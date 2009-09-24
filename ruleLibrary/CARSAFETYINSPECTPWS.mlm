@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Car Safety Seat Inspection PWS;;
+	Filename:		CARSAFETYINSPECTPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-15T02:53:08-0400;;
+	Validation:	;;
+Library:
+	Purpose:		PWS prompt to alert practitioners when parents have yet to obtain a car safety seat installation inspection.  Provides the practitioner with information to pass on to parents if interested.                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	PWS, injury, car safety;;
+	Citations:		Pediatrics, Nov 2000; 106: 1113 - 1116.;;
+	Links:		http://www.aap.org/family/carseatguide.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+cis := read Last {Car_Seat_Inspection from CHICA} Where it Occurred Within Past 4 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+endif
+;;
+Priority:		630;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (cis = Yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
+endif
+
+;;
+Action:
+write ("|| firstname ||'s parents have not confirmed that they have received a car safety seat installation inspection, which is recommended by the AAP.  Parents can call the Car Seat Safety Program at (317) 274-2977.");                                                                                
+write ("Parent was interested in info->");
+write ("Provided contact information");
+write ("");
+write ("Provided brochure");
+write ("Parent not interested in info");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 4 years;;
+end:

@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Sleep Suggestions PWS;;
+	Filename:		SLPSUGGPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2004-12-10T11:54:45-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS is designed to stimulate discussion of sleep issues in children up to two years of age.                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	PWS, sleep, noevidence;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		975;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+;;
+Action:
+write ("Sleep issues in young children are important yet underrecognized.  You may wish to use the following discussion points to engage || firstname ||'s parents in a conversation about || hisher || sleep habits:");                                                                                    
+write ("Child sleeps in crib/bed?");
+write ("Child sleeps alone/with others?");
+write ("Duration of sleep?");
+write ("Nightly waking frequency?");
+write ("Nap habits/patterns?");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 2 years;;
+end:

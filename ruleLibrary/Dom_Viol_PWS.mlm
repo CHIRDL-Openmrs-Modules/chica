@@ -1,0 +1,73 @@
+Maintenance:
+	Title:		Follow up concerns about domestic violence on PWS;;
+	Filename:		Dom_Viol_PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-01-01T09:24:05-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Prompt MD to followup PSF data suspicious of domestic violence                                                                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Explanation:	Fires if parent reports being kicked, hit or slapped by partner or does not feel safe at home                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Keywords:	domestic violence abuse followup;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Dom_Viol := read Last {Domest_Violence_Concern from CHICA} Where it Occurred Within Past 365 Days;
+AbuseConcern := read Last {Abuse_Concern from CHICA} Where it Occurred Within Past 365 Days;    
+DomViolElement := read Last 2 {Domest_Violence_Concern from CHICA} Where it Occurred Within Past 365 Days;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority:		190;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Dom_Viol = Not_Confirmed) OR (AbuseConcern = yes_md) OR (Dom_Viol = Addressed) then conclude False;
+
+If 'Kick_Hit_Slap' is in DomViolElement or 'Not_Safe_Home' is in DomViolElement then conclude True;
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR  (Box2=true) OR  (Box3=true) then
+ CALL storeObs With "Domest_Violence_Concern","Addressed";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "Domest_Violence_Concern","Not_Confirmed";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "Abuse_Concern","yes_md";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname ||'s parent reported being abused or feeling unsafe on || Dom_Viol_date ||.  If you can speak confidentially and confirm risk of domestic violence, assess for child abuse and advise parent:");                                                                                       
+write ("Dom Viol Network 205-4673");
+write ("Pack $ & clothes for escape");
+write ("Offer social services here");
+write ("Dom viol NOT confirmed");
+write ("Suspect child abuse --> Report");
+write ("Can't speak confidentially");
+;;
+Age_Min: 0 days;;
+Age_Max: 11 years;;
+end:

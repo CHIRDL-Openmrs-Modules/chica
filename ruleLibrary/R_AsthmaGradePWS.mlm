@@ -1,0 +1,79 @@
+Maintenance:
+	Title:		Research Asthma Grading PWS                                                                         ;;
+	Filename:		R_AsthmaGradePWS                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Steve Downs                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2005-05-12 15:26:16;;
+	Validation:	;;
+Library:
+	Purpose:		PWS promt to alert MD of positive case-finding screen for asthma so he/she can confirm asthma (or not) and grade severity as intermittent or persistent.                                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	If AsthmaStatus is "symptoms" then the PWS asks the MD to grade the asthma as persistent, intermittent, or not present                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Keywords:	asthma PWS grade intermittent persistent treatment                                                  ;;
+	Citations:		NHLBI guidelines                                                                                    ;;
+	Links:		http://www.nhlbi.nih.gov/guidelines/asthma/asthgdln.htm                                             ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+CurrentStatus := read Last {AsthmaStatus from CHICA} ;
+Insurance := read Last {Insurance from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+endif
+;;
+Priority:		192       ;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (CurrentStatus = Symptoms) then conclude True;
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) AND NOT  (Box2=true) AND NOT  (Box4=true) then
+ CALL storeObs With "AsthmaStatus","Persistent-no-controller";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "AsthmaStatus","Persistent-controller";
+endif;
+If  (Box3=true) AND NOT  (Box4=true) AND NOT  (Box2=true) then
+ CALL storeObs With "AsthmaStatus","Persistent-no-controller";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "AsthmaStatus","Persistent-controller";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "AsthmaStatus","Intermittent";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "AsthmaStatus","None";
+endif;
+
+
+endif
+;;
+Action:
+call CREATE_JIT with "ASTHMA_JIT","Insurance_value";
+write ("|| firstname || reportedly has asthma or symptoms suggesting asthma.  Please evaluate and/or treatment (see attached ASTHMA ACTION PLAN):");                                                                                                                                                                                                                                                                                                                   
+write ("Day asthma Sx >2x/wk ----->                       ");
+write ("Persistent --> Rx controller                      ");
+write ("Night asthma Sx >2x/mo --->                       ");
+write ("Persistent --> Rx controller                      ");
+write ("Intermittent --> prn albut                        ");
+write ("Does not have asthma                              ");
+;;
+Age_Min: 3          years     ;;
+Age_Max: 11         years     ;;
+end:

@@ -1,0 +1,115 @@
+Maintenance:
+	Title:		Anemia  Specific PWS Reminder;;
+	Filename:		idaspecpws;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 14:59:27;;
+	Validation:	;;
+Library:
+	Purpose:		Provides a specific reminder, tailored to the patient who identified one or more iron deficiency risk factors;;
+	Explanation:	Based on AAP screening recommendations;;
+	Keywords:	PWS, iron deficiency, anemia, specific, exposure;;
+	Citations:		CDC MMWR 47:RR-3 "Recommendations to Prevent and Control Iron Deficiency in the United States";;
+	Links:		ftp://ftp.cdc.gov/pub/Publications/mmwr/rr/rr4703.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+lbw := read {PAST MEDICAL HISTORY from CHICA};
+nh := read {NUTRITION HISTORY from CHICA};
+pid := read {NUTRITION HISTORY from CHICA} Where it Occurred Within Past 6 Months;
+RMRS2BW := read Last {WEIGHT NEWBORN BABY A from RMRS};
+screen := read {IRON DEFICIENCY SCREEN - QUALITATIVE from CHICA} Where it Occurred Within Past 1 Year;
+endif
+;;
+Priority:		232;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+/*******
+screen := read Exist (NOT INDICATED, PENDING, POSITIVE, NEGATIVE) 
+If (screen = True) then conclude False;
+********/
+If 'NOT INDICATED' is in screen then conclude False;
+If 'PENDING' is in screen then conclude False;
+If 'POSITIVE' is in screen then conclude False;
+If 'NEGATIVE' is in screen then conclude False;
+
+
+/*****
+lif := read Exist (LOW IRON FORMULA)
+If (lif = True) then || Risk_Factor || = "drinks low iron formula.";
+*****/
+If 'LOW IRON FORMULA' is in pid then || Risk_Factor || = "drinks low iron formula.";
+
+
+/******
+lbw := read Exist (LOW BIRTH WEIGHT)
+If (lbw = True) or (RMRS2BW < 2500) then || Risk_Factor || = "was born low birth weight.";
+*******/
+If 'LOW BIRTH WEIGHT' is in lbw or (RMRS2BW < 2500) then || Risk_Factor || = "was born low birth weight.";
+
+
+/*****
+pid := read Exist (LOW DIETARY IRON) 
+If (pid = True) then || Risk_Factor || = "has poor dietary iron.";
+******/
+If 'LOW DIETARY IRON' is in pid then || Risk_Factor || = "has poor dietary iron.";
+
+
+/*******
+ecm := read Exist (EARLY COW MILK INTRODUCTION)
+If (ecm = True) then || Risk_Factor || = "drinks regular cow's milk.";
+*******/
+If 'EARLY COW MILK INTRODUCTION' is in nh then || Risk_Factor || = "drinks regular cow's milk.";
+
+
+If (Risk_Factor = True) then conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box3=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","NOT INDICATED";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","PENDING";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","POSITIVE";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","NEGATIVE";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","DEFERRED";
+endif;
+
+
+endif
+;;
+Action:
+write ("**High Iron Deficiency Risk **:  Highest priority risk factor reported for || firstname ||: || Risk_Factor ||  Draw CBC now.");
+write ("test already done ->");
+write ("Positive");
+write ("test not indicated");
+write ("Negative");
+write ("blood drawn");
+write ("test deferred");
+;;
+Age_Min: 6 months;;
+Age_Max: 18 months;;
+end:

@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Depression  Screen Suicide PSF;;
+	Filename:		DepressionSCNSuicidePSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-20T11:43:09-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This is the fourth screening question looking for depression or suicide in adolescents.                                                                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Explanation:	GAPS recommends 5 screening questions looking for depression or suicide.                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	adolescent, depression, suicide, PSF;;
+	Citations:		;;
+	Links:		http://www.ama-assn.org/ama/pub/category/2280.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+suicide := read Exist {suicide_concerns from CHICA} Where it Occurred Within Past 180 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif
+;;
+Priority:		370;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (suicide = False) then conclude True;conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "suicide_concerns","True";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "suicide_concerns","False";
+endif;
+
+
+endif
+;;
+Action:
+write ("Have you ever seriously thought about killing yourself, made a plan to kill yourself, or actually tried to kill yourself?");
+write ("¿Has pensado seriamente en suicidarte, has hecho planes para matarte o has intentado suicidarte?") At Spanish;                                                                                                                                                                                                                                                        
+;;
+Age_Min: 11 years;;
+Age_Max: 21 years;;
+end:

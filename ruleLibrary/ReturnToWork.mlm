@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Return to work;;
+	Filename:		ReturnToWork;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-12-17T12:02:56-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Discuss issues about returning to work                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	Fills space on early PWS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	work noevidence PWS;;
+	Citations:		Bright Futures;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		978;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+;;
+Action:
+write ("There are many challenges to discuss when || firstname ||'s parent is returning to work:");                                                                                                                                                                                                         
+write ("Continuing breastfeeding (if applicable)");
+write ("Feelings about leaving baby");
+write ("Taking time for self");
+write ("Encourage partner participation");
+write ("Attention to other kids");
+write ("Time alone w/ partner");
+;;
+Age_Min: 14 days;;
+Age_Max: 12 months;;
+end:

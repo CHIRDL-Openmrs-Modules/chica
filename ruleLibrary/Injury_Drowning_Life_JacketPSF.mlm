@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Drowning Life Jacket PSF;;
+	Filename:		Injury_Drowning_Life_JacketPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:30:28-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if the child wears a life jacket appropriately.                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	The AAP recommends that children should wear life jackets at all times when on boats or near bodies of water and blow-up water wings, toys, rafts, and air mattresses should never be used as life jackets or life preservers.                                                                                                                                                                                                                                                                                      ;;
+	Keywords:	injury, drowning, life jacket, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/tippslip.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+lifejacket := read Last {wears_life_jacket from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority:		946;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (lifejacket = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "wears_life_jacket","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "wears_life_jacket","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || always wear a life-jacket when on a boat?");
+write("¿|| firstname || usa una chaqueta de salvavidas cuando esta en un bote?") At Spanish;                                                                                                                                     
+;;
+Age_Min: 3 years;;
+Age_Max: 11 years;;
+end:

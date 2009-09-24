@@ -1,0 +1,95 @@
+Maintenance:
+	Title:		Anemia  CBC Followup PWS Reminder;;
+	Filename:		irondefdfupws;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 14:52:14;;
+	Validation:	;;
+Library:
+	Purpose:		Provides a reminder, intended to remind clinicians when a CBC for iron deficiency was either deferred or pending for a followup interpretation.;;
+	Explanation:	Based on AAP screening recommendations;;
+	Keywords:	PWS, iron deficiency, anemia, specific;;
+	Citations:		CDC MMWR 47:RR-3 "Recommendations to Prevent and Control Iron Deficiency in the United States";;
+	Links:		ftp://ftp.cdc.gov/pub/Publications/mmwr/rr/rr4703.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+idsq := read {IRON DEFICIENCY SCREEN - QUALITATIVE from CHICA} Where it Occurred Within Past 1 Year;
+endif
+;;
+Priority:		231;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+/******
+Resolved := read Exist (POSITIVE, NEGATIVE, NOT INDICATED)
+If (Resolved = True) then conclude False;
+*******/
+If 'POSITIVE' is in idsq then conclude False;
+If 'NEGATIVE' is in idsq then conclude False;
+If 'NOT INDICATED' is in idsq then conclude False;
+
+/******
+Pending := read Exist (PENDING)
+If (Pending = True) then || dynamic || = "CBC drawn";
+******/
+If 'PENDING' is in idsq then || dynamic || = "CBC drawn";
+
+/******
+Deferred := read Exist (DEFERRED)
+If (Deferred = True) then || dynamic || = "positive iron deficiency screen with a CBC deferred on";
+*******/
+
+If  'DEFERRED' is in idsq then || dynamic || = "positive iron deficiency screen with a CBC deferred on";
+
+If ( dynamic = True) then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box3=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","NOT INDICATED";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","PENDING";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","POSITIVE";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","NEGATIVE";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "IRON DEFICIENCY SCREEN - QUALITATIVE","DEFERRED";
+endif;
+
+
+endif
+;;
+Action:
+write ("**|| firstname || had a || dynamic || on || Pending_date |||| Deferred_date ||**:  Follow this up today!");
+write ("test already done ->");
+write ("Positive");
+write ("test not indicated");
+write ("Negative");
+write ("blood drawn");
+write ("test deferred");
+;;
+Age_Min: 6 months;;
+Age_Max: 15 months;;
+end:

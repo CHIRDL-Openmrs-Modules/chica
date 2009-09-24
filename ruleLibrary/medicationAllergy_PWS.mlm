@@ -1,0 +1,65 @@
+Maintenance:
+	Title:		Medication Allergies  PWS;;
+	Filename:		medicationAllergy_PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2008-02-02T09:25:40-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Assess medication allergies;;
+	Explanation:	;;
+	Keywords:	PWS, allergy, medication, allergies;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+allergies := read Last {MEDICATION ALLERGIES from CHICA} ;
+endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (allergies = "FAMILY REPORTED") then conclude True;
+Else conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) then
+ CALL storeObs With "MEDICATION ALLERGIES","PHYSICIAN CONFIRMED";
+endif;
+If  (Box3=true) OR (Box5=true) then
+ CALL storeObs With "MEDICATION ALLERGIES","NONE";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname ||'s family reports that || firstname || has a medication allergy.  Please evaluate.");
+write ("Yes, medication allergy --->");
+write ("_______________________");
+write ("Reaction, not  true allergy --->");
+write ("Explained to patient");
+write ("No medication reaction");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 21 years;;
+end:

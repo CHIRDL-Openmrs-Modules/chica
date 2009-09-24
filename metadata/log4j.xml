@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
+
+        <appender name="info-out" class="org.apache.log4j.DailyRollingFileAppender"> 
+                <param name="File" value="${catalina.home}/logs/chica_info.log"/> 
+                <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+				<layout class="org.apache.log4j.PatternLayout">
+					<param name="ConversionPattern" value="%C{1}.%M|%d{ISO8601}|%t|%m%n"/>
+				</layout>
+                <filter class="org.apache.log4j.varia.LevelRangeFilter">
+                        <param name="LevelMax" value="warn"/>
+                        <param name="LevelMin" value="info"/>
+                        <param name="AcceptOnMatch" value="true"/>
+                </filter>
+        </appender> 
+
+        <appender name="error-out" class="org.apache.log4j.DailyRollingFileAppender"> 
+                <param name="File" value="${catalina.home}/logs/chica_error.log"/> 
+                <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+				<layout class="org.apache.log4j.PatternLayout">
+					<param name="ConversionPattern" value="%C{1}.%M|%d{ISO8601}|%t|%m%n"/>
+				</layout>
+                <filter class="org.apache.log4j.varia.LevelRangeFilter">
+                        <param name="LevelMax" value="fatal"/>
+                        <param name="LevelMin" value="error"/>
+                        <param name="AcceptOnMatch" value="true"/>
+                </filter>
+        </appender> 
+
+        <logger name="org.openmrs.module" additivity="false"> 
+                <level value="info"/> 
+                <appender-ref ref="info-out" /> 
+                <appender-ref ref="error-out" /> 
+        </logger> 
+</log4j:configuration>

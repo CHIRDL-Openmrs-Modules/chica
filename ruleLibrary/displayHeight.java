@@ -1,0 +1,136 @@
+/********************************************************************
+ Translated from - mcad.mlm on Fri Dec 28 15:10:34 EST 2007
+
+ Title : MCAD Reminder
+ Filename:  mcad
+ Version : 0 . 2
+ Institution : Indiana University School of Medicine
+ Author : Steve Downs
+ Specialist : Pediatrics
+ Date : 05 - 22 - 2007
+ Validation :
+ Purpose : Provides a specific reminder, tailored to the patient who identified one or more fatty acid disorders
+ Explanation : Based on AAP screening recommendations
+ Keywords : fatty, acid, fatty acid disorder
+ Citations : Screening for fatty acid disorder AAP
+ Links :
+
+ ********************************************************************/
+package org.openmrs.module.chica.rule;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.logic.LogicContext;
+import org.openmrs.logic.LogicCriteria;
+import org.openmrs.logic.LogicException;
+import org.openmrs.logic.LogicService;
+import org.openmrs.logic.Rule;
+import org.openmrs.logic.result.Result;
+import org.openmrs.logic.result.Result.Datatype;
+import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.atd.service.ATDService;
+
+public class displayHeight implements Rule
+{
+	private LogicService logicService = Context.getLogicService();
+
+	/**
+	 * *
+	 * 
+	 * @see org.openmrs.logic.Rule#getParameterList()
+	 */
+	public Set<RuleParameterInfo> getParameterList()
+	{
+		return null;
+	}
+
+	/**
+	 * *
+	 * 
+	 * @see org.openmrs.logic.Rule#getDependencies()
+	 */
+	public String[] getDependencies()
+	{
+		return new String[]
+		{};
+	}
+
+	/**
+	 * *
+	 * 
+	 * @see org.openmrs.logic.Rule#getTTL()
+	 */
+	public int getTTL()
+	{
+		return 0; // 60 * 30; // 30 minutes
+	}
+
+	/**
+	 * *
+	 * 
+	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
+	 */
+	public Datatype getDefaultDatatype()
+	{
+		return Datatype.CODED;
+	}
+
+	
+	public Result eval(LogicContext context, Patient patient,
+			Map<String, Object> parameters) throws LogicException
+	{
+		if(parameters == null)
+		{
+			return Result.emptyResult();
+		}
+		
+		String conceptName = (String) parameters.get("concept");
+		
+		if(conceptName == null)
+		{
+			return Result.emptyResult();
+		}
+		Result ruleResult = null;
+		
+		Integer encounterId = (Integer) parameters.get("encounterId");
+		
+		LogicCriteria conceptCriteria = new LogicCriteria(
+				conceptName);
+		
+		LogicCriteria fullCriteria = null;
+		
+		if(encounterId != null)
+		{
+			LogicCriteria encounterCriteria = 
+				new LogicCriteria("encounterId").equalTo(encounterId);
+			
+			fullCriteria = conceptCriteria.and(encounterCriteria);
+		}else
+		{
+			fullCriteria = conceptCriteria;
+		}
+		ruleResult = context.read(patient,context.getLogicDataSource("obs"), 
+				fullCriteria.last());
+
+		if (ruleResult != null&&ruleResult.size()>0)
+		{
+			ATDService atdService = Context.getService(ATDService.class);
+			ruleResult = ruleResult.get(0);
+			String heightUnit = atdService.evaluateRule( "birthdate>heightUnits", 
+					  patient,parameters,null).toString();
+			if(heightUnit != null && heightUnit.equals("cm."))
+			{
+				double inches = ruleResult.toNumber();
+				double cm = 
+					org.openmrs.module.dss.util.Util.convertUnitsToMetric(inches, 
+							org.openmrs.module.dss.util.Util.MEASUREMENT_IN);
+				ruleResult = new Result(String.valueOf(cm));
+			}
+			return ruleResult;
+		}
+		return Result.emptyResult();
+	}
+}

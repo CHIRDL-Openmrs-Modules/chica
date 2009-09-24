@@ -1,0 +1,67 @@
+Maintenance:
+	Title:		Response to child abuse concerns PWS;;
+	Filename:		Abuse_Concern_PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-01-01T09:25:14-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PWS prompt to followup concern about possible child abuse                                                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Explanation:	Fires if parent has expressed concern about abuse on the PSF                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Keywords:	PWS;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Abuse_concern := read Last {Abuse_Concern from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority:		88;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Abuse_concern = yes_parent) OR (Abuse_concern = yes_md) then conclude True;Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) AND NOT  (Box2=true) then
+ CALL storeObs With "Abuse_Concern","yes_md";
+endif;
+If (Box2=true) then
+ CALL storeObs With "Abuse_Concern","reported";
+endif;
+If (Box5=true) then
+ CALL storeObs With "Abuse_Concern","no";
+endif;
+
+
+endif
+;;
+Action:
+Write ("|| firstname ||'s parent expressed concern that || firstname || may be maltreated.  If you suspect, reporting is mandatory.");                                                                                                                                                                      
+write ("Suspect Abuse ->");
+write ("Report to CPS");
+write ("");
+write ("Initiate workup");
+write ("Do not suspect abuse");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 11 years;;
+end:

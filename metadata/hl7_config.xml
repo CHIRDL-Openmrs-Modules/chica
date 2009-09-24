@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>Hl7</comment>
+	<entry key="image_dir"></entry>
+	<entry key="OBX_size">500000</entry>
+	<entry key="ADD_size">30000</entry>
+	<entry key="our_facility">WMS</entry>
+	<entry key="our_app">CHICA</entry>
+    <entry key="receiving_app"></entry>
+    <entry key="receiving_facility"></entry>
+	<entry key="univ_serv_id"></entry>
+	<entry key="univ_serv_id_name">CHICA</entry>
+	<entry key="version">2.5</entry>
+	<entry key="message_type">ORU</entry>
+	<entry key="event_type_code">R01</entry>
+	<entry key="uid"></entry>
+    <entry key="OBX_data_type"></entry>
+    <entry key="OBX_sub_data_type"></entry>
+    <entry key="OBX_universal_id"></entry>
+	<entry key="coding_system">L</entry>
+    <entry key="encoding"></entry>
+	<entry key="check_for_duplicates">true</entry>
+	<entry key="result_status">F</entry>
+	<entry key="specimen_action_code">F</entry>
+	<entry key="obs_location">PECAR PEDS</entry>
+	<entry key="ATTRIBUTE_NEXT_OF_KIN">Mother's Name</entry>
+	<entry key="ATTRIBUTE_TELEPHONE">Telephone Number</entry>
+	<entry key="ATTRIBUTE_RACE">Race</entry>
+	<entry key="ATTRIBUTE_BIRTHPLACE">Birthplace</entry>
+	<entry key="PROVIDER_ID">Provider ID</entry>
+	<entry key="PROVIDER_NAME">Provider Name</entry>
+	<entry key="CITIZENSHIP">Citizenship</entry>
+	<entry key="MATCH_INFO">Other Matching Information</entry>
+	<entry key="PATIENT_IDENT_TYPE">MRN</entry>
+	
+			
+
+	
+</properties>	
+	

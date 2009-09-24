@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Depression  Screen Abused PSF;;
+	Filename:		DepressionSCNAbusedPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-20T11:51:44-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This is the fifth screening question looking for depression or suicide in adolescents.                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	GAPS recommends 5 screening questions looking for depression or suicide.                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	adolescent, depression, suicide, PSF;;
+	Citations:		;;
+	Links:		http://www.ama-assn.org/ama/pub/category/2280.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+abuse := read Exist {abuse_ever from CHICA} Where it Occurred Within Past 180 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority:		388;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "abusado";If (Gender = F) then || spanishgender || = "abusada";If (abuse = False) then conclude True;conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "abuse_ever","True";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "abuse_ever","False";
+endif;
+
+
+endif
+;;
+Action:
+write ("Have you ever been physically, sexually, or emotionally abused?");
+write ("¿Alguna vez ha sido usted  física, emocional o sexualmente || spanishgender ||? ") At Spanish;                                                                                                                                                                                                                                                                                                                                  
+;;
+Age_Min: 11 years;;
+Age_Max: 21 years;;
+end:

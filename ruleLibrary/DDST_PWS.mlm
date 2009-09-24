@@ -1,0 +1,112 @@
+Maintenance:
+	Title:		DDST Milestones  PWS                                                                               ;;
+	Filename:		DDST_PWS                                          ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Steve Downs                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2004-04-23 10:41:22;;
+	Validation:	;;
+Library:
+	Purpose:		This prompt provides the four most appropriate (for age) developmental milestones from the Denver Developmental Screening Test II (DDST-II).  The clinician can indicate which milestones the child passes, whether the child failed any, and whether a referral was made.                                                                                                                                                                                                                                          ;;
+	Explanation:	This MLM calls a table lookup function that inserts the milestonres.                                                                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Keywords:	Development DDST Denver                                                                             ;;
+	Citations:		Frankenburg WK, Dodds J, Archer P, et al. The DENVER II Technical Manual. Denver CO                 ;;
+	Links:		http://www.denverii.com/                                                                            ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+ps_passed := read Exist {PS_Passed from CHICA} Where it Occurred Within Past 2 months;
+gm_passed := read Exist {GM_Passed from CHICA} Where it Occurred Within Past 2 months;
+fm_passed := read Exist {FM_Passed from CHICA} Where it Occurred Within Past 2 months;
+lg_passed := read Exist {LG_Passed from CHICA} Where it Occurred Within Past 2 months;
+ps_failed := read Last {PS_Failed from CHICA} Where it Occurred Within Past 2 months;
+gm_failed := read Last {GM_Failed from CHICA} Where it Occurred Within Past 2 months;
+fm_failed := read Last {FM_Failed from CHICA} Where it Occurred Within Past 2 months;
+lg_failed := read Last {LG_Failed from CHICA} Where it Occurred Within Past 2 months;
+referral := read Last {Developmental_Referral from CHICA} Where it Occurred Within Past 6 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+endif
+;;
+Priority:		412       ;;
+	Evoke:		;;
+Logic:
+
+Age := call ChicaAgeRule With "days";
+Box1_Text := call DDST with "PS", "Age";
+Box2_Text := call DDST with "FM", "Age";
+Box3_Text := call DDST with "GM", "Age";
+Box4_Text := call DDST with "LG", "Age";
+
+If (mode = PRODUCE) then
+If (ps_passed = True) AND (gm_passed = True) AND (fm_passed = True) AND (lg_passed = True) then conclude False;
+If (referral = Made) then conclude False;
+If (ps_failed = null) AND (gm_failed = null) AND (fm_failed = null) AND (lg_failed = null) then || DevText || = "";
+Else || DevText || = "Milestones failed in the last 2 mos:";
+Conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+
+
+
+If (mode = CONSUME) then
+/*
+Age := call ChicaAgeRule With "days";
+Box1_Text := Call DDST With "PS", "Age";
+Box2_Text := Call DDST With "FM", "Age";
+Box3_Text := Call DDST With "GM", "Age";
+Box4_Text := Call DDST With "LG", "Age";
+*/
+If  (Box1=true) then
+ CALL storeObs With "PS_Passed", "Box1_Text";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "FM_Passed", "Box2_Text";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "GM_Passed", "Box3_Text";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "LG_Passed", "Box4_Text";
+endif;
+If  (Box5=true) AND NOT  (Box1=true) then
+ CALL storeObs With "PS_Failed", "Box1_Text";
+endif;
+If  (Box5=true) AND NOT  (Box2=true) then
+ CALL storeObs With "FM_Failed", "Box2_Text";
+endif;
+If  (Box5=true) AND NOT  (Box3=true) then
+ CALL storeObs With "GM_Failed", "Box3_Text";
+endif;
+If  (Box5=true) AND NOT  (Box4=true) then
+ CALL storeObs With "LG_Failed", "Box4_Text";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "Developmental_Referral","Made";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| DevText || || ps_failed_value || || gm_failed_value || || fm_failed_value || || lg_failed_value || Milestones to eval today.  Check if passed. ");                                                                                                                                                                                                                                                                                                                                                       
+write ("|| Box1_Text ||");
+write ("|| Box2_Text ||");
+write ("|| Box3_Text ||");
+write ("|| Box4_Text ||");
+write ("Failed Any -->                                    ");
+write ("Development referral                              ");
+;;
+Age_Min: 15         days      ;;
+Age_Max: 6          years     ;;
+end:

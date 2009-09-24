@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Bicycle After Dark PSF;;
+	Filename:		Injury_Bicycle_After_DarkPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:33:59-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the child rides a bike after dusk or dark.                                                                                                                                                                                                                                                                                                                                                                                                                                                  ;;
+	Explanation:	The AAP recommends that children should never ride at dusk or in the dark.                                                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Keywords:	injury, bicycle, dark, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/bicycle.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+dark := read Last {rides_after_dark from CHICA} Where it Occurred Within Past 1 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority:		640;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (dark = no) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "rides_after_dark","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "rides_after_dark","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || ever ride || gender || bike after dusk or after dark?");
+write("¿|| firstname || monta su bicicleta cuando esta oscureciendo o ya de noche?") At Spanish;                                                                                                                                                                                                                                                                                                                             
+;;
+Age_Min: 8 years;;
+Age_Max: 11 years;;
+end:

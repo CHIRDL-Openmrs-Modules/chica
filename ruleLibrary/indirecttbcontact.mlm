@@ -1,0 +1,83 @@
+Maintenance:
+	Title:		Indirect Tuberculosis Contact;;
+	Filename:		indirecttbcontact.mlm;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 15:41:47;;
+	Validation:	;;
+Library:
+	Purpose:		PSF screening question that assesses indirect exposure to people who visit high risk TB environments, which is a risk factor for TB exposure.;;
+	Explanation:	Uses new EXIST modifier.. need to discuss with group.;;
+	Keywords:	PSF, TB, tuberculosis, exposure;;
+	Citations:		2004 Pediatric Tuberculosis Collaborative Group Report - AAP;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Pos_Risk := read {ENVIRONMENTAL HISTORY from CHICA} Where it Occurred Within Past 1 Year;
+Neg_Risk := read {NEGATIVE ENVIRONMENTAL HISTORY from CHICA} Where it Occurred Within Past 1 Year;
+PPD := read EXIST {PPD - QUALITATIVE from CHICA} Where it Occurred Within Past 1 Year;
+Study := read LAST {K22STUDY1};
+Pos := read {PPD - QUALITATIVE from CHICA};
+endif
+;;
+Priority:		261;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Study = Control) then conclude False;
+/*****
+Pos_Risk := read EXIST (DIRECT TUBERCULOSIS CONTACT, TRAVEL TO ENDEMIC TUBERCULOSIS AREA, FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE, 
+FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA)
+If (Pos_Risk = True) then conclude False;
+*****/
+If 'DIRECT TUBERCULOSIS CONTACT' is in Pos_Risk then conclude False;
+If 'TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Pos_Risk then conclude False;
+If 'FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE' is in Pos_Risk then conclude False;
+If 'FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Pos_Risk then conclude False;
+
+
+/*****
+Neg_Risk := read EXIST (FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE)
+If (Neg_Risk = True) then conclude False;
+******/
+If 'FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE' is in Neg_Risk then conclude False;
+
+If (PPD = True) then conclude False;
+If 'POSITIVE' is in Pos then conclude False;
+conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "ENVIRONMENTAL HISTORY","FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || spend time with anyone who has been in jail or a shelter, uses illegal drugs, or has HIV?");
+write("¿Pasa tiempo || firstname || con alguien que ha estado encarcelado o refugiado, que usa las drogas ilegales, o que tiene el VIH?") At Spanish;
+;;
+Age_Min: 11 months;;
+Age_Max: 11 years;;
+end:

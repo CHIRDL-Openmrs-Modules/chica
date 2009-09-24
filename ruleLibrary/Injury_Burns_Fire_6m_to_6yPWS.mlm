@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Injury  Burns Fire 6m6y PWS;;
+	Filename:		Injury_Burns_Fire_6m_to_6yPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T04:33:22-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advises clinicians on how to administer age-appropriate advice on burn prevention / fire safety to parents.                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Explanation:	The AAP has a number of recommendations to prevent childhood burns and fires.                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Keywords:	injury, burns, PWS;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=10835082&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+detector := read Last {has_smoke_detector from CHICA} Where it Occurred Within Past 1 Years;batteries := read Last {tested_smoke_detector from CHICA} Where it Occurred Within Past 1 Years;smokes := read Last {any_household_members_smoke from CHICA} Where it Occurred Within Past 2 Years;matches := read Last {matches_lighters_safe from CHICA} Where it Occurred Within Past 1 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		658;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (detector = yes) AND (batteries = yes) AND (smokes = no) AND (matches = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+;;
+Action:
+write ("The AAP has age-specific recommendations for the prevention of childhood burns and fires.  Please review the following, and check those you review:");                                                                                                                                              
+write ("Working smoke detector");
+write ("Store matches/lighters safely");
+write ("Test batteries monthly");
+write ("");
+write ("Rec no smoking in house->");
+write ("Smoking = #1 cause of fires");
+;;
+Age_Min: 6 months;;
+Age_Max: 6 years;;
+end:

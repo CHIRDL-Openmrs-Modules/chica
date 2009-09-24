@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Firearms Unloaded PSF;;
+	Filename:		Injury_Firearms_UnloadedPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:34:14-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to guns at home are kept unloaded and in a locked place separate from ammunition.                                                                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Explanation:	The AAP recommends that firearms are stored locked and unloaded separate from ammunition.                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Keywords:	injury, firearms, home, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=10742344&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+unloaded := read Last {firearms_kept_unloaded from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		994;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (unloaded = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "firearms_kept_unloaded","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "firearms_kept_unloaded","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Are all firearms in || firstname ||'s home kept unloaded and in a locked place separate from ammunition?");
+write("¿Todas las armas en la casa de || firstname ||, están descargadas y guardadas en un lugar seguro y estan lejos de las municiones?") At Spanish;                                                                                                                                                                                                                                         
+;;
+Age_Min: 1 years;;
+Age_Max: 10 years;;
+end:

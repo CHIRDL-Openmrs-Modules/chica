@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Growth  Abnormal Temperature PWS Flag Infant;;
+	Filename:		TEMPPWSFLAGINF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2004-01-30T11:27:25-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Flags temperature as being abnormal on PWS.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	Abnormal criteria at this point are temps > 100.4                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	PWS, vitalflag, growth;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+vital := read Last {Temperature from CHICA} Where it Occurred Within Past 7 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (vital > 100.4) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+endif
+
+;;
+Action:
+write ("*") At TempA;                                                                                                                                                                                                                                                                                       
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 1 days;;
+Age_Max: 3 months;;
+end:

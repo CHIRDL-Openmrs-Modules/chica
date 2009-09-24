@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.Statistics" table="chica_statistics">
+				
+		<id name="statisticsId" type="java.lang.Integer" column="statistics_id">
+			<generator class="native" />
+		</id>
+		
+		<property name="patientId" type="java.lang.Integer" column="patient_id" />
+		<property name="formName" type="java.lang.String" column="form_name" />
+		<property name="ruleId" type="java.lang.Integer" column="rule_id" />
+		<property name="formInstanceId" type="java.lang.Integer" column="form_instance_id" />
+		<property name="encounterId" type="java.lang.Integer" column="encounter_id" />
+		<property name="position" type="java.lang.Integer" column="position" />
+		<property name="answer" type="java.lang.String" column="answer" />
+		<property name="answerErr" type="java.lang.String" column="answer_err" />
+		<property name="printedTimestamp" type="java.util.Date" column="printed_timestamp" />
+		<property name="scannedTimestamp" type="java.util.Date" column="scanned_timestamp" />
+		<property name="priority" type="java.lang.Integer" column="priority" />
+		<property name="obsvId" type="java.lang.Integer" column="obsv_id" />
+		<property name="languageResponse" type="java.lang.String" column="language_response" />
+		<property name="ageAtVisit" type="java.lang.String" column="age_at_visit" />
+	
+	</class>
+	
+</hibernate-mapping>

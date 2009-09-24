@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Injury  Bicycle Rules of Road PWS;;
+	Filename:		Injury_Bicycle_Rules_of_RoadPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T12:35:41-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advised clinicians on how to prepare parents to teach "rules of the road."                                                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	The APP states the most important "Rules of the Road" for children to learn are: a. Ride with traffic, b. Stop and look both ways before entering the street, c. Stop at all intersections, marked and unmarked, and d. Before turning, use hand signals and look all ways.                                                                                                                                                                                                                                         ;;
+	Keywords:	injury, bicycle, rules, PWS;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/bicycle.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+rules := read Last {knows_rules_of_road from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority:		964;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (rules = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+;;
+Action:
+write ("The AAP states that there are four important rules of the road for children to know for bicycle safety.  Review the following:?");                                                                                                                                                                  
+write ("Ride with traffic");
+write ("Look both ways entering street");
+write ("Stop at ALL intersections");
+write ("");
+write ("Before turning look both ways");
+write ("Use hand signals when turning");
+;;
+Age_Min: 8 years;;
+Age_Max: 11 years;;
+end:

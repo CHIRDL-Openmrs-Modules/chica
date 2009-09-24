@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Domestic Violence Screening on PSF;;
+	Filename:		Kicked_Hit_Slapped_PSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-01-01T09:23:44-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Ask parent if partner has ever kicked, hit or slapped them.                                                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	Ask annually if domestic violence concern has not already been addressed.                                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Keywords:	abuse violence screening;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Dom_Viol := read Exist {Domest_Violence_Concern from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority:		77;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Dom_Viol = True) then conclude False;Else conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "Domest_Violence_Concern","Kick_Hit_Slap";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "Domest_Violence_Concern","No_Kick_Hit_Slap";
+endif;
+
+
+endif
+;;
+Action:
+write ("Has your partner kicked, hit, or slapped you?");
+write ("¿Su pareja alguna vez la ha golpeado, abofeteado o pateado a usted?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                 
+;;
+Age_Min: 0 days;;
+Age_Max: 11 years;;
+end:

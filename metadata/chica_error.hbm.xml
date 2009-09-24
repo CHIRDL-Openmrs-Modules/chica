@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica" auto-import="false">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.ChicaError" table="chica_error">
+		<id name="chicaErrorID" type="java.lang.Integer" column="error_id">
+			<generator class="native" />
+		</id>
+	
+		<property name="errorCategory" type="java.lang.Integer" column="error_category_id" />
+		<property name="level" type="java.lang.String" column="level" />
+		<property name="sessionId" type="java.lang.Integer" column="session_id"/>
+		<property name="message" type="java.lang.String" column="message" />
+		<property name="details" type="java.lang.String" column="details" />
+		<property name="dateTime" type="java.util.Date" column="date_time"/>
+		
+	</class>
+	
+</hibernate-mapping>

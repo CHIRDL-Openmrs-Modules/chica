@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Bicycle Helmet PSF;;
+	Filename:		Injury_Bicycle_HelmetPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:33:12-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the child wears a bike helmet.                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	The AAP and USPSTF strongly recommend wearing bicycle helmets by all bicyclists since the risk of head injury among bicyclists is reduced by 63-85% by the use of bicycle helmets.                                                                                                                                                                                                                                                                                                                                  ;;
+	Keywords:	injury, bicycle, helmet, PSF;;
+	Citations:		;;
+	Links:		http://www.ahrq.gov/clinic/uspstf/uspshrin.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+helmet := read Last {wears_bike_helmet from CHICA} Where it Occurred Within Past 1 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+endif
+;;
+Priority:		94;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (helmet = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "wears_bike_helmet","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "wears_bike_helmet","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || always wear a helmet when riding || gender || bike or tricycle?");
+write("¿|| firstname || usa un casco cuando monta bicicleta o triciclo?") At Spanish;                                                                                                                      
+;;
+Age_Min: 2 years;;
+Age_Max: 11 years;;
+end:

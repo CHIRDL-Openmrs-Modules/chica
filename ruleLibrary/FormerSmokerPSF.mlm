@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Former Smoker in home PSF;;
+	Filename:		FormerSmokerPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Vivienne Zhu;;
+	Specialist:	Pediatrics;;
+	Date:		2008-02-08 11:17:28;;
+	Validation:	;;
+Library:
+	Purpose:		Ask if there's a former smoker in home;;
+	Explanation:	;;
+	Keywords:	Environmental smoking, smoking cessation, parental smoking;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+smokerL := read Last {any_household_members_smoke from CHICA};
+endif
+;;
+Priority:		131;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (smokerL = yes) then conclude True;
+If (smokerL = yes_ready_to_quit) then conclude True;
+If (smokerL = yes_not_ready_to_quit) then conclude True;
+If (smokerL = relapse) then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "any_household_members_smoke","former";
+endif;
+
+
+endif
+;;
+Action:
+write ("There was a smoker in || firstname ||'s home, has that person quit?");
+write ("¿Hubo alquien en la casa de || firstname || que fuma, se ha dejado de fumar?") At Spanish;
+;;
+Age_Min: 0 days;;
+Age_Max: 11 years;;
+end:

@@ -1,0 +1,68 @@
+Maintenance:
+	Title:		Followup Cholesterol Screening PWS;;
+	Filename:		FU_Cholesterol_PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-07T12:47:50-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Follows up a pending cholesterol level if result not in RMRS                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	cholesterol screening AAP PSF;;
+	Citations:		PEDIATRICS Vol. 101 No. 1 January 1998, pp. 141-147;;
+	Links:		http://aappolicy.aappublications.org/cgi/content/full/pediatrics;101/1/141;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Exists_Lab_Cholesterol := read Exist {CHOLESTEROL from RMRS} Where it Occurred Within Past 1 Years;Cholesterol_Screen := read Last {Cholesterol_Screen from CHICA} Where it Occurred Within Past 1 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+endif
+;;
+Priority:		250;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Exists_Lab_Cholesterol = True) then conclude False;If (Cholesterol_Screen = cholesterol_pending) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "Cholesterol_Screen","acceptable";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "Cholesterol_Screen","borderline";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "Cholesterol_Screen","high";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname || had a screening cholesterol drawn on || Cholesterol_Screen_date ||.  Please indicate results and action taken:");
+                                                                                                                                                                
+write ("Acceptable (<170) -->");
+write ("No action");
+write ("Borderline (170-199) -->");
+write ("Repeat cholesterol w/in 1y");
+write ("High (>199) -->");
+write ("Lipoprotien analysis (incl LDL)");
+;;
+Age_Min: 12 months;;
+Age_Max: 11 years;;
+end:

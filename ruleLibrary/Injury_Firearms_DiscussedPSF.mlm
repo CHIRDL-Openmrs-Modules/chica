@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Firearms Discussed PSF;;
+	Filename:		Injury_Firearms_DiscussedPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:32:00-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if a parent had discussed duns at school or on the streets with the child.                                                                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Explanation:	The AAP and USPSTF recommend counseling parents and adolescents on the risks and dangers of firearms.                                                                                                                                                                                                                                                                                                                                                                                                               ;;
+	Keywords:	injury, firearms, discussed, PSF;;
+	Citations:		;;
+	Links:		http://www.ahrq.gov/clinic/uspstf/uspshrin.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+gunsdiscussed := read Last {firearms_discussed from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority:		478;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (gunsdiscussed = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "firearms_discussed","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "firearms_discussed","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Have you talked to || firstname || about guns at school or on the streets?");
+write("¿Has hablado con || firstname || acerca de las armas en la escuela o en la calle?") At Spanish;                                                                                                               
+;;
+Age_Min: 6 years;;
+Age_Max: 11 years;;
+end:

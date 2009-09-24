@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Parent High Cholesterol PSF;;
+	Filename:		Parent_Cholesterol_PSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-07T10:32:00-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Identify children at risk for hypercholesterolemia based on parents high cholesterol.                                                                                                                                                                                                                                                                                                                                                                                                                               ;;
+	Explanation:	Asks if parent's cholesterol os above 240.  Sets child's cholesterol to "parent_high_cholesterol"                                                                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	cholesterol screening AAP PSF;;
+	Citations:		PEDIATRICS Vol. 101 No. 1 January 1998, pp. 141-147;;
+	Links:		http://aappolicy.aappublications.org/cgi/content/full/pediatrics;101/1/141;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Exists_Lab_Cholesterol := read Exist {CHOLESTEROL from RMRS} Where it Occurred Within Past 5 Years;
+Cholesterol_Screen := read Exist {Cholesterol_Screen from CHICA} Where it Occurred Within Past 5 Years;   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+endif
+;;
+Priority:		870;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Exists_Lab_Cholesterol = True) then conclude False;
+If (Cholesterol_Screen = True) then conclude False;
+conclude True; 
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "Cholesterol_Screen","Hi_risk_parent_cholesterol";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || have a parent with high cholesterol (above 240)?");
+write("¿La mama o el papa de || firstname || tienen colesterol alto? (sobre 240)") At Spanish;                                                                                                                                                                                                                                                                                                                                    
+;;
+Age_Min: 12 months;;
+Age_Max: 11 years;;
+end:

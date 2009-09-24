@@ -1,0 +1,73 @@
+Maintenance:
+	Title:		Breastfeeding Screening PWS;;
+	Filename:		BFScreenPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-19T10:36:01-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This question will screen mother's for breastfeeding.  The trigger for this question will be no knowledge of breastfeeding status (BREASTFED 0-1).                                                                                                                                                                                                                                                                                                                                                                  ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+breastfeed := read Exist {BREASTFED from CHICA} Where it Occurred Within Past 30 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority:		622;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (breastfeed = True) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "BREASTFED","1";
+endif;
+If  (Box1=true) then
+ CALL storeObs With "breast_feeding_help_needed","0";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "BREASTFED","1";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "breast_feeding_help_needed","1";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "BREASTFED","0";
+endif;
+
+
+endif
+;;
+Action:
+write ("Breast feeding can reduce the risk of pneumonia, otitis, hospitalizations, and SIDS.  Is this mother breastfeeding?");                                                                                                                                                                              
+write ("Yes, no problems ->");
+write ("consider TriViSol");
+write ("Yes, but problems ->");
+write ("lactation counseling");
+write ("No ->");
+write ("recommend formula with Fe");
+;;
+Age_Min: 0 days;;
+Age_Max: 12 months;;
+end:
