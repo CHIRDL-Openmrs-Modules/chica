@@ -27,7 +27,7 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
 RMRS2BW := read Exist {WEIGHT NEWBORN BABY A from RMRS};
-PMH := read {PAST MEDICAL HISTORY from CHICA};
+PMH := read {PAST MEDICAL HISTORY CHICA from CHICA};
 NPMH := read {NEGATIVE PAST MEDICAL HISTORY from CHICA};
 Study := read Last {K22STUDY1};
 endif
@@ -53,7 +53,7 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "PAST MEDICAL HISTORY","LOW BIRTH WEIGHT";
+ CALL storeObs With "PAST MEDICAL HISTORY CHICA","LOW BIRTH WEIGHT";
 endif;
 If  (Box2=true) then
  CALL storeObs With "NEGATIVE PAST MEDICAL HISTORY","LOW BIRTH WEIGHT";

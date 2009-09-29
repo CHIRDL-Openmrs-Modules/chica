@@ -26,7 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-lbw := read {PAST MEDICAL HISTORY from CHICA};
+lbw := read {PAST MEDICAL HISTORY CHICA from CHICA};
 nh := read {NUTRITION HISTORY from CHICA};
 pid := read {NUTRITION HISTORY from CHICA} Where it Occurred Within Past 6 Months;
 RMRS2BW := read Last {WEIGHT NEWBORN BABY A from RMRS};

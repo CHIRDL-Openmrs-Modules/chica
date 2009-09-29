@@ -30,7 +30,7 @@ nh := read {NUTRITION HISTORY from CHICA};
 
 nnh := read {NEGATIVE NUTRITION HISTORY from CHICA} Where it Occurred Within Past 60 Days;
 
-pmh := read {PAST MEDICAL HISTORY from CHICA};
+pmh := read {PAST MEDICAL HISTORY CHICA from CHICA};
 npmh := read {NEGATIVE PAST MEDICAL HISTORY from CHICA};
 RMRS1BW := read Exist {BIRTH WEIGHT from RMRS};
 RMRS2BW := read Exist {WEIGHT NEWBORN BABY A from RMRS};
@@ -65,7 +65,7 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "PAST MEDICAL HISTORY","LOW BIRTH WEIGHT";
+ CALL storeObs With "PAST MEDICAL HISTORY CHICA","LOW BIRTH WEIGHT";
 endif;
 If  (Box2=true) then
  CALL storeObs With "NUTRITION HISTORY","EARLY COW MILK INTRODUCTION";
