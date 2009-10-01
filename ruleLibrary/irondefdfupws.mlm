@@ -82,7 +82,7 @@ endif;
 endif
 ;;
 Action:
-write ("**|| firstname || had a || dynamic || on || Pending_date |||| Deferred_date ||**:  Follow this up today!");
+write ("**|| firstname || had a || dynamic || on || idsq_date ||**:  Follow this up today!");
 write ("test already done ->");
 write ("Positive");
 write ("test not indicated");
