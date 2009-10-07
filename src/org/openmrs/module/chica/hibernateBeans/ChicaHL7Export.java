@@ -16,6 +16,7 @@ public class ChicaHL7Export implements java.io.Serializable {
 	private Date dateInserted = null;
 	private Boolean voided = null;
 	private Date dateVoided = null;
+	private Date ackDate = null;
 
 	public ChicaHL7Export() {
 
@@ -78,6 +79,14 @@ public class ChicaHL7Export implements java.io.Serializable {
 
 	public void setDateProcessed(Date dateProcessed) {
 		this.dateProcessed = dateProcessed;
+	}
+
+	public Date getAckDate() {
+		return ackDate;
+	}
+
+	public void setAckDate(Date ackDate) {
+		this.ackDate = ackDate;
 	}
 
 		

@@ -3,7 +3,9 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -18,6 +20,7 @@ import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptNumeric;
+import org.openmrs.ConceptSet;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -36,7 +39,7 @@ import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.dss.util.IOUtil;
 import org.openmrs.module.sockethl7listener.HL7MessageConstructor;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
-import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
+import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -52,12 +55,15 @@ public class HL7Exporter extends AbstractTask {
 	private TaskDefinition taskConfig;
 	private String host;
 	private Integer port;
+	private HL7SocketHandler socketHandler;
+	
 	
 	@Override
 	public void initialize(TaskDefinition config)
 	{
 
 		Context.openSession();
+		
 		try {
 			if (Context.isAuthenticated() == false)
 				authenticate();
@@ -79,6 +85,7 @@ public class HL7Exporter extends AbstractTask {
 			}
 			
 		}finally{
+			
 			Context.closeSession();
 		}
 
@@ -93,16 +100,42 @@ public class HL7Exporter extends AbstractTask {
 	{
 		
 		ChicaService chicaService = Context.getService(ChicaService.class);
+		EncounterService encounterService = Context.getService(EncounterService.class);
 		ATDService atdService = Context.getService(ATDService.class);
 		AdministrationService adminService = Context.getAdministrationService();
 		ObsService obsService = Context.getObsService();
-		HL7SocketHandler  socketHandler = new HL7SocketHandler();
+		socketHandler = new HL7SocketHandler();
+		
+		String vitalsBatteryId  = "";
+		String vitalsBatteryName = "";
+		String generalBatteryName = "";
+		String generalBatteryId = "";
+		String socketReadTimeoutStr = "";
+		Integer socketReadTimeout = null;
+		
+		
+		boolean vitalsBatteryOnly = true;
 		Integer encid = null;
 		List <Concept> concepts = null;
-		String set = "";
-		
 		Context.openSession();
 		
+		String hl7ConfigFile = adminService
+				.getGlobalProperty("sockethl7listener.hl7ConfigFile");
+			
+		Properties hl7Prop = Util.getProps(hl7ConfigFile);
+		if (hl7Prop != null){
+			String vOnly = hl7Prop.getProperty("use_vitals_battery_only");
+			if (vOnly != null) vitalsBatteryOnly = Boolean.valueOf(vOnly);
+			vitalsBatteryName = hl7Prop.getProperty("vitals_battery_name");
+			vitalsBatteryId = hl7Prop.getProperty("vitals_battery_id");
+			generalBatteryName = hl7Prop.getProperty("general_battery_name");
+			generalBatteryId = hl7Prop.getProperty("general_battery_id");
+			socketReadTimeoutStr = hl7Prop.getProperty("socket_read_timeout");
+			if (socketReadTimeoutStr != null) {
+				socketReadTimeout = Integer.valueOf(socketReadTimeoutStr);
+			}
+		}
+	
 		try
 		{
 			
@@ -113,102 +146,81 @@ public class HL7Exporter extends AbstractTask {
 				.getGlobalProperty("chica.conceptDictionaryMapFile");
 			
 			HL7MessageConstructor constructor = new HL7MessageConstructor();
+			socketHandler.openSocket(host, port);
 			
-			//get the list of encounters
-			List<Encounter> allPendingEncounterList = chicaService.getEncountersPendingHL7Export();
-			Iterator<Encounter> it = allPendingEncounterList.iterator();
+			//get list of pending exports
+			List <ChicaHL7Export> exportList = chicaService.getPendingHL7Exports();
+			Iterator <ChicaHL7Export> it = exportList.iterator();
+		
 			while (it.hasNext()){
-				Encounter enc = (Encounter) it.next();
+				//Encounter enc = (Encounter) it.next();
+				ChicaHL7Export export = it.next();
+				Integer encId = export.getEncounterId();
+				Encounter enc = encounterService.getEncounter(encId);
 				List<Encounter> queryEncounterList = new ArrayList<Encounter>();
+				//create list with one entry for parameter in obs search only
 				queryEncounterList.add(enc);
-				
+			
+				constructor.AddSegmentMSH(enc);
+				constructor.AddSegmentPID(enc.getPatient());
+				constructor.AddSegmentPV1(enc);
+
 				//Create a list of vitals concepts for the concept names defined in mapping xml
 				Properties prop = Util.getProps(conceptDictionaryMapFile);
-				concepts =	  getConceptListFromMap(prop, true);
-				 
-				 //Get all obs for one encounter, where the concept is in the mapping properties xml
-				 //If an obs for that concept does not exist for an encounter, we do not create an OBX
-				 List<Obs> obsList = obsService.getObservations(null, queryEncounterList, concepts, null, null, null, null, null, null, null, null, false);
-				 constructor.AddSegmentMSH(enc);
-				 constructor.AddSegmentPID(enc.getPatient());
-				 constructor.AddSegmentPV1(enc);
-				 
-				 //TODO: concept for set id will be determined. For now hard code to max concept_id  + 1.
-				 set = "18296";
-				 constructor.AddSegmentOBR(enc,set);
 
-				 int rep = 1;
-				 
-				 for (Obs obs : obsList ){
-					 
-					 String chicaNameString = "";
-					 String rmrsName = "";
-					 String rmrsCode = "";
-					 String units = "";
-					 String hl7Abbreviation = "";
-					 ConceptDatatype conceptDatatype = null;
-					
-					 String obsValue = obs.getValueAsString(null);
-					 Date datetime = obs.getObsDatetime();
-					 Concept chicaConcept = obs.getConcept();
-					 ConceptName chicaConceptName = chicaConcept.getName();
-					 
-					 if (chicaConceptName != null){	
-						chicaNameString = chicaConceptName.getName();
-						rmrsName = prop.getProperty(chicaNameString);
-					 }
-					// if vitals
-					if (rmrsName != null){
-						Concept rmrsConcept =  getRMRSConceptByName(rmrsName);
-						if (rmrsConcept != null){
-							conceptDatatype = rmrsConcept.getDatatype();
-							hl7Abbreviation = conceptDatatype.getHl7Abbreviation();
-							units = getUnits(rmrsConcept);
-							rmrsCode = getRMRSCodeFromConcept(rmrsConcept);
-	
+				//get list of concepts from map 
+				concepts = getConceptListFromMap(prop, false);
+
+				if (vitalsBatteryOnly){
+					List<Concept> verifiedVitalsConcepts = getConceptsInSet(concepts, "PEDS CL DATA");
+					if (verifiedVitalsConcepts != null){
+						List<Obs> obsList = obsService.getObservations(null, queryEncounterList, 
+								verifiedVitalsConcepts, null, null, null, null, null, null, null, null, false);
+						if (obsList == null || obsList.size()== 0){
+							export.setStatus(100);
+							chicaService.saveChicaHL7Export(export);
+							continue;
 						}
+						constructor.AddSegmentOBR(enc, vitalsBatteryId, vitalsBatteryName);
+						addOBXBlock(obsList, constructor, prop);
 					}
-						
-					constructor.AddSegmentOBX(rmrsName, rmrsCode, null, obsValue, units, datetime, hl7Abbreviation,  rep);
-					rep++;
-				 } 
-				 
-				   
-				 String message = constructor.getMessage();
-				 if (message != null) {
-					 socketHandler.sendMessage(host,port, message);
-				 }
-				 List<ChicaHL7Export> exports = chicaService.getPendingHL7ExportsByEncounterId(enc.getId());
-				 ChicaHL7Export lastExport = null;
-				 
-				 Iterator<ChicaHL7Export> exportIter = exports.iterator();
-				 if (exportIter.hasNext()) {
-					 lastExport = exportIter.next();
-					 //lastExport = exports.get(0);
-					 lastExport.setStatus(2);
-					 lastExport.setDateProcessed(new Date());
-					 lastExport.setVoided(false);
-					 lastExport.setDateVoided(null);
-					 chicaService.saveChicaHL7ExportQueue(lastExport);
-				 }
-				 while (exportIter.hasNext()){
-					 ChicaHL7Export earlierExport = new ChicaHL7Export();
-					 earlierExport = exportIter.next();
-					 earlierExport.setStatus(3);
-					 earlierExport.setDateProcessed(new Date());
-					 earlierExport.setVoided(false);
-					 earlierExport.setDateVoided(null);
-					 chicaService.saveChicaHL7ExportQueue(earlierExport);
-				 }
-				 
-				 SocketHL7ListenerService hl7ListService = Context.getService(SocketHL7ListenerService.class);
-				 hl7ListService.saveMessageToDatabase(enc, message);
-				 saveMessage(message,enc.getId());
+				} else {
+
+					List<Concept> verifiedNonVitalsConcepts = getConceptsInSet(concepts, "MEDICAL RECORD FILE OBSERVATIONS");
+					if (verifiedNonVitalsConcepts != null){
+						constructor.AddSegmentOBR(enc, generalBatteryId, generalBatteryName);
+						List<Obs> obsList = obsService.getObservations(null, queryEncounterList, 
+								verifiedNonVitalsConcepts, null, null, null, null, null, null, null, null, false);
+						addOBXBlock(obsList, constructor, prop);
+					}
+				}
+
 				
+				String message = constructor.getMessage();
+				export.setStatus(2);
+				export.setDateProcessed(new Date());
+				chicaService.saveChicaHL7Export(export);
+				
+				if (message != null && !message.equals("")){
+					Date ackDate = sendMessage(message, enc, socketHandler, socketReadTimeout);
+					if (ackDate != null) { 
+						export.setStatus(3);
+						export.setAckDate(ackDate);
+					}else {
+						export.setStatus(4);
+					}
+					
+					chicaService.saveChicaHL7Export(export);
+					saveMessageFile(message,encId, ackDate);
+				}
 			}	
 			
 	    
-		} catch (Exception e)
+		} catch (IOException e ){
+			log.error("Error opening socket:" + e.getMessage());
+			
+		}catch (Exception e)
+		
 		{
 			Integer sessionId = null;
 			if (encid != null){
@@ -227,6 +239,7 @@ public class HL7Exporter extends AbstractTask {
 			
 		} finally
 		{
+			socketHandler.closeSocket();
 			Context.closeSession();
 		}
 
@@ -236,7 +249,7 @@ public class HL7Exporter extends AbstractTask {
 	 * @param message
 	 * @param encid
 	 */
-	public void saveMessage( String message, Integer encid){
+	public void saveMessageFile( String message, Integer encid, Date ackDate){
 		AdministrationService adminService = Context.getAdministrationService();
 		EncounterService es = Context.getService(EncounterService.class);
 
@@ -246,9 +259,13 @@ public class HL7Exporter extends AbstractTask {
 		patient = enc.getPatient();
 		PatientIdentifier pi = patient.getPatientIdentifier();
 		String mrn = "";
+		String ack = "";
+		if (ackDate != null){
+			ack = "-ACK";
+		}
 		
 		if (pi != null) mrn = pi.getIdentifier();
-		String filename =  org.openmrs.module.dss.util.Util.archiveStamp() + "_"+ mrn + ".hl7";
+		String filename =  org.openmrs.module.dss.util.Util.archiveStamp() + "_"+ mrn + ack + ".hl7";
 		
 		String archiveDir = IOUtil.formatDirectoryName(adminService
 				.getGlobalProperty("chica.outboundHl7ArchiveDirectory"));
@@ -297,6 +314,7 @@ public class HL7Exporter extends AbstractTask {
 		super.shutdown();
 		try
 		{
+			
 			//this.server.stop();
 		} catch (Exception e)
 		{
@@ -309,17 +327,15 @@ public class HL7Exporter extends AbstractTask {
 	private List<Concept> getConceptListFromMap(Properties prop, boolean vitals){
 		ConceptService cs = Context.getConceptService();
 		List<Concept> concepts = new ArrayList<Concept>();
-		List<ConceptClass> classList = new ArrayList<ConceptClass>();
-		ConceptClass chicaClass = cs.getConceptClassByName("CHICA");
-		classList.add(chicaClass);
 		Enumeration <Object> names = prop.keys();
-		while (names.hasMoreElements()){
+		
+		while (names != null && names.hasMoreElements()){
 			 String name = (String) names.nextElement();
 			 //Get the concept for class CHICA only
 			 List<Concept> conceptsWithSameName = cs.getConcepts(name, 
-						Context.getLocale(), false, classList, null);
-			 if (conceptsWithSameName.size()>0){
-				 concepts.add(conceptsWithSameName.get(0));
+						Context.getLocale(), false, null, null);
+			 for (Concept c : conceptsWithSameName){
+				 concepts.add(c);
 			 }
 		}
 		return concepts;
@@ -373,5 +389,143 @@ public class HL7Exporter extends AbstractTask {
 		}
 		return units;
 	}
+	private boolean checkConceptSet(Concept conceptToTest, String batteryName){
+		boolean match = false;
+		ConceptService cs = Context.getConceptService();
+		
+		if (conceptToTest == null || batteryName == null || batteryName.equals("")){
+			return false;
+		}
+		
+		List<Concept> conceptsWithBatteryName = new ArrayList<Concept>();
+		conceptsWithBatteryName = cs.getConcepts(batteryName, 
+				 Context.getLocale(), false, null, null);
+		
+		Concept batteryConcept = new Concept();
+		for (Concept concept : conceptsWithBatteryName){
+			if (concept.isSet()){
+				batteryConcept = concept;
+				continue;
+			}
+		}
+		Collection<ConceptSet> allConceptsInBattery = cs.getConceptSetsByConcept(batteryConcept);
+		for (ConceptSet concept : allConceptsInBattery){
+			
+			if ( conceptToTest.getConceptId() == concept.getConcept().getConceptId()){
+				match = true;
+				continue;
+			}
+		
+		}
+			
+		return match;
+	
+	}
+	
+	private List<Concept> getConceptsInSet(List<Concept> list, String setName){
+		List<Concept> conceptsInSet = new ArrayList<Concept>();
+		 for (Concept c : list){
+			 if (checkConceptSet(c, setName)){
+				 conceptsInSet.add(c);
+			 }
+		 }
+		 return conceptsInSet;
+	}
+	
+	private void addOBXBlock(List<Obs>obsList, HL7MessageConstructor constructor, Properties prop){
+		//Get all obs for one encounter, where the concept is in the mapping properties xml
+		//If an obs for that concept does not exist for an encounter, we do not create an OBX
+			
+		
+		for (int rep = 0; rep < obsList.size(); rep++){
+			
+			Obs obs = obsList.get(rep);
+			String chicaNameString = "";
+			String rmrsName = "";
+			String rmrsCode = "";
+			String units = "";
+			String hl7Abbreviation = "";
+			ConceptDatatype conceptDatatype = null;
+
+			String obsValue = obs.getValueAsString(null);
+			Date datetime = obs.getObsDatetime();
+			Concept chicaConcept = obs.getConcept();
+			ConceptName chicaConceptName = chicaConcept.getName();
+
+			if (chicaConceptName != null){	
+				chicaNameString = chicaConceptName.getName();
+				rmrsName = prop.getProperty(chicaNameString);
+			}
+
+			if (rmrsName != null){
+				Concept rmrsConcept =  getRMRSConceptByName(rmrsName);
+				if (rmrsConcept != null){
+					conceptDatatype = rmrsConcept.getDatatype();
+					hl7Abbreviation = conceptDatatype.getHl7Abbreviation();
+					units = getUnits(rmrsConcept);
+					rmrsCode = getRMRSCodeFromConcept(rmrsConcept);
+
+				}
+			}
+
+			constructor.AddSegmentOBX(rmrsName, rmrsCode, null, obsValue, units, datetime, hl7Abbreviation,  rep + 1 );
+
+		} 
+	}
+	private Date sendMessage(String message, Encounter enc, 
+			HL7SocketHandler socketHandler, Integer socketReadTimeout ){
+		Date ackDate = null;
+		
+		HL7Outbound hl7b = new HL7Outbound();
+		hl7b.setHl7Message(message);
+		hl7b.setEncounter(enc);
+		hl7b.setAckReceived(null);
+		hl7b.setPort(port);
+		hl7b.setHost(host);
+		
+		try {
+			if (message != null) {
+				hl7b = socketHandler.sendMessage(hl7b, socketReadTimeout);
+				
+				if (hl7b != null && hl7b.getAckReceived() != null){
+					ackDate = hl7b.getAckReceived();
+					 log.error("Ack received host:" + host + "; port:" + port 
+							 + "- first try. Encounter_id = " + enc.getEncounterId());
+				}
+					
+			}
+			
+		} catch (Exception e){
+			log.error("Error exporting message host:" + host + "; port:" + port 
+					+ "- first try. Encounter_id = " + enc.getEncounterId());
+			try {
+				if (message != null) {
+					
+					hl7b = socketHandler.sendMessage(hl7b, socketReadTimeout);
+					 if (hl7b != null && hl7b.getAckReceived() != null){
+						 ackDate = hl7b.getAckReceived();
+						 log.error("Ack received host:" + host + "; port:" + port 
+								 + "- second try. Encounter_id = " + enc.getEncounterId());
+					 }
+				}
+			} catch (Exception e1) {
+				log.error("Error exporting message host:" + host + "; port:" + port 
+					+ "- second try. Encounter_id = " + enc.getEncounterId());
+			}
+		}
+		return ackDate;
+	}
+
+	/*private void updateChicaHl7Export(ChicaHL7Export export, Date ackDate){
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		export.setStatus(2);
+		export.setDateProcessed(new Date());
+		//add ack date
+		export.setVoided(false);
+		export.setDateVoided(null);
+		chicaService.saveChicaHL7Export(export);
+	}
+	*/
+		
 	
 }

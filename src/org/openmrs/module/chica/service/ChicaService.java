@@ -151,9 +151,9 @@ public interface ChicaService
 	
 	public void insertEncounterToHL7ExportQueue(ChicaHL7Export export);
 
-	public List<org.openmrs.Encounter> getEncountersPendingHL7Export();
+	public List<ChicaHL7Export> getPendingHL7Exports();
 	
-	public void saveChicaHL7ExportQueue(ChicaHL7Export export);
+	public void saveChicaHL7Export(ChicaHL7Export export);
 	
 	public List<ChicaHL7Export> getPendingHL7ExportsByEncounterId(Integer encounterId);
 	

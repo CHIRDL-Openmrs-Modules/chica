@@ -1096,15 +1096,15 @@ public class ChicaServiceImpl implements ChicaService
 			getChicaDAO().insertEncounterToHL7ExportQueue(export);
 		}
 
-		public List<org.openmrs.Encounter> getEncountersPendingHL7Export() {
-			return getChicaDAO().getEncountersPendingHL7Export();
+		public List<ChicaHL7Export> getPendingHL7Exports() {
+			return getChicaDAO().getPendingHL7Exports();
 			
 		}
 
-		public void saveChicaHL7ExportQueue(ChicaHL7Export export) {
+		public void saveChicaHL7Export(ChicaHL7Export export) {
 
 			ATDService atdService = Context.getService(ATDService.class);
-			getChicaDAO().saveChicaHL7ExportQueue(export);
+			getChicaDAO().saveChicaHL7Export(export);
 			
 		}
 	

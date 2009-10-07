@@ -866,20 +866,20 @@ public class HibernateChicaDAO implements ChicaDAO
 		
 	}
 	
-	public List <org.openmrs.Encounter> getEncountersPendingHL7Export(){
+	public List <ChicaHL7Export> getPendingHL7Exports(){
+		
 		
 		SQLQuery qry = this.sessionFactory.getCurrentSession()
-			.createSQLQuery("select * from encounter where encounter_id in " +
-		"(select distinct encounter_id from chica_hl7_export" +
-		" export where export.date_processed is null and export.voided = 0)");
+			.createSQLQuery("select * from chica_hl7_export " +
+		" where date_processed is null and voided = 0 and status = 1");
 
-		qry.addEntity(org.openmrs.Encounter.class);
-		List <org.openmrs.Encounter> encounters = qry.list();
-		return encounters;
+		qry.addEntity(ChicaHL7Export.class);
+		List <ChicaHL7Export> exports = qry.list();
+		return exports;
 	}
 
 	
-	public void saveChicaHL7ExportQueue(ChicaHL7Export export) {
+	public void saveChicaHL7Export(ChicaHL7Export export) {
 		this.sessionFactory.getCurrentSession().saveOrUpdate(export);
 		return;
 	}
