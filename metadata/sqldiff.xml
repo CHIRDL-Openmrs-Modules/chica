@@ -2902,18 +2902,16 @@ from atd_state where name='PSF_process') and b.name='Export';
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;	
 
 
-		ALTER IGNORE  TABLE  chica_hl7_export 
-		ADD ack_date datetime default null after date_processed,
-		ADD KEY `FK_chica_hl7_export_1` (`status`),
-		ADD FOREIGN KEY (status) REFERENCES chica_hl7_export_status (hl7_export_status_id);
-
-
 		INSERT INTO `chica_hl7_export_status` VALUES ('1', 'Inserted to pending queue');
 		INSERT INTO `chica_hl7_export_status` VALUES ('2', 'Hl7 message constructed and send message requested');
 		INSERT INTO `chica_hl7_export_status` VALUES ('3', 'ACK received');
 		INSERT INTO `chica_hl7_export_status` VALUES ('4', 'ACK not received after multiple retries');
 		INSERT INTO `chica_hl7_export_status` VALUES ('100', 'Not Required');
 
+		ALTER IGNORE  TABLE  chica_hl7_export 
+		ADD ack_date datetime default null after date_processed,
+		ADD KEY `FK_chica_hl7_export_1` (`status`),
+		ADD FOREIGN KEY (status) REFERENCES chica_hl7_export_status (hl7_export_status_id);
 		
 		INSERT INTO `scheduler_task_config` ( name, description, schedulable_class, start_time,
 		start_time_pattern, repeat_interval, start_on_startup, started, date_created, created_by)

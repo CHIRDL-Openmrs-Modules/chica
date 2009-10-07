@@ -266,25 +266,6 @@ INSERT INTO `concept_source`
  values ('CHICA', 'CHICA', ' ', '1', NOW(), '0' );
 
 
-
-/* TEMPERATURE CHICA  -------------------------*/
-/*Concept_set TEMPERATURE CHICA*/
-insert into concept_set (concept_id, concept_set, creator, date_created)
-values ((SELECT c.concept_id FROM concept c, concept_name cn where c.concept_id = cn.concept_id
-and name like 'TEMPERATURE CHICA'),
-(select c.concept_id from concept c, concept_name cn where name like 'MEDICAL RECORD FILE OBSERVATIONS'
-and is_set=true and c.concept_id = cn.concept_id),
-1,
-now());
-
-insert into concept_set (concept_id, concept_set, creator, date_created)
-values ((SELECT c.concept_id FROM concept c, concept_name cn where c.concept_id = cn.concept_id
-and name like 'TEMPERATURE CHICA'),
-(select c.concept_id from concept c, concept_name cn where name like 'PEDS CL DATA'
-and is_set=true and c.concept_id = cn.concept_id),
-1,
-now());
-
 /*Concept Map TEMPERATURE CHICA*/
 INSERT INTO `concept_map` (source,source_code, comment, creator, date_created, concept_id)
  VALUES (
@@ -317,9 +298,9 @@ now());
 INSERT INTO `concept_map` (source,source_code, comment, creator, date_created, concept_id)
  VALUES (
  (select concept_source_id from concept_source where name = 'RMRS'),
-  '1284', 'HEAD CIRCUM', 1, now(),
+  '1284', 'HEAD CIRCUMF', 1, now(),
 (select c.concept_id from concept c, concept_name cn where
-     c.concept_id = cn.concept_id and cn.name like 'HEAD CIRCUM' and c.class_id in
+     c.concept_id = cn.concept_id and cn.name like 'HEAD CIRCUMF' and c.class_id in
     (select concept_class_id from concept_class where name like 'RMRS')));
 	
 
