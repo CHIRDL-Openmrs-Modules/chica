@@ -145,7 +145,6 @@ public class HL7Exporter extends AbstractTask {
 			String conceptDictionaryMapFile = adminService
 				.getGlobalProperty("chica.conceptDictionaryMapFile");
 			
-			HL7MessageConstructor constructor = new HL7MessageConstructor();
 			socketHandler.openSocket(host, port);
 			
 			//get list of pending exports
@@ -153,7 +152,8 @@ public class HL7Exporter extends AbstractTask {
 			Iterator <ChicaHL7Export> it = exportList.iterator();
 		
 			while (it.hasNext()){
-				//Encounter enc = (Encounter) it.next();
+				HL7MessageConstructor constructor = new HL7MessageConstructor();
+				
 				ChicaHL7Export export = it.next();
 				Integer encId = export.getEncounterId();
 				Encounter enc = encounterService.getEncounter(encId);
@@ -448,6 +448,15 @@ public class HL7Exporter extends AbstractTask {
 			ConceptDatatype conceptDatatype = null;
 
 			String obsValue = obs.getValueAsString(null);
+			Double obsValueNumeric = obs.getValueNumeric();
+			if (obsValueNumeric != null  ){
+				Double obsRounded =
+					org.openmrs.module.dss.util.Util.round(Double.valueOf(obsValueNumeric), 1);
+				if (obsRounded != null){
+					obsValue = String.valueOf(obsRounded);
+				}
+			}
+			
 			Date datetime = obs.getObsDatetime();
 			Concept chicaConcept = obs.getConcept();
 			ConceptName chicaConceptName = chicaConcept.getName();
@@ -516,16 +525,6 @@ public class HL7Exporter extends AbstractTask {
 		return ackDate;
 	}
 
-	/*private void updateChicaHl7Export(ChicaHL7Export export, Date ackDate){
-		ChicaService chicaService = Context.getService(ChicaService.class);
-		export.setStatus(2);
-		export.setDateProcessed(new Date());
-		//add ack date
-		export.setVoided(false);
-		export.setDateVoided(null);
-		chicaService.saveChicaHL7Export(export);
-	}
-	*/
 		
 	
 }
