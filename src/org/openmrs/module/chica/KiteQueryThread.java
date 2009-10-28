@@ -4,11 +4,10 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.dss.util.Util;
 
@@ -116,10 +115,11 @@ public class KiteQueryThread implements Runnable
 
 		} catch (Exception e)
 		{
-			ChicaError error = new ChicaError("Error", "Query Kite Connection",
+			ATDError error = new ATDError("Error", "Query Kite Connection",
 					queryPrefix + ": " + e.getMessage(), Util.getStackTrace(e),
 					new Date(), null);
-			chicaService.saveError(error);
+			ATDService atdService = Context.getService(ATDService.class);
+			atdService.saveError(error);
 			throw new QueryKiteException("Query Kite Connection timed out",
 					error);
 

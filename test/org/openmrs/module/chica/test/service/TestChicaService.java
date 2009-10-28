@@ -1,38 +1,20 @@
 package org.openmrs.module.chica.test.service;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.OutputStream;
-import java.util.Calendar;
+
 import java.util.Iterator;
 import java.util.TreeMap;
 
 import org.junit.Before;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
-import org.openmrs.test.SkipBaseSetup;
+import org.junit.Test;
 import org.openmrs.Form;
 import org.openmrs.FormField;
-import org.openmrs.Location;
-import org.openmrs.Patient;
-import org.openmrs.User;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.FormService;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.test.TestUtil;
-import org.openmrs.module.dss.util.IOUtil;
-import org.openmrs.module.dss.util.XMLUtil;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.SkipBaseSetup;
 
 /**
  * @author Tammy Dugan

@@ -29,6 +29,7 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
@@ -76,6 +77,7 @@ public class LoadObsController extends SimpleFormController
 
 		if (loadObs != null)
 		{
+			LocationService locationService = Context.getLocationService();
 			EncounterService encounterService = Context
 					.getService(EncounterService.class);
 			PatientService patientService = Context.getPatientService();
@@ -115,8 +117,7 @@ public class LoadObsController extends SimpleFormController
 					org.openmrs.Patient openmrsPatient = new org.openmrs.Patient();
 					SimpleDateFormat format = new SimpleDateFormat(
 							"yyyy-MM-dd HH:mm:ss");
-					Location location = encounterService
-							.getLocationByName("PEDIATRICS");
+					Location location = locationService.getLocation("PCPS");
 					try
 					{
 

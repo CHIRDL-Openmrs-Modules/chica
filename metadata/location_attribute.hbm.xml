@@ -5,9 +5,9 @@
 
 <hibernate-mapping package="org.openmrs.module.chica">
 
-	<class name="org.openmrs.module.chica.hibernateBeans.ChicaErrorCategory" table="chica_error_category">
+	<class name="org.openmrs.module.chica.hibernateBeans.LocationAttribute" table="chica_location_attribute">
 		
-		<id name="errorCategoryId" type="java.lang.Integer" column="error_category_id">
+		<id name="locationAttributeId" type="java.lang.Integer" column="location_attribute_id">
 			<generator class="native" />
 		</id>
 	

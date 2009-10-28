@@ -71,12 +71,10 @@ public class pwsId implements Rule
 		ATDService atdService = Context.getService(ATDService.class);
 		if (parameters != null)
 		{
-			Integer sessionId = (Integer) parameters.get("sessionId");
-
-			if (sessionId != null)
+			Integer encounterId = (Integer) parameters.get("encounterId");
+			
+			if (encounterId != null)
 			{
-				Session atdSession = atdService.getSession(sessionId);
-				Integer encounterId = atdSession.getEncounterId();
 				String formName = "PWS";
 				FormService formService = Context.getFormService();
 				Form form = formService.getForms(formName,null,null,false,null,null,null).get(0);

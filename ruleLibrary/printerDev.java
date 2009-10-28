@@ -76,6 +76,8 @@ public class printerDev implements Rule
 		FormInstance formInstance = (FormInstance) parameters
 				.get("formInstance");
 		Integer encounterId = (Integer) parameters.get("encounterId");
+		Integer locationTagId = (Integer) parameters.get("locationTagId");
+		
 		if (encounterId != null)
 		{
 			EncounterService encounterService = Context
@@ -86,21 +88,22 @@ public class printerDev implements Rule
 			if (formInstance != null)
 			{
 				Integer formId = formInstance.getFormId();
+				Integer locationId = formInstance.getLocationId();
 				FormAttributeValue formAttrValue = atdService.getFormAttributeValue(formId, 
-						"useAlternatePrinter "+printerLocation);
+						"useAlternatePrinter",locationTagId,locationId);
 				
-				String formAttributeName = "defaultPrinter "+printerLocation;
+				String formAttributeName = "defaultPrinter";
 				
 				//use the alternate printer if useAlternatePrinter attribute is true
 				if(formAttrValue != null){
 					if(formAttrValue.getValue() != null && 
 							formAttrValue.getValue().equalsIgnoreCase("true")){
-						formAttributeName = "alternatePrinter "+printerLocation;
+						formAttributeName = "alternatePrinter";
 					}
 				}
 				
 				formAttrValue = atdService
-						.getFormAttributeValue(formId, formAttributeName);
+						.getFormAttributeValue(formId, formAttributeName,locationTagId,locationId);
 				if (formAttrValue != null)
 				{
 					return new Result(formAttrValue.getValue());

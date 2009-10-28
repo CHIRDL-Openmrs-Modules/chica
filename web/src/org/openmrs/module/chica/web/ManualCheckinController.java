@@ -72,14 +72,20 @@ public class ManualCheckinController extends SimpleFormController
 		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
 		
 		//set stations
-		List<String> stationNames =  chicaService.getPrinterStations();
+		User user = Context.getAuthenticatedUser();
+		LocationService locationService = Context.getLocationService();
+		String locationString = user.getUserProperty("location");
+
+		Location location = locationService
+			.getLocation(locationString);
+		List<String> stationNames =  chicaService.getPrinterStations(location);
 		map.put("stations", stationNames);
 		
 		String checkin = request.getParameter("checkin");
 
 		if (checkin != null)
 		{
-			checkin(request,map);
+			checkin(request,map,location);
 		}
 		
 		// process mrn 
@@ -231,7 +237,8 @@ public class ManualCheckinController extends SimpleFormController
 		return map;
 	}
 
-	private void checkin(HttpServletRequest request,Map<String, Object> map){
+	private void checkin(HttpServletRequest request,Map<String, Object> map,
+			Location encounterLocation){
 		
 		Date encounterDate = new Date();
 
@@ -323,8 +330,9 @@ public class ManualCheckinController extends SimpleFormController
 			checkinPatient.addAttribute(attribute);
 		}
 		LocationService locationService = Context.getLocationService();
-		Location encounterLocation = locationService
-			.getLocation("PEPS");
+		Integer locationId = null;
+		User user = Context.getAuthenticatedUser();
+
 		if (encounterLocation == null){
 			encounterLocation = locationService.getDefaultLocation();
 			//Default location is created by openmrs and 
@@ -400,7 +408,7 @@ public class ManualCheckinController extends SimpleFormController
 		{
 			userId = Integer.parseInt(request.getParameter("doctor"));
 			UserService userService = Context.getUserService();
-			User user = userService.getUser(userId);
+			user = userService.getUser(userId);
 			provider.setProviderfromUser(user);
 		} catch (Exception e)
 		{
@@ -435,9 +443,10 @@ public class ManualCheckinController extends SimpleFormController
 		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
 		boolean validIdentifier = luhn.isValid(checkinPatient.getPatientIdentifier().getIdentifier());
 		boolean checkinSuccess = false;
+		HashMap<String,Object> parameters = new HashMap<String,Object>();
 		if (validIdentifier){
 			Encounter enc = (Encounter) socketHandler.checkin(provider, checkinPatient, encounterDate,
-					 null, null, newEncounter);
+					 null, null, newEncounter,parameters);
 			if (enc != null){
 				checkinSuccess = true;
 			}

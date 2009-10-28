@@ -8,13 +8,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -30,9 +33,8 @@ import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.QueryKiteException;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.hl7.ZPV;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
@@ -47,6 +49,7 @@ import org.openmrs.module.sockethl7listener.Provider;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -57,13 +60,6 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 {
 	protected final Log log = LogFactory.getLog(getClass());
 
-	private String locationString = null;
-	private Date appointmentTime = null;
-	private String insuranceCode = null;
-	private Integer sessionId = null;
-	private Date timeCheckinHL7Received = null;
-	
-	private String printerLocation = null;
 	private static final String ATTRIBUTE_RELIGION = "Religion";
 	private static final String ATTRIBUTE_MARITAL = "Civil Status";
 	private static final String ATTRIBUTE_MAIDEN = "Mother's maiden name";
@@ -87,13 +83,13 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 	 * @see org.openmrs.module.sockethl7listener.HL7SocketHandler#processMessage(ca.uhn.hl7v2.model.Message)
 	 */
 	@Override
-	public Message processMessage(Message message) throws ApplicationException
+	public synchronized Message processMessage(Message message,HashMap<String,Object> parameters) throws ApplicationException
 	{
-		this.timeCheckinHL7Received = null;
-		this.sessionId = null;
+		ATDService atdService = Context.getService(ATDService.class);
+
+		parameters.put("processCheckinHL7Start",new java.util.Date());
 		String incomingMessageString = null;
 		AdministrationService adminService = Context.getAdministrationService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 
 		// change the message version so we can use default hl7 handlers
 		if (message instanceof ca.uhn.hl7v2.model.v23.message.ADT_A01)
@@ -107,11 +103,12 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 				message = this.parser.parse(incomingMessageString);
 			} catch (Exception e)
 			{
-				ChicaError error = new ChicaError("Fatal", "Hl7 Parsing",
+				//Write the hl7 to a file in the error directory if it cannot be parsed
+				ATDError error = new ATDError("Fatal", "Hl7 Parsing",
 						"Error parsing the sms checkin hl7 " + e.getMessage(),
 						org.openmrs.module.dss.util.Util.getStackTrace(e),
 						new Date(), null);
-				chicaService.saveError(error);
+				atdService.saveError(error);
 				String smsParseErrorDirectory = IOUtil
 						.formatDirectoryName(adminService
 								.getGlobalProperty("chica.smsParseErrorDirectory"));
@@ -171,104 +168,30 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 			logger.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
 		}
 
-		//load additional chica encounter attributes
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25)
 		{
-			this.locationString = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getLocation(message);
-
-			this.appointmentTime = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getAppointmentTime(message);
-
-			this.insuranceCode = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getInsuranceCode(message);
-
-			this.printerLocation = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
+			String printerLocation = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
 					.getPrinterLocation(message,incomingMessageString);
-		}
-
-		if (this.printerLocation != null && this.printerLocation.equals("0"))
-		{
-			// ignore this message because it is just kids getting shots
-			return message;
-		}
-		return super.processMessage(message);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openmrs.module.sockethl7listener.HL7SocketHandler#createEncounter(ca.uhn.hl7v2.model.v25.segment.MSH,
-	 *      ca.uhn.hl7v2.model.v25.segment.PID, org.openmrs.Location,
-	 *      org.openmrs.Patient, java.util.Date,
-	 *      org.openmrs.module.sockethl7listener.Provider)
-	 */
-	@Override
-	protected org.openmrs.Encounter createEncounter(Patient resultPatient,
-			org.openmrs.Encounter newEncounter, Provider provider)
-	{
-		LocationService locationService = Context.getLocationService();
-		org.openmrs.Encounter encounter = super.createEncounter(resultPatient,newEncounter,provider);
-		ATDService atdService = Context.getService(ATDService.class);
-		Session session = atdService.getSession(getSessionId());
-		session.setEncounterId(encounter.getEncounterId());
-		atdService.updateSession(session);
-		
-		State state = atdService.getStateByName("Clinic Registration");
-		PatientState patientState = atdService.addPatientState(resultPatient, state, getSessionId(), null);
-		patientState.setStartTime(encounter.getEncounterDatetime());
-		patientState.setEndTime(encounter.getEncounterDatetime());
-		atdService.updatePatientState(patientState);
-		
-		Integer encounterId = encounter.getEncounterId();
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
-		encounter = encounterService.getEncounter(encounterId);
-		Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounter;
-
-		if(this.insuranceCode != null){
-			chicaEncounter.setInsuranceSmsCode(this.insuranceCode);
-		}
-		if(this.appointmentTime != null){
-			chicaEncounter.setScheduledTime(this.appointmentTime);
-		}
-		if(this.printerLocation != null){
-			chicaEncounter.setPrinterLocation(this.printerLocation);
-		}
-
-		if (this.locationString != null)
-		{
-			Location location = locationService
-					.getLocation(this.locationString);
-
-			if (location == null)
+			
+			if (printerLocation != null && printerLocation.equals("0"))
 			{
-				location = new Location();
-				location.setName(this.locationString);
-				locationService.saveLocation(location);
-				logger.warn("Location '" + this.locationString 
-						+ "' does not exist in the Location table." 
-						+ "a new location was created for '" + this.locationString + "'");
+				// ignore this message because it is just kids getting shots
+				return message;
 			}
-
-			chicaEncounter.setLocation(location);
 		}
 
-		encounterService.saveEncounter(chicaEncounter);
-
-		return chicaEncounter;
+		return super.processMessage(message,parameters);
 	}
 
 	//search for patient based on medical record number then
 	//run alias query to see if any patient records to merge
 	@Override
-	public Patient findPatient(Patient hl7Patient, Date encounterDate)
+	public Patient findPatient(Patient hl7Patient, Date encounterDate,HashMap<String,Object> parameters)
 	{
 		Patient resultPatient = null;
 
 		try
 		{
-
 			PatientIdentifier patientIdentifier = hl7Patient
 					.getPatientIdentifier();
 			if (patientIdentifier != null)
@@ -285,21 +208,15 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 							encounterDate);
 				}
 				
-				ATDService atdService = Context.getService(ATDService.class);
-				State state = atdService.getStateByName("Process Checkin HL7");
-				PatientState patientState = atdService.addPatientState(resultPatient, state, getSessionId(), null);
-				patientState.setStartTime(getTimeCheckinHL7Received());
-				patientState.setEndTime(new java.util.Date());
-				atdService.updatePatientState(patientState);
+			    parameters.put("processCheckinHL7End",new java.util.Date());
 				
-				state = atdService.getStateByName("QUERY KITE Alias");
-				patientState = atdService.addPatientState(resultPatient, state, getSessionId(), null);
+			    parameters.put("queryKiteAliasStart",new java.util.Date());
 				
 				// merge alias medical record number patients with the matched
 				// patient
 				processAliasString(mrn, resultPatient);
-				patientState.setEndTime(new java.util.Date());
-				atdService.updatePatientState(patientState);
+				
+				parameters.put("queryKiteAliasEnd",new java.util.Date());
 			}
 
 		} catch (RuntimeException e)
@@ -312,26 +229,46 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 
 	}
 
-	/**
-	 * @return
-	 */
-	private Date getTimeCheckinHL7Received()
+	private Integer getLocationTagId(Encounter encounter)
 	{
-		if(this.timeCheckinHL7Received == null){
-			this.timeCheckinHL7Received = new java.util.Date();
+		if (encounter != null)
+		{
+			//lookup location tag id that matches printer location
+			if(encounter.getPrinterLocation()!= null){
+				Location location = encounter.getLocation();
+				Set<LocationTag> tags = location.getTags();
+				
+				if(tags != null){
+					for(LocationTag tag:tags){
+						if(tag.getTag().equalsIgnoreCase(encounter.getPrinterLocation())){
+							return tag.getLocationTagId();
+						}
+					}
+				}
+			}
 		}
-		return this.timeCheckinHL7Received;
+		return null;
 	}
-
-	private Integer getSessionId()
+	
+	private Integer getLocationId(Encounter encounter)
 	{
-		if (this.sessionId == null)
+		if (encounter != null)
+		{
+			return encounter.getLocation().getLocationId();
+		}
+		return null;
+	}
+	
+	private Session getSession(HashMap<String,Object> parameters)
+	{
+		Session session = (Session) parameters.get("session");
+		if (session == null)
 		{
 			ATDService atdService = Context.getService(ATDService.class);
-			Session session = atdService.addSession();
-			this.sessionId = session.getSessionId();
+			session = atdService.addSession();
+			parameters.put("session", session);
 		}
-		return this.sessionId;
+		return session;
 	}
 	
 	private Patient findPatient(String mrn)
@@ -350,14 +287,14 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 
 	private void processAliasString(String mrn, Patient preferredPatient)
 	{
+		ATDService atdService = Context.getService(ATDService.class);
 		PatientService patientService = Context.getPatientService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		String aliasString = null;
 		try {
 			aliasString = QueryKite.aliasQuery(mrn);
 		} catch (QueryKiteException e) {
-			ChicaError ce = e.getChicaError();
-			chicaService.saveError(ce);
+			ATDError ce = e.getATDError();
+			atdService.saveError(ce);
 			
 		}
 
@@ -373,17 +310,17 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 
 			if(length>=2){
 				if(fields[1].equals("FAILED")){
-					ChicaError error = new ChicaError("Error", "Query Kite Connection"
+					ATDError error = new ATDError("Error", "Query Kite Connection"
 							, "Alias query returned FAILED for mrn: "+mrn
 							, null, new Date(), null);
-					chicaService.saveError(error);
+					atdService.saveError(error);
 					return;
 				}
 				if(fields[1].equals("unknown_patient")){
-					ChicaError error = new ChicaError("Warning", "Query Kite Connection"
+					ATDError error = new ATDError("Warning", "Query Kite Connection"
 							, "Alias query returned unknown_patient for mrn: "+mrn
 							, null, new Date(), null);
-					chicaService.saveError(error);
+					atdService.saveError(error);
 					return;
 				}
 			}
@@ -418,9 +355,9 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 							patientService.mergePatients(preferredPatient,
 									currPatient);
 						}else{
-							ChicaError error = new ChicaError("Error","General Error","Tried to merge patient: "+
+							ATDError error = new ATDError("Error","General Error","Tried to merge patient: "+
 									currPatient.getPatientId()+" with itself.",null,new Date(),null);
-							chicaService.saveError(error);
+							atdService.saveError(error);
 						}
 					}
 				}
@@ -451,15 +388,6 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 					resultPatient.getPatientIdentifier("SSN").setVoided(true);
 					resultPatient.addIdentifier(newSSN);
 				}
-				
-			}
-			
-			for (PatientIdentifier pi : resultPatient.getIdentifiers()){
-				boolean voided = pi.getVoided();
-				PatientIdentifierType pit = pi.getIdentifierType();
-				String pitstring = pit.getName();
-				boolean preferred = pi.getPreferred();
-				String value = pi.getIdentifier();
 				
 			}
 		}
@@ -511,11 +439,17 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 	@Override
 	public org.openmrs.Encounter checkin(Provider provider, Patient patient,
 			Date encounterDate, Message message, String incomingMessageString,
-			org.openmrs.Encounter newEncounter)
+			org.openmrs.Encounter newEncounter, HashMap<String,Object> parameters)
 	{
+		Date processCheckinHL7Start = (Date) parameters.get("processCheckinHL7Start");
+		if(processCheckinHL7Start == null){
+			parameters.put("processCheckinHL7Start", new java.util.Date());
+		}
+		
 		return super.checkin(provider, patient, encounterDate,  message,
-				incomingMessageString, newEncounter);
+				incomingMessageString, newEncounter,parameters);
 	}
+	
 
 	@Override
 	public Obs CreateObservation(org.openmrs.Encounter enc,
@@ -525,5 +459,128 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 		return super.CreateObservation(enc, saveToDatabase, message, orderRep, obxRep,
 				existingLoc, resultPatient);
 	}
+
+	@Override
+	public org.openmrs.Encounter processEncounter(String incomingMessageString,
+			Patient p, Date encDate, org.openmrs.Encounter newEncounter,
+			Provider provider,HashMap<String,Object> parameters)
+	{
+		ATDService atdService = Context.getService(ATDService.class);
+		org.openmrs.Encounter encounter = super.processEncounter(
+				incomingMessageString, p, encDate, newEncounter, provider,parameters);
+		//store the encounter id with the session
+		Integer encounterId = newEncounter.getEncounterId();
+		getSession(parameters).setEncounterId(encounterId);
+		atdService.updateSession(getSession(parameters));
+		if(incomingMessageString == null){
+			return encounter;
+		}
+		LocationService locationService = Context.getLocationService();
+
+		String locationString = null;
+		Date appointmentTime = null;
+		String insuranceCode = null;
+		String printerLocation = null;
+		Message message;
+		try
+		{
+			message = this.parser.parse(incomingMessageString);
+			EncounterService encounterService = Context
+					.getService(EncounterService.class);
+			encounter = encounterService.getEncounter(encounter
+					.getEncounterId());
+			Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounter;
+
+			// load additional chica encounter attributes
+			if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25)
+			{
+				locationString = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getLocation(message);
+
+				appointmentTime = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getAppointmentTime(message);
+
+				insuranceCode = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getInsuranceCode(message);
+
+				printerLocation = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getPrinterLocation(message, incomingMessageString);
+
+				if (insuranceCode != null)
+				{
+					chicaEncounter.setInsuranceSmsCode(insuranceCode);
+				}
+				if (appointmentTime != null)
+				{
+					chicaEncounter.setScheduledTime(appointmentTime);
+				}
+				if (printerLocation != null)
+				{
+					chicaEncounter.setPrinterLocation(printerLocation);
+				}
+
+				if (locationString != null)
+				{
+					Location location = locationService
+							.getLocation(locationString);
+
+					if (location == null)
+					{
+						location = new Location();
+						location.setName(locationString);
+						locationService.saveLocation(location);
+						logger.warn("Location '" + locationString
+								+ "' does not exist in the Location table."
+								+ "a new location was created for '"
+								+ locationString + "'");
+					}
+
+					chicaEncounter.setLocation(location);
+				}
+					//This code must come after the code that sets the encounter values
+					//because the states can't be created until the locationTagId and 
+					//locationId have been set
+					State state = atdService.getStateByName("Clinic Registration");
+					PatientState patientState = atdService.addPatientState(p, state, 
+							getSession(parameters).getSessionId(),getLocationTagId(chicaEncounter),
+							getLocationId(chicaEncounter));
+					patientState.setStartTime(chicaEncounter.getEncounterDatetime());
+					patientState.setEndTime(chicaEncounter.getEncounterDatetime());
+					atdService.updatePatientState(patientState);
+					
+					state = atdService.getStateByName("Process Checkin HL7");
+					patientState = atdService.addPatientState(p, state, getSession(parameters).getSessionId(),
+							getLocationTagId(chicaEncounter),getLocationId(chicaEncounter));
+					Date processCheckinHL7Start = (Date) parameters.get("processCheckinHL7Start");
+					Date processCheckinHL7End = (Date) parameters.get("processCheckinHL7End");
+					patientState.setStartTime(processCheckinHL7Start);
+					patientState.setEndTime(processCheckinHL7End);
+					atdService.updatePatientState(patientState);
+
+					state = atdService.getStateByName("QUERY KITE Alias");
+					patientState = atdService.addPatientState(p, state, getSession(parameters).getSessionId(),
+							getLocationTagId(chicaEncounter),getLocationId(chicaEncounter));
+					Date queryKiteAliasStart = (Date) parameters.get("queryKiteAliasStart");
+					Date queryKiteAliasEnd = (Date) parameters.get("queryKiteAliasEnd");
+					patientState.setStartTime(queryKiteAliasStart);
+					patientState.setEndTime(queryKiteAliasEnd);
+					atdService.updatePatientState(patientState);
+				
+					encounterService.saveEncounter(chicaEncounter);
+			}
+		} catch (EncodingNotSupportedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HL7Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return encounter;
+	}
+	
+	
 
 }

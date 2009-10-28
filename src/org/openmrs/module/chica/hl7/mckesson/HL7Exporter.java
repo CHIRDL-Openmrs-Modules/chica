@@ -22,17 +22,21 @@ import org.openmrs.ConceptName;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.ConceptSet;
 import org.openmrs.Encounter;
+import org.openmrs.LocationTag;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
+import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
@@ -42,6 +46,8 @@ import org.openmrs.module.sockethl7listener.HL7SocketHandler;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
+
+
 
 /**
  * Determines which encounters require an hl7 to be exported to RMRS, 
@@ -55,6 +61,7 @@ public class HL7Exporter extends AbstractTask {
 	private TaskDefinition taskConfig;
 	private String host;
 	private Integer port;
+	private Integer socketReadTimeout;
 	private HL7SocketHandler socketHandler;
 	
 	
@@ -72,6 +79,7 @@ public class HL7Exporter extends AbstractTask {
 			//port to export
 			String portName = this.taskConfig.getProperty("port");
 			host  = this.taskConfig.getProperty("host");
+			String socketReadTimeoutString  = this.taskConfig.getProperty("socketReadTimeout");
 			
 			if (host == null){
 				host = "localhost";
@@ -82,6 +90,11 @@ public class HL7Exporter extends AbstractTask {
 			} else
 			{
 				port = 0;
+			}
+			if (socketReadTimeoutString != null){
+				socketReadTimeout = Integer.parseInt(socketReadTimeoutString);
+			} else {
+				socketReadTimeout = 5; //seconds
 			}
 			
 		}finally{
@@ -100,6 +113,7 @@ public class HL7Exporter extends AbstractTask {
 	{
 		
 		ChicaService chicaService = Context.getService(ChicaService.class);
+		LocationService locationService = Context.getService(LocationService.class);
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		ATDService atdService = Context.getService(ATDService.class);
 		AdministrationService adminService = Context.getAdministrationService();
@@ -118,24 +132,8 @@ public class HL7Exporter extends AbstractTask {
 		Integer encid = null;
 		List <Concept> concepts = null;
 		Context.openSession();
-		
-		String hl7ConfigFile = adminService
-				.getGlobalProperty("sockethl7listener.hl7ConfigFile");
-			
-		Properties hl7Prop = Util.getProps(hl7ConfigFile);
-		if (hl7Prop != null){
-			String vOnly = hl7Prop.getProperty("use_vitals_battery_only");
-			if (vOnly != null) vitalsBatteryOnly = Boolean.valueOf(vOnly);
-			vitalsBatteryName = hl7Prop.getProperty("vitals_battery_name");
-			vitalsBatteryId = hl7Prop.getProperty("vitals_battery_id");
-			generalBatteryName = hl7Prop.getProperty("general_battery_name");
-			generalBatteryId = hl7Prop.getProperty("general_battery_id");
-			socketReadTimeoutStr = hl7Prop.getProperty("socket_read_timeout");
-			if (socketReadTimeoutStr != null) {
-				socketReadTimeout = Integer.valueOf(socketReadTimeoutStr);
-			}
-		}
-	
+		ChicaHL7Export export = null;
+
 		try
 		{
 			
@@ -152,18 +150,45 @@ public class HL7Exporter extends AbstractTask {
 			Iterator <ChicaHL7Export> it = exportList.iterator();
 		
 			while (it.hasNext()){
-				HL7MessageConstructor constructor = new HL7MessageConstructor();
 				
-				ChicaHL7Export export = it.next();
+				
+			
+				
+				
+				
+				//add socketReadTimeout to scheduler
+				
+				export = it.next();
+				
+				
+				
+				//Get location of hl7 configuration file from location_tag_attribute_value
 				Integer encId = export.getEncounterId();
-				Encounter enc = encounterService.getEncounter(encId);
+				//Get file location
+				String configFileName = getFileLocation(encId);
+				Encounter openmrsEncounter = encounterService.getEncounter(encId);
+				
+				
+				Properties hl7Prop = Util.getProps(configFileName);
+				if (hl7Prop != null){
+					String vOnly = hl7Prop.getProperty("use_vitals_battery_only");
+					if (vOnly != null) vitalsBatteryOnly = Boolean.valueOf(vOnly);
+					vitalsBatteryName = hl7Prop.getProperty("vitals_battery_name");
+					vitalsBatteryId = hl7Prop.getProperty("vitals_battery_id");
+					generalBatteryName = hl7Prop.getProperty("general_battery_name");
+					generalBatteryId = hl7Prop.getProperty("general_battery_id");
+					
+				}
+				
+				//Create message
+				HL7MessageConstructor constructor = new HL7MessageConstructor(configFileName);
 				List<Encounter> queryEncounterList = new ArrayList<Encounter>();
 				//create list with one entry for parameter in obs search only
-				queryEncounterList.add(enc);
+				queryEncounterList.add(openmrsEncounter);
 			
-				constructor.AddSegmentMSH(enc);
-				constructor.AddSegmentPID(enc.getPatient());
-				constructor.AddSegmentPV1(enc);
+				constructor.AddSegmentMSH(openmrsEncounter);
+				constructor.AddSegmentPID(openmrsEncounter.getPatient());
+				constructor.AddSegmentPV1(openmrsEncounter);
 
 				//Create a list of vitals concepts for the concept names defined in mapping xml
 				Properties prop = Util.getProps(conceptDictionaryMapFile);
@@ -181,14 +206,15 @@ public class HL7Exporter extends AbstractTask {
 							chicaService.saveChicaHL7Export(export);
 							continue;
 						}
-						constructor.AddSegmentOBR(enc, vitalsBatteryId, vitalsBatteryName);
+
+						constructor.AddSegmentOBR(openmrsEncounter, vitalsBatteryId, vitalsBatteryName);
 						addOBXBlock(obsList, constructor, prop);
 					}
 				} else {
 
 					List<Concept> verifiedNonVitalsConcepts = getConceptsInSet(concepts, "MEDICAL RECORD FILE OBSERVATIONS");
 					if (verifiedNonVitalsConcepts != null){
-						constructor.AddSegmentOBR(enc, generalBatteryId, generalBatteryName);
+						constructor.AddSegmentOBR(openmrsEncounter, generalBatteryId, generalBatteryName);
 						List<Obs> obsList = obsService.getObservations(null, queryEncounterList, 
 								verifiedNonVitalsConcepts, null, null, null, null, null, null, null, null, false);
 						addOBXBlock(obsList, constructor, prop);
@@ -202,7 +228,7 @@ public class HL7Exporter extends AbstractTask {
 				chicaService.saveChicaHL7Export(export);
 				
 				if (message != null && !message.equals("")){
-					Date ackDate = sendMessage(message, enc, socketHandler, socketReadTimeout);
+					Date ackDate = sendMessage(message, openmrsEncounter, socketHandler);
 					if (ackDate != null) { 
 						export.setStatus(3);
 						export.setAckDate(ackDate);
@@ -223,19 +249,14 @@ public class HL7Exporter extends AbstractTask {
 		
 		{
 			Integer sessionId = null;
-			if (encid != null){
-
-				Session session = atdService.getSessionByEncounter(encid);
-				if (session != null){
-					sessionId = session.getSessionId();
-				}
-				
+			if (export != null) {
+				sessionId = export.getSessionId();
 			}
 			String message = e.getMessage();
-			ChicaError ce = new ChicaError("Error", "Hl7 Export", 
+			ATDError ce = new ATDError("Error", "Hl7 Export", 
 					message, "",
 					 new Date(), sessionId);
-			chicaService.saveError(ce);
+			atdService.saveError(ce);
 			
 		} finally
 		{
@@ -482,7 +503,7 @@ public class HL7Exporter extends AbstractTask {
 		} 
 	}
 	private Date sendMessage(String message, Encounter enc, 
-			HL7SocketHandler socketHandler, Integer socketReadTimeout ){
+			HL7SocketHandler socketHandler ){
 		Date ackDate = null;
 		
 		HL7Outbound hl7b = new HL7Outbound();
@@ -524,7 +545,25 @@ public class HL7Exporter extends AbstractTask {
 		}
 		return ackDate;
 	}
+	
+	private String getFileLocation(Integer encId){
+		String filename = "";
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		LocationService locationService = Context.getLocationService();
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		
+		
+		org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter 
+			= (org.openmrs.module.chica.hibernateBeans.Encounter) 
+			encounterService.getEncounter(encId);
+		String printerLocation = chicaEncounter.getPrinterLocation();
+		LocationTag locTag = locationService.getLocationTagByName(printerLocation);
+		LocationTagAttributeValue locationTagValue = chicaService.getLocationTagAttributeValue(
+				locTag.getId(), "HL7ConfigFile", 
+				chicaEncounter.getLocation().getLocationId());
+	 	filename = locationTagValue.getValue();
+		return filename;
+	}
 
 		
-	
 }

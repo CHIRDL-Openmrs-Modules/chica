@@ -3,12 +3,14 @@
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <c:choose>
 <c:when test="${scanned == 'scanned'}">  
-<p>PSF ID: ${psf_id} was successfully scanned.</p>
+<p>PSF ID: ${formInstanceId} was successfully scanned.</p>
 <form name="input" action="fillOutPSF.form" method="get">
 <input type="submit" value="scan another PSF">
+<input type="hidden" value="PSF" name="formName"/>
 </form>
 <form name="input" action="fillOutPWS.form" method="get">
 <input type="submit" value="scan PWS">
+<input type="hidden" value="PWS" name="formName"/>
 </form>
 </c:when>
      <c:when test="${showForm == ''}">  
@@ -17,14 +19,15 @@
 <table>
 <tr style="padding: 5px">
 <td>
-<select name="psf_id">
-<c:forEach items="${psfs}" var="psf">
-<option value="${psf}">PSF ID: ${psf}</option>
+<select name="formInstanceId">
+<c:forEach items="${forms}" var="form">
+<option value="${form}">${form}</option>
 </c:forEach>
 </select>
 </td>
 <td><input type="submit" value="OK"></td>
 <input type="hidden" value="showForm" name="showForm">
+<input type="hidden" value="PSF" name="formName"/>
 </tr>
 </table>
 </form>
@@ -37,7 +40,7 @@
 <td colspan="3">
 <table style="padding:10px" width="100%">
 <tr>
-<td style="vertical-align:middle;text-align:center;">${PSF_ID}</td>
+<td style="vertical-align:middle;text-align:center;">${formInstanceId}</td>
 <td style="vertical-align:middle;text-align:center;"><b style="font-size: 22px">CHICA Pre-Screening Form</b></td>
 </tr>
 </table>
@@ -529,7 +532,8 @@
 	</tr>
 	</table>
 	<input type="hidden" name="submitAnswers" value="submitAnswers"/>
-	<input type="hidden" value="${psf_id}" name="psf_id"/>
+	<input type="hidden" value="${formInstanceId}" name="formInstanceId"/>
+	<input type="hidden" value="PSF" name="formName"/>
 </form>
 </c:otherwise>
 </c:choose>

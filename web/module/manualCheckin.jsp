@@ -144,8 +144,7 @@ if (err != 0)
 	
 	var oDDL = document.getElementById("doctorName");
 	var curText = oDDL.options[oDDL.selectedIndex].text
-	if (curText == 'Other')
-	
+	if (curText.indexOf('Other')>-1)
    {
   	var where_to= confirm("Are you sure to select OTHER as the Doctor?");
 
@@ -162,7 +161,7 @@ if (err != 0)
    
    	var oDDL = document.getElementById("station");
     var curText = oDDL.options[oDDL.selectedIndex].text
-	if (curText == 'Other')
+	if (curText.indexOf('Other')>-1)
 	
    {
 	var where_to= confirm("Are you sure to select OTHER as the Station?");
@@ -248,7 +247,6 @@ if (err != 0)
 <tr>
 <td style="text-align:left"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>Station</b>
 <select name="station" tabindex="1" id="station" >
-<OPTION>Other</OPTION>
 <c:forEach items="${stations}" var="station">
 <option>${station}</option>
 </c:forEach>	

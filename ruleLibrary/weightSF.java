@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -63,6 +65,27 @@ public class weightSF implements Rule
 	public Result eval(LogicContext context, Patient patient,
 			Map<String, Object> parameters) throws LogicException
 	{
+		Integer locationId = (Integer) parameters.get("locationId");
+		LocationService locationService = Context.getLocationService();
+		Location location = locationService.getLocation(locationId);
+		
+		if(location!= null){
+			//if this is Pecar, just return "kg."
+			if(location.getName().equalsIgnoreCase("PEPS")){
+				return kiloResult();
+			}
+		
+			//if this is PCC, return lb. or oz. based on age 
+			if(location.getName().equalsIgnoreCase("PCPS")){
+				return lbsOrLbsOzResult(parameters);
+			}
+		}
+
+		return Result.emptyResult();
+	}
+	
+	
+	private Result lbsOrLbsOzResult(Map<String, Object> parameters){
 		String units = null;
 		if (parameters != null && parameters.get("param0") != null)
 		{
@@ -77,6 +100,7 @@ public class weightSF implements Rule
 							.getAgeInUnits(result, null,
 									Util.MONTH_ABBR);
 
+					//if over 18 months, don't measure ounces
 					if (ageMonths > 18)
 					{
 						units = "lb.";
@@ -88,7 +112,10 @@ public class weightSF implements Rule
 				return new Result(units);
 			}
 		}
-
-		return Result.emptyResult();
+		return null;
+	}
+	
+	private Result kiloResult(){
+		return new Result("kg.");	
 	}
 }

@@ -45,10 +45,10 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "any_household_members_smoke ","relapse";
+ CALL storeObs With "any_household_members_smoke","relapse";
 endif;
 If  (Box2=true) then
- CALL storeObs With "any_household_members_smoke ","no";
+ CALL storeObs With "any_household_members_smoke","no";
 endif;
 
 

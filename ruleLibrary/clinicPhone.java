@@ -1,21 +1,24 @@
 package org.openmrs.module.chica.rule;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
+import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.LogicException;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
+import org.openmrs.logic.op.Operator;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
+import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chica.service.ChicaService;
 
-public class weightPFPecar implements Rule
+public class clinicPhone implements Rule
 {
 	private LogicService logicService = Context.getLogicService();
 
@@ -59,10 +62,22 @@ public class weightPFPecar implements Rule
 	{
 		return Datatype.CODED;
 	}
-
 	public Result eval(LogicContext context, Patient patient,
 			Map<String, Object> parameters) throws LogicException
 	{
-			return new Result(".");	
+		FormInstance formInstance = (FormInstance) parameters
+			.get("formInstance");
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		if (formInstance != null)
+		{
+			Integer locationId = formInstance.getLocationId();
+			LocationAttributeValue locationAttributeValue = 
+				chicaService.getLocationAttributeValue(locationId, "clinicPhone");
+		
+			if(locationAttributeValue != null){
+				return new Result(locationAttributeValue.getValue());
+			}
+		}
+		return Result.emptyResult();
 	}
 }

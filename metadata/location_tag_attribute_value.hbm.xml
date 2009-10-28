@@ -12,6 +12,7 @@
 		</id>
 	
 		<property name="locationTagId" type="java.lang.Integer" column="location_tag_id" />
+		<property name="locationId" type="java.lang.Integer" column="location_id" />
 		<property name="locationTagAttributeId" type="java.lang.Integer" column="location_tag_attribute_id" />
 		<property name="value" type="java.lang.String" column="value" />
 	</class>

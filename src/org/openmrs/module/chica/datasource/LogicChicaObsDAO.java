@@ -33,9 +33,9 @@ import org.openmrs.logic.LogicExpressionBinary;
 import org.openmrs.logic.LogicTransform;
 import org.openmrs.logic.db.LogicObsDAO;
 import org.openmrs.logic.op.Operator;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
-import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.dss.util.IOUtil;
 import org.openmrs.module.dss.util.Util;
 
@@ -694,7 +694,7 @@ public class LogicChicaObsDAO implements LogicObsDAO
 
 	public void parseHL7ToObs(String hl7Message, Integer patientId, String mrn)
 	{
-		ChicaService chicaService = Context.getService(ChicaService.class);
+		ATDService atdService = Context.getService(ATDService.class);
 		try
 		{
 			BufferedReader reader = new BufferedReader(new StringReader(
@@ -706,17 +706,19 @@ public class LogicChicaObsDAO implements LogicObsDAO
 					&& !line.startsWith("MSH"))
 			{
 				if(line.contains("FAILED")){
-					ChicaError error = new ChicaError("Error", "Query Kite Connection"
+					ATDError error = new ATDError("Error", "Query Kite Connection"
 							, "MRF query returned FAILED for mrn: "+mrn
 							, null, new Date(), null);
-					chicaService.saveError(error);
+					atdService.saveError(error);
 					return;
 				}
 			}
 
 			StringWriter output = new StringWriter();
 			PrintWriter writer = new PrintWriter(output);
-			writer.println(line); // write out the MSH line
+			if(line != null){
+				writer.println(line); // write out the MSH line
+			}
 
 			while ((line = reader.readLine()) != null)
 			{
@@ -817,9 +819,9 @@ public class LogicChicaObsDAO implements LogicObsDAO
 	}
 
 	private void processMessage(String messageString, Integer patientId)
-	{
+	{			
+		ATDService atdService = Context.getService(ATDService.class);
 		AdministrationService adminService = Context.getAdministrationService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		
 		if(messageString != null){
 			messageString = messageString.trim();
@@ -840,11 +842,11 @@ public class LogicChicaObsDAO implements LogicObsDAO
 			message = pipeParser.parse(newMessageString);
 		} catch (Exception e)
 		{
-			ChicaError error = new ChicaError("Error", "Hl7 Parsing",
+			ATDError error = new ATDError("Error", "Hl7 Parsing",
 					"Error parsing the MRF dump " + e.getMessage(),
 					messageString,
 					new Date(), null);
-			chicaService.saveError(error);
+			atdService.saveError(error);
 			String mrfParseErrorDirectory = IOUtil
 					.formatDirectoryName(adminService
 							.getGlobalProperty("chica.mrfParseErrorDirectory"));

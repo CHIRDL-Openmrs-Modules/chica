@@ -50,12 +50,12 @@
 		<property name="formView"><value>/module/@MODULE_ID@/displayTiff</value></property>
 		<property name="successView"><value>displayTiff.form</value></property>
 	</bean>
-	<bean id="fillOutPSF" class="@MODULE_PACKAGE@.web.FillOutPSFController">
+	<bean id="fillOutPSF" class="@MODULE_PACKAGE@.web.FillOutFormController">
 		<property name="commandName"><value>fillOutPSFObject</value></property>
 		<property name="formView"><value>/module/@MODULE_ID@/fillOutPSF</value></property>
 		<property name="successView"><value>fillOutPSF.form</value></property>
 	</bean>
-	<bean id="fillOutPWS" class="@MODULE_PACKAGE@.web.FillOutPWSController">
+	<bean id="fillOutPWS" class="@MODULE_PACKAGE@.web.FillOutFormController">
 		<property name="commandName"><value>fillOutPWSObject</value></property>
 		<property name="formView"><value>/module/@MODULE_ID@/fillOutPWS</value></property>
 		<property name="successView"><value>fillOutPWS.form</value></property>

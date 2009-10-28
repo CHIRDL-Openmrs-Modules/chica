@@ -64,7 +64,7 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with Smoking_JIT_CONGRATULATE;
+call CREATE_JIT with "Smoking_JIT_CONGRATULATE";
 write ("The smoker in || firstname ||'s home has quit, please reinforce?");
 write ("Congratulate");
 write ("Give attached certificate");

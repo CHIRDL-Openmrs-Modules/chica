@@ -2,44 +2,42 @@ package org.openmrs.module.chica.service;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.openmrs.Concept;
 import org.openmrs.FormField;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Chica1Patient;
 import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
 
 public interface ChicaService
 {
 	public void consume(InputStream input, Patient patient,
-			Integer encounterId,Integer formId,
-			Integer formInstanceId,Integer sessionId,
-			List<FormField> fieldsToConsume);
+			Integer encounterId,FormInstance formInstance,Integer sessionId,
+			List<FormField> fieldsToConsume,Integer locationTagId);
 
 	public void produce(OutputStream output, PatientState state,
 			Patient patient,Integer encounterId,String dssType,
-			int maxDssElements)throws Exception;
+			int maxDssElements,Integer sessionId)throws Exception;
 
 	public void updateStatistics(Statistics statistics);
 
@@ -75,12 +73,14 @@ public interface ChicaService
 
 	public List<Study> getActiveStudies();
 
-	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName);
+	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName,
+			Integer locationId);
 
 	public StudyAttributeValue getStudyAttributeValue(Study study,
 			String studyAttributeName);
 
-	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName);
+	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName,
+			Integer locationId);
 
 	
 	public List<OldRule> getAllOldRules();
@@ -130,12 +130,6 @@ public interface ChicaService
 	
 	public String getInsCategoryByInsCode(String insCode);
 	
-	public void saveError(ChicaError error);
-	
-	public Integer getErrorCategoryIdByName(String name);
-	
-	public List<ChicaError> getChicaErrorsByLevel(String errorLevel,Integer sessionId);
-	
 	public PatientState getPrevProducePatientState(Integer sessionId, Integer patientStateId );
 	
 	public Double getHighBP(Patient patient, Integer bpPercentile, String bpType, org.openmrs.Encounter encounter);
@@ -166,18 +160,19 @@ public interface ChicaService
 	 * 
 	 * @return
 	 */
-	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction);
+	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, Integer locationTagId, Integer locationId);
 	
 	/**
 	 * Gets a list of the printer stations for PSF
 	 * @return List of form attributes
 	 */
-	public List<String> getPrinterStations();
-	
-	public ArrayList<String> getImagesDirectory(String location);
+	public List<String> getPrinterStations(Location location);
 	
 	public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId);
 	
 	public LocationTagAttributeValue getLocationTagAttributeValue(Integer locationTagId,
-			String locationTagAttributeName);
+			String locationTagAttributeName, Integer locationId);
+	
+	public LocationAttributeValue getLocationAttributeValue(Integer locationId,
+			String locationAttributeName);
 }

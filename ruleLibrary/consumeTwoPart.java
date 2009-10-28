@@ -74,6 +74,7 @@ public class consumeTwoPart implements Rule
 		boolean resetPrimary = false;
 		boolean resetSecondary = false;
 		Integer ruleId = null;
+		Integer locationTagId = null;
 
 		if (parameters != null)
 		{
@@ -88,6 +89,7 @@ public class consumeTwoPart implements Rule
 			}
 			
 			encounterId = (Integer) parameters.get("encounterId");
+			locationTagId = (Integer) parameters.get("locationTagId");
 		}
 
 		if (formInstance == null)
@@ -141,8 +143,8 @@ public class consumeTwoPart implements Rule
 		if(fullResult != null&&fullResult.length()>0)
 		{
 			Util.saveObs(patient, conceptService.getConceptByName(conceptName),
-					encounterId, fullResult,formInstance.getFormInstanceId(),
-					ruleId,formInstance.getFormId());
+					encounterId, fullResult,formInstance,
+					ruleId,locationTagId);
 		}
 		
 		return Result.emptyResult();

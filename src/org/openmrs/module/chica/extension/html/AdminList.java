@@ -30,8 +30,8 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("module/chica/testCheckin.form", "Test checkin through AOP");
 		map.put("module/chica/parseDictionary.form", "Parse dictionary file");
 		map.put("module/chica/loadObs.form", "Load old obs");
-		map.put("module/chica/fillOutPSF.form", "Scan PSF");
-		map.put("module/chica/fillOutPWS.form", "Scan PWS");
+		map.put("module/chica/fillOutPSF.form?formName=PSF", "Scan PSF");
+		map.put("module/chica/fillOutPWS.form?formName=PWS", "Scan PWS");
 		map.put("module/chica/greaseBoard.form", "Grease Board");
 		map.put("module/chica/viewPatient.form", "View Encounters");
 		map.put("module/chica/ruleTester.form", "Rule Tester");

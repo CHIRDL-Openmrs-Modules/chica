@@ -5,8 +5,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
@@ -75,8 +77,9 @@ public class consumeHeight implements Rule
 		String fieldName = null;
 		String conceptName  = null;
 		Integer encounterId = null;
-		ATDService atdService = (ATDService) Context.getService(ATDService.class);
+		ATDService atdService = Context.getService(ATDService.class);
 		Integer ruleId = null;
+		Integer locationTagId = null;
 
 		if (parameters != null)
 		{
@@ -91,6 +94,7 @@ public class consumeHeight implements Rule
 			}
 			
 			encounterId = (Integer) parameters.get("encounterId");
+			locationTagId = (Integer) parameters.get("locationTagId");
 		}
 
 		if (formInstance == null)
@@ -137,11 +141,44 @@ public class consumeHeight implements Rule
 			secondaryResult = "0";
 		}
 		
+		
+		String fullResult = primaryResult+"."+secondaryResult;
+		
+		Integer locationId = (Integer) parameters.get("locationId");
+		LocationService locationService = Context.getLocationService();
+		Location location = locationService.getLocation(locationId);
+		
+		if(location!= null){
+			//if this is Pecar, consume kilograms
+			if(location.getName().equalsIgnoreCase("PEPS")){
+				fullResult = consumeInchesOrCm(fullResult,patient,parameters);
+			}
+		
+			//if this is PCC, consume lb. or lb. and oz. based on age 
+			if(location.getName().equalsIgnoreCase("PCPS")){
+				fullResult = consumeInches(fullResult);
+			}
+		}
+		
+		if(fullResult != null&&fullResult.length()>0)
+		{
+			Util.saveObs(patient, conceptService.getConceptByName(conceptName),
+					encounterId, fullResult,formInstance,ruleId,locationTagId);
+		}
+		
+		return Result.emptyResult();
+	}
+	
+	private String consumeInches(String fullResult){
+		return fullResult;
+	}
+	
+	private String consumeInchesOrCm(String fullResult,Patient patient,
+			Map<String, Object> parameters){
+		ATDService atdService = Context.getService(ATDService.class);
 		String heightUnit = atdService.evaluateRule( "birthdate>heightUnits", 
 				  patient,parameters,null).toString();
 
-		String fullResult = primaryResult+"."+secondaryResult;
-		
 		if(heightUnit != null && heightUnit.equals("cm."))
 		{
 			double measurement = Double.parseDouble(fullResult);
@@ -149,18 +186,7 @@ public class consumeHeight implements Rule
 				org.openmrs.module.dss.util.Util.convertUnitsToEnglish(measurement, 
 						org.openmrs.module.dss.util.Util.MEASUREMENT_CM);
 			fullResult = String.valueOf(inches);
-		}else
-		{
-			fullResult = primaryResult+"."+secondaryResult;
 		}
-		
-		if(fullResult != null&&fullResult.length()>0)
-		{
-			Util.saveObs(patient, conceptService.getConceptByName(conceptName),
-					encounterId, fullResult,formInstance.getFormInstanceId(),
-					ruleId,formInstance.getFormId());
-		}
-		
-		return Result.emptyResult();
+		return fullResult;
 	}
 }

@@ -25,7 +25,9 @@
 		<property name="obsvId" type="java.lang.Integer" column="obsv_id" />
 		<property name="languageResponse" type="java.lang.String" column="language_response" />
 		<property name="ageAtVisit" type="java.lang.String" column="age_at_visit" />
-	
+		<property name="locationTagId" type="java.lang.Integer" column="location_tag_id" />
+		<property name="locationId" type="java.lang.Integer" column="location_id" />
+		
 	</class>
 	
 </hibernate-mapping>

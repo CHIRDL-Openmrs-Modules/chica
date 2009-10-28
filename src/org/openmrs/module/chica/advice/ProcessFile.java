@@ -11,7 +11,9 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.TeleformFileState;
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
+import org.openmrs.module.atd.hibernateBeans.Program;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.ChicaStateActionHandler;
 
@@ -25,6 +27,7 @@ public class ProcessFile implements Runnable
 
 	private Integer patientStateId = null;
 	private String filename = null;
+	private FormInstance formInstance = null;
 
 	public ProcessFile(TeleformFileState tfState)
 	{
@@ -32,6 +35,7 @@ public class ProcessFile implements Runnable
 		//run method of the thread to prevent crossthreading
 		//from corrupting the patientState
 		this.filename = tfState.getFullFilePath();
+		this.formInstance = tfState.getFormInstance();
 		Map<String, Object> parameters = tfState.getParameters();
 		if (parameters != null)
 		{
@@ -57,9 +61,8 @@ public class ProcessFile implements Runnable
 					.getGlobalProperty("scheduler.username"), adminService
 					.getGlobalProperty("scheduler.password"));
 			ATDService atdService = Context.getService(ATDService.class);
-			//lookup the patient state to get a fresh copy (passing by reference
-			//seems to be causing crossthreading errors)
-			//this also prevents lazy initialization exceptions from the
+
+			//this prevents lazy initialization exceptions from the
 			//object being passed across the aop call
 			PatientState patientState = atdService.getPatientState(this.patientStateId);
 			HashMap<String, Object> stateParameters = patientState
@@ -69,7 +72,9 @@ public class ProcessFile implements Runnable
 				stateParameters = new HashMap<String, Object>();
 			}
 			stateParameters.put("filename", this.filename);
-			ChicaStateActionHandler.getInstance().processState(patientState,
+			stateParameters.put("formInstance", this.formInstance);
+	
+			ChicaStateActionHandler.getInstance().changeState(patientState,
 					stateParameters);
 		} catch (Exception e)
 		{

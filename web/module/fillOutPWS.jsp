@@ -3,12 +3,14 @@
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <c:choose>
 <c:when test="${scanned == 'scanned'}">  
-<p>PWS ID: ${pws_id} was successfully scanned.</p>
+<p>PWS ID: ${formInstanceId} was successfully scanned.</p>
 <form name="input" action="fillOutPWS.form" method="get">
 <input type="submit" value="scan another PWS">
+<input type="hidden" value="PWS" name="formName"/>
 </form>
 <form name="input" action="fillOutPSF.form" method="get">
 <input type="submit" value="scan PSF">
+<input type="hidden" value="PSF" name="formName"/>
 </form>
 </c:when>
      <c:when test="${showForm == ''}">  
@@ -17,14 +19,15 @@
 <table>
 <tr style="padding: 5px">
 <td>
-<select name="pws_id">
-<c:forEach items="${pwss}" var="pws">
-<option value="${pws}">PWS ID: ${pws}</option>
+<select name="formInstanceId">
+<c:forEach items="${forms}" var="form">
+<option value="${form}">${form}</option>
 </c:forEach>
 </select>
 </td>
 <td><input type="submit" value="OK"></td>
 <input type="hidden" value="showForm" name="showForm">
+<input type="hidden" value="PWS" name="formName"/>
 </tr>
 </table>
 </form>
@@ -231,7 +234,8 @@ ${TobaccoLabel} ${TobaccoAnswer}
 	<center><b style="font-size:16px">${BottomName}</b></center>
 	<center><b>${CurrentTime}</b></center>
 	<input type="hidden" name="submitAnswers" value="submitAnswers"/>
-	<input type="hidden" value="${pws_id}" name="pws_id"/>
+	<input type="hidden" value="${formInstanceId}" name="formInstanceId"/>
+	<input type="hidden" value="PWS" name="formName"/>
 </form>
 </c:otherwise>
 </c:choose>

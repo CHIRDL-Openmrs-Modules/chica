@@ -5,8 +5,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
@@ -75,8 +77,9 @@ public class consumeWeight implements Rule
 		String fieldName = null;
 		String conceptName  = null;
 		Integer encounterId = null;
-		ATDService atdService = (ATDService) Context.getService(ATDService.class);
+		ATDService atdService = Context.getService(ATDService.class);
 		Integer ruleId = null;
+		Integer locationTagId = null;
 
 		if (parameters != null)
 		{
@@ -91,6 +94,7 @@ public class consumeWeight implements Rule
 			}
 			
 			encounterId = (Integer) parameters.get("encounterId");
+			locationTagId = (Integer) parameters.get("locationTagId");
 		}
 
 		if (formInstance == null)
@@ -137,10 +141,41 @@ public class consumeWeight implements Rule
 			secondaryResult = "0";
 		}
 		
+		Integer locationId = (Integer) parameters.get("locationId");
+		LocationService locationService = Context.getLocationService();
+		Location location = locationService.getLocation(locationId);
+		String fullResult = null;
+		
+		if(location!= null){
+			//if this is Pecar, consume kilograms
+			if(location.getName().equalsIgnoreCase("PEPS")){
+				fullResult = consumeKilo(primaryResult,secondaryResult);
+			}
+		
+			//if this is PCC, consume lb. or lb. and oz. based on age 
+			if(location.getName().equalsIgnoreCase("PCPS")){
+				fullResult = consumeLbOrLbOz(primaryResult,secondaryResult,patient,parameters);
+			}	
+		}
+
+		if(fullResult != null&&fullResult.length()>0)
+		{
+			Util.saveObs(patient, conceptService.getConceptByName(conceptName),
+					encounterId, fullResult,formInstance,
+					ruleId,locationTagId);
+		}
+		
+		return Result.emptyResult();
+	}
+	
+	private String consumeLbOrLbOz(String primaryResult,
+			String secondaryResult,Patient patient,
+			Map<String, Object> parameters){
+		ATDService atdService = Context.getService(ATDService.class);
+		ConceptService conceptService = Context.getConceptService();
+		String fullResult = null;
 		String weightUnit = atdService.evaluateRule( "birthdate>weightSF", 
 				  patient,parameters,null).toString();
-
-		String fullResult = null;
 		
 		if(weightUnit != null && weightUnit.equals("oz."))
 		{
@@ -150,14 +185,24 @@ public class consumeWeight implements Rule
 			fullResult = primaryResult+"."+secondaryResult;
 		}
 		
-		if(fullResult != null&&fullResult.length()>0)
-		{
-			Util.saveObs(patient, conceptService.getConceptByName(conceptName),
-					encounterId, fullResult,formInstance.getFormInstanceId(),
-					ruleId,formInstance.getFormId());
-		}
+		return fullResult;
 		
-		return Result.emptyResult();
+	}
+	
+	private String consumeKilo(String primaryResult,
+			String secondaryResult){
+		String fullResult = primaryResult+"."+secondaryResult;
+		ConceptService conceptService = Context.getConceptService();
+		//convert kilograms to lbs
+		try{
+			double kilograms = (new Double(fullResult)).doubleValue();
+			double pounds = org.openmrs.module.dss.util.Util.convertUnitsToEnglish(
+					kilograms, org.openmrs.module.dss.util.Util.MEASUREMENT_KG);
+			fullResult = String.valueOf(pounds);
+		}catch(Exception e){
+			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+		}
+		return fullResult;
 	}
 	
 	private String processWeight(String poundsString,String ouncesString)

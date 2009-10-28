@@ -15,8 +15,8 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.datasource.ObsChicaDatasource;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
-import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.dss.util.IOUtil;
 import org.openmrs.module.dss.util.Util;
 
@@ -82,8 +82,8 @@ public class QueryKite
 	
 	public static String aliasQuery(String mrn) throws  QueryKiteException
 	{
+		ATDService atdService = Context.getService(ATDService.class); 
 		AdministrationService adminService = Context.getAdministrationService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		String response = null;
 		try
 		{
@@ -95,10 +95,10 @@ public class QueryKite
 		}
 		catch (Exception e)
 		{
-			ChicaError error = new ChicaError("Error", "Query Kite Connection"
+			ATDError error = new ATDError("Error", "Query Kite Connection"
 					, e.getMessage()
 					, Util.getStackTrace(e), new Date(), null);
-			chicaService.saveError(error);
+			atdService.saveError(error);
 		}
 		
 		//If the response is null this means the connection was broken
@@ -108,10 +108,10 @@ public class QueryKite
 			if(response != null){
 				log.info("Re-query of FIND-ALIASES for mrn: "+mrn+" successful");
 			}else{
-				ChicaError error = new ChicaError("Error", "Query Kite Connection"
+				ATDError error = new ATDError("Error", "Query Kite Connection"
 					, "Re-query of FIND-ALIASES after message dropped for mrn: "+mrn+" failed"
 					, null, new Date(), null);
-			chicaService.saveError(error);
+			atdService.saveError(error);
 			}
 		}
 		
@@ -168,8 +168,8 @@ public class QueryKite
 
 	public static String mrfQuery(String mrn,Integer patientId) throws  QueryKiteException
 	{
+		ATDService atdService = Context.getService(ATDService.class);
 		AdministrationService adminService = Context.getAdministrationService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 				
 		String response = null;
 		long startTime = System.currentTimeMillis();
@@ -184,10 +184,11 @@ public class QueryKite
 		}
 		catch (Exception e)
 		{
-			ChicaError error = new ChicaError("Error", "Query Kite Connection"
+			ATDError error = new ATDError("Error", "Query Kite Connection"
 					, e.getMessage()
 					, Util.getStackTrace(e), new Date(), null);
-			chicaService.saveError(error);
+
+			atdService.saveError(error);
 		}
 		
 		//If the response is null this means the connection was broken
@@ -201,11 +202,11 @@ public class QueryKite
 						+ " successful");
 			} else
 			{
-				ChicaError error = new ChicaError("Error",
+				ATDError error = new ATDError("Error",
 						"Query Kite Connection",
 						"Re-query of GET-MRF after message dropped for mrn: "
 								+ mrn + " failed", null, new Date(), null);
-				chicaService.saveError(error);
+				atdService.saveError(error);
 			}
 		}
 		

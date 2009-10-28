@@ -21,7 +21,9 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
+import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
@@ -119,18 +121,43 @@ public class displayHeight implements Rule
 		{
 			ATDService atdService = Context.getService(ATDService.class);
 			ruleResult = ruleResult.get(0);
-			String heightUnit = atdService.evaluateRule( "birthdate>heightUnits", 
-					  patient,parameters,null).toString();
-			if(heightUnit != null && heightUnit.equals("cm."))
-			{
-				double inches = ruleResult.toNumber();
-				double cm = 
-					org.openmrs.module.dss.util.Util.convertUnitsToMetric(inches, 
-							org.openmrs.module.dss.util.Util.MEASUREMENT_IN);
-				ruleResult = new Result(String.valueOf(cm));
+			Integer locationId = (Integer) parameters.get("locationId");
+			LocationService locationService = Context.getLocationService();
+			Location location = locationService.getLocation(locationId);
+			
+			if(location!= null){
+				//if this is Pecar, just return inches or cm based on age
+				if(location.getName().equalsIgnoreCase("PEPS")){
+					return inchesOrCmResult(ruleResult,
+							parameters,patient);
+				}
+			
+				//if this is PCC, return inches
+				if(location.getName().equalsIgnoreCase("PCPS")){
+					return inchesResult(ruleResult);
+				}
 			}
-			return ruleResult;
 		}
 		return Result.emptyResult();
+	}
+	
+	private Result inchesResult(Result ruleResult){
+		return ruleResult;
+	}
+	
+	private Result inchesOrCmResult(Result ruleResult,
+			Map<String, Object> parameters,Patient patient){
+		ATDService atdService = Context.getService(ATDService.class);
+		String heightUnit = atdService.evaluateRule( "birthdate>heightUnits", 
+				  patient,parameters,null).toString();
+		if(heightUnit != null && heightUnit.equals("cm."))
+		{
+			double inches = ruleResult.toNumber();
+			double cm = 
+				org.openmrs.module.dss.util.Util.convertUnitsToMetric(inches, 
+						org.openmrs.module.dss.util.Util.MEASUREMENT_IN);
+			ruleResult = new Result(String.valueOf(cm));
+		}
+		return ruleResult;
 	}
 }

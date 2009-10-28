@@ -26,7 +26,9 @@ public class Statistics implements java.io.Serializable {
 	private Integer obsvId=null;
 	private String languageResponse=null;
 	private String ageAtVisit=null;
-
+	private Integer locationTagId = null;
+	private Integer locationId = null;
+	
 	// Constructors
 
 	/** default constructor */
@@ -39,6 +41,7 @@ public class Statistics implements java.io.Serializable {
 		this.formName = stat.getFormName();
 		this.ruleId = stat.getRuleId();
 		this.formInstanceId = stat.getFormInstanceId();
+		this.locationTagId = stat.getLocationTagId();
 		this.encounterId = stat.getEncounterId();
 		this.position = stat.getPosition();
 		this.answer = stat.getAnswer();
@@ -49,6 +52,7 @@ public class Statistics implements java.io.Serializable {
 		this.obsvId = stat.getObsvId();
 		this.languageResponse = stat.getLanguageResponse();
 		this.ageAtVisit = stat.getAgeAtVisit();
+		this.locationId = stat.getLocationId();
 	}
 
 	public Integer getStatisticsId()
@@ -200,5 +204,24 @@ public class Statistics implements java.io.Serializable {
 	{
 		this.ageAtVisit = ageAtVisit;
 	}
-	
+
+	public Integer getLocationTagId()
+	{
+		return this.locationTagId;
+	}
+
+	public void setLocationTagId(Integer locationTagId)
+	{
+		this.locationTagId = locationTagId;
+	}
+
+	public Integer getLocationId()
+	{
+		return this.locationId;
+	}
+
+	public void setLocationId(Integer locationId)
+	{
+		this.locationId = locationId;
+	}
 }

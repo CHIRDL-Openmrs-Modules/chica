@@ -14,8 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
+import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chica.service.ChicaService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 
@@ -51,8 +56,7 @@ public class PagerController extends SimpleFormController
 		AdministrationService adminService = Context.getAdministrationService();
 		String pagerNumber = adminService
 			.getGlobalProperty("chica.pagerNumber");
-		String message = adminService
-			.getGlobalProperty("chica.pagerMessage");
+		
 		String idParam = adminService
 			.getGlobalProperty("chica.pagerUrlNumberParam");
 		String textParam = adminService
@@ -63,7 +67,21 @@ public class PagerController extends SimpleFormController
 			.getGlobalProperty("chica.pagerWaitTimeBeforeRepage");
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-
+		User user = Context.getAuthenticatedUser();
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		LocationService locationService = Context.getLocationService();
+		String locationString = user.getUserProperty("location");
+		Integer locationId = null;
+					if(locationString != null){
+						Location location = locationService.getLocation(locationString);
+						if(location != null){
+							locationId = location.getLocationId();
+						}
+					}
+		LocationAttributeValue locAttrValue = 
+			chicaService.getLocationAttributeValue(locationId, "pagerMessage");
+		String message = locAttrValue.getValue();
+		
 		String pageResponse =sendPage(pagerNumber, message, baseUrl, idParam , textParam, thresholdTime);
 		if (pageResponse != null && pageResponse.contains("Send message results" )
 				&& !pageResponse.contains("send failed")){

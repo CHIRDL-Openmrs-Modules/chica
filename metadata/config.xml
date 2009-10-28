@@ -6,7 +6,7 @@
 	<!-- Chica Module Properties -->
 	<id>chica</id>
 	<name>Chica</name>
-	<version>1.44.23</version>
+	<version>1.45.8</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
 	<author>Vibha Anand and Tammy Dugan</author>
 	<description>
@@ -20,8 +20,8 @@
 	<require_version>1.1.10.2283</require_version>
 	<require_modules>
    		<require_module version="2.27.9">org.openmrs.module.dss</require_module>
-   		<require_module version="1.55.25">org.openmrs.module.atd</require_module>
-   		<require_module version="1.3.10">org.openmrs.module.sockethl7listener</require_module>
+   		<require_module version="1.56.3">org.openmrs.module.atd</require_module>
+   		<require_module version="1.3.13">org.openmrs.module.sockethl7listener</require_module>
 	</require_modules>
 	
 	<extension>
@@ -70,16 +70,6 @@
    		</description>
 	</globalProperty>
 	<globalProperty>
-		<property>chica.pagerNumber</property>
-   		<description>Number of support pager for CHICA clinic.
-   		</description>
-	</globalProperty>
-	<globalProperty>
-		<property>chica.pagerMessage</property>
-   		<description>Message sent to support pager for CHICA clinic.
-   		</description>
-	</globalProperty>
-	<globalProperty>
 		<property>chica.mrfParseErrorDirectory</property>
    		<description>Directory where a copy of an mrf query result that couldn't be parsed is stored.
    		</description>
@@ -95,18 +85,6 @@
    		</description>
 	</globalProperty>
 	<globalProperty>
-		<property>chica.programName</property>
-		<defaultValue>chica</defaultValue>
-   		<description>name for the chica program in the atd_program table
-   		</description>
-	</globalProperty>
-	<globalProperty>
-		<property>chica.programVersion</property>
-		<defaultValue>1.0</defaultValue>
-   		<description>version of the chica program
-   		</description>
-	</globalProperty>
-	<globalProperty>
 		<property>chica.outboundHl7ArchiveDirectory</property>
 		<description>Location to archive constructed outbound hl7 messages
    		</description>
@@ -115,12 +93,6 @@
 		<property>chica.pagerBaseURL</property>
 		<defaultValue>http://www.ipnpaging.com/page.html</defaultValue>
 		<description>Base URL of the pager service
-   		</description>
-	</globalProperty>
-	<globalProperty>
-		<property>chica.pagerMessage</property>
-		<defaultValue>CHICA 2.0 support request</defaultValue>
-		<description>Message sent to support pager for CHICA clinic.
    		</description>
 	</globalProperty>
 	<globalProperty>
@@ -156,6 +128,11 @@
 		<defaultValue>15</defaultValue>
    		<description>How long to wait before the GET HELP NOW sends another page request from Greaseboard</description>
 	</globalProperty>
+	<globalProperty>
+		<property>chica.defaultTifImageDirectory</property>
+		<defaultValue>c:/chica/images/</defaultValue>
+   		<description>Directory to look for notavailable tif</description>
+	</globalProperty>
 	<advice>
 		<point>org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService</point>
 		<class>@MODULE_PACKAGE@.advice.TriggerPatientAfterAdvice</class>
@@ -190,13 +167,14 @@
 		family.hbm.xml
 		patient_family.hbm.xml
 		statistics.hbm.xml
-		chica_error_category.hbm.xml
-		chica_error.hbm.xml
+		chica_hl7_export.hbm.xml
 		chica_hl7_export.hbm.xml
 		ddst.hbm.xml
 		high_bp.hbm.xml
 		location_tag_attribute.hbm.xml
 		location_tag_attribute_value.hbm.xml
+		location_attribute.hbm.xml
+		location_attribute_value.hbm.xml
 	</mappingFiles>
 	
 </module>

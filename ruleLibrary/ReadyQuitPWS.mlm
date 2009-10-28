@@ -45,7 +45,7 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "referral ","Wishard quit smoking program 855-2255";
+ CALL storeObs With "referral","Wishard quit smoking program 855-2255";
 endif;
 If  (Box2=true) then
  CALL storeObs With "counseling topic","Smoking quit date";

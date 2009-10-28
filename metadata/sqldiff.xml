@@ -2582,14 +2582,10 @@ CREATE TABLE IF NOT EXISTS `chica_response` (
 		<author>Tammy Dugan</author>
 		<date>Jan 13, 2009</date>
 		<description>
-		Added "Other" provider and "PEDIATRICS" location. Remove the Provider role from the admin user so it 
+		Added "Other" provider. Remove the Provider role from the admin user so it 
 		doesn't show up as a provider in the manual checkin.
 		</description>
 <sql>
-INSERT INTO `location`(name,description,creator,date_created) 
-select 'PEDIATRICS', 'Generic chica location', '1', NOW()from 
-(select count(*) as cnt from location where name='PEDIATRICS') a
-where a.cnt=0;
 
 delete from user_role where role='Provider' and user_id=(select max(user_id) from users where system_id='admin');
 
@@ -2707,22 +2703,7 @@ where a.cnt=0;
 	
 	</sql>
 	</diff>
-	
-	<diff>
-	
-		<version>1.3.1</version>
-		<author>Vibha Anand</author>
-		<date>Apr 15, 2009</date>
-		<description>
-		Added "PEPS" location. 
-		</description>
-		<sql>
-		INSERT INTO `location`(name,description,creator,date_created) 
-		select 'PEPS', 'Pecar chica location', '1', NOW()from 
-		(select count(*) as cnt from location where name='PEPS') a
-		where a.cnt=0;
-		</sql>
-	</diff>
+
 	<diff>
 		<version>1.3.2</version>
 		<author>Tammy Dugan</author>
@@ -2784,61 +2765,13 @@ CREATE TABLE `chica_location_tag_attribute_value` (
   PRIMARY KEY  (`location_tag_attribute_value_id`),
   KEY `location_tag_value_fk_location_tag` (`location_tag_id`),
   KEY `location_tag_value_fk_attr` (`location_tag_attribute_id`),
-  KEY `chica_location_tag_value_fk_loc_tag` (`location_tag_id`),
-  CONSTRAINT `chica_location_tag_value_fk_loc_tag` FOREIGN KEY (`location_tag_id`) REFERENCES `location_tag` (`location_tag_id`),
   CONSTRAINT `location_tag_value_fk_attr` FOREIGN KEY (`location_tag_attribute_id`) REFERENCES `chica_location_tag_attribute` (`location_tag_attribute_id`),
   CONSTRAINT `location_tag_value_fk_location_tag` FOREIGN KEY (`location_tag_id`) REFERENCES `location_tag` (`location_tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 	INSERT INTO `chica_location_tag_attribute`(name,description) 
 	VALUES ( 'ActivePrinterLocation', 'Printer locations in the hl7 message that should be processed');
-	
-	INSERT INTO `location_tag`(tag,creator,date_created) 
-select 'PEREG1', '1', NOW() from 
-(select count(*) as cnt from location_tag where tag='PEREG1') a
-where a.cnt=0;
-
-INSERT INTO `location_tag`(tag,creator,date_created) 
-select 'PEREG2', '1', NOW() from 
-(select count(*) as cnt from location_tag where tag='PEREG2') a
-where a.cnt=0;
-
-INSERT INTO `location_tag`(tag,creator,date_created) 
-select 'PEREG3', '1', NOW() from 
-(select count(*) as cnt from location_tag where tag='PEREG3') a
-where a.cnt=0;
-
-INSERT INTO `location_tag`(tag,creator,date_created) 
-select 'PEREG4', '1', NOW() from 
-(select count(*) as cnt from location_tag where tag='PEREG4') a
-where a.cnt=0;
-
-INSERT INTO `location_tag_map`(location_id,location_tag_id) 
-select b.location_id,c.location_tag_id from location b, location_tag c,(select count(*) as cnt from location_tag_map a inner join location b 
-on a.location_id=b.location_id inner join location_tag c
-on a.location_tag_id=c.location_tag_id where b.name='PEPS' and c.tag='PEREG1') d
-where b.name='PEPS' and c.tag='PEREG1' and d.cnt=0;
-
-INSERT INTO `location_tag_map`(location_id,location_tag_id) 
-select b.location_id,c.location_tag_id from location b, location_tag c,(select count(*) as cnt from location_tag_map a inner join location b 
-on a.location_id=b.location_id inner join location_tag c
-on a.location_tag_id=c.location_tag_id where b.name='PEPS' and c.tag='PEREG2') d
-where b.name='PEPS' and c.tag='PEREG2' and d.cnt=0;
-
-INSERT INTO `location_tag_map`(location_id,location_tag_id) 
-select b.location_id,c.location_tag_id from location b, location_tag c,(select count(*) as cnt from location_tag_map a inner join location b 
-on a.location_id=b.location_id inner join location_tag c
-on a.location_tag_id=c.location_tag_id where b.name='PEPS' and c.tag='PEREG3') d
-where b.name='PEPS' and c.tag='PEREG3' and d.cnt=0;
-
-INSERT INTO `location_tag_map`(location_id,location_tag_id) 
-select b.location_id,c.location_tag_id from location b, location_tag c,(select count(*) as cnt from location_tag_map a inner join location b 
-on a.location_id=b.location_id inner join location_tag c
-on a.location_tag_id=c.location_tag_id where b.name='PEPS' and c.tag='PEREG4') d
-where b.name='PEPS' and c.tag='PEREG4' and d.cnt=0;
-	
-insert into chica_location_tag_attribute_value(location_tag_id,value,location_tag_attribute_id)
-select a.location_tag_id,'true',b.location_tag_attribute_id from location_tag a, chica_location_tag_attribute b
-where a.tag='PEREG3' and b.name='ActivePrinterLocation';	
+		
 	</sql>
 	</diff>
 		<diff>
@@ -2931,6 +2864,149 @@ from atd_state where name='PSF_process') and b.name='Export';
 	</sql>
 	</diff>
 	
+	<diff>
+		<version>1.3.8</version>
+		<author>Tammy Dugan</author>
+		<date>Oct 7, 2009</date>
+		<description>
+		Scripts to support multiple locations.
+		</description>
+	<sql>
+		
+	update atd_program
+set start_state=(select state_id from atd_state where name='CHECKIN'),
+end_state=(select state_id from atd_state where name='FINISHED')
+where name='chica';
+		alter table chica_statistics add column location_tag_id int NOT NULL default 1;
+	    	alter table chica_statistics add CONSTRAINT chica_stat_fk_loc_tag FOREIGN KEY (location_tag_id) REFERENCES location_tag (location_tag_id);
+		
+		alter table chica_statistics add column location_id int NOT NULL default 1;
+	    	alter table chica_statistics add CONSTRAINT chica_stat_fk_loc FOREIGN KEY (location_id) REFERENCES location (location_id);
+		
+		insert into atd_error_category
+select * from chica_error_category;
+
+insert into atd_error(error_id,error_category_id,level,session_id,message,details,date_time)
+select * from chica_error;
+
+drop table chica_error;
+
+drop table chica_error_category;
+
+alter table chica_location_tag_attribute_value add column location_id int NOT NULL default 1;
+alter table chica_location_tag_attribute_value add CONSTRAINT chica_loc_tag_att_fk_loc 
+FOREIGN KEY (location_id) REFERENCES location (location_id);
+
+CREATE TABLE `chica_location_attribute` (
+  `location_attribute_id` int(11) NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) default NULL,
+  PRIMARY KEY  (`location_attribute_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `chica_location_attribute_value` (
+  `location_attribute_value_id` int(11) NOT NULL auto_increment,
+  `location_id` int(11) NOT NULL,
+  `value` varchar(255) NOT NULL,
+  `location_attribute_id` int(11) NOT NULL,
+  PRIMARY KEY  (`location_attribute_value_id`),
+  KEY `location_value_fk_attr` (`location_attribute_id`),
+  KEY `loc_att_fk_loc` (`location_id`),
+  CONSTRAINT `chica_loc_att_fk_loc` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`),
+  CONSTRAINT `location_value_fk_attr` FOREIGN KEY (`location_attribute_id`) REFERENCES `chica_location_attribute` (`location_attribute_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `chica_location_attribute`(name,description)
+ VALUES ('pagerMessage', 'Message sent to support pager for CHICA clinic');
+
+INSERT INTO `chica_location_attribute`(name,description)
+ VALUES ('clinicPhone', 'Contact phone number for the clinic.');
+
+   INSERT INTO atd_form_attribute
+   (`name`, `description`)
+VALUES
+   ('defaultPrinter', 'Default printer for a given printer location.');
+   
+      INSERT INTO atd_form_attribute
+   (`name`, `description`)
+VALUES
+   ('alternatePrinter', 'Alternate printer for a given printer location.');
+   
+      INSERT INTO atd_form_attribute
+   (`name`, `description`)
+VALUES
+   ('useAlternatePrinter', 'Flag used to indicate when alternate printer should be used.');
+
+	update atd_state_action
+set action_class='org.openmrs.module.chica.action.ProduceFormInstance'
+where action_name='PRODUCE FORM INSTANCE';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.ConsumeFormInstance'
+where action_name='CONSUME FORM INSTANCE';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.WaitForPrint'
+where action_name='WAIT FOR PRINT';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.WaitForScan'
+where action_name='WAIT FOR SCAN';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.Rescan'
+where action_name='RESCAN';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.Reprint'
+where action_name='REPRINT';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.Randomize'
+where action_name='RANDOMIZE';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.QueryKite'
+where action_name='QUERY KITE';
+
+update atd_state_action
+set action_class='org.openmrs.module.chica.action.LoadHL7ExportQueue'
+where action_name='LOAD HL7 EXPORT QUEUE';
+
+alter table chica_hl7_export add CONSTRAINT chica_hl7_export_fk_encounter
+		FOREIGN KEY (encounter_id)  REFERENCES encounter (encounter_id);
+		
+		insert into chica_location_tag_attribute(name)
+select name from form where retired=0;
+
+insert into chica_location_tag_attribute_value(location_tag_id,value,location_tag_attribute_id,location_id)
+select location_tag_id,form_id,location_tag_attribute_id,location_id from location_tag_map a, form b, chica_location_tag_attribute c
+where b.retired=0 and b.name='PWS' and c.name='PWS';
+
+insert into chica_location_tag_attribute_value(location_tag_id,value,location_tag_attribute_id,location_id)
+select location_tag_id,form_id,location_tag_attribute_id,location_id from location_tag_map a, form b, chica_location_tag_attribute c
+where b.retired=0 and b.name='PSF' and c.name='PSF';
+
+ALTER TABLE atd_state DROP FOREIGN KEY state_fk_form;
+alter table atd_state drop column form_id;
+
+INSERT INTO scheduler_task_config
+   (`name`, `schedulable_class`, `start_time_pattern`, `repeat_interval`, `start_on_startup`, `started`, `created_by`, `date_created`)
+select 'PccCheckinProcessor', 'org.openmrs.module.chica.hl7.mckesson.CheckinProcessor', 
+'MM/dd/yyyy HH:mm:ss', 86400000, 1, 0, 1,NOW() from 
+(select count(*) as cnt from scheduler_task_config where name='PccCheckinProcessor') a
+where a.cnt=0;
+
+   INSERT INTO scheduler_task_config_property
+   (`name`, `value`, `task_config_id`)
+select a.* from 
+(select 'port', '5001', max(task_config_id) from scheduler_task_config where name='PccCheckinProcessor')a,
+(select count(*) as cnt from scheduler_task_config_property where name='port'
+and task_config_id=(select max(task_config_id) from scheduler_task_config where name='PccCheckinProcessor') )b
+where b.cnt=0;
+	</sql>
+	</diff>	
 </sqldiff>
 
 

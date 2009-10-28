@@ -10,8 +10,8 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
-import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.dss.util.IOUtil;
 
 public class KiteMessageHandler
@@ -72,7 +72,7 @@ public class KiteMessageHandler
 
 	public String getMessage() throws Exception
 	{
-		ChicaService chicaService = Context.getService(ChicaService.class);
+		ATDService atdService = Context.getService(ATDService.class);
 		ByteArrayOutputStream outputString = new ByteArrayOutputStream();
 
 		try
@@ -84,10 +84,10 @@ public class KiteMessageHandler
 		{	
 			outputString.flush();
 			outputString.close();
-			ChicaError error = new ChicaError("Error","Query Kite Connection"
+			ATDError error = new ATDError("Error","Query Kite Connection"
 					, "Message dropped"
 					, "Partial message: "+outputString.toString(), new Date(), null);
-			chicaService.saveError(error);
+			atdService.saveError(error);
 			return null;
 		}
 		return outputString.toString();

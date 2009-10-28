@@ -10,10 +10,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.openmrs.Cohort;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -22,27 +20,24 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.db.ChicaDAO;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Chica1Patient;
 import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.DDST_Milestone;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
-import org.openmrs.module.chica.hibernateBeans.HighBP;
-import org.openmrs.module.chica.hibernateBeans.InsuranceCategory;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.LocationAttribute;
+import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.LocationTagAttribute;
 import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
-import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
+import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
@@ -105,15 +100,17 @@ public class HibernateChicaDAO implements ChicaDAO
 	}
 
 	public List<Statistics> getStatByFormInstance(int formInstanceId,
-			String formName)
+			String formName, Integer locationId)
 	{
 		try
 		{
-			String sql = "select * from chica_statistics where form_instance_id=? and form_name=?";
+			String sql = "select * from chica_statistics where form_instance_id=? and form_name=? "+
+			"and location_id=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setInteger(0, formInstanceId);
 			qry.setString(1, formName);
+			qry.setInteger(2,locationId);
 			qry.addEntity(Statistics.class);
 			return qry.list();
 		} catch (Exception e)
@@ -140,16 +137,18 @@ public class HibernateChicaDAO implements ChicaDAO
 	}
 
 	public List<Statistics> getStatByIdAndRule(int formInstanceId, int ruleId,
-			String formName)
+			String formName, Integer locationId)
 	{
 		try
 		{
-			String sql = "select * from chica_statistics where form_instance_id=? and rule_id=? and form_name=?";
+			String sql = "select * from chica_statistics where form_instance_id=? "+
+			"and rule_id=? and form_name=? and location_id=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setInteger(0, formInstanceId);
 			qry.setInteger(1, ruleId);
 			qry.setString(2, formName);
+			qry.setInteger(3,locationId);
 			qry.addEntity(Statistics.class);
 			return qry.list();
 		} catch (Exception e)
@@ -714,65 +713,6 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public void saveError(ChicaError error)
-	{
-		try
-		{
-			this.sessionFactory.getCurrentSession().save(error);
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-	}
-
-	public Integer getErrorCategoryIdByName(String name)
-	{
-		try
-		{
-			Connection con = this.sessionFactory.getCurrentSession()
-					.connection();
-			String sql = "select error_category_id from chica_error_category where name=?";
-			try
-			{
-				PreparedStatement stmt = con.prepareStatement(sql);
-				stmt.setString(1, name);
-				ResultSet rs = stmt.executeQuery();
-				if (rs.next())
-				{
-					return rs.getInt(1);
-				}
-
-			} catch (Exception e)
-			{
-
-			}
-			return null;
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
-
-	public List<ChicaError> getChicaErrorsByLevel(String errorLevel,
-			Integer sessionId)
-	{
-		try
-		{
-			String sql = "select * from chica_error where level=? and session_id=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setString(0, errorLevel);
-			qry.setInteger(1, sessionId);
-			qry.addEntity(ChicaError.class);
-			return qry.list();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
-
 	public Integer getHighBP(Integer ageInYears, String sex,
 			Integer bpPercentile, String bpType, Integer heightPercentile)
 	{
@@ -860,7 +800,6 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	
 	public void insertEncounterToHL7ExportQueue(ChicaHL7Export export){
 		sessionFactory.getCurrentSession().saveOrUpdate(export);
 		
@@ -894,18 +833,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return exports;
 	}
 	
-	public List<String> getPrinterStations(){
-		Query qry = this.sessionFactory.getCurrentSession()
-			.createSQLQuery("select distinct name from atd_form_attribute where form_attribute_id in "
-					+ " (select form_attribute_id from atd_form_attribute_value where form_id in "
-					+ " (select form_id from form where name='PSF' and retired=0))"
-					+ "and name like 'defaultPrinter%'");
-		List<String> list =  qry.list();
-		
-		return list;
-	}
-	
-	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction){
+	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, 
+			Integer locationTagId,Integer locationId){
 		
 		try
 		{
@@ -921,17 +850,19 @@ public class HibernateChicaDAO implements ChicaDAO
 						"select state_id from atd_state where state_action_id in ("+
 						"select state_action_id from atd_state_action where action_name in ('RESCAN','REPRINT')) "+
 						") "+
-						"and encounter_id=? and retired=? "+dateRestriction;
+						"and encounter_id=? and retired=? and location_tag_id=? and location_id=? "+dateRestriction;
 			
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			
 			qry.setInteger(0, encounterId);
 			qry.setBoolean(1, false);
+			qry.setInteger(2, locationTagId);
+			qry.setInteger(3, locationId);
 			
 			if (optionalDateRestriction != null)
 			{
-				qry.setDate(2, optionalDateRestriction);
+				qry.setDate(4, optionalDateRestriction);
 			}
 			
 			qry.addEntity(PatientState.class);
@@ -941,33 +872,6 @@ public class HibernateChicaDAO implements ChicaDAO
 			log.error(Util.getStackTrace(e));
 		}
 		return null;
-	}
-	
-	public ArrayList<String> getImagesDirectory(String location){
-		
-		try
-		{
-			String sql = "select distinct value from atd_form_attribute_value where form_attribute_id in "
-					+ "(select form_attribute_id from atd_form_attribute where name='imageDirectory')" 
-					+ " && value like ?" ;
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setString(0, "%" + location + "%");
-			List<String> list = qry.list();
-
-			ArrayList<String> imagesDirectories = new ArrayList<String>();
-			for (String currResult : list)
-			{
-				imagesDirectories.add(currResult);
-			}
-
-			return imagesDirectories;
-		} catch (Exception e)
-		{
-			log.error(Util.getStackTrace(e));
-		}
-		return null;
-		
 	}
 	
 	public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId){
@@ -987,7 +891,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		return appt;
 	}
 	public LocationTagAttributeValue getLocationTagAttributeValue(Integer locationTagId,
-			String locationTagAttributeName)
+			String locationTagAttributeName,Integer locationId)
 	{
 		try
 		{
@@ -998,12 +902,13 @@ public class HibernateChicaDAO implements ChicaDAO
 			{
 				Integer locationTagAttributeId = locationTagAttribute.getLocationTagAttributeId();
 
-				String sql = "select * from chica_location_tag_attribute_value where location_tag_id=? and location_tag_attribute_id=?";
+				String sql = "select * from chica_location_tag_attribute_value where location_tag_id=? and location_id=? and location_tag_attribute_id=?";
 				SQLQuery qry = this.sessionFactory.getCurrentSession()
 						.createSQLQuery(sql);
 
 				qry.setInteger(0, locationTagId);
-				qry.setInteger(1, locationTagAttributeId);
+				qry.setInteger(1, locationId);
+				qry.setInteger(2, locationTagAttributeId);
 				qry.addEntity(LocationTagAttributeValue.class);
 
 				List<LocationTagAttributeValue> list = qry.list();
@@ -1032,6 +937,64 @@ public class HibernateChicaDAO implements ChicaDAO
 			qry.addEntity(LocationTagAttribute.class);
 
 			List<LocationTagAttribute> list = qry.list();
+
+			if (list != null && list.size() > 0)
+			{
+				return list.get(0);
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public LocationAttributeValue getLocationAttributeValue(Integer locationId,
+			String locationAttributeName)
+	{
+		try
+		{
+			LocationAttribute locationAttribute = this
+					.getLocationAttributeByName(locationAttributeName);
+
+			if (locationAttribute != null)
+			{
+				Integer locationAttributeId = locationAttribute.getLocationAttributeId();
+
+				String sql = "select * from chica_location_attribute_value where location_id=? and location_attribute_id=?";
+				SQLQuery qry = this.sessionFactory.getCurrentSession()
+						.createSQLQuery(sql);
+
+				qry.setInteger(0, locationId);
+				qry.setInteger(1, locationAttributeId);
+				qry.addEntity(LocationAttributeValue.class);
+
+				List<LocationAttributeValue> list = qry.list();
+
+				if (list != null && list.size() > 0)
+				{
+					return list.get(0);
+				}
+
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private LocationAttribute getLocationAttributeByName(String locationAttributeName)
+	{
+		try
+		{
+			String sql = "select * from chica_location_attribute " + "where name=?";
+			SQLQuery qry = this.sessionFactory.getCurrentSession()
+					.createSQLQuery(sql);
+			qry.setString(0, locationAttributeName);
+			qry.addEntity(LocationAttribute.class);
+
+			List<LocationAttribute> list = qry.list();
 
 			if (list != null && list.size() > 0)
 			{

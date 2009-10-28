@@ -5,11 +5,14 @@ package org.openmrs.module.chica.advice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -17,6 +20,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.StateManager;
+import org.openmrs.module.atd.hibernateBeans.Program;
 import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.ChicaStateActionHandler;
@@ -64,16 +68,38 @@ public class CheckinPatient implements Runnable
 			Integer encounterId = this.encounter.getEncounterId();
 			
 			//The session is unique because only 1 session exists at checkin
-			Session session = atdService.getSessionByEncounter(encounterId);
+			List<Session> sessions = atdService.getSessionsByEncounter(encounterId);
+			Session session = sessions.get(0);
 			
 			Integer sessionId = session.getSessionId();
-			saveInsuranceInfo(encounterId, patient);
-			if (StateManager.getStateActionHandler() == null)
+			
+			Integer locationTagId = null;
+			Integer locationId = null;
+			
+			// lookup location tag id by printer location
+			org.openmrs.module.chica.service.EncounterService encounterService = Context
+					.getService(org.openmrs.module.chica.service.EncounterService.class);
+			org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = (Encounter) encounterService
+					.getEncounter(this.encounter.getEncounterId());
+			String printerLocation = chicaEncounter.getPrinterLocation();
+			if (printerLocation != null)
 			{
-				StateManager.setStateActionHandler(ChicaStateActionHandler.getInstance());
+				Location location = this.encounter.getLocation();
+				Set<LocationTag> tags = location.getTags();
+				for(LocationTag tag:tags){
+					if(printerLocation.equalsIgnoreCase(tag.getTag())){
+						locationTagId = tag.getLocationTagId();
+						locationId = location.getLocationId();
+						break;
+					}
+				}
 			}
+		
+			saveInsuranceInfo(encounterId, patient,locationTagId);
+			Program program = atdService.getProgram(locationTagId,locationId);
 			StateManager.changeState(patient, sessionId, null,
-					ChicaStateActionHandler.getInstance().getProgram(),null);
+					program,null,
+					locationTagId,locationId,ChicaStateActionHandler.getInstance());
 		} catch (Exception e)
 		{
 			this.log.error(e.getMessage());
@@ -83,7 +109,7 @@ public class CheckinPatient implements Runnable
 		}
 	}
 
-	private void saveInsuranceInfo(Integer encounterId, Patient patient)
+	private void saveInsuranceInfo(Integer encounterId, Patient patient,Integer locationTagId)
 	{
 		ChicaService chicaService = Context
 				.getService(ChicaService.class);
@@ -137,7 +163,7 @@ public class CheckinPatient implements Runnable
 			if (category != null)
 			{
 				Util.saveObs(patient, concept, encounterId, category, null,
-						null,null);
+						null,locationTagId);
 			}
 		}
 	}

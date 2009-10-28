@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<comment>Hl7</comment>
+	<comment>Hl7 PCC</comment>
 	<entry key="image_dir"></entry>
 	<entry key="OBX_size">500000</entry>
 	<entry key="ADD_size">30000</entry>
 	<entry key="acknowledgement_type">NE</entry> 
 	<entry key="app_acknowledgement_type">NE</entry> 
 	<entry key="our_facility">WMH</entry>
-	<entry key="point_of_care">PECAR PEDS</entry>
+	<entry key="point_of_care">PEDS</entry>
 	<entry key="our_app">CHICA</entry>
     <entry key="receiving_app"></entry>
     <entry key="receiving_facility"></entry>
@@ -17,7 +17,7 @@
 	<entry key="version">2.5</entry>
 	<entry key="message_type">ORU</entry>
 	<entry key="event_type_code">R01</entry>
-	<entry key="msh_processing_id">T</entry>
+	<entry key="msh_processing_id">P</entry>
 	<entry key="identifier_type">MRN</entry>
 	<entry key="uid"></entry>
 	<entry key="check_digit_algorithm">M10</entry>
@@ -28,10 +28,9 @@
     <entry key="OBX_universal_id"></entry>
 	<entry key="coding_system">L</entry>
     <entry key="encoding"></entry>
-	<entry key="check_for_duplicates">true</entry>
 	<entry key="result_status">F</entry>
 	<entry key="specimen_action_code">F</entry>
-	<entry key="obs_location">PECAR PEDS</entry>
+	<entry key="obs_location">PEDS</entry>
 	<entry key="pid_2_required">false</entry>
 	<entry key="use_vitals_battery_only">true</entry>
 	<entry key="vitals_battery_name">PEDS CL DATA</entry>

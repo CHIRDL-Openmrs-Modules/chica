@@ -1,6 +1,5 @@
 package org.openmrs.module.chica.test;
 
-import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,15 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.openmrs.Patient;
-import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
-import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.service.ATDService;
-
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -60,7 +56,7 @@ public class TestXMLDatasource extends BaseModuleContextSensitiveTest
 				.getLogicDataSource("xml");
 
 		FormInstance formInstance = datasource.parse(input,
-				null, null);
+				null,null);
 		ArrayList<Rule> ruleList = new ArrayList<Rule>();
 		Rule rule = new Rule();
 		rule.setTokenName("testingXMLDatasource");

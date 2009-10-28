@@ -91,13 +91,11 @@ public class DDST implements Rule
 		{
 			formInstance = (FormInstance) parameters.get("formInstance");
 			String category = (String) parameters.get("param1");
-			Integer formInstanceId = formInstance.getFormInstanceId();
 			Integer formId = formInstance.getFormId();
 			ATDService atdService = Context.getService(ATDService.class);
 			String action = "PRODUCE FORM INSTANCE";
 			PatientState patientState = atdService
-					.getPatientStateByFormInstanceAction(formId,
-							formInstanceId, action);
+					.getPatientStateByFormInstanceAction(formInstance, action);
 
 			if (patientState != null)
 			{

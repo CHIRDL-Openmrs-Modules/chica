@@ -88,9 +88,17 @@ public class CREATE_JIT implements Rule
 		Form form = formService.getForms(formName,null,null,false,null,null,null).get(0);
 		Integer formId = form.getFormId();
 		Integer sessionId = (Integer) parameters.get("sessionId");
+		Integer locationTagId = (Integer) parameters.get("locationTagId"); 
+		FormInstance formInstance = (FormInstance) parameters.get("formInstance");
+		//we don't know the formInstanceId yet because the JIT hasn't been created
+		formInstance = new FormInstance(formInstance.getLocationId(),formId,null);
+
+		Integer locationId = formInstance.getLocationId();
 		if(sessionId != null){
 			State currState = atdService.getStateByName("JIT");
-			PatientState patientState = atdService.addPatientState(patient, currState, sessionId, formId);
+			PatientState patientState = atdService.addPatientState(patient, currState, sessionId, locationTagId,locationId);
+			patientState.setFormInstance(formInstance);
+			atdService.updatePatientState(patientState);
 		}	
 		return Result.emptyResult();
 	}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>Hl7 Pecar</comment>
+	<entry key="image_dir"></entry>
+	<entry key="OBX_size">500000</entry>
+	<entry key="ADD_size">30000</entry>
+	<entry key="acknowledgement_type">NE</entry> 
+	<entry key="app_acknowledgement_type">NE</entry> 
+	<entry key="our_facility">WMH</entry>
+	<entry key="point_of_care">PECAR PEDS</entry>
+	<entry key="our_app">CHICA</entry>
+    <entry key="receiving_app"></entry>
+    <entry key="receiving_facility"></entry>
+	<entry key="univ_serv_id">22391</entry>
+	<entry key="univ_serv_id_name">MEDICAL RECORD FILE OBSERVATIONS</entry>
+	<entry key="version">2.5</entry>
+	<entry key="message_type">ORU</entry>
+	<entry key="event_type_code">R01</entry>
+	<entry key="msh_processing_id">P</entry>
+	<entry key="identifier_type">MRN</entry>
+	<entry key="uid"></entry>
+	<entry key="check_digit_algorithm">M10</entry>
+	<entry key="assigning_authority">WISHARD</entry>
+	<entry key="patient_class">O</entry>  
+    <entry key="OBX_data_type"></entry>
+    <entry key="OBX_sub_data_type"></entry>
+    <entry key="OBX_universal_id"></entry>
+	<entry key="coding_system">L</entry>
+    <entry key="encoding"></entry>
+	<entry key="result_status">F</entry>
+	<entry key="specimen_action_code">F</entry>
+	<entry key="obs_location">PECAR PEDS</entry>
+	<entry key="pid_2_required">false</entry>
+	<entry key="use_vitals_battery_only">true</entry>
+	<entry key="vitals_battery_name">PEDS CL DATA</entry>
+	<entry key="vitals_battery_id">8995</entry>
+	<entry key="general_battery_name">MEDICAL RECORD FILE OBSERVATIONS</entry>
+	<entry key="general_battery_id">22391</entry>
+	<entry key="use_vitals_battery_only">true</entry>
+	<entry key="socket_read_timeout">5</entry>
+	<entry key="ATTRIBUTE_NEXT_OF_KIN">Mother's Name</entry>
+	<entry key="ATTRIBUTE_TELEPHONE">Telephone Number</entry>
+	<entry key="ATTRIBUTE_RACE">Race</entry>
+	<entry key="ATTRIBUTE_BIRTHPLACE">Birthplace</entry>
+	<entry key="PROVIDER_ID">Provider ID</entry>
+	<entry key="PROVIDER_NAME">Provider Name</entry>
+	<entry key="CITIZENSHIP">Citizenship</entry>
+	<entry key="MATCH_INFO">Other Matching Information</entry>
+	<entry key="PATIENT_IDENT_TYPE">MRN</entry>
+	
+			
+
+	
+</properties>	
+	

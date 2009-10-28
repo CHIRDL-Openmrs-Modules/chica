@@ -11,11 +11,11 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 
@@ -45,9 +45,7 @@ public class ChicaParameterHandler implements ParameterHandler
 
 		TeleformExportXMLDatasource xmlDatasource = (TeleformExportXMLDatasource) logicService
 				.getLogicDataSource("xml");
-		Integer formInstanceId = formInstance.getFormInstanceId();
-		Integer formId = formInstance.getFormId();
-		HashMap<String,Field> fieldMap = xmlDatasource.getParsedFile(formInstanceId, formId);
+		HashMap<String,Field> fieldMap = xmlDatasource.getParsedFile(formInstance);
 
 		if (ruleType.equalsIgnoreCase("PSF"))
 		{
@@ -151,16 +149,13 @@ public class ChicaParameterHandler implements ParameterHandler
 				}
 				if (numBoxes == 6){
 					
-					ChicaError chicaError = new ChicaError("Error", "PWS Scan"
+					ATDError atdError = new ATDError("Error", "PWS Scan"
 							, "All six PWS boxes were checked - possible scan error. "
 							,null, new Date(), null);
 					//Get the session id
-					Integer encounterId = (Integer) parameters.get("encounterId");
-					Session session = atdService.getSessionByEncounter(encounterId);
-					if (session != null) {
-						chicaError.setSessionId(session.getSessionId());
-					}
-					chicaService.saveError(chicaError);
+					Integer sessionId = (Integer) parameters.get("sessionId");
+					atdError.setSessionId(sessionId);
+					atdService.saveError(atdError);
 					
 				}
 			}

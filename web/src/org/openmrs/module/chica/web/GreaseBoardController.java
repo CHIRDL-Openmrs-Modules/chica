@@ -3,10 +3,13 @@ package org.openmrs.module.chica.web;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,16 +18,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.StateManager;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
+import org.openmrs.module.atd.hibernateBeans.Program;
 import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.service.ATDService;
@@ -158,12 +165,14 @@ public class GreaseBoardController extends SimpleFormController
 
 				if (currState != null)
 				{
+					PatientState patientState = atdService.getLastPatientState(sessionId);
 					PatientService patientService = Context.getPatientService();
 					Patient patient = patientService.getPatient(patientId);
 
-					StateManager.setStateActionHandler(ChicaStateActionHandler
-							.getInstance());
-					StateManager.runState(patient, sessionId, currState,null);
+					StateManager.runState(patient, sessionId, currState,null,
+							patientState.getLocationTagId(),
+							patientState.getLocationId(),
+							ChicaStateActionHandler.getInstance());
 				}
 			}
 			
@@ -185,7 +194,7 @@ public class GreaseBoardController extends SimpleFormController
 		Map<String, Object> map = new HashMap<String, Object>();
 		Integer needVitals = 0;
 		Integer waitingForMD = 0;
-		
+		User user = Context.getUserContext().getAuthenticatedUser();
 		
 		try
 		{
@@ -201,11 +210,51 @@ public class GreaseBoardController extends SimpleFormController
 			todaysDate.set(Calendar.HOUR_OF_DAY, 0);
 			todaysDate.set(Calendar.MINUTE, 0);
 			todaysDate.set(Calendar.SECOND, 0);
-			Integer programId = ChicaStateActionHandler.getInstance().getProgram().getProgramId();
-			List<PatientState> unfinishedStates = atdService
-					.getLastPatientStateAllPatients(todaysDate.getTime(),programId);
 			
-			List<PatientRow> rows = new ArrayList<PatientRow>();
+			String locationTags = user.getUserProperty("locationTags");
+			String locationString = user.getUserProperty("location");
+			ArrayList<Integer> locationTagIds = new ArrayList<Integer>();
+			LocationService locationService = Context.getLocationService();
+			
+			Integer locationId = null;
+			Location location = null;
+			if(locationString != null){
+				location = locationService.getLocation(locationString);
+				if(location != null){
+					locationId = location.getLocationId();
+				}
+			}
+			
+			if(locationTags != null&location!=null){
+				StringTokenizer tokenizer = new StringTokenizer(locationTags,",");
+				while(tokenizer.hasMoreTokens()){
+					String locationTagName = tokenizer.nextToken();
+					locationTagName = locationTagName.trim();
+					Set<LocationTag> tags = location.getTags();
+					for(LocationTag tag:tags){
+						if(tag.getTag().equalsIgnoreCase(locationTagName)){
+							locationTagIds.add(tag.getLocationTagId());
+						}
+					}
+				}
+				
+			}
+			
+			List<PatientState> unfinishedStates = new ArrayList<PatientState>();
+
+			for (Integer locationTagId : locationTagIds)
+			{
+				Program program = atdService.getProgram(locationTagId,locationId);
+				List<PatientState> currUnfinishedStates = atdService
+					.getLastPatientStateAllPatients(todaysDate.getTime(),
+						program.getProgramId(),program.getStartState().getName(), 
+						locationTagId,locationId);
+				if(currUnfinishedStates != null){
+					unfinishedStates.addAll(currUnfinishedStates);
+				}
+			}
+			
+			ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
 			
 			for (PatientState currState : unfinishedStates)
 			{
@@ -242,10 +291,12 @@ public class GreaseBoardController extends SimpleFormController
 				String appointment = atdService.evaluateRule("scheduledTime>fullTimeFormat", 
 						patient, parameters, null).toString();
 				PatientRow row = new PatientRow();
-
+				Date encounterDate  = null;
+				
 				if (encounter != null)
 				{
-					Date encounterDate = encounter.getEncounterDatetime();
+					row.setEncounter(encounter);
+					encounterDate = encounter.getEncounterDatetime();
 					if (encounterDate != null && !Util.isToday(encounterDate)) {
 							continue;
 					}
@@ -303,12 +354,20 @@ public class GreaseBoardController extends SimpleFormController
 					row.setMdName(mdName);
 
 				}
-				List<PatientState> reprintRescanStates = chicaService
-						.getReprintRescanStatesByEncounter(encounterId, todaysDate
-								.getTime());
+				
+				List<PatientState> reprintRescanStates = new ArrayList<PatientState>();
+
+				for (Integer locationTagId : locationTagIds)
+				{
+					List<PatientState> currReprintRescanStates = chicaService
+					.getReprintRescanStatesByEncounter(encounterId,
+							todaysDate.getTime(), locationTagId,locationId);
+					if(currReprintRescanStates != null){
+						reprintRescanStates.addAll(currReprintRescanStates);
+					}
+				}
 				boolean reprint = false;
-				if (reprintRescanStates != null
-						&& reprintRescanStates.size() > 0)
+				if (reprintRescanStates.size() > 0)
 				{
 					reprint = true;
 				}
@@ -332,9 +391,10 @@ public class GreaseBoardController extends SimpleFormController
 				getStatus(state, row, sessionId,currState);
 				
 				rows.add(row);
-
 			}
 			
+			//sort arraylist by encounterDatetime
+			Collections.sort(rows, new PatientRowComparator());
 			
 			map.put("needVitals", needVitals);
 			map.put("waitingForMD", waitingForMD);
@@ -453,13 +513,13 @@ public class GreaseBoardController extends SimpleFormController
 		{
 			row.setStatusColor(PROCESSING_COLOR);
 			PatientState prevState = chicaService.getPrevProducePatientState(sessionId, currState.getPatientStateId());
-			if (prevState != null)
+			if (prevState != null&&prevState.getFormInstance()!=null)
 			{
 				FormService formService = Context.getFormService();
 				String formName = "";
-				if(prevState.getFormId() != null)
+				if(prevState.getFormInstance().getFormId() != null)
 				{
-					Form form = formService.getForm(prevState.getFormId());
+					Form form = formService.getForm(prevState.getFormInstance().getFormId());
 					if(form != null){
 						formName = form.getName();
 					}

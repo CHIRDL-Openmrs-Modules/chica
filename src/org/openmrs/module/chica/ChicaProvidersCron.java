@@ -78,7 +78,7 @@ public class ChicaProvidersCron extends AbstractTask
 			lastRunDate = GregorianCalendar.getInstance().getTime();
 			
 			Calendar threshold = GregorianCalendar.getInstance();
-			threshold.add(GregorianCalendar.DAY_OF_MONTH, retireProvidersPriorToDays);   
+			threshold.add(Calendar.DAY_OF_MONTH, retireProvidersPriorToDays);   
 			thresholdDate = threshold.getTime();
 			
 			//List<Encounter> encounters = encounterService.getEncounters(null, null, thresholdDate, lastRunDate, null, null, false);

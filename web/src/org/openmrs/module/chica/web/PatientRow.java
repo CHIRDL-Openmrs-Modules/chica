@@ -3,6 +3,9 @@
  */
 package org.openmrs.module.chica.web;
 
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
+
 /**
  * @author tmdugan
  *
@@ -22,25 +25,22 @@ public class PatientRow
 	private Integer patientId = null;
 	private Integer sessionId = null;
 	private String rowColor = null;
-	private Integer psfId	= null;
-	private Integer pwsId = null;
-	private Integer jitID = null;
+	private FormInstance psfId	= null;
+	private FormInstance pwsId = null;
+	private FormInstance jitID = null;
 	private String ageAtVisit = null;
 	private String station = null;
 	private String weightPercentile = null;
 	private String heightPercentile = null;
-	private Integer encounterId = null;
-	/**
-	 * @return the encounterId
-	 */
-	public Integer getEncounterId() {
-		return encounterId;
+	private Encounter encounter = null;
+	
+	public Encounter getEncounter()
+	{
+		return this.encounter;
 	}
-	/**
-	 * @param encounterId the encounterId to set
-	 */
-	public void setEncounterId(Integer encounterId) {
-		this.encounterId = encounterId;
+	public void setEncounter(Encounter encounter)
+	{
+		this.encounter = encounter;
 	}
 	/**
 	 * @return the heightPercentile
@@ -90,19 +90,7 @@ public class PatientRow
 	public void setAgeAtVisit(String ageAtVisit) {
 		this.ageAtVisit = ageAtVisit;
 	}
-	/**
-	 * @return the jitID
-	 */
-	public Integer getJitID() {
-		return jitID;
-	}
-	/**
-	 * @param jitID the jitID to set
-	 */
-	public void setJitID(Integer jitID) {
-		this.jitID = jitID;
-	}
-
+	
 	private boolean reprintStatus = false;
 	
 	
@@ -223,20 +211,28 @@ public class PatientRow
 	public void setRowColor(String rowColor) {
 		this.rowColor = rowColor;
 	}
-	
-	public Integer getPsfId() {
-		return psfId;
+	public FormInstance getPsfId()
+	{
+		return this.psfId;
 	}
-	
-	public void setPsfId(Integer psfId) {
+	public void setPsfId(FormInstance psfId)
+	{
 		this.psfId = psfId;
 	}
-	public Integer getPwsId() {
-		return pwsId;
+	public FormInstance getPwsId()
+	{
+		return this.pwsId;
 	}
-	
-	public void setPwsId(Integer pwsId) {
+	public void setPwsId(FormInstance pwsId)
+	{
 		this.pwsId = pwsId;
 	}
-
+	public FormInstance getJitID()
+	{
+		return this.jitID;
+	}
+	public void setJitID(FormInstance jitID)
+	{
+		this.jitID = jitID;
+	}
 }

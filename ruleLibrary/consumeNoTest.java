@@ -70,6 +70,7 @@ public class consumeNoTest implements Rule
 		String conceptName  = null;
 		Integer encounterId = null;
 		Integer ruleId = null;
+		Integer locationTagId = null;
 
 		if (parameters != null)
 		{
@@ -83,6 +84,7 @@ public class consumeNoTest implements Rule
 			}
 			
 			encounterId = (Integer) parameters.get("encounterId");
+			locationTagId = (Integer) parameters.get("locationTagId");
 			ruleId = (Integer) parameters.get("ruleId");
 		}
 
@@ -116,8 +118,7 @@ public class consumeNoTest implements Rule
 			
 			if(answer != null){
 				Util.saveObs(patient, conceptService.getConceptByName(conceptName),
-						encounterId, answer,formInstance.getFormInstanceId(),ruleId,
-						formInstance.getFormId());
+						encounterId, answer,formInstance,ruleId,locationTagId);
 			}
 		}
 		

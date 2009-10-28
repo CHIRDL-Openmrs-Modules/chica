@@ -2,7 +2,6 @@ package org.openmrs.module.chica.web;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +24,10 @@ import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.Session;
-import org.openmrs.module.atd.hibernateBeans.State;
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -97,8 +95,12 @@ public class ViewEncounterController extends SimpleFormController {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("encounterId", encounterId);
 				map.put("sessionId", sessionId);
-				map.put("psfId", request.getParameter("psfId"));
-				map.put("pwsId", request.getParameter("pwsId"));
+				map.put("psfFormInstanceId", request.getParameter("psfFormInstanceId"));
+				map.put("pwsFormInstanceId", request.getParameter("pwsFormInstanceId"));
+				map.put("psfFormId", request.getParameter("psfFormId"));
+				map.put("pwsFormId", request.getParameter("pwsFormId"));
+				map.put("psfLocationId", request.getParameter("psfLocationId"));
+				map.put("pwsLocationId", request.getParameter("pwsLocationId"));
 				map.put("patientId", patientIdString);
 				return new ModelAndView(new RedirectView("displayTiff.form"),
 						map);
@@ -111,15 +113,11 @@ public class ViewEncounterController extends SimpleFormController {
 
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception {
-		AdministrationService adminService = Context.getAdministrationService();
 		ATDService atdService = Context.getService(ATDService.class);
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		FormService formService = Context.getFormService();
 		PatientService patientService = Context
 				.getService(PatientService.class);
 		Map<String, Object> map = new HashMap<String, Object>();
-		Integer needVitals = 0;
-		Integer waitingForMD = 0;
 
 		try {
 
@@ -146,7 +144,7 @@ public class ViewEncounterController extends SimpleFormController {
 			map.put("titleDOB", dobString);
 
 			// encounter rows
-			EncounterService encounterService = (EncounterService) Context
+			EncounterService encounterService = Context
 					.getService(EncounterService.class);
 			List<org.openmrs.Encounter> list = encounterService
 					.getEncountersByPatientId(Integer.valueOf(pidparam));
@@ -201,43 +199,62 @@ public class ViewEncounterController extends SimpleFormController {
 				row.setMdName(providerName);
 				row.setAppointment(apptDateString);
 				row.setCheckin(checkinDateString);
-				row.setEncounterId(encounterId);
+				row.setEncounter(enct);
 				row.setStation(station);
 				row.setAgeAtVisit(org.openmrs.module.chica.util.Util
 						.adjustAgeUnits(dob, checkin));
 
 				// psf, pws form ids
-				String locationName = getLocationNameByEncounter(encounterId);
-
-				// chica1 tiffs
-				if (locationName != null && locationName.equals("PEDIATRICS")) {
-					Chica1Appointment Chica1Appt = chicaService
-							.getChica1AppointmentByEncounterId(encounterId);
-					if (Chica1Appt != null) {
-						Integer psfId = Chica1Appt.getApptPsfId();
-						Integer pwsId = Chica1Appt.getApptPwsId();
-						row.setPsfId(psfId);
-						row.setPwsId(pwsId);
+				
+				
+				List<FormInstance> psfForms = atdService.getFormInstancesByEncounterId("PSF", encounterId);
+				if (psfForms != null && !psfForms.isEmpty()){
+					row.setPsfId(psfForms.get(0));
+				}
+				
+				List<FormInstance> pwsForms= atdService.getFormInstancesByEncounterId("PWS", encounterId);
+				if (pwsForms != null && !pwsForms.isEmpty()){
+					row.setPwsId(pwsForms.get(0));
+				}
+				
+				Chica1Appointment chica1Appt = chicaService
+					.getChica1AppointmentByEncounterId(encounterId);
+				
+				if (chica1Appt != null)
+				{
+					Integer psfId = chica1Appt.getApptPsfId();
+					Integer pwsId = chica1Appt.getApptPwsId();
+					Integer locationId = enct.getLocation().getLocationId();
+					
+					FormService formService = Context.getFormService();
+					
+					if(psfId != null){
+						Form form = formService.getForms("PSF",null,null,false,null,null,null).get(0);
+						Integer formId = null;
+						if (form != null)
+						{
+							formId = form.getFormId();
+						}
+						FormInstance psfFormInstance = new FormInstance();
+						psfFormInstance.setFormInstanceId(psfId);
+						psfFormInstance.setFormId(formId);
+						psfFormInstance.setLocationId(locationId);
+						row.setPsfId(psfFormInstance);
 					}
-
-				} else {
-					// chica2 tiffs
 					
-					List<Integer> psfForms = atdService.getFormInstancesByEncounterId("PSF", encounterId);
-					Integer latestPsfForm = null;
-					if (psfForms != null && !psfForms.isEmpty()){
-						latestPsfForm = psfForms.get(0);
+					if(pwsId != null){
+						Form form = formService.getForms("PWS",null,null,false,null,null,null).get(0);
+						Integer formId = null;
+						if (form != null)
+						{
+							formId = form.getFormId();
+						}
+						FormInstance pwsFormInstance = new FormInstance();
+						pwsFormInstance.setFormInstanceId(pwsId);
+						pwsFormInstance.setFormId(formId);
+						pwsFormInstance.setLocationId(locationId);
+						row.setPwsId(pwsFormInstance);
 					}
-					
-					List<Integer> pwsForms= atdService.getFormInstancesByEncounterId("PWS", encounterId);
-					Integer latestPwsForm = null;
-					if (pwsForms != null && !pwsForms.isEmpty()){
-						latestPwsForm = pwsForms.get(0);
-					}
-					
-					row.setPsfId(latestPsfForm);
-					row.setPwsId(latestPwsForm);
-					
 				}
 
 				// From the encounter, get the obs for weight percentile
@@ -252,8 +269,6 @@ public class ViewEncounterController extends SimpleFormController {
 
 			}
 
-			map.put("needVitals", needVitals);
-			map.put("waitingForMD", waitingForMD);
 			map.put("patientRows", rows);
 
 		} catch (UnexpectedRollbackException ex) {
@@ -325,24 +340,6 @@ public class ViewEncounterController extends SimpleFormController {
 				}
 			}
 		}
-		return name;
-	}
-
-	private String getLocationNameByEncounter(Integer encId) {
-
-		EncounterService encService = Context
-				.getService(EncounterService.class);
-		Encounter enc = (Encounter) encService.getEncounter(encId);
-		String name = null;
-
-		if (enc != null) {
-			Location loc = enc.getLocation();
-			if (loc != null) {
-				name = loc.getName();
-
-			}
-		}
-
 		return name;
 	}
 

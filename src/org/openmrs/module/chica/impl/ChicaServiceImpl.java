@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +19,8 @@ import org.openmrs.Concept;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
@@ -28,11 +33,10 @@ import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.TeleformTranslator;
 import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientATD;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.Session;
-import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.Percentile;
@@ -41,12 +45,12 @@ import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Chica1Patient;
 import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
@@ -104,9 +108,10 @@ public class ChicaServiceImpl implements ChicaService
 	 * @should testPWSConsume
 	 */
 	public void consume(InputStream input, Patient patient,
-			Integer encounterId,Integer formId,
-			Integer formInstanceId,Integer sessionId,
-			List<FormField> fieldsToConsume)
+			Integer encounterId,FormInstance formInstance,
+			Integer sessionId,
+			List<FormField> fieldsToConsume,
+			Integer locationTagId)
 	{
 		try
 		{
@@ -122,72 +127,40 @@ public class ChicaServiceImpl implements ChicaService
 					.getIdentifier();
 			String xmlMedRecNumber = null;
 			String xmlMedRecNumber2 = null;
-			String formInstanceIdValue2 = null;
-			String formInstanceIdValue = null;
 			LogicService logicService = Context.getLogicService();
 
 			TeleformExportXMLDatasource xmlDatasource = (TeleformExportXMLDatasource) logicService
 					.getLogicDataSource("xml");
 			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = xmlDatasource
-					.getParsedFile(formInstanceId, formId);
+					.getParsedFile(formInstance);
+
+			Integer formInstanceId = formInstance.getFormInstanceId();
 
 			if (fieldMap == null)
 			{
 				try
 				{
-					FormInstance formInstance = xmlDatasource.parse(input,
-							formInstanceId, formId);
-					formInstanceId = formInstance.getFormInstanceId();
-					formId = formInstance.getFormId();
-					fieldMap = xmlDatasource.getParsedFile(formInstanceId, formId);
+					formInstance = xmlDatasource.parse(input,
+							formInstance,locationTagId);
+					fieldMap = xmlDatasource.getParsedFile(formInstance);
 
 				} catch (Exception e1)
 				{
-					ChicaError chicaError = new ChicaError("Error","XML Parsing", 
+					ATDError atdError = new ATDError("Error","XML Parsing", 
 							" Error parsing XML file to be consumed. Form Instance Id = " + formInstanceId
 							, Util.getStackTrace(e1), new Date(),sessionId);
-					this.saveError(chicaError);
+					atdService.saveError(atdError);
 					return;
 				}
 			}
 
-			String formInstanceIdTag  = org.openmrs.module.atd.util.Util
-				.getFormAttributeValue(formId, "formInstanceIdTag");
-			String formInstanceIdTag2  = org.openmrs.module.atd.util.Util
-				.getFormAttributeValue(formId, "formInstanceIdTag2");
-			
-			if (formInstanceIdTag2!=null&&fieldMap.get(formInstanceIdTag2)!= null){
-				formInstanceIdValue2 = fieldMap.get(formInstanceIdTag2).getValue();
-			}
-			if (formInstanceIdTag != null && fieldMap.get(formInstanceIdTag)!= null){
-				formInstanceIdValue = fieldMap.get(formInstanceIdTag).getValue();
-			}
-			if ((formInstanceIdValue == null || formInstanceIdValue.equals("") )
-					&& ( formInstanceIdValue2 == null || formInstanceIdValue2.equals(""))){
-				ChicaError error = new ChicaError("Fatal", "Form Instance ID Validity", 
-						"Form instance id bar codes are null or empty on front and back of form"
-						,formInstanceIdTag + " : " + formInstanceIdValue  
-						+ "\r\n " + formInstanceIdTag2 + " : " + formInstanceIdValue2 
-						, new Date(), sessionId);
-				this.saveError(error);
-				return;
-			}
-			if (! formInstanceIdValue.equalsIgnoreCase(formInstanceIdValue2)){
-				ChicaError error = new ChicaError("Warning", "Form Instance ID Validity", 
-						"Form instance id bar codes on front and back of form do not match."
-						,formInstanceIdTag + " : " + formInstanceIdValue 
-						+ "\r\n " + formInstanceIdTag2 + " : " + formInstanceIdValue2 
-						+ "\r\n " + "formId: " + formId 
-						+ "\r\n Patient MRN: " + patientMedRecNumber
-						, new Date(), sessionId);
-				this.saveError(error);
-			}
-			
+			Integer formId = formInstance.getFormId();
+			Integer locationId = formInstance.getLocationId();
 			String medRecNumberTag = org.openmrs.module.atd.util.Util
-					.getFormAttributeValue(formId, "medRecNumberTag");
+					.getFormAttributeValue(formId, "medRecNumberTag",locationTagId,locationId);
 
 			String medRecNumberTag2 = org.openmrs.module.atd.util.Util
-					.getFormAttributeValue(formId, "medRecNumberTag2");
+					.getFormAttributeValue(formId, "medRecNumberTag2",locationTagId,locationId);
 			
 			//MRN
 			if (medRecNumberTag!=null&&fieldMap.get(medRecNumberTag) != null)
@@ -206,27 +179,25 @@ public class ChicaServiceImpl implements ChicaService
 				//Compare patient MRN to MRN bar code from back of form.
 				if (xmlMedRecNumber2 == null || !Util.extractIntFromString(patientMedRecNumber)
 							.equalsIgnoreCase( Util.extractIntFromString(xmlMedRecNumber2))){
-					ChicaError noMatch = new ChicaError("Fatal", "MRN Validity", "Patient MRN" 
+					ATDError noMatch = new ATDError("Fatal", "MRN Validity", "Patient MRN" 
 							+ " does not match any form MRN bar codes (front or back) " 
 							,"\r\n Form instance id: "  + formInstanceId 
-							+ "\r\n " + "formId: " + formId 
 							+ "\r\n Patient MRN: " + patientMedRecNumber
 							+ " \r\n MRN barcode front: " + xmlMedRecNumber + "\r\n MRN barcode back: "
 							+ xmlMedRecNumber2, new Date(), sessionId);
-				    this.saveError(noMatch);
+					atdService.saveError(noMatch);
 				    return;
 					
 				} 
 				//Patient MRN does not match MRN bar code on front of form, but does match 
 				// MRN bar code on back of form.
-				ChicaError warning = new ChicaError("Warning", "MRN Validity", "Patient MRN matches" 
+				ATDError warning = new ATDError("Warning", "MRN Validity", "Patient MRN matches" 
 							+ " MRN bar code from back of form only. " 
 							,"Form instance id: "  + formInstanceId 
-							+ "\r\n " + "formId: " + formId 
 							+ "\r\n Patient MRN: " + patientMedRecNumber
 							+ " \r\n MRN barcode front: " + xmlMedRecNumber + "\r\n MRN barcode back: " 
 							+ xmlMedRecNumber2, new Date(), sessionId);
-				 this.saveError(warning);
+				atdService.saveError(warning);
 				
 				
 			}else{
@@ -235,12 +206,12 @@ public class ChicaServiceImpl implements ChicaService
 				if (!Util.extractIntFromString(xmlMedRecNumber).equalsIgnoreCase(
 						Util.extractIntFromString(xmlMedRecNumber2)))
 				{
-					ChicaError chicaError = new ChicaError("Warning", "MRN Validity", "Patient MRN matches " 
+					ATDError atdError = new ATDError("Warning", "MRN Validity", "Patient MRN matches " 
 							+ " MRN bar code on front of form, but the front and back of the form do not match."
 							+ " Possible scan error. "
 							, "\r\n Form instance id: "  + formInstanceId + " \r\n MRN bar code front: " + xmlMedRecNumber + "\r\n MRN bar code back: "
 							+ xmlMedRecNumber2, new Date(), sessionId);
-				    this.saveError(chicaError);
+					atdService.saveError(atdError);
 				}
 			}
 			
@@ -254,7 +225,7 @@ public class ChicaServiceImpl implements ChicaService
 
 			//only consume the question fields for one side of the PSF
 			ArrayList<String> languageFieldsToConsume = 
-				saveAnswers(fieldMap, formInstanceId, formId,encounterId);
+				saveAnswers(fieldMap, formInstance,encounterId);
 			FormService formService = Context.getFormService();
 			Form databaseForm = formService.getForm(formId);
 			TeleformTranslator translator = new TeleformTranslator();
@@ -277,8 +248,8 @@ public class ChicaServiceImpl implements ChicaService
 						if (parentField != null)
 						{
 							PatientATD patientATD = atdService.getPatientATD(
-									formInstanceId, parentField.getField()
-											.getFieldId(), formId);
+									formInstance, parentField.getField()
+											.getFieldId());
 
 							if (patientATD != null)
 							{
@@ -308,8 +279,9 @@ public class ChicaServiceImpl implements ChicaService
 					}
 				}
 			}
-			atdService.consume(input, formInstanceId, formId, patient, encounterId,
-					 null, null, parameterHandler,fieldsToConsume);
+			atdService.consume(input, formInstance, patient, encounterId,
+					 null, null, parameterHandler,
+					 fieldsToConsume,locationTagId,sessionId);
 		} catch (Exception e)
 		{
 			log.error(e.getMessage());
@@ -414,12 +386,13 @@ public class ChicaServiceImpl implements ChicaService
 
 	private ArrayList<String> saveAnswers(
 			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
-			int formInstanceId, int formId, int encounterId)
+			FormInstance formInstance, int encounterId)
 	{
 		ATDService atdService = Context
 				.getService(ATDService.class);
 		TeleformTranslator translator = new TeleformTranslator();
 		FormService formService = Context.getFormService();
+		Integer formId = formInstance.getFormId();
 		Form databaseForm = formService.getForm(formId);
 		if (databaseForm == null)
 		{
@@ -466,8 +439,8 @@ public class ChicaServiceImpl implements ChicaService
 				if (parentField != null)
 				{
 					PatientATD patientATD = atdService.getPatientATD(
-							formInstanceId,
-							parentField.getField().getFieldId(), formId);
+							formInstance,
+							parentField.getField().getFieldId());
 
 					if (patientATD != null)
 					{
@@ -521,9 +494,11 @@ public class ChicaServiceImpl implements ChicaService
 
 						if (dsstype.equalsIgnoreCase("PWS"))
 						{
+							Integer formInstanceId = formInstance.getFormInstanceId();
+							Integer locationId = formInstance.getLocationId();
 							List<Statistics> statistics = this.getChicaDAO()
 									.getStatByIdAndRule(formInstanceId,
-											ruleId,dsstype);
+											ruleId,dsstype,locationId);
 
 							if (statistics != null)
 							{
@@ -578,8 +553,10 @@ public class ChicaServiceImpl implements ChicaService
 			for (Integer currRuleId : answers.keySet())
 			{
 				String answer = answers.get(currRuleId);
+				Integer formInstanceId = formInstance.getFormInstanceId();
+				Integer locationId = formInstance.getLocationId();
 				List<Statistics> statistics = this.getChicaDAO()
-						.getStatByIdAndRule(formInstanceId, currRuleId, "PSF");
+						.getStatByIdAndRule(formInstanceId, currRuleId, "PSF",locationId);
 				if (statistics != null)
 				{
 					for (Statistics stat : statistics)
@@ -649,33 +626,34 @@ public class ChicaServiceImpl implements ChicaService
 	 */
 	public void produce(OutputStream output, PatientState state,
 			Patient patient, Integer encounterId, String dssType,
-			int maxDssElements) throws Exception
+			int maxDssElements,Integer sessionId) throws Exception
 	{
 		DssService dssService = Context
 				.getService(DssService.class);
 		ATDService atdService = Context
 				.getService(ATDService.class);
-		Integer formId = state.getFormId();
-		Integer formInstanceId = state.getFormInstanceId();
 
 		DssManager dssManager = new DssManager(patient);
 		dssManager.setMaxDssElementsByType(dssType, maxDssElements);
 		HashMap<String, Object> baseParameters = new HashMap<String, Object>();
-		baseParameters.put("sessionId", state.getSessionId());
 		dssService.loadRule("CREATE_JIT",false);
 		dssService.loadRule("ChicaAgeRule",false);
 		dssService.loadRule("storeObs",false);
 		dssService.loadRule("DDST", false);
 		dssService.loadRule("LookupBPcentile", false);
 
-		atdService.produce(patient, formInstanceId, output, formId, dssManager,
-				encounterId, baseParameters, null,true);
+		FormInstance formInstance = state.getFormInstance();
+		atdService.produce(patient, formInstance, output, dssManager,
+				encounterId, baseParameters, null,true,state.getLocationTagId(),sessionId);
 
-		this.saveStats(patient, formInstanceId, dssManager, encounterId);
+		Integer formInstanceId = formInstance.getFormInstanceId();
+		Integer locationId = formInstance.getLocationId();
+		this.saveStats(patient, formInstanceId, dssManager, encounterId,state.getLocationTagId(),locationId);
 	}
 
 	private void saveStats(Patient patient, Integer formInstanceId,
-			DssManager dssManager, Integer encounterId)
+			DssManager dssManager, Integer encounterId, 
+			Integer locationTagId,Integer locationId)
 	{
 		HashMap<String, ArrayList<DssElement>> dssElementsByType = dssManager
 				.getDssElementsByType();
@@ -701,7 +679,7 @@ public class ChicaServiceImpl implements ChicaService
 				DssElement currDssElement = dssElements.get(i);
 
 					this.addStatistics(patient, currDssElement, formInstanceId, i,
-							encounter, type);
+							encounter, type,locationTagId,locationId);
 				}
 			}
 		}
@@ -718,7 +696,7 @@ public class ChicaServiceImpl implements ChicaService
 
 	private void addStatistics(Patient patient, DssElement currDssElement,
 			Integer formInstanceId, int questionPosition, Encounter encounter,
-			String formName)
+			String formName,Integer locationTagId,Integer locationId)
 	{
 			DssService dssService = Context
 					.getService(DssService.class);
@@ -730,12 +708,14 @@ public class ChicaServiceImpl implements ChicaService
 					.adjustAgeUnits(patient.getBirthdate(), null));
 			statistics.setPriority(rule.getPriority());
 			statistics.setFormInstanceId(formInstanceId);
+			statistics.setLocationTagId(locationTagId);
 			statistics.setPosition(questionPosition + 1);
 
 			statistics.setRuleId(ruleId);
 			statistics.setPatientId(patient.getPatientId());
 			statistics.setFormName(formName);
 			statistics.setEncounterId(encounter.getEncounterId());
+			statistics.setLocationId(locationId);
 
 			getChicaDAO().addStatistics(statistics);
 	}
@@ -765,9 +745,10 @@ public class ChicaServiceImpl implements ChicaService
 		return getChicaDAO().getActiveStudies();
 	}
 
-	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName)
+	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName, 
+			Integer locationId)
 	{
-		return getChicaDAO().getStatByFormInstance(formInstanceId,formName);
+		return getChicaDAO().getStatByFormInstance(formInstanceId,formName, locationId);
 	}
 
 	public StudyAttributeValue getStudyAttributeValue(Study study,
@@ -776,8 +757,9 @@ public class ChicaServiceImpl implements ChicaService
 		return getChicaDAO().getStudyAttributeValue(study, studyAttributeName);
 	}
 
-	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName)	{
-		return getChicaDAO().getStatByIdAndRule(formInstanceId,ruleId,formName);
+	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName, 
+			Integer locationId)	{
+		return getChicaDAO().getStatByIdAndRule(formInstanceId,ruleId,formName,locationId);
 	}
 
 	public List<OldRule> getAllOldRules()
@@ -884,16 +866,6 @@ public class ChicaServiceImpl implements ChicaService
 		return getChicaDAO().getInsCategoryByInsCode(insCode);
 	}
 	
-	public void saveError(ChicaError error){
-		getChicaDAO().saveError(error);
-	}
-	
-	public Integer getErrorCategoryIdByName(String name){
-		return getChicaDAO().getErrorCategoryIdByName(name);
-	}
-	public List<ChicaError> getChicaErrorsByLevel(String errorLevel,Integer sessionId){
-		return getChicaDAO().getChicaErrorsByLevel(errorLevel, sessionId);
-	}
 	
 	public PatientState getPrevProducePatientState(Integer sessionId, Integer patientStateId ){
 		ATDService atdService = Context.getService(ATDService.class);
@@ -1111,27 +1083,36 @@ public class ChicaServiceImpl implements ChicaService
 		public List<ChicaHL7Export> getPendingHL7ExportsByEncounterId(Integer encounterId) {
 			return getChicaDAO().getPendingHL7ExportsByEncounterId(encounterId);
 		}
-		
-		public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction){
-			return getChicaDAO().getReprintRescanStatesByEncounter(encounterId, optionalDateRestriction);
+	
+		public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, 
+				Integer locationTagId,Integer locationId){
+			return getChicaDAO().getReprintRescanStatesByEncounter(encounterId, optionalDateRestriction, locationTagId,locationId);
 		}
 		
-		public List<String> getPrinterStations(){
-			List<String>  printerAttrNames = getChicaDAO().getPrinterStations();
+		public List<String> getPrinterStations(Location location){
+			String locationTagAttributeName = "ActivePrinterLocation";
+			ChicaService chicaService = Context.getService(ChicaService.class);
+			Set<LocationTag> tags = location.getTags();
 			List<String>  stationNames = new ArrayList<String>();
-			for (String name : printerAttrNames){
-				if (name != null){
-					Integer space = name.indexOf(" ");
-					String station = name.substring(space + 1);
-					stationNames.add(station);
+			for (LocationTag tag : tags){
+				LocationTagAttributeValue locationTagAttributeValue = 
+					chicaService.getLocationTagAttributeValue(tag
+						.getLocationTagId(), locationTagAttributeName,location.getLocationId());
+				if (locationTagAttributeValue != null)
+				{
+					String activePrinterLocationString = locationTagAttributeValue
+							.getValue();
+					//only display active printer locations
+					if (activePrinterLocationString.equalsIgnoreCase("true"))
+					{
+						stationNames.add(tag.getTag());
+					}
 				}
+				
 			}
+			Collections.sort(stationNames);
+			
 			return stationNames;
-		}
-		
-		public ArrayList<String> getImagesDirectory(String location){
-			ArrayList<String> dirs = getChicaDAO().getImagesDirectory(location);
-			return dirs;
 		}
 		
 		public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId){
@@ -1141,9 +1122,16 @@ public class ChicaServiceImpl implements ChicaService
 		}
 
 		public LocationTagAttributeValue getLocationTagAttributeValue(Integer locationTagId,
-				String locationTagAttributeName){
+				String locationTagAttributeName, Integer locationId){
 			return getChicaDAO().
 				getLocationTagAttributeValue(locationTagId, 
-						locationTagAttributeName);
+						locationTagAttributeName,locationId);
+		}
+		
+		public LocationAttributeValue getLocationAttributeValue(Integer locationId,
+				String locationAttributeName){
+			return getChicaDAO().
+				getLocationAttributeValue(locationId, 
+						locationAttributeName);
 		}
 }

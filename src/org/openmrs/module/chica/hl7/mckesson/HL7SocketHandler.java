@@ -8,15 +8,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.atd.hibernateBeans.Session;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.dss.util.IOUtil;
 import org.openmrs.module.dss.util.Util;
@@ -30,6 +32,7 @@ import org.openmrs.module.sockethl7listener.Provider;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 
 /**
  * @author tmdugan
@@ -37,12 +40,7 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class HL7SocketHandler extends
 		org.openmrs.module.chica.hl7.sms.HL7SocketHandler {
-	private String planCode = null;
-	private String carrierCode = null;
-	private String locationString = null;
-	private Date appointmentTime = null;
-	private String printerLocation = null;
-
+	
 	/**
 	 * @param parser
 	 * @param patientHandler
@@ -65,8 +63,8 @@ public class HL7SocketHandler extends
 	 * ca.uhn.hl7v2.model.Message)
 	 */
 	@Override
-	public Message processMessage(Message message) throws ApplicationException {
-		ChicaService chicaService = Context.getService(ChicaService.class);
+	public synchronized Message processMessage(Message message,
+			HashMap<String,Object> parameters) throws ApplicationException {
 		AdministrationService adminService = Context.getAdministrationService();
 		String incomingMessageString = null;
 
@@ -79,12 +77,14 @@ public class HL7SocketHandler extends
 				incomingMessageString = this.parser.encode(message);
 				message = this.parser.parse(incomingMessageString);
 			} catch (Exception e) {
-				ChicaError error = new ChicaError("Fatal", "Hl7 Parsing",
+				ATDError error = new ATDError("Fatal", "Hl7 Parsing",
 						"Error parsing the McKesson checkin hl7 "
 								+ e.getMessage(),
 						org.openmrs.module.dss.util.Util.getStackTrace(e),
 						new Date(), null);
-				chicaService.saveError(error);
+				ATDService atdService = Context.getService(ATDService.class);
+
+				atdService.saveError(error);
 				String mckessonParseErrorDirectory = IOUtil
 						.formatDirectoryName(adminService
 								.getGlobalProperty("chica.mckessonParseErrorDirectory"));
@@ -133,61 +133,105 @@ public class HL7SocketHandler extends
 			logger.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
 		}
 
-		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
-			this.locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getLocation(message);
-
-			this.appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getAppointmentTime(message);
-
-			this.planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getInsurancePlan(message);
-
-			this.carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getInsuranceCarrier(message);
-
-			this.printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25)
+		{
+			String printerLocation = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
 					.getPrinterLocation(message,incomingMessageString);
+			
+			if (printerLocation != null && printerLocation.equals("0"))
+			{
+				// ignore this message because it is just kids getting shots
+				return message;
+			}
 		}
-
-		if (this.printerLocation != null && this.printerLocation.equals("0")) {
-			// ignore this message because it is just kids getting shots
-			return message;
-		}
-		return super.processMessage(message);
+		return super.processMessage(message,parameters);
 	}
+	
 
 	@Override
-	protected org.openmrs.Encounter createEncounter(Patient resultPatient,
-			org.openmrs.Encounter newEncounter, Provider provider) {
-		LocationService locationService = Context.getLocationService();
-		org.openmrs.Encounter encounter = super.createEncounter(resultPatient,
-				newEncounter, provider);
+	public org.openmrs.Encounter processEncounter(String incomingMessageString,
+			Patient p, Date encDate, org.openmrs.Encounter newEncounter,
+			Provider provider, HashMap<String, Object> parameters)
+	{
+		ATDService atdService = Context.getService(ATDService.class);
+		org.openmrs.Encounter encounter = super.processEncounter(
+				incomingMessageString, p, encDate, newEncounter, provider,
+				parameters);
+		//store the encounter id with the session
+		Integer encounterId = newEncounter.getEncounterId();
+		getSession(parameters).setEncounterId(encounterId);
+		atdService.updateSession(getSession(parameters));
+		if (incomingMessageString == null)
+		{
+			return encounter;
+		}
 
-		Integer encounterId = encounter.getEncounterId();
+		LocationService locationService = Context.getLocationService();
+
+		String locationString = null;
+		Date appointmentTime = null;
+		String planCode = null;
+		String carrierCode = null;
+		String printerLocation = null;
+		Message message;
+		try
+		{
+			message = this.parser.parse(incomingMessageString);
+			EncounterService encounterService = Context
+					.getService(EncounterService.class);
+			encounter = encounterService.getEncounter(encounter
+					.getEncounterId());
+			if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25)
+			{
+				locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getLocation(message);
+
+				appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getAppointmentTime(message);
+
+				planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getInsurancePlan(message);
+
+				carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getInsuranceCarrier(message);
+
+				printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getPrinterLocation(message, incomingMessageString);
+			}
+
+		} catch (EncodingNotSupportedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HL7Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
 		encounter = encounterService.getEncounter(encounterId);
 		Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounter;
 
-		chicaEncounter.setInsurancePlanCode(this.planCode);
-		chicaEncounter.setInsuranceCarrierCode(this.carrierCode);
-		chicaEncounter.setScheduledTime(this.appointmentTime);
-		chicaEncounter.setPrinterLocation(this.printerLocation);
+		chicaEncounter.setInsurancePlanCode(planCode);
+		chicaEncounter.setInsuranceCarrierCode(carrierCode);
+		chicaEncounter.setScheduledTime(appointmentTime);
+		chicaEncounter.setPrinterLocation(printerLocation);
 
 		Location location = null;
 
-		if (this.locationString != null) {
-			location = locationService.getLocation(this.locationString);
+		if (locationString != null) {
+			location = locationService.getLocation(locationString);
 
 			if (location == null) {
 				location = new Location();
-				location.setName(this.locationString);
+				location.setName(locationString);
 				locationService.saveLocation(location);
-				logger.warn("Location '" + this.locationString
+				logger.warn("Location '" + locationString
 						+ "' does not exist in the Location table."
 						+ "a new location was created for '"
-						+ this.locationString + "'");
+						+ locationString + "'");
 			}
 		}
 
@@ -195,7 +239,19 @@ public class HL7SocketHandler extends
 		chicaEncounter.setInsuranceSmsCode(null);
 
 		encounterService.saveEncounter(chicaEncounter);
-
-		return chicaEncounter;
+		
+		return encounter;
+	}
+	
+	private Session getSession(HashMap<String,Object> parameters)
+	{
+		Session session = (Session) parameters.get("session");
+		if (session == null)
+		{
+			ATDService atdService = Context.getService(ATDService.class);
+			session = atdService.addSession();
+			parameters.put("session", session);
+		}
+		return session;
 	}
 }

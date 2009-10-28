@@ -24,6 +24,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.service.ChicaService;
@@ -62,7 +63,8 @@ public class Util
 		return dssType;
 	}
 	
-	public synchronized static int getMaxDssElements(Integer formId)
+	public synchronized static int getMaxDssElements(Integer formId,
+			Integer locationTagId,Integer locationId)
 	{
 		String propertyValue = null;
 		int maxDssElements = 0;
@@ -73,12 +75,12 @@ public class Util
 		if (formName.equals("PSF"))
 		{
 			propertyValue = org.openmrs.module.atd.util.Util
-					.getFormAttributeValue(formId, "numQuestions");
+					.getFormAttributeValue(formId, "numQuestions",locationTagId,locationId);
 		}
 		if (formName.equals("PWS"))
 		{
 			propertyValue = org.openmrs.module.atd.util.Util
-				.getFormAttributeValue(formId, "numPrompts");
+				.getFormAttributeValue(formId, "numPrompts",locationTagId,locationId);
 		}
 		
 		try
@@ -92,8 +94,8 @@ public class Util
 	}
 	
 	public synchronized static void saveObs(Patient patient, Concept currConcept,
-			int encounterId, String value, Integer formInstanceId,
-			Integer ruleId,Integer formId)
+			int encounterId, String value, FormInstance formInstance,
+			Integer ruleId, Integer locationTagId)
 	{
 		if (value == null || value.length() == 0)
 		{
@@ -101,11 +103,16 @@ public class Util
 		}
 		
 		String formName = null;
-		
-		if (formId != null)
+		if (formInstance != null)
 		{
+			if (formInstance.getFormId() == null)
+			{
+				log.error("Could not find form for statistics update");
+				return;
+			}
+
 			FormService formService = Context.getFormService();
-			Form form = formService.getForm(formId);
+			Form form = formService.getForm(formInstance.getFormId());
 			formName = form.getName();
 		}
 
@@ -141,31 +148,41 @@ public class Util
 		Location location = encounter.getLocation();
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		Date obsDate = null;
-		
-		//Since PWS forms get scanned much later, sometimes the next day, 
-		//set the observation time as the time the form is printed
-		if(formName != null && formName.equalsIgnoreCase("PWS")){
-			List<Statistics> stats = chicaService.getStatByFormInstance(formInstanceId, formName);
-			if(stats != null&&stats.size()>0){
-				obsDate = stats.get(0).getPrintedTimestamp(); 
-			}
-		}
-		if(obsDate == null){
-			obsDate = new Date();
-		}
-		obs.setObsDatetime(obsDate);
+				
 		obs.setPerson(patient);
 		obs.setConcept(currConcept);
 		obs.setLocation(location);
 		obs.setEncounter(encounter);
-		obsService.saveObs(obs, null);
+		
+		if(formInstance == null){
+			obs.setObsDatetime(new Date());
+			obsService.saveObs(obs, null);
+		}
 
-		if (formInstanceId != null)
+		if (formInstance != null)
 		{
+			Integer formInstanceId = formInstance.getFormInstanceId();
+			Integer locationId = formInstance.getLocationId();
+			//Since PWS forms get scanned much later, sometimes the next day, 
+			//set the observation time as the time the form is printed
+			if(formName != null && formName.equalsIgnoreCase("PWS")){
+				List<Statistics> stats = chicaService.getStatByFormInstance(formInstanceId, formName,locationId);
+				if(stats != null&&stats.size()>0){
+					obsDate = stats.get(0).getPrintedTimestamp(); 
+				}
+			}
+			
+			if(obsDate == null){
+				obsDate = new Date();
+			}
+			
+			obs.setObsDatetime(obsDate);
+			obsService.saveObs(obs, null);
+			
 			if (ruleId != null)
 			{
 				List<Statistics> statistics = chicaService.getStatByIdAndRule(
-						formInstanceId, ruleId, formName);
+						formInstanceId, ruleId, formName,locationId);
 
 				if (statistics != null)
 				{
@@ -184,17 +201,19 @@ public class Util
 				}
 			} else
 			{
-				List<Statistics> statistics = chicaService.getStatByFormInstance(formInstanceId, formName);
+				List<Statistics> statistics = chicaService.getStatByFormInstance(formInstanceId, formName,locationId);
 				Statistics stat = new Statistics();
 
 				stat.setAgeAtVisit(org.openmrs.module.chica.util.Util
 						.adjustAgeUnits(patient.getBirthdate(), null));
 				stat.setEncounterId(encounterId);
 				stat.setFormInstanceId(formInstanceId);
+				stat.setLocationTagId(locationTagId);
 				stat.setFormName(formName);
 				stat.setObsvId(obs.getObsId());
 				stat.setPatientId(patient.getPatientId());
 				stat.setRuleId(ruleId);
+				stat.setLocationId(locationId);
 				if(statistics != null&&statistics.size()>0){
 					Statistics oldStat = statistics.get(0);
 					stat.setPrintedTimestamp(oldStat.getPrintedTimestamp());

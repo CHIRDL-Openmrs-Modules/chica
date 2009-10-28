@@ -103,26 +103,30 @@ function exitForm(){
 			<td class="viewEncounterWeight">${row.weightPercentile}</td>
 			<td class="viewEncounterHeight">${row.heightPercentile}</td>
 			<td class="viewEncounterDoctor">${row.mdName}</td>
-			<td class="viewEncounterPSFID"><c:if test = "${empty row.psfId}">N/A</c:if>
-				<c:if test= "${!empty row.psfId}">${row.psfId}</c:if>
+			<td class="viewEncounterPSFID"><c:if test = "${empty row.psfId.formInstanceId}">N/A</c:if>
+				<c:if test= "${!empty row.psfId.formInstanceId}">${row.psfId.formInstanceId}</c:if>
 			</td>
-			<td class="viewEncounterPWSID"><c:if test = "${empty row.pwsId}">N/A</c:if>
-				<c:if test= "${!empty row.pwsId}">${row.pwsId}</c:if></td>
-			<td class="viewEncounterJITID"><c:if test = "${empty row.jitID}">N/A</c:if>
-				<c:if test= "${!empty row.pwsId}">${row.jitID}</c:if></td>
+			<td class="viewEncounterPWSID"><c:if test = "${empty row.pwsId.formInstanceId}">N/A</c:if>
+				<c:if test= "${!empty row.pwsId.formInstanceId}">${row.pwsId.formInstanceId}</c:if></td>
+			<td class="viewEncounterJITID"><c:if test = "${empty row.jitID.formInstanceId}">N/A</c:if>
+				<c:if test= "${!empty row.jitID.formInstanceId}">${row.jitID.formInstanceId}</c:if></td>
 			<td class="viewEncounterAction">
 				<form method="post" STYLE="margin: 0px; padding: 0px" action="">
 				<select name="options" onchange="this.form.submit();">
 				<option>&lt;Forms&gt;</option>
-				<c:if test= "${!empty row.psfId}"><option>PSF</option></c:if>
-				<c:if test= "${!empty row.pwsId}"><option>PWS</option></c:if>
+				<c:if test= "${!empty row.psfId.formInstanceId}"><option>PSF</option></c:if>
+				<c:if test= "${!empty row.pwsId.formInstanceId}"><option>PWS</option></c:if>
 				</select>
 				<input type="hidden" value="${row.patientId}" name="patientId" />
 				<input type="hidden" value="${row.sessionId}" name="sessionId" />
-				<input type="hidden" value="${row.encounterId}" name="encounterId" />
-				<input type="hidden" value="${row.psfId}" name="psfId" />
-				<input type="hidden" value="${row.pwsId}" name="pwsId" />
-				</form>
+				<input type="hidden" value="${row.encounter.encounterId}" name="encounterId" />
+				<input type="hidden" value="${row.psfId.formInstanceId}" name="psfFormInstanceId" />
+				<input type="hidden" value="${row.pwsId.formInstanceId}" name="pwsFormInstanceId" />
+				<input type="hidden" value="${row.psfId.formId}" name="psfFormId" />
+				<input type="hidden" value="${row.pwsId.formId}" name="pwsFormId" />
+				<input type="hidden" value="${row.psfId.locationId}" name="psfLocationId" />
+				<input type="hidden" value="${row.pwsId.locationId}" name="pwsLocationId" />
+			</form>
 			</td>
 		</tr>
 		</c:forEach>

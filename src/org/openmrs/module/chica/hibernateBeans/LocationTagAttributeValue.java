@@ -10,6 +10,7 @@ public class LocationTagAttributeValue implements java.io.Serializable {
 	// Fields
 	private Integer locationTagAttributeValueId = null;
 	private Integer locationTagId = null;
+	private Integer locationId = null;
 	private Integer locationTagAttributeId = null;
 	private String value = null;
 
@@ -70,6 +71,18 @@ public class LocationTagAttributeValue implements java.io.Serializable {
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+
+	public Integer getLocationId()
+	{
+		return this.locationId;
+	}
+
+
+	public void setLocationId(Integer locationId)
+	{
+		this.locationId = locationId;
 	}
 
 }

@@ -70,6 +70,7 @@ public class consumeOnePart implements Rule
 		String conceptName  = null;
 		Integer encounterId = null;
 		Integer ruleId = null;
+		Integer locationTagId = null;
 
 		if (parameters != null)
 		{
@@ -84,6 +85,7 @@ public class consumeOnePart implements Rule
 			}
 			
 			encounterId = (Integer) parameters.get("encounterId");
+			locationTagId = (Integer) parameters.get("locationTagId");
 		}
 
 		if (formInstance == null)
@@ -106,8 +108,8 @@ public class consumeOnePart implements Rule
 				ruleResult.toString().length()>0)
 		{
 			Util.saveObs(patient, conceptService.getConceptByName(conceptName),
-					encounterId, ruleResult.toString(),formInstance.getFormInstanceId(),
-					ruleId,formInstance.getFormId());
+					encounterId, ruleResult.toString(),formInstance,
+					ruleId,locationTagId);
 		}
 		
 		return Result.emptyResult();

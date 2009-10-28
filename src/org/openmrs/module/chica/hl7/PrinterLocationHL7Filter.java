@@ -63,7 +63,7 @@ public class PrinterLocationHL7Filter implements HL7Filter
 		if (targetLocationTag != null)
 		{
 			LocationTagAttributeValue locationTagAttributeValue = chicaService.getLocationTagAttributeValue(targetLocationTag
-					.getLocationTagId(), locationTagAttributeName);
+					.getLocationTagId(), locationTagAttributeName,location.getLocationId());
 			if (locationTagAttributeValue != null)
 			{
 				String activePrinterLocationString = locationTagAttributeValue

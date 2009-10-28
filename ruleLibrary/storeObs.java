@@ -80,6 +80,7 @@ public class storeObs implements Rule
 		Integer encounterId = null;
 		Integer ruleId = null;
 		String value = null;
+		Integer locationTagId = null;
 
 		if (parameters != null)
 		{
@@ -88,6 +89,7 @@ public class storeObs implements Rule
 			conceptName = (String) parameters.get("param1");
 
 			ruleId = (Integer) parameters.get("ruleId");
+			locationTagId = (Integer) parameters.get("locationTagId");
 
 			if (conceptName == null)
 			{
@@ -112,8 +114,8 @@ public class storeObs implements Rule
 			formId = formInstance.getFormId();
 		}
 
-		Util.saveObs(patient, currConcept, encounterId, value, formInstanceId,
-				ruleId,formId);
+		Util.saveObs(patient, currConcept, encounterId, value, formInstance,
+				ruleId,locationTagId);
 
 		return Result.emptyResult();
 	}

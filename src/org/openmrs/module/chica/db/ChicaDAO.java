@@ -1,30 +1,26 @@
 package org.openmrs.module.chica.db;
 
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Chica1Patient;
 import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
-import org.openmrs.module.chica.hibernateBeans.ChicaError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
-import org.openmrs.module.chica.hibernateBeans.HighBP;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
-import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
+import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 
@@ -72,9 +68,9 @@ public interface ChicaDAO {
 	
 	public List<Study> getActiveStudies();
 	
-	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName);
+	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName, Integer locationId);
 
-	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName);
+	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName, Integer locationId);
 		
 	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
 
@@ -120,12 +116,6 @@ public interface ChicaDAO {
 	
 	public String getInsCategoryByInsCode(String insCode);
 	
-	public void saveError(ChicaError error);
-	
-	public Integer getErrorCategoryIdByName(String name);
-	
-	public List<ChicaError> getChicaErrorsByLevel(String errorLevel,Integer sessionId);
-
 	public Integer getHighBP(Integer ageInYears, String sex,
 			Integer bpPercentile, String bpType, Integer heightPercentile);
 
@@ -143,15 +133,15 @@ public interface ChicaDAO {
 	
 	public List<ChicaHL7Export> getPendingHL7ExportsByEncounterId(Integer encounterId);
 	
-	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction);
-	
-	public List<String> getPrinterStations();
-	
-	public ArrayList<String> getImagesDirectory(String location);
-	
+	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, 
+			Integer locationTagId,Integer locationId);
+		
 	public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId);
 	
 	public LocationTagAttributeValue getLocationTagAttributeValue(Integer locationTagId,
-			String locationTagAttributeName);
+			String locationTagAttributeName,Integer locationId);
+	
+	public LocationAttributeValue getLocationAttributeValue(Integer locationId,
+			String locationAttributeName);
 
 }

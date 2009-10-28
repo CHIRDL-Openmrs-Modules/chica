@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -63,6 +65,26 @@ public class weightPF implements Rule
 	public Result eval(LogicContext context, Patient patient,
 			Map<String, Object> parameters) throws LogicException
 	{
+		Integer locationId = (Integer) parameters.get("locationId");
+		LocationService locationService = Context.getLocationService();
+		Location location = locationService.getLocation(locationId);
+		
+		if(location!= null){
+			//if this is Pecar, just return "."
+			if(location.getName().equalsIgnoreCase("PEPS")){
+				return dotResult();
+			}
+		
+			//if this is PCC, return "." or "#" based on age 
+			if(location.getName().equalsIgnoreCase("PCPS")){
+				return dotOrPoundResult(parameters);
+			}
+		}
+
+		return Result.emptyResult();
+	}
+	
+	private Result dotOrPoundResult(Map<String, Object> parameters){
 		String units = null;
 		if (parameters != null && parameters.get("param0") != null)
 		{
@@ -90,7 +112,10 @@ public class weightPF implements Rule
 				}
 			}
 		}
-
-		return Result.emptyResult();
+		return null;
+	}
+	
+	private Result dotResult(){
+		return new Result(".");	
 	}
 }

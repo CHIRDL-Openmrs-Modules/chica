@@ -1,6 +1,5 @@
 package org.openmrs.module.chica.hibernateBeans;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,6 +16,7 @@ public class ChicaHL7Export implements java.io.Serializable {
 	private Boolean voided = null;
 	private Date dateVoided = null;
 	private Date ackDate = null;
+	private Integer sessionId = null;
 
 	public ChicaHL7Export() {
 
@@ -88,7 +88,18 @@ public class ChicaHL7Export implements java.io.Serializable {
 	public void setAckDate(Date ackDate) {
 		this.ackDate = ackDate;
 	}
-
-		
+	
+    /**
+     * @return the sessionId
+     */
+    public Integer getSessionId() {
+    	return this.sessionId;
+    }
+    /**
+     * @param sessionId the sessionId to set
+     */
+    public void setSessionId(Integer sessionId) {
+    	this.sessionId = sessionId;
+    }
 
 }
