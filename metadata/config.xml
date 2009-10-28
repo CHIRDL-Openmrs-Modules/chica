@@ -168,7 +168,6 @@
 		patient_family.hbm.xml
 		statistics.hbm.xml
 		chica_hl7_export.hbm.xml
-		chica_hl7_export.hbm.xml
 		ddst.hbm.xml
 		high_bp.hbm.xml
 		location_tag_attribute.hbm.xml
