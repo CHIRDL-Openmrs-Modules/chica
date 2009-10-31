@@ -5,6 +5,8 @@ package org.openmrs.module.chica.hl7;
 
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.api.LocationService;
@@ -22,6 +24,8 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class PrinterLocationHL7Filter implements HL7Filter
 {
+	protected final Log log = LogFactory.getLog(getClass());
+	
 	public boolean ignoreMessage(HL7EncounterHandler hl7EncounterHandler,
 			Message message,String incomingMessageString)
 	{
@@ -43,6 +47,12 @@ public class PrinterLocationHL7Filter implements HL7Filter
 		// get the location tag that matches the printer location
 		LocationService locationService = Context.getLocationService();
 		Location location = locationService.getLocation(locationString);
+		
+		if(location == null){
+			log.error("Location "+locationString+" does not exist. Cannot process this message.");
+			return true;
+		}
+		
 		Set<LocationTag> locationTags = location.getTags();
 		
 		//there are no location tags mapped for this location so
