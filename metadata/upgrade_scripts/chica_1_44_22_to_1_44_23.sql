@@ -1,6 +1,3 @@
-insert into chica_location_tag_attribute (name, description)
-values ('HL7ConfigFile', 'Configuration file for outbound hl7 messages');
-
 insert into chica_location_tag_attribute_value (location_tag_id, value,
 location_tag_attribute_id, location_id)
 values(

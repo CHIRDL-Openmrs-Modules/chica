@@ -3006,7 +3006,19 @@ select a.* from
 and task_config_id=(select max(task_config_id) from scheduler_task_config where name='PccCheckinProcessor') )b
 where b.cnt=0;
 	</sql>
-	</diff>	
+	</diff>
+	<diff>
+		<version>1.3.9</version>
+		<author>Tammy Dugan</author>
+		<date>Nov 3, 2009</date>
+		<description>
+		Add hl7 config file location attribute.
+		</description>
+	<sql>	
+	insert into chica_location_tag_attribute (name, description)
+values ('HL7ConfigFile', 'Configuration file for outbound hl7 messages');
+	</sql>
+	</diff>
 </sqldiff>
 
 
