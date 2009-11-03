@@ -130,7 +130,6 @@
 	</globalProperty>
 	<globalProperty>
 		<property>chica.defaultTifImageDirectory</property>
-		<defaultValue>c:/chica/images/</defaultValue>
    		<description>Directory to look for notavailable tif</description>
 	</globalProperty>
 	<advice>
