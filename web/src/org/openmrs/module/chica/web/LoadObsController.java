@@ -332,7 +332,7 @@ public class LoadObsController extends SimpleFormController
 								encounter.setEncounterDatetime(encounterDate);
 							}
 							User provider = userService
-									.getUserByUsername(".Other");
+									.getUserByUsername(".Other.");
 
 							encounter.setProvider(provider);
 							encounter.setLocation(location);

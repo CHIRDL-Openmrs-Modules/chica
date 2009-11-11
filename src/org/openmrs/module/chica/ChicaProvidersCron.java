@@ -93,7 +93,7 @@ public class ChicaProvidersCron extends AbstractTask
 			for(User doctor: doctors)
 			{
 				active = false;
-				if(doctor.getUsername().compareToIgnoreCase(".other") != 0)
+				if(doctor.getUsername().compareToIgnoreCase(".Other.") != 0)
 				{
 					for (Encounter e: encounters)
 					{
@@ -107,10 +107,6 @@ public class ChicaProvidersCron extends AbstractTask
 					{
 						userService.voidUser(doctor, "Inactive in the clinic");  // retires states
 					}
-				}
-				else
-				{
-					//this.log.info("CAN NOT VOID .OTHER PROVIDER");
 				}
 				
 			}
