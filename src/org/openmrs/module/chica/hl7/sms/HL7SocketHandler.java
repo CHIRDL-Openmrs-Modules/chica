@@ -38,7 +38,7 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
-import org.openmrs.module.dss.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
@@ -106,7 +106,7 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 				//Write the hl7 to a file in the error directory if it cannot be parsed
 				ATDError error = new ATDError("Fatal", "Hl7 Parsing",
 						"Error parsing the sms checkin hl7 " + e.getMessage(),
-						org.openmrs.module.dss.util.Util.getStackTrace(e),
+						org.openmrs.module.chirdlutil.util.Util.getStackTrace(e),
 						new Date(), null);
 				atdService.saveError(error);
 				String smsParseErrorDirectory = IOUtil
@@ -114,7 +114,7 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 								.getGlobalProperty("chica.smsParseErrorDirectory"));
 				if (smsParseErrorDirectory != null)
 				{
-					String filename = "r" + org.openmrs.module.dss.util.Util.archiveStamp() + ".hl7";
+					String filename = "r" + org.openmrs.module.chirdlutil.util.Util.archiveStamp() + ".hl7";
 
 					FileOutputStream outputFile = null;
 
@@ -149,7 +149,7 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 							this.log
 									.error("There was an error writing the dump file");
 							this.log.error(e1.getMessage());
-							this.log.error(org.openmrs.module.dss.util.Util
+							this.log.error(org.openmrs.module.chirdlutil.util.Util
 									.getStackTrace(e));
 						}
 					}
@@ -165,7 +165,7 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 		} catch (HL7Exception e)
 		{
 			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25)
@@ -222,7 +222,7 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 		} catch (RuntimeException e)
 		{
 			logger.error("Exception during patient lookup. " + e.getMessage());
-			logger.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			
 		}
 		return resultPatient;

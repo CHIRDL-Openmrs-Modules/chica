@@ -196,11 +196,11 @@ public class consumeWeight implements Rule
 		//convert kilograms to lbs
 		try{
 			double kilograms = (new Double(fullResult)).doubleValue();
-			double pounds = org.openmrs.module.dss.util.Util.convertUnitsToEnglish(
-					kilograms, org.openmrs.module.dss.util.Util.MEASUREMENT_KG);
+			double pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
+					kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
 			fullResult = String.valueOf(pounds);
 		}catch(Exception e){
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		return fullResult;
 	}

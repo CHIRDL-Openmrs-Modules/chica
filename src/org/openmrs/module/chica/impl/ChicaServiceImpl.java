@@ -50,8 +50,9 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
-import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
@@ -68,8 +69,8 @@ import org.openmrs.module.dss.DssElement;
 import org.openmrs.module.dss.DssManager;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
-import org.openmrs.module.dss.util.Util;
-import org.openmrs.module.dss.util.XMLUtil;
+import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -1092,11 +1093,13 @@ public class ChicaServiceImpl implements ChicaService
 		public List<String> getPrinterStations(Location location){
 			String locationTagAttributeName = "ActivePrinterLocation";
 			ChicaService chicaService = Context.getService(ChicaService.class);
+			ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+
 			Set<LocationTag> tags = location.getTags();
 			List<String>  stationNames = new ArrayList<String>();
 			for (LocationTag tag : tags){
 				LocationTagAttributeValue locationTagAttributeValue = 
-					chicaService.getLocationTagAttributeValue(tag
+					chirdlUtilService.getLocationTagAttributeValue(tag
 						.getLocationTagId(), locationTagAttributeName,location.getLocationId());
 				if (locationTagAttributeValue != null)
 				{
@@ -1119,19 +1122,5 @@ public class ChicaServiceImpl implements ChicaService
 			Chica1Appointment appt= getChicaDAO().getChica1AppointmentByEncounterId(encId);
 			return appt;
 			
-		}
-
-		public LocationTagAttributeValue getLocationTagAttributeValue(Integer locationTagId,
-				String locationTagAttributeName, Integer locationId){
-			return getChicaDAO().
-				getLocationTagAttributeValue(locationTagId, 
-						locationTagAttributeName,locationId);
-		}
-		
-		public LocationAttributeValue getLocationAttributeValue(Integer locationId,
-				String locationAttributeName){
-			return getChicaDAO().
-				getLocationAttributeValue(locationId, 
-						locationAttributeName);
 		}
 }

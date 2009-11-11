@@ -358,7 +358,7 @@ if (err != 0)
 <select name="insuranceCategory" tabindex="21" >
 <option></option>		
 <c:forEach items="${insuranceCategories}" var="insurCategory">
-<option <c:if test="${insuranceCategory == '${insurCategory}'}">selected</c:if> value="${insurCategory}">${insurCategory}</option>
+<option <c:if test="${insuranceCategory == insurCategory}">selected</c:if> value="${insurCategory}">${insurCategory}</option>
 </c:forEach>	
 </select>
 	</td>

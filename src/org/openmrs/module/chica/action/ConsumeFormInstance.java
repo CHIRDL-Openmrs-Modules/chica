@@ -17,7 +17,7 @@ import org.openmrs.module.atd.hibernateBeans.StateAction;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.dss.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 
 /**
  * @author tmdugan

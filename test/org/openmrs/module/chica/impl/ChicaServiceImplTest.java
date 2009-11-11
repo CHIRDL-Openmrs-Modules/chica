@@ -28,11 +28,12 @@ import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
-import org.openmrs.module.dss.util.IOUtil;
-import org.openmrs.module.dss.util.XMLUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
@@ -306,6 +307,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				String PSFFilename = "test/testFiles/PSF.xml";
 				String removeCurrentTimeXSLT = "test/testFiles/removeCurrentTime.xslt";
 
+				ChirdlUtilService chirdlutilService = Context.getService(ChirdlUtilService.class);
 				ChicaService chicaService = Context.getService(ChicaService.class);
 				PatientState patientState = new PatientState();
 				patientState.setPatient(patient);
@@ -313,7 +315,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				// test create PSF merge file
 				String state = "PSF_create";
 				LocationTagAttributeValue locTagAttrValue = 
-					chicaService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
 				
 				Integer formId = null;
 				
@@ -372,7 +374,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				// test create PSF merge file
 				state = "PSF_create";
 				locTagAttrValue = 
-					chicaService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -478,13 +480,15 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 
 				ChicaService chicaService = Context
 						.getService(ChicaService.class);
+				
+				ChirdlUtilService chirdlutilService = Context.getService(ChirdlUtilService.class);
 				PatientState patientState = new PatientState();
 				patientState.setPatient(patient);
 
 				// test create PWS merge file
 				String state = "PWS_create";
 				LocationTagAttributeValue locTagAttrValue = 
-					chicaService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
 				Integer formId = null;
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -544,7 +548,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				// test create PWS merge file
 				state = "PWS_create";
 				locTagAttrValue = 
-					chicaService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();

@@ -26,7 +26,7 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.dss.util.Util;
+import org.openmrs.module.chirdlutil.util.Util;
 
 /**
  * 
@@ -64,19 +64,19 @@ public class ChicaAgeRule implements Rule {
         	
         	if(param.compareToIgnoreCase("years") == 0) {
         
-        		 age = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.YEAR_ABBR);
+        		 age = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.YEAR_ABBR);
         	}
         	else if(param.compareToIgnoreCase("months") == 0) {
         
-        		 age = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.MONTH_ABBR);
+        		 age = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.MONTH_ABBR);
         	}
         	else if(param.compareToIgnoreCase("days") == 0) {
                 
-        		 age = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.DAY_ABBR);
+        		 age = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.DAY_ABBR);
         	}
         	else if(param.compareToIgnoreCase("weeks") == 0) {
         	
-        		 age = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.WEEK_ABBR);
+        		 age = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, now.getTime(), Util.WEEK_ABBR);
         	}        	
 		}
         else

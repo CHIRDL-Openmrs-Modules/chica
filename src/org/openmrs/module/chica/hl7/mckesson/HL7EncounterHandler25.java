@@ -5,7 +5,7 @@ package org.openmrs.module.chica.hl7.mckesson;
 
 import org.openmrs.PersonName;
 import org.openmrs.module.chica.hl7.ZPV;
-import org.openmrs.module.dss.util.Util;
+import org.openmrs.module.chirdlutil.util.Util;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;

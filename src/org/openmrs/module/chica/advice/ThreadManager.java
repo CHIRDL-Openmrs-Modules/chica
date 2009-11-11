@@ -40,7 +40,7 @@ public class ThreadManager
 			// thread is added
 		} catch (Exception e)
 		{
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 
@@ -75,7 +75,7 @@ public class ThreadManager
 			}
 		} catch (Exception e)
 		{
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 }

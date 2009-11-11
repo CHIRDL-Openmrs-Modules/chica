@@ -79,11 +79,11 @@ public class percentile implements Rule
 				}else if(conceptName.equalsIgnoreCase("HEIGHT"))
 				{
 					type = "length";
-					measurementUnits = org.openmrs.module.dss.util.Util.MEASUREMENT_IN;
+					measurementUnits = org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN;
 				}else if(conceptName.equalsIgnoreCase("WEIGHT"))
 				{
 					type = "weight";
-					measurementUnits = org.openmrs.module.dss.util.Util.MEASUREMENT_LB;
+					measurementUnits = org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB;
 				}else if(conceptName.equalsIgnoreCase("HC"))
 				{
 					type = "hc";

@@ -19,7 +19,8 @@ import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -69,6 +70,7 @@ public class PagerController extends SimpleFormController
 		Map<String, Object> map = new HashMap<String, Object>();
 		User user = Context.getAuthenticatedUser();
 		ChicaService chicaService = Context.getService(ChicaService.class);
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
 		LocationService locationService = Context.getLocationService();
 		String locationString = user.getUserProperty("location");
 		Integer locationId = null;
@@ -79,7 +81,7 @@ public class PagerController extends SimpleFormController
 						}
 					}
 		LocationAttributeValue locAttrValue = 
-			chicaService.getLocationAttributeValue(locationId, "pagerMessage");
+			chirdlUtilService.getLocationAttributeValue(locationId, "pagerMessage");
 		String message = locAttrValue.getValue();
 		
 		String pageResponse =sendPage(pagerNumber, message, baseUrl, idParam , textParam, thresholdTime);
@@ -163,7 +165,7 @@ public class PagerController extends SimpleFormController
 		} catch (Exception e)
 		{
 			this.log.error("Could not send page: " + e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		finally {
 			if (rd != null)

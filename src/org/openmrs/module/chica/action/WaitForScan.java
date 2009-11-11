@@ -98,7 +98,7 @@ public class WaitForScan implements ProcessStateAction {
 							.getLocationTagId(), patientState.getLocationId());
 		} catch (Exception e) {
 			log.error(e);
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 

@@ -82,7 +82,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		} catch (HL7Exception e)
 		{
 			log.error(e.getMessage());
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 
 		return obx;
@@ -98,7 +98,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		} catch (HL7Exception e)
 		{
 			log.error(e.getMessage());
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 
 		return obr;
@@ -408,7 +408,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 						+ ";concept question id: " + conceptQuestionId
 						+ "; concept name: " + conceptName);
 				logger.error(e.getMessage());
-				logger.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+				logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 
 		}

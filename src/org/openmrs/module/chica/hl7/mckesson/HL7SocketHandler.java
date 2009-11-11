@@ -20,8 +20,8 @@ import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.dss.util.IOUtil;
-import org.openmrs.module.dss.util.Util;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
@@ -80,7 +80,7 @@ public class HL7SocketHandler extends
 				ATDError error = new ATDError("Fatal", "Hl7 Parsing",
 						"Error parsing the McKesson checkin hl7 "
 								+ e.getMessage(),
-						org.openmrs.module.dss.util.Util.getStackTrace(e),
+						org.openmrs.module.chirdlutil.util.Util.getStackTrace(e),
 						new Date(), null);
 				ATDService atdService = Context.getService(ATDService.class);
 
@@ -130,7 +130,7 @@ public class HL7SocketHandler extends
 			message.addNonstandardSegment("ZPV");
 		} catch (HL7Exception e) {
 			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25)

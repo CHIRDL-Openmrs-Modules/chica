@@ -83,7 +83,7 @@ public class Randomize implements ProcessStateAction
 					log.error("Error creating custom randomizer: "
 							+ randomizerClassName);
 					log.error(e.getMessage());
-					log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+					log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 				}
 			} else
 			{

@@ -39,7 +39,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 			} catch (Exception e)
 			{
 				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.dss.util.Util
+				this.log.error(org.openmrs.module.chirdlutil.util.Util
 						.getStackTrace(e));
 			}
 		}
@@ -81,7 +81,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 			} catch (Exception e)
 			{
 				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.dss.util.Util
+				this.log.error(org.openmrs.module.chirdlutil.util.Util
 						.getStackTrace(e));
 			}
 		}

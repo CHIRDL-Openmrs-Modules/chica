@@ -19,9 +19,10 @@ import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.hibernateBeans.StateAction;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.dss.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 
 /**
  * @author tmdugan
@@ -40,6 +41,8 @@ public class Reprint implements ProcessStateAction
 	{
 		//lookup the patient again to avoid lazy initialization errors
 		ChicaService chicaService = Context.getService(ChicaService.class);
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+
 		PatientService patientService = Context.getPatientService();
 		Integer patientId = patient.getPatientId();
 		patient = patientService.getPatient(patientId);
@@ -54,7 +57,7 @@ public class Reprint implements ProcessStateAction
 		Integer encounterId = session.getEncounterId();
 		Integer locationId = patientState.getLocationId();
 		LocationTagAttributeValue locTagAttrValue = 
-			chicaService.getLocationTagAttributeValue(locationTagId, patientState.getState().getFormName(), locationId);
+			chirdlUtilService.getLocationTagAttributeValue(locationTagId, patientState.getState().getFormName(), locationId);
 		
 		Integer formId = null;
 		if(locTagAttrValue != null){

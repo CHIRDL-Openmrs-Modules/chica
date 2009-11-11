@@ -23,10 +23,11 @@ import org.openmrs.module.atd.hibernateBeans.StateAction;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.datasource.ObsChicaDatasource;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.dss.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 
 /**
  * @author tmdugan
@@ -60,13 +61,15 @@ public class ProduceFormInstance implements ProcessStateAction
 				.getService(ChicaService.class);
 		ATDService atdService = Context
 				.getService(ATDService.class);
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+
 		State currState = patientState.getState();
 		Integer sessionId = patientState.getSessionId();
 		
 		Session session = atdService.getSession(sessionId);
 		Integer encounterId = session.getEncounterId();
 		LocationTagAttributeValue locTagAttrValue = 
-			chicaService.getLocationTagAttributeValue(locationTagId, currState.getFormName(), locationId);
+			chirdlUtilService.getLocationTagAttributeValue(locationTagId, currState.getFormName(), locationId);
 		
 		Integer formId = null;
 		

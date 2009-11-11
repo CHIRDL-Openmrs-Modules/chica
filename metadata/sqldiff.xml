@@ -3019,6 +3019,33 @@ where b.cnt=0;
 values ('HL7ConfigFile', 'Configuration file for outbound hl7 messages');
 	</sql>
 	</diff>
+	<diff>
+		<version>1.4.0</version>
+		<author>Tammy Dugan</author>
+		<date>Nov 11, 2009</date>
+		<description>
+		Remove chica_location_* tables since they were moved to the chirdlutil module
+		</description>
+	<sql>	
+	insert into chirdlutil_location_tag_attribute 
+	select * from chica_location_tag_attribute;
+	
+	insert into chirdlutil_location_attribute 
+	select * from chica_location_attribute;
+	
+	insert into chirdlutil_location_tag_attribute_value 
+	select * from chica_location_tag_attribute_value;
+	
+	insert into chirdlutil_location_attribute_value 
+	select * from chica_location_attribute_value;
+	
+	drop table chica_location_tag_attribute_value;
+	drop table chica_location_tag_attribute;
+	drop table chica_location_attribute_value;
+	drop table chica_location_attribute;
+	
+	</sql>
+	</diff>
 </sqldiff>
 
 

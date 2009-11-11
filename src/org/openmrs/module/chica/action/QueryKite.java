@@ -66,7 +66,7 @@ public class QueryKite implements ProcessStateAction
 			{
 				log.error("Error querying kite");
 				log.error(e.getMessage());
-				log.error(org.openmrs.module.dss.util.Util
+				log.error(org.openmrs.module.chirdlutil.util.Util
 								.getStackTrace(e));
 			}
 		}

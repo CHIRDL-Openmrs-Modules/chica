@@ -306,7 +306,7 @@ public class LoadObsController extends SimpleFormController
 						log.error("Error for chica1 patient_id: "
 								+ currPatient.getPatientId());
 						log.error(e.getMessage());
-						log.error(org.openmrs.module.dss.util.Util
+						log.error(org.openmrs.module.chirdlutil.util.Util
 								.getStackTrace(e));
 						//If there is a problem loading the chica1 patient,
 						//don't try to create encounters or obs
@@ -369,7 +369,7 @@ public class LoadObsController extends SimpleFormController
 							log.error("Error for chica1 appointment id: "
 									+ currAppointment.getApptId());
 							log.error(e.getMessage());
-							log.error(org.openmrs.module.dss.util.Util
+							log.error(org.openmrs.module.chirdlutil.util.Util
 									.getStackTrace(e));
 							//If there is a problem loading the chica1 appointment,
 							//don't try to create obs
@@ -446,7 +446,7 @@ public class LoadObsController extends SimpleFormController
 					log.error(e.getMessage() + ": patient_id "
 							+ currPatient.getPatientId());
 					log
-							.error(org.openmrs.module.dss.util.Util
+							.error(org.openmrs.module.chirdlutil.util.Util
 									.getStackTrace(e));
 				}
 
@@ -568,7 +568,7 @@ public class LoadObsController extends SimpleFormController
 		} catch (Exception e)
 		{
 			log.error(e.getMessage());
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 

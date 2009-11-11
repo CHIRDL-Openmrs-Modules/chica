@@ -13,7 +13,8 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 
 import ca.uhn.hl7v2.model.Message;
@@ -31,6 +32,8 @@ public class PrinterLocationHL7Filter implements HL7Filter
 	{
 		ChicaService chicaService = Context
 				.getService(ChicaService.class);
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+
 		String printerLocation = null;
 		String locationString = null;
 		String locationTagAttributeName = "ActivePrinterLocation";
@@ -70,9 +73,10 @@ public class PrinterLocationHL7Filter implements HL7Filter
 				break;
 			}
 		}
+		
 		if (targetLocationTag != null)
 		{
-			LocationTagAttributeValue locationTagAttributeValue = chicaService.getLocationTagAttributeValue(targetLocationTag
+			LocationTagAttributeValue locationTagAttributeValue = chirdlUtilService.getLocationTagAttributeValue(targetLocationTag
 					.getLocationTagId(), locationTagAttributeName,location.getLocationId());
 			if (locationTagAttributeValue != null)
 			{

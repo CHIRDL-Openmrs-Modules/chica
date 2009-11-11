@@ -25,7 +25,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.xmlBeans.FindObsvTerm;
 import org.openmrs.module.chica.xmlBeans.ObsvDictionary;
-import org.openmrs.module.dss.util.XMLUtil;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 /**
@@ -135,7 +135,7 @@ public class ParseDictionaryController extends SimpleFormController
 			} catch (Exception e)
 			{
 				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 		}
 

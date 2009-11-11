@@ -96,7 +96,7 @@ public class weightSF implements Rule
 
 				if (result != null)
 				{
-					int ageMonths = org.openmrs.module.dss.util.Util
+					int ageMonths = org.openmrs.module.chirdlutil.util.Util
 							.getAgeInUnits(result, null,
 									Util.MONTH_ABBR);
 

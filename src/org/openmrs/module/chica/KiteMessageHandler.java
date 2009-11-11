@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.dss.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 
 public class KiteMessageHandler
 {
@@ -59,7 +59,7 @@ public class KiteMessageHandler
 		} catch (Exception e)
 		{
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 

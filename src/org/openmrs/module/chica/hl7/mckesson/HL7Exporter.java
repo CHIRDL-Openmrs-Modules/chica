@@ -36,11 +36,12 @@ import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
-import org.openmrs.module.dss.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.sockethl7listener.HL7MessageConstructor;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
@@ -286,7 +287,7 @@ public class HL7Exporter extends AbstractTask {
 		}
 		
 		if (pi != null) mrn = pi.getIdentifier();
-		String filename =  org.openmrs.module.dss.util.Util.archiveStamp() + "_"+ mrn + ack + ".hl7";
+		String filename =  org.openmrs.module.chirdlutil.util.Util.archiveStamp() + "_"+ mrn + ack + ".hl7";
 		
 		String archiveDir = IOUtil.formatDirectoryName(adminService
 				.getGlobalProperty("chica.outboundHl7ArchiveDirectory"));
@@ -322,7 +323,7 @@ public class HL7Exporter extends AbstractTask {
 				}
 				log.error("There was an error writing the hl7 file");
 				log.error(e.getMessage());
-				log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+				log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 		}
 		return;
@@ -340,7 +341,7 @@ public class HL7Exporter extends AbstractTask {
 		} catch (Exception e)
 		{
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 	
@@ -472,7 +473,7 @@ public class HL7Exporter extends AbstractTask {
 			Double obsValueNumeric = obs.getValueNumeric();
 			if (obsValueNumeric != null  ){
 				Double obsRounded =
-					org.openmrs.module.dss.util.Util.round(Double.valueOf(obsValueNumeric), 1);
+					org.openmrs.module.chirdlutil.util.Util.round(Double.valueOf(obsValueNumeric), 1);
 				if (obsRounded != null){
 					obsValue = String.valueOf(obsRounded);
 				}
@@ -551,14 +552,14 @@ public class HL7Exporter extends AbstractTask {
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		LocationService locationService = Context.getLocationService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
 		
 		org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter 
 			= (org.openmrs.module.chica.hibernateBeans.Encounter) 
 			encounterService.getEncounter(encId);
 		String printerLocation = chicaEncounter.getPrinterLocation();
 		LocationTag locTag = locationService.getLocationTagByName(printerLocation);
-		LocationTagAttributeValue locationTagValue = chicaService.getLocationTagAttributeValue(
+		LocationTagAttributeValue locationTagValue = chirdlUtilService.getLocationTagAttributeValue(
 				locTag.getId(), "HL7ConfigFile", 
 				chicaEncounter.getLocation().getLocationId());
 	 	filename = locationTagValue.getValue();

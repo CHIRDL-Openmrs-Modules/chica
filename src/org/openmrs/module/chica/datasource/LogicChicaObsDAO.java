@@ -36,8 +36,8 @@ import org.openmrs.logic.op.Operator;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
-import org.openmrs.module.dss.util.IOUtil;
-import org.openmrs.module.dss.util.Util;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.Util;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -756,7 +756,7 @@ public class LogicChicaObsDAO implements LogicObsDAO
 		} catch (Exception e)
 		{
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 	
@@ -811,7 +811,7 @@ public class LogicChicaObsDAO implements LogicObsDAO
 			}
 		} catch (IOException e) {
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		
 		
@@ -922,7 +922,7 @@ public class LogicChicaObsDAO implements LogicObsDAO
 		{
 			this.log.error("Error processing MRF dump obs.");
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 }

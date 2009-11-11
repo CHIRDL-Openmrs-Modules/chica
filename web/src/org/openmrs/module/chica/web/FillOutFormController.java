@@ -33,8 +33,8 @@ import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.dss.util.IOUtil;
-import org.openmrs.module.dss.util.XMLUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class FillOutFormController extends SimpleFormController

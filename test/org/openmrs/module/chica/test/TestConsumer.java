@@ -23,11 +23,12 @@ import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.dss.util.IOUtil;
-import org.openmrs.module.dss.util.XMLUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
@@ -66,6 +67,8 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				.getService(EncounterService.class);
 		PatientService patientService = Context.getPatientService();
 		UserService userService = Context.getUserService();
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+
 
 		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
 		encounter.setEncounterDatetime(new java.util.Date());
@@ -117,7 +120,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				// create the PSF form
 				state = "PSF_create";
 				LocationTagAttributeValue locTagAttrValue = 
-					chicaService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlUtilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -151,7 +154,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				int sessionId = 1;
 				state = "PWS_create";
 				locTagAttrValue = 
-					chicaService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlUtilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -183,7 +186,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				// create the PWS form
 				state = "PWS_create";
 				locTagAttrValue = 
-					chicaService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlUtilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();

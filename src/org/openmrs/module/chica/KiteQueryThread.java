@@ -9,7 +9,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.dss.util.Util;
+import org.openmrs.module.chirdlutil.util.Util;
 
 /**
  * @author tmdugan

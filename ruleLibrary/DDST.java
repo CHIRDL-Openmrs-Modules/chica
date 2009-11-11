@@ -30,7 +30,7 @@ import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.util.Util;
-import org.openmrs.module.dss.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import java.util.Date;
 
@@ -115,7 +115,7 @@ public class DDST implements Rule
 						}
 					} catch (Exception e)
 					{
-						log.error(org.openmrs.module.dss.util.Util
+						log.error(org.openmrs.module.chirdlutil.util.Util
 								.getStackTrace(e));
 					}
 				}
@@ -144,10 +144,10 @@ public class DDST implements Rule
 		Calendar now = Calendar.getInstance();
 		now.setTime(formPrintedTime);
 
-		return org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, now
+		return org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, now
 				.getTime(), Util.DAY_ABBR);
 		}catch(Exception e){
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		return null;
 	}

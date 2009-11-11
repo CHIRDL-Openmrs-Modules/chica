@@ -21,8 +21,6 @@ import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
-import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
-import org.openmrs.module.chica.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
@@ -170,9 +168,4 @@ public interface ChicaService
 	
 	public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId);
 	
-	public LocationTagAttributeValue getLocationTagAttributeValue(Integer locationTagId,
-			String locationTagAttributeName, Integer locationId);
-	
-	public LocationAttributeValue getLocationAttributeValue(Integer locationId,
-			String locationAttributeName);
 }

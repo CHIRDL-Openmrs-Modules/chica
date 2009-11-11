@@ -17,8 +17,8 @@ import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.datasource.ObsChicaDatasource;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.dss.util.IOUtil;
-import org.openmrs.module.dss.util.Util;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.Util;
 
 /**
  * @author tmdugan

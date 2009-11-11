@@ -73,7 +73,7 @@ public class CheckinProcessor extends AbstractTask
 		{
 			log.error("Error starting SimpleServer...");
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 
@@ -89,7 +89,7 @@ public class CheckinProcessor extends AbstractTask
 		} catch (Exception e)
 		{
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		} finally
 		{
 			//Context.closeSession();
@@ -109,7 +109,7 @@ public class CheckinProcessor extends AbstractTask
 		} catch (Exception e)
 		{
 			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 

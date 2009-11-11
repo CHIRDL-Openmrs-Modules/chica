@@ -132,7 +132,7 @@ public class RuleTesterController extends SimpleFormController
 			} catch (Exception e)
 			{
 				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 		}
 		if (ruleName != null && ruleName.length() > 0)

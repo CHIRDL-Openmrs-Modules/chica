@@ -15,7 +15,8 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.chica.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 
 public class clinicPhone implements Rule
@@ -67,12 +68,12 @@ public class clinicPhone implements Rule
 	{
 		FormInstance formInstance = (FormInstance) parameters
 			.get("formInstance");
-		ChicaService chicaService = Context.getService(ChicaService.class);
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
 		if (formInstance != null)
 		{
 			Integer locationId = formInstance.getLocationId();
 			LocationAttributeValue locationAttributeValue = 
-				chicaService.getLocationAttributeValue(locationId, "clinicPhone");
+				chirdlUtilService.getLocationAttributeValue(locationId, "clinicPhone");
 		
 			if(locationAttributeValue != null){
 				return new Result(locationAttributeValue.getValue());

@@ -36,7 +36,7 @@ import org.openmrs.module.chica.hl7.sms.HL7SocketHandler;
 import org.openmrs.module.chica.hl7.sms.PatientHandler;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.dss.util.Util;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.springframework.web.servlet.mvc.SimpleFormController;

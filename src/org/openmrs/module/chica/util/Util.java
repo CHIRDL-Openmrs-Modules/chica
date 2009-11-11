@@ -253,10 +253,10 @@ public class Util
 	 */
 	public synchronized static String adjustAgeUnits(Date birthdate, Date cutoff)
 	{
-		int years = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, cutoff, YEAR_ABBR);
-		int months = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, cutoff, MONTH_ABBR);
-		int weeks = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, cutoff, WEEK_ABBR);
-		int days = org.openmrs.module.dss.util.Util.getAgeInUnits(birthdate, cutoff, DAY_ABBR);
+		int years = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, cutoff, YEAR_ABBR);
+		int months = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, cutoff, MONTH_ABBR);
+		int weeks = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, cutoff, WEEK_ABBR);
+		int days = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, cutoff, DAY_ABBR);
 
 		if (years >= 2)
 		{

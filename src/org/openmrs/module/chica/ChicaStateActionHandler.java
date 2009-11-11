@@ -114,7 +114,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 				{
 					log.error(e.getMessage());
 					log
-							.error(org.openmrs.module.dss.util.Util
+							.error(org.openmrs.module.chirdlutil.util.Util
 									.getStackTrace(e));
 				}
 			}
@@ -160,7 +160,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 		} catch (Exception e)
 		{
 			log.error(e.getMessage());
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		return processStateAction;
 	}
@@ -227,7 +227,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 		{
 			log.error("Error consuming chica file: " + exportFilename);
 			log.error(e.getMessage());
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		
 		// save specific observations
@@ -256,7 +256,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 		} catch (Exception e)
 		{
 			log.error(e.getMessage());
-			log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 	
@@ -290,7 +290,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 						.getBirthdate(), "bmi", null);
 				if (percentile != null)
 				{
-					percentile = org.openmrs.module.dss.util.Util.round(
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(
 							percentile, 2); // round percentile to two places
 					Util.saveObs(patient, concept, encounterId, percentile
 							.toString(), null,null,locationTagId);
@@ -314,7 +314,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 						.getBirthdate(), "hc", null);
 				if (percentile != null)
 				{
-					percentile = org.openmrs.module.dss.util.Util.round(
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(
 							percentile, 2); // round percentile to two places
 					Util.saveObs(patient, concept, encounterId, percentile
 							.toString(), null,null,locationTagId);
@@ -335,10 +335,10 @@ public class ChicaStateActionHandler implements StateActionHandler
 			{
 				Double percentile = calculator.calculatePercentile(result
 						.toNumber(), patient.getGender(), patient
-						.getBirthdate(), "length", org.openmrs.module.dss.util.Util.MEASUREMENT_IN);
+						.getBirthdate(), "length", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
 				if (percentile != null)
 				{
-					percentile = org.openmrs.module.dss.util.Util.round(
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(
 							percentile, 2); // round percentile to two places
 					Util.saveObs(patient, concept, encounterId, percentile
 							.toString() , null,null,locationTagId);
@@ -360,10 +360,10 @@ public class ChicaStateActionHandler implements StateActionHandler
 				Double percentile = calculator.calculatePercentile(result
 						.toNumber(), patient.getGender(), patient
 						.getBirthdate(), "weight", 
-						org.openmrs.module.dss.util.Util.MEASUREMENT_LB);
+						org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
 				if (percentile != null)
 				{
-					percentile = org.openmrs.module.dss.util.Util.round(
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(
 							percentile, 2); // round percentile to two places
 					Util.saveObs(patient, concept, encounterId, percentile
 							.toString(), null,null,locationTagId);

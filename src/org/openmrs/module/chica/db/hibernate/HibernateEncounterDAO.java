@@ -83,7 +83,7 @@ public class HibernateEncounterDAO extends
 			} catch (Exception e)
 			{
 				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 		}
 

@@ -154,8 +154,8 @@ public class displayHeight implements Rule
 		{
 			double inches = ruleResult.toNumber();
 			double cm = 
-				org.openmrs.module.dss.util.Util.convertUnitsToMetric(inches, 
-						org.openmrs.module.dss.util.Util.MEASUREMENT_IN);
+				org.openmrs.module.chirdlutil.util.Util.convertUnitsToMetric(inches, 
+						org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
 			ruleResult = new Result(String.valueOf(cm));
 		}
 		return ruleResult;

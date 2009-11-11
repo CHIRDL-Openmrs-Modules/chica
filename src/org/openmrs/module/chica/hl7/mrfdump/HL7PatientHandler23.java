@@ -428,7 +428,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 			if (STln != null && STln.getValue() != null)
 			{
-				String lnvalue = org.openmrs.module.dss.util.Util
+				String lnvalue = org.openmrs.module.chirdlutil.util.Util
 						.toProperCase(STln.getValue());
 				if (lnvalue != null)
 					ln = lnvalue;
@@ -436,14 +436,14 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 			if (STfn != null)
 			{
-				String fnvalue =  org.openmrs.module.dss.util.Util.toProperCase(STfn.getValue());
+				String fnvalue =  org.openmrs.module.chirdlutil.util.Util.toProperCase(STfn.getValue());
 				if (fnvalue != null)
 					fn = fnvalue;
 			}
 
 			if (STmn != null)
 			{
-				String mnvalue =  org.openmrs.module.dss.util.Util.toProperCase(STmn.getValue());
+				String mnvalue =  org.openmrs.module.chirdlutil.util.Util.toProperCase(STmn.getValue());
 				if (mnvalue != null)
 					mn = mnvalue;
 			}

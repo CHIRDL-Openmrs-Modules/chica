@@ -140,7 +140,7 @@ public class HL7PatientHandler25 extends
 		} catch (HL7Exception e)
 		{
 			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.dss.util.Util.getStackTrace(e));
+			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		return maiden;
 	}

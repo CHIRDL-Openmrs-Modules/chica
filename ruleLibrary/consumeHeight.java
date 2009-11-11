@@ -183,8 +183,8 @@ public class consumeHeight implements Rule
 		{
 			double measurement = Double.parseDouble(fullResult);
 			double inches = 
-				org.openmrs.module.dss.util.Util.convertUnitsToEnglish(measurement, 
-						org.openmrs.module.dss.util.Util.MEASUREMENT_CM);
+				org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(measurement, 
+						org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CM);
 			fullResult = String.valueOf(inches);
 		}
 		return fullResult;

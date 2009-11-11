@@ -94,7 +94,7 @@ public class heightUnits implements Rule
 
 				if (result != null)
 				{
-					int ageYears = org.openmrs.module.dss.util.Util
+					int ageYears = org.openmrs.module.chirdlutil.util.Util
 							.getAgeInUnits(result, null,
 									Util.YEAR_ABBR);
 
