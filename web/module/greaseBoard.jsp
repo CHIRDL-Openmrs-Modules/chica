@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/template/include.jsp" %>
+<%@ include file="/WEB-INF/template/include.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/greaseBoard.form" />
@@ -57,6 +57,18 @@
 			document.location.href = "viewPatient.form";
 			return false;
 		}
+
+                function popupfull(url) 
+                {
+ 		params  = 'width='+screen.width;
+ 		params += ', height='+screen.height;
+ 		params += ', top=0, left=0'
+ 		params += ', fullscreen=no';
+
+ 		newwin=window.open(url,'windowname4', params);
+ 		if (window.focus) {newwin.focus()}
+ 		return false;
+ 		}
 		</script>
  
 </head>
@@ -140,8 +152,8 @@
 </tr>
 <tr>
 <td align="center">
-<a href="" onclick="return lookupPatient();"><input type="button" value="View Encounters" 
-name="viewEncountersButton" style="width:250px;height:27px;font-size:15px;font-weight:bold;" ></a>
+<input type="button" value="View Encounters" 
+name="viewEncountersButton" onClick="javascript:popupfull('viewPatient.form')"  style="width:250px;height:27px;font-size:15px;font-weight:bold;" ></a>
 
 </tr>
 <tr>

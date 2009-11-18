@@ -75,7 +75,7 @@
 </c:choose>
 
 <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MRN <span style="font-size:8pt;" ></span></b>&nbsp;&nbsp;<input type="text"  size="8" name="mrnLookup" style="width:150px;"tabindex="1"/>
-<input type="submit" name="viewPatientFromEncounterPage" value="Enter" tabindex="2"/> <input type="button" value="Cancel" onclick="javascript:exitForm();" tabindex="3"/>
+<input type="submit" name="viewPatientFromEncounterPage" value="Enter" tabindex="2"/> <input type="button" value="Cancel" onClick="javascript:window.close();" tabindex="3"/>
 
 
 <input type="hidden" name="validate" value="validate"/>

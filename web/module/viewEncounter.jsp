@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/template/include.jsp" %>
+<%@ include file="/WEB-INF/template/include.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/viewEncounter.form" />
@@ -137,7 +137,7 @@ function exitForm(){
 <tr>
 <td align="center">
 <a href="" onclick="return lookupPatient();"><input type="button" value="View Patient" name="viewPatientButton" style="width:100px; height:50px"></a>
-<a href="" onclick="return exitForm();"><input type="button" value="Exit" name="exitButton" style="width:100px; height:50px"></a>
+<a href="" onClick="javascript:window.close();"><input type="button" value="Exit" name="exitButton" style="width:100px; height:50px"></a>
 </td>
 </tr>
 <tr>
