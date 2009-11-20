@@ -520,7 +520,7 @@ public class HL7Exporter extends AbstractTask {
 				
 				if (hl7b != null && hl7b.getAckReceived() != null){
 					ackDate = hl7b.getAckReceived();
-					 log.error("Ack received host:" + host + "; port:" + port 
+					 log.info("Ack received host:" + host + "; port:" + port 
 							 + "- first try. Encounter_id = " + enc.getEncounterId());
 				}
 					
@@ -535,7 +535,7 @@ public class HL7Exporter extends AbstractTask {
 					hl7b = socketHandler.sendMessage(hl7b, socketReadTimeout);
 					 if (hl7b != null && hl7b.getAckReceived() != null){
 						 ackDate = hl7b.getAckReceived();
-						 log.error("Ack received host:" + host + "; port:" + port 
+						 log.info("Ack received host:" + host + "; port:" + port 
 								 + "- second try. Encounter_id = " + enc.getEncounterId());
 					 }
 				}
