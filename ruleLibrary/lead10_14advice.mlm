@@ -35,6 +35,17 @@ Priority:		154;;
 Logic:
 If (mode = PRODUCE) then
 
+/********
+higher := read Exist (GREATER THAN 19 MG/DL, 15 - 19 MG/DL) {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
+If (higher = True) then conclude False;
+*********/
+
+If '15 - 19 MG/DL' is in vblq then conclude False;
+If 'GREATER THAN 19 MG/DL' is in vblq then conclude False;
+/*** If 'LESS THAN 10 MG/DL' is in vblq then conclude False; ---Needs to be discussed with Steve 12/14/09 ****/
+
+
+
 If (RMRS_Lead_Level < 10) OR (RMRS_Lead_Level >= 15)  then conclude False;
 
 /*********
