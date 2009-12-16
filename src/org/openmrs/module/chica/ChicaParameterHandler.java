@@ -149,7 +149,7 @@ public class ChicaParameterHandler implements ParameterHandler
 				}
 				if (numBoxes == 6){
 					
-					ATDError atdError = new ATDError("Error", "PWS Scan"
+					ATDError atdError = new ATDError("Warning", "PWS Scan"
 							, "All six PWS boxes were checked - possible scan error. "
 							,null, new Date(), null);
 					//Get the session id

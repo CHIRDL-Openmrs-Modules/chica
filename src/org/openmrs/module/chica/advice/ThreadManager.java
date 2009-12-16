@@ -31,8 +31,14 @@ public class ThreadManager
 		try
 		{
 			readWriteManager.getWriteLock();
-			activeThreads.add(thread);
+			try {
+	            activeThreads.add(thread);
+            }
+            catch (Exception e) {
+	            log.error("",e);
+            }finally{
 			readWriteManager.releaseWriteLock();
+            }
 
 			thread.start();
 			totalThreadsCreated++;
@@ -55,11 +61,19 @@ public class ThreadManager
 			log.info("Total number of threads purged: " + purgedThreads);
 
 			readWriteManager.getReadLock();
-			int activeThreadsLength = activeThreads.size();
-			log.info("Number of active threads: " + activeThreadsLength);
-			Thread[] activeThreadsArray = new Thread[activeThreadsLength];
-			activeThreads.toArray(activeThreadsArray);
-			readWriteManager.releaseReadLock();
+			int activeThreadsLength = 0;
+            Thread[] activeThreadsArray = null;
+            try {
+	            activeThreadsLength = activeThreads.size();
+	            log.info("Number of active threads: " + activeThreadsLength);
+	            activeThreadsArray = new Thread[activeThreadsLength];
+	            activeThreads.toArray(activeThreadsArray);
+            }
+            catch (Exception e) {
+	            log.error("",e);
+            }finally{
+            	readWriteManager.releaseReadLock();
+            }
 
 			// remove inactive threads
 			for (int i = 0; i < activeThreadsLength; i++)
@@ -68,8 +82,14 @@ public class ThreadManager
 				if (!currThread.isAlive())
 				{
 					readWriteManager.getWriteLock();
-					activeThreads.remove(currThread);
-					readWriteManager.releaseWriteLock();
+					try {
+	                    activeThreads.remove(currThread);
+                    }
+                    catch (Exception e) {
+	                    log.error("",e);
+                    }finally{
+                    	readWriteManager.releaseWriteLock();
+                    }
 					purgedThreads++;
 				}
 			}

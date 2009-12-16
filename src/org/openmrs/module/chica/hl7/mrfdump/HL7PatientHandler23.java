@@ -17,7 +17,7 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 
 import ca.uhn.hl7v2.model.Message;

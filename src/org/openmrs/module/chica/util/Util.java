@@ -224,24 +224,6 @@ public class Util
 		}
 	}
 	
-	public synchronized static String removeLeadingZeros(String mrn)
-	{
-
-		char[] chars = mrn.toCharArray();
-		int index = 0;
-		for (; index < chars.length; index++)
-		{
-			if (chars[index] != '0')
-			{
-				break;
-			}
-		}
-		if (index > -1)
-		{
-			return mrn.substring(index);
-		}
-		return mrn;
-	}
 	
 	/**
 	 * Calculates age to a precision of days, weeks, months, or years based on a

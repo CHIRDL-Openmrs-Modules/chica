@@ -6,7 +6,7 @@
 	<!-- Chica Module Properties -->
 	<id>chica</id>
 	<name>Chica</name>
-	<version>1.45.12</version>
+	<version>1.45.13</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
 	<author>Vibha Anand and Tammy Dugan</author>
 	<description>
@@ -20,9 +20,10 @@
 	<require_version>1.1.10.2283</require_version>
 	<require_modules>
    		<require_module version="2.27.10">org.openmrs.module.dss</require_module>
-   		<require_module version="1.56.5">org.openmrs.module.atd</require_module>
-   		<require_module version="1.3.13">org.openmrs.module.sockethl7listener</require_module>
-   		<require_module version="1.0.4">org.openmrs.module.chirdlutil</require_module>
+   		<require_module version="1.56.6">org.openmrs.module.atd</require_module>
+   		<require_module version="1.3.16">org.openmrs.module.sockethl7listener</require_module>
+		<require_module version="1.0">org.openmrs.module.rgccd</require_module>
+   		<require_module version="1.0.5">org.openmrs.module.chirdlutil</require_module>
 	</require_modules>
 	
 	<extension>
@@ -132,6 +133,17 @@
 	<globalProperty>
 		<property>chica.defaultTifImageDirectory</property>
    		<description>Directory to look for notavailable tif</description>
+	</globalProperty>
+	<globalProperty>
+		<property>chica.medicationListTimeout</property>
+		<defaultValue>5</defaultValue>
+   		<description>Timeout for medication list queries (in seconds).
+   		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>chica.genericProviderId</property>
+   		<description>Generic provider id to use for medication query when no other provider id.
+   		</description>
 	</globalProperty>
 	<advice>
 		<point>org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService</point>

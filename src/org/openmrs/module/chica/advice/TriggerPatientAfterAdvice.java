@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.atd.TeleformFileMonitor;
 import org.openmrs.module.atd.TeleformFileState;
+import org.openmrs.module.chica.MedicationListLookup;
 import org.openmrs.module.sockethl7listener.ProcessedMessagesManager;
 import org.springframework.aop.AfterReturningAdvice;
 
@@ -34,6 +35,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					org.openmrs.Encounter encounter = (org.openmrs.Encounter) args[0];
 					Thread thread = new Thread(new CheckinPatient(encounter));
 					ThreadManager.startThread(thread);
+					MedicationListLookup.queryMedicationList(encounter, false);
 					ProcessedMessagesManager.encountersProcessed();
 				}
 			} catch (Exception e)

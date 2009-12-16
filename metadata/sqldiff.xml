@@ -3046,6 +3046,31 @@ values ('HL7ConfigFile', 'Configuration file for outbound hl7 messages');
 	
 	</sql>
 	</diff>
+	<diff>
+		<version>1.4.1</version>
+		<author>Tammy Dugan</author>
+		<date>Dec 2, 2009</date>
+		<description>
+		Added configuration needed for medication list lookup.
+		</description>
+	<sql>	
+	INSERT INTO `chirdlutil_location_attribute`(name,description)
+ VALUES ('medicationListQueryUser', 
+ 'Location based user for querying the rg ccd service for a patient medication list');
+
+	INSERT INTO atd_error_category
+   (`name`, `description`)
+VALUES
+   ('Query Medication List Connection', 'Query Medication List connection timeout');
+   
+   INSERT INTO atd_state
+   (`name`)
+VALUES
+   ('Query medication list');
+
+</sql>
+	</diff>
+	
 </sqldiff>
 
 

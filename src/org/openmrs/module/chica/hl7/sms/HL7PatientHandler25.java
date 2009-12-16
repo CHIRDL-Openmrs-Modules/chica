@@ -3,7 +3,7 @@
  */
 package org.openmrs.module.chica.hl7.sms;
 
-import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.Util;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
