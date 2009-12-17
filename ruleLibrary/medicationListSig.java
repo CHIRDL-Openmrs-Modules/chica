@@ -41,46 +41,13 @@ public class medicationListSig implements Rule {
 		if(medicationList == null||medicationList.size()==0){
 			return Result.emptyResult();
 		}
-		//sort by dispense date in descending order
-		Collections.sort(medicationList,new MedicationListComparator());
-		
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		calendar.add(Calendar.MONTH, -2);
-		Date threshholdDate = calendar.getTime();
-		
-		//remove medications with dispense date older than 2 months
-		System.out.println(medicationList.size()+ " size of medication list");
-		Iterator<Medication> iter = medicationList.iterator();
-		while(iter.hasNext()){
-			Medication currMed = iter.next();
-			System.out.println(currMed.getName()+" ("+currMed.getDispenseDate()+")");
-			if(currMed.getDispenseDate().before(threshholdDate)){
-				iter.remove();
-			}
-		}
+		MedicationListLookup.filterMedListByDate(medicationList,2);
 		
 		if (medicationList != null&&index != null&&index<medicationList.toArray().length) {
 			
 			Medication currDrug = (Medication) medicationList.toArray()[index];
 			
-			//rx norm name, then original text name, then ndc name
-			String name = currDrug.getRxNormName();
-			
-			if (name == null||name.length()==0) {
-				name = currDrug.getOriginalText();
-			}
-			
-			if (name == null||name.length()==0) {
-				name = currDrug.getNdcName();
-			}
-			
-			// ignore null values
-			if (name != null) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-				return new Result(currDrug.getSig());
-			}
+			return new Result(currDrug.getSig());
 		}
 		
 		return Result.emptyResult();

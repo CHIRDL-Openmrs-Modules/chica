@@ -196,7 +196,10 @@ public class ManualCheckinController extends SimpleFormController
                //entries before update might not be in proper case
                
                if (p1LastName.compareToIgnoreCase(p2LastName)==0){	  
-                   return p1FirstName.compareToIgnoreCase(p2FirstName);
+            	   if(p1FirstName.compareToIgnoreCase(p2FirstName)==0){
+            		   return p2.getDateCreated().compareTo(p1.getDateCreated());
+            	   }
+            	   return p1FirstName.compareToIgnoreCase(p2FirstName);
                }
                
                return p1LastName.compareTo(p2LastName);
@@ -215,7 +218,7 @@ public class ManualCheckinController extends SimpleFormController
 		
 			for (Integer index = 1; index < size; index++){
 				User nextdoc = doctors.get(index);
-				if (comparator.compare(nextdoc, prev) != 0){
+				if (compareOnlyName(nextdoc, prev) != 0){
 					noDups.add(nextdoc);
 					prev = nextdoc;
 				}
@@ -236,6 +239,60 @@ public class ManualCheckinController extends SimpleFormController
 
 		return map;
 	}
+	
+    private int compareOnlyName(Object o1, Object o2) 
+    {
+       User p1 = (User) o1;
+       User p2 = (User) o2;
+       PersonName pn1 = new PersonName();
+       PersonName pn2 = new PersonName();
+       if (p1 != null){
+    	   pn1 = p1.getPersonName();
+       }
+       if (p2!= null){
+    	   pn2 = p2.getPersonName();
+       }
+       String p1FirstName = null;
+       String p2FirstName = null;
+       String p1LastName = null;
+       String p2LastName = null;
+       
+       if(pn1 != null){
+           p1FirstName = pn1.getGivenName(); 
+           p1LastName = pn1.getFamilyName();
+      }
+       
+       if(pn2 != null){
+           p2FirstName = pn2.getGivenName();
+           p2LastName = pn2.getFamilyName();
+       }
+       
+       if(p1FirstName == null){
+    	   p1FirstName = "";
+       }
+       
+       if(p1LastName == null){
+    	   p1LastName = "";
+       }
+       
+       if(p2FirstName == null){
+    	   p2FirstName = "";
+       }
+       
+       if(p2LastName == null){
+    	   p2LastName = "";
+       }
+       //Make sure duplicate name is detected as a duplicate regardless of case.  
+       //NOTE: Comparing to ignore case as a safety check
+       //User should have been stored in proper case, but
+       //entries before update might not be in proper case
+       
+       if (p1LastName.compareToIgnoreCase(p2LastName)==0){	  
+    	   return p1FirstName.compareToIgnoreCase(p2FirstName);
+       }
+       
+       return p1LastName.compareTo(p2LastName);
+    }
 
 	private void checkin(HttpServletRequest request,Map<String, Object> map,
 			Location encounterLocation){

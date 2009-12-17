@@ -14,8 +14,11 @@
 package org.openmrs.module.chica;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -23,9 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.advice.QueryMeds;
 import org.openmrs.module.chirdlutil.ReadWriteManager;
 import org.openmrs.module.rgccd.Medication;
+import org.openmrs.module.rgccd.MedicationListComparator;
 
 /**
  *
@@ -85,6 +91,7 @@ public class MedicationListLookup {
 	
 	public static void queryMedicationList(Encounter encounter, boolean useTimeout) throws QueryMedicationListException {
 		AdministrationService adminService = Context.getAdministrationService();
+		ATDService atdService = Context.getService(ATDService.class);
 		Integer timeout = null;
 		
 		try {
@@ -114,7 +121,12 @@ public class MedicationListLookup {
 				
 				if ((System.currentTimeMillis() - startTime) > timeout) {
 					//the timeout was exceeded so return null
-					log.warn("Timeout exceeded.");
+					//the timeout was exceeded so return null
+					ATDError error = new ATDError("Warning", "Query Medication List Connection", 
+						"Timeout of "+timeout/1000+" seconds was exceeded for patientId: "+
+						encounter.getPatientId()+"."
+						, null, new Date(), null);
+					atdService.saveError(error);
 					return;
 				}
 				try {
@@ -125,6 +137,33 @@ public class MedicationListLookup {
 					e.printStackTrace();
 					return;
 				}
+			}
+		}
+	}
+	
+	public static void filterMedListByDate(List<Medication> medicationList, Integer numMonths){
+		//sort by dispense date in descending order
+		Collections.sort(medicationList,new MedicationListComparator());
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.MONTH, -numMonths);
+		Date threshholdDate = calendar.getTime();
+		
+		//remove medications with dispense date older than 2 months
+		System.out.println(medicationList.size()+ " size of medication list");
+		Iterator<Medication> iter = medicationList.iterator();
+		while(iter.hasNext()){
+			Medication currMed = iter.next();
+			Date dispenseDate = currMed.getDispenseDate();
+			String dateString = "";
+			if(dispenseDate != null){
+				dateString = dispenseDate.toString();
+			}
+			
+			System.out.println(currMed.getName()+" ("+dateString+")");
+			if(dispenseDate!=null&&dispenseDate.before(threshholdDate)){
+				iter.remove();
 			}
 		}
 	}
