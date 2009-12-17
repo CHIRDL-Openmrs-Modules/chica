@@ -44,6 +44,6 @@ set f1.parent_form_field=f3.form_field_id
 where f2.parent_name=f3.name and f4.name=f2.child_name and f1.form_field_id=f4.form_field_id;
 
 /* add rows in atd_form_attribute_value for new form */
-insert into atd_form_attribute_value(form_id,value,form_attribute_id)
-select b.form_id,value,form_attribute_id from atd_form_attribute_value a,(select form_id from form where name='PWS_new') b where a.form_id in (
+insert into atd_form_attribute_value(form_id,value,form_attribute_id,location_tag_id,location_id)
+select b.form_id,value,form_attribute_id,location_tag_id,location_id from atd_form_attribute_value a,(select form_id from form where name='PWS_new') b where a.form_id in (
 select form_id from form where name='PWS' and retired=0);
