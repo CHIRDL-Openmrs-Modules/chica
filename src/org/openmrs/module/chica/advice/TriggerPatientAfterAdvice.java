@@ -35,7 +35,12 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					org.openmrs.Encounter encounter = (org.openmrs.Encounter) args[0];
 					Thread thread = new Thread(new CheckinPatient(encounter));
 					ThreadManager.startThread(thread);
-					MedicationListLookup.queryMedicationList(encounter, false);
+					try {
+	                    MedicationListLookup.queryMedicationList(encounter, false);
+                    }
+                    catch (Exception e) {
+	                    log.error("medication list lookup failed",e);
+                    }
 					ProcessedMessagesManager.encountersProcessed();
 				}
 			} catch (Exception e)

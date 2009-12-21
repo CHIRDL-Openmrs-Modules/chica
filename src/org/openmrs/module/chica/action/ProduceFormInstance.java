@@ -114,7 +114,13 @@ public class ProduceFormInstance implements ProcessStateAction
 				State queryMedListState = atdService.getStateByName("Query medication list");
 				PatientState state = atdService.addPatientState(patient, queryMedListState, 
 					sessionId, locationTagId,locationId);
-				MedicationListLookup.queryMedicationList(encounter,true);
+				try {
+	                MedicationListLookup.queryMedicationList(encounter,true);
+                }
+                catch (Exception e) {
+	               
+	                log.error("Medication Query failed", e);
+                }
 				state.setEndTime(new java.util.Date());
 				atdService.updatePatientState(patientState);
 			}
