@@ -166,7 +166,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 	}
 	
 	public synchronized void changeState(PatientState patientState,
-			HashMap<String,Object> parameters) throws Exception{
+			HashMap<String,Object> parameters){
 		StateAction stateAction = patientState.getState().getAction();
 		if (stateAction == null)
 		{
@@ -182,7 +182,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 	}
 	
 	public synchronized void processAction(StateAction stateAction, Patient patient,
-			PatientState patientState,HashMap<String,Object> parameters) throws Exception
+			PatientState patientState,HashMap<String,Object> parameters)
 	{
 		if (stateAction == null)
 		{
@@ -409,7 +409,7 @@ public class ChicaStateActionHandler implements StateActionHandler
 	public static synchronized void changeState(Patient patient, Integer sessionId,
 			State currState,StateAction action,
 			HashMap<String,Object> parameters,
-			Integer locationTagId,Integer locationId) throws Exception
+			Integer locationTagId,Integer locationId)
 	{
 		ATDService atdService = Context.getService(ATDService.class);
 		List<ATDError> errors = null;

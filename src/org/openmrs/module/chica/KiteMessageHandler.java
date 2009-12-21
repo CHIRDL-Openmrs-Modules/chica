@@ -70,7 +70,7 @@ public class KiteMessageHandler
 		this.os.flush();
 	}
 
-	public String getMessage() throws Exception
+	public String getMessage()
 	{
 		ATDService atdService = Context.getService(ATDService.class);
 		ByteArrayOutputStream outputString = new ByteArrayOutputStream();
@@ -78,17 +78,21 @@ public class KiteMessageHandler
 		try
 		{
 			IOUtil.bufferedReadWrite(this.is, outputString,1);
-			outputString.flush();
-			outputString.close();
+		
 		} catch (Exception e)
 		{	
-			outputString.flush();
-			outputString.close();
 			ATDError error = new ATDError("Error","Query Kite Connection"
 					, "Message dropped"
 					, "Partial message: "+outputString.toString(), new Date(), null);
 			atdService.saveError(error);
 			return null;
+		}finally{
+			try {
+	            outputString.flush();
+	            outputString.close();
+            }
+            catch (IOException e) {
+            }
 		}
 		return outputString.toString();
 	}

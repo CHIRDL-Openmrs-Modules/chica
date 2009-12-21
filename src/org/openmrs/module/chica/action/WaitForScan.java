@@ -39,8 +39,7 @@ public class WaitForScan implements ProcessStateAction {
 	 *      java.util.HashMap)
 	 */
 	public void processAction(StateAction stateAction, Patient patient,
-			PatientState patientState, HashMap<String, Object> parameters)
-			throws Exception {
+			PatientState patientState, HashMap<String, Object> parameters){
 		// lookup the patient again to avoid lazy initialization errors
 		PatientService patientService = Context.getPatientService();
 		Integer patientId = patient.getPatientId();

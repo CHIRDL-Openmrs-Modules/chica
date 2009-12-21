@@ -35,7 +35,7 @@ public interface ChicaService
 
 	public void produce(OutputStream output, PatientState state,
 			Patient patient,Integer encounterId,String dssType,
-			int maxDssElements,Integer sessionId)throws Exception;
+			int maxDssElements,Integer sessionId);
 
 	public void updateStatistics(Statistics statistics);
 

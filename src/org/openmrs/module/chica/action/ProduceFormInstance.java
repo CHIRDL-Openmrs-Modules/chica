@@ -4,6 +4,7 @@
 package org.openmrs.module.chica.action;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,7 +54,6 @@ public class ProduceFormInstance implements ProcessStateAction
 	 */
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
-			throws Exception
 	{
 		//lookup the patient again to avoid lazy initialization errors
 		PatientService patientService = Context.getPatientService();
@@ -141,11 +141,16 @@ public class ProduceFormInstance implements ProcessStateAction
 				.getMaxDssElements(formId, locationTagId, locationId);
 		String dsstype = org.openmrs.module.chica.util.Util
 				.getDssType(currState.getName());
-		FileOutputStream output = new FileOutputStream(mergeFilename);
-		chicaService.produce(output, patientState, patient, encounterId,
-				dsstype, maxDssElements, sessionId);
-		output.flush();
-		output.close();
+		try {
+			FileOutputStream output = new FileOutputStream(mergeFilename);
+			chicaService.produce(output, patientState, patient, encounterId, dsstype, maxDssElements, sessionId);
+			
+			output.flush();
+			output.close();
+		}
+		catch (IOException e) {
+			log.error("Could not produce merge xml for file: "+mergeFilename, e);
+		}
 		LogicService logicService = Context.getLogicService();
 
 		ObsChicaDatasource xmlDatasource = (ObsChicaDatasource) logicService

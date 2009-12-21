@@ -627,7 +627,7 @@ public class ChicaServiceImpl implements ChicaService
 	 */
 	public void produce(OutputStream output, PatientState state,
 			Patient patient, Integer encounterId, String dssType,
-			int maxDssElements,Integer sessionId) throws Exception
+			int maxDssElements,Integer sessionId)
 	{
 		DssService dssService = Context
 				.getService(DssService.class);
@@ -637,11 +637,16 @@ public class ChicaServiceImpl implements ChicaService
 		DssManager dssManager = new DssManager(patient);
 		dssManager.setMaxDssElementsByType(dssType, maxDssElements);
 		HashMap<String, Object> baseParameters = new HashMap<String, Object>();
-		dssService.loadRule("CREATE_JIT",false);
-		dssService.loadRule("ChicaAgeRule",false);
-		dssService.loadRule("storeObs",false);
-		dssService.loadRule("DDST", false);
-		dssService.loadRule("LookupBPcentile", false);
+		try {
+	        dssService.loadRule("CREATE_JIT",false);
+	        dssService.loadRule("ChicaAgeRule",false);
+	        dssService.loadRule("storeObs",false);
+	        dssService.loadRule("DDST", false);
+	        dssService.loadRule("LookupBPcentile", false);
+        }
+        catch (Exception e) {
+	        log.error("load rule failed", e);
+        }
 
 		FormInstance formInstance = state.getFormInstance();
 		atdService.produce(patient, formInstance, output, dssManager,

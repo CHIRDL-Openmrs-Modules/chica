@@ -37,7 +37,6 @@
 	<classpathentry kind="lib" path="/dss/dist"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-webmvc.jar"/>
-	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-bind.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-extras.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-run.jar"/>
@@ -97,7 +96,6 @@
 	<classpathentry kind="lib" path="lib-common/openmrs-api-1.5.0.10396-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/tests-openmrs-api-1.5.0.10396-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/web-openmrs-api-1.5.0.10396-dev.jar"/>
-	<classpathentry kind="lib" path="lib-common/dss-2.27.10.jar" sourcepath="/dss/src"/>
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.3.16.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-tools.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/xmlpull_1_1_4.jar"/>
@@ -141,7 +139,9 @@
 	<classpathentry kind="lib" path="lib-common/axis2/XmlSchema-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/axis2/XmlSchema-LICENSE.txt"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutil-1.0.5.jar"/>
-	<classpathentry kind="lib" path="lib-common/atd-1.56.6.jar"/>
 	<classpathentry kind="lib" path="lib-common/rgccd-1.0.1.jar"/>
+	<classpathentry kind="lib" path="dist"/>
+	<classpathentry kind="lib" path="lib-common/atd-1.56.7.jar"/>
+	<classpathentry kind="lib" path="lib-common/dss-2.27.11.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

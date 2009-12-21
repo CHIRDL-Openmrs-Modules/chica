@@ -40,7 +40,6 @@ public class Randomize implements ProcessStateAction
 	 */
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
-			throws Exception
 	{
 		//lookup the patient again to avoid lazy initialization errors
 		PatientService patientService = Context.getPatientService();
