@@ -109,6 +109,10 @@ public class bmi implements Rule
 		{
 			Double weightNum = weightResult.toNumber();
 			Double heightNum = heightResult.toNumber();
+			//check for division by zero
+			if(heightNum==0){
+				return Result.emptyResult();
+			}
 			if(weightNum != null && heightNum != null)
 			{
 				Double bmi = ( weightNum / 
