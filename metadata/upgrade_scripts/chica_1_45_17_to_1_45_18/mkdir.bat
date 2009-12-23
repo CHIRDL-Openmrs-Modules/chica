@@ -1,0 +1,1 @@
+copy unfilteredMeds.xml to c:\chica\config;
