@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
@@ -55,8 +56,8 @@ public class QueryMeds implements Runnable {
 			        .getGlobalProperty("scheduler.password"));
 			
 			Patient patient = this.encounter.getPatient();
+			Hibernate.initialize(patient); //prevent lazy initialization errors
 			locationId = this.encounter.getLocation().getLocationId();
-			//Integer encounterId = this.encounter.getEncounterId();
 			
 			CcdService ccdService = Context.getService(CcdService.class);
 			mrn = patient.getPatientIdentifier().getIdentifier();
@@ -65,6 +66,7 @@ public class QueryMeds implements Runnable {
 			
 				if (ps.getPersonAttributeTypeByName(PROVIDER_ID) != null) {
 					User providerUser = this.encounter.getProvider();
+					Hibernate.initialize(providerUser); //prevent lazy initialization errors
 					if(providerUser.getAttribute(PROVIDER_ID) != null){
 						providerId = providerUser.getAttribute(PROVIDER_ID).toString();
 						if(providerId.length()==0){

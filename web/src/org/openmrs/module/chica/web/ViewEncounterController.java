@@ -28,6 +28,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
+import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -207,14 +208,26 @@ public class ViewEncounterController extends SimpleFormController {
 				// psf, pws form ids
 				
 				
-				List<FormInstance> psfForms = atdService.getFormInstancesByEncounterId("PSF", encounterId);
-				if (psfForms != null && !psfForms.isEmpty()){
-					row.setPsfId(psfForms.get(0));
+				List<PatientState> psfPatientStates = atdService.getPatientStatesWithFormInstances("PSF", encounterId);
+				if (psfPatientStates != null && !psfPatientStates.isEmpty()){
+					
+					for(PatientState currState:psfPatientStates){
+						if(currState.getEndTime()!=null){
+							row.setPsfId(currState.getFormInstance());
+							break;
+						}
+					}
 				}
 				
-				List<FormInstance> pwsForms= atdService.getFormInstancesByEncounterId("PWS", encounterId);
-				if (pwsForms != null && !pwsForms.isEmpty()){
-					row.setPwsId(pwsForms.get(0));
+				List<PatientState> pwsPatientStates = atdService.getPatientStatesWithFormInstances("PWS", encounterId);
+				if (pwsPatientStates != null && !pwsPatientStates.isEmpty()){
+					
+					for(PatientState currState:pwsPatientStates){
+						if(currState.getEndTime()!=null){
+							row.setPwsId(currState.getFormInstance());
+							break;
+						}
+					}
 				}
 				
 				Chica1Appointment chica1Appt = chicaService
