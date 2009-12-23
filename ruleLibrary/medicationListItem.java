@@ -1,11 +1,8 @@
 package org.openmrs.module.chica.rule;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +13,6 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.rgccd.MedicationListComparator;
 import org.openmrs.module.chica.MedicationListLookup;
 import org.openmrs.module.rgccd.Medication;
 
@@ -40,7 +36,7 @@ public class medicationListItem implements Rule {
 		}
 		
 		Integer patientId = patient.getPatientId();
-		List<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
+		LinkedList<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
 		
 		if(medicationList == null||medicationList.size()==0){
 			return Result.emptyResult();

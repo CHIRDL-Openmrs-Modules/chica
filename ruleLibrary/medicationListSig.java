@@ -1,11 +1,6 @@
 package org.openmrs.module.chica.rule;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +35,7 @@ public class medicationListSig implements Rule {
 		}
 		
 		Integer patientId = patient.getPatientId();
-		List<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
+		LinkedList<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
 		
 		if(medicationList == null||medicationList.size()==0){
 			return Result.emptyResult();

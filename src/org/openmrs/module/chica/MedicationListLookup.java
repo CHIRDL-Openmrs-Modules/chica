@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -65,9 +66,9 @@ public class MedicationListLookup {
         }
 	}
 	
-	public static synchronized List<Medication> getMedicationList(Integer patientId) {
+	public static synchronized LinkedList<Medication> getMedicationList(Integer patientId) {
 		medicationListsLock.getReadLock();
-		List<Medication> medications = new ArrayList<Medication>();
+		LinkedList<Medication> medications = new LinkedList<Medication>();
         try {
 	        List<Medication> medicationList = medicationLists.get(patientId);
 	        if(medicationList == null){
@@ -150,7 +151,7 @@ public class MedicationListLookup {
 		}
 	}
 	
-	public static void filterMedListByDate(List<Medication> medicationList, 
+	public static void filterMedListByDate(LinkedList<Medication> medicationList, 
 	                                       Integer numMonths,Integer locationTagId,
 	                                       Integer locationId) {
 		
@@ -159,6 +160,7 @@ public class MedicationListLookup {
 	                                                              locationId);
 		
 		String medExceptionConfigFilename = null;
+		List<Medication> unfilteredMeds = new ArrayList<Medication>();
 		
 		if(locationTagAttrVal != null){
 			medExceptionConfigFilename = locationTagAttrVal.getValue();
@@ -204,6 +206,28 @@ public class MedicationListLookup {
 		//remove medications with dispense date older than 2 months
 		System.out.println(medicationList.size()+ " size of medication list");
 		Iterator<Medication> iter = medicationList.iterator();
+			
+		if (exceptionMeds != null) {
+			while (iter.hasNext()) {
+				Medication currMed = iter.next();
+				
+				org.openmrs.module.chica.xmlBeans.Medication unfilteredMed = exceptionMeds.get(currMed.getNdcName());
+				
+				if (unfilteredMed != null && unfilteredMed.getSystem().equalsIgnoreCase("NDC")) {
+					iter.remove();
+					unfilteredMeds.add(currMed);
+				}
+				
+				unfilteredMed = exceptionMeds.get(currMed.getRegenstriefName());
+				
+				if (unfilteredMed != null && unfilteredMed.getSystem().equalsIgnoreCase("RMRS")) {
+					iter.remove();
+					unfilteredMeds.add(currMed);
+				}
+			}
+		}
+		
+	    iter = medicationList.iterator();
 		while(iter.hasNext()){
 			Medication currMed = iter.next();
 			Date dispenseDate = currMed.getDispenseDate();
@@ -214,28 +238,12 @@ public class MedicationListLookup {
 			
 			System.out.println(currMed.getName()+" ("+dateString+")");
 			if(dispenseDate!=null&&dispenseDate.before(threshholdDate)){
-				boolean filtered = true;
-				//don't remove exception list meds from the list even if they are outside
-				//the dispenseDate range
-				if(exceptionMeds != null){
-					org.openmrs.module.chica.xmlBeans.Medication unfilteredMed = 
-						exceptionMeds.get(currMed.getNdcName());
-					
-					if(unfilteredMed != null&&unfilteredMed.getSystem().equalsIgnoreCase("NDC")){
-						filtered = false;
-					}
-					
-					unfilteredMed = 
-						exceptionMeds.get(currMed.getRegenstriefName());
-					
-					if(unfilteredMed != null&&unfilteredMed.getSystem().equalsIgnoreCase("RMRS")){
-						filtered = false;
-					}
-				}
-				if(filtered){
-					iter.remove();
-				}
+				iter.remove();
 			}
+		}
+		
+		for(int i = unfilteredMeds.size()-1;i>=0;i--){
+			medicationList.addFirst(unfilteredMeds.get(i));
 		}
 	}
 }
