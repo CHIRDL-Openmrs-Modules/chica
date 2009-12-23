@@ -3070,7 +3070,18 @@ VALUES
 
 </sql>
 	</diff>
-	
+		<diff>
+		<version>1.4.2</version>
+		<author>Tammy Dugan</author>
+		<date>Dec 22, 2009</date>
+		<description>
+		Added location tag attribute for medications that should always display on the medication list.
+		</description>
+	<sql>
+	insert into chirdlutil_location_tag_attribute (name, description)
+values ('unfilteredMedicationFile', 'Configuration file listing medications that should always appear on the medication list');
+	</sql>
+	</diff>
 </sqldiff>
 
 

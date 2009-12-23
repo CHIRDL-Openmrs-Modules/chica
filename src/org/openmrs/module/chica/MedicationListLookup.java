@@ -13,10 +13,14 @@
  */
 package org.openmrs.module.chica;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +33,12 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.advice.QueryMeds;
+import org.openmrs.module.chica.xmlBeans.UnfilteredMedications;
 import org.openmrs.module.chirdlutil.ReadWriteManager;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
+import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.rgccd.Medication;
 import org.openmrs.module.rgccd.MedicationListComparator;
 
@@ -141,7 +150,49 @@ public class MedicationListLookup {
 		}
 	}
 	
-	public static void filterMedListByDate(List<Medication> medicationList, Integer numMonths){
+	public static void filterMedListByDate(List<Medication> medicationList, 
+	                                       Integer numMonths,Integer locationTagId,
+	                                       Integer locationId) {
+		
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		LocationTagAttributeValue locationTagAttrVal = chirdlUtilService.getLocationTagAttributeValue(locationTagId, "unfilteredMedicationFile",
+	                                                              locationId);
+		
+		String medExceptionConfigFilename = null;
+		
+		if(locationTagAttrVal != null){
+			medExceptionConfigFilename = locationTagAttrVal.getValue();
+		}
+		
+		UnfilteredMedications unfilteredMedications = null;
+		FileInputStream input;
+		HashMap<String,org.openmrs.module.chica.xmlBeans.Medication> exceptionMeds = null;
+		
+		if (medExceptionConfigFilename != null) {
+			try {
+				input = new FileInputStream(medExceptionConfigFilename);
+				
+				try {
+					unfilteredMedications = (UnfilteredMedications) XMLUtil.deserializeXML(
+						UnfilteredMedications.class, input);
+					
+					exceptionMeds = new HashMap<String, org.openmrs.module.chica.xmlBeans.Medication>();
+					
+					for (org.openmrs.module.chica.xmlBeans.Medication medication : unfilteredMedications
+					        .getUnfilteredMedications()) {
+						exceptionMeds.put(medication.getName(), medication);
+					}
+				}
+				catch (IOException e) {
+					log.error(e.getMessage());
+					log.error(Util.getStackTrace(e));
+				}
+			}
+			catch (FileNotFoundException e1) {
+				log.error("", e1);
+			}
+		}
+		
 		//sort by dispense date in descending order
 		Collections.sort(medicationList,new MedicationListComparator());
 		
@@ -163,7 +214,27 @@ public class MedicationListLookup {
 			
 			System.out.println(currMed.getName()+" ("+dateString+")");
 			if(dispenseDate!=null&&dispenseDate.before(threshholdDate)){
-				iter.remove();
+				boolean filtered = true;
+				//don't remove exception list meds from the list even if they are outside
+				//the dispenseDate range
+				if(exceptionMeds != null){
+					org.openmrs.module.chica.xmlBeans.Medication unfilteredMed = 
+						exceptionMeds.get(currMed.getNdcName());
+					
+					if(unfilteredMed != null&&unfilteredMed.getSystem().equalsIgnoreCase("NDC")){
+						filtered = false;
+					}
+					
+					unfilteredMed = 
+						exceptionMeds.get(currMed.getRegenstriefName());
+					
+					if(unfilteredMed != null&&unfilteredMed.getSystem().equalsIgnoreCase("RMRS")){
+						filtered = false;
+					}
+				}
+				if(filtered){
+					iter.remove();
+				}
 			}
 		}
 	}

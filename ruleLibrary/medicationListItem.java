@@ -30,9 +30,13 @@ public class medicationListItem implements Rule {
 	 */
 	public Result eval(LogicContext context, Patient patient, Map<String, Object> parameters) throws LogicException {
 		Integer index = null;
+		Integer locationTagId = null;
+		Integer locationId = null;
 		
 		if (parameters != null) {
 			index = Integer.parseInt((String) parameters.get("param0"));
+			locationTagId = (Integer) parameters.get("locationTagId");
+			locationId = (Integer) parameters.get("locationId");
 		}
 		
 		Integer patientId = patient.getPatientId();
@@ -41,7 +45,8 @@ public class medicationListItem implements Rule {
 		if(medicationList == null||medicationList.size()==0){
 			return Result.emptyResult();
 		}
-		MedicationListLookup.filterMedListByDate(medicationList,2);
+		MedicationListLookup.filterMedListByDate(medicationList,2,locationTagId,
+            locationId);
 		
 		if (medicationList != null&&index != null&&index<medicationList.toArray().length) {
 			

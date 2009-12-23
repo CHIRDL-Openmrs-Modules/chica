@@ -42,4 +42,12 @@
 <value name="UNITS" field="units" usage="optional" />
 </mapping>
 
+  <mapping class="org.openmrs.module.chica.xmlBeans.UnfilteredMedications" name="unfilteredMedications">
+    <collection item-type="org.openmrs.module.chica.xmlBeans.Medication" get-method="getUnfilteredMedications" set-method="setUnfilteredMedications" create-type="java.util.ArrayList"/>
+  </mapping>
+  <mapping class="org.openmrs.module.chica.xmlBeans.Medication" name="medication">
+    <value style="attribute" name="name" get-method="getName" set-method="setName"/>
+    <value style="attribute" name="system" get-method="getSystem" set-method="setSystem"/>
+  </mapping>
+
 </binding>

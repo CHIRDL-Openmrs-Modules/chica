@@ -142,5 +142,16 @@
 		  </bind>
 		  </target>
 	
+  	
+  <target name="codegen">
+  		    <java classname="org.jibx.schema.codegen.CodeGen"
+  		        classpathref="classpath">
+  		      <arg value="-t"/>
+  		      <arg value="src/org/openmrs/module/chica/xmlBeans"/>
+  		      <arg value="src/org/openmrs/module/chica/xmlBeans/*.xsd"/>
+  		    </java>
+  		    
+  </target>
+	
 </project>
 
