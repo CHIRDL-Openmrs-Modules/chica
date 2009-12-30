@@ -204,7 +204,6 @@ public class MedicationListLookup {
 		Date threshholdDate = calendar.getTime();
 		
 		//remove medications with dispense date older than 2 months
-		System.out.println(medicationList.size()+ " size of medication list");
 		Iterator<Medication> iter = medicationList.iterator();
 			
 		if (exceptionMeds != null) {
@@ -236,7 +235,6 @@ public class MedicationListLookup {
 				dateString = dispenseDate.toString();
 			}
 			
-			System.out.println(currMed.getName()+" ("+dateString+")");
 			if(dispenseDate!=null&&dispenseDate.before(threshholdDate)){
 				iter.remove();
 			}
