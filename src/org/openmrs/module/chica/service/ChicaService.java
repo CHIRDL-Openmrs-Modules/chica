@@ -18,6 +18,8 @@ import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Chica1Patient;
 import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
+import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
+import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
@@ -141,7 +143,7 @@ public interface ChicaService
 
 	public List<Statistics> getStatsByEncounterFormNotPrioritized(Integer encounterId,String formName);
 	
-	public void insertEncounterToHL7ExportQueue(ChicaHL7Export export);
+	public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export);
 
 	public List<ChicaHL7Export> getPendingHL7Exports();
 	
@@ -167,5 +169,13 @@ public interface ChicaService
 	public List<String> getPrinterStations(Location location);
 	
 	public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId);
+	
+	public void  saveHL7ExportMap (ChicaHL7ExportMap map);
+	
+	public ChicaHL7ExportMap getChicaExportMapByQueueId(Integer queue_id);
+	
+	public ChicaHL7ExportStatus getChicaExportStatusByName (String name);
+	
+	public ChicaHL7ExportStatus getChicaExportStatusById (Integer id);
 	
 }

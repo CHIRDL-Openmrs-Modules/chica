@@ -42,21 +42,27 @@ If (mode = CONSUME) then
 
 If  (Box1=true) then
  CALL storeObs With "PAIN QUANTITATIVE","1-2";
+ CALL storeObs With "PAIN QUANTITATIVE CAREWEB","1-2";
 endif;
 If  (Box2=true) then
  CALL storeObs With "PAIN QUANTITATIVE","3-4";
+ CALL storeObs With "PAIN QUANTITATIVE CAREWEB","3-4";
 endif;
 If  (Box3=true) then
  CALL storeObs With "PAIN QUANTITATIVE","5-6";
+ CALL storeObs With "PAIN QUANTITATIVE CAREWEB","5-6";
 endif;
 If  (Box4=true) then
  CALL storeObs With "PAIN QUANTITATIVE","7-8";
+ CALL storeObs With "PAIN QUANTITATIVE CAREWEB","7-8";
 endif;
 If  (Box5=true) then
  CALL storeObs With "PAIN QUANTITATIVE","9-10";
+ CALL storeObs With "PAIN QUANTITATIVE CAREWEB","9-10";
 endif;
 If  (Box6=true) then
  CALL storeObs With "PAIN QUANTITATIVE","0";
+ CALL storeObs With "PAIN QUANTITATIVE CAREWEB","0";
 endif;
 
 

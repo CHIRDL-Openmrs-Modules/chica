@@ -53,6 +53,15 @@ public class ChicaHL7Export implements java.io.Serializable {
 	
 	public void setStatus(Integer status) {
 		this.status = status;
+		
+	}
+	public void setStatus(ChicaHL7ExportStatus exportStatus) {
+		if (exportStatus != null){
+			status = exportStatus.getHl7ExportStatusId();
+		} else {
+			status = 999;
+		}
+		
 	}
 	
 	public Date getDateInserted() {

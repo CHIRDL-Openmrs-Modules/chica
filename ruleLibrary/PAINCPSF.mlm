@@ -45,6 +45,7 @@ If  (Box1=true) then
 endif;
 If  (Box2=true) then
  CALL storeObs With "PAIN QUALITATIVE","no";
+ CALL storeObs With "PAIN QUALITATIVE CAREWEB","0";
 endif;
 
 

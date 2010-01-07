@@ -1,6 +1,9 @@
 package org.openmrs.module.chica.hl7.mckesson;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,9 +11,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,32 +31,45 @@ import org.openmrs.ConceptMap;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.ConceptSet;
-import org.openmrs.Encounter;
 import org.openmrs.LocationTag;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.Session;
+import org.openmrs.hl7.HL7Service;
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
+import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
+import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.Base64;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.sockethl7listener.HL7MessageConstructor;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import ca.uhn.hl7v2.model.v25.segment.OBX;
 
 
 
@@ -114,36 +137,20 @@ public class HL7Exporter extends AbstractTask {
 	{
 		
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		LocationService locationService = Context.getService(LocationService.class);
-		EncounterService encounterService = Context.getService(EncounterService.class);
 		ATDService atdService = Context.getService(ATDService.class);
-		AdministrationService adminService = Context.getAdministrationService();
-		ObsService obsService = Context.getObsService();
+		EncounterService encounterService = Context.getService(EncounterService.class);
 		socketHandler = new HL7SocketHandler();
 		
-		String vitalsBatteryId  = "";
-		String vitalsBatteryName = "";
-		String generalBatteryName = "";
-		String generalBatteryId = "";
-		String socketReadTimeoutStr = "";
-		Integer socketReadTimeout = null;
-		
-		
-		boolean vitalsBatteryOnly = true;
-		Integer encid = null;
-		List <Concept> concepts = null;
+		String conceptCategory = "";
+		ChicaHL7Export export = new ChicaHL7Export();
 		Context.openSession();
-		ChicaHL7Export export = null;
-
+		
 		try
 		{
 			
 			if (Context.isAuthenticated() == false)
 				authenticate();
 
-			String conceptDictionaryMapFile = adminService
-				.getGlobalProperty("chica.conceptDictionaryMapFile");
-			
 			socketHandler.openSocket(host, port);
 			
 			//get list of pending exports
@@ -152,95 +159,150 @@ public class HL7Exporter extends AbstractTask {
 		
 			while (it.hasNext()){
 				
-				
-			
-				
-				
-				
 				//add socketReadTimeout to scheduler
 				
 				export = it.next();
-				
-				
-				
+			
 				//Get location of hl7 configuration file from location_tag_attribute_value
 				Integer encId = export.getEncounterId();
-				//Get file location
-				String configFileName = getFileLocation(encId);
-				Encounter openmrsEncounter = encounterService.getEncounter(encId);
+				Integer hl7ExportQueueId = export.getQueueId();
 				
-				
-				Properties hl7Prop = Util.getProps(configFileName);
-				if (hl7Prop != null){
-					String vOnly = hl7Prop.getProperty("use_vitals_battery_only");
-					if (vOnly != null) vitalsBatteryOnly = Boolean.valueOf(vOnly);
-					vitalsBatteryName = hl7Prop.getProperty("vitals_battery_name");
-					vitalsBatteryId = hl7Prop.getProperty("vitals_battery_id");
-					generalBatteryName = hl7Prop.getProperty("general_battery_name");
-					generalBatteryId = hl7Prop.getProperty("general_battery_id");
-					
+				//Get the mapping files
+				String conceptMapFile = getChicaExportConceptMapByQueueId(hl7ExportQueueId);
+				if (conceptMapFile == null) {
+					export.setStatus(chicaService.getChicaExportStatusByName("concept_map_location_unknown"));
+					chicaService.saveChicaHL7Export(export);
+					continue;
 				}
 				
-				//Create message
+				Document doc = getDocument(conceptMapFile);
+				if (doc == null) {
+					
+					export.setStatus(chicaService.getChicaExportStatusByName("XML_parsing_error"));
+					chicaService.saveChicaHL7Export(export);
+					continue;
+				}
+				
+				
+				//Get the hl7 config file
+				String configFileName = getFileLocation(encId);
+				if (configFileName == null || configFileName.equalsIgnoreCase("") ) {
+					export.setStatus(chicaService.getChicaExportStatusByName("hl7_config_file_not_found"));
+					chicaService.saveChicaHL7Export(export);
+					continue;
+				}
+				
+				
+				//Construct the message
+				
+				Hashtable<String,String> mappings = this.loadHashTable(doc); 
+				conceptCategory = doc.getDocumentElement().getAttribute("category");
+				Properties hl7Properties = Util.getProps(configFileName);
+				if (hl7Properties ==null){
+					export.setStatus(chicaService.getChicaExportStatusByName("no_hl7_config_properties"));
+					chicaService.saveChicaHL7Export(export);
+					continue;
+				}
+				
+				int numberOfOBXSegments = 0;
+				boolean sendObs = false;
+			
+				Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encId);
+				
 				HL7MessageConstructor constructor = new HL7MessageConstructor(configFileName);
 				List<Encounter> queryEncounterList = new ArrayList<Encounter>();
-				//create list with one entry for parameter in obs search only
 				queryEncounterList.add(openmrsEncounter);
 			
 				constructor.AddSegmentMSH(openmrsEncounter);
 				constructor.AddSegmentPID(openmrsEncounter.getPatient());
 				constructor.AddSegmentPV1(openmrsEncounter);
-
-				//Create a list of vitals concepts for the concept names defined in mapping xml
-				Properties prop = Util.getProps(conceptDictionaryMapFile);
-
-				//get list of concepts from map 
-				concepts = getConceptListFromMap(prop, false);
-
-				if (vitalsBatteryOnly){
-					List<Concept> verifiedVitalsConcepts = getConceptsInSet(concepts, "PEDS CL DATA");
-					if (verifiedVitalsConcepts != null){
-						List<Obs> obsList = obsService.getObservations(null, queryEncounterList, 
-								verifiedVitalsConcepts, null, null, null, null, null, null, null, null, false);
-						if (obsList == null || obsList.size()== 0){
-							export.setStatus(100);
-							chicaService.saveChicaHL7Export(export);
-							continue;
-						}
-
-						constructor.AddSegmentOBR(openmrsEncounter, vitalsBatteryId, vitalsBatteryName);
-						addOBXBlock(obsList, constructor, prop);
+				
+				
+				//Construct TIFFS
+				if (conceptCategory != null && conceptCategory.equalsIgnoreCase("PSF TIFF")){
+					String batteryName = hl7Properties.getProperty("psf_battery_name");
+					if (!addOBXForTiff(constructor, openmrsEncounter , "PSF", mappings, batteryName)){
+						export.setStatus(chicaService.getChicaExportStatusByName("Image_not_found"));
+						chicaService.saveChicaHL7Export(export);
+						continue;
 					}
-				} else {
-
-					List<Concept> verifiedNonVitalsConcepts = getConceptsInSet(concepts, "MEDICAL RECORD FILE OBSERVATIONS");
-					if (verifiedNonVitalsConcepts != null){
-						constructor.AddSegmentOBR(openmrsEncounter, generalBatteryId, generalBatteryName);
-						List<Obs> obsList = obsService.getObservations(null, queryEncounterList, 
-								verifiedNonVitalsConcepts, null, null, null, null, null, null, null, null, false);
-						addOBXBlock(obsList, constructor, prop);
-					}
+					
 				}
+				
+				if (conceptCategory != null && conceptCategory.equalsIgnoreCase("PWS TIFF")){
+					String batteryName = hl7Properties.getProperty("pws_battery_name");
+					if (!addOBXForTiff(constructor, openmrsEncounter,"PWS", mappings, batteryName )){
+						export.setStatus(chicaService.getChicaExportStatusByName("Image_not_found"));
+						chicaService.saveChicaHL7Export(export);
+						continue;
+					}
+					
+				}
+				
+				//Get observations for vitals and general observations.
+				//Create an OBR and block of OBX vitals 
+				//Create an OBR and block of OBX for non vitals
 
 				
-				String message = constructor.getMessage();
-				export.setStatus(2);
-				export.setDateProcessed(new Date());
-				chicaService.saveChicaHL7Export(export);
+				//TODO:  Add handling of obs with coded answers using new mapping xml
+				if (conceptCategory != null && conceptCategory.equalsIgnoreCase("Vitals") ||
+						conceptCategory.equalsIgnoreCase("POC")){
+					
+					//First the vital battery 
+					String batteryName = hl7Properties.getProperty("vitals_battery_name");
+					
+					List<Obs> obsList = getObsListByBattery(openmrsEncounter, mappings, batteryName );
 				
+					//Create OBR and OBX segments for Vitals
+					int orderRep = 0;
+					if (obsList != null && obsList.size()> 0){
+						numberOfOBXSegments = addOBXBlock(constructor, openmrsEncounter, 
+								obsList, mappings, batteryName, orderRep);
+						orderRep++;
+						if (numberOfOBXSegments > 0) sendObs = true;
+					}
+					
+					// general -- MEDICAL RECORD FILE OBSERVATIONS
+					batteryName = hl7Properties.getProperty("general_battery_name");
+					List<Obs> obsListMRF = getObsListByBattery(openmrsEncounter, mappings, batteryName );
+				
+					//Create OBR and OBX segments for MEDICAL RECORD FILE OBSERVATIONS
+					if (obsListMRF != null && obsListMRF.size()> 0){
+						numberOfOBXSegments = addOBXBlock(constructor, openmrsEncounter, 
+								obsListMRF, mappings, batteryName, orderRep);
+						if (numberOfOBXSegments > 0) sendObs = true;
+					}
+					
+					//If no observations, do not create message
+					if (!sendObs){
+						export.setStatus(chicaService.getChicaExportStatusByName("no_obs"));
+						chicaService.saveChicaHL7Export(export);
+						continue;
+					}
+
+				}
+				
+				
+				//Send the message
+				String message = constructor.getMessage();
+				export.setStatus(chicaService.getChicaExportStatusByName("hl7_sent"));
+				export.setDateProcessed(new Date());
+					
 				if (message != null && !message.equals("")){
 					Date ackDate = sendMessage(message, openmrsEncounter, socketHandler);
 					if (ackDate != null) { 
-						export.setStatus(3);
+						export.setStatus(chicaService.getChicaExportStatusByName("ACK_received"));
 						export.setAckDate(ackDate);
-					}else {
-						export.setStatus(4);
+						
+					}	else {
+						export.setStatus(chicaService.getChicaExportStatusByName("ACK_not_received"));
 					}
-					
-					chicaService.saveChicaHL7Export(export);
 					saveMessageFile(message,encId, ackDate);
 				}
-			}	
+				 
+				chicaService.saveChicaHL7Export(export);
+				
+			}
 			
 	    
 		} catch (IOException e ){
@@ -249,10 +311,7 @@ public class HL7Exporter extends AbstractTask {
 		}catch (Exception e)
 		
 		{
-			Integer sessionId = null;
-			if (export != null) {
-				sessionId = export.getSessionId();
-			}
+			Integer sessionId = export.getSessionId();
 			String message = e.getMessage();
 			ATDError ce = new ATDError("Error", "Hl7 Export", 
 					message, "",
@@ -346,19 +405,31 @@ public class HL7Exporter extends AbstractTask {
 	}
 	
 	
-	private List<Concept> getConceptListFromMap(Properties prop, boolean vitals){
+	private List<Concept> getConceptListFromMap( NodeList conceptMapList, String categoryName ){
+		
+		
 		ConceptService cs = Context.getConceptService();
 		List<Concept> concepts = new ArrayList<Concept>();
-		Enumeration <Object> names = prop.keys();
-		
-		while (names != null && names.hasMoreElements()){
-			 String name = (String) names.nextElement();
-			 //Get the concept for class CHICA only
-			 List<Concept> conceptsWithSameName = cs.getConcepts(name, 
+		if(conceptMapList != null && conceptMapList.getLength() > 0){
+			for (int i = 0; i < conceptMapList.getLength(); i++){
+				
+				Element elConcept = (Element) conceptMapList.item(i);
+				String chicaName = getTextValue(elConcept, "CHICA");
+				List<Concept> conceptsWithSameName = cs.getConcepts(chicaName, 
 						Context.getLocale(), false, null, null);
-			 for (Concept c : conceptsWithSameName){
-				 concepts.add(c);
-			 }
+				
+				for (Concept c : conceptsWithSameName){
+					concepts.add(c);
+				}
+			
+				
+			}
+		
+		}
+		
+		List<Concept> verifiedConcepts = getConceptsInSet(concepts,categoryName);
+		if (verifiedConcepts == null){
+			return null;
 		}
 		return concepts;
 	}
@@ -369,20 +440,27 @@ public class HL7Exporter extends AbstractTask {
 		Concept rmrsConcept = null;
 		
 		List<ConceptClass> classList = new ArrayList<ConceptClass>();
-		ConceptClass rmrsClass = cs.getConceptClassByName("RMRS");
-		classList.add(rmrsClass);
-		
-		List<Concept> conceptsWithSameName = cs.getConcepts(rmrsname, 
-			Context.getLocale(), false, classList, null);
-		
-		if (conceptsWithSameName != null && conceptsWithSameName.size() >0){
-			if (conceptsWithSameName.size()>1){
-				log.error("More than one RMRS concept exist with exact name of " 
-						+ rmrsname);
+		try {
+			ConceptClass rmrsClass = cs.getConceptClassByName("RMRS");
+			classList.add(rmrsClass);
+			
+			List<Concept> conceptsWithSameName = cs.getConcepts(rmrsname, 
+				Context.getLocale(), false, classList, null);
+			
+			if (conceptsWithSameName != null && conceptsWithSameName.size() >0){
+				if (conceptsWithSameName.size()>1){
+					log.error("More than one RMRS concept exist with exact name of " 
+							+ rmrsname);
+				}
+				rmrsConcept = conceptsWithSameName.get(0);
+			} else {
+				log.error("No RMRS class concepts found with exact name of " + rmrsname);
 			}
-			rmrsConcept = conceptsWithSameName.get(0);
-		} else {
-			log.error("No RMRS class concepts found with exact name of " + rmrsname);
+		} catch (APIException e) {
+			log.error("ConceptClass api exception." + e.getMessage());
+			
+		} catch (Exception e){
+			log.error( e.getMessage());
 		}
 		
 		return rmrsConcept;
@@ -411,6 +489,8 @@ public class HL7Exporter extends AbstractTask {
 		}
 		return units;
 	}
+	
+	
 	private boolean checkConceptSet(Concept conceptToTest, String batteryName){
 		boolean match = false;
 		ConceptService cs = Context.getConceptService();
@@ -420,7 +500,7 @@ public class HL7Exporter extends AbstractTask {
 		}
 		
 		List<Concept> conceptsWithBatteryName = new ArrayList<Concept>();
-		conceptsWithBatteryName = cs.getConcepts(batteryName, 
+		conceptsWithBatteryName = cs.getConcepts(batteryName + " CHICA", 
 				 Context.getLocale(), false, null, null);
 		
 		Concept batteryConcept = new Concept();
@@ -433,7 +513,7 @@ public class HL7Exporter extends AbstractTask {
 		Collection<ConceptSet> allConceptsInBattery = cs.getConceptSetsByConcept(batteryConcept);
 		for (ConceptSet concept : allConceptsInBattery){
 			
-			if ( conceptToTest.getConceptId() == concept.getConcept().getConceptId()){
+			if ( conceptToTest.getConceptId().equals(concept.getConcept().getConceptId())){
 				match = true;
 				continue;
 			}
@@ -445,64 +525,150 @@ public class HL7Exporter extends AbstractTask {
 	}
 	
 	private List<Concept> getConceptsInSet(List<Concept> list, String setName){
-		List<Concept> conceptsInSet = new ArrayList<Concept>();
+		 List<Concept> conceptsInSet = new ArrayList<Concept>();
 		 for (Concept c : list){
 			 if (checkConceptSet(c, setName)){
 				 conceptsInSet.add(c);
 			 }
 		 }
+		 if (conceptsInSet.size()==0) {
+			 conceptsInSet = null;
+		 }
 		 return conceptsInSet;
 	}
 	
-	private void addOBXBlock(List<Obs>obsList, HL7MessageConstructor constructor, Properties prop){
+	private Hashtable<String,String> loadHashTable( Document doc){
+		
+		String chicaConceptName = null;
+		String rmrsConceptName = null;
+		NodeList chicaNodes = null;
+		if (doc != null){
+			chicaNodes = doc.getElementsByTagName("CHICA");
+		}
+		Hashtable<String,String> conceptMapping = new Hashtable<String,String>();
+		
+		 for (int i=0; i<chicaNodes.getLength(); i++) {
+			 Node chicaTextNode = chicaNodes.item(i).getFirstChild();
+			 if (chicaTextNode != null){
+				 chicaConceptName = chicaTextNode.getNodeValue();
+			 }
+			 Node rmrsNode = chicaNodes.item(i).getNextSibling();
+			 
+		    if (rmrsNode!= null) {
+		    	Node rmrsTextNode = rmrsNode.getFirstChild();
+		    	if (rmrsTextNode != null) {
+		    		rmrsConceptName = rmrsTextNode.getNodeValue();
+		    	}
+		    }
+		    conceptMapping.put(chicaConceptName, rmrsConceptName);
+		    
+		 }
+		 return conceptMapping;
+	}
+	private List<Obs> getObsListByBattery(Encounter encounter, Hashtable<String,String> table, 
+			String batteryName ){
+		
+		ConceptService conceptService = Context.getConceptService();
+		ObsService obsService = Context.getObsService();
+		List<Concept> concepts = new ArrayList<Concept>();
+		List<Obs> obsList = null;
+		
+		try {
+			
+			Enumeration<String> en = table.keys();
+			while (en.hasMoreElements()){
+				String chicaConceptName = (String )en.nextElement();
+			    Concept chicaConcept = conceptService.getConceptByName(chicaConceptName);
+			    if (chicaConcept != null &&
+			    		checkConceptSet(chicaConcept,batteryName)) {
+			    	concepts.add(chicaConcept);
+			    }
+			    
+			 }
+			
+			if (concepts.size()>0){
+				 List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();	
+				 encounters.add(encounter);
+				   
+				 obsList = obsService.getObservations(null, encounters,
+							concepts, null, null, null, null, null, null, null, null, false);		 
+			}
+		}catch (Exception e){
+			log.error("Error collecting obs list from concept map.");
+		}
+			
+		return obsList;
+
+	}
+	private int addOBXBlock(HL7MessageConstructor constructor,
+			Encounter encounter, List<Obs> obsList, Hashtable<String,String> mappings
+			, String batteryName, int orderRep){
 		//Get all obs for one encounter, where the concept is in the mapping properties xml
 		//If an obs for that concept does not exist for an encounter, we do not create an OBX
 			
-		
-		for (int rep = 0; rep < obsList.size(); rep++){
-			
-			Obs obs = obsList.get(rep);
-			String chicaNameString = "";
-			String rmrsName = "";
-			String rmrsCode = "";
-			String units = "";
-			String hl7Abbreviation = "";
-			ConceptDatatype conceptDatatype = null;
+		Locale locale = new Locale("en_US");
+		String units = "";
+		String rmrsCode = "";
+		String hl7Abbreviation = "";
+		ConceptDatatype conceptDatatype = null;
+		int obsRep = 0;
+		addOBRSegment(constructor, encounter,  batteryName, orderRep );
 
-			String obsValue = obs.getValueAsString(null);
-			Double obsValueNumeric = obs.getValueNumeric();
-			if (obsValueNumeric != null  ){
-				Double obsRounded =
-					org.openmrs.module.chirdlutil.util.Util.round(Double.valueOf(obsValueNumeric), 1);
-				if (obsRounded != null){
-					obsValue = String.valueOf(obsRounded);
-				}
-			}
-			
-			Date datetime = obs.getObsDatetime();
+		for (Obs obs : obsList){
 			Concept chicaConcept = obs.getConcept();
-			ConceptName chicaConceptName = chicaConcept.getName();
-
-			if (chicaConceptName != null){	
-				chicaNameString = chicaConceptName.getName();
-				rmrsName = prop.getProperty(chicaNameString);
-			}
-
-			if (rmrsName != null){
-				Concept rmrsConcept =  getRMRSConceptByName(rmrsName);
+			ConceptName cname = chicaConcept.getName(locale);
+			if (cname != null){
+				String rmrsName = mappings.get(cname.getName());
+				if (rmrsName == null) continue;
+				Concept rmrsConcept = getRMRSConceptByName(rmrsName);
 				if (rmrsConcept != null){
-					conceptDatatype = rmrsConcept.getDatatype();
-					hl7Abbreviation = conceptDatatype.getHl7Abbreviation();
-					units = getUnits(rmrsConcept);
 					rmrsCode = getRMRSCodeFromConcept(rmrsConcept);
-
 				}
+				String value = obs.getValueAsString(locale);
+				
+
+				if (chicaConcept.isNumeric()  ){
+					Double obsRounded =
+						org.openmrs.module.chirdlutil.util.Util
+						.round(Double.valueOf(obs.getValueNumeric()), 1);
+					if (obsRounded != null){
+						value = String.valueOf(obsRounded);
+					}
+				}
+				conceptDatatype = rmrsConcept.getDatatype();
+				String sourceCode = "";
+				
+				if (conceptDatatype != null && conceptDatatype.isCoded()){
+					Concept answer = obs.getValueCoded();
+					
+					Collection<ConceptMap> maps = answer.getConceptMappings();
+					ConceptMap map = null;
+					if (maps != null){
+						Iterator<ConceptMap> it = maps.iterator();
+						if (it.hasNext()){
+							//get first
+							map = it.next();
+						}
+						sourceCode = map.getSourceCode();
+					}
+					
+				}
+				hl7Abbreviation = conceptDatatype.getHl7Abbreviation();
+				units = getUnits(rmrsConcept);
+				Date datetime = obs.getObsDatetime();
+				constructor.AddSegmentOBX(rmrsName, rmrsCode, 
+						null, sourceCode, value, units, datetime, hl7Abbreviation, orderRep, obsRep);
+				obsRep++;
+				
+				
 			}
-
-			constructor.AddSegmentOBX(rmrsName, rmrsCode, null, obsValue, units, datetime, hl7Abbreviation,  rep + 1 );
-
-		} 
+		
+		}
+			
+		return obsRep;
 	}
+			
+			
 	private Date sendMessage(String message, Encounter enc, 
 			HL7SocketHandler socketHandler ){
 		Date ackDate = null;
@@ -551,20 +717,314 @@ public class HL7Exporter extends AbstractTask {
 		String filename = "";
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		LocationService locationService = Context.getLocationService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		LocationTag locTag =null;
 		
 		org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter 
 			= (org.openmrs.module.chica.hibernateBeans.Encounter) 
 			encounterService.getEncounter(encId);
+		
+		Location loc = chicaEncounter.getLocation();
+		Integer locId = null;
+		if (loc != null){
+			locId = loc.getLocationId();	
+		}
+  
 		String printerLocation = chicaEncounter.getPrinterLocation();
-		LocationTag locTag = locationService.getLocationTagByName(printerLocation);
-		LocationTagAttributeValue locationTagValue = chirdlUtilService.getLocationTagAttributeValue(
-				locTag.getId(), "HL7ConfigFile", 
-				chicaEncounter.getLocation().getLocationId());
-	 	filename = locationTagValue.getValue();
+		if (printerLocation != null){
+			locTag = locationService.getLocationTagByName(printerLocation);
+		}
+		if (printerLocation == null){
+			LocationAttributeValue locAttrValue = chirdlUtilService.getLocationAttributeValue(locId, "defaultPrinterLocation");
+			if (locAttrValue != null ){
+				String locTagStr = locAttrValue.getValue();
+				if (locTagStr != null && !locTagStr.equals("")){
+					locTag = locationService.getLocationTag(Integer.valueOf(locTagStr));
+				}
+			}
+			
+		}
+		
+		if (locTag != null) {
+			LocationTagAttributeValue locationTagValue = chirdlUtilService.getLocationTagAttributeValue(
+					locTag.getId(), "HL7ConfigFile", 
+					chicaEncounter.getLocation().getLocationId());
+		 	if (locationTagValue != null )filename = locationTagValue.getValue();
+		}
 		return filename;
 	}
+	
+	private String getBatteryIdByConcept(Concept batteryConcept){
+		
+	
+				String sourceCode = "";
+				Collection<ConceptMap> maps = batteryConcept.getConceptMappings();
+				Iterator<ConceptMap>  it = maps.iterator();
+				if (it.hasNext()){
+					sourceCode = it.next().getSourceCode();
+				}
+				return sourceCode;
+		
+	}
+	
+	
+	private String  getTextValue(Element element, String tagName) {
+		String textVal = null;
+		NodeList nl = element.getElementsByTagName(tagName);
+		if(nl != null && nl.getLength() > 0) {
+			Element el = (Element)nl.item(0);
+			textVal = el.getFirstChild().getNodeValue();
+		}
 
+		return textVal;
+	}
+		
+	
+	private String getChicaExportConceptMapByQueueId(Integer hl7ExportQueueId){
+		String filename = null;
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		ChicaHL7ExportMap exportmap =  chicaService.getChicaExportMapByQueueId(hl7ExportQueueId);
+		
+		if (exportmap == null){
+			return null;
+		}
+		
+		String locationTagAttributeIdStr = exportmap.getValue();
+		if ( locationTagAttributeIdStr != null){
+			Integer locationTagAttributeId = Integer.valueOf(locationTagAttributeIdStr);
+			LocationTagAttributeValue value =  
+				chirdlUtilService.getLocationTagAttributeValueById(locationTagAttributeId);
+			if (value != null) {
+				filename = value.getValue();
+			}
+		}
+		
+		
+		
+		return filename;
+	}
+	
+	
+	
+	private Document getDocument(String conceptMapFile){
+		File file = new File(conceptMapFile);
+		Document doc = null;
+		if(file.exists()){
+		     try {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				doc = builder.parse(file);
+					
+			} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				
+			} catch (ParserConfigurationException e) {
+				
+				log.error("Unable to parse XML map file");
+			} catch (SAXException e) {
+				
+				log.error("SAX handler exeception when parsing XML map file");
+			}
+		}
+		return doc;
+	}
+	
+	private boolean addOBXForTiff(HL7MessageConstructor constructor,
+			Encounter encounter, String form ,Hashtable<String,
+			String> mappings, String batteryName){
+		boolean obxcreated = false;
+		Integer locationTagId = null;
+		
+		ATDService atdService = Context.getService(ATDService.class);
+		
+		String formDir = "";
+		String hl7Abbreviation = "ED";
+		Integer encounterId = encounter.getEncounterId();
+		locationTagId = getLocationTagIdByEncounter(encounterId);
+		
+		List<PatientState> patientStates = 
+			atdService.getPatientStatesWithFormInstances(form, encounterId);
+		
+		FormInstance formInstance = null;
+		Integer formId = null;
+		Integer formInstanceId = null;
+		Integer formLocationId = null;
+		
+		if (patientStates == null){
+			return false; 
+		}
+		
+		Iterator<PatientState> psIterator = patientStates.iterator();
+		if (psIterator.hasNext()){
+			formInstance = psIterator.next().getFormInstance();
+			if (formInstance == null){
+				return false;
+			}
+		}
+		
+		String filename = "";
+		String encodedForm = "";
+		try {
+			formId = formInstance.getFormId();
+			formInstanceId = formInstance.getFormInstanceId();
+			formLocationId = formInstance.getLocationId();
+			
+			if (formId == null || locationTagId == null || formLocationId == null
+					|| formInstanceId == null){
+				return false;
+			}
+			
+			formDir  = IOUtil
+						.formatDirectoryName(org.openmrs.module.atd.util.Util
+								.getFormAttributeValue(formId,
+										"imageDirectory", locationTagId,
+										formLocationId));
+			
+
+			if (formDir == null || formDir.equals("")){
+				return false;
+			}
+			filename = "_" + formLocationId + "-" + formId + "-" + formInstanceId + "_";
+			File file = new File(formDir + filename + ".tif");
+			if (!file.exists()){
+				return false;
+			}
+			encodedForm = encodeForm(file);
+			if (encodedForm == null){
+				return false;
+			}
+				
+			int orderRep = 0;
+			addOBRSegment(constructor, encounter,  batteryName, orderRep);
+			
+			String rmrsName = "";
+			int obsRep = 0;
+			Collection<String> values = mappings.values();
+			Iterator <String>  it = values.iterator();
+			if (it.hasNext()){
+				rmrsName = it.next();
+			}
+			
+			Concept rmrsConcept = getRMRSConceptByName(rmrsName);
+			if (rmrsConcept != null){
+				
+				String rmrsCode = getRMRSCodeFromConcept(rmrsConcept);
+				
+				Date datetime = encounter.getDateCreated();
+				OBX resultOBX = constructor.AddSegmentOBX(rmrsName, rmrsCode, 
+						null, "", encodedForm, "", datetime, hl7Abbreviation, orderRep, obsRep );
+				if (resultOBX != null){
+					obxcreated = true;
+				} 
+			}
+		} catch (Exception e) {
+			log.error("Exception adding OBX for tiff image. " + e.getMessage());
+		}
+			
+		return obxcreated;
+		
+	}
+	
+	private Integer getLocationTagIdByEncounter(Integer encId){
+		Integer locationTagId = null;
+		String printerLocation = null;
+		
+		EncounterService encounterService = Context
+		.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService
+			.getEncounter(encId);
+		
+		try {
+			if (encId != null && encounter != null)
+			{
+				// see if the encounter has a printer location
+				// this will give us the location tag id
+				printerLocation = encounter.getPrinterLocation();
+
+				// if the printer location is null, pick
+				// any location tag id for the given location
+				if (printerLocation == null)
+				{
+					Location location = encounter.getLocation();
+					if (location != null)
+					{
+						Set<LocationTag> tags = location.getTags();
+
+						if (tags != null && tags.size() > 0)
+						{
+							printerLocation = ((LocationTag) tags.toArray()[0])
+									.getTag();
+						}
+					}
+				}
+				if (printerLocation != null)
+				{
+					LocationService locationService = Context
+							.getLocationService();
+					LocationTag tag = locationService
+							.getLocationTagByName(printerLocation);
+					if (tag != null)
+					{
+						locationTagId = tag.getLocationTagId();
+					}
+				}
+				
+			}
+		} catch (APIException e) {
+			log.error("LocationTag api exception: " +  e.getMessage());
+		} catch (Exception e){
+			log.error(e.getMessage());
+		}
+		return locationTagId;
+	}
+	
+	private String encodeForm(File file){
+			String encodedForm = null;
+			try {
+				
+				FileInputStream fis = new FileInputStream(file);			
+				ByteArrayOutputStream bas = new ByteArrayOutputStream();
+				
+				int c;
+				while((c = fis.read()) != -1){
+				  bas.write(c);
+				}
+				encodedForm = Base64.byteArrayToBase64(bas.toByteArray(), false);
+
+				fis.close();
+				bas.flush();
+				bas.close();	
+				
+				
+			} catch (FileNotFoundException e) {
+				log.error("Tiff file not found");
+			} catch (IOException e) {
+				log.error("Unable to read tiff file.");
+			}
+			
+			return encodedForm;
+		
+		
+	}
+	
+	private void addOBRSegment(HL7MessageConstructor constructor, 
+			Encounter openmrsEncounter,  String batteryName, int orderRep){
+		
+		ConceptService cs = Context.getConceptService();
+	
+		String batteryId = null;
+		
+		if (batteryName != null){
+			Concept batteryConcept = cs.getConceptByName(batteryName);
+			batteryId = getBatteryIdByConcept(batteryConcept);
+		}
+		
+		constructor.AddSegmentOBR(openmrsEncounter, batteryId, batteryName, orderRep);
+		
+	}
+	
+	
 		
 }

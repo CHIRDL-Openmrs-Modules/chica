@@ -12,8 +12,8 @@
 	<entry key="our_app">CHICA</entry>
     <entry key="receiving_app"></entry>
     <entry key="receiving_facility"></entry>
-	<entry key="univ_serv_id">22391</entry>
-	<entry key="univ_serv_id_name">MEDICAL RECORD FILE OBSERVATIONS</entry>
+	<entry key="univ_serv_id">8995</entry>
+	<entry key="univ_serv_id_name">PEDS CL DATA</entry>
 	<entry key="version">2.5</entry>
 	<entry key="message_type">ORU</entry>
 	<entry key="event_type_code">R01</entry>
@@ -35,6 +35,12 @@
 	<entry key="use_vitals_battery_only">true</entry>
 	<entry key="vitals_battery_name">PEDS CL DATA</entry>
 	<entry key="vitals_battery_id">8995</entry>
+	<entry key="POC_battery_name">MEDICAL RECORD FILE OBSERVATIONS</entry>
+	<entry key="POC_battery_id">22391</entry>
+	<entry key="psf_battery_name">OBS SET PEDS PRE-SCREENING</entry>
+	<entry key="psf_battery_id">36404</entry>
+	<entry key="pws_battery_name">OBS SET PEDS PHYSICIAN ENCOUNTER</entry>
+	<entry key="pws_battery_id">36405</entry>
 	<entry key="general_battery_name">MEDICAL RECORD FILE OBSERVATIONS</entry>
 	<entry key="general_battery_id">22391</entry>
 	<entry key="use_vitals_battery_only">true</entry>

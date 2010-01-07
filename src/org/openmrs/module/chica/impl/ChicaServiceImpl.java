@@ -46,6 +46,8 @@ import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Chica1Patient;
 import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
+import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
+import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
@@ -1070,8 +1072,9 @@ public class ChicaServiceImpl implements ChicaService
 		}
 	
 		
-		public void insertEncounterToHL7ExportQueue(ChicaHL7Export export) {
+		public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export) {
 			getChicaDAO().insertEncounterToHL7ExportQueue(export);
+			return export;
 		}
 
 		public List<ChicaHL7Export> getPendingHL7Exports() {
@@ -1128,4 +1131,23 @@ public class ChicaServiceImpl implements ChicaService
 			return appt;
 			
 		}
+		
+		public void  saveHL7ExportMap (ChicaHL7ExportMap map){
+			
+			getChicaDAO().saveHL7ExportMap(map);
+			
+		}
+		
+		public ChicaHL7ExportMap getChicaExportMapByQueueId(Integer queue_id){
+			return getChicaDAO().getChicaExportMapByQueueId(queue_id);
+		}
+		
+		public ChicaHL7ExportStatus getChicaExportStatusByName (String name){
+			return getChicaDAO().getChicaExportStatusByName(name);
+		}
+		
+		public ChicaHL7ExportStatus getChicaExportStatusById (Integer id){
+			return getChicaDAO().getChicaExportStatusById( id);
+		}
+		
 }

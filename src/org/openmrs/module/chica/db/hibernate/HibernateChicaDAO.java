@@ -9,10 +9,16 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Expression;
 import org.openmrs.Concept;
+import org.openmrs.ConceptName;
+import org.openmrs.ConceptNameTag;
+import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
@@ -27,6 +33,8 @@ import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Chica1Patient;
 import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
+import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
+import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
 import org.openmrs.module.chica.hibernateBeans.DDST_Milestone;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
@@ -38,6 +46,7 @@ import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.Wtageinf;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutil.util.Util;
 
 /**
@@ -796,9 +805,9 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public void insertEncounterToHL7ExportQueue(ChicaHL7Export export){
+	public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export){
 		sessionFactory.getCurrentSession().saveOrUpdate(export);
-		
+		return export;
 	}
 	
 	public List <ChicaHL7Export> getPendingHL7Exports(){
@@ -885,6 +894,82 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		
 		return appt;
+	}
+	
+	public void  saveHL7ExportMap (ChicaHL7ExportMap map){
+		try
+		{
+			this.sessionFactory.getCurrentSession().save(map);
+		} catch (Exception e)
+		{
+			this.log.error(Util.getStackTrace(e));
+		}
+	}
+	
+	public ChicaHL7ExportMap getChicaExportMapByQueueId(Integer queueId){
+		try {
+			SQLQuery qry = this.sessionFactory.getCurrentSession()
+			.createSQLQuery("select * from chica_hl7_export_map " +
+			" where hl7_export_queue_id = ?");
+			qry.setInteger(0, queueId);
+			qry.addEntity(ChicaHL7ExportMap.class);
+			List<ChicaHL7ExportMap> list = qry.list();
+			if (list != null && list.size() > 0) {
+				return list.get(0);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ChicaHL7ExportStatus getChicaExportStatusByName (String name){
+		/*try {
+			SQLQuery qry = this.sessionFactory.getCurrentSession()
+			.createSQLQuery("select * from chica_hl7_export_status " +
+			" where name = ?");
+			qry.setString(0, name);
+			qry.addEntity(ChicaHL7ExportStatus.class);
+			List<ChicaHL7ExportStatus> list = qry.list();
+			if (list != null && list.size() > 0) {
+				return list.get(0);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;*/
+		
+		
+		Criteria crit = sessionFactory.getCurrentSession().createCriteria(ChicaHL7ExportStatus.class).add(
+			    Expression.eq("name", name));
+			try {
+				if (crit.list().size() < 1) {
+					log.warn("No export status found with name: " + name);
+					return null;
+				}
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			return (ChicaHL7ExportStatus) crit.list().get(0);
+	}
+	
+	public ChicaHL7ExportStatus getChicaExportStatusById (Integer id){
+		
+		try {
+			SQLQuery qry = this.sessionFactory.getCurrentSession()
+			.createSQLQuery("select * from chica_hl7_export_status " +
+			" where hl7_export_status_id = ?");
+			qry.setInteger(0, id);
+			qry.addEntity(ChicaHL7ExportStatus.class);
+			List<ChicaHL7ExportStatus> list = qry.list();
+			if (list != null && list.size() > 0) {
+				return list.get(0);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 
 }

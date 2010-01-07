@@ -3082,6 +3082,35 @@ VALUES
 values ('unfilteredMedicationFile', 'Configuration file listing medications that should always appear on the medication list');
 	</sql>
 	</diff>
+	
+	<diff>
+		<version>1.4.3</version>
+		<author>Meena Sheley</author>
+		<date>Jan 07, 2010</date>
+		<description>
+		Add map table for hl7 export and alter status table with new columns.
+		</description>
+	<sql>
+	
+	CREATE TABLE  IF NOT EXISTS `openmrs`.`chica_hl7_export_map` (
+  	`hl7_export_map_id` int(11) NOT NULL auto_increment,
+  	`hl7_export_queue_id` int(11) NOT NULL,
+  	`value` varchar(255) NOT NULL,
+  	`date_inserted` datetime NOT NULL default '0002-11-30 00:00:00',
+  	`voided` smallint(6) NOT NULL default '0',
+  	`date_voided` datetime default NULL,
+  	PRIMARY KEY  (`hl7_export_map_id`)
+	)ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=utf8;
+	
+	alter table chica_hl7_export_status
+			add name  varchar(200) after hl7_export_status_id;
+
+	alter table chica_hl7_export_status
+			add date_created  datetime after description;
+		
+	
+	</sql>
+	</diff>
 </sqldiff>
 
 
