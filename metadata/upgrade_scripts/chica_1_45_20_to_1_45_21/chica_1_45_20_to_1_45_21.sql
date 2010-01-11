@@ -1,19 +1,3 @@
-﻿insert into atd_state (name , state_action_id)
-values ('Export POC',  (select state_action_id from atd_state_action
-where action_name like 'LOAD HL7 EXPORT QUEUE'));
-
-update atd_state set name = 'Export Vitals' 
-where name like 'Export';
-
-update atd_state_mapping a set next_state =
-(select state_id from  atd_state where name like 'Export POC')
-where  initial_state = (select state_id from atd_state where name like 'PWS_process');
-
-insert into atd_state_mapping (initial_state, next_state, program_id)
-values( (select state_id from atd_state where name like 'Export POC'),
-(select state_id from atd_state where name like 'FINISHED'), 1);
-
-
 update chica_hl7_export_status set name = 'pending_export',
 description = 'Inserted in table and pending export',
 date_created = now()
@@ -239,14 +223,6 @@ INSERT INTO `concept_map` VALUES ('21', '1', '8995', 'PEDS CL DATA', '1', '2009-
 INSERT INTO `concept_map` VALUES ('22', '1', '22391', 'MEDICAL RECORD FILE OBSERVATIONS', '1', '2009-12-23 14:23:57', '10684');
 INSERT INTO `concept_map` VALUES ('23', '1', '7717', 'ALLERGY HX', '1', '2009-12-29 00:00:00', '842');
 
-/*
-insert into location_tag_attribute!!!!!!
-19, 'POCConceptMapLocation', 'File containing concept mappings for POC'
-21, 'PSFTiffConceptMapLocation', 'File containing concept mappings for PSF tiff images'
-22, 'VitalsConceptMapLocation', 'File containing concept mappings for Vitals'
-23, 'PWSTiffConceptMapLocation', 'File containing concept mappings for PWS tiff images'
-*/
-
 insert into chirdlutil_location_tag_attribute_value
 (location_tag_id, value, location_tag_attribute_id, location_id)
 values (
@@ -351,7 +327,7 @@ insert into chirdlutil_location_tag_attribute_value
 (location_tag_id, value, location_tag_attribute_id, location_id)
 values (
 (select location_tag_id from location_tag where tag like 'PEREG3'),
-'C:\\chica\\conceptMaps\\PEREG3\\Vitals\\vitalsConceptMap.xml',
+'C:\\chica\\conceptMaps\\PEREG3\\Vitals\\VitalsConceptMap.xml',
 (select location_tag_attribute_id from chirdlutil_location_tag_attribute
  where name like 'VitalsConceptMapLocation'),
  (select location_id from location where name like 'PEPS')
@@ -467,7 +443,7 @@ insert into chirdlutil_location_tag_attribute_value
 (location_tag_id, value, location_tag_attribute_id, location_id)
 values (
 (select location_tag_id from location_tag where tag like 'PEREG2'),
-'C:\\chica\\conceptMaps\\PSFTiffConceptMap.xml'
+'C:\\chica\\conceptMaps\\PSFTiffConceptMap.xml',
 (select location_tag_attribute_id from chirdlutil_location_tag_attribute
  where name like 'PSFTiffConceptMapLocation'),
  (select location_id from location where name like 'PEPS')

@@ -3108,6 +3108,28 @@ values ('unfilteredMedicationFile', 'Configuration file listing medications that
 	alter table chica_hl7_export_status
 			add date_created  datetime after description;
 		
+	insert into atd_state (name , state_action_id)
+values ('Export POC',  (select state_action_id from atd_state_action
+where action_name='LOAD HL7 EXPORT QUEUE'));
+
+update atd_state set name = 'Export Vitals' 
+where name ='Export';
+
+update atd_state_mapping a set next_state =
+(select state_id from  atd_state where name='Export POC')
+where  initial_state = (select state_id from atd_state where name='PWS_process');
+	
+insert into atd_state_mapping (initial_state, next_state, program_id)
+values( (select state_id from atd_state where name='Export POC'),
+(select state_id from atd_state where name='FINISHED'), (select program_id from atd_program where name='chica'));		
+		insert into chirdlutil_location_tag_attribute (name, description)
+	values( 'POCConceptMapLocation', 'File containing concept mappings for POC');
+    insert into chirdlutil_location_tag_attribute (name, description)
+	values( 'PSFTiffConceptMapLocation', 'File containing concept mappings for PSF tiff images');
+    insert into chirdlutil_location_tag_attribute (name, description)
+	values( 'VitalsConceptMapLocation', 'File containing concept mappings for Vitals');
+    insert into chirdlutil_location_tag_attribute (name, description)
+	values( 'PWSTiffConceptMapLocation', 'File containing concept mappings for PWS tiff images');
 	
 	</sql>
 	</diff>
