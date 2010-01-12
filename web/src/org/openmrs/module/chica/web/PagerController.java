@@ -19,9 +19,10 @@ import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
-import org.openmrs.module.chica.service.ChicaService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 
@@ -37,7 +38,7 @@ public class PagerController extends SimpleFormController
 
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
-	static Date thresholdDate;
+	private static HashMap<Integer,Date> thresholdDateByLocation = new HashMap<Integer,Date>();
 
 	/*
 	 * (non-Javadoc)
@@ -52,56 +53,66 @@ public class PagerController extends SimpleFormController
 	}
 
 	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception
-	{
-		AdministrationService adminService = Context.getAdministrationService();
-		String pagerNumber = adminService
-			.getGlobalProperty("chica.pagerNumber");
-		
-		String idParam = adminService
-			.getGlobalProperty("chica.pagerUrlNumberParam");
-		String textParam = adminService
-			.getGlobalProperty("chica.pagerUrlMessageParam");
-		String baseUrl = adminService
-			.getGlobalProperty("chica.pagerBaseURL");
-		String thresholdTime = adminService
-			.getGlobalProperty("chica.pagerWaitTimeBeforeRepage");
-		
+	protected Map referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		User user = Context.getAuthenticatedUser();
-		ChicaService chicaService = Context.getService(ChicaService.class);
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
-		LocationService locationService = Context.getLocationService();
-		String locationString = user.getUserProperty("location");
-		Integer locationId = null;
-					if(locationString != null){
-						Location location = locationService.getLocation(locationString);
-						if(location != null){
-							locationId = location.getLocationId();
-						}
-					}
-		LocationAttributeValue locAttrValue = 
-			chirdlUtilService.getLocationAttributeValue(locationId, "pagerMessage");
-		String message = locAttrValue.getValue();
 		
-		String pageResponse =sendPage(pagerNumber, message, baseUrl, idParam , textParam, thresholdTime);
-		if (pageResponse != null && pageResponse.contains("Send message results" )
-				&& !pageResponse.contains("send failed")){
-			map.put("success", true);
-		}
-		else {
-			map.put("success", false);
-		}
+		String sendPage = request.getParameter("sendPage");
 		
+		if (sendPage != null) {
+			AdministrationService adminService = Context.getAdministrationService();
+			
+			String pagerNumber = adminService.getGlobalProperty("chica.pagerNumber");
+			
+			String idParam = adminService.getGlobalProperty("chica.pagerUrlNumberParam");
+			String textParam = adminService.getGlobalProperty("chica.pagerUrlMessageParam");
+			String baseUrl = adminService.getGlobalProperty("chica.pagerBaseURL");
+			String thresholdTime = adminService.getGlobalProperty("chica.pagerWaitTimeBeforeRepage");
+			
+			User user = Context.getAuthenticatedUser();
+			ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+			LocationService locationService = Context.getLocationService();
+			String locationString = user.getUserProperty("location");
+			Integer locationId = null;
+			if (locationString != null) {
+				Location location = locationService.getLocation(locationString);
+				if (location != null) {
+					locationId = location.getLocationId();
+				}
+			}
+			LocationAttributeValue locAttrValue = chirdlUtilService.getLocationAttributeValue(locationId, "pagerMessage");
+			String message = locAttrValue.getValue();
+			
+			String reporter = request.getParameter("reporter");
+			String reporterMessage = request.getParameter("message");
+			message+=" "+reporter+" "+reporterMessage;
+						
+			String pageResponse = sendPage(pagerNumber, message, baseUrl, idParam, textParam, 
+				thresholdTime,locationId);
+						
+			if (pageResponse != null && pageResponse.contains("Send message results")
+			        && !pageResponse.contains("send failed")) {
+				map.put("pagerSuccess", true);
+				ATDError error = new ATDError("Warning","Support Page","Support page sent: "+message,null,new java.util.Date(),null);
+				ATDService atdService = Context.getService(ATDService.class);
+				atdService.saveError(error);
+			} else {
+				map.put("pagerSuccess", false);
+				if(pageResponse != null){
+					map.put("pageResponse", pageResponse);
+				}
+			}
+			map.put("sendPage", sendPage);
+		}
 		return map;
 	}
 	
 	private String sendPage(String pagerNumber,String message, String baseUrl, 
-			String QryStrId, String QryStrText, String thresholdTime)
+			String QryStrId, String QryStrText, String thresholdTime,Integer locationId)
 	{
 		Calendar thisCalendar = Calendar.getInstance();
 		Date now = thisCalendar.getTime();
 		boolean goAhead = true;
+		Date thresholdDate = thresholdDateByLocation.get(locationId);
 		
 		if(thresholdDate != null)
 		{
@@ -123,7 +134,8 @@ public class PagerController extends SimpleFormController
 		
 		if(goAhead == false)
 		{
-			return null;
+			return "Someone has already sent a message in the last "+thresholdTime+" minutes. "
+			+"Chica Support will contact you shortly.";
 			
 		}
 		
@@ -143,7 +155,7 @@ public class PagerController extends SimpleFormController
 					message == null || message.length()==0 || 
 					QryStrId == null || QryStrId.length()==0||
 					QryStrText == null || QryStrText.length()==0){
-				log.warn("Page was not sent due to null url string or null parameters. "  + urlStr);
+				this.log.warn("Page was not sent due to null url string or null parameters. "  + urlStr);
 				
 				return null;
 			}
@@ -175,9 +187,10 @@ public class PagerController extends SimpleFormController
 					Integer timeToWait = Integer.parseInt(thresholdTime);
 					threshold.add(Calendar.MINUTE, timeToWait.intValue());
 					thresholdDate = threshold.getTime();
+					thresholdDateByLocation.put(locationId, thresholdDate);
 				}
 				catch (Exception e) { /* pass */
-					log.error("Could not set Threshold Date for Page!" + e.getMessage());
+					this.log.error("Could not set Threshold Date for Page!" + e.getMessage());
 				}
 		}
 		return response;

@@ -81,9 +81,9 @@
 		<property name="successView"><value>manualCheckin.form</value></property>
 	</bean>
 	<bean id="pager" class="@MODULE_PACKAGE@.web.PagerController">
-		<property name="commandName"><value>pagerObject</value></property>
+		<property name="commandName"><value>PagerObject</value></property>
 		<property name="formView"><value>/module/@MODULE_ID@/pager</value></property>
-		<property name="successView"><value>greaseBoard.form</value></property>
+		<property name="successView"><value>pager.form</value></property>
 	</bean>
 	<bean id="viewPatient" class="@MODULE_PACKAGE@.web.ViewPatientController">
 		<property name="commandName"><value>viewPatientObject</value></property>
