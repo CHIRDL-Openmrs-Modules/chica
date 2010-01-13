@@ -42,7 +42,6 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
-import org.openmrs.hl7.HL7Service;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
@@ -64,7 +63,6 @@ import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -314,7 +312,7 @@ public class HL7Exporter extends AbstractTask {
 			Integer sessionId = export.getSessionId();
 			String message = e.getMessage();
 			ATDError ce = new ATDError("Error", "Hl7 Export", 
-					message, "",
+					message, "Error creating hl7 export: " + e.getMessage(),
 					 new Date(), sessionId);
 			atdService.saveError(ce);
 			
@@ -405,35 +403,6 @@ public class HL7Exporter extends AbstractTask {
 	}
 	
 	
-	private List<Concept> getConceptListFromMap( NodeList conceptMapList, String categoryName ){
-		
-		
-		ConceptService cs = Context.getConceptService();
-		List<Concept> concepts = new ArrayList<Concept>();
-		if(conceptMapList != null && conceptMapList.getLength() > 0){
-			for (int i = 0; i < conceptMapList.getLength(); i++){
-				
-				Element elConcept = (Element) conceptMapList.item(i);
-				String chicaName = getTextValue(elConcept, "CHICA");
-				List<Concept> conceptsWithSameName = cs.getConcepts(chicaName, 
-						Context.getLocale(), false, null, null);
-				
-				for (Concept c : conceptsWithSameName){
-					concepts.add(c);
-				}
-			
-				
-			}
-		
-		}
-		
-		List<Concept> verifiedConcepts = getConceptsInSet(concepts,categoryName);
-		if (verifiedConcepts == null){
-			return null;
-		}
-		return concepts;
-	}
-	
 	private Concept getRMRSConceptByName(String rmrsname){
 		
 		ConceptService cs = Context.getConceptService();
@@ -522,19 +491,6 @@ public class HL7Exporter extends AbstractTask {
 			
 		return match;
 	
-	}
-	
-	private List<Concept> getConceptsInSet(List<Concept> list, String setName){
-		 List<Concept> conceptsInSet = new ArrayList<Concept>();
-		 for (Concept c : list){
-			 if (checkConceptSet(c, setName)){
-				 conceptsInSet.add(c);
-			 }
-		 }
-		 if (conceptsInSet.size()==0) {
-			 conceptsInSet = null;
-		 }
-		 return conceptsInSet;
 	}
 	
 	private Hashtable<String,String> loadHashTable( Document doc){
@@ -649,7 +605,9 @@ public class HL7Exporter extends AbstractTask {
 							//get first
 							map = it.next();
 						}
-						sourceCode = map.getSourceCode();
+						if (map != null) {
+							sourceCode = map.getSourceCode();
+						}
 					}
 					
 				}
@@ -767,18 +725,6 @@ public class HL7Exporter extends AbstractTask {
 		
 	}
 	
-	
-	private String  getTextValue(Element element, String tagName) {
-		String textVal = null;
-		NodeList nl = element.getElementsByTagName(tagName);
-		if(nl != null && nl.getLength() > 0) {
-			Element el = (Element)nl.item(0);
-			textVal = el.getFirstChild().getNodeValue();
-		}
-
-		return textVal;
-	}
-		
 	
 	private String getChicaExportConceptMapByQueueId(Integer hl7ExportQueueId){
 		String filename = null;
