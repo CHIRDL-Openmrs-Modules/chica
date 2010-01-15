@@ -37,44 +37,45 @@ VALUES ('500', 'no_hl7_config_properties', 'Unable to extract properties from hl
 INSERT INTO `chica_hl7_export_status` 
 VALUES ('600', 'XML_parsing_error', 'Concept map file not found or unable to parse xml', now());
 INSERT INTO `chica_hl7_export_status` 
-VALUES ('999', 'Unknown', 'Status unknown', now());            
+VALUES ('999', 'Unknown', 'Status unknown', now()); 
+INSERT INTO `chica_hl7_export_status` 
+VALUES ('5', 'do_not_send', 'Do not send tiff images in hl7', now());            
 
 
 /*concept*/
 /*add all new rmrs/chica concepts*/
-INSERT INTO `concept` VALUES ('18304', '0', null, null,
+INSERT INTO `concept` VALUES ('18304', '0', null, 'OBS SET PEDS PRE-SCREENING',
 'Concept for HL7 OBR Universal Service Identifier for PSF tiff',
  '4', '16', '1', '1', now(), null, '', null, null, null, null, null);
  
-INSERT INTO `concept` VALUES ('18305', '0', null, null,
+INSERT INTO `concept` VALUES ('18305', '0', null, 'OBS SET PEDS PHYSICIAN ENCOUNTER',
 'Concept for HL7 OBR Universal Service Identifier for PWS tiff',
  '4', '16', '1', '1', now(), null, '', null, null, null, null, null);
  
-INSERT INTO `concept` VALUES ('18306', '0', null, null,
+INSERT INTO `concept` VALUES ('18306', '0', null, 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA',
 'CHICA concept for HL7 OBR Universal Service Identifier for PWS tiff',
  '4', '17', '1', '1', now(), null, '', null, null, null, null, null);
  
-INSERT INTO `concept` VALUES ('18307', '0', null, null,
+INSERT INTO `concept` VALUES ('18307', '0', null, 'OBS SET PEDS PRE-SCREENING CHICA',
 'CHICA concept for HL7 OBR Universal Service Identifier for PSF tiff',
  '4', '17', '1', '1', now(), null, '', null, null, null, null, null);
  
- INSERT INTO `concept` VALUES ('18308', '0', null, null,
+ INSERT INTO `concept` VALUES ('18308', '0', null, 'PAIN QUALITATIVE CAREWEB',
 'Pain qualitative concept for CAREWEB',
  '4', '17', '0', '1', now(), null, '', null, null, null, null, null);
  
 
- INSERT INTO `concept` VALUES ('18309', '0', null, null,
+ INSERT INTO `concept` VALUES ('18309', '0', null, 'PEDS CL DATA',
 'PEDS CL DATA for RMRS',
  '4', '16', '0', '1', now(), null, '', null, null, null, null, null);
  
- INSERT INTO `concept` VALUES ('18310', '0', null, null,
+ INSERT INTO `concept` VALUES ('18310', '0', null, 'MEDICATION ALLERGIES CAREWEB',
 'Medication Allergies for Careweb',
  '2', '17', '0', '1', now(), null, '', null, null, null, null, null);
  
- INSERT INTO `concept` VALUES ('18311', '0', null, null,
-'Pain Quantitative for CAREWEB',
- '3', '17', '0', '1', now(), null, '', null, null, null, null, null);
- 
+ INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'MACROLIDES',
+ '2', (select concept_class_id from concept_class where name like 'RMRS'), '0', '1', now());
  
  INSERT INTO `concept_name`
  VALUES ('18304', 'OBS SET PEDS PRE-SCREENING', 'en', '1', now(), '63321', '0', null, null, null);
@@ -97,8 +98,11 @@ INSERT INTO `concept` VALUES ('18307', '0', null, null,
   INSERT INTO `concept_name`
  VALUES ('18310', 'MEDICATION ALLERGIES CAREWEB', 'en', '1', now(), '63327', '0', null, null, null);
 
- INSERT INTO `concept_name`
- VALUES ('18311', 'PAIN QUANTITATIVE CAREWEB', 'en', '1', now(), '63328', '0', null, null, null);
+ 
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'MACROLIDES'), 
+'MACROLIDES', 'en', '1', now(),'0')
 
 
 /*names*/
@@ -115,12 +119,94 @@ INSERT INTO `concept_answer`
  (select concept_id from concept_name where name like '0'),
  null, '1', now());
  
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES'),
+ (select concept_id from concept_name where name like 'MACROLIDES'),
+ null, '1', now());
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES'),
+ (select concept_id from concept_name where name like 'PENICILLINS'),
+ null, '1', now());
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES'),
+ (select concept_id from concept_name where name like 'CEPHALOSPORINS'),
+ null, '1', now());
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES'),
+ (select concept_id from concept_name where name like 'SULFONAMIDES'),
+ null, '1', now());
+ 
+  INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES'),
+ (select concept_id from concept_name where name like 'drug allergy other'),
+ null, '1', now());
+ 
+ 
 INSERT INTO `concept_answer`
 (concept_id, answer_concept, answer_drug, creator, date_created)
 VALUES (
 (select concept_id from concept_name where name like 'MEDICATION ALLERGIES CAREWEB'),
  (select concept_id from concept_name where name like 'no known allergies'),
  null, '1', now());
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES CAREWEB'),
+ (select concept_id from concept_name where name like 'PENICILLINS'),
+ null, '1', now());
+ 
+  INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES CAREWEB'),
+ (select concept_id from concept_name where name like 'CEPHALOSPORINS'),
+ null, '1', now());
+ 
+  INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES CAREWEB'),
+ (select concept_id from concept_name where name like 'SULFONAMIDES'),
+ null, '1', now());
+ 
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES CAREWEB'),
+ (select concept_id from concept_name where name like 'drug allergy other'),
+ null, '1', now());
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'MEDICATION ALLERGIES CAREWEB'),
+ (select concept_id from concept_name where name like 'MACROLIDES'),
+ null, '1', now());
+ 
+ 
+ INSERT INTO `concept_answer`
+(concept_id, answer_concept, answer_drug, creator, date_created)
+VALUES (
+(select concept_id from concept_name where name like 'ALLERGY HX'),
+ (select concept_id from concept_name where name like 'MACROLIDES'),
+ null, '1', now());
+ 
  
 INSERT INTO `concept_word` VALUES ('18302', 'FILE', '', 'en', '63319');
 INSERT INTO `concept_word` VALUES ('18302', 'MEDICAL', '', 'en', '63319');
@@ -169,9 +255,10 @@ INSERT INTO `concept_word` VALUES ('18310', 'MEDICATION', '', 'en', '63327');
 INSERT INTO `concept_word` VALUES ('18310', 'ALLERGIES', '', 'en', '63327');
 INSERT INTO `concept_word` VALUES ('18310', 'CAREWEB', '', 'en', '63327');
 
-INSERT INTO `concept_word` VALUES ('18311', 'PAIN', '', 'en', '63328');
-INSERT INTO `concept_word` VALUES ('18311', 'QUANTITATIVE', '', 'en', '63328');
-INSERT INTO `concept_word` VALUES ('18311', 'CAREWEB', '', 'en', '63328');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MACROLIDES'), 'MACROLIDES', '', 'en',
+(select concept_name_id from concept_name where name like 'MACROLIDES'));
 
 truncate concept_set;
 
@@ -197,31 +284,172 @@ INSERT INTO `concept_set` VALUES ('18306', '18306', '1', '1', '2009-12-23 14:21:
 INSERT INTO `concept_set` VALUES ('18307', '18307', '1', '1', '2009-12-23 09:39:20');
 INSERT INTO `concept_set` VALUES ('18308', '18303', '1', '1', '2009-12-07 00:00:00');
 INSERT INTO `concept_set` VALUES ('18310', '18302', '1', '1', '2009-12-29 00:00:00');
-INSERT INTO `concept_set` VALUES ('18311', '18302', '1', '1', '2009-12-29 15:23:44');
 
 truncate concept_map;
 
-INSERT INTO `concept_map` VALUES ('1', '1', '6493', 'HEIGHT PEDS', '1', '2009-10-07 10:05:28', '8309');
-INSERT INTO `concept_map` VALUES ('2', '1', '1280', 'WEIGHT PEDS', '1', '2009-10-07 10:05:28', '18114');
-INSERT INTO `concept_map` VALUES ('3', '1', '1283', 'HEIGHT %ILE', '1', '2009-10-07 10:05:28', '8307');
-INSERT INTO `concept_map` VALUES ('4', '1', '1281', 'WT %ILE', '1', '2009-10-07 10:05:28', '18199');
-INSERT INTO `concept_map` VALUES ('5', '1', '26764', 'BMI', '1', '2009-10-07 10:05:28', '2426');
-INSERT INTO `concept_map` VALUES ('6', '1', '65', 'TEMP', '1', '2009-10-07 10:05:28', '16512');
-INSERT INTO `concept_map` VALUES ('9', '1', '65', 'TEMP', '1', '2009-10-07 10:14:05', '16512');
-INSERT INTO `concept_map` VALUES ('10', '1', '1284', 'HEAD CIRCUMF', '1', '2009-10-07 10:18:17', '8221');
-INSERT INTO `concept_map` VALUES ('11', '1', '68', 'SYS BP SITTING', '1', '2009-10-07 10:18:17', '16334');
-INSERT INTO `concept_map` VALUES ('12', '1', '69', 'DIAS BP SITTING', '1', '2009-10-07 10:18:17', '5237');
-INSERT INTO `concept_map` VALUES ('13', '1', '66', 'PULSE', '1', '2009-10-07 10:18:17', '14113');
-INSERT INTO `concept_map` VALUES ('14', '1', '1285', 'HEAD CIRC %ILE', '1', '2009-10-07 10:18:17', '8216');
-INSERT INTO `concept_map` VALUES ('15', '1', '67', 'RR', '1', '2009-10-07 10:18:17', '14918');
-INSERT INTO `concept_map` VALUES ('16', '1', '448', 'ACUITY L FAR 20/', '1', '2009-10-07 10:18:17', '513');
-INSERT INTO `concept_map` VALUES ('17', '1', '446', 'ACUITY R FAR 20/', '1', '2009-10-07 10:18:17', '515');
-INSERT INTO `concept_map` VALUES ('18', '1', '36404', 'OBS SET PEDS PRE-SCREENING', '1', '2009-12-07 00:00:00', '18304');
-INSERT INTO `concept_map` VALUES ('19', '1', '27159', 'Pain Scale (0-10)', '1', '2009-12-07 00:00:00', '12586');
-INSERT INTO `concept_map` VALUES ('20', '1', '36405', 'OBS SET PEDS PHYSICIAN ENCOUNTER', '1', '2009-12-11 00:00:00', '18305');
-INSERT INTO `concept_map` VALUES ('21', '1', '8995', 'PEDS CL DATA', '1', '2009-12-23 14:16:57', '18309');
-INSERT INTO `concept_map` VALUES ('22', '1', '22391', 'MEDICAL RECORD FILE OBSERVATIONS', '1', '2009-12-23 14:23:57', '10684');
-INSERT INTO `concept_map` VALUES ('23', '1', '7717', 'ALLERGY HX', '1', '2009-12-29 00:00:00', '842');
+INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '6493', 'HEIGHT PEDS', '1', now(), 
+ (select concept_id from concept_name where name like 'HEIGHT PEDS'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '1280', 'WEIGHT PEDS', '1', now(), 
+ (select concept_id from concept_name where name like 'WEIGHT PEDS'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '1283', 'HEIGHT %ILE', '1', now(), 
+ (select concept_id from concept_name where name like 'HEIGHT %ILE'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '1281', 'WT %ILE', '1', now(), 
+ (select concept_id from concept_name where name like 'WT %ILE'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '26764', 'BMI', '1', now(), 
+ (select concept_id from concept_name where name like 'BMI'));
+ 
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '65', 'TEMP', '1', now(), 
+ (select concept_id from concept_name where name like 'TEMP'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '1284', 'HEAD CIRCUMF', '1', now(), 
+ (select concept_id from concept_name where name like 'HEAD CIRCUMF'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '68', 'SYS BP SITTING', '1', now(), 
+ (select concept_id from concept_name where name like 'SYS BP SITTING'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '69', 'DIAS BP SITTING', '1', now(), 
+ (select concept_id from concept_name where name like 'DIAS BP SITTING'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '66', 'PULSE', '1', now(), 
+ (select concept_id from concept_name where name like 'PULSE'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '1285', 'HEAD CIRC %ILE', '1', now(), 
+ (select concept_id from concept_name where name like 'HEAD CIRC %ILE'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '67', 'RR', '1', now(), 
+ (select concept_id from concept_name where name like 'RR'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '448', 'ACUITY L FAR 20/', '1', now(), 
+ (select concept_id from concept_name where name like 'ACUITY L FAR 20/'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '446', 'ACUITY R FAR 20/', '1', now(), 
+ (select concept_id from concept_name where name like 'ACUITY R FAR 20/'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '36404', 'OBS SET PEDS PRE-SCREENING', '1', now(), 
+ (select concept_id from concept_name where name like 'OBS SET PEDS PRE-SCREENING'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '27159', 'Pain Scale (0-10)', '1', now(), 
+ (select concept_id from concept_name where name like 'Pain Scale (0-10)'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '36405', 'OBS SET PEDS PHYSICIAN ENCOUNTER', '1', now(), 
+ (select concept_id from concept_name where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '8995', 'PEDS CL DATA', '1', now(), 
+ (select concept_id from concept_name where name like 'PEDS CL DATA'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '8995', 'PEDS CL DATA', '1', now(), 
+ (select concept_id from concept_name where name like 'PEDS CL DATA'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '22391', 'MEDICAL RECORD FILE OBSERVATIONS', '1', now(), 
+ (select concept_id from concept_name where name like 'MEDICAL RECORD FILE OBSERVATIONS'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '7717', 'ALLERGY HX', '1', now(), 
+ (select concept_id from concept_name where name like 'ALLERGY HX'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '16404', 'no known allergies', '1', now(), 
+ (select concept_id from concept_name where name like 'no known allergies'));
+ 
+
+INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '18049', 'MACROLIDES', '1', now(), 
+ (select concept_id from concept_name where name like 'MACROLIDES'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '93', 'PENICILLINS', '1', now(), 
+ (select concept_id from concept_name where name like 'PENICILLINS'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '1128', 'CEPHALOSPORINS', '1', now(), 
+ (select concept_id from concept_name where name like 'CEPHALOSPORINS'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '568', 'SULFONAMIDES', '1', now(), 
+ (select concept_id from concept_name where name like 'SULFONAMIDES'));
+ 
+ INSERT INTO `concept_map` 
+(source, source_code, comment, creator, date_created, concept_id)
+VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
+ '4455', 'drug allergy other', '1', now(), 
+ (select concept_id from concept_name where name like 'drug allergy other'));
 
 insert into chirdlutil_location_tag_attribute_value
 (location_tag_id, value, location_tag_attribute_id, location_id)
@@ -420,14 +648,23 @@ insert into chirdlutil_location_tag_attribute_value
 (location_tag_id, value, location_tag_attribute_id, location_id)
 values (
 (select location_tag_id from location_tag where tag like 'Other - PCC'),
-'C:\\chica\\conceptMaps\\Other - PCC\\TIFF\\PSF\\PSFTiffConceptMap.xml',
+'C:\\chica\\conceptMaps\\PSFTiffConceptMap.xml',
 (select location_tag_attribute_id from chirdlutil_location_tag_attribute
  where name like 'PSFTiffConceptMapLocation'),
  (select location_id from location where name like 'PCPS')
 );
 
-
 /*PECAR PSF TIFF*/
+
+insert into chirdlutil_location_tag_attribute_value
+(location_tag_id, value, location_tag_attribute_id, location_id)
+values (
+(select location_tag_id from location_tag where tag like 'PEREG4'),
+'C:\\chica\\conceptMaps\\PSFTiffConceptMap.xml',
+(select location_tag_attribute_id from chirdlutil_location_tag_attribute
+ where name like 'PSFTiffConceptMapLocation'),
+ (select location_id from location where name like 'PEPS')
+);
 
 insert into chirdlutil_location_tag_attribute_value
 (location_tag_id, value, location_tag_attribute_id, location_id)
@@ -501,7 +738,18 @@ values (
  (select location_id from location where name like 'PCPS')
 );
 
+
 /*PECAR PWS TIFF*/
+insert into chirdlutil_location_tag_attribute_value
+(location_tag_id, value, location_tag_attribute_id, location_id)
+values (
+(select location_tag_id from location_tag where tag like 'PEREG4'),
+'C:\\chica\\conceptMaps\\PWSTiffConceptMap.xml',
+(select location_tag_attribute_id from chirdlutil_location_tag_attribute
+ where name like 'PWSTiffConceptMapLocation'),
+ (select location_id from location where name like 'PEPS')
+);
+
 insert into chirdlutil_location_tag_attribute_value
 (location_tag_id, value, location_tag_attribute_id, location_id)
 values (

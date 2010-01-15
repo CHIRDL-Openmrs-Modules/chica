@@ -208,6 +208,19 @@ public class HL7Exporter extends AbstractTask {
 				Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encId);
 				
 				HL7MessageConstructor constructor = new HL7MessageConstructor(configFileName);
+				
+				if (conceptCategory != null && (conceptCategory.equalsIgnoreCase("PSF TIFF")
+						|| conceptCategory.equalsIgnoreCase("PWS TIFF"))){
+					constructor.setImage(true);
+					String sendImage = hl7Properties.getProperty("send_form_images");
+					if (sendImage != null && sendImage.equalsIgnoreCase("false") ){
+						export.setStatus(chicaService.getChicaExportStatusByName("do_not_send"));
+						chicaService.saveChicaHL7Export(export);
+						continue;
+					}
+		
+				}
+				
 				List<Encounter> queryEncounterList = new ArrayList<Encounter>();
 				queryEncounterList.add(openmrsEncounter);
 			
@@ -215,10 +228,12 @@ public class HL7Exporter extends AbstractTask {
 				constructor.AddSegmentPID(openmrsEncounter.getPatient());
 				constructor.AddSegmentPV1(openmrsEncounter);
 				
-				
+				String sendImage = hl7Properties.getProperty("send_form_images");
 				//Construct TIFFS
+				
 				if (conceptCategory != null && conceptCategory.equalsIgnoreCase("PSF TIFF")){
 					String batteryName = hl7Properties.getProperty("psf_battery_name");
+					
 					if (!addOBXForTiff(constructor, openmrsEncounter , "PSF", mappings, batteryName)){
 						export.setStatus(chicaService.getChicaExportStatusByName("Image_not_found"));
 						chicaService.saveChicaHL7Export(export);
@@ -229,6 +244,7 @@ public class HL7Exporter extends AbstractTask {
 				
 				if (conceptCategory != null && conceptCategory.equalsIgnoreCase("PWS TIFF")){
 					String batteryName = hl7Properties.getProperty("pws_battery_name");
+					
 					if (!addOBXForTiff(constructor, openmrsEncounter,"PWS", mappings, batteryName )){
 						export.setStatus(chicaService.getChicaExportStatusByName("Image_not_found"));
 						chicaService.saveChicaHL7Export(export);
