@@ -44,60 +44,76 @@ VALUES ('5', 'do_not_send', 'Do not send tiff images in hl7', now());
 
 /*concept*/
 /*add all new rmrs/chica concepts*/
-INSERT INTO `concept` VALUES ('18304', '0', null, 'OBS SET PEDS PRE-SCREENING',
-'Concept for HL7 OBR Universal Service Identifier for PSF tiff',
- '4', '16', '1', '1', now(), null, '', null, null, null, null, null);
- 
-INSERT INTO `concept` VALUES ('18305', '0', null, 'OBS SET PEDS PHYSICIAN ENCOUNTER',
-'Concept for HL7 OBR Universal Service Identifier for PWS tiff',
- '4', '16', '1', '1', now(), null, '', null, null, null, null, null);
- 
-INSERT INTO `concept` VALUES ('18306', '0', null, 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA',
-'CHICA concept for HL7 OBR Universal Service Identifier for PWS tiff',
- '4', '17', '1', '1', now(), null, '', null, null, null, null, null);
- 
-INSERT INTO `concept` VALUES ('18307', '0', null, 'OBS SET PEDS PRE-SCREENING CHICA',
-'CHICA concept for HL7 OBR Universal Service Identifier for PSF tiff',
- '4', '17', '1', '1', now(), null, '', null, null, null, null, null);
- 
- INSERT INTO `concept` VALUES ('18308', '0', null, 'PAIN QUALITATIVE CAREWEB',
-'Pain qualitative concept for CAREWEB',
- '4', '17', '0', '1', now(), null, '', null, null, null, null, null);
- 
 
- INSERT INTO `concept` VALUES ('18309', '0', null, 'PEDS CL DATA',
-'PEDS CL DATA for RMRS',
- '4', '16', '0', '1', now(), null, '', null, null, null, null, null);
+
+INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'OBS SET PEDS PRE-SCREENING',
+ '4', (select concept_class_id from concept_class where name like 'RMRS'), '1', '1', now());
  
- INSERT INTO `concept` VALUES ('18310', '0', null, 'MEDICATION ALLERGIES CAREWEB',
-'Medication Allergies for Careweb',
- '2', '17', '0', '1', now(), null, '', null, null, null, null, null);
+ INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'OBS SET PEDS PRE-SCREENING CHICA',
+ '4', (select concept_class_id from concept_class where name like 'CHICA'), '1', '1', now());
+
+INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'OBS SET PEDS PHYSICIAN ENCOUNTER',
+ '4', (select concept_class_id from concept_class where name like 'RMRS'), '1', '1', now());
  
+INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA',
+ '4', (select concept_class_id from concept_class where name like 'CHICA'), '1', '1', now());
+ 
+INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'PAIN QUALITATIVE CAREWEB',
+ '2', (select concept_class_id from concept_class where name like 'CHICA'), '0', '1', now());
+ 
+ INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'PEDS CL DATA',
+ '4', (select concept_class_id from concept_class where name like 'RMRS'), '1', '1', now());
+ 
+ INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'MEDICATION ALLERGIES CAREWEB',
+ '2', (select concept_class_id from concept_class where name like 'CHICA'), '0', '1', now());
+
  INSERT INTO `concept` (retired, description, datatype_id, class_id, 
  is_set, creator, date_created)  VALUES ( '0', 'MACROLIDES',
  '2', (select concept_class_id from concept_class where name like 'RMRS'), '0', '1', now());
  
- INSERT INTO `concept_name`
- VALUES ('18304', 'OBS SET PEDS PRE-SCREENING', 'en', '1', now(), '63321', '0', null, null, null);
  
  INSERT INTO `concept_name`
- VALUES ('18305', 'OBS SET PEDS PHYSICIAN ENCOUNTER', 'en', '1', now(), '63322', '0', null, null, null);
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'OBS SET PEDS PRE-SCREENING'), 
+'OBS SET PEDS PRE-SCREENING', 'en', '1', now(),'0')
 
- INSERT INTO `concept_name`
- VALUES ('18306', 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA', 'en', '1', now(), '63323', '0', null, null, null);
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER'), 
+'OBS SET PEDS PHYSICIAN ENCOUNTER', 'en', '1', now(),'0')
 
- INSERT INTO `concept_name`
- VALUES ('18307', 'OBS SET PEDS PRE-SCREENING CHICA', 'en', '1', now(), '63324', '0', null, null, null);
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 
+'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA', 'en', '1', now(),'0')
 
- INSERT INTO `concept_name`
- VALUES ('18308', 'PAIN QUALITATIVE CAREWEB', 'en', '1', now(), '63325', '0', null, null, null);
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'OBS SET PEDS PRE-SCREENING CHICA'), 
+'OBS SET PEDS PRE-SCREENING CHICA', 'en', '1', now(),'0')
+
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'PAIN QUALITATIVE CAREWEB'), 
+'PAIN QUALITATIVE CAREWEB', 'en', '1', now(),'0')
+
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'PEDS CL DATA'), 
+'PEDS CL DATA', 'en', '1', now(),'0')
+
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'MEDICATION ALLERGIES CAREWEB'), 
+'MEDICATION ALLERGIES CAREWEB', 'en', '1', now(),'0')
  
- INSERT INTO `concept_name`
- VALUES ('18309', 'PEDS CL DATA', 'en', '1', now(), '63326', '0', null, null, null);
- 
-  INSERT INTO `concept_name`
- VALUES ('18310', 'MEDICATION ALLERGIES CAREWEB', 'en', '1', now(), '63327', '0', null, null, null);
-
  
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
@@ -105,11 +121,19 @@ VALUES ((select concept_id from concept where description like 'MACROLIDES'),
 'MACROLIDES', 'en', '1', now(),'0')
 
 
-/*names*/
-update concept set short_name = null where concept_id = 18302;
-update concept set short_name = null where concept_id = 18303;
-update concept_name set name = 'PEDS CL DATA CHICA' where concept_id = 18303;
-update concept_name set name = 'MEDICAL RECORD FILE OBSERVATIONS CHICA' where concept_id = 18302;
+/*names remove short names from some existing concepts 
+ because of openmrs handling of short names*/
+update concept set short_name = null where concept_id = (select distinct concept_id from concept_name
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
+update concept set short_name = null where concept_id = (select distinct concept_id from concept_name
+  where name like 'PEDS CL DATA CHICA');
+  /* add descriptions for concepts*/
+update concept set description = 'PEDS CL DATA CHICA'
+   where concept_id = (select distinct concept_id from concept_name
+   where name like 'PEDS CL DATA CHICA');
+update concept set description = 'MEDICAL RECORD FILE OBSERVATIONS CHICA'
+   where concept_id = (select distinct concept_id from concept_name
+   where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
 
 
 /*answers for careweb concepts*/ 
@@ -208,52 +232,212 @@ VALUES (
  null, '1', now());
  
  
-INSERT INTO `concept_word` VALUES ('18302', 'FILE', '', 'en', '63319');
-INSERT INTO `concept_word` VALUES ('18302', 'MEDICAL', '', 'en', '63319');
-INSERT INTO `concept_word` VALUES ('18302', 'RECORD', '', 'en', '63319');
-INSERT INTO `concept_word` VALUES ('18302', 'OBSERVATIONS', '', 'en', '63319');
-INSERT INTO `concept_word` VALUES ('18302', 'CHICA', '', 'en', '63319');
+ 
+ INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MACROLIDES'), 'MACROLIDES', '', 'en',
+(select concept_name_id from concept_name where name like 'MACROLIDES'));
 
-INSERT INTO `concept_word` VALUES ('18303', 'PEDS', '', 'en', '63320');
-INSERT INTO `concept_word` VALUES ('18303', 'CL', '', 'en', '63320');
-INSERT INTO `concept_word` VALUES ('18303', 'DATA', '', 'en', '63320');
-INSERT INTO `concept_word` VALUES ('18303', 'CHICA', '', 'en', '63320');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 'FILE', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 'MEDICAL', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 'RECORD', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
+  
+ INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 'CHICA', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'));
 
-INSERT INTO `concept_word` VALUES ('18304', 'OBS', '', 'en', '63321');
-INSERT INTO `concept_word` VALUES ('18304', 'SET', '', 'en', '63321');
-INSERT INTO `concept_word` VALUES ('18304', 'PEDS', '', 'en', '63321');
-INSERT INTO `concept_word` VALUES ('18304', 'PRE-SCREENING', '', 'en', '63321');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PEDS CL DATA CHICA'), 'PEDS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PEDS CL DATA CHICA'));
 
-INSERT INTO `concept_word` VALUES ('18305', 'OBS', '', 'en', '63322');
-INSERT INTO `concept_word` VALUES ('18305', 'SET', '', 'en', '63322');
-INSERT INTO `concept_word` VALUES ('18305', 'PEDS', '', 'en', '63322');
-INSERT INTO `concept_word` VALUES ('18305', 'PHYSICIAN', '', 'en', '63322');
-INSERT INTO `concept_word` VALUES ('18305', 'ENCOUNTER', '', 'en', '63322');
 
-INSERT INTO `concept_word` VALUES ('18306', 'OBS', '', 'en', '63323');
-INSERT INTO `concept_word` VALUES ('18306', 'SET', '', 'en', '63323');
-INSERT INTO `concept_word` VALUES ('18306', 'PEDS', '', 'en', '63323');
-INSERT INTO `concept_word` VALUES ('18306', 'PHYSICIAN', '', 'en', '63323');
-INSERT INTO `concept_word` VALUES ('18306', 'ENCOUNTER', '', 'en', '63323');
-INSERT INTO `concept_word` VALUES ('18306', 'CHICA', '', 'en', '63323');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PEDS CL DATA CHICA'), 'CL', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PEDS CL DATA CHICA'));
+  
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PEDS CL DATA CHICA'), 'DATA', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PEDS CL DATA CHICA'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PEDS CL DATA CHICA'), 'CHICA', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PEDS CL DATA CHICA'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PRE-SCREENING'), 'OBS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PRE-SCREENING'));
 
-INSERT INTO `concept_word` VALUES ('18307', 'OBS', '', 'en', '63324');
-INSERT INTO `concept_word` VALUES ('18307', 'SET', '', 'en', '63324');
-INSERT INTO `concept_word` VALUES ('18307', 'PEDS', '', 'en', '63324');
-INSERT INTO `concept_word` VALUES ('18307', 'PRE-SCREENING', '', 'en', '63324');
-INSERT INTO `concept_word` VALUES ('18307', 'CHICA', '', 'en', '63324');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PRE-SCREENING'), 'PEDS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PRE-SCREENING'));
 
-INSERT INTO `concept_word` VALUES ('18308', 'PAIN', '', 'en', '63325');
-INSERT INTO `concept_word` VALUES ('18308', 'QUALITATIVE', '', 'en', '63325');
-INSERT INTO `concept_word` VALUES ('18308', 'CAREWEB', '', 'en', '63325');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PRE-SCREENING'), 'PRE-SCREENING', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PRE-SCREENING'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER'), 'OBS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER'), 'SET', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
+  
+   INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER'), 'PEDS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER'), 'PHYSICIAN', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER'), 'ENCOUNTER', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 'OBS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 'SET', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'));
+  
+   INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 'PEDS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 'PHYSICIAN', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 'ENCOUNTER', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'));
 
-INSERT INTO `concept_word` VALUES ('18309', 'PEDS', '', 'en', '63326');
-INSERT INTO `concept_word` VALUES ('18309', 'CL', '', 'en', '63326');
-INSERT INTO `concept_word` VALUES ('18309', 'DATA', '', 'en', '63326');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PRE-SCREENING CHICA'), 'OBS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PRE-SCREENING CHICA'));
 
-INSERT INTO `concept_word` VALUES ('18310', 'MEDICATION', '', 'en', '63327');
-INSERT INTO `concept_word` VALUES ('18310', 'ALLERGIES', '', 'en', '63327');
-INSERT INTO `concept_word` VALUES ('18310', 'CAREWEB', '', 'en', '63327');
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PRE-SCREENING CHICA'), 'PEDS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PRE-SCREENING'));
+
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'OBS SET PEDS PRE-SCREENING CHICA'), 'PRE-SCREENING', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'OBS SET PEDS PRE-SCREENING CHICA'));
+
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PAIN QUALITATIVE CAREWEB'), 'PAIN', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PAIN QUALITATIVE CAREWEB'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PAIN QUALITATIVE CAREWEB'), 'QUALITATIVE', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PAIN QUALITATIVE CAREWEB'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PAIN QUALITATIVE CAREWEB'), 'CAREWEB', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PAIN QUALITATIVE CAREWEB'));
+
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PEDS CL DATA'), 'PEDS', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PEDS CL DATA'));
+
+
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PEDS CL DATA CHICA'), 'CL', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PEDS CL DATA CHICA'));
+  
+INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'PEDS CL DATA CHICA'), 'DATA', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'PEDS CL DATA CHICA'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MEDICATION ALLERGIES CAREWEB'), 'MEDICATION', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'MEDICATION ALLERGIES CAREWEB'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MEDICATION ALLERGIES CAREWEB'), 'ALLERGIES', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'MEDICATION ALLERGIES CAREWEB'));
+  
+  INSERT INTO `concept_word`
+VALUES ((select concept_id from concept
+where description like 'MEDICATION ALLERGIES CAREWEB'), 'CAREWEB', '', 'en',
+ (select concept_name_id from concept_name 
+  where name like 'MEDICATION ALLERGIES CAREWEB'));
+
 
 INSERT INTO `concept_word`
 VALUES ((select concept_id from concept
@@ -261,29 +445,118 @@ where description like 'MACROLIDES'), 'MACROLIDES', '', 'en',
 (select concept_name_id from concept_name where name like 'MACROLIDES'));
 
 truncate concept_set;
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'BMI CHICA'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
 
-INSERT INTO `concept_set` VALUES ('2427', '18303', '0', '1', '2009-10-07 10:05:28');
-INSERT INTO `concept_set` VALUES ('2428', '18303', '14', '1', '2009-10-07 10:05:28');
-INSERT INTO `concept_set` VALUES ('5242', '18303', '1', '1', '2009-10-07 10:18:17');
-INSERT INTO `concept_set` VALUES ('8152', '18303', '1', '1', '2009-10-07 10:14:05');
-INSERT INTO `concept_set` VALUES ('8155', '18303', '1', '1', '2009-10-07 10:18:17');
-INSERT INTO `concept_set` VALUES ('8306', '18303', '1', '1', '2009-10-07 10:05:28');
-INSERT INTO `concept_set` VALUES ('8866', '18303', '1', '1', '2009-10-07 10:05:28');
-INSERT INTO `concept_set` VALUES ('10686', '18302', '1', '1', '2009-12-23 15:03:05');
-INSERT INTO `concept_set` VALUES ('12581', '18303', '1', '1', '2009-12-08 00:00:00');
-INSERT INTO `concept_set` VALUES ('14114', '18303', '1', '1', '2009-10-07 10:18:17');
-INSERT INTO `concept_set` VALUES ('14917', '18303', '1', '1', '2009-10-07 10:18:17');
-INSERT INTO `concept_set` VALUES ('16349', '18303', '1', '1', '2009-10-07 10:18:17');
-INSERT INTO `concept_set` VALUES ('16525', '18303', '1', '1', '2009-10-07 10:05:28');
-INSERT INTO `concept_set` VALUES ('17860', '18303', '1', '1', '2009-10-07 10:18:17');
-INSERT INTO `concept_set` VALUES ('17861', '18303', '1', '1', '2009-10-07 10:18:17');
-INSERT INTO `concept_set` VALUES ('18091', '18303', '1', '1', '2009-10-07 10:05:28');
-INSERT INTO `concept_set` VALUES ('18200', '18303', '1', '1', '2009-10-07 10:05:28');
-INSERT INTO `concept_set` VALUES ('18305', '18305', '1', '1', '2009-12-11 00:00:00');
-INSERT INTO `concept_set` VALUES ('18306', '18306', '1', '1', '2009-12-23 14:21:42');
-INSERT INTO `concept_set` VALUES ('18307', '18307', '1', '1', '2009-12-23 09:39:20');
-INSERT INTO `concept_set` VALUES ('18308', '18303', '1', '1', '2009-12-07 00:00:00');
-INSERT INTO `concept_set` VALUES ('18310', '18302', '1', '1', '2009-12-29 00:00:00');
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'BMICENTILE'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'DIASTOLIC_BP'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'HC'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'HCCENTILE'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'HEIGHT'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'HTCENTILE'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'MEDICATION ALLERGIES'), 
+(select distinct concept_id from concept_name where
+name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), '1', '1', now());
+
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'PAIN QUANTITATIVE'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'PULSE CHICA'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'RR CHICA'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'SYSTOLIC_BP'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'TEMPERATURE CHICA'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'VISIONL'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'VISIONR'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'WEIGHT'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'WTCENTILE'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+
+/* OBS SET PEDS PHYSICIAN ENCOUNTER is both a set and an obs*/
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name 
+  like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 
+(select distinct concept_id from concept_name where
+name like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name 
+  like 'OBS SET PEDS PRE-SCREENING CHICA'), 
+(select distinct concept_id from concept_name where
+name like 'OBS SET PEDS PRE-SCREENING CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'PAIN QUALITATIVE CAREWEB'), 
+(select distinct concept_id from concept_name where
+name like 'PEDS CL DATA CHICA'), '1', '1', now());
+
+INSERT INTO `concept_set` VALUES ((
+select distinct concept_id from concept_name where name like 'MEDICATION ALLERGIES CAREWEB'), 
+(select distinct concept_id from concept_name where
+name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), '1', '1', now());
+
 
 truncate concept_map;
 
