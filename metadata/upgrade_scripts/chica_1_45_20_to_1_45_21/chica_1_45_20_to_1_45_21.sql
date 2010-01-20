@@ -82,43 +82,43 @@ INSERT INTO `concept` (retired, description, datatype_id, class_id,
  INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'OBS SET PEDS PRE-SCREENING'), 
-'OBS SET PEDS PRE-SCREENING', 'en', '1', now(),'0')
+'OBS SET PEDS PRE-SCREENING', 'en', '1', now(),'0');
 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER'), 
-'OBS SET PEDS PHYSICIAN ENCOUNTER', 'en', '1', now(),'0')
+'OBS SET PEDS PHYSICIAN ENCOUNTER', 'en', '1', now(),'0');
 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA'), 
-'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA', 'en', '1', now(),'0')
+'OBS SET PEDS PHYSICIAN ENCOUNTER CHICA', 'en', '1', now(),'0');
 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'OBS SET PEDS PRE-SCREENING CHICA'), 
-'OBS SET PEDS PRE-SCREENING CHICA', 'en', '1', now(),'0')
+'OBS SET PEDS PRE-SCREENING CHICA', 'en', '1', now(),'0');
 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'PAIN QUALITATIVE CAREWEB'), 
-'PAIN QUALITATIVE CAREWEB', 'en', '1', now(),'0')
+'PAIN QUALITATIVE CAREWEB', 'en', '1', now(),'0');
 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'PEDS CL DATA'), 
-'PEDS CL DATA', 'en', '1', now(),'0')
+'PEDS CL DATA', 'en', '1', now(),'0');
 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'MEDICATION ALLERGIES CAREWEB'), 
-'MEDICATION ALLERGIES CAREWEB', 'en', '1', now(),'0')
+'MEDICATION ALLERGIES CAREWEB', 'en', '1', now(),'0');
  
  
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'MACROLIDES'), 
-'MACROLIDES', 'en', '1', now(),'0')
+'MACROLIDES', 'en', '1', now(),'0');
 
 
 /*names remove short names from some existing concepts 
@@ -242,19 +242,19 @@ INSERT INTO `concept_word`
 VALUES ((select concept_id from concept
 where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 'FILE', '', 'en',
  (select concept_name_id from concept_name 
-  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'));
   
   INSERT INTO `concept_word`
 VALUES ((select concept_id from concept
 where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 'MEDICAL', '', 'en',
  (select concept_name_id from concept_name 
-  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'));
   
   INSERT INTO `concept_word`
 VALUES ((select concept_id from concept
 where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 'RECORD', '', 'en',
  (select concept_name_id from concept_name 
-  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA');
+  where name like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'));
   
  INSERT INTO `concept_word`
 VALUES ((select concept_id from concept
