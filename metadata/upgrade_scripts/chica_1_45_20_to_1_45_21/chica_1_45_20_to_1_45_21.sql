@@ -44,7 +44,23 @@ VALUES ('5', 'do_not_send', 'Do not send tiff images in hl7', now());
 
 /*concept*/
 /*add all new rmrs/chica concepts*/
+INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'MEDICAL RECORD FILE OBSERVATIONS CHICA',
+ '4', (select concept_class_id from concept_class where name like 'CHICA'), '1', '1', now());	
+ 
+INSERT INTO `concept` (retired, description, datatype_id, class_id, 
+ is_set, creator, date_created)  VALUES ( '0', 'PEDS CL DATA CHICA',
+ '4', (select concept_class_id from concept_class where name like 'CHICA'), '1', '1', now());	
+ 
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 
+'MEDICAL RECORD FILE OBSERVATIONS CHICA', 'en', '1', now(),'0');
 
+INSERT INTO `concept_name`
+(concept_id, name, locale, creator, date_created, voided)
+VALUES ((select concept_id from concept where description like 'PEDS CL DATA CHICA'), 
+'PEDS CL DATA CHICA', 'en', '1', now(),'0');
 
 INSERT INTO `concept` (retired, description, datatype_id, class_id, 
  is_set, creator, date_created)  VALUES ( '0', 'OBS SET PEDS PRE-SCREENING',
@@ -65,10 +81,6 @@ INSERT INTO `concept` (retired, description, datatype_id, class_id,
 INSERT INTO `concept` (retired, description, datatype_id, class_id, 
  is_set, creator, date_created)  VALUES ( '0', 'PAIN QUALITATIVE CAREWEB',
  '2', (select concept_class_id from concept_class where name like 'CHICA'), '0', '1', now());
- 
- INSERT INTO `concept` (retired, description, datatype_id, class_id, 
- is_set, creator, date_created)  VALUES ( '0', 'PEDS CL DATA',
- '4', (select concept_class_id from concept_class where name like 'RMRS'), '1', '1', now());
  
  INSERT INTO `concept` (retired, description, datatype_id, class_id, 
  is_set, creator, date_created)  VALUES ( '0', 'MEDICATION ALLERGIES CAREWEB',
@@ -103,11 +115,6 @@ INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'PAIN QUALITATIVE CAREWEB'), 
 'PAIN QUALITATIVE CAREWEB', 'en', '1', now(),'0');
-
-INSERT INTO `concept_name`
-(concept_id, name, locale, creator, date_created, voided)
-VALUES ((select concept_id from concept where description like 'PEDS CL DATA'), 
-'PEDS CL DATA', 'en', '1', now(),'0');
 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
@@ -400,25 +407,6 @@ VALUES ((select concept_id from concept
 where description like 'PAIN QUALITATIVE CAREWEB'), 'CAREWEB', '', 'en',
  (select concept_name_id from concept_name 
   where name like 'PAIN QUALITATIVE CAREWEB'));
-
-INSERT INTO `concept_word`
-VALUES ((select concept_id from concept
-where description like 'PEDS CL DATA'), 'PEDS', '', 'en',
- (select concept_name_id from concept_name 
-  where name like 'PEDS CL DATA'));
-
-
-INSERT INTO `concept_word`
-VALUES ((select concept_id from concept
-where description like 'PEDS CL DATA CHICA'), 'CL', '', 'en',
- (select concept_name_id from concept_name 
-  where name like 'PEDS CL DATA CHICA'));
-  
-INSERT INTO `concept_word`
-VALUES ((select concept_id from concept
-where description like 'PEDS CL DATA CHICA'), 'DATA', '', 'en',
- (select concept_name_id from concept_name 
-  where name like 'PEDS CL DATA CHICA'));
   
   INSERT INTO `concept_word`
 VALUES ((select concept_id from concept
@@ -437,12 +425,6 @@ VALUES ((select concept_id from concept
 where description like 'MEDICATION ALLERGIES CAREWEB'), 'CAREWEB', '', 'en',
  (select concept_name_id from concept_name 
   where name like 'MEDICATION ALLERGIES CAREWEB'));
-
-
-INSERT INTO `concept_word`
-VALUES ((select concept_id from concept
-where description like 'MACROLIDES'), 'MACROLIDES', '', 'en',
-(select concept_name_id from concept_name where name like 'MACROLIDES'));
 
 truncate concept_set;
 INSERT INTO `concept_set` VALUES ((
