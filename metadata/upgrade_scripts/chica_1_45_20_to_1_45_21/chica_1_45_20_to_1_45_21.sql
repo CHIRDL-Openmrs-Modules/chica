@@ -54,6 +54,11 @@ where cn.concept_id = c.concept_id
 and cn.name like 'MEDICAL RECORD FILE OBSERVATIONS'
 and cl.concept_class_id = c.class_id
 and cl.name = 'CHICA';
+
+update concept c, concept_name cn  set class_id =
+(select concept_class_id from concept_class where name like 'RMRS')
+where cn.concept_id = c.concept_id
+and name like 'PEDS CL DATA';
  
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
@@ -642,12 +647,6 @@ VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
 VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
  '36405', 'OBS SET PEDS PHYSICIAN ENCOUNTER', '1', now(), 
  (select concept_id from concept_name where name like 'OBS SET PEDS PHYSICIAN ENCOUNTER'));
- 
- INSERT INTO `concept_map` 
-(source, source_code, comment, creator, date_created, concept_id)
-VALUES ( (select concept_source_id from concept_source where name like 'RMRS') ,
- '8995', 'PEDS CL DATA', '1', now(), 
- (select concept_id from concept_name where name like 'PEDS CL DATA'));
  
  INSERT INTO `concept_map` 
 (source, source_code, comment, creator, date_created, concept_id)
