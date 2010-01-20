@@ -45,18 +45,16 @@ VALUES ('5', 'do_not_send', 'Do not send tiff images in hl7', now());
 /*concept*/
 /*add all new rmrs/chica concepts*/
 INSERT INTO `concept` (retired, description, datatype_id, class_id, 
- is_set, creator, date_created)  VALUES ( '0', 'MEDICAL RECORD FILE OBSERVATIONS CHICA',
- '4', (select concept_class_id from concept_class where name like 'CHICA'), '1', '1', now());	
- 
-INSERT INTO `concept` (retired, description, datatype_id, class_id, 
  is_set, creator, date_created)  VALUES ( '0', 'PEDS CL DATA CHICA',
  '4', (select concept_class_id from concept_class where name like 'CHICA'), '1', '1', now());	
  
-INSERT INTO `concept_name`
-(concept_id, name, locale, creator, date_created, voided)
-VALUES ((select concept_id from concept where description like 'MEDICAL RECORD FILE OBSERVATIONS CHICA'), 
-'MEDICAL RECORD FILE OBSERVATIONS CHICA', 'en', '1', now(),'0');
-
+ update concept_name cn, concept c, concept_class cl
+set cn.name = 'MEDICAL RECORD FILE OBSERVATIONS CHICA'
+where cn.concept_id = c.concept_id
+and cn.name like 'MEDICAL RECORD FILE OBSERVATIONS'
+and cl.concept_class_id = c.class_id
+and cl.name = 'CHICA';
+ 
 INSERT INTO `concept_name`
 (concept_id, name, locale, creator, date_created, voided)
 VALUES ((select concept_id from concept where description like 'PEDS CL DATA CHICA'), 
