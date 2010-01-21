@@ -209,6 +209,8 @@ CREATE TABLE chica_statistics (
   KEY stats_fk_obs (obsv_id),
   CONSTRAINT stats_fk_pat FOREIGN KEY (patient_id) REFERENCES patient (patient_id),
   CONSTRAINT stats_fk_rule FOREIGN KEY (rule_id) REFERENCES dss_rule (rule_id),
+  KEY chica_stat_idx_instance (location_id,form_name,form_instance_id),
+  KEY chica_stat_idx_encounter (encounter_id,form_name),
   CONSTRAINT stats_fk_encounter FOREIGN KEY (encounter_id) REFERENCES encounter (encounter_id),
   CONSTRAINT stats_fk_obs FOREIGN KEY (obsv_id) REFERENCES obs (obs_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -255,6 +257,9 @@ CREATE TABLE chica_wtageinf (
   wtageinf_id int(11) NOT NULL auto_increment,
   PRIMARY KEY  (wtageinf_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE INDEX obs_idx_person_concept ON obs (`person_id`,`concept_id`,`obs_datetime`);
 
 INSERT INTO `chica_bmiage` VALUES ('1', '24', '-2.01118107', '16.575027675', '0.080592465', '14.520953329', '14.737319472', '15.090328265', '15.74164233', '16.575027675', '17.55718781', '18.162194733', '18.609481276', '19.338010618', '19.859858115', '441');
 INSERT INTO `chica_bmiage` VALUES ('1', '24.5', '-1.982373595', '16.547774867', '0.0801274288', '14.503476669', '14.719292573', '15.071174743', '15.71962876', '16.547774867', '17.521292788', '18.119549228', '18.561106338', '19.278898128', '19.791940141', '442');
