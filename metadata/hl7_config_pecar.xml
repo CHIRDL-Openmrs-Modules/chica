@@ -46,7 +46,7 @@
 	<entry key="general_battery_id">22391</entry>
 	<entry key="use_vitals_battery_only">true</entry>
 	<entry key="socket_read_timeout">5</entry>
-	<entry key="send_form_images">true</entry>
+	<entry key="send_form_images">false</entry>
 	
 </properties>	
 	
