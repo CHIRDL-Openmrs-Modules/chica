@@ -1,1 +1,1 @@
-copy unfilteredMeds.xml to c:\chica\config;
+copy unfilteredMeds.xml c:\chica\config;
