@@ -116,6 +116,8 @@ public class ChicaServiceImpl implements ChicaService
 			List<FormField> fieldsToConsume,
 			Integer locationTagId)
 	{
+		long totalTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		try
 		{
 			DssService dssService = Context
@@ -156,6 +158,9 @@ public class ChicaServiceImpl implements ChicaService
 					return;
 				}
 			}
+
+			startTime = System.currentTimeMillis();
+
 
 			Integer formId = formInstance.getFormId();
 			Integer locationId = formInstance.getLocationId();
@@ -217,7 +222,8 @@ public class ChicaServiceImpl implements ChicaService
 					atdService.saveError(atdError);
 				}
 			}
-			
+
+			startTime = System.currentTimeMillis();
 			// make sure storeObs gets loaded before running consume
 			// rules
 			dssService.loadRule("CREATE_JIT",false);
@@ -226,6 +232,7 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("DDST", false);
 			dssService.loadRule("LookupBPcentile", false);
 
+			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
 			ArrayList<String> languageFieldsToConsume = 
 				saveAnswers(fieldMap, formInstance,encounterId);
@@ -282,9 +289,15 @@ public class ChicaServiceImpl implements ChicaService
 					}
 				}
 			}
+			System.out.println("chicaService.consume: Fields to consume: "+
+				(System.currentTimeMillis()-startTime));
+			
+			startTime = System.currentTimeMillis();
 			atdService.consume(input, formInstance, patient, encounterId,
 					 null, null, parameterHandler,
 					 fieldsToConsume,locationTagId,sessionId);
+			System.out.println("chicaService.consume: Time of atdService.consume: "+
+				(System.currentTimeMillis()-startTime));
 		} catch (Exception e)
 		{
 			log.error(e.getMessage());
@@ -631,6 +644,9 @@ public class ChicaServiceImpl implements ChicaService
 			Patient patient, Integer encounterId, String dssType,
 			int maxDssElements,Integer sessionId)
 	{
+		long totalTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
+
 		DssService dssService = Context
 				.getService(DssService.class);
 		ATDService atdService = Context
@@ -639,6 +655,7 @@ public class ChicaServiceImpl implements ChicaService
 		DssManager dssManager = new DssManager(patient);
 		dssManager.setMaxDssElementsByType(dssType, maxDssElements);
 		HashMap<String, Object> baseParameters = new HashMap<String, Object>();
+		startTime = System.currentTimeMillis();
 		try {
 	        dssService.loadRule("CREATE_JIT",false);
 	        dssService.loadRule("ChicaAgeRule",false);
@@ -649,11 +666,12 @@ public class ChicaServiceImpl implements ChicaService
         catch (Exception e) {
 	        log.error("load rule failed", e);
         }
+		startTime = System.currentTimeMillis();
 
 		FormInstance formInstance = state.getFormInstance();
 		atdService.produce(patient, formInstance, output, dssManager,
 				encounterId, baseParameters, null,true,state.getLocationTagId(),sessionId);
-
+		startTime = System.currentTimeMillis();
 		Integer formInstanceId = formInstance.getFormInstanceId();
 		Integer locationId = formInstance.getLocationId();
 		this.saveStats(patient, formInstanceId, dssManager, encounterId,state.getLocationTagId(),locationId);

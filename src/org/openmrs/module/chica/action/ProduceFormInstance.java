@@ -55,6 +55,8 @@ public class ProduceFormInstance implements ProcessStateAction
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
 	{
+		long totalTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		//lookup the patient again to avoid lazy initialization errors
 		PatientService patientService = Context.getPatientService();
 		Integer patientId = patient.getPatientId();
@@ -104,6 +106,7 @@ public class ProduceFormInstance implements ProcessStateAction
 		
 		FormService formService = Context.getFormService();
 		Form form = formService.getForm(formId);
+		startTime = System.currentTimeMillis();
 		if(form.getName().equals("PWS")){
 			List<Medication> drugs = MedicationListLookup.getMedicationList(patientId);
 			EncounterService encounterService = Context.getService(EncounterService.class);
@@ -124,7 +127,9 @@ public class ProduceFormInstance implements ProcessStateAction
 				state.setEndTime(new java.util.Date());
 				atdService.updatePatientState(patientState);
 			}
+			System.out.println("Produce: query medication list: "+(System.currentTimeMillis()-startTime));
 		}
+		startTime = System.currentTimeMillis();
 		
 		// write the form
 		FormInstance formInstance = atdService.addFormInstance(formId,
@@ -143,8 +148,9 @@ public class ProduceFormInstance implements ProcessStateAction
 				.getDssType(currState.getName());
 		try {
 			FileOutputStream output = new FileOutputStream(mergeFilename);
+			startTime = System.currentTimeMillis();
 			chicaService.produce(output, patientState, patient, encounterId, dsstype, maxDssElements, sessionId);
-			
+			startTime = System.currentTimeMillis();
 			output.flush();
 			output.close();
 		}
@@ -161,9 +167,10 @@ public class ProduceFormInstance implements ProcessStateAction
 		xmlDatasource.deleteRegenObsByPatientId(patientId);
 
 		StateManager.endState(patientState);
+		System.out.println("Produce: Total time to produce "+form.getName()+": "+(System.currentTimeMillis()-totalTime));
 		ChicaStateActionHandler.changeState(patient, sessionId, currState, stateAction, parameters,
 				locationTagId, locationId);
-
+		startTime = System.currentTimeMillis();
 		// update statistics
 		List<Statistics> statistics = chicaService.getStatByFormInstance(
 				formInstanceId, dsstype, locationId);
@@ -173,7 +180,7 @@ public class ProduceFormInstance implements ProcessStateAction
 			currStat.setPrintedTimestamp(patientState.getEndTime());
 			chicaService.updateStatistics(currStat);
 		}
-		
+		startTime = System.currentTimeMillis();
 		//if this is a PWS, clear the medication list query results
 		if(form.getName().equals("PWS")){
 			MedicationListLookup.removeMedicationList(patientId);

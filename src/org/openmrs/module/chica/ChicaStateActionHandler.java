@@ -207,6 +207,8 @@ public class ChicaStateActionHandler implements StateActionHandler
 			HashMap<String,Object> parameters,List<FormField> fieldsToConsume,
 			Integer locationTagId)
 	{
+		long totalTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		AdministrationService adminService = Context.getAdministrationService();
 		ATDService atdService = Context.getService(ATDService.class);
 		ChicaService chicaService = Context.getService(ChicaService.class);
@@ -220,8 +222,10 @@ public class ChicaStateActionHandler implements StateActionHandler
 		{
 			InputStream input = new FileInputStream(exportFilename);
 			
+			startTime = System.currentTimeMillis();
 			chicaService.consume(input,patient,encounterId,
 					formInstance,sessionId,fieldsToConsume,locationTagId);
+			startTime = System.currentTimeMillis();
 			input.close();
 		} catch (Exception e)
 		{
@@ -232,7 +236,9 @@ public class ChicaStateActionHandler implements StateActionHandler
 		
 		// save specific observations
 		saveObs(encounterId, patient,locationTagId);
-
+		System.out.println("chicaStateActionHandler.consume: time of saveObs: "+
+			(System.currentTimeMillis()-startTime));
+		startTime = System.currentTimeMillis();
 		// remove the parsed xml from the xml datasource
 		try
 		{
