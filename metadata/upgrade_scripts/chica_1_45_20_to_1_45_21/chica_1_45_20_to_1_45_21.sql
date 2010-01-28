@@ -18,7 +18,7 @@ description = 'ACK not received from sent message',
 date_created = now()
 where hl7_export_status_id = 4;
 
-update chica_hl7_export_status set description = 'no_obs',
+update chica_hl7_export_status set name = 'no_obs',
 description = 'No observations to send',
 date_created = now()
 where hl7_export_status_id = 100;
