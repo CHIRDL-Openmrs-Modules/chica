@@ -1,6 +1,42 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
+<SCRIPT LANGUAGE="JavaScript">
+<!--adapted from http://www.siteexperts.com/tips/html/ts16/page2.asp -->
+function getSelected(opt) {
+            var selected = new Array();
+            var index = 0;
+            for (var intLoop = 0; intLoop < opt.length; intLoop++) {
+               if ((opt[intLoop].selected) ||
+                   (opt[intLoop].checked)) {
+                  index = selected.length;
+                  selected[index] = new Object;
+                  selected[index].value = opt[intLoop].value;
+                  selected[index].index = intLoop;
+               }
+            }
+            return selected;
+         }
+
+         function outputSelected(opt,hidden) {
+            var sel = getSelected(opt);
+            var strSel = "";
+            for (var item in sel)       
+               strSel += sel[item].value;
+
+	    hidden.value=strSel;
+         }
+
+	function processCheckboxes(form1) {
+
+	   outputSelected(form1.sub_Choice1,form1.Choice1);
+outputSelected(form1.sub_Choice2,form1.Choice2);
+outputSelected(form1.sub_Choice3,form1.Choice3);
+outputSelected(form1.sub_Choice4,form1.Choice4);
+outputSelected(form1.sub_Choice5,form1.Choice5);
+outputSelected(form1.sub_Choice6,form1.Choice6);
+    }
+	</SCRIPT>
 <c:choose>
 <c:when test="${scanned == 'scanned'}">  
 <p>PWS ID: ${formInstanceId} was successfully scanned.</p>
@@ -34,7 +70,7 @@
 </c:when>
 <c:otherwise> 
 <form name="input" action="fillOutPWS.form" method="get">
-<input type="submit" value="Scan">
+<input type="submit" value="Scan" ONCLICK="processCheckboxes(this.form);">
 <center><h2>CHICA Physician Encounter Form</h2></center>
 <table width="100%">
 <tr>
@@ -166,66 +202,66 @@ ${TobaccoLabel} ${TobaccoAnswer}
 <tr style="padding: 10px">
 	<td>${Prompt1_Text}<br/><br/>
 	<table>
-	<tr><td><input type="checkbox" name="Choice1" value="1"/>${Answer1_1}</td>
-	<td><input type="checkbox" name="Choice1" value="2"/>${Answer1_2}</td></tr>
-	<tr><td><input type="checkbox" name="Choice1" value="3"/>${Answer1_3}</td>
-	<td><input type="checkbox" name="Choice1" value="4"/>${Answer1_4}</td></tr>
-	<tr><td><input type="checkbox" name="Choice1" value="5"/>${Answer1_5}</td>
-	<td><input type="checkbox" name="Choice1" value="6"/>${Answer1_6}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice1" value="1"/>${Answer1_1}</td>
+	<td><input type="checkbox" name="sub_Choice1" value="2"/>${Answer1_2}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice1" value="3"/>${Answer1_3}</td>
+	<td><input type="checkbox" name="sub_Choice1" value="4"/>${Answer1_4}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice1" value="5"/>${Answer1_5}</td>
+	<td><input type="checkbox" name="sub_Choice1" value="6"/>${Answer1_6}</td></tr>
 	</table>
 	</td>
 	<td>${Prompt2_Text}<br/><br/>
 	<table>
-	<tr><td><input type="checkbox" name="Choice2" value="1"/>${Answer2_1}</td>
-	<td><input type="checkbox" name="Choice2" value="2"/>${Answer2_2}</td></tr>
-	<tr><td><input type="checkbox" name="Choice2" value="3"/>${Answer2_3}</td>
-	<td><input type="checkbox" name="Choice2" value="4"/>${Answer2_4}</td></tr>
-	<tr><td><input type="checkbox" name="Choice2" value="5"/>${Answer2_5}</td>
-	<td><input type="checkbox" name="Choice2" value="6"/>${Answer2_6}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice2" value="1"/>${Answer2_1}</td>
+	<td><input type="checkbox" name="sub_Choice2" value="2"/>${Answer2_2}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice2" value="3"/>${Answer2_3}</td>
+	<td><input type="checkbox" name="sub_Choice2" value="4"/>${Answer2_4}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice2" value="5"/>${Answer2_5}</td>
+	<td><input type="checkbox" name="sub_Choice2" value="6"/>${Answer2_6}</td></tr>
 	</table>
 	</td>
 </tr>
 <tr style="padding: 10px">
 	<td>${Prompt3_Text}<br/><br/>
 	<table>
-	<tr><td><input type="checkbox" name="Choice3" value="1"/>${Answer3_1}</td>
-	<td><input type="checkbox" name="Choice3" value="2"/>${Answer3_2}</td></tr>
-	<tr><td><input type="checkbox" name="Choice3" value="3"/>${Answer3_3}</td>
-	<td><input type="checkbox" name="Choice3" value="4"/>${Answer3_4}</td></tr>
-	<tr><td><input type="checkbox" name="Choice3" value="5"/>${Answer3_5}</td>
-	<td><input type="checkbox" name="Choice3" value="6"/>${Answer3_6}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice3" value="1"/>${Answer3_1}</td>
+	<td><input type="checkbox" name="sub_Choice3" value="2"/>${Answer3_2}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice3" value="3"/>${Answer3_3}</td>
+	<td><input type="checkbox" name="sub_Choice3" value="4"/>${Answer3_4}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice3" value="5"/>${Answer3_5}</td>
+	<td><input type="checkbox" name="sub_Choice3" value="6"/>${Answer3_6}</td></tr>
 	</table>
 	</td>
 	<td>${Prompt4_Text}<br/><br/>
 	<table>
-	<tr><td><input type="checkbox" name="Choice4" value="1"/>${Answer4_1}</td>
-	<td><input type="checkbox" name="Choice4" value="2"/>${Answer4_2}</td></tr>
-	<tr><td><input type="checkbox" name="Choice4" value="3"/>${Answer4_3}</td>
-	<td><input type="checkbox" name="Choice4" value="4"/>${Answer4_4}</td></tr>
-	<tr><td><input type="checkbox" name="Choice4" value="5"/>${Answer4_5}</td>
-	<td><input type="checkbox" name="Choice4" value="6"/>${Answer4_6}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice4" value="1"/>${Answer4_1}</td>
+	<td><input type="checkbox" name="sub_Choice4" value="2"/>${Answer4_2}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice4" value="3"/>${Answer4_3}</td>
+	<td><input type="checkbox" name="sub_Choice4" value="4"/>${Answer4_4}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice4" value="5"/>${Answer4_5}</td>
+	<td><input type="checkbox" name="sub_Choice4" value="6"/>${Answer4_6}</td></tr>
 	</table>
 	</td>
 </tr>
 <tr style="padding: 10px">
 	<td>${Prompt5_Text}<br/><br/>
 	<table>
-	<tr><td><input type="checkbox" name="Choice5" value="1"/>${Answer5_1}</td>
-	<td><input type="checkbox" name="Choice5" value="2"/>${Answer5_2}</td></tr>
-	<tr><td><input type="checkbox" name="Choice5" value="3"/>${Answer5_3}</td>
-	<td><input type="checkbox" name="Choice5" value="4"/>${Answer5_4}</td></tr>
-	<tr><td><input type="checkbox" name="Choice5" value="5"/>${Answer5_5}</td>
-	<td><input type="checkbox" name="Choice5" value="6"/>${Answer5_6}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice5" value="1"/>${Answer5_1}</td>
+	<td><input type="checkbox" name="sub_Choice5" value="2"/>${Answer5_2}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice5" value="3"/>${Answer5_3}</td>
+	<td><input type="checkbox" name="sub_Choice5" value="4"/>${Answer5_4}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice5" value="5"/>${Answer5_5}</td>
+	<td><input type="checkbox" name="sub_Choice5" value="6"/>${Answer5_6}</td></tr>
 	</table>
 	</td>
 	<td>${Prompt6_Text}<br/><br/>
 	<table>
-	<tr><td><input type="checkbox" name="Choice6" value="1"/>${Answer6_1}</td>
-	<td><input type="checkbox" name="Choice6" value="2"/>${Answer6_2}</td></tr>
-	<tr><td><input type="checkbox" name="Choice6" value="3"/>${Answer6_3}</td>
-	<td><input type="checkbox" name="Choice6" value="4"/>${Answer6_4}</td></tr>
-	<tr><td><input type="checkbox" name="Choice6" value="5"/>${Answer6_5}</td>
-	<td><input type="checkbox" name="Choice6" value="6"/>${Answer6_6}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice6" value="1"/>${Answer6_1}</td>
+	<td><input type="checkbox" name="sub_Choice6" value="2"/>${Answer6_2}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice6" value="3"/>${Answer6_3}</td>
+	<td><input type="checkbox" name="sub_Choice6" value="4"/>${Answer6_4}</td></tr>
+	<tr><td><input type="checkbox" name="sub_Choice6" value="5"/>${Answer6_5}</td>
+	<td><input type="checkbox" name="sub_Choice6" value="6"/>${Answer6_6}</td></tr>
 	</table>
 	</td>
 </tr>
@@ -236,6 +272,12 @@ ${TobaccoLabel} ${TobaccoAnswer}
 	<input type="hidden" name="submitAnswers" value="submitAnswers"/>
 	<input type="hidden" value="${formInstanceId}" name="formInstanceId"/>
 	<input type="hidden" value="PWS" name="formName"/>
+	<INPUT TYPE=HIDDEN Name="Choice1"/>
+	<INPUT TYPE=HIDDEN Name="Choice2"/>
+    <INPUT TYPE=HIDDEN Name="Choice3"/>
+    <INPUT TYPE=HIDDEN Name="Choice4"/>
+    <INPUT TYPE=HIDDEN Name="Choice5"/>
+    <INPUT TYPE=HIDDEN Name="Choice6"/>
 </form>
 </c:otherwise>
 </c:choose>
