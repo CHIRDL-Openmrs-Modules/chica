@@ -41,6 +41,12 @@ endif
 
 If (mode = CONSUME) then
 
+If  (Box1=true) AND (Box2=true) AND (Box3=true) AND (Box4=true) AND (Box5=true)AND (Box6=true) then
+CALL storeObs With "PWS READ ERROR", "MISSCAN";
+conclude False;
+endif;
+
+
 If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then
  CALL storeObs With "MEDICATION ALLERGIES","PHYSICIAN CONFIRMED";
 endif;

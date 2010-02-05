@@ -40,6 +40,13 @@ endif
 
 If (mode = CONSUME) then
 
+/* To prevent PWS scan errors */
+
+If  (Box1=true) AND (Box2=true) AND (Box3=true) AND (Box4=true) AND (Box5=true)AND (Box6=true) then
+CALL storeObs With "PWS READ ERROR", "MISSCAN";
+conclude False;
+endif;
+
 If  (Box1=true) then
  CALL storeObs With "PAIN QUANTITATIVE","1-2";
 endif;
