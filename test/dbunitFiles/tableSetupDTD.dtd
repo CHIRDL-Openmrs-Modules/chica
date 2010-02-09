@@ -11,8 +11,8 @@
     atd_state_mapping*,
     chica_bmiage*,
     chica_ddst*,
-    chica_error*,
-    chica_error_category*,
+    atd_error*,
+    atd_error_category*,
     chica_family*,
     chica_hcageinf*,
     chica_high_bp*,
@@ -175,7 +175,7 @@
     name CDATA #IMPLIED
     description CDATA #IMPLIED
     state_action_id CDATA #IMPLIED
-    form_id CDATA #IMPLIED
+    form_name CDATA #IMPLIED
     date_changed CDATA #IMPLIED
     changed_by CDATA #IMPLIED
     date_created CDATA #IMPLIED
@@ -224,8 +224,8 @@
     ddst_id CDATA #REQUIRED
 >
 
-<!ELEMENT chica_error EMPTY>
-<!ATTLIST chica_error
+<!ELEMENT atd_error EMPTY>
+<!ATTLIST atd_error
     error_id CDATA #REQUIRED
     error_category_id CDATA #IMPLIED
     level CDATA #IMPLIED
@@ -235,8 +235,8 @@
     date_time CDATA #IMPLIED
 >
 
-<!ELEMENT chica_error_category EMPTY>
-<!ATTLIST chica_error_category
+<!ELEMENT atd_error_category EMPTY>
+<!ATTLIST atd_error_category
     error_category_id CDATA #REQUIRED
     name CDATA #REQUIRED
     description CDATA #IMPLIED

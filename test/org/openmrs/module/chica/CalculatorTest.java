@@ -11,7 +11,7 @@ import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 
-public class CalculatorTest 
+public class CalculatorTest extends BaseModuleContextSensitiveTest 
 {
 	/**
 	 * @see {@link Calculator#calculatePercentile(double,double,double,double,String)}
