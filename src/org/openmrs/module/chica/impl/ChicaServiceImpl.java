@@ -235,7 +235,7 @@ public class ChicaServiceImpl implements ChicaService
 			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
 			ArrayList<String> languageFieldsToConsume = 
-				saveAnswers(fieldMap, formInstance,encounterId);
+				saveAnswers(fieldMap, formInstance,encounterId,patient);
 			FormService formService = Context.getFormService();
 			Form databaseForm = formService.getForm(formId);
 			TeleformTranslator translator = new TeleformTranslator();
@@ -402,7 +402,7 @@ public class ChicaServiceImpl implements ChicaService
 
 	private ArrayList<String> saveAnswers(
 			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
-			FormInstance formInstance, int encounterId)
+			FormInstance formInstance, int encounterId, Patient patient)
 	{
 		ATDService atdService = Context
 				.getService(ATDService.class);
@@ -561,9 +561,10 @@ public class ChicaServiceImpl implements ChicaService
 			}
 		}
 
+		String languageResponse = null;
 		if (maxNumAnswers > 0)
 		{
-			String languageResponse = maxLanguage;
+			languageResponse = maxLanguage;
 			HashMap<Integer, String> answers = maxAnswers;
 
 			for (Integer currRuleId : answers.keySet())
@@ -586,6 +587,32 @@ public class ChicaServiceImpl implements ChicaService
 			}
 		}
 		
+		//save language response to preferred language
+		ObsService obsService = Context.getObsService();
+		Obs obs = new Obs();
+		String conceptName = "preferred_language";
+		ConceptService conceptService = Context.getConceptService();
+		Concept currConcept = conceptService.getConceptByName(conceptName);
+		Concept languageConcept = conceptService.getConceptByName(languageResponse);
+		if (currConcept == null || languageConcept == null) {
+			log
+			        .error("Could not save preferred language for concept: " + conceptName + " and language: "
+			                + languageResponse);
+		} else {
+			obs.setValueCoded(languageConcept);
+			
+			EncounterService encounterService = Context.getService(EncounterService.class);
+			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+			
+			Location location = encounter.getLocation();
+			
+			obs.setPerson(patient);
+			obs.setConcept(currConcept);
+			obs.setLocation(location);
+			obs.setEncounter(encounter);
+			obs.setObsDatetime(new Date());
+			obsService.saveObs(obs, null);
+		}
 		if (maxNumAnswers > 0){
 			return languageToFieldnames.get(maxLanguage);
 		}else{
