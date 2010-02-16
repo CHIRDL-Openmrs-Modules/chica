@@ -93,5 +93,133 @@ public class TestUtil extends BaseModuleContextSensitiveTest
 		cutoff.set(2007, Calendar.OCTOBER, 2);
 		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
 		assertEquals("11 mo", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 27);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 10);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 2);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 23);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("7 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 10);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 29);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("7 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 11);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 23);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 13);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 30);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 22);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 23);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("4 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 23);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 28);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("5 wk", age);
+		
+		
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 26);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 30);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("4 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 27);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 30);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("4 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 27);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.JANUARY, 28);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("4 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 31);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 2);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("4 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 28);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 2);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("5 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 29);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 3);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("5 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 30);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 5);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("5 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 31);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 5);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("5 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 27);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 9);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 27);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 10);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 29);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 12);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 30);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 11);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.DECEMBER, 31);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2010, Calendar.FEBRUARY, 12);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("6 wk", age);
+		
+		birthdate.set(2009, Calendar.NOVEMBER, 25);
+		cutoff = Calendar.getInstance();
+		cutoff.set(2009, Calendar.DECEMBER, 21);
+		age = Util.adjustAgeUnits(birthdate.getTime(), cutoff.getTime());
+		assertEquals("26 do", age);
 	}
 }
