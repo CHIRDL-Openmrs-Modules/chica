@@ -12,6 +12,7 @@ import org.hibernate.Hibernate;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
@@ -52,11 +53,12 @@ public class QueryMeds implements Runnable {
 		try {
 			AdministrationService adminService = Context.getAdministrationService();
 			PersonService ps = Context.getPersonService();
+			PatientService patientService = Context.getPatientService();
 			Context.authenticate(adminService.getGlobalProperty("scheduler.username"), adminService
 			        .getGlobalProperty("scheduler.password"));
 			
 			Patient patient = this.encounter.getPatient();
-			Hibernate.initialize(patient); //prevent lazy initialization errors
+			patient = patientService.getPatient(patient.getPatientId());//lookup to prevent lazy initialization errors
 			locationId = this.encounter.getLocation().getLocationId();
 			
 			CcdService ccdService = Context.getService(CcdService.class);
