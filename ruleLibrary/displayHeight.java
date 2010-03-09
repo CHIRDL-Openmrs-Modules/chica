@@ -130,10 +130,8 @@ public class displayHeight implements Rule
 				if(location.getName().equalsIgnoreCase("PEPS")){
 					return inchesOrCmResult(ruleResult,
 							parameters,patient);
-				}
-			
-				//if this is PCC, return inches
-				if(location.getName().equalsIgnoreCase("PCPS")){
+				}else{
+					//return inches
 					return inchesResult(ruleResult);
 				}
 			}

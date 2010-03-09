@@ -150,10 +150,8 @@ public class consumeWeight implements Rule
 			//if this is Pecar, consume kilograms
 			if(location.getName().equalsIgnoreCase("PEPS")){
 				fullResult = consumeKilo(primaryResult,secondaryResult);
-			}
-		
-			//if this is PCC, consume lb. or lb. and oz. based on age 
-			if(location.getName().equalsIgnoreCase("PCPS")){
+			}else{
+				//consume lb. or lb. and oz. based on age 
 				fullResult = consumeLbOrLbOz(primaryResult,secondaryResult,patient,parameters);
 			}	
 		}

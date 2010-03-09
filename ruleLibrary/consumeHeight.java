@@ -152,10 +152,8 @@ public class consumeHeight implements Rule
 			//if this is Pecar, consume kilograms
 			if(location.getName().equalsIgnoreCase("PEPS")){
 				fullResult = consumeInchesOrCm(fullResult,patient,parameters);
-			}
-		
-			//if this is PCC, consume lb. or lb. and oz. based on age 
-			if(location.getName().equalsIgnoreCase("PCPS")){
+			}else{
+				//consume lb. or lb. and oz. based on age
 				fullResult = consumeInches(fullResult);
 			}
 		}

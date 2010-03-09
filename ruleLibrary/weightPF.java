@@ -73,10 +73,8 @@ public class weightPF implements Rule
 			//if this is Pecar, just return "."
 			if(location.getName().equalsIgnoreCase("PEPS")){
 				return dotResult();
-			}
-		
-			//if this is PCC, return "." or "#" based on age 
-			if(location.getName().equalsIgnoreCase("PCPS")){
+			}else{
+				//return "." or "#" based on age
 				return dotOrPoundResult(parameters);
 			}
 		}

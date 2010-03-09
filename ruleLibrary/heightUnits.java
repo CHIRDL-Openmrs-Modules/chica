@@ -73,10 +73,8 @@ public class heightUnits implements Rule
 			//if this is Pecar, just return "cm." or "in." base on age
 			if(location.getName().equalsIgnoreCase("PEPS")){
 				return cmOrInchesResult(parameters);
-			}
-		
-			//if this is PCC, return "in."
-			if(location.getName().equalsIgnoreCase("PCPS")){
+			}else{
+				//return "in."
 				return inchesResult();
 			}
 		}

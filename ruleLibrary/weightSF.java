@@ -73,10 +73,8 @@ public class weightSF implements Rule
 			//if this is Pecar, just return "kg."
 			if(location.getName().equalsIgnoreCase("PEPS")){
 				return kiloResult();
-			}
-		
-			//if this is PCC, return lb. or oz. based on age 
-			if(location.getName().equalsIgnoreCase("PCPS")){
+			}else{
+				//return lb. or oz. based on age
 				return lbsOrLbsOzResult(parameters);
 			}
 		}
