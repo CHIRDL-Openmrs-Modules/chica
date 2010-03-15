@@ -32,5 +32,9 @@ public class ObsChicaDatasource extends ObsDataSource
 		return ((LogicChicaObsDAO) this.getLogicObsDAO())
 				.getRegenObsByConceptName(patientId, conceptName);
 	}
+	
+	public void clearRegenObs() {
+	    ((LogicChicaObsDAO) this.getLogicObsDAO()).clearRegenObs();
+	}
 
 }

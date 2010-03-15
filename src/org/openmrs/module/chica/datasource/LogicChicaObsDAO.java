@@ -925,4 +925,14 @@ public class LogicChicaObsDAO implements LogicObsDAO
 			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
+	
+	
+	public void clearRegenObs() {
+	    if(regenObs != null && !regenObs.isEmpty()) {
+	        log.info("Before clearing regenObs cache, No. of elements" + regenObs.size());
+	        regenObs.clear();
+	        log.info("After clearing regenObs cache, No. of elements" + regenObs.size());
+	    }
+    }
+	
 }

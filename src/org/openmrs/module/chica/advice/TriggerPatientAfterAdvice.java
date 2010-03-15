@@ -6,9 +6,14 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
+import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.TeleformFileMonitor;
 import org.openmrs.module.atd.TeleformFileState;
+import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
 import org.openmrs.module.chica.MedicationListLookup;
+import org.openmrs.module.chica.datasource.LogicChicaObsDAO;
+import org.openmrs.module.chica.datasource.ObsChicaDatasource;
 import org.openmrs.module.sockethl7listener.ProcessedMessagesManager;
 import org.springframework.aop.AfterReturningAdvice;
 
@@ -51,6 +56,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 			}
 		}
 
+		
 		if (method.getName().equals("fileProcessed"))
 		{
 			try
@@ -92,6 +98,13 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 						.getStackTrace(e));
 			}
 		}
+		
+	      
+        if(method.getName().equals("cleanCache")) {
+            log.info("clear regenObs and medicationList cache");
+            ((ObsChicaDatasource) Context.getLogicService().getLogicDataSource("RMRS")).clearRegenObs();
+            MedicationListLookup.clearMedicationLists();
+        }
 	}
 
 }

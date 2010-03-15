@@ -244,4 +244,14 @@ public class MedicationListLookup {
 			medicationList.addFirst(unfilteredMeds.get(i));
 		}
 	}
+	
+	
+	public static void clearMedicationLists() {
+	    if(medicationLists != null && !medicationLists.isEmpty())  {
+	        log.info("Before clearing medicationList cache, No. of elements" + medicationLists.size());
+	        medicationLists.clear();
+	        log.info("After clearing medicationList cache, No. of elements" + medicationLists.size());
+	    }
+	}
+	
 }
