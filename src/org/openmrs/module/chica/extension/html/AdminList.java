@@ -35,6 +35,7 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("module/chica/greaseBoard.form", "Grease Board");
 		map.put("module/chica/viewPatient.form", "View Encounters");
 		map.put("module/chica/ruleTester.form", "Rule Tester");
+		map.put("module/chica/weeklyReports.form", "Weekly Reports");
 		return map;
 	}
 	

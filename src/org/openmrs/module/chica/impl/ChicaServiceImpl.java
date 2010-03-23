@@ -1195,4 +1195,25 @@ public class ChicaServiceImpl implements ChicaService
 			return getChicaDAO().getChicaExportStatusById( id);
 		}
 		
+		public List<Object[]> getFormsPrintedByWeek(String formName, String locationName) {
+			return getChicaDAO().getFormsPrintedByWeek(formName, locationName);
+		}
+		
+		public List<Object[]> getFormsScannedByWeek(String formName, String locationName) {
+			return getChicaDAO().getFormsScannedByWeek(formName, locationName);
+		}
+		
+		public List<Object[]> getFormsScannedAnsweredByWeek(String formName, String locationName) {
+			return getChicaDAO().getFormsScannedAnsweredByWeek(formName, locationName);
+		}
+		public List<Object[]> getFormsScannedAnythingMarkedByWeek(String formName, String locationName){
+			return getChicaDAO().getFormsScannedAnythingMarkedByWeek(formName,locationName);	
+		}
+		public List<Object[]> getQuestionsScanned(String formName, String locationName) {
+			return getChicaDAO().getQuestionsScanned(formName, locationName);
+		}
+
+		public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName) {
+			return getChicaDAO().getQuestionsScannedAnswered(formName, locationName);
+		}
 }

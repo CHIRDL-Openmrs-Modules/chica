@@ -22,6 +22,7 @@ import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -971,5 +972,157 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 		
 	}
+	
+	public List<Object[]> getFormsPrintedByWeek(String formName, String locationName) {
+		try {
+			LocationService locationService = Context.getLocationService();
+			Integer locationId = locationService.getLocation(locationName).getLocationId();
+			SQLQuery qry = this.sessionFactory.getCurrentSession().createSQLQuery(
+			    "select start_date, end_date,count(*) as count from ( "
+			            + "SELECT form_name,form_instance_id,DATE_FORMAT(DATE_SUB(printed_timestamp,"
+			            + "INTERVAL  DAYOFWEEK(printed_timestamp)+2  DAY),'%Y-%m-%d') as start_date,"
+			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
+			            + ",'%Y-%m-%d') as end_date,location_id from (select form_name, form_instance_id, "
+			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
+			            + "scanned_timestamp,location_id from chica_statistics where form_name=? and location_id=? and printed_timestamp is not null group by form_name,"
+			            + "form_instance_id,location_id) a "
+			            + ")a group by start_date,end_date order by start_date desc,end_date desc");
+			qry.setString(0, formName);
+			qry.setInteger(1, locationId);
+			return qry.list();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public List<Object[]> getFormsScannedByWeek(String formName, String locationName) {
+		try {
+			LocationService locationService = Context.getLocationService();
+			Integer locationId = locationService.getLocation(locationName).getLocationId();
+			SQLQuery qry = this.sessionFactory.getCurrentSession().createSQLQuery(
+			    "select start_date, end_date,count(*) as count from ( "
+			            + "SELECT form_name,form_instance_id,DATE_FORMAT(DATE_SUB(printed_timestamp,"
+			            + "INTERVAL  DAYOFWEEK(printed_timestamp)+2  DAY),'%Y-%m-%d') as start_date,"
+			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
+			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id, "
+			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
+			            + "scanned_timestamp,location_id from chica_statistics where form_name=? and location_id=? "+
+			            "and printed_timestamp is not null and scanned_timestamp is not null group by form_name,"
+			            + "form_instance_id,location_id) a "
+			            + ")a group by start_date,end_date order by start_date desc,end_date desc");
+			qry.setString(0, formName);
+			qry.setInteger(1, locationId);
+			return qry.list();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public List<Object[]> getFormsScannedAnsweredByWeek(String formName, String locationName) {
+		try {
+			LocationService locationService = Context.getLocationService();
+			Integer locationId = locationService.getLocation(locationName).getLocationId();
+			SQLQuery qry = this.sessionFactory.getCurrentSession().createSQLQuery(
+			    "select start_date, end_date,count(*) as count from ( "
+			            + "SELECT form_name,form_instance_id,DATE_FORMAT(DATE_SUB(printed_timestamp,"
+			            + "INTERVAL  DAYOFWEEK(printed_timestamp)+2  DAY),'%Y-%m-%d') as start_date,"
+			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
+			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id, "
+			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
+			            + "scanned_timestamp,location_id from chica_statistics where answer is "+
+			            "not null and answer not in ('NoAnswer') and form_name=? and location_id=? "+
+			            "and printed_timestamp is not null and scanned_timestamp is not null group by form_name,"
+			            + "form_instance_id,location_id) a "
+			            + ")a group by start_date,end_date order by start_date desc,end_date desc");
+			qry.setString(0, formName);
+			qry.setInteger(1, locationId);
+			return qry.list();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public List<Object[]> getFormsScannedAnythingMarkedByWeek(String formName, String locationName) {
+		try {
+			LocationService locationService = Context.getLocationService();
+			Integer locationId = locationService.getLocation(locationName).getLocationId();
+			SQLQuery qry = this.sessionFactory.getCurrentSession().createSQLQuery(
+			    "select start_date, end_date,count(*) as count from ( "
+			            + "SELECT form_name,form_instance_id,DATE_FORMAT(DATE_SUB(printed_timestamp,"
+			            + "INTERVAL  DAYOFWEEK(printed_timestamp)+2  DAY),'%Y-%m-%d') as start_date,"
+			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
+			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id, "
+			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
+			            + "scanned_timestamp,a.location_id from chica_statistics a inner join obs e "+
+			            "on a.obsv_id=e.obs_id where form_name=? and a.location_id=? "+
+			            "and printed_timestamp is not null and scanned_timestamp is not null group by form_name,"
+			            + "form_instance_id,location_id) a "
+			            + ")a group by start_date,end_date order by start_date desc,end_date desc");
+			qry.setString(0, formName);
+			qry.setInteger(1, locationId);
+			return qry.list();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
+	public List<Object[]> getQuestionsScanned(String formName, String locationName) {
+		try {
+			LocationService locationService = Context.getLocationService();
+			Integer locationId = locationService.getLocation(locationName).getLocationId();
+			SQLQuery qry = this.sessionFactory.getCurrentSession().createSQLQuery(
+			    "select start_date, end_date,count(*) as count from ( "+
+			    "SELECT form_name,form_instance_id,rule_id,DATE_FORMAT(DATE_SUB(printed_timestamp, "+
+			    "INTERVAL  DAYOFWEEK(printed_timestamp)+2  DAY),'%Y-%m-%d') as start_date, "+
+			    "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY) "+
+			    ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, "+
+			    "form_instance_id,rule_id,max(printed_timestamp) as printed_timestamp,"+
+			    "max(scanned_timestamp) as scanned_timestamp,location_id from chica_statistics "+
+			    "where rule_id is not null and form_name=? and location_id=? "+
+			    "and printed_timestamp is not null and scanned_timestamp is not null group by form_name, "+
+			    "form_instance_id,rule_id,location_id) a)a group by start_date,end_date "+
+			    "order by start_date desc,end_date desc");
+			qry.setString(0, formName);
+			qry.setInteger(1, locationId);
+			return qry.list();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName) {
+		try {
+			LocationService locationService = Context.getLocationService();
+			Integer locationId = locationService.getLocation(locationName).getLocationId();
+			SQLQuery qry = this.sessionFactory.getCurrentSession().createSQLQuery(
+			    "select start_date, end_date,count(*) as count from ( "
+			            + "SELECT form_name,form_instance_id,rule_id,DATE_FORMAT(DATE_SUB(printed_timestamp,"
+			            + "INTERVAL  DAYOFWEEK(printed_timestamp)+2  DAY),'%Y-%m-%d') as start_date,"
+			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
+			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id,rule_id, "
+			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
+			            + "scanned_timestamp,location_id from chica_statistics where rule_id is not null "+
+			            "and answer is not null and answer not in ('NoAnswer') group by form_name,"
+			            + "form_instance_id,rule_id,location_id) a where form_name=? and location_id=? "+
+			            "and printed_timestamp is not null and scanned_timestamp is not null"
+			            + ")a group by start_date,end_date order by start_date desc,end_date desc");
+			qry.setString(0, formName);
+			qry.setInteger(1, locationId);
+			return qry.list();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

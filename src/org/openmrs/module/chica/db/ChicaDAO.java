@@ -150,4 +150,15 @@ public interface ChicaDAO {
 	
 	public ChicaHL7ExportStatus getChicaExportStatusById (Integer id);
 
+	public List<Object[]> getFormsPrintedByWeek(String formName, String locationName);
+	
+	public List<Object[]> getFormsScannedByWeek(String formName, String locationName);
+	
+	public List<Object[]> getFormsScannedAnsweredByWeek(String formName, String locationName);
+	
+	public List<Object[]> getFormsScannedAnythingMarkedByWeek(String formName, String locationName);
+	
+	public List<Object[]> getQuestionsScanned(String formName, String locationName);
+
+	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
 }
