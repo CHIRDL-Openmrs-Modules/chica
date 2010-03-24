@@ -73,8 +73,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% of PSF Scanned
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : psfsPrintedMap.values()) {
-				Double psfPrintedCount = row.getData();
-				Double psfScannedCount = null;
+				Integer psfPrintedCount = row.getData();
+				Integer psfScannedCount = null;
 				if (psfsScannedMap.get(row.getDateRange()) != null) {
 					psfScannedCount = psfsScannedMap.get(row.getDateRange()).getData();
 				}
@@ -82,7 +82,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (psfScannedCount / psfPrintedCount) * 100, 0));
+					    ((double) psfScannedCount / psfPrintedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -115,8 +115,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% of scanned PSFs w >=1 Box Chked
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : psfsScannedMap.values()) {
-				Double psfScannedCount = row.getData();
-				Double psfScannedAnsweredCount = null;
+				Integer psfScannedCount = row.getData();
+				Integer psfScannedAnsweredCount = null;
 				if (psfsScannedAnsweredMap.get(row.getDateRange()) != null) {
 					psfScannedAnsweredCount = psfsScannedAnsweredMap.get(row.getDateRange()).getData();
 				}
@@ -124,7 +124,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (psfScannedAnsweredCount / psfScannedCount) * 100, 0));
+					    ((double)psfScannedAnsweredCount / psfScannedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -137,8 +137,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% of scanned PSFs with anything marked
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : psfsScannedMap.values()) {
-				Double psfScannedCount = row.getData();
-				Double psfScannedAnythingMarkedCount = null;
+				Integer psfScannedCount = row.getData();
+				Integer psfScannedAnythingMarkedCount = null;
 				if (psfsScannedAnythingMarkedMap.get(row.getDateRange()) != null) {
 					psfScannedAnythingMarkedCount = psfsScannedAnythingMarkedMap.get(row.getDateRange()).getData();
 				}
@@ -146,7 +146,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (psfScannedAnythingMarkedCount / psfScannedCount) * 100, 0));
+					    ((double) psfScannedAnythingMarkedCount / psfScannedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -177,8 +177,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% of PWS Scanned
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : pwssPrintedMap.values()) {
-				Double pwsPrintedCount = row.getData();
-				Double pwsScannedCount = null;
+				Integer pwsPrintedCount = row.getData();
+				Integer pwsScannedCount = null;
 				if (pwssScannedMap.get(row.getDateRange()) != null) {
 					pwsScannedCount = pwssScannedMap.get(row.getDateRange()).getData();
 				}
@@ -186,7 +186,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (pwsScannedCount / pwsPrintedCount) * 100, 0));
+					    ((double) pwsScannedCount / pwsPrintedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -218,8 +218,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% of scanned PWSs w >=1 Box Chked
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : pwssScannedMap.values()) {
-				Double pwsScannedCount = row.getData();
-				Double pwsScannedAnsweredCount = null;
+				Integer pwsScannedCount = row.getData();
+				Integer pwsScannedAnsweredCount = null;
 				if (pwssScannedAnsweredMap.get(row.getDateRange()) != null) {
 					pwsScannedAnsweredCount = pwssScannedAnsweredMap.get(row.getDateRange()).getData();
 				}
@@ -227,7 +227,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (pwsScannedAnsweredCount / pwsScannedCount) * 100, 0));
+					    ((double) pwsScannedAnsweredCount / pwsScannedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -240,8 +240,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% of scanned PWSs with anything marked
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : pwssScannedMap.values()) {
-				Double pwsScannedCount = row.getData();
-				Double pwsScannedAnythingMarkedCount = null;
+				Integer pwsScannedCount = row.getData();
+				Integer pwsScannedAnythingMarkedCount = null;
 				if (pwssScannedAnythingMarkedMap.get(row.getDateRange()) != null) {
 					pwsScannedAnythingMarkedCount = pwssScannedAnythingMarkedMap.get(row.getDateRange()).getData();
 				}
@@ -249,7 +249,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (pwsScannedAnythingMarkedCount / pwsScannedCount) * 100, 0));
+					    ((double) pwsScannedAnythingMarkedCount / pwsScannedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -280,8 +280,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% PSF Prompts w Response
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : psfQuestionsScannedMap.values()) {
-				Double psfQuestionsScannedCount = row.getData();
-				Double psfQuestionsScannedAnsweredCount = null;
+				Integer psfQuestionsScannedCount = row.getData();
+				Integer psfQuestionsScannedAnsweredCount = null;
 				if (psfQuestionsScannedAnsweredMap.get(row.getDateRange()) != null) {
 					psfQuestionsScannedAnsweredCount = psfQuestionsScannedAnsweredMap.get(row.getDateRange()).getData();
 				}
@@ -289,7 +289,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (psfQuestionsScannedAnsweredCount / psfQuestionsScannedCount) * 100, 0));
+					    ((double) psfQuestionsScannedAnsweredCount / psfQuestionsScannedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -302,10 +302,10 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% PSF Prompts w Response - adjusted for blanks
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : psfQuestionsScannedMap.values()) {
-				Double psfQuestionsScannedCount = row.getData();
-				Double psfQuestionsScannedAnsweredCount = null;
-				Double psfsScannedCount = null;
-				Double psfsScannedAnsweredCount = null;
+				Integer psfQuestionsScannedCount = row.getData();
+				Integer psfQuestionsScannedAnsweredCount = null;
+				Integer psfsScannedCount = null;
+				Integer psfsScannedAnsweredCount = null;
 				
 				if (psfQuestionsScannedAnsweredMap.get(row.getDateRange()) != null) {
 					psfQuestionsScannedAnsweredCount = psfQuestionsScannedAnsweredMap.get(row.getDateRange()).getData();
@@ -322,8 +322,8 @@ public class WeeklyReportsController extends SimpleFormController {
 					percentRow
 					        .setData(org.openmrs.module.chirdlutil.util.Util
 					                .round(
-					                    (psfQuestionsScannedAnsweredCount / (psfQuestionsScannedCount - ((psfsScannedCount - psfsScannedAnsweredCount) * 20))) * 100,
-					                    0));
+					                    ((double) psfQuestionsScannedAnsweredCount / (psfQuestionsScannedCount - ((psfsScannedCount - psfsScannedAnsweredCount) * 20))) * 100,
+					                    0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -354,8 +354,8 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% PWS Prompts w Response
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : pwsQuestionsScannedMap.values()) {
-				Double pwsQuestionsScannedCount = row.getData();
-				Double pwsQuestionsScannedAnsweredCount = null;
+				Integer pwsQuestionsScannedCount = row.getData();
+				Integer pwsQuestionsScannedAnsweredCount = null;
 				if (pwsQuestionsScannedAnsweredMap.get(row.getDateRange()) != null) {
 					pwsQuestionsScannedAnsweredCount = pwsQuestionsScannedAnsweredMap.get(row.getDateRange()).getData();
 				}
@@ -363,7 +363,7 @@ public class WeeklyReportsController extends SimpleFormController {
 					WeeklyReportRow percentRow = new WeeklyReportRow();
 					percentRow.setDateRange(row.getDateRange());
 					percentRow.setData(org.openmrs.module.chirdlutil.util.Util.round(
-					    (pwsQuestionsScannedAnsweredCount / pwsQuestionsScannedCount) * 100, 0));
+					    ((double) pwsQuestionsScannedAnsweredCount / pwsQuestionsScannedCount) * 100, 0).intValue());
 					rows.add(percentRow);
 				}
 			}
@@ -377,10 +377,10 @@ public class WeeklyReportsController extends SimpleFormController {
 			//% PWS Prompts w Response - adjusted for blanks
 			rows = new ArrayList<WeeklyReportRow>();
 			for (WeeklyReportRow row : pwsQuestionsScannedMap.values()) {
-				Double pwsQuestionsScannedCount = row.getData();
-				Double pwsQuestionsScannedAnsweredCount = null;
-				Double pwssScannedCount = null;
-				Double pwssScannedAnsweredCount = null;
+				Integer pwsQuestionsScannedCount = row.getData();
+				Integer pwsQuestionsScannedAnsweredCount = null;
+				Integer pwssScannedCount = null;
+				Integer pwssScannedAnsweredCount = null;
 				
 				if (pwsQuestionsScannedAnsweredMap.get(row.getDateRange()) != null) {
 					pwsQuestionsScannedAnsweredCount = pwsQuestionsScannedAnsweredMap.get(row.getDateRange()).getData();
@@ -397,8 +397,8 @@ public class WeeklyReportsController extends SimpleFormController {
 					percentRow
 					        .setData(org.openmrs.module.chirdlutil.util.Util
 					                .round(
-					                    (pwsQuestionsScannedAnsweredCount / (pwsQuestionsScannedCount - ((pwssScannedCount - pwssScannedAnsweredCount) * 6))) * 100,
-					                    0));
+					                    ((double) pwsQuestionsScannedAnsweredCount / (pwsQuestionsScannedCount - ((pwssScannedCount - pwssScannedAnsweredCount) * 6))) * 100,
+					                    0).intValue());
 					rows.add(percentRow);
 				}
 			}

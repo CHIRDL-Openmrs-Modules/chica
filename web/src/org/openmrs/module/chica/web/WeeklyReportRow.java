@@ -11,12 +11,12 @@ package org.openmrs.module.chica.web;
 public class WeeklyReportRow
 {
 	String dateRange = null;
-	Double data = 0D;
+	Integer data = 0;
 	
     /**
      * @return the data
      */
-    public Double getData() {
+    public Integer getData() {
     	return this.data;
     }
 
@@ -25,12 +25,12 @@ public class WeeklyReportRow
     /**
      * @param data the data to set
      */
-    public void setData(Double data) {
+    public void setData(Integer data) {
     	this.data = data;
     }
     
     public void setData(java.math.BigInteger data){
-    	this.data = data.doubleValue();
+    	this.data = data.intValue();
     }
 
 

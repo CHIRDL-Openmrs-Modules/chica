@@ -90,43 +90,43 @@
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;PSF&nbsp;Printed</td>
+<td style="text-align:left">#&nbsp;PSF&nbsp;Printed</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${item.value.data }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;PSF&nbsp;scanned</td>
+<td style="text-align:left">#&nbsp;PSF&nbsp;scanned</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfsScannedMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr bgcolor="yellow">
-<td>%&nbsp;of&nbsp;PSF&nbsp;Scanned</td>
+<td style="text-align:left">%&nbsp;of&nbsp;PSF&nbsp;Scanned</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfsPercentScannedMap[item.key].data }&nbsp;%</td>
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;scanned&nbsp;PSFs&nbsp;w >=1&nbsp;Box&nbsp;Chked</td>
+<td style="text-align:left">#&nbsp;scanned&nbsp;PSFs&nbsp;w >=1&nbsp;Box&nbsp;Chked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfsScannedAnsweredMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;scanned&nbsp;PSFs&nbsp;w anything&nbsp;marked</td>
+<td style="text-align:left">#&nbsp;scanned&nbsp;PSFs&nbsp;w anything&nbsp;marked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfsScannedAnythingMarkedMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>%&nbsp;of&nbsp;scanned&nbsp;PSFs&nbsp;w >=1&nbsp;Box&nbsp;Chked</td>
+<td style="text-align:left">%&nbsp;of&nbsp;scanned&nbsp;PSFs&nbsp;w >=1&nbsp;Box&nbsp;Chked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfsPercentScannedAnsweredMap[item.key].data }&nbsp;%</td>
 </c:forEach>
 </tr>
 <tr bgcolor="yellow">
-<td>%&nbsp;of&nbsp;scanned&nbsp;PSFs with&nbsp;anything&nbsp;marked</td>
+<td style="text-align:left">%&nbsp;of&nbsp;scanned&nbsp;PSFs with&nbsp;anything&nbsp;marked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfsPercentScannedAnythingMarkedMap[item.key].data }&nbsp;%</td>
 </c:forEach>
@@ -138,44 +138,44 @@
 <td>&nbsp;</td>
 </tr>
 <tr>
-<td>#&nbsp;PWS&nbsp;Printed</td>
+<td style="text-align:left">#&nbsp;PWS&nbsp;Printed</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwssPrintedMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;PWS&nbsp;scanned</td>
+<td style="text-align:left">#&nbsp;PWS&nbsp;scanned</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwssScannedMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr bgcolor="yellow">
-<td>%&nbsp;of&nbsp;PWS&nbsp;Scanned</td>
+<td style="text-align:left">%&nbsp;of&nbsp;PWS&nbsp;Scanned</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwssPercentScannedMap[item.key].data }&nbsp;%</td>
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;scanned&nbsp;PWSs&nbsp;w >=1&nbsp;Box&nbsp;Chked</td>
+<td style="text-align:left">#&nbsp;scanned&nbsp;PWSs&nbsp;w >=1&nbsp;Box&nbsp;Chked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwssScannedAnsweredMap[item.key].data }</td>
 </c:forEach>
 </tr>
 
 <tr>
-<td>#&nbsp;scanned&nbsp;PWSs&nbsp;w anything&nbsp;marked</td>
+<td style="text-align:left">#&nbsp;scanned&nbsp;PWSs&nbsp;w anything&nbsp;marked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwssScannedAnythingMarkedMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>%&nbsp;of&nbsp;scanned&nbsp;PWSs&nbsp;w >=1 Box&nbsp;Chked</td>
+<td style="text-align:left">%&nbsp;of&nbsp;scanned&nbsp;PWSs&nbsp;w >=1 Box&nbsp;Chked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwssPercentScannedAnsweredMap[item.key].data }&nbsp;%</td>
 </c:forEach>
 </tr>
 <tr bgcolor="yellow">
-<td>%&nbsp;of&nbsp;scanned&nbsp;PWSs with&nbsp;anything&nbsp;marked</td>
+<td style="text-align:left">%&nbsp;of&nbsp;scanned&nbsp;PWSs with&nbsp;anything&nbsp;marked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwssPercentScannedAnythingMarkedMap[item.key].data }&nbsp;%</td>
 </c:forEach>
@@ -187,25 +187,25 @@
 <td>&nbsp;</td>
 </tr>
 <tr>
-<td>#&nbsp;PSF&nbsp;Questions Printed&nbsp;&&nbsp;Scanned</td>
+<td style="text-align:left">#&nbsp;PSF&nbsp;Questions Printed&nbsp;&&nbsp;Scanned</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfQuestionsScannedMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;PSF&nbsp;Questions&nbsp;w >=&nbsp;1&nbsp;Box&nbsp;Chked</td>
+<td style="text-align:left">#&nbsp;PSF&nbsp;Questions&nbsp;w >=&nbsp;1&nbsp;Box&nbsp;Chked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfQuestionsScannedAnsweredMap[item.key].data }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>%&nbsp;PSF&nbsp;Prompts&nbsp;w&nbsp;Response</td>
+<td style="text-align:left">%&nbsp;PSF&nbsp;Prompts&nbsp;w&nbsp;Response</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfPercentQuestionsScannedAnsweredMap[item.key].data }&nbsp;%</td>
 </c:forEach>
 </tr>
 <tr bgcolor="yellow">
-<td>%&nbsp;PSF&nbsp;Prompts&nbsp;w Response&nbsp;-&nbsp;adjusted&nbsp;for&nbsp;blanks</td>
+<td style="text-align:left">%&nbsp;PSF&nbsp;Prompts&nbsp;w Response&nbsp;-&nbsp;adjusted&nbsp;for&nbsp;blanks</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${psfPercentQuestionsScannedAnsweredAdjustedMap[item.key].data  }&nbsp;%</td>
 </c:forEach>
@@ -217,25 +217,25 @@
 <td>&nbsp;</td>
 </tr>
 <tr>
-<td>#&nbsp;PWS&nbsp;Questions Printed&nbsp;&&nbsp;Scanned</td>
+<td style="text-align:left">#&nbsp;PWS&nbsp;Questions Printed&nbsp;&&nbsp;Scanned</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwsQuestionsScannedMap[item.key].data  }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>#&nbsp;PWS&nbsp;Questions&nbsp;w >=&nbsp;1&nbsp;Box&nbsp;Chked</td>
+<td style="text-align:left">#&nbsp;PWS&nbsp;Questions&nbsp;w >=&nbsp;1&nbsp;Box&nbsp;Chked</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwsQuestionsScannedAnsweredMap[item.key].data  }</td>
 </c:forEach>
 </tr>
 <tr>
-<td>%&nbsp;PWS&nbsp;Prompts&nbsp;w&nbsp;Response</td>
+<td style="text-align:left">%&nbsp;PWS&nbsp;Prompts&nbsp;w&nbsp;Response</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwsPercentQuestionsScannedAnsweredMap[item.key].data  }&nbsp;%</td>
 </c:forEach>
 </tr>
 <tr bgcolor="yellow">
-<td>%&nbsp;PWS&nbsp;Prompts&nbsp;w&nbsp;Response -&nbsp;adjusted&nbsp;for&nbsp;blanks</td>
+<td style="text-align:left">%&nbsp;PWS&nbsp;Prompts&nbsp;w&nbsp;Response -&nbsp;adjusted&nbsp;for&nbsp;blanks</td>
 <c:forEach items="${psfsPrintedMap}" var="item">
 <td>${pwsPercentQuestionsScannedAnsweredAdjustedMap[item.key].data  }&nbsp;%</td>
 </c:forEach>
