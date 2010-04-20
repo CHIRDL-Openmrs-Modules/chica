@@ -1,0 +1,107 @@
+Maintenance:
+	Title:		Research ADHD Workup Complete Younger PWS                                                                         ;;
+	Filename:		R_ADHDWorkupCompleteYoungerPWS                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Aaron Carroll                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2010-04-14 11:00:00;;
+	Validation:	;;
+Library:
+	Purpose:		PWS prompt to alert MD of that the Workup for ADHD is complete and advise on next steps.;;
+	Explanation:	ADHD workup is complete and all data are in.;;
+	Keywords:	ADHD PWS Vanderbilt                                                  ;;
+	Citations:		                                                                                   ;;
+	Links:		                                            ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then      
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
+ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
+ParentAssessmentScale := read last 6 {ParentAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;
+TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};              
+TeacherAssessmentScale := read last 5 {TeacherAssessmentScale from CHICA}; 
+endif
+;;
+Priority:		1       ;;
+	Evoke:		;;
+
+Logic:
+If (mode = PRODUCE) then
+
+If (CurrentStatus = yes) OR (CurrentStatus = yes_Inattentive) OR (CurrentStatus = yes_Hyperactive) OR(CurrentStatus = yes_Mixed) OR (CurrentStatus = no)  then conclude False;
+
+If ('NegativePredominantlyInattentiveSubtype' is in ParentAssessmentScale) AND ('NegativeHyperactiveImpulsiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || = " NEGATIVE for ADHD,";
+If ('NegativePredominantlyInattentiveSubtype' is in TeacherAssessmentScale) AND ('NegativeHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || = " NEGATIVE for ADHD,";
+
+
+If ('ADHDCombinedInattentionHyperactivity' is in ParentAssessmentScale) then || ParentPrompt1 || = " ADHD Combined Inattention/Hyperactivity,";
+ELSE;
+If ('PredominantlyInattentiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || "Predominantly Inattentive Subtype,";
+ELSE;
+If ('PredominantlyHyperactiveImpulsiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || "Predominantly Hyperactive/Impulsive Subtype,";
+If ('OppositionalDefiantDisorderScreen' is in ParentAssessmentScale) then || ParentPrompt2 || "Oppositional Defiant,";
+If ('ConductDisorderScreen' is in ParentAssessmentScale) then || ParentPrompt3 || "Conduct Disorder,";
+If ('AnxietyDepressionScreen' is in ParentAssessmentScale) then || ParentPrompt4 || "Anxiety/Depression,";
+
+If ('ADHDCombinedInattentionHyperactivity' is in TeacherAssessmentScale) then || TeacherPrompt1 || = " ADHD Combined Inattention/Hyperactivity,";
+ELSE;
+If ('PredominantlyInattentiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || "Predominantly Inattentive Subtype,";
+ELSE;
+If ('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || "Predominantly Hyperactive/Impulsive Subtype,";
+If ('OppositionalDefiantDisorderScreen' is in TeacherAssessmentScale) then || TeacherPrompt2 || "Oppositional Defiant,";
+If ('AnxietyDepressionScreen' is in TeacherAssessmentScale) then || TeacherPrompt3 || "Anxiety/Depression,";
+
+If (ParentVanderbilt = TRUE) AND (TeacherVanderbilt = TRUE) then conclude TRUE;
+Else conclude False;
+
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_ADHD_Dx","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_ADHD_Rx","Midtown_Referral";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "CHICA_ADHD_Rx","Medication";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "CHICA_ADHD_Rx","Parent_Education_Group";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "CHICA_ADHD_Dx","no";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "CHICA_ADHD_Rx","Targets_Set";
+endif;
+
+
+endif
+;;
+Action:
+call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";
+write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following AND REFER TO MIDTOWN  ");                                                                                                                                                                                                                                                                                                                   
+write ("ADHD Diagnosed                       ");
+write ("Send to Midtown                      ");
+write ("Medication Begun                       ");
+write ("All parents to Midtown Education Group                      ");
+write ("ADHD NOT Diagnosed                        ");
+write ("Targets set, f/u in 2-4 wks                              ");
+;;
+Age_Min: 5          years     ;;
+Age_Max: 6         years     ;;
+end:
