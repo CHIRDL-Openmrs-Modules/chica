@@ -1,20 +1,20 @@
 Maintenance:
-	Title:		Research ADHD Workup Complete Older PWS                                                                         ;;
-	Filename:		R_ADHDWorkupCompleteOlderPWS                                  ;;
-	Version:	1.0       ;;
-	Institution:	Indiana University School of Medicine             ;;
-	Author:		Aaron Carroll                                       ;;
-	Specialist:	Pediatrics;;
-	Date:		2010-04-14 11:00:00;;
-	Validation:	;;
+ Title: Research ADHD Workup Complete Older PWS                                                                         ;;
+ Filename: R_ADHDWorkupCompleteOlderPWS                                  ;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Aaron Carroll                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-14 11:00:00;;
+ Validation: ;;
 Library:
 	Purpose:		PWS prompt to alert MD of that the Workup for ADHD is complete and advise on next steps.;;
 	Explanation:	ADHD workup is complete and all data are in.;;
-	Keywords:	ADHD PWS Vanderbilt                                                  ;;
-	Citations:		                                                                                   ;;
-	Links:		                                            ;;
+ Keywords: ADHD PWS Vanderbilt                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
 Knowledge:
-	Type:		data_driven;;
+ Type: data_driven;;
 Data:
 
 mode:=read {mode from Parameters};
@@ -26,15 +26,15 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then      
-CurrentStatus := read last {CHICA_ADHD_Dx from CHICA} ;   
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
 ParentAssessmentScale := read last 6 {ParentAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;
 TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};              
-TeacherAssessmentScale := read last 5 {TeacherAssessmentScale from CHICA} ;
+TeacherAssessmentScale := read last 5 {TeacherAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 endif
 ;;
-Priority:		1       ;;
-	Evoke:		;;
+Priority: 1       ;;
+ Evoke: ;;
 
 Logic:
 If (mode = PRODUCE) then
@@ -64,29 +64,29 @@ If ('AnxietyDepressionScreen' is in TeacherAssessmentScale) then || TeacherPromp
 
 If (ParentVanderbilt = TRUE) AND (TeacherVanderbilt = TRUE) then conclude TRUE;
 Else conclude False;
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 endif
 
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_Dx","yes";
+ CALL storeObs With "CHICA_ADHD_DX","yes";
 endif;
 If  (Box2=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Midtown_Referral";
+ CALL storeObs With "CHICA_ADHD_RX","Midtown_Referral";
 endif;
 If  (Box3=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Medication";
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
 endif;
 If  (Box4=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Parent_Education_Group";
+ CALL storeObs With "CHICA_ADHD_RX","Parent_Education_Group";
 endif;
 If  (Box5=true) then
- CALL storeObs With "CHICA_ADHD_Dx","no";
+ CALL storeObs With "CHICA_ADHD_DX","no";
 endif;
 If  (Box6=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Targets_Set";
+ CALL storeObs With "CHICA_ADHD_RX","Targets_Set";
 endif;
 
 

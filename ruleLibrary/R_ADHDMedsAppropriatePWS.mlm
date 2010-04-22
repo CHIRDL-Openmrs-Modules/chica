@@ -1,20 +1,20 @@
 Maintenance:
-	Title:		Research ADHD Meds Appropriate PWS                                                                         ;;
-	Filename:		R_ADHDMedsAppropriatePWS                                  ;;
-	Version:	1.0       ;;
-	Institution:	Indiana University School of Medicine             ;;
-	Author:		Aaron Carroll                                       ;;
-	Specialist:	Pediatrics;;
-	Date:		2010-04-15 15:00:00;;
-	Validation:	;;
+ Title: Research ADHD Meds Appropriate PWS                                                                         ;;
+ Filename: R_ADHDMedsAppropriatePWS                                  ;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Aaron Carroll                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-15 15:00:00;;
+ Validation: ;;
 Library:
 	Purpose:		PWS prompt to alert MD that medication level is appropriate.;;
-	Explanation:	ADHD meds are at the right dose.;;
-	Keywords:	ADHD PWS Vanderbilt                                                  ;;
-	Citations:		                                                                                   ;;
-	Links:		                                            ;;
+ Explanation: ADHD meds are at the right dose.                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: ADHD PWS Vanderbilt                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
 Knowledge:
-	Type:		data_driven;;
+ Type: data_driven;;
 Data:
 
 mode:=read {mode from Parameters};
@@ -26,44 +26,44 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then      
-CurrentStatus := read last {CHICA_ADHD_Dx from CHICA} ;   
-Meds := read Last 4 {CHICA_ADHD_Rx from CHICA} Where it Occurred Within Past 365 Days;
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
+Meds := read Last 4 {CHICA_ADHD_RX from CHICA} Where it Occurred Within Past 365 Days;
 Target := read last {CHICA_ADHD_Targets from CHICA} ; 
-SideEffects := read last {CHICA_ADHD_Targets from CHICA};
+SideEffects := read last {CHICA_ADHD_Targets from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 endif
 ;;
-Priority:		1       ;;
-	Evoke:		;;
+Priority: 1       ;;
+ Evoke: ;;
 
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = workup_underway) OR (CurrentStatus = no)  then conclude False;
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = no)  then conclude False;
 If (Target = Target_Met) AND ('Medication' is in Meds) AND SideEffects=no then conclude True;
 Else conclude False;
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 endif
 
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_Rx"," Target_Met";
+ CALL storeObs With "CHICA_ADHD_RX"," Target_Met";
 endif;
 If  (Box2=true) then
- CALL storeObs With "CHICA_ADHD_Side_Effects","no";
+ CALL storeObs With "CHICA_ADHD_RX","Chronic_Care";
 endif;
 If  (Box3=true) then
- CALL storeObs With "CHICA_ADHD_Targets","ARGHXXXXX";
+ CALL storeObs With "CHICA_ADHD_Targets","Other";
 endif;
 If  (Box4=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Medication";
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
 endif;
 If  (Box5=true) then
  CALL storeObs With "CHICA_ADHD_Side_Effects","yes";
 endif;
 If  (Box6=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Chronic_Care";
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
 endif;
 
 
@@ -72,12 +72,12 @@ endif
 Action:
 call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";
 write ("|| firstname || has met target goals for ADHD management and does not seem to be experiencing significant side effects.  Confirm this and consider moving || firstname || into the chronic care pathway.");                                                                                                                                                                                                                                                                                                                   
-write ("Targets met                      ");
-write ("No Significant Side Effects                     ");
+write ("ADHD Well Controlled                      ");
+write ("Follow-up 3-4 mos                     ");
 write ("Targets not met ->                       ");
 write ("Increase dose, f/u 2-3 wks");
-write ("Significant Side Effects Noted");
-write ("Follow-up 3-4 mos                              ");
+write ("Significant Side Effects Noted ->" );
+write ("Change meds or dec dose, f/u 2-3 wks                            ");
 ;;
 Age_Min: 5          years     ;;
 Age_Max: 12         years     ;;

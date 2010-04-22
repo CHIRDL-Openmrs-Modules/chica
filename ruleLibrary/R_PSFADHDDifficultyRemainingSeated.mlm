@@ -36,7 +36,7 @@ Logic:
 If (mode = PRODUCE) then
 
 If (CurrentStatus = yes) OR (CurrentStatus = yes_Inattentive) OR (CurrentStatus = yes_Hyperactive) OR(CurrentStatus = yes_Mixed)  OR (CurrentStatus = Workup_underway)  then conclude False;
-If ('Difficulty_remaining_seated' is in RecentlyAsked) OR ('no_Difficulty_remaining_seated' is in RecentlyAsked) then conclude False;
+If ('Difficulty_Remaining_Seated' is in RecentlyAsked) OR ('no_Difficulty_remaining_seated' is in RecentlyAsked) then conclude False;
 Else conclude true;
 
 endif
@@ -44,7 +44,7 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_SX","Difficulty_remaining_seated";
+ CALL storeObs With "CHICA_ADHD_SX","Difficulty_Remaining_Seated";
 If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_SX","no_Difficulty_remaining_seated";
 endif;

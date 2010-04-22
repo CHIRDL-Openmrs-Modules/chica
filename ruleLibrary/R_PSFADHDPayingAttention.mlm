@@ -45,9 +45,9 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_SX","Hard_Time_Paying_Attention";
+ CALL storeObs With "CHICA_ADHD_SX","Hard_time_paying_attention";
 If  (Box2=true) then
- CALL storeObs With "CHICA_ADHD_SX","no_Hard_Time_Paying_Attention";
+ CALL storeObs With "CHICA_ADHD_SX","no_Hard_time_paying_attention";
 endif;
 
 

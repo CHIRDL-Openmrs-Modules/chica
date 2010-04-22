@@ -1,20 +1,20 @@
 Maintenance:
-	Title:		Research PSF ADHD Disruptive Behaviors;;
-	Filename:		R_PSFADHDDisruptiveBehaviors;;
-	Version:	1.0;;
-	Institution:	Indiana University School of Medicine;;
-	Author:		Aaron Carroll;;
-	Specialist:	Pediatrics;;
-	Date:		2010-04-013T11:00:00-0400;;
-	Validation:	;;
+ Title: Research PSF ADHD Disruptive Behaviors;;
+ Filename: R_PSFADHDDisruptiveBehaviors;;
+ Version: 1.0;;
+ Institution: Indiana University School of Medicine;;
+ Author: Aaron Carroll;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-013T11:00:00-0400;;
+ Validation: ;;
 Library:
-	Purpose:		Assess whether patient has met target goal.;;
-	Explanation:	           ;;
-	Keywords:	ADHD attention Vanderbilt research;;
-	Citations:		;;
-	Links:		;;
+ Purpose: Assess whether patient has met target goal.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+ Explanation:            ;;
+ Keywords: ADHD attention Vanderbilt research;;
+ Citations: ;;
+ Links: ;;
 Knowledge:
-	Type:		data_driven;;
+ Type: data_driven;;
 Data:
 
 mode:=read {mode from Parameters};
@@ -27,18 +27,18 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
-Target := read last{CHICA_ADHD_Targets from CHICA};
+Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
 ;;
-Priority:		1;;
-	Evoke:		;;
+Priority: 1;;
+ Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
 
 If (CurrentStatus = no) OR (CurrentStatus = Workup_underway)  then conclude False;
 If (Target = "Disruptive_Behaviors") then conclude True;
 
-
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 
 endif
 

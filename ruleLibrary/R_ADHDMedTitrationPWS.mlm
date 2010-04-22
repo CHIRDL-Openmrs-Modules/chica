@@ -1,20 +1,20 @@
 Maintenance:
-	Title:		Research ADHD Med Titration PWS                                                                         ;;
-	Filename:		R_ADHDMedTitrationPWS                                  ;;
-	Version:	1.0       ;;
-	Institution:	Indiana University School of Medicine             ;;
-	Author:		Aaron Carroll                                       ;;
-	Specialist:	Pediatrics;;
-	Date:		2010-04-14 11:00:00;;
-	Validation:	;;
+ Title: Research ADHD Med Titration PWS                                                                         ;;
+ Filename: R_ADHDMedTitrationPWS                                  ;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Aaron Carroll                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-14 11:00:00;;
+ Validation: ;;
 Library:
-	Purpose:		PWS prompt to alert MD to titrate meds.;;
-	Explanation:	ADHD meeds need titrating.;;
-	Keywords:	ADHD PWS Vanderbilt                                                  ;;
-	Citations:		                                                                                   ;;
-	Links:		                                            ;;
+ Purpose: PWS prompt to alert MD to titrate meds.                                                                                                                                                                                                                                                                                                                                                     ;;
+ Explanation: ADHD meeds need titrating.                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: ADHD PWS Vanderbilt                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
 Knowledge:
-	Type:		data_driven;;
+ Type: data_driven;;
 Data:
 
 mode:=read {mode from Parameters};
@@ -26,30 +26,30 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then      
-CurrentStatus := read last {CHICA_ADHD_Dx from CHICA} ;   
-Meds := read Last 4 {CHICA_ADHD_Rx from CHICA} Where it Occurred Within Past 365 Days;
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
+Meds := read Last 4 {CHICA_ADHD_RX from CHICA} Where it Occurred Within Past 365 Days;
 Target := read last {CHICA_ADHD_Targets from CHICA} ; 
-SideEffects := read last {CHICA_ADHD_Targets from CHICA};
+SideEffects := read last {CHICA_ADHD_Targets from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 endif
 ;;
-Priority:		1       ;;
-	Evoke:		;;
+Priority: 1       ;;
+ Evoke: ;;
 
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = workup_underway) OR (CurrentStatus = no)  then conclude False;
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = no)  then conclude False;
 If (Target = "Target_Met") then conclude False;
 If ('Medication' is in Meds) AND SideEffects='no' then conclude True;
 Else conclude False;
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 endif
 
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Medication";
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
 endif;
 
 
@@ -58,13 +58,13 @@ If  (Box3=true) then
  CALL storeObs With "CHICA_ADHD_Side_Effects","yes";
 endif;
 If  (Box4=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Medication";
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
 endif;
 If  (Box5=true) then
  CALL storeObs With "CHICA_ADHD_Targets","Target_Met";
 endif;
 If  (Box6=true) then
- CALL storeObs With "CHICA_ADHD_Rx","Chronic_Care";
+ CALL storeObs With "CHICA_ADHD_RX","Chronic_Care";
 endif;
 
 
