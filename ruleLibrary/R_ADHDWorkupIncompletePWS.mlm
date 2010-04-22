@@ -72,8 +72,8 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "PARENT_VANDERBILT","|| firstname|| ", "|| lastname ||";
-call CREATE_JIT with "TEACHER_VANDERBILT","|| firstname|| ", "|| lastname ||";
+call CREATE_JIT with "ADHD P";
+call CREATE_JIT with "ADHD T";
 write ("A workup for ADHD has begun, but not all data are in. We are missing || prompttext1 || || prompttext1 || and need data to be complete ");                                                                                                                                                                                                                                                                                                                   
 write ("Parent Vanderbilt Scanned                       ");
 write ("Teacher Vanderbilt Re-requested                      ");

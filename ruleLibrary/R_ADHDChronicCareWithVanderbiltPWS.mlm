@@ -71,7 +71,8 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with BOTH VANDERBILTS NEED TO BE PRINTED
+call CREATE_JIT with "ADHD PFU";
+call CREATE_JIT with "ADHD TFU";
 write ("ADHD follow-up visit. || SEPrompt || || firstname || is due for Vanderbilt assessments from both the parent and teacher (attached).");                                                                                                                                                                                                                                                                                                                   
 write ("Parent Vanderbilt Scanned                      ");
 write ("Teacher Vanderbilt given to parent                     ");

@@ -73,8 +73,8 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "PARENT_VANDERBILT","|| firstname|| ", "|| lastname ||";
-call CREATE_JIT with "TEACHER_VANDERBILT","|| firstname|| ", "|| lastname ||";
+call CREATE_JIT with "ADHD P";
+call CREATE_JIT with "ADHD T";
 write ("|| firstname || reportedly has ADHD or symptoms suggesting ADHD.  Please evaluate and/or treatment (see attached VANDERBILT):");                                                                                                                                                                                                                                                                                                                   
 write ("H&P with respect to ADHD                       ");
 write ("Parent Vanderbilt and scan now                      ");

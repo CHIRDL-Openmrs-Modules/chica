@@ -48,10 +48,12 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_RX","Medication";
+ CALL storeObs With "CHICA_ADHD_Targets","Target_Met";
 endif;
 
-
+If  (Box2=true) then
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
+endif;
 
 If  (Box3=true) then
  CALL storeObs With "CHICA_ADHD_Side_Effects","yes";
