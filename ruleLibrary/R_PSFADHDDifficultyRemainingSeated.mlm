@@ -35,7 +35,7 @@ Priority:		1;;
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = yes) OR (CurrentStatus = yes_Inattentive) OR (CurrentStatus = yes_Hyperactive) OR(CurrentStatus = yes_Mixed)  OR (CurrentStatus = Workup_underway)  then conclude False;
+If (CurrentStatus = yes) OR (CurrentStatus = Workup_underway)  then conclude False;
 If ('Difficulty_Remaining_Seated' is in RecentlyAsked) OR ('no_Difficulty_remaining_seated' is in RecentlyAsked) then conclude False;
 Else conclude true;
 

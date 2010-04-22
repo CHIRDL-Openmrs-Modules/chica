@@ -36,7 +36,7 @@ Logic:
 If (mode = PRODUCE) then
 
 If (CurrentStatus = no) OR (CurrentStatus = Workup_underway)  then conclude False;
-If (Target = "Disruptive_Behaviors") then conclude True;
+If (Target = "Improved_Academics") then conclude True;
 
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 

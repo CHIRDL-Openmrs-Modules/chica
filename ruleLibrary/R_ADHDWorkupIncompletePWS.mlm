@@ -37,7 +37,7 @@ Priority:		1       ;;
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = yes) OR (CurrentStatus = yes_Inattentive) OR (CurrentStatus = yes_Hyperactive) OR(CurrentStatus = yes_Mixed) OR (CurrentStatus = no)  then conclude False;
+If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
 If (ParentVanderbilt = TRUE) AND (TeacherVanderbilt = TRUE) then conclude FALSE;
 If (ParentVanderbilt = FALSE) then || prompttext1 || = " Parent Vanderbilt,";
 If (TeacherVanderbilt = FALSE) then || prompttext2 || = " Teacher Vanderbilt,";

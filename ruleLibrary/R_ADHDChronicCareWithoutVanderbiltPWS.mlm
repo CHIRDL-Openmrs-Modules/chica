@@ -26,8 +26,8 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then      
-CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
-SideEffects := read last {CHICA_ADHD_Targets from CHICA} Where it occurred within past 7 days; 
+CurrentStatus := read last {CHICA_ADHD_RX from CHICA} ;   
+SideEffects := read last {CHICA_ADHD_Side_Effects from CHICA} Where it occurred within past 7 days; 
 ParentVanderbiltDone := read exist {ParentAssessmentScale from CHICA} Where it occurred within past 6 months;     
 TeacherVanderbiltDone := read exist {TeacherAssessmentScale from CHICA} Where it occurred within past 6 months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif

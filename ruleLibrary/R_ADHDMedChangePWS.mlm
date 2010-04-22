@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
 Meds := read Last 4 {CHICA_ADHD_RX from CHICA} Where it Occurred Within Past 365 Days;
 Target := read last {CHICA_ADHD_Targets from CHICA} ; 
-SideEffects := read last {CHICA_ADHD_Targets from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+SideEffects := read last {CHICA_ADHD_Side_Effects from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 endif
 ;;
 Priority: 1       ;;
@@ -55,7 +55,7 @@ If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_RX","Medication";
 endif;
 If  (Box3=true) then
- CALL storeObs With " CHICA_ADHD_Targets","Target_Met";
+ CALL storeObs With "CHICA_ADHD_Targets","Target_Met";
 endif;
 If  (Box4=true) then
  CALL storeObs With "CHICA_ADHD_RX","Medication";

@@ -35,7 +35,7 @@ Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = yes) OR (CurrentStatus = yes_Inattentive) OR (CurrentStatus = yes_Hyperactive) OR(CurrentStatus = yes_Mixed) OR (CurrentStatus = Workup_underway)  then conclude False;
+If (CurrentStatus = yes) OR (CurrentStatus = Workup_underway)  then conclude False;
 If ('Hard_time_paying_attention' is in RecentlyAsked) OR ('no_Hard_time_paying_attention' is in RecentlyAsked) then conclude False;
 Else conclude true;
 
