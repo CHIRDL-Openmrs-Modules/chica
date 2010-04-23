@@ -27,13 +27,14 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
-RecentlyAsked := read last 3 {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
+RecentlyAsked := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
 endif
 ;;
 Priority:		1;;
 Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
+
 
 If (CurrentStatus = yes) OR (CurrentStatus = Workup_underway)  then conclude False;
 If ('Hard_time_paying_attention' is in RecentlyAsked) OR ('no_Hard_time_paying_attention' is in RecentlyAsked) then conclude False;
