@@ -1,7 +1,7 @@
 Maintenance:
 	Title:		Depression  Maternal Depression Anhedonia PSF;;
 	Filename:		MDEPANHPSF;;
-	Version:	1.0;;
+	Version:	0.1;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Paul Biondich;;
 	Specialist:	Pediatrics;;
@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 Depr_concern_3mo := read Exist {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 90 Days;study := read Last {MatDepressionStudy_Repeat from CHICA};
 endif
 ;;
-Priority:		70;;
+Priority:		1000 /* 70 */;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
