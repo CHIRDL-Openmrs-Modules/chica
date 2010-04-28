@@ -75,7 +75,7 @@ endif
 Action:
 call CREATE_JIT with "ADHD P";
 call CREATE_JIT with "ADHD T";
-write ("||firstname|| ||prompttext1|| ||prompttext2|| ||prompttext3|| therefore, w/u ADHD");                                                                                                                                                                                                                                                                                                                   
+write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 || therefore, w/u ADHD");                                                                                                                                                                                                                                                                                                                   
 write ("H&P with respect to ADHD                       ");
 write ("Parent Vanderbilt and scan now                      ");
 write ("Vision and hearing screens                       ");
