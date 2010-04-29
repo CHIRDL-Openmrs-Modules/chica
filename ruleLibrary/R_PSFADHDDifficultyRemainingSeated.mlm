@@ -45,6 +45,7 @@ If (mode = CONSUME) then
 
 If  (Box1=true) then
  CALL storeObs With "CHICA_ADHD_SX","Difficulty_Remaining_Seated";
+ endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_SX","no_Difficulty_remaining_seated";
 endif;

@@ -45,6 +45,7 @@ If (mode = CONSUME) then
 
 If  (Box1=true) then
  CALL storeObs With "CHICA_ADHD_SX","Careless_mistakes";
+ endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_SX","no_Careless_mistakes";
 endif;

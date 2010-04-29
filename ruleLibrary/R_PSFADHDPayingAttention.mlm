@@ -47,6 +47,7 @@ If (mode = CONSUME) then
 
 If  (Box1=true) then
  CALL storeObs With "CHICA_ADHD_SX","Hard_time_paying_attention";
+ endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_SX","no_Hard_time_paying_attention";
 endif;
