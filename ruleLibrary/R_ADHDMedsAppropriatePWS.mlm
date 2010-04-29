@@ -70,7 +70,7 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";
+/*call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";*/
 write ("|| firstname || has met target goals for ADHD management and does not seem to be experiencing significant side effects.  Confirm this and consider moving || firstname || into the chronic care pathway.");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Well Controlled                      ");
 write ("Follow-up 3-4 mos                     ");
