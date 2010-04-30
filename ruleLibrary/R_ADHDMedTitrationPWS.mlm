@@ -26,7 +26,9 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then      
-CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ; 
+ChronicCareStatus := read last {CHICA_ADHD_RX from CHICA} ;  
+  
 Meds := read {CHICA_ADHD_RX from CHICA} Where it Occurred Within Past 365 Days;
 Target := read last {CHICA_ADHD_Targets from CHICA} ; 
 SideEffects := read last {CHICA_ADHD_Side_Effects from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
@@ -38,9 +40,11 @@ Priority: 1       ;;
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = Workup_underway) OR (CurrentStatus = no)  then conclude False;
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
 If (Target = "Target_Met") then conclude False;
 If ('Medication' is in Meds) AND SideEffects='no' then conclude True;
+If ('Medication' is in Meds) AND SideEffects=NULL then conclude True; 
+
 Else conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
