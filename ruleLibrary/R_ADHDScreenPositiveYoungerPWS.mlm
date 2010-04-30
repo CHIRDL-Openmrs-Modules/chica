@@ -77,8 +77,14 @@ endif;
 endif
 ;;
 Action:
+If(ParentVanderbilt = False) then
 call CREATE_JIT with "ADHD P";
+endif;
+
+If(TeacherVanderbilt = False) then
 call CREATE_JIT with "ADHD T";
+endif;
+
 write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 || therefore, w/u ADHD");                                                                                                                                                                                                                                                                                                                   
 write ("H&P with respect to ADHD                       ");
 write ("Parent Vanderbilt and scan now                      ");
