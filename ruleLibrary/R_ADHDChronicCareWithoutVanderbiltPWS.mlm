@@ -41,16 +41,18 @@ Priority:		1       ;;
 
 Logic:
 If (mode = PRODUCE) then
-If (ParentVanderbiltDone = false) OR (TeacherVanderbiltDone = false) then conclude false;
-If (ParentVanderbiltDoneFU = false) OR (TeacherVanderbiltDone = false) then conclude false;
-If (ParentVanderbiltDone = false) OR (TeacherVanderbiltDoneFU = false) then conclude false;
-If (ParentVanderbiltDoneFU = false) OR (TeacherVanderbiltDoneFU = false) then conclude false;
-
  
 If (SideEffects = "yes") then || SEPrompt || = " Parent reports significant side effects.";
 If (SideEffects = "no") then || SEPrompt || = " Parent reports no significant side effects.";
-If (CurrentStatus = "Chronic_Care") then conclude True;
-Else conclude False;
+
+
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDone = true) AND (TeacherVanderbiltDone = true) then conclude true;
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDoneFU = true) AND (TeacherVanderbiltDone = true) then conclude true;
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDone = true) AND (TeacherVanderbiltDoneFU = true) then conclude true;
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDoneFU = true) AND (TeacherVanderbiltDoneFU = true) then conclude true;
+
+
+conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 endif
