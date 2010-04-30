@@ -30,7 +30,9 @@ CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
 ParentAssessmentScale := read last 6 {ParentAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;
 TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};              
-TeacherAssessmentScale := read last 5 {TeacherAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+TeacherAssessmentScale := read last 5 {TeacherAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;   
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 endif
 ;;
 Priority: 1       ;;
@@ -40,6 +42,7 @@ Logic:
 If (mode = PRODUCE) then
 
 If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
+
 
 If ('NegativePredominantlyInattentiveSubtype' is in ParentAssessmentScale) AND ('NegativeHyperactiveImpulsiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || = " NEGATIVE for ADHD,";
 If ('NegativePredominantlyInattentiveSubtype' is in TeacherAssessmentScale) AND ('NegativeHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || = " NEGATIVE for ADHD,";
@@ -94,11 +97,11 @@ Action:
 /*call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";*/
 write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following  ");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");
-write ("Comorbidities Dx'd -> Send to Midtown                      ");
-write ("Medication Begun                       ");
-write ("All parents to Midtown Education Group                      ");
-write ("ADHD NOT Diagnosed                        ");
-write ("Targets set, f/u in 2-4 wks                              ");
+write ("Comorbidities Dx'd -> Send to Midtown");
+write ("Medication Begun                     ");
+write ("Midtown Education Group              ");
+write ("ADHD NOT Diagnosed                   ");
+write ("Targets set, f/u in 2-4 wks          ");
 ;;
 Age_Min: 6          years     ;;
 Age_Max: 12         years     ;;
