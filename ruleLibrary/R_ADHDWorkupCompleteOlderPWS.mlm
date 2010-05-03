@@ -44,8 +44,8 @@ If (mode = PRODUCE) then
 If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
 
 
-If ('NegativePredominantlyInattentiveSubtype' is in ParentAssessmentScale) AND ('NegativeHyperactiveImpulsiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || = " NEGATIVE for ADHD,";
-If ('NegativePredominantlyInattentiveSubtype' is in TeacherAssessmentScale) AND ('NegativeHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || = " NEGATIVE for ADHD,";
+If ('NegativePredominantlyInattentiveSubtype' is in ParentAssessmentScale) AND ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || = " NEGATIVE for ADHD,";
+If ('NegativePredominantlyInattentiveSubtype' is in TeacherAssessmentScale) AND ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || = " NEGATIVE for ADHD,";
 
 
 If ('PredominantlyInattentiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 ||= "Predominantly Inattentive Subtype,";
