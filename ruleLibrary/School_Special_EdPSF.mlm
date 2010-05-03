@@ -54,6 +54,6 @@ Action:
 write ("Are you in any special education classes?");
 write("¿Está usted tomando algunas clases de educación especial?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

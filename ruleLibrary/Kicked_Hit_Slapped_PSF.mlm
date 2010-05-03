@@ -55,5 +55,5 @@ write ("Has your partner kicked, hit, or slapped you?");
 write ("¿Su pareja alguna vez la ha golpeado, abofeteado o pateado a usted?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                 
 ;;
 Age_Min: 0 days;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

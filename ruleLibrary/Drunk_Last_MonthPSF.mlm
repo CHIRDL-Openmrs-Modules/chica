@@ -54,6 +54,6 @@ Action:
 write ("In the past month, did you get drunk or very high on beer, wine, wine coolers, or other alcohol?");
 write ("¿En este último mes, se ha embriagado con cerveza, vino, o algún otro tipo de bebida alcoholica?") At Spanish;                                                                                                                                                                                                                                                                                 
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

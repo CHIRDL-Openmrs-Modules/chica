@@ -59,6 +59,6 @@ Action:
 write ("Are you allergic to any medicines?");
 write("¿Eres || spanishgender || a alguna medicina?") At Spanish;
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

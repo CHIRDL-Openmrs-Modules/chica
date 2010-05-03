@@ -54,6 +54,6 @@ Action:
 write ("Have you been suspended from school this year?");
 write("¿Le han suspendido de la escuela este año?") At Spanish;                                                                                                                                                                                  
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

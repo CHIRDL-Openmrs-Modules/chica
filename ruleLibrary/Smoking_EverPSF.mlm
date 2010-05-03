@@ -54,6 +54,6 @@ Action:
 write ("Do you ever smoke cigarettes or use snuff or chewing tobacco?");
 write("¿Fumas, inhalas, o masticas tabaco?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                  
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

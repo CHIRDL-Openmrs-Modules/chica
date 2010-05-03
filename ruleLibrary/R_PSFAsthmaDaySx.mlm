@@ -52,5 +52,5 @@ write ("Does || firstname || have coughing, wheezing, breathing problems or a ti
 write ("¿Tiene || firstname || tos, le silba el pecho, tiene problemas al respirar o pecho congestionado durante el día 3 o mas veces a la semana") At Spanish;                                                                                                                                                                                                            
 ;;
 Age_Min: 3 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

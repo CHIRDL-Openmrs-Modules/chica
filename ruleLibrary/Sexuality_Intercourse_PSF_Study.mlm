@@ -54,6 +54,6 @@ Action:
 write ("Have you ever had sexual intercourse?");
 write("¿Has tenido relaciones sexuales?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                             
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

@@ -55,5 +55,5 @@ write ("Does || firstname || have a parent with high cholesterol (above 240)?");
 write("¿La mama o el papa de || firstname || tienen colesterol alto? (sobre 240)") At Spanish;                                                                                                                                                                                                                                                                                                                                    
 ;;
 Age_Min: 12 months;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

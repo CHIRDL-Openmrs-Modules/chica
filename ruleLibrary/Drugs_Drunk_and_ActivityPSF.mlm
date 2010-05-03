@@ -54,6 +54,6 @@ Action:
 write ("Have you ever used alcohol and then done any of the following - (1) driven a car, (2) gone swimming or boating, (3) gotten in a fight, (4) used tools or equipment, or (5) done something you later regretted?");
 write ("¿Ha - 1)manejado un coche, 2)nadado o manejado un bote, 3)peleado con alguien, 4)usado herramientas, 5) hecho algo de lo cual se arrepienta, bajo influencia del alcohol?") At Spanish;                                                                                          
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

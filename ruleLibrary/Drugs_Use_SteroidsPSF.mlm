@@ -54,6 +54,6 @@ Action:
 write ("Have you ever used steroids (eg, roids or juice) without a doctor's permission?");
 write ("¿Alguna vez haz usado esteroides sin permiso del medico?") At Spanish;                                                                                                                                                                                                                                                                                                                                          
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

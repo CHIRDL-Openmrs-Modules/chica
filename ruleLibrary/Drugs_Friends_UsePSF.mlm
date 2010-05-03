@@ -54,6 +54,6 @@ Action:
 write ("Do any of your close friends ever use marijuana, other drugs, or inhalants?");
 write ("¿Algunos de tus amigos cercanos usan marihuana, otras drogas o inhalantes?") At Spanish;                                                                                                                                                                                                                                                                                                                            
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

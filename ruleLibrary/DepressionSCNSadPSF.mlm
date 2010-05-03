@@ -54,6 +54,6 @@ Action:
 write ("During the past few weeks, have you often felt sad or down or as though you have nothing to look forward to?");
 write ("¿Durante las últimas semanas, ¿se ha sentido triste, decaida, o como si su vida no tuviera propósito?") At Spanish;                                                                                                                                                                                                                                                                
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

@@ -55,5 +55,5 @@ write ("Does || firstname || know what to do if the smoke alarm rings?");
 write("¿Sabe || firstname || que hacer si suena la alarma de fuego?") At Spanish;                                                                                                                                                
 ;;
 Age_Min: 3 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

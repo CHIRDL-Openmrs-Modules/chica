@@ -55,5 +55,5 @@ write ("Does || firstname || know the escape plan in case of a fire in || gender
 write("¿|| firstname || sabe el plan de escape de su casa en caso de fuego?") At Spanish;                                                                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 6 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

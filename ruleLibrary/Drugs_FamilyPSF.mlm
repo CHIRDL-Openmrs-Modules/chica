@@ -54,6 +54,6 @@ Action:
 write ("Does anyone in your family have a problem with alcohol or other drugs?");
 write ("¿Alguien en su familia tiene problemas con alcohol o de drogas?") At Spanish;                                                                                                                                                                                                                                                                                                                                            
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

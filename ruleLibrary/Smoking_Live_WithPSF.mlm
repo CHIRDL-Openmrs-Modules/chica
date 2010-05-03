@@ -54,6 +54,6 @@ Action:
 write ("Does anyone you live with ever smoke cigarettes or use snuff or chewing tobacco?");
 write("¿Alguien con quien usted vive fuma, inhala o mastica tabaco?") At Spanish;                                                                                                                                                                                                                                                                                                                                      
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

@@ -55,5 +55,5 @@ write ("Does anyone in || firstname ||'s home smoke?");
 write ("¿Hay alguna persona en la casa de || firstname || que fuma?") At Spanish;
 ;;
 Age_Min: 0 days;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

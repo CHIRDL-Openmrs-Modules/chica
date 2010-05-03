@@ -42,6 +42,6 @@ endif
 Action:
 write ("*") At BP_HL;                                                                                                                                                                                                                                                                                       
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

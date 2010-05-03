@@ -55,5 +55,5 @@ write ("Have you talked to || firstname || about guns at school or on the street
 write("¿Has hablado con || firstname || acerca de las armas en la escuela o en la calle?") At Spanish;                                                                                                               
 ;;
 Age_Min: 6 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

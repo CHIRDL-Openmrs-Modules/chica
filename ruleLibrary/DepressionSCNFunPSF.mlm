@@ -54,6 +54,6 @@ Action:
 write ("Have you had fun during the past two weeks?");
 write("¿En las ultimas dos semanas, usted se ha divertido?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                    
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

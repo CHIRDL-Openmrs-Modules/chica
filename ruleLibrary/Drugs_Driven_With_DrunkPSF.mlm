@@ -54,6 +54,6 @@ Action:
 write ("In the past year, have you been in a car or other motor vehicle when the driver has been drinking alcohol or using other drugs?");
 write ("¿En este ultimo año, se ha montado en un coche u otro automóvil cuando el  conductor ha estado bebiendo alcohol o utilizado otras drogas?") At Spanish;                                                                                                                                                                                                         
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

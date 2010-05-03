@@ -59,6 +59,6 @@ Action:
 write ("Do you think you might be pregnant?");
 write ("¿Hay una posibilidad que esta embarazada?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                     
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

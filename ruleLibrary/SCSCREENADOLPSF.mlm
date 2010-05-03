@@ -57,6 +57,6 @@ Action:
 write ("Do you have sickle cell disease?");    
 write ("¿Tiene usted la enfermedad de celula de hoz?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                                                  
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

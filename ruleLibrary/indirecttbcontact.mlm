@@ -79,5 +79,5 @@ write ("Does || firstname || spend time with anyone who has been in jail or a sh
 write("¿Pasa tiempo || firstname || con alguien que ha estado encarcelado o refugiado, que usa las drogas ilegales, o que tiene el VIH?") At Spanish;
 ;;
 Age_Min: 11 months;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

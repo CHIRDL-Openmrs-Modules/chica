@@ -55,5 +55,5 @@ write ("Does || firstname || have sickle cell disease?");
 write ("¿Tiene || firstname ||, la enfermedad de celula de hoz?") At Spanish;                                                                                                                                                                     
 ;;
 Age_Min: 0 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

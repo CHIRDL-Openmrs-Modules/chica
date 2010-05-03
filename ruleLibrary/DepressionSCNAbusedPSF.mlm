@@ -54,6 +54,6 @@ Action:
 write ("Have you ever been physically, sexually, or emotionally abused?");
 write ("¿Alguna vez ha sido usted  física, emocional o sexualmente || spanishgender ||? ") At Spanish;                                                                                                                                                                                                                                                                                                                                  
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

@@ -84,5 +84,5 @@ write ("Has || firstname || been exposed to anyone with tuberculosis (TB) diseas
 write("¿Ha estado || firstname || en contacto con alguien que padece de tuberculosis (TB)?") At Spanish;
 ;;
 Age_Min: 11 months;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

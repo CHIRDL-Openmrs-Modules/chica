@@ -55,5 +55,5 @@ write ("Do any of || firstname ||'s friends have guns?");
 write ("¿Algunas de las amigas de || firstname || guardan armas?") At Spanish;
 ;;
 Age_Min: 6 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

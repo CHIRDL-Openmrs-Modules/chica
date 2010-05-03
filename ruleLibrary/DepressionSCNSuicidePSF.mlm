@@ -54,6 +54,6 @@ Action:
 write ("Have you ever seriously thought about killing yourself, made a plan to kill yourself, or actually tried to kill yourself?");
 write ("¿Has pensado seriamente en suicidarte, has hecho planes para matarte o has intentado suicidarte?") At Spanish;                                                                                                                                                                                                                                                        
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

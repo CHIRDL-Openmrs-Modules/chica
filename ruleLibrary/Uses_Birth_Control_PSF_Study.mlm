@@ -58,6 +58,6 @@ Action:
 write ("Are you using birth control?");
 write("¿Estas usando anticonceptivo?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                                         
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

@@ -55,5 +55,5 @@ write ("Does || firstname || wear all appropriate protective equipment when play
 write ("¿Cuando || firstname || juega deportes, ¿|| spanishgender || usa el equipo de protección adecuado?") At Spanish;                                                                                                                                                                                                                                                                                             
 ;;
 Age_Min: 5 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

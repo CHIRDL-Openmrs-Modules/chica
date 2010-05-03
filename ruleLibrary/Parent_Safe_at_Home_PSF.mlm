@@ -55,5 +55,5 @@ write ("Do you feel safe in your home?");
 write ("¿Se siente seguro en su casa?") At Spanish;                                                                                                                                                                                                              
 ;;
 Age_Min: 0 days;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

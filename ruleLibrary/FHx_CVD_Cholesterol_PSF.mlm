@@ -52,5 +52,5 @@ write ("Does || firstname || have a parent or grand parent who had a heart attac
 write("¿Los padres de || firstname || han tenido ataque al corazon o infarto cerebral antes de los 55 años?") At Spanish;                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 12 months;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

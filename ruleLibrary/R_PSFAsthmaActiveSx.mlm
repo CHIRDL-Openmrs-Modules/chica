@@ -52,5 +52,5 @@ write ("Does || firstname ||'s asthma prevent || HimHer || from || hisher || usu
 write ("¿El asma de || firstname || le impide hacer sus actividades normales en la casa o escuela?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 3 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

@@ -56,5 +56,5 @@ write ("Does || firstname || ever swim in canals, streams, or any fast-moving wa
 write("¿|| firstname || nada en canales, rios o en corrientes de aguas rápidas?") At Spanish;                                                                                                                                                                                                                                                                                                                              
 ;;
 Age_Min: 8 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

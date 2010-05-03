@@ -55,5 +55,5 @@ write ("Does || firstname || ride || gender || bike in the street?");
 write("¿|| firstname || anda en su bicicleta en la calle?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                      
 ;;
 Age_Min: 3          years     ;;
-Age_Max: 11         years     ;;
+Age_Max: 12         years     ;;
 end:

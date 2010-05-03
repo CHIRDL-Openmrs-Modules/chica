@@ -56,5 +56,5 @@ write ("There was a smoker in || firstname ||'s home, has that person quit?");
 write ("¿Hubo alquien en la casa de || firstname || que fuma, se ha dejado de fumar?") At Spanish;
 ;;
 Age_Min: 0 days;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

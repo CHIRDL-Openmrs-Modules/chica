@@ -55,6 +55,6 @@ Action:
 write ("Are you in pain today?");
 write ("¿Tienes dolor hoy?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                                                         
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

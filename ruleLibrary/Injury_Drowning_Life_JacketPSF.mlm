@@ -55,5 +55,5 @@ write ("Does || firstname || always wear a life-jacket when on a boat?");
 write("¿|| firstname || usa una chaqueta de salvavidas cuando esta en un bote?") At Spanish;                                                                                                                                     
 ;;
 Age_Min: 3 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

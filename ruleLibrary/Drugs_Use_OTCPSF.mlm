@@ -54,6 +54,6 @@ Action:
 write ("Some drugs can be bought at a store without a doctor's prescription.  Do you ever use nonprescription drugs to get to sleep, stay awake, calm down, or get high?");
 write ("¿Hay algunas drogas que se pueden comprar en la farmacia sin receta médica. Has tomado de éstas medicinas para dormir, mantenerte despierto, para calmarte, o para estar animado?") At Spanish;                                                                                                                                
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

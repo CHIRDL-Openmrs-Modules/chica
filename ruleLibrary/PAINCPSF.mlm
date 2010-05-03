@@ -56,5 +56,5 @@ write ("Is || firstname || having pain today?");
 write ("¿Tiene || firstname || dolor hoy?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                           
 ;;
 Age_Min: 0 days;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

@@ -46,5 +46,5 @@ write ("*") At VisionL_HL;
 write ("*") At VisionR_HL;                                                                                                                                                                                                                                                      
 ;;
 Age_Min: 3 years;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

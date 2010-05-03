@@ -54,6 +54,6 @@ Action:
 write ("Are your grades this year worse than your grades last year?");
 write("¿Sus calificaciones están peores este año que las del año pasado?") At Spanish;                                                                                                                                              
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

@@ -85,5 +85,5 @@ write ("Has anyone in || firstname ||'s home recently spent more than a week in 
 write("¿Hay alguien en la casa de || firstname || que ha pasado más de una semana en Asia, África, Latinoamérica, o Europa del Este?") At Spanish;
 ;;
 Age_Min: 11 months;;
-Age_Max: 11 years;;
+Age_Max: 12 years;;
 end:

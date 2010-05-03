@@ -54,6 +54,6 @@ Action:
 write ("Do you ever use marijuana, other drugs, or inhalants?");
 write ("¿Usted usa marihuana, u otras drogas o inhalantes?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                          
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

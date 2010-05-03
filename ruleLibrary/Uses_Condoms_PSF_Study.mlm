@@ -54,6 +54,6 @@ Action:
 write ("Do you and your partner always use condoms when you have sex?");
 write("¿Tu y tu pareja siempre usan condones cuando tienen sexo?") At Spanish;                                                                                                                                                                                                                                                                                                                                                            
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

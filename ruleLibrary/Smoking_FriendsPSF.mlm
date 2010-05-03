@@ -54,6 +54,6 @@ Action:
 write ("Do any of your close friends ever smoke cigarettes or use snuff or chewing tobacco?");
 write ("¿Algunos de sus amigos cercanos fuman, inhala o mastican tabaco?") At Spanish;                                                                                                                                                                                                                                                                                                                              
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

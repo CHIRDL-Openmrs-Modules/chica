@@ -59,6 +59,6 @@ Action:
 write ("If you smoke cigarettes, use snuff, or chew tobacco, are you willing to quit?");
 write ("¿ Si usted fuma, inhalan o mastica tabaco, esta usted pensando en || spanishgender || dejarlo?") At Spanish;                                                                                                                                                                                                                                                                                                      
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:

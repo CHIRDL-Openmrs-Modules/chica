@@ -54,6 +54,6 @@ Action:
 write ("In general, are you happy with the way things are going for you these days?");
 write ("¿En general, ¿está usted || spanishgender || en como van las cosas, estos días?") At Spanish;                                                                                                                                                                                                                                                                                                                       
 ;;
-Age_Min: 11 years;;
+Age_Min: 12 years;;
 Age_Max: 21 years;;
 end:
