@@ -26,6 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
+locationName:= read {location from Parameters};
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
@@ -34,7 +35,9 @@ Priority: 1;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
-
+If (Gender = M) then || text || = "his";
+If (Gender = F) then || text || = "her";
+If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
 If (CurrentStatus = no) OR (CurrentStatus = Workup_underway)  then conclude False;
 If (Target = "Improved_Academics") then conclude True;
 
@@ -53,7 +56,7 @@ endif;
 endif
 ;;
 Action:
-write ("Has || firstname || met his ADHD treatment target of doing better in school?");
+write ("Has || firstname || met || text || ADHD treatment target of doing better in school?");
 write ("") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 5 years;;

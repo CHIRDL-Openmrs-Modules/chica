@@ -25,7 +25,8 @@ Box4:=read {box4 from Parameters};
 Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
-If (mode = PRODUCE) then      
+If (mode = PRODUCE) then   
+locationName:= read {location from Parameters};   
 CurrentStatus := read last {CHICA_ADHD_RX from CHICA} ;   
 SideEffects := read last {CHICA_ADHD_Side_Effects from CHICA} Where it occurred within past 7 days; 
 ParentVanderbiltDone := read exist {ParentAssessmentScale from CHICA} Where it occurred within past 6 months;
@@ -39,6 +40,7 @@ Priority:		1       ;;
 
 Logic:
 If (mode = PRODUCE) then
+If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
 If (ParentVanderbiltDone = true) AND (TeacherVanderbiltDone = true) then conclude false;
 If (ParentVanderbiltDoneFU = true) AND (TeacherVanderbiltDone = true) then conclude false;
 If (ParentVanderbiltDone = true) AND (TeacherVanderbiltDoneFU = true) then conclude false;
@@ -78,13 +80,21 @@ endif
 ;;
 Action:
 If(ParentVanderbiltDoneFU = False) then
+If(preferred_language = Spanish) then
 call CREATE_JIT with "ADHD PFU";
+else
+call CREATE_JIT with "ADHD PFU";
+endif;
 endif;
 
 If(TeacherVanderbiltDoneFU = False) then
+If(preferred_language = Spanish) then
+call CREATE_JIT with "ADHD TFU";
+else
 call CREATE_JIT with "ADHD TFU";
 endif;
-
+endif;
+call CREATE_JIT with "TargetOutcomes";
 write ("ADHD follow-up visit. || SEPrompt || || firstname || is due for Vanderbilt assessments from both the parent and teacher (attached).");                                                                                                                                                                                                                                                                                                                   
 write ("Parent Vanderbilt Scanned                      ");
 write ("Teacher Vanderbilt given to parent                     ");

@@ -25,7 +25,8 @@ Box4:=read {box4 from Parameters};
 Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
-If (mode = PRODUCE) then      
+If (mode = PRODUCE) then  
+locationName:= read {location from Parameters};    
 CurrentStatus := read last {CHICA_ADHD_RX from CHICA} ; 
 
    
@@ -41,7 +42,7 @@ Priority:		1       ;;
 
 Logic:
 If (mode = PRODUCE) then
- 
+If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
 If (SideEffects = "yes") then || SEPrompt || = " Parent reports significant side effects.";
 If (SideEffects = "no") then || SEPrompt || = " Parent reports no significant side effects.";
 
@@ -82,6 +83,7 @@ endif;
 endif
 ;;
 Action:
+call CREATE_JIT with "TargetOutcomes";
 write ("ADHD follow-up visit. || SEPrompt ||");                                                                                                                                                                                                                                                                                                                   
 write ("Doing Well ->                                           ");
 write ("Follow-up 3-4 mos                    ");

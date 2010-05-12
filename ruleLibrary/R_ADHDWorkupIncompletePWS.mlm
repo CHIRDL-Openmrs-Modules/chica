@@ -25,7 +25,8 @@ Box4:=read {box4 from Parameters};
 Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
-If (mode = PRODUCE) then      
+If (mode = PRODUCE) then   
+locationName:= read {location from Parameters};   
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
 TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};
@@ -36,7 +37,7 @@ Priority:		1       ;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
-
+If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
 If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
 If (ParentVanderbilt = TRUE) AND (TeacherVanderbilt = TRUE) then conclude FALSE;
 If (ParentVanderbilt = FALSE) then || prompttext1 || = " Parent Vanderbilt,";
@@ -73,11 +74,19 @@ endif
 ;;
 Action:
 If(ParentVanderbilt = False) then
+If(preferred_language = Spanish) then
 call CREATE_JIT with "ADHD P";
+else
+call CREATE_JIT with "ADHD P";
+endif;
 endif;
 
 If(TeacherVanderbilt = False) then
+If(preferred_language = Spanish) then
 call CREATE_JIT with "ADHD T";
+else
+call CREATE_JIT with "ADHD T";
+endif;
 endif;
 
 write ("A workup for ADHD has begun, but not all data are in. We are missing || prompttext1 || || prompttext2 || and need data to be complete ");                                                                                                                                                                                                                                                                                                                   

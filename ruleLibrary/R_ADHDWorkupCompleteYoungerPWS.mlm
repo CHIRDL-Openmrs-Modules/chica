@@ -25,7 +25,8 @@ Box4:=read {box4 from Parameters};
 Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
-If (mode = PRODUCE) then      
+If (mode = PRODUCE) then  
+locationName:= read {location from Parameters};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
 ParentAssessmentScale := read last 6 {ParentAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;
@@ -39,7 +40,7 @@ Priority: 1       ;;
 
 Logic:
 If (mode = PRODUCE) then
-
+If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
 If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
 
 
@@ -99,6 +100,7 @@ endif
 ;;
 Action:
 /*call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";*/
+call CREATE_JIT with "TargetOutcomes";
 write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following AND REFER TO MIDTOWN  ");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");
 write ("Send to Midtown                      ");
