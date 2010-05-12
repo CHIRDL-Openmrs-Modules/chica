@@ -30,6 +30,7 @@ locationName:= read {location from Parameters};
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
 TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};
+preferred_language:= read last {preferred_language from CHICA};               
 
 endif
 ;;
