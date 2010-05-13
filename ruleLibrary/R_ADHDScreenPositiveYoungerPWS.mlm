@@ -30,7 +30,8 @@ locationName:= read {location from Parameters};
 ScreenResults := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;        
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} Where it Occurred Within Past 365 Days ;    
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA}; 
-TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};              
+TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA}; 
+preferred_language:= read last {preferred_language from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif
 ;;
@@ -79,7 +80,10 @@ endif;
 endif
 ;;
 Action:
-If(ParentVanderbilt = False) then
+If(ParentVanderbilt = False) AND (preferred_language = Spanish) then
+call CREATE_JIT with "ADHD PS";
+endif;
+If(ParentVanderbilt = False) AND NOT (preferred_language = Spanish) then
 call CREATE_JIT with "ADHD P";
 endif;
 

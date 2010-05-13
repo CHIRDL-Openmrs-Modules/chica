@@ -74,20 +74,15 @@ endif;
 endif
 ;;
 Action:
-If(ParentVanderbilt = False) then
-If(preferred_language = Spanish) then
-call CREATE_JIT with "ADHD P";
-else
-call CREATE_JIT with "ADHD P";
+If(ParentVanderbilt = False) AND (preferred_language = Spanish) then
+call CREATE_JIT with "ADHD PS";
 endif;
+If(ParentVanderbilt = False) AND NOT (preferred_language = Spanish) then
+call CREATE_JIT with "ADHD P";
 endif;
 
 If(TeacherVanderbilt = False) then
-If(preferred_language = Spanish) then
 call CREATE_JIT with "ADHD T";
-else
-call CREATE_JIT with "ADHD T";
-endif;
 endif;
 
 write ("A workup for ADHD has begun, but not all data are in. We are missing || prompttext1 || || prompttext2 || and need data to be complete ");                                                                                                                                                                                                                                                                                                                   
