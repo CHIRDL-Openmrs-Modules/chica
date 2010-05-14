@@ -39,10 +39,11 @@ Priority: 1       ;;
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = Workup_underway) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
-If (Target = Target_Met) AND ('Medication' is in Meds) then conclude False;
 
-Else conclude True;
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
+If (Target = Target_Met) AND NOT ('Medication' is in Meds) then conclude True
+
+Else conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 endif

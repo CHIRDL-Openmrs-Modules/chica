@@ -40,10 +40,9 @@ Logic:
 If (mode = PRODUCE) then
 
 If (CurrentStatus = Workup_underway) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
-If (Target = "Target_Met") then conclude False;
-If ('Medication' is in Meds) then conclude False;
 
-Else conclude True;
+If NOT (Target = "Target_Met") AND NOT ('Medication' is in Meds) then conclude True;
+Else conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 endif
@@ -57,9 +56,6 @@ endif;
 
 
 If  (Box3=true) then
-
-endif;
-If  (Box4=true) then
  CALL storeObs With "CHICA_ADHD_RX","Medication";
 endif;
 If  (Box5=true) then
@@ -77,8 +73,8 @@ Action:
 write ("|| firstname || has not met target goals for ADHD management, and does not appear to be on medications at this time.");                                                                                                                                                                                                                                                                                                                   
 write ("Increase Behavioral Therapy -> ");
 write ("Follow-up 2-3 wks                     ");
-write ("Consider meds ->                       ");
-write ("Started Medication                      ");
+write ("Start meds ->                       ");
+write ("Follow-up 2-3 wks                      ");
 write ("Targets Met ->                        ");
 write ("Follow-up 3-4 mos                              ");
 ;;
