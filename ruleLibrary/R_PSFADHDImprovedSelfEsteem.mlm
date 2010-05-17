@@ -39,7 +39,7 @@ If (Gender = M) then || text || = "his";
 If (Gender = F) then || text || = "her";
 If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
 
-If (CurrentStatus = no) OR (CurrentStatus = Workup_underway)  then conclude False;
+If (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
 If (Target = "Improved_Self_Esteem") then conclude True;
 
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      

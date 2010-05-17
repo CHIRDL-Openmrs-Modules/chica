@@ -43,7 +43,7 @@ If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
 If (ParentVanderbilt = TRUE) AND (TeacherVanderbilt = TRUE) then conclude FALSE;
 If (ParentVanderbilt = FALSE) then || prompttext1 || = " Parent Vanderbilt,";
 If (TeacherVanderbilt = FALSE) then || prompttext2 || = " Teacher Vanderbilt,";
-If (CurrentStatus = Workup_underway) then conclude True;
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude True;
 Else conclude False;
 
 

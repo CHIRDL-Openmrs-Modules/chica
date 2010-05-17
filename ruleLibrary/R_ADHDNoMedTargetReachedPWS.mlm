@@ -41,7 +41,7 @@ Logic:
 If (mode = PRODUCE) then
 If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
 
-If (CurrentStatus = Workup_underway) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
 If (Target = Target_Met) AND NOT ('Medication' is in Meds) then conclude True
 
 Else conclude False;
