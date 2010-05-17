@@ -93,5 +93,5 @@ write ("" );
 write ("Follow-up 2-3 wks                            ");
 ;;
 Age_Min: 5          years     ;;
-Age_Max: 12         years     ;;
+Age_Max: 13         years     ;;
 end:

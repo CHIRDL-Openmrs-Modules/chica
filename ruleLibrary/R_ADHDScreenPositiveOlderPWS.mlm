@@ -107,5 +107,5 @@ write ("Family, School, and Education Hx                        ");
 write ("Sched f/u in 2-3 weeks                              ");
 ;;
 Age_Min: 6          years     ;;
-Age_Max: 12         years     ;;
+Age_Max: 13         years     ;;
 end:
