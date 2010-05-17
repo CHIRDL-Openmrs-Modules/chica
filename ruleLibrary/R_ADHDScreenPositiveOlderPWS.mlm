@@ -87,8 +87,12 @@ Action:
 If(ParentVanderbilt = False) AND (preferred_language = Spanish) then
 call CREATE_JIT with "ADHD PS";
 endif;
-If(ParentVanderbilt = False) AND NOT (preferred_language = Spanish) then
+If(ParentVanderbilt = False) AND (preferred_language = English) then
 call CREATE_JIT with "ADHD P";
+endif;
+If(ParentVanderbilt = False) AND (preferred_language = null) then
+call CREATE_JIT with "ADHD P";
+call CREATE_JIT with "ADHD PS";
 endif;
 
 If(TeacherVanderbilt = False)then
