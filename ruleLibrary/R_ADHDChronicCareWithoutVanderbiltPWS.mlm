@@ -37,7 +37,7 @@ TeacherVanderbiltDone := read exist {TeacherAssessmentScale from CHICA} Where it
 TeacherVanderbiltDoneFU := read exist {TeacherAssessFollowupSymptomTotal from CHICA} Where it occurred within past 6 months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
 ;;
-Priority:		1       ;;
+Priority:		174       ;;
 	Evoke:		;;
 
 Logic:

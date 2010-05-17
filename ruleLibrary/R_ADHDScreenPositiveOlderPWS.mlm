@@ -35,7 +35,7 @@ preferred_language:= read last {preferred_language from CHICA};
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 endif
 ;;
-Priority: 1       ;;
+Priority: 182       ;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then

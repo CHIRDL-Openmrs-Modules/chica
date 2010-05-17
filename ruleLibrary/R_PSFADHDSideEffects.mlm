@@ -32,7 +32,7 @@ Meds := read {CHICA_ADHD_RX from CHICA} Where it Occurred Within Past 365 Days;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 endif
 ;;
-Priority: 1;;
+Priority: 56;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then

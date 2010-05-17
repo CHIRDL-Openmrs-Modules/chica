@@ -35,7 +35,7 @@ TeacherAssessmentScale := read last 5 {TeacherAssessmentScale from CHICA} Where 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 endif
 ;;
-Priority: 1       ;;
+Priority: 185       ;;
  Evoke: ;;
 
 Logic:

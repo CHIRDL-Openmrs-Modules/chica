@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 Dom_Viol := read Exist {Domest_Violence_Concern from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority:		77;;
+Priority:		42;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

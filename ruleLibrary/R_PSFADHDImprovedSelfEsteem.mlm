@@ -31,7 +31,7 @@ Target := read last {CHICA_ADHD_Targets from CHICA};
 locationName:= read {location from Parameters};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
-Priority: 1;;
+Priority: 52;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
