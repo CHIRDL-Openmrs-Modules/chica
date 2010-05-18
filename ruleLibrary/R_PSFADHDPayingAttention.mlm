@@ -59,7 +59,7 @@ endif
 ;;
 Action:
 write ("Does || firstname || often have a hard time paying attention to tasks or play?");
-write ("") At Spanish;                                                                                                                                                                                                                                                                            
+write ("¿|| firstname || tiene seguido dificultad para poner atención a tareas o juegos?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 5 years;;
 Age_Max: 13 years;;

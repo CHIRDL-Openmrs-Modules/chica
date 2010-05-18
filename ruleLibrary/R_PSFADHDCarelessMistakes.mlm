@@ -57,7 +57,7 @@ endif
 ;;
 Action:
 write ("Does || firstname || often make careless mistakes or not pay close attention to details?");
-write ("") At Spanish;                                                                                                                                                                                                                                                                            
+write ("¿|| firstname || comete seguidos errores por descuido o por no poner atención a los detalles?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 5 years;;
 Age_Max: 13 years;;

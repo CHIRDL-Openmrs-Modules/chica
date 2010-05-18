@@ -57,7 +57,7 @@ endif
 ;;
 Action:
 write ("Has || firstname || met || text || ADHD treatment target of doing better in school?");
-write ("") At Spanish;                                                                                                                                                                                                                                                                            
+write ("¿Ha alcanzado || firstname || su objetivo de tratamiento de ADHD en mejorar en la escuela?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 5 years;;
 Age_Max: 13 years;;
