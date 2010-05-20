@@ -40,7 +40,7 @@ Priority: 180      ;;
 Logic:
 If (mode = PRODUCE) then
 If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
-If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
+If (CurrentStatus = null) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
 
 If NOT (Target = "Target_Met") AND NOT ('Medication' is in Meds) then conclude True;
 Else conclude False;
@@ -70,7 +70,7 @@ endif;
 endif
 ;;
 Action:
-/*call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";*/
+call CREATE_JIT with "TargetOutcomes";
 write ("|| firstname || has not met target goals for ADHD management, and does not appear to be on medications at this time.");                                                                                                                                                                                                                                                                                                                   
 write ("Increase Behavioral Therapy -> ");
 write ("Follow-up 2-3 wks                     ");
