@@ -68,7 +68,6 @@ endif;
 endif
 ;;
 Action:
-/*call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";*/
 call CREATE_JIT with "TargetOutcomes";
 write ("|| firstname || has not met target goals for ADHD management, and seems to be experiencing significant side effects.  Confirm this and consider changing the medication.");
 write ("Significant Side Effects ->                       ");

@@ -94,6 +94,7 @@ endif;
 If(TeacherVanderbilt = False) then
 call CREATE_JIT with "ADHD T";
 endif;
+/*call CREATE_JIT with "Evaluating ADHD Toolkit";*/
 write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 || therefore, w/u ADHD");                                                                                                                                                                                                                                                                                                                   
 write ("H&P with respect to ADHD                       ");
 write ("Parent Vanderbilt and scan now                      ");

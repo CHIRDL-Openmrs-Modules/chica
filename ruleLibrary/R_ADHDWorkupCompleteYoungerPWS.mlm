@@ -99,8 +99,8 @@ endif;
 endif
 ;;
 Action:
-/*call CREATE_JIT with "ADHD TOOLKIT","|| firstname || ", "|| lastname ||";*/
 call CREATE_JIT with "TargetOutcomes";
+/*call CREATE_JIT with "ADHD Diagnosed Toolkit";*/
 write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following AND REFER TO MIDTOWN  ");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");
 write ("Send to Midtown                      ");
