@@ -32,6 +32,7 @@ ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
 ParentAssessmentScale := read last 6 {ParentAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;
 TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};              
 TeacherAssessmentScale := read last 5 {TeacherAssessmentScale from CHICA} Where it Occurred Within Past 365 Days;   
+preferred_language:= read last {preferred_language from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 endif
@@ -101,7 +102,18 @@ endif
 ;;
 Action:
 call CREATE_JIT with "TargetOutcomes";
-/*call CREATE_JIT with "ADHD Diagnosed Toolkit";*/
+
+If(preferred_language = Spanish) then
+call CREATE_JIT with "ADHD Diagnosed Toolkit Spanish";
+endif;
+If(preferred_language = English) then
+call CREATE_JIT with "ADHD Diagnosed Toolkit";
+endif;
+If(preferred_language = null) then
+call CREATE_JIT with "ADHD Diagnosed Toolkit";
+call CREATE_JIT with "ADHD Diagnosed Toolkit Spanish";
+endif;
+
 write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following  ");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");
 write ("Comorbidities Dx'd -> Send to Midtown");
