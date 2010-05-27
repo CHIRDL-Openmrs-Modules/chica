@@ -26,7 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then   
-locationName:= read {location from Parameters};      
+location:= read {location from Parameters};      
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
 ChronicCareStatus := read last {CHICA_ADHD_RX from CHICA} ;  
 
@@ -39,7 +39,7 @@ Priority: 181       ;;
 
 Logic:
 If (mode = PRODUCE) then
-If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
+If (location = BBPS) OR (location = FMPS) then conclude False;
 
 If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
 If (Target = Target_Met) AND NOT ('Medication' is in Meds) then conclude True

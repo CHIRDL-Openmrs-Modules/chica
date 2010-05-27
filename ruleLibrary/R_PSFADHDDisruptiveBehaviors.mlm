@@ -26,7 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-locationName:= read {location from Parameters};
+location:= read {location from Parameters};
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
@@ -37,7 +37,7 @@ Logic:
 If (mode = PRODUCE) then
 If (Gender = M) then || text || = "his";
 If (Gender = F) then || text || = "her";
-If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
+If (location = BBPS) OR (location = FMPS) then conclude False;
 
 If (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
 If (Target = "Disruptive_Behaviors") then conclude True;
