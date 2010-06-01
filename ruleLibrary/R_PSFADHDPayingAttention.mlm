@@ -58,7 +58,7 @@ endif;
 endif
 ;;
 Action:
-write ("Does || firstname || often have a hard time paying attention to tasks or play?");
+write ("Does || firstname || OFTEN have a hard time paying attention to tasks or play?");
 write ("¿|| firstname || tiene seguido dificultad para poner atención a tareas o juegos?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 5 years;;
