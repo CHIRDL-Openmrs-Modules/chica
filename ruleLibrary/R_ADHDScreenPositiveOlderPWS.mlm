@@ -68,7 +68,7 @@ If  (Box4=true) then
  CALL storeObs With "ADHD_Workup","Teacher_Vanderbilt_sent";
 endif;
 If  (Box5=true) then
- CALL storeObs With "ADHD_Workup","Family_school_education_hx";
+ CALL storeObs With "CHICA_ADHD_DX","no";
 endif;
 If  (Box6=true) then
  CALL storeObs With "ADHD_Workup","Follow-up_2wks_scheduled";
@@ -111,13 +111,13 @@ call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
 endif;*/
 
 
-write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 || therefore, w/u ADHD");                                                                                                                                                                                                                                                                                                                   
-write ("H&P with respect to ADHD                       ");
-write ("Parent Vanderbilt and scan now                      ");
+write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 ||. This Sx may imply ADHD.");                                                                                                                                                                                                                                                                                                                   
+write ("H&P with respect to ADHD                         ");
+write ("Parent Vanderbilt and scan now                   ");
 write ("Vision and hearing screens                       ");
-write ("Teacher Vanderbilt and fax ASAP                      ");
-write ("Family, School, and Education Hx                        ");
-write ("Sched f/u in 2-3 weeks                              ");
+write ("Teacher Vanderbilt and fax ASAP                  ");
+write ("No school/home prob, not ADHD                    ");
+write ("Sched f/u in 2-3 weeks                           ");
 ;;
 Age_Min: 6          years     ;;
 Age_Max: 13         years     ;;

@@ -55,7 +55,7 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "ADHD_Workup","ADHD_H&P";
+ CALL storeObs With "CHICA_ADHD_DX","no";
 endif;
 If  (Box2=true) then
  CALL storeObs With "ADHD_Workup","Parent_Vanderbilt_done";
@@ -107,12 +107,12 @@ call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
 endif;*/
 
 write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 || therefore, w/u ADHD");                                                                                                                                                                                                                                                                                                                   
-write ("H&P with respect to ADHD                       ");
-write ("Parent Vanderbilt and scan now                      ");
+write ("H&P suggest NO ADHD                       ");
+write ("Parent Vanderbilt and scan now                   ");
 write ("Vision and hearing screens                       ");
-write ("Teacher Vanderbilt and fax ASAP                      ");
+write ("Teacher Vanderbilt and fax ASAP                  ");
 write ("Consult Midtown                        ");
-write ("Sched f/u in 2-3 weeks                              ");
+write ("Sched f/u in 2-3 weeks                           ");
 ;;
 Age_Min: 5          years     ;;
 Age_Max: 6         years     ;;
