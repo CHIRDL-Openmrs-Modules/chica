@@ -27,7 +27,7 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
  
-Advised = Read Exist(Dental Advice from CHICA) where it occurred in the last 1 year;
+Advised = Read Last(Dental_Advice from CHICA) where it occurred in the last 1 year;
 
 endif
 ;;
@@ -45,19 +45,19 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "Dental Advice","brush bid";
+ CALL storeObs With "Dental_Advice","brush bid";
 endif;
 If  (Box2=true) then
-  CALL storeObs With "Dental Advice","No food at bed";
+  CALL storeObs With "Dental_Advice","No food at bed";
 endif;
 If  (Box3=true) then
-  CALL storeObs With "Dental Advice","Referred to dentist";
+  CALL storeObs With "Dental_Advice","Referred to dentist";
 endif;
 If  (Box4=true) then
-  CALL storeObs With "Dental Advice","Dental Handout";
+  CALL storeObs With "Dental_Advice","Dental Handout";
 endif;
 If  (Box5=true) then
-  CALL storeObs With "Dental Advice","Mouth/teeth healthy";
+  CALL storeObs With "Dental_Advice","Mouth/teeth healthy";
 endif;
 If  (Box6=true) then
  /* CALL storeObs With "Tooth_erupted","no"; ???*/
