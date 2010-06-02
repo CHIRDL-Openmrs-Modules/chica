@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<comment>Hl7 PCC</comment>
+	<comment>Hl7 Forest Manor</comment>
 	<entry key="image_dir"></entry>
 	<entry key="OBX_size">500000</entry>
 	<entry key="ADD_size">30000</entry>

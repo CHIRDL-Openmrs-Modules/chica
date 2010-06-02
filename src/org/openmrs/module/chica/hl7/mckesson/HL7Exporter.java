@@ -149,7 +149,7 @@ public class HL7Exporter extends AbstractTask {
 			if (Context.isAuthenticated() == false)
 				authenticate();
 
-			socketHandler.openSocket(host, port);
+			
 			
 			//get list of pending exports
 			List <ChicaHL7Export> exportList = chicaService.getPendingHL7Exports();
@@ -157,6 +157,8 @@ public class HL7Exporter extends AbstractTask {
 		
 			while (it.hasNext()){
 				
+				
+				socketHandler.openSocket(host, port);
 				//add socketReadTimeout to scheduler
 				
 				export = it.next();
@@ -232,9 +234,10 @@ public class HL7Exporter extends AbstractTask {
 				//Construct TIFFS
 				
 				if (conceptCategory != null && conceptCategory.equalsIgnoreCase("PSF TIFF")){
-					String batteryName = hl7Properties.getProperty("psf_battery_name");
+				
 					
-					if (!addOBXForTiff(constructor, openmrsEncounter , "PSF", mappings, batteryName)){
+					if (!addOBXForTiff(constructor, openmrsEncounter , "PSF", mappings, 
+							hl7Properties)){
 						export.setStatus(chicaService.getChicaExportStatusByName("Image_not_found"));
 						chicaService.saveChicaHL7Export(export);
 						continue;
@@ -245,7 +248,7 @@ public class HL7Exporter extends AbstractTask {
 				if (conceptCategory != null && conceptCategory.equalsIgnoreCase("PWS TIFF")){
 					String batteryName = hl7Properties.getProperty("pws_battery_name");
 					
-					if (!addOBXForTiff(constructor, openmrsEncounter,"PWS", mappings, batteryName )){
+					if (!addOBXForTiff(constructor, openmrsEncounter,"PWS", mappings, hl7Properties )){
 						export.setStatus(chicaService.getChicaExportStatusByName("Image_not_found"));
 						chicaService.saveChicaHL7Export(export);
 						continue;
@@ -793,11 +796,17 @@ public class HL7Exporter extends AbstractTask {
 		return doc;
 	}
 	
+
 	private boolean addOBXForTiff(HL7MessageConstructor constructor,
 			Encounter encounter, String form ,Hashtable<String,
-			String> mappings, String batteryName){
+			String> mappings, 
+			Properties hl7Properties){
 		boolean obxcreated = false;
 		Integer locationTagId = null;
+		String batteryName = hl7Properties.getProperty("psf_battery_name");
+		String attachmentConceptName = hl7Properties.getProperty("attachment_battery_name");
+		String attachmentText = hl7Properties.getProperty("attachment_text");
+		
 		
 		ATDService atdService = Context.getService(ATDService.class);
 		
@@ -872,11 +881,21 @@ public class HL7Exporter extends AbstractTask {
 			Concept rmrsConcept = getRMRSConceptByName(rmrsName);
 			if (rmrsConcept != null){
 				
-				String rmrsCode = getRMRSCodeFromConcept(rmrsConcept);
-				
+				String rmrsCode = getRMRSCodeFromConcept(rmrsConcept);	
 				Date datetime = encounter.getDateCreated();
+			
+				Concept attachmentConcept = getRMRSConceptByName(attachmentConceptName);
+				if (attachmentConcept == null){
+					log.error("Concept for OBX containing attachment text does not exist. " +
+							"Check that the Concept for the obx attachment has been created.");
+					return false;
+				}
+				String attachmentCode = getRMRSCodeFromConcept(attachmentConcept);
+				
+				constructor.AddSegmentOBX(attachmentConceptName, attachmentCode,
+						null, null, attachmentText, null, datetime, "ST", orderRep, obsRep);
 				OBX resultOBX = constructor.AddSegmentOBX(rmrsName, rmrsCode, 
-						null, "", encodedForm, "", datetime, hl7Abbreviation, orderRep, obsRep );
+						null, "", encodedForm, "", datetime, hl7Abbreviation, orderRep, obsRep +1);
 				if (resultOBX != null){
 					obxcreated = true;
 				} 

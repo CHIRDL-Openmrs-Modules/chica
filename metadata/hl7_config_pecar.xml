@@ -44,6 +44,9 @@
 	<entry key="pws_battery_id">36405</entry>
 	<entry key="general_battery_name">MEDICAL RECORD FILE OBSERVATIONS</entry>
 	<entry key="general_battery_id">22391</entry>
+	<entry key="attachment_battery_name">OBS DOC ATTACHMENT</entry>
+	<entry key="attachment_battery_id">19763</entry>
+	<entry key="attachment_text">See accompanying scanned image.</entry>
 	<entry key="use_vitals_battery_only">true</entry>
 	<entry key="socket_read_timeout">20</entry>
 	<entry key="send_form_images">false</entry>
