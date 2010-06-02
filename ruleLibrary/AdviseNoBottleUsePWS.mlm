@@ -1,0 +1,82 @@
+Maintenance:
+ Title: Advise to brush teeth;;
+ Filename: AdviseNoBottleUsePWS;;
+ Version: 0.1;;
+ Institution: Indiana University School of Medicine;;
+ Author: Steve Downs;;
+ Specialist: Pediatrics;;
+ Date: 2010-05-27T11:00:00-0400;;
+ Validation: ;;
+Library:
+ Purpose: Advise no bottle in bed;;
+ Explanation:            ;;
+ Keywords: teeth young dental PWS;;
+ Citations: ;;
+ Links: ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+ 
+Advised = Read (Dental_Advice from CHICA) where it occurred in the last 1 month;
+
+endif
+;;
+Priority: 1;;
+ Evoke: ;;
+Logic:
+If (mode = PRODUCE) then
+
+If ('discontinue_bottle_at_one' is in Advised ) then conclude false;
+Else conclude true;
+   
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "Dental_Advice","brush bid";
+endif;
+If  (Box2=true) then
+  CALL storeObs With "Dental_Advice","discontinue_bottle_at_one";
+endif;
+If  (Box3=true) then
+  CALL storeObs With "Dental_Advice","Referred to dentist";
+endif;
+If  (Box4=true) then
+  CALL storeObs With "Dental_Advice","Dental Handout";
+endif;
+If  (Box5=true) then
+  CALL storeObs With "Dental_Advice","Mouth/teeth healthy";
+endif;
+If  (Box6=true) then
+ /* CALL storeObs With "Tooth_erupted","no"; ???*/
+endif;
+
+
+
+endif
+;;
+Action:
+call CREATE_JIT with "DENTAL JIT";
+write ("DENTAL: Prolonged bottle use increases risk of dental caries, poor nutrition, anemia and ear infections. Discontinue bottle use at 1 year of age.");
+write("Reminded parent to help brush bid");
+write("Advised no bottles/food before bed");
+write("Referred to dentist");
+write("Gave handout with dentist contacts");
+write("Mouth/teeth healthy on exam");
+write("");
+;;
+Age_Min: 12 months;;
+Age_Max: 18 months;;
+end:
