@@ -102,7 +102,7 @@ endif
 Action:
 call CREATE_JIT with "TargetOutcomes";
 
-/*If(preferred_language = Spanish) then
+If(preferred_language = Spanish) then
 call CREATE_JIT with "Diagnosed Toolkit Spanish";
 endif;
 If(preferred_language = English) then
@@ -111,7 +111,7 @@ endif;
 If(preferred_language = null) then
 call CREATE_JIT with "Diagnosed Toolkit";
 call CREATE_JIT with "Diagnosed Toolkit Spanish";
-endif;*/
+endif;
 
 write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following AND REFER TO MIDTOWN  ");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");

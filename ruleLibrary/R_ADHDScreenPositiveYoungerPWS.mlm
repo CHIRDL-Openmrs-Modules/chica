@@ -95,7 +95,7 @@ If(TeacherVanderbilt = False) then
 call CREATE_JIT with "ADHD T";
 endif;
 
-/*If(preferred_language = Spanish) then
+If(preferred_language = Spanish) then
 call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
 endif;
 If(preferred_language = English) then
@@ -104,7 +104,7 @@ endif;
 If(preferred_language = null) then
 call CREATE_JIT with "Evaluating ADHD Toolkit";
 call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
-endif;*/
+endif;
 
 write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 || therefore, w/u ADHD");                                                                                                                                                                                                                                                                                                                   
 write ("H&P suggest NO ADHD                       ");
