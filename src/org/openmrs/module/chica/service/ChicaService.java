@@ -28,7 +28,9 @@ import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface ChicaService
 {
 	public void consume(InputStream input, Patient patient,

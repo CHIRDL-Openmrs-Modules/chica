@@ -15,6 +15,7 @@ import org.openmrs.module.atd.action.ProcessStateAction;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.hibernateBeans.StateAction;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -39,19 +40,25 @@ public class WaitForPrint implements ProcessStateAction
 		
 		Integer locationTagId = patientState.getLocationTagId();
 	
+		FormInstance formInstance = (FormInstance) parameters.get("formInstance");
+		if(formInstance == null){
 		ChicaService chicaService = Context
 				.getService(ChicaService.class);
 		Integer sessionId = patientState.getSessionId();
 		PatientState stateWithFormId = chicaService.getPrevProducePatientState(sessionId, 
 				patientState.getPatientStateId());
 		
-		FormInstance formInstance = patientState.getFormInstance();
+		formInstance = patientState.getFormInstance();
 
 		if(formInstance == null&&stateWithFormId != null)
 		{
 			formInstance = stateWithFormId.getFormInstance();
 		}
-				
+		}
+		patientState.setFormInstance(formInstance);
+		ATDService atdService = Context.getService(ATDService.class);
+		atdService.updatePatientState(patientState);
+		
 		String mergeDirectory = IOUtil
 				.formatDirectoryName(org.openmrs.module.atd.util.Util
 						.getFormAttributeValue(formInstance.getFormId(),

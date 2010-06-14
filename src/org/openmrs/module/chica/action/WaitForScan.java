@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.StateManager;
@@ -18,6 +20,7 @@ import org.openmrs.module.atd.action.ProcessStateAction;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.hibernateBeans.StateAction;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.service.ChicaService;
@@ -45,17 +48,23 @@ public class WaitForScan implements ProcessStateAction {
 		Integer patientId = patient.getPatientId();
 		patient = patientService.getPatient(patientId);
 
+		FormInstance formInstance = (FormInstance) parameters.get("formInstance");
+		if(formInstance == null){
 		ChicaService chicaService = Context.getService(ChicaService.class);
 
 		Integer sessionId = patientState.getSessionId();
 		PatientState stateWithFormId = chicaService.getPrevProducePatientState(
 				sessionId, patientState.getPatientStateId());
 
-		FormInstance formInstance = patientState.getFormInstance();
+		formInstance = patientState.getFormInstance();
 
 		if (formInstance == null && stateWithFormId != null) {
 			formInstance = stateWithFormId.getFormInstance();
 		}
+		}
+		patientState.setFormInstance(formInstance);
+		ATDService atdService = Context.getService(ATDService.class);
+		atdService.updatePatientState(patientState);
 		TeleformFileState teleformFileState = TeleformFileMonitor
 				.addToPendingStatesWithoutFilename(formInstance);
 		teleformFileState.addParameter("patientState", patientState);
@@ -67,24 +76,27 @@ public class WaitForScan implements ProcessStateAction {
 
 		StateManager.endState(patientState);
 
-		String dsstype = org.openmrs.module.chica.util.Util
-				.getDssType(patientState.getState().getName());
-
 		try {
+
+			FormInstance formInstance = patientState.getFormInstance();
+			
+			if(formInstance == null){
 			Integer sessionId = patientState.getSessionId();
 			PatientState stateWithFormId = chicaService
 					.getPrevProducePatientState(sessionId, patientState
 							.getPatientStateId());
 
-			Integer formInstanceId = null;
-
 			if (stateWithFormId != null) {
-				formInstanceId = stateWithFormId.getFormInstance()
-						.getFormInstanceId();
+				formInstance = stateWithFormId.getFormInstance();
 			}
-
+			}
+			Integer formId = formInstance.getFormId();
+			FormService formService = Context.getFormService();
+			Form form = formService.getForm(formId);
+			String formName = form.getName();
+			
 			List<Statistics> statistics = chicaService.getStatByFormInstance(
-					formInstanceId, dsstype, patientState.getLocationId());
+				formInstance.getFormInstanceId(), formName, patientState.getLocationId());
 
 			for (Statistics currStat : statistics) {
 				currStat.setScannedTimestamp(patientState.getEndTime());

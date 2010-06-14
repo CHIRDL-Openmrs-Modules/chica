@@ -104,6 +104,9 @@ public class RuleTesterController extends SimpleFormController
 						dssService.loadRule("storeObs",false);
 						dssService.loadRule("DDST", false);
 						dssService.loadRule("LookupBPcentile", false);
+						dssService.loadRule("ScoreJit", false);
+						dssService.loadRule("CheckIncompleteScoringJit", false);
+
 						Result result = dssService.runRule(patient, currRule,
 								null, null);
 						

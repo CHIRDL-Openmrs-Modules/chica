@@ -201,15 +201,33 @@ public class FillOutFormController extends SimpleFormController
 		{
 			Integer locationId = location.getLocationId();
 			Integer locationTagId = tag.getLocationTagId();
+			String stateName = null;
+			
+			if(formName.equalsIgnoreCase("PSF")||
+					formName.equalsIgnoreCase("PWS")){
+				stateName = formName+"_printed";
+			}else
+			{
+				stateName = "JIT_printed";
+			}
 			states = atdService
-					.getUnfinishedPatientStateByStateName(formName+"_printed", null,
+					.getUnfinishedPatientStateByStateName(stateName, null,
 							locationTagId, locationId);
 			if (states != null)
 			{
 				totalStates.addAll(states);
 			}
+			stateName = null;
+			
+			if(formName.equalsIgnoreCase("PSF")||
+					formName.equalsIgnoreCase("PWS")){
+				stateName = formName+"_wait_to_scan";
+			}else
+			{
+				stateName = "JIT_wait_to_scan";
+			}
 			states = atdService.getUnfinishedPatientStateByStateName(
-					formName+"_wait_to_scan", null, locationTagId, locationId);
+					stateName, null, locationTagId, locationId);
 			if (states != null)
 			{
 				totalStates.addAll(states);
@@ -217,21 +235,12 @@ public class FillOutFormController extends SimpleFormController
 		}
 		}
 		ArrayList<String> forms = new ArrayList<String>();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		for (PatientState currState : totalStates)
 		{
-			PatientState stateWithId = chicaService.getPrevProducePatientState(currState.getSessionId(), 
-					currState.getPatientStateId());
-			if(stateWithId == null){
-				log.error("State: "+currState.getPatientStateId()+
-						" does not have previous produce state");
-			}else{
-				FormInstance formInstance = stateWithId.getFormInstance();
-				if(formInstance != null){
-					forms.add(formInstance.getLocationId()+"_"+stateWithId.getLocationTagId()+
-							"_"+formInstance.getFormId()+"_"+formInstance.getFormInstanceId()
-							);
-				}
+			FormInstance formInstance = currState.getFormInstance();
+			if (formInstance != null) {
+				forms.add(formInstance.getLocationId() + "_" + currState.getLocationTagId() + "_" + formInstance.getFormId()
+				        + "_" + formInstance.getFormInstanceId());
 			}
 		}
 		map.put("forms", forms);

@@ -97,24 +97,9 @@ public class Rescan implements ProcessStateAction
 			obsService.voidObs(obs, "voided due to rescan");
 		}
 
-		ChicaStateActionHandler.consume(sessionId, formInstance, patient,
-				 parameters,
-				null,locationTagId);
 		StateManager.endState(patientState);
-		
-		//start a new session if this was a PSF_RESCAN
-		if (patientState.getState().getName()
-				.equalsIgnoreCase("PSF_rescan"))
-		{
-			Session newSession = atdService.addSession();
-			sessionId = newSession.getSessionId();
-			newSession.setEncounterId(encounterId);
-			atdService.updateSession(newSession);
-			
-			ChicaStateActionHandler.changeState(patient, sessionId, currState, 
-					stateAction,parameters,locationTagId,locationId);
-		}
-
+		ChicaStateActionHandler.changeState(patient, sessionId, currState, stateAction, parameters, locationTagId,
+		    locationId);
 	}
 	private void voidObsForConcept(String conceptName,Integer encounterId){
 		EncounterService encounterService = Context.getService(EncounterService.class);

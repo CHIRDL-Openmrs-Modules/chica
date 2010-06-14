@@ -69,6 +69,18 @@
  		if (window.focus) {newwin.focus()}
  		return false;
  		}
+
+		function confirmation(formName) {
+			var answer = true;
+			var selectedIndex = formName.options.selectedIndex;
+			if(formName.options[selectedIndex].text == 'ADHD WU'){
+             	answer = confirm("Are you sure you want to initiate an ADHD Workup?")
+			}
+			if(answer){
+				formName.submit();
+			}
+        }
+
 		</script>
  
 </head>
@@ -116,11 +128,17 @@
 <td class="status ${row.statusColor}">${row.status}</td>
 <td class="action ${row.rowColor}" >
 <form method="post" STYLE="margin: 0px; padding: 0px; action="">
-<select name="options"  onchange="this.form.submit();">
+<select name="options"  onchange="confirmation(this.form)">
 <option>&lt;Options&gt;</option>
 <option>Encounters</option>
 <option>Print PSF</option>
 <option>Print PWS</option>
+<c:forEach items="${row.printableJits}" var="printableJit">
+<option>${printableJit}</option>
+</c:forEach>
+<c:if test="${isADHDInterventionLocation}">
+<option>ADHD WU</option>
+</c:if>
 </select>
 <input type="hidden" value="${row.patientId}" name="patientId" />
 <input type="hidden" value="${row.sessionId}" name="sessionId" />

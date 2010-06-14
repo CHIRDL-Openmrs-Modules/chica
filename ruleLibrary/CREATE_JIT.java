@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.rule;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
@@ -25,8 +27,10 @@ import org.openmrs.logic.op.Operator;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.atd.StateManager;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -82,7 +86,7 @@ public class CREATE_JIT implements Rule
 	public Result eval(LogicContext context, Patient patient,
 			Map<String, Object> parameters) throws LogicException
 	{
-		ATDService atdService = (ATDService) Context.getService(ATDService.class);
+		ATDService atdService = Context.getService(ATDService.class);
 		FormService formService = Context.getFormService();
 		String formName = (String) parameters.get("param1");
 		Form form = formService.getForms(formName,null,null,false,null,null,null).get(0);
@@ -95,10 +99,20 @@ public class CREATE_JIT implements Rule
 
 		Integer locationId = formInstance.getLocationId();
 		if(sessionId != null){
-			State currState = atdService.getStateByName("JIT");
-			PatientState patientState = atdService.addPatientState(patient, currState, sessionId, locationTagId,locationId);
-			patientState.setFormInstance(formInstance);
-			atdService.updatePatientState(patientState);
+			State currState = atdService.getStateByName("JIT_create");
+			
+			try {
+				HashMap<String,Object> actionParameters = new HashMap<String,Object>();
+				actionParameters.put("formName", formName);
+	            PatientState patientState = 
+	            	StateManager.runState(patient, sessionId, currState,actionParameters,
+	            		locationTagId,
+	            		locationId,
+	            		ChicaStateActionHandler.getInstance());
+            }
+            catch (Exception e) {
+	            log.error("",e);
+            }
 		}	
 		return Result.emptyResult();
 	}

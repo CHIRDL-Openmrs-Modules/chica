@@ -76,8 +76,15 @@ public class ProduceFormInstance implements ProcessStateAction
 		
 		Session session = atdService.getSession(sessionId);
 		Integer encounterId = session.getEncounterId();
+		String formName = null;
+		if(parameters != null){
+			formName = (String) parameters.get("formName");
+		}
+		if(formName == null){
+			formName = currState.getFormName();
+		}
 		LocationTagAttributeValue locTagAttrValue = 
-			chirdlUtilService.getLocationTagAttributeValue(locationTagId, currState.getFormName(), locationId);
+			chirdlUtilService.getLocationTagAttributeValue(locationTagId, formName, locationId);
 		
 		Integer formId = null;
 		
@@ -98,7 +105,7 @@ public class ProduceFormInstance implements ProcessStateAction
 			currState = atdService.getStateByName("ErrorState");
 			atdService.addPatientState(patient,
 					currState, sessionId,locationTagId,locationId);
-			log.error(currState.getFormName()+
+			log.error(formName+
 					" locationTagAttribute does not exist for locationTagId: "+
 					locationTagId+" locationId: "+locationId);
 			return;
@@ -134,7 +141,13 @@ public class ProduceFormInstance implements ProcessStateAction
 		// write the form
 		FormInstance formInstance = atdService.addFormInstance(formId,
 				locationId);
+		
+		if(parameters == null){
+			parameters = new HashMap<String,Object>();
+		}
+		parameters.put("formInstance", formInstance);
 		patientState.setFormInstance(formInstance);
+		atdService.updatePatientState(patientState);
 		Integer formInstanceId = formInstance.getFormInstanceId();
 		String mergeDirectory = IOUtil
 				.formatDirectoryName(org.openmrs.module.atd.util.Util
@@ -144,12 +157,11 @@ public class ProduceFormInstance implements ProcessStateAction
 		String mergeFilename = mergeDirectory + formInstance.toString() + ".xml";
 		int maxDssElements = org.openmrs.module.chica.util.Util
 				.getMaxDssElements(formId, locationTagId, locationId);
-		String dsstype = org.openmrs.module.chica.util.Util
-				.getDssType(currState.getName());
+		
 		try {
 			FileOutputStream output = new FileOutputStream(mergeFilename);
 			startTime = System.currentTimeMillis();
-			chicaService.produce(output, patientState, patient, encounterId, dsstype, maxDssElements, sessionId);
+			chicaService.produce(output, patientState, patient, encounterId, formName, maxDssElements, sessionId);
 			startTime = System.currentTimeMillis();
 			output.flush();
 			output.close();
@@ -173,7 +185,7 @@ public class ProduceFormInstance implements ProcessStateAction
 		startTime = System.currentTimeMillis();
 		// update statistics
 		List<Statistics> statistics = chicaService.getStatByFormInstance(
-				formInstanceId, dsstype, locationId);
+				formInstanceId, formName, locationId);
 
 		for (Statistics currStat : statistics)
 		{

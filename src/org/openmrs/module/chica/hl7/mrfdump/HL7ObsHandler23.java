@@ -12,10 +12,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.openmrs.Concept;
+import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -377,15 +379,8 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 			intObxValueID = Integer.parseInt(stConceptId);
 		} catch (NumberFormatException ne)
 		{
-			logger
-					.warn("PARSE WARNING: Unable to parse integer from CE observation value id string - Invalid value in OBX  = "
-							+ stConceptId
-							+ " for patient MRN "
-							+ pIdentifierString
-							+ " \n concept question id : "
-							+ conceptQuestionId
-							+ " concept name: "
-							+ conceptName + " Check coded value.");
+			intObxValueID = 1;
+			conceptName = stConceptId;
 		}
 
 		// Success conversion to int
@@ -440,6 +435,8 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 	
 	public ArrayList<Obs> getObs(Message message) throws HL7Exception
 	{
+		ConceptService conceptService = Context.getConceptService();
+
 		PipeParser parser = new PipeParser();
 		parser.setValidationContext(new NoValidation());
 		PatientHandler patientHandler = new PatientHandler();
@@ -486,6 +483,35 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 						Obs obs = hl7SocketHandler.CreateObservation(null,
 								false, message, i, j, existingLoc,
 								resultPatient);
+						
+						Concept obsConcept = obs.getConcept();
+						//if the concept datatype is null,
+						//infer the type from the data
+						if(obsConcept.getDatatype() == null){
+							if(obs.getValueCoded() != null){
+								ConceptDatatype conceptDatatype = 
+									conceptService.getConceptDatatypeByName("Coded");
+								obsConcept.setDatatype(conceptDatatype);
+							}
+							
+							if(obs.getValueNumeric() != null){
+								ConceptDatatype conceptDatatype = 
+									conceptService.getConceptDatatypeByName("Numeric");
+								obsConcept.setDatatype(conceptDatatype);
+							}
+							
+							if(obs.getValueDatetime() != null){
+								ConceptDatatype conceptDatatype = 
+									conceptService.getConceptDatatypeByName("Datetime");
+								obsConcept.setDatatype(conceptDatatype);
+							}
+							
+							if(obs.getValueText() != null){
+								ConceptDatatype conceptDatatype = 
+									conceptService.getConceptDatatypeByName("Text");
+								obsConcept.setDatatype(conceptDatatype);
+							}
+						}
 						allObs.add(obs);
 					}
 				}

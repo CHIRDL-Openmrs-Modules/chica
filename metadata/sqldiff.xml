@@ -209,7 +209,6 @@ CREATE TABLE chica_statistics (
   KEY stats_fk_obs (obsv_id),
   CONSTRAINT stats_fk_pat FOREIGN KEY (patient_id) REFERENCES patient (patient_id),
   CONSTRAINT stats_fk_rule FOREIGN KEY (rule_id) REFERENCES dss_rule (rule_id),
-  KEY chica_stat_idx_instance (location_id,form_name,form_instance_id),
   KEY chica_stat_idx_encounter (encounter_id,form_name),
   CONSTRAINT stats_fk_encounter FOREIGN KEY (encounter_id) REFERENCES encounter (encounter_id),
   CONSTRAINT stats_fk_obs FOREIGN KEY (obsv_id) REFERENCES obs (obs_id)
@@ -2308,7 +2307,17 @@ VALUES
 INSERT INTO chica_error_category
    (`name`, `description`)
 VALUES
-   ('Form Instance ID Validity', 'Invalid form instance id tags on forms');
+   ('ID Validity', 'Invalid form instance tags on forms');
+
+INSERT INTO chica_error_category
+   (`name`, `description`)
+VALUES
+   ('Hl7 Export', 'Error sending the hl7 export back to Regenstrief');
+
+INSERT INTO chica_error_category
+   (`name`, `description`)
+VALUES
+   ('Support Page', 'A support page was sent from the grease board');
 INSERT INTO atd_state_action
    (`action_name`, `action_description`)
 VALUES
@@ -3136,6 +3145,105 @@ values( (select state_id from atd_state where name='Export POC'),
     insert into chirdlutil_location_tag_attribute (name, description)
 	values( 'PWSTiffConceptMapLocation', 'File containing concept mappings for PWS tiff images');
 	
+	</sql>
+	</diff>
+	<diff>
+		<version>1.4.4</version>
+		<author>Tammy Dugan</author>
+		<date>May 1, 2010</date>
+		<description>
+
+		</description>
+	<sql>	
+		insert into atd_state(name,state_action_id)
+select 'JIT_create', state_action_id from atd_state_action where action_name='PRODUCE FORM INSTANCE';
+
+insert into atd_state(name,state_action_id)
+select 'JIT_printed', state_action_id from atd_state_action where action_name='WAIT FOR PRINT';
+
+insert into atd_state(name,state_action_id)
+select 'JIT_wait_to_scan', state_action_id from atd_state_action where action_name='WAIT FOR SCAN';
+
+insert into atd_state(name,state_action_id)
+select 'JIT_process', state_action_id from atd_state_action where action_name='CONSUME FORM INSTANCE';
+
+insert into atd_state(name,state_action_id)
+select 'JIT_rescan', state_action_id from atd_state_action where action_name='RESCAN';
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='JIT_rescan' and b.name='JIT_process' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='JIT_create' and b.name='JIT_printed' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='JIT_printed' and b.name='JIT_wait_to_scan' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='JIT_wait_to_scan' and b.name='JIT_process' and c.name='chica';
+ 
+ 	insert into atd_state(name) values( 'JIT_FINISHED');
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='JIT_process' and b.name='JIT_FINISHED' and c.name='chica';
+	delete a.* from atd_state_mapping a inner join atd_state b on a.initial_state=b.state_id where b.name='PSF_rescan';
+	INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='PSF_reprint' and b.name='PSF_printed' and c.name='chica';
+
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='PSF_rescan' and b.name='PSF_process' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='PWS_reprint' and b.name='PWS_printed' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (`initial_state`, `next_state`,`program_id`)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='PWS_rescan' and b.name='PWS_process' and c.name='chica';
+ 
+ update atd_state
+set form_name=null
+where name='PSF_rescan';
+
+update atd_state
+set form_name=null
+where name='PWS_rescan';
+
+insert into atd_state(name,state_action_id)
+select 'JIT_reprint', state_action_id from atd_state_action where action_name='REPRINT';
+	
+INSERT INTO atd_form_attribute
+   (`name`, `description`)
+VALUES
+   ('scorableFormConfigFile', 'Configuration file telling how to score values on a form.');
+
+INSERT INTO atd_state
+   (`name`)
+VALUES
+   ('JIT_incomplete');	
+   
+     INSERT INTO chirdlutil_location_attribute(name,description)
+ VALUES ('faxNumber', 'Fax number for the clinic.');
+ 
+ INSERT INTO chirdlutil_location_attribute(name,description)
+ VALUES ('isADHDInterventionLocation', 'Indicates whether a given location is an ADHD intervention site');
 	</sql>
 	</diff>
 </sqldiff>

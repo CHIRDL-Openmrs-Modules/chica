@@ -3,6 +3,8 @@
  */
 package org.openmrs.module.chica.web;
 
+import java.util.ArrayList;
+
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 
@@ -33,7 +35,16 @@ public class PatientRow
 	private String weightPercentile = null;
 	private String heightPercentile = null;
 	private Encounter encounter = null;
+	private boolean reprintStatus = false;
+	private ArrayList<String> printableJits;
 	
+	
+    /**
+     * @return the printableJits
+     */
+    public ArrayList<String> getPrintableJits() {
+    	return this.printableJits;
+    }
 	public Encounter getEncounter()
 	{
 		return this.encounter;
@@ -90,9 +101,6 @@ public class PatientRow
 	public void setAgeAtVisit(String ageAtVisit) {
 		this.ageAtVisit = ageAtVisit;
 	}
-	
-	private boolean reprintStatus = false;
-	
 	
 	/**
 	 * @return the reprintStatus
@@ -235,4 +243,13 @@ public class PatientRow
 	{
 		this.jitID = jitID;
 	}
+	/**
+     * Auto generated method comment
+     * 
+     * @param printableJits
+     */
+    public void setPrintableJits(ArrayList<String> printableJits) {
+	  this.printableJits = printableJits;
+	    
+    }
 }

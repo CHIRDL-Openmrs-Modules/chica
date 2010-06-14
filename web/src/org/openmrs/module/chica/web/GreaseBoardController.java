@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -24,12 +25,15 @@ import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.StateManager;
+import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.hibernateBeans.Program;
 import org.openmrs.module.atd.hibernateBeans.Session;
@@ -39,6 +43,8 @@ import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.validation.BindException;
@@ -90,36 +96,107 @@ public class GreaseBoardController extends SimpleFormController
 			map.put("patientId", patientId);
 			return new ModelAndView(new RedirectView("viewEncounter.form"),map);
 		}
+		
+		String patientIdString = request.getParameter("patientId");
+		Integer patientId = null;
+		try
+		{
+			if(patientIdString != null){
+				patientId = Integer.parseInt(patientIdString);
+			}
+		} catch (Exception e)
+		{
+		}
+		String sessionIdString = request.getParameter("sessionId");
+		Integer sessionId = null;
+		try
+		{
+			if(sessionIdString != null){
+				sessionId = Integer.parseInt(sessionIdString);
+			}
+		} catch (Exception e)
+		{
+		}
+		
+		//Initiate an ADHD WU for the patient
+		if (optionsString != null && optionsString.equalsIgnoreCase("ADHD WU")) {
+			PatientService patientService = Context.getPatientService();
+			Patient patient = patientService.getPatient(patientId);
+			ConceptService conceptService = Context.getConceptService();
+			Concept currConcept = conceptService.getConceptByName("CHICA_ADHD_SX");
+			Session session = atdService.getSession(sessionId);
+			Integer encounterId = session.getEncounterId();
+			org.openmrs.module.chica.util.Util.saveObs(patient, currConcept, encounterId, 
+				"workup_initiated", null,null, null);
+			
+			LogicService logicService = Context.getLogicService();
+			
+			//print the ADHD parent form
+			User user = Context.getUserContext().getAuthenticatedUser();
+			String locationString = user.getUserProperty("location");
+			String locationTags = user.getUserProperty("locationTags");
+			LocationService locationService = Context.getLocationService();
+			
+			Integer locationId = null;
+			Location location = null;
+			if(locationString != null){
+				location = locationService.getLocation(locationString);
+				if(location != null){
+					locationId = location.getLocationId();
+				}
+			}
+			
+			Integer locationTagId = null;
+			if(locationTags != null&location!=null){
+				StringTokenizer tokenizer = new StringTokenizer(locationTags,",");
+				while(tokenizer.hasMoreTokens()){
+					String locationTagName = tokenizer.nextToken();
+					locationTagName = locationTagName.trim();
+					Set<LocationTag> tags = location.getTags();
+					for(LocationTag tag:tags){
+						if(tag.getTag().equalsIgnoreCase(locationTagName)){
+							locationTagId = tag.getLocationTagId();
+						}
+					}
+				}
+				
+			}
+			//print the ADHD parent form
+			Map<String, Object> parameters = new HashMap<String,Object>();
+			parameters.put("sessionId",sessionId);
+			parameters.put("locationTagId",locationTagId); 
+			FormInstance formInstance = new FormInstance();
+			formInstance.setLocationId(locationId);
+			parameters.put("formInstance",formInstance);
+			parameters.put("param1","ADHD P");
+			logicService.eval(patient, "CREATE_JIT",parameters);
+			
+			//print the ADHD Spanish parent form
+			parameters = new HashMap<String,Object>();
+			parameters.put("sessionId",sessionId);
+			parameters.put("locationTagId",locationTagId); 
+			formInstance = new FormInstance();
+			formInstance.setLocationId(locationId);
+			parameters.put("formInstance",formInstance);
+			parameters.put("param1","ADHD PS");
+			logicService.eval(patient, "CREATE_JIT",parameters);
+			
+			//print the ADHD teacher form
+			parameters = new HashMap<String,Object>();
+			parameters.put("sessionId",sessionId);
+			parameters.put("locationTagId",locationTagId); 
+			formInstance = new FormInstance();
+			formInstance.setLocationId(locationId);
+			parameters.put("formInstance",formInstance);
+			parameters.put("param1","ADHD T");
+			logicService.eval(patient, "CREATE_JIT",parameters);
+		}
 
 		if (optionsString != null && optionsString.startsWith("Print"))
 		{
-			String patientIdString = request.getParameter("patientId");
-			Integer patientId = null;
-			try
-			{
-				patientId = Integer.parseInt(patientIdString);
-			} catch (Exception e)
-			{
-			}
-			String sessionIdString = request.getParameter("sessionId");
-			Integer sessionId = null;
-			try
-			{
-				sessionId = Integer.parseInt(sessionIdString);
-			} catch (Exception e)
-			{
-			}
-			String formName = null;
-
-			if (optionsString.equalsIgnoreCase("Print PSF"))
-			{
-				formName = "PSF";
-			}
-
-			if (optionsString.equalsIgnoreCase("Print PWS"))
-			{
-				formName = "PWS";
-			}
+			String formName = optionsString.replaceAll("Print", "");
+			formName = formName.trim();
+			
 
 			if (patientId != null && sessionId != null && formName != null)
 			{
@@ -144,17 +221,27 @@ public class GreaseBoardController extends SimpleFormController
 				
 				//Don't generate a PSF with the print button on the greaseboard
 				//We don't ever want more than one unique PSF
+				
+				String stateName = null;
+				
+				if(formName.equalsIgnoreCase("PSF")||
+						formName.equalsIgnoreCase("PWS"))
+				{
+					stateName = formName+"_reprint";
+				}else{
+					stateName = "JIT_reprint";
+				}
+				
 				if (formName.equalsIgnoreCase("PSF"))
 				{
 					currState = atdService
-							.getStateByName(formName + "_reprint");
+							.getStateByName(stateName);
 				} else
 				{
 					// reprint if the state exists
 					if (patientStateProduce != null)
 					{
-						currState = atdService.getStateByName(formName
-								+ "_reprint");
+						currState = atdService.getStateByName(stateName);
 					} else
 					{
 						// create for the first time if it does not exist
@@ -162,6 +249,9 @@ public class GreaseBoardController extends SimpleFormController
 								+ formName);
 					}
 				}
+				
+				HashMap<String,Object> actionParameters = new HashMap<String,Object>();
+				actionParameters.put("formName", formName);
 
 				if (currState != null)
 				{
@@ -169,7 +259,7 @@ public class GreaseBoardController extends SimpleFormController
 					PatientService patientService = Context.getPatientService();
 					Patient patient = patientService.getPatient(patientId);
 
-					StateManager.runState(patient, sessionId, currState,null,
+					StateManager.runState(patient, sessionId, currState,actionParameters,
 							patientState.getLocationTagId(),
 							patientState.getLocationId(),
 							ChicaStateActionHandler.getInstance());
@@ -390,6 +480,25 @@ public class GreaseBoardController extends SimpleFormController
 				}
 				getStatus(state, row, sessionId,currState);
 				
+				ArrayList<String> printableJits = new ArrayList<String>();
+				State createJitState = atdService.getStateByName("JIT_create");
+				List<PatientState> jitStates = 
+					atdService.getPatientStateByEncounterState(encounterId, createJitState.getStateId());
+				
+				for(PatientState jitState:jitStates){
+					FormService formService = Context.getFormService();
+					Integer formId = jitState.getFormId();
+					
+					if (formId != null) {
+						Form form = formService.getForm(formId);
+						String jitFormName = form.getName();
+						//only display ADHD forms for reprint
+						if(jitFormName.startsWith("ADHD")){
+							printableJits.add("Print " + jitFormName);
+						}
+					}
+				}
+				row.setPrintableJits(printableJits);
 				rows.add(row);
 			}
 			
@@ -403,7 +512,8 @@ public class GreaseBoardController extends SimpleFormController
 			map.put("refreshPeriod", adminService.getGlobalProperty(
 					"chica.greaseBoardRefresh"));
 		
-			
+			boolean isADHDInterventionLocation = isADHDInterventionLocation(locationId);
+			map.put("isADHDInterventionLocation", isADHDInterventionLocation);
 		}catch(UnexpectedRollbackException ex){
 			//ignore this exception since it happens with an APIAuthenticationException
 		}catch(APIAuthenticationException ex2){
@@ -419,87 +529,114 @@ public class GreaseBoardController extends SimpleFormController
 
 	private void getStatus(State state, PatientRow row, Integer sessionId,PatientState currState)
 	{
+		//see if an incomplete state exists for the JIT
+		ATDService atdService = Context.getService(ATDService.class);
+		State jitIncompleteState = atdService.getStateByName("JIT_incomplete");
+		FormInstance formInstance = currState.getFormInstance();
+		Integer formId = null;
+		String formName = null;
+		FormService formService = Context.getFormService();
+
+		if(formInstance != null){
+			formId = formInstance.getFormId();
+			formName = formService.getForm(formId).getName();
+		}
 		
-		String status = state.getName();
-		if (status.equals("CHECKIN"))
+		List<PatientState> patientStates = atdService.getPatientStateBySessionState(sessionId,jitIncompleteState.getStateId());
+		
+		//color the row a different color if there is an incomplete JIT state
+		if (patientStates != null) {
+			for (PatientState patientState : patientStates) {
+				if (patientState.getEndTime() == null) {
+					row.setStatusColor(WAIT_COLOR);
+					formId = patientState.getFormInstance().getFormId();
+					formName = formService.getForm(formId).getName();
+					row.setStatus(formName + " incomplete");
+					return;
+				}
+			}
+		}
+		
+		String stateName = state.getName();
+		if (stateName.equals("CHECKIN"))
 		{
 			row.setStatusColor(WAIT_COLOR);
 			row.setStatus("Arrived");
 			return;
 		}
-		if (status.equals("QUERY KITE PWS")||
-				status.equals("QUERY KITE PSF")||
-				status.equals("QUERY KITE Alias"))
+		if (stateName.equals("QUERY KITE PWS")||
+				stateName.equals("QUERY KITE PSF")||
+				stateName.equals("QUERY KITE Alias"))
 		{
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Searching Patient Data...");
 			return;
 		}
-		if (status.equals("PSF_create") || status.equals("Randomize"))
+		if (stateName.equals("PSF_create") || stateName.equals("Randomize"))
 		{
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Creating PSF...");
 			return;
 		}
-		if (status.equals("PSF_printed"))
+		if (stateName.equals("PSF_printed"))
 		{
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Printing PSF...");
 			return;
 		}
-		if (status.equals("PSF_wait_to_scan"))
+		if (stateName.equals("PSF_wait_to_scan"))
 		{
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PSF Ready");
 			return;
 		}
-		if (status.equals("PSF_process"))
+		if (stateName.equals("PSF_process"))
 		{
 			row.setStatusColor(WAIT_COLOR);
 			row.setStatus("PSF Scanned");
 			return;
 		}
-		if (status.equals("PWS_create"))
+		if (stateName.equals("PWS_create"))
 		{
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Creating PWS...");
 			return;
 		}
-		if (status.equals("PWS_printed"))
+		if (stateName.equals("PWS_printed"))
 		{
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Printing PWS...");
 			return;
 		}
-		if (status.equals("PWS_wait_to_scan"))
+		if (stateName.equals("PWS_wait_to_scan"))
 		{
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PWS Ready");
 			return;
 		}
-		if (status.equals("PWS_process"))
+		if (stateName.equals("PWS_process"))
 		{
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PWS Scanned");
 			return;
 		}
-		if (status.equals("FINISHED"))
+		if (stateName.equals("FINISHED"))
 		{
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("Gone");
 			return;
 		}
-		if (status.equals("ErrorState")){
+		if (stateName.equals("ErrorState")){
 			row.setStatusColor(WAIT_COLOR);
 			row.setStatus("Error. Contact support");
 		}
 		
-		if (status.equals("PSF_reprint")){
+		if (stateName.equals("PSF_reprint")){
 			row.setStatusColor(PSF_REPRINT_COLOR);
 			row.setStatus("PSF reprint");
 		}
 		
-		if (status.equals("PWS_reprint")){
+		if (stateName.equals("PWS_reprint")){
 			row.setStatusColor(PWS_REPRINT_COLOR);
 			row.setStatus("PWS reprint");
 		}
@@ -507,30 +644,20 @@ public class GreaseBoardController extends SimpleFormController
 		//PSF_rescan and PWS_rescan states are currently not given
 		//a status on the greaseboard
 		
-		ChicaService chicaService = Context.getService(ChicaService.class);
-
-		if (status.equals("JIT"))
-		{
-			row.setStatusColor(PROCESSING_COLOR);
-			PatientState prevState = chicaService.getPrevProducePatientState(sessionId, currState.getPatientStateId());
-			if (prevState != null&&prevState.getFormInstance()!=null)
-			{
-				FormService formService = Context.getFormService();
-				String formName = "";
-				if(prevState.getFormInstance().getFormId() != null)
-				{
-					Form form = formService.getForm(prevState.getFormInstance().getFormId());
-					if(form != null){
-						formName = form.getName();
-					}
-				}
-				
-				row.setStatus("Creating "+formName+" JIT...");
-				
-			}
-		}
 	}
 	
-	
-	
+	private boolean isADHDInterventionLocation(Integer locationId) {
+		String locationAttributeName = "isADHDInterventionLocation";
+		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		
+		LocationAttributeValue locationAttributeValue = chirdlUtilService.getLocationAttributeValue(locationId,
+		    locationAttributeName);
+		if (locationAttributeValue != null) {
+			String interventionSiteString = locationAttributeValue.getValue();
+			if (interventionSiteString.equalsIgnoreCase("true")) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

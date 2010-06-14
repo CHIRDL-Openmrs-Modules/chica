@@ -21,7 +21,7 @@ import org.openmrs.module.atd.hibernateBeans.StateAction;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
-import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 
 /**
@@ -39,7 +39,6 @@ public class Reprint implements ProcessStateAction
 			PatientState patientState, HashMap<String, Object> parameters)
 	{
 		//lookup the patient again to avoid lazy initialization errors
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
 
 		PatientService patientService = Context.getPatientService();
@@ -55,8 +54,16 @@ public class Reprint implements ProcessStateAction
 		Session session = atdService.getSession(sessionId);
 		Integer encounterId = session.getEncounterId();
 		Integer locationId = patientState.getLocationId();
+		
+		String formName = null;
+		if(parameters != null){
+			formName = (String) parameters.get("formName");
+		}
+		if(formName == null){
+			formName = patientState.getState().getFormName();
+		}
 		LocationTagAttributeValue locTagAttrValue = 
-			chirdlUtilService.getLocationTagAttributeValue(locationTagId, patientState.getState().getFormName(), locationId);
+			chirdlUtilService.getLocationTagAttributeValue(locationTagId, formName, locationId);
 		
 		Integer formId = null;
 		if(locTagAttrValue != null){
@@ -76,7 +83,7 @@ public class Reprint implements ProcessStateAction
 			State currState = atdService.getStateByName("ErrorState");
 			atdService.addPatientState(patient,
 					currState, sessionId,locationTagId,locationId);
-			log.error(currState.getFormName()+
+			log.error(formName+
 					" locationTagAttribute does not exist for locationTagId: "+
 					locationTagId+" locationId: "+locationId);
 			return;
@@ -105,6 +112,9 @@ public class Reprint implements ProcessStateAction
 								fileName.lastIndexOf("."))
 								+ ".xml");
 						StateManager.endState(patientState);
+						State currState = patientState.getState();
+						ChicaStateActionHandler.changeState(patient, sessionId, currState,
+							stateAction,parameters,locationTagId,locationId);
 						break;
 					}
 				}

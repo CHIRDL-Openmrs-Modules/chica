@@ -66,7 +66,7 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 				formInstance.setFormInstanceId(formInstanceId);
 				formInstance.setLocationId(locationId);
 				atdService.produce(patient, formInstance, output,
-						dssManager, encounterId, null, null, true,
+						dssManager, encounterId, null, null,
 						locationTagId, sessionId);
 			
 		} catch (Exception e)

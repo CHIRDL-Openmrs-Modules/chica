@@ -1,0 +1,44 @@
+Maintenance:
+	Title:		VanderbiltFollowUpADHD_PARENT;;
+	Filename:		VanderbiltFollowUpADHD_PARENT;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This question will fire if the system recognizes a prior problem with breast feeding.  It will allow for follow-up.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+
+If (mode = CONSUME) then
+
+checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
+scoreJit := CALL ScoreJit;
+
+endif
+;;
+Action:
+;;
+Age_Min: 0 years;;
+Age_Max: 20 years;;
+end:

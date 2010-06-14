@@ -62,6 +62,7 @@ import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.xmlBeans.Field;
 import org.openmrs.module.chica.xmlBeans.Language;
 import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs;
@@ -73,9 +74,7 @@ import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public class ChicaServiceImpl implements ChicaService
 {
 
@@ -231,10 +230,12 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("storeObs",false);
 			dssService.loadRule("DDST", false);
 			dssService.loadRule("LookupBPcentile", false);
+			dssService.loadRule("ScoreJit", false);
+			dssService.loadRule("CheckIncompleteScoringJit", false);
 
 			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
-			ArrayList<String> languageFieldsToConsume = 
+			HashMap<String,Field> languageFieldsToConsume = 
 				saveAnswers(fieldMap, formInstance,encounterId,patient);
 			FormService formService = Context.getFormService();
 			Form databaseForm = formService.getForm(formId);
@@ -268,7 +269,7 @@ public class ChicaServiceImpl implements ChicaService
 									// consume only one side of questions for
 									// PSF
 									if (languageFieldsToConsume
-											.contains(fieldName))
+											.get(fieldName)!=null)
 									{
 										fieldsToConsume.add(currField);
 									}
@@ -306,7 +307,7 @@ public class ChicaServiceImpl implements ChicaService
 	}
 
 	private void populateFieldNameArrays(
-			HashMap<String, ArrayList<String>> languages,
+			HashMap<String, HashMap<String, Field>> languages,
 			ArrayList<String> pwsAnswerChoices,
 			ArrayList<String> pwsAnswerChoiceErr)
 	{
@@ -373,34 +374,10 @@ public class ChicaServiceImpl implements ChicaService
 		}
 
 		LanguageAnswers languageAnswers = statsConfig.getLanguageAnswers();
-
-		if (languageAnswers != null)
-		{
-			ArrayList<Language> xmlLanguages = languageAnswers.getLanguages();
-
-			for (Language currLanguage : xmlLanguages)
-			{
-				String languageName = currLanguage.getName();
-				if (languageName != null)
-				{
-					ArrayList<String> currLanguageFields = new ArrayList<String>();
-					languages.put(languageName, currLanguageFields);
-
-					ArrayList<org.openmrs.module.chica.xmlBeans.Field> fields = currLanguage
-							.getFields();
-					for (org.openmrs.module.chica.xmlBeans.Field currField : fields)
-					{
-						if (currField.getId() != null)
-						{
-							currLanguageFields.add(currField.getId());
-						}
-					}
-				}
-			}
-		}
+		org.openmrs.module.chica.util.Util.populateFieldNameArrays(languages, languageAnswers);
 	}
 
-	private ArrayList<String> saveAnswers(
+	private HashMap<String, Field> saveAnswers(
 			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
 			FormInstance formInstance, int encounterId, Patient patient)
 	{
@@ -420,7 +397,7 @@ public class ChicaServiceImpl implements ChicaService
 		ArrayList<String> pwsAnswerChoices = new ArrayList<String>();
 		ArrayList<String> pwsAnswerChoiceErr = new ArrayList<String>();
 
-		HashMap<String, ArrayList<String>> languageToFieldnames = new HashMap<String, ArrayList<String>>();
+		HashMap<String, HashMap<String, Field>> languageToFieldnames = new HashMap<String, HashMap<String, Field>>();
 
 		this.populateFieldNameArrays(languageToFieldnames, pwsAnswerChoices,
 				pwsAnswerChoiceErr);
@@ -475,7 +452,7 @@ public class ChicaServiceImpl implements ChicaService
 							for (String currLanguage : languageToFieldnames
 									.keySet())
 							{
-								ArrayList<String> currLanguageArray = languageToFieldnames
+								HashMap<String, Field> currLanguageArray = languageToFieldnames
 										.get(currLanguage);
 								HashMap<Integer, String> answers = languageToAnswers
 										.get(currLanguage);
@@ -486,9 +463,9 @@ public class ChicaServiceImpl implements ChicaService
 									languageToAnswers
 											.put(currLanguage, answers);
 								}
-
-								if (currLanguageArray.contains(currField
-										.getField().getName()))
+						
+								if (currLanguageArray.get(currField
+										.getField().getName())!= null)
 								{
 									answers.put(ruleId, answer);
 									if (!answer.equalsIgnoreCase("NoAnswer"))
@@ -561,7 +538,7 @@ public class ChicaServiceImpl implements ChicaService
 			}
 		}
 
-		String languageResponse = null;
+		String languageResponse = "English";
 		if (maxNumAnswers > 0)
 		{
 			languageResponse = maxLanguage;
@@ -694,6 +671,10 @@ public class ChicaServiceImpl implements ChicaService
 	        dssService.loadRule("storeObs",false);
 	        dssService.loadRule("DDST", false);
 	        dssService.loadRule("LookupBPcentile", false);
+			dssService.loadRule("ScoreJit", false);
+			dssService.loadRule("CheckIncompleteScoringJit", false);
+
+
         }
         catch (Exception e) {
 	        log.error("load rule failed", e);
@@ -702,7 +683,7 @@ public class ChicaServiceImpl implements ChicaService
 
 		FormInstance formInstance = state.getFormInstance();
 		atdService.produce(patient, formInstance, output, dssManager,
-				encounterId, baseParameters, null,true,state.getLocationTagId(),sessionId);
+				encounterId, baseParameters, null,state.getLocationTagId(),sessionId);
 		startTime = System.currentTimeMillis();
 		Integer formInstanceId = formInstance.getFormInstanceId();
 		Integer locationId = formInstance.getLocationId();
@@ -1134,7 +1115,6 @@ public class ChicaServiceImpl implements ChicaService
 
 		public void saveChicaHL7Export(ChicaHL7Export export) {
 
-			ATDService atdService = Context.getService(ATDService.class);
 			getChicaDAO().saveChicaHL7Export(export);
 			
 		}
@@ -1150,7 +1130,6 @@ public class ChicaServiceImpl implements ChicaService
 		
 		public List<String> getPrinterStations(Location location){
 			String locationTagAttributeName = "ActivePrinterLocation";
-			ChicaService chicaService = Context.getService(ChicaService.class);
 			ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
 
 			Set<LocationTag> tags = location.getTags();
