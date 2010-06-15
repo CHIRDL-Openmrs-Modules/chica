@@ -243,6 +243,10 @@ public class CheckIncompleteScoringJit implements Rule {
 						PatientState patientState = atdService.addPatientState(patient, currState, sessionId, locationTagId, locationId);
 						patientState.setFormInstance(formInstance);
 						atdService.updatePatientState(patientState);
+					}else{
+						//update the start time if the state already exists
+						openJITIncompleteState.setStartTime(new java.util.Date());
+						atdService.updatePatientState(openJITIncompleteState);
 					}
 				} else {
 					//if a JIT_incomplete state exists, make sure the state is ended
