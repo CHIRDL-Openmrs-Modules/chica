@@ -843,7 +843,7 @@ public class HL7Exporter extends AbstractTask {
 			if (formDir == null || formDir.equals("")) {
 				return false;
 			}
-			filename = "_" + formLocationId + "-" + formId + "-" + formInstanceId + "_";
+			filename = formLocationId + "-" + formId + "-" + formInstanceId;
 			
 			//This FilenameFilter will get ALL tifs starting with the filename
 			//including of rescan versions nnn_1.tif, nnn_2.tif, etc
@@ -870,7 +870,7 @@ public class HL7Exporter extends AbstractTask {
 			if (it.hasNext()) {
 				rmrsName = it.next();
 			}
-
+			
 			Concept rmrsConcept = getRMRSConceptByName(rmrsName);
 			if (rmrsConcept != null) {
 

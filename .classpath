@@ -143,5 +143,6 @@
 	<classpathentry kind="lib" path="lib-common/dss-2.27.12.jar"/>
 	<classpathentry kind="lib" path="lib-common/rgccd-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.3.21.jar"/>
+	<classpathentry kind="lib" path="lib-common/chirdlutil-1.0.12.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
