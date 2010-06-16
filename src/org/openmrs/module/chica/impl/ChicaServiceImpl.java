@@ -232,6 +232,7 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("LookupBPcentile", false);
 			dssService.loadRule("ScoreJit", false);
 			dssService.loadRule("CheckIncompleteScoringJit", false);
+			dssService.loadRule("VanderbiltParentADHD", false);
 
 			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
@@ -673,7 +674,7 @@ public class ChicaServiceImpl implements ChicaService
 	        dssService.loadRule("LookupBPcentile", false);
 			dssService.loadRule("ScoreJit", false);
 			dssService.loadRule("CheckIncompleteScoringJit", false);
-
+			dssService.loadRule("VanderbiltParentADHD", false);
 
         }
         catch (Exception e) {

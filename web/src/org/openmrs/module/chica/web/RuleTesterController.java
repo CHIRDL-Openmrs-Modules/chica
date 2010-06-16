@@ -106,6 +106,7 @@ public class RuleTesterController extends SimpleFormController
 						dssService.loadRule("LookupBPcentile", false);
 						dssService.loadRule("ScoreJit", false);
 						dssService.loadRule("CheckIncompleteScoringJit", false);
+						dssService.loadRule("VanderbiltParentADHD", false);
 
 						Result result = dssService.runRule(patient, currRule,
 								null, null);
