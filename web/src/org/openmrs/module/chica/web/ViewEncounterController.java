@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,16 +16,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Form;
-import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
@@ -76,14 +74,9 @@ public class ViewEncounterController extends SimpleFormController {
 		} catch (Exception e) {
 		}
 
-		String sessionIdString = request.getParameter("sessionId");
 		String encounterIdString = request.getParameter("encounterId");
-		Integer sessionId = null;
 		Integer encounterId = null;
 		try {
-			if (sessionIdString != null && !sessionIdString.equals("")) {
-				sessionId = Integer.parseInt(sessionIdString);
-			}
 			if (encounterIdString != null && !encounterIdString.equals("")) {
 				encounterId = Integer.parseInt(encounterIdString);
 			}
@@ -95,15 +88,127 @@ public class ViewEncounterController extends SimpleFormController {
 			if (patientId != null) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("encounterId", encounterId);
-				map.put("sessionId", sessionId);
-				map.put("psfFormInstanceId", request.getParameter("psfFormInstanceId"));
-				map.put("pwsFormInstanceId", request.getParameter("pwsFormInstanceId"));
-				map.put("psfFormId", request.getParameter("psfFormId"));
-				map.put("pwsFormId", request.getParameter("pwsFormId"));
-				map.put("psfLocationId", request.getParameter("psfLocationId"));
-				map.put("pwsLocationId", request.getParameter("pwsLocationId"));
 				map.put("patientId", patientIdString);
-				return new ModelAndView(new RedirectView("displayTiff.form"),
+				StringTokenizer tokenizer = new StringTokenizer(optionsString,"_");
+				Integer locationId = null;
+				Integer formId = null;
+				Integer formInstanceId = null;
+				if(tokenizer.hasMoreTokens()){
+					try
+					{
+						locationId = Integer.parseInt(tokenizer.nextToken());
+					} catch (NumberFormatException e)
+					{
+					}
+				}
+				
+				if(tokenizer.hasMoreTokens()){
+					try
+					{
+						formId = Integer.parseInt(tokenizer.nextToken());
+					} catch (NumberFormatException e)
+					{
+					}
+				}
+				
+				if(tokenizer.hasMoreTokens()){
+					try
+					{
+						formInstanceId = Integer.parseInt(tokenizer.nextToken());
+					} catch (NumberFormatException e)
+					{
+					}
+				}
+				
+				FormService formService = Context.getFormService();
+				Form form = formService.getForm(formId);
+				String formName = form.getName();
+				ATDService atdService = Context.getService(ATDService.class);
+				Integer leftImageLocationId = null;
+				Integer leftImageFormId = null;
+				Integer leftImageFormInstanceId = null;
+				
+				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS")) {
+					leftImageLocationId = locationId;
+					leftImageFormId = formId;
+					leftImageFormInstanceId = formInstanceId;
+					
+				} else {
+					ArrayList<String> leftNames = new ArrayList<String>();
+					
+					if(formName.equals("ADHD T")){
+						leftNames.add("ADHD P");
+						leftNames.add("ADHD PS");
+					}
+					
+					if(formName.equals("PWS")){
+						leftNames.add("PSF");
+					}
+					
+					for (String leftName : leftNames) {
+						List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(leftName,
+						    encounterId);
+						if (patientStates != null && !patientStates.isEmpty()) {
+							
+							for (PatientState currState : patientStates) {
+								if (currState.getEndTime() != null) {
+									leftImageLocationId = currState.getLocationId();
+									leftImageFormId = currState.getFormId();
+									leftImageFormInstanceId = currState.getFormInstanceId();
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+				Integer rightImageLocationId = null;
+				Integer rightImageFormId = null;
+				Integer rightImageFormInstanceId = null;
+				
+				if (formName.equals("PWS") || formName.equals("ADHD T")) {
+					rightImageLocationId = locationId;
+					rightImageFormId = formId;
+					rightImageFormInstanceId = formInstanceId;
+					
+				} else {
+					
+					String rightName = null;
+					
+					if(formName.equals("ADHD P")){
+						rightName = "ADHD T";
+					}
+					
+					if(formName.equals("ADHD PS")){
+						rightName = "ADHD T";
+					}
+					
+					if(formName.equals("PSF")){
+						rightName = "PWS";
+					}
+					
+					List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(rightName, encounterId);
+					if (patientStates != null && !patientStates.isEmpty()) {
+						
+						for (PatientState currState : patientStates) {
+							if (currState.getEndTime() != null) {
+								rightImageLocationId = currState.getLocationId();
+								rightImageFormId = currState.getFormId();
+								rightImageFormInstanceId = currState.getFormInstanceId();
+								break;
+							}
+						}
+					}
+				}
+							
+					map.put("rightImageLocationId", rightImageLocationId);
+					map.put("rightImageFormId", rightImageFormId);
+					map.put("rightImageFormInstanceId", rightImageFormInstanceId);
+					map.put("leftImageLocationId", leftImageLocationId);
+					map.put("leftImageFormId", leftImageFormId);
+					map.put("leftImageFormInstanceId", leftImageFormInstanceId);
+
+					return new ModelAndView(new RedirectView("displayTiff.form"),
 						map);
 			}
 
@@ -119,6 +224,7 @@ public class ViewEncounterController extends SimpleFormController {
 		PatientService patientService = Context
 				.getService(PatientService.class);
 		Map<String, Object> map = new HashMap<String, Object>();
+		HashMap<Integer,String> formNameMap = new HashMap<Integer,String>();
 
 		try {
 
@@ -207,29 +313,36 @@ public class ViewEncounterController extends SimpleFormController {
 
 				// psf, pws form ids
 				
+				ArrayList<String> formsToProcess = new ArrayList<String>();
+				formsToProcess.add("PSF");
+				formsToProcess.add("PWS");
+				formsToProcess.add("ADHD P");
+				formsToProcess.add("ADHD PS");
+				formsToProcess.add("ADHD T");
 				
-				List<PatientState> psfPatientStates = atdService.getPatientStatesWithFormInstances("PSF", encounterId);
-				if (psfPatientStates != null && !psfPatientStates.isEmpty()){
+				for (String formName : formsToProcess) {
 					
-					for(PatientState currState:psfPatientStates){
-						if(currState.getEndTime()!=null){
-							row.setPsfId(currState.getFormInstance());
-							break;
+					List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(formName, encounterId);
+					if (patientStates != null && !patientStates.isEmpty()) {
+						
+						for (PatientState currState : patientStates) {
+							if (currState.getEndTime() != null) {
+							    if(formName.equals("PSF")){
+							    	row.setPsfId(currState.getFormInstance());
+							    }
+							    if(formName.equals("PWS")){
+							    	row.setPwsId(currState.getFormInstance());
+							    }
+								row.addFormInstance(currState.getFormInstance());
+								formNameMap.put(currState.getFormId(), formName);
+								break;
+							}
 						}
 					}
 				}
+			
 				
-				List<PatientState> pwsPatientStates = atdService.getPatientStatesWithFormInstances("PWS", encounterId);
-				if (pwsPatientStates != null && !pwsPatientStates.isEmpty()){
-					
-					for(PatientState currState:pwsPatientStates){
-						if(currState.getEndTime()!=null){
-							row.setPwsId(currState.getFormInstance());
-							break;
-						}
-					}
-				}
-				
+				//get CHICA 1 PSF and PWS ids
 				Chica1Appointment chica1Appt = chicaService
 					.getChica1AppointmentByEncounterId(encounterId);
 				
@@ -253,6 +366,8 @@ public class ViewEncounterController extends SimpleFormController {
 						psfFormInstance.setFormId(formId);
 						psfFormInstance.setLocationId(locationId);
 						row.setPsfId(psfFormInstance);
+						formNameMap.put(formId, "PSF");
+						row.addFormInstance(psfFormInstance);
 					}
 					
 					if(pwsId != null){
@@ -267,6 +382,8 @@ public class ViewEncounterController extends SimpleFormController {
 						pwsFormInstance.setFormId(formId);
 						pwsFormInstance.setLocationId(locationId);
 						row.setPwsId(pwsFormInstance);
+						formNameMap.put(formId, "PWS");
+						row.addFormInstance(pwsFormInstance);
 					}
 				}
 
@@ -283,6 +400,7 @@ public class ViewEncounterController extends SimpleFormController {
 			}
 
 			map.put("patientRows", rows);
+			map.put("formNameMap",formNameMap);
 
 		} catch (UnexpectedRollbackException ex) {
 			// ignore this exception since it happens with an

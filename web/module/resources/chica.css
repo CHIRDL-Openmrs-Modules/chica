@@ -225,12 +225,12 @@ border-color: black;
 height:100%;
 }
 
-.displayPSFTiffHeaderSegment{
+.displayLeftTiffHeaderSegment{
 text-align:left; 
 font-size: 20px;
 }
 
-.displayPWStiffHeaderSegment{
+.displayRighttiffHeaderSegment{
 text-align:center; 
 font-size: 20px;
 }

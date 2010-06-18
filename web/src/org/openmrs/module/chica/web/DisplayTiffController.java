@@ -1,8 +1,9 @@
 package org.openmrs.module.chica.web;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,20 +12,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.State;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.FileDateComparator;
+import org.openmrs.module.chirdlutil.util.FileListFilter;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -76,6 +77,58 @@ public class DisplayTiffController extends SimpleFormController {
 		return id;
 	}
 	
+	private void setImageLocation(String defaultImageDirectory,String imageFormIdString,
+	                      String imageLocationIdString,String imageFormInstanceIdString,
+	                      Integer locationTagId, String na,Map map,
+	                      String filenameParameterName){
+		String imageDir = null;
+		String imageFilename = null;
+		
+		Integer imageFormId = parseString(imageFormIdString);
+		Integer imageLocationId = parseString(imageLocationIdString);
+		Integer imageFormInstanceId = parseString(imageFormInstanceIdString);
+		if (imageFormId != null && locationTagId != null && imageLocationId != null) {
+			imageDir = IOUtil.formatDirectoryName(org.openmrs.module.atd.util.Util.getFormAttributeValue(imageFormId,
+			    "imageDirectory", locationTagId, imageLocationId));
+		}
+						
+		if (imageDir != null && !imageDir.equals("") && imageFormInstanceId != null) {
+			// check if dir and file exists
+			imageFilename = imageLocationId + "-" + imageFormId + "-" + imageFormInstanceId;
+			
+			//This FilenameFilter will get ALL tifs starting with the filename
+			//including of rescan versions nnn_1.tif, nnn_2.tif, etc
+			FilenameFilter filtered = new FileListFilter(imageFilename, "tif");
+			File dir = new File(imageDir);
+			File[] files = dir.listFiles(filtered);
+			if (!(files == null || files.length == 0)) {
+				//This FileDateComparator will list in order
+				//with newest file first.
+				Arrays.sort(files, new FileDateComparator());
+				imageFilename = files[0].getPath();
+			}
+			
+			File imagefile = new File(imageFilename);
+			
+			//if the file does not exist, look for the old style file name format
+			if (!imagefile.exists()) {
+				imageFilename = imageDir + imageFormInstanceId + ".tif";
+				imagefile = new File(imageFilename);
+				
+				if (!imagefile.exists()) {
+					imageFilename = null;
+				}
+			}
+			
+		}
+		
+		if(imageFilename == null){
+			imageFilename = defaultImageDirectory + na + ".tif";
+		}
+
+		map.put(filenameParameterName, imageFilename);
+	}
+	
 	/* @param request 
 	 * @should return the form id for existing file
 	 * @return
@@ -88,27 +141,34 @@ public class DisplayTiffController extends SimpleFormController {
 
 		try {
 			// default 
-			String pwsDir = defaultImageDirectory;
-			String psfDir = defaultImageDirectory;
 			String na = "notavailable";
-			String psfFilename = null;
-			String pwsFilename = null;
-			
 			String encounterIdString = request.getParameter("encounterId");
 
-			String psfFormInstanceIdString = request
-					.getParameter("psfFormInstanceId");
-			String psfFormIdString = request.getParameter("psfFormId");
-			String psfLocationIdString = request.getParameter("psfLocationId");
-
-			String pwsFormInstanceIdString = request
-					.getParameter("pwsFormInstanceId");
-			String pwsFormIdString = request.getParameter("pwsFormId");
-			String pwsLocationIdString = request.getParameter("pwsLocationId");
-
-			Integer psfFormId = parseString(psfFormIdString);
-			Integer psfLocationId = parseString(psfLocationIdString);
-			Integer psfFormInstanceId = parseString(psfFormInstanceIdString);
+			String leftImageFormInstanceIdString = request
+					.getParameter("leftImageFormInstanceId");
+			String leftImageFormIdString = request.getParameter("leftImageFormId");
+			String leftImageLocationIdString = request.getParameter("leftImageLocationId");
+			Integer leftImageFormId = parseString(leftImageFormIdString);
+			FormService formService = Context.getFormService();
+			Form form = formService.getForm(leftImageFormId);
+			map.put("leftImageForminstance", leftImageFormInstanceIdString);
+			if(form != null){
+				map.put("leftImageFormname", form.getName());
+			}
+			
+			String rightImageFormInstanceIdString = request
+					.getParameter("rightImageFormInstanceId");
+			String rightImageFormIdString = request.getParameter("rightImageFormId");
+			String rightImageLocationIdString = request.getParameter("rightImageLocationId");
+			Integer rightImageFormId = parseString(rightImageFormIdString);
+			form = null;
+			if(rightImageFormId != null){
+				form = formService.getForm(rightImageFormId);
+			}
+			map.put("rightImageForminstance", rightImageFormInstanceIdString);
+			if(form != null){
+				map.put("rightImageFormname", form.getName());
+			}
 			
 			Integer encounterId = null;
 
@@ -165,137 +225,12 @@ public class DisplayTiffController extends SimpleFormController {
 				}
 			}
 
-			if (psfFormId != null && locationTagId != null && psfLocationId != null)
-			{
-				psfDir = IOUtil
-						.formatDirectoryName(org.openmrs.module.atd.util.Util
-								.getFormAttributeValue(psfFormId,
-										"imageDirectory", locationTagId,
-										psfLocationId));
-			}
+			setImageLocation(defaultImageDirectory,leftImageFormIdString,leftImageLocationIdString,
+				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename");
+			
+			setImageLocation(defaultImageDirectory,rightImageFormIdString,rightImageLocationIdString,
+				rightImageFormInstanceIdString,locationTagId,na,map,"rightImagefilename");
 
-			Integer pwsFormId = parseString(pwsFormIdString);
-			Integer pwsLocationId = parseString(pwsLocationIdString);
-			Integer pwsFormInstanceId = parseString(pwsFormInstanceIdString);
-			
-			if (pwsFormId != null && locationTagId != null && pwsLocationId != null)
-			{
-				pwsDir = IOUtil
-						.formatDirectoryName(org.openmrs.module.atd.util.Util
-								.getFormAttributeValue(pwsFormId,
-										"imageDirectory", locationTagId,
-										pwsLocationId));
-			}
-
-			psfFilename = na;
-			pwsFilename = na;
-			
-			ATDService atdService = Context.getService(ATDService.class);
-			State state = atdService.getStateByName("PSF_wait_to_scan");
-			List<PatientState> scanStates = 
-				atdService.getPatientStateByEncounterState(encounterId,
-					state.getStateId());
-			PatientState scanState = null;
-			
-			if(scanStates != null && scanStates.size()>0){
-				scanState = scanStates.get(0);
-			}
-			
-			ChicaService chicaService = Context.getService(ChicaService.class);
-			Chica1Appointment chica1Appt = chicaService
-				.getChica1AppointmentByEncounterId(encounterId);
-			
-			//there are two different possible file name formats
-			//if a completed scan state exists
-			if (scanState!=null&&scanState.getEndTime() != null) {
-				
-				if (psfDir != null && !psfDir.equals("") && psfFormInstanceId != null) {
-					// check if dir and file exists
-					psfFilename = "_" + psfLocationId + "-" + psfFormId + "-" + psfFormInstanceId + "_";
-					File psffile = new File(psfDir + psfFilename + ".tif");
-					if (!psffile.exists()) {
-						psfFilename = psfFormInstanceId.toString();
-						psffile = new File(psfDir + psfFilename + ".tif");
-						
-						if (!psffile.exists()) {
-							psfDir = defaultImageDirectory;
-							psfFilename = na;
-						}
-					}
-				}
-			}else{
-				//if there is no completed scanned state but a chica1Appt row
-				//exists, then this is archival chica1 data and there is only
-				//one possible file format
-				if (chica1Appt != null) {
-					if (psfDir != null && !psfDir.equals("") && psfFormInstanceId != null) {
-						// check if dir and file exists
-						psfFilename = psfFormInstanceId.toString();
-						File psffile = new File(psfDir + psfFilename + ".tif");
-						
-						if (!psffile.exists()) {
-							psfDir = defaultImageDirectory;
-							psfFilename = na;
-						}
-					}
-				}else{
-					psfDir = defaultImageDirectory;
-					psfFilename = na;
-				}
-			}
-			
-			state = atdService.getStateByName("PWS_wait_to_scan");
-			scanStates = 
-				atdService.getPatientStateByEncounterState(encounterId,
-					state.getStateId());
-			scanState = null;
-			
-			if(scanStates != null && scanStates.size()>0){
-				scanState = scanStates.get(0);
-			}
-			//there are two different possible file name formats
-			//if a completed scan state exists
-			if (scanState!=null&&scanState.getEndTime() != null) {
-				
-				if (pwsDir != null && !pwsDir.equals("") && pwsFormInstanceId != null) {
-					// check if dir and file exists
-					pwsFilename = "_" + pwsLocationId + "-" + pwsFormId + "-" + pwsFormInstanceId + "_";
-					File pwsfile = new File(pwsDir + pwsFilename + ".tif");
-					if (!pwsfile.exists()) {
-						pwsFilename = pwsFormInstanceId.toString();
-						pwsfile = new File(pwsDir + pwsFilename + ".tif");
-						
-						if (!pwsfile.exists()) {
-							pwsDir = defaultImageDirectory;
-							pwsFilename = na;
-						}
-					}
-				}
-			}else{
-				//if there is no completed scanned state but a chica1Appt row
-				//exists, then this is archival chica1 data and there is only
-				//one possible file format
-				if (chica1Appt != null) {
-					if (pwsDir != null && !pwsDir.equals("") && pwsFormInstanceId != null) {
-						// check if dir and file exists
-						pwsFilename = pwsFormInstanceId.toString();
-						File pwsfile = new File(pwsDir + pwsFilename + ".tif");
-						
-						if (!pwsfile.exists()) {
-							pwsDir = defaultImageDirectory;
-							pwsFilename = na;
-						}
-					}
-				}else{
-					pwsDir = defaultImageDirectory;
-					pwsFilename = na;
-				}
-			}
-
-			map.put("psfdir", psfDir);
-			map.put("pwsdir", pwsDir);
-			map.put("pwsfilename", pwsFilename);
-			map.put("psffilename", psfFilename);
 			map.put("patientId", request.getParameter("patientId"));
 
 		} catch (UnexpectedRollbackException ex) {

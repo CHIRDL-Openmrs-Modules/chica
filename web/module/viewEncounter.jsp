@@ -73,7 +73,7 @@ function exitForm(){
 <table width="100%" class="viewEncounterHeaderText">
 	<tr  class="chicaBackground" >
 	<td  width = "100%" class="formTitleStyle" ><b>Encounters: ${titleMRN}</b>
-	<br><b>${titleLastName}, ${titleFirstName} &nbsp&nbsp&nbsp DOB: ${titleDOB}</b></td>
+	<br><b>${titleLastName}, ${titleFirstName} &nbsp;&nbsp;&nbsp; DOB: ${titleDOB}</b></td>
 	</tr>
 </table>
 </div>
@@ -88,7 +88,6 @@ function exitForm(){
 	<td class="viewEncounterDoctor"><b>Doctor</b></td>
 	<td class="viewEncounterPSFID"><b>PSF ID</b></td>
 	<td class="viewEncounterPWSID"><b>PWS ID</b></td>
-	<td class="viewEncounterJITID"><b>JIT ID</b></td>
 	<td class="viewEncounterAction"><b>Action</b></td>
 	</tr>
    </table>
@@ -108,24 +107,18 @@ function exitForm(){
 			</td>
 			<td class="viewEncounterPWSID"><c:if test = "${empty row.pwsId.formInstanceId}">N/A</c:if>
 				<c:if test= "${!empty row.pwsId.formInstanceId}">${row.pwsId.formInstanceId}</c:if></td>
-			<td class="viewEncounterJITID"><c:if test = "${empty row.jitID.formInstanceId}">N/A</c:if>
-				<c:if test= "${!empty row.jitID.formInstanceId}">${row.jitID.formInstanceId}</c:if></td>
 			<td class="viewEncounterAction">
 				<form method="post" STYLE="margin: 0px; padding: 0px" action="">
 				<select name="options" onchange="this.form.submit();">
 				<option>&lt;Forms&gt;</option>
-				<c:if test= "${!empty row.psfId.formInstanceId}"><option>PSF</option></c:if>
-				<c:if test= "${!empty row.pwsId.formInstanceId}"><option>PWS</option></c:if>
+				<c:forEach items="${row.formInstances}" var="formInstance">
+				<option value="${formInstance.locationId}_${formInstance.formId}_${formInstance.formInstanceId}">
+				${formNameMap[formInstance.formId] }
+				</option>
+				</c:forEach>
 				</select>
 				<input type="hidden" value="${row.patientId}" name="patientId" />
-				<input type="hidden" value="${row.sessionId}" name="sessionId" />
 				<input type="hidden" value="${row.encounter.encounterId}" name="encounterId" />
-				<input type="hidden" value="${row.psfId.formInstanceId}" name="psfFormInstanceId" />
-				<input type="hidden" value="${row.pwsId.formInstanceId}" name="pwsFormInstanceId" />
-				<input type="hidden" value="${row.psfId.formId}" name="psfFormId" />
-				<input type="hidden" value="${row.pwsId.formId}" name="pwsFormId" />
-				<input type="hidden" value="${row.psfId.locationId}" name="psfLocationId" />
-				<input type="hidden" value="${row.pwsId.locationId}" name="pwsLocationId" />
 			</form>
 			</td>
 		</tr>

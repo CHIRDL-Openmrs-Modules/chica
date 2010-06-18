@@ -29,7 +29,6 @@ public class PatientRow
 	private String rowColor = null;
 	private FormInstance psfId	= null;
 	private FormInstance pwsId = null;
-	private FormInstance jitID = null;
 	private String ageAtVisit = null;
 	private String station = null;
 	private String weightPercentile = null;
@@ -37,6 +36,7 @@ public class PatientRow
 	private Encounter encounter = null;
 	private boolean reprintStatus = false;
 	private ArrayList<String> printableJits;
+	private ArrayList<FormInstance> formInstances;
 	
 	
     /**
@@ -235,14 +235,7 @@ public class PatientRow
 	{
 		this.pwsId = pwsId;
 	}
-	public FormInstance getJitID()
-	{
-		return this.jitID;
-	}
-	public void setJitID(FormInstance jitID)
-	{
-		this.jitID = jitID;
-	}
+
 	/**
      * Auto generated method comment
      * 
@@ -251,5 +244,16 @@ public class PatientRow
     public void setPrintableJits(ArrayList<String> printableJits) {
 	  this.printableJits = printableJits;
 	    
+    }
+    
+    public void addFormInstance(FormInstance formInstance){
+    	if(this.formInstances == null){
+    		this.formInstances = new ArrayList<FormInstance>();
+    	}
+    	this.formInstances.add(formInstance);
+    }
+    
+    public ArrayList<FormInstance> getFormInstances(){
+    	return this.formInstances;
     }
 }
