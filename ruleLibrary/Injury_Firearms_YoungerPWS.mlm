@@ -63,5 +63,5 @@ write ("Asked about guns at friends'");
 write ("Store away from ammo");
 ;;
 Age_Min: 1 years;;
-Age_Max: 10 years;;
+Age_Max: 12 years;;
 end:
