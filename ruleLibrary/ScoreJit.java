@@ -13,58 +13,25 @@
  */
 package org.openmrs.module.chica.rule;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
-import org.openmrs.Encounter;
-import org.openmrs.FieldType;
-import org.openmrs.Form;
-import org.openmrs.FormField;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.FormService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
-import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.TeleformTranslator;
-import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
-import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.util.Util;
-import org.openmrs.module.chica.xmlBeans.Choose;
-import org.openmrs.module.chica.xmlBeans.Field;
-import org.openmrs.module.chica.xmlBeans.FormConfig;
-import org.openmrs.module.chica.xmlBeans.Geq;
-import org.openmrs.module.chica.xmlBeans.If;
-import org.openmrs.module.chica.xmlBeans.Language;
-import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
-import org.openmrs.module.chica.xmlBeans.Mean;
-import org.openmrs.module.chica.xmlBeans.Plus;
-import org.openmrs.module.chica.xmlBeans.Score;
-import org.openmrs.module.chica.xmlBeans.Scores;
-import org.openmrs.module.chica.xmlBeans.Then;
-import org.openmrs.module.chica.xmlBeans.Value;
-import org.openmrs.module.chirdlutil.util.XMLUtil;
 
 /**
  * Calculates a person's age in years based from their date of birth to the index date
@@ -82,14 +49,7 @@ public class ScoreJit implements Rule {
 		FormInstance formInstance = (FormInstance) parameters.get("formInstance");
 		Integer locationTagId = (Integer) parameters.get("locationTagId");
 		Integer encounterId = (Integer) parameters.get("encounterId");
-		Integer locationId = null;
-		Integer formId = null;
-		
-		if (formInstance != null) {
-			locationId = formInstance.getLocationId();
-			formId = formInstance.getFormId();
-		}
-		
+				
 		ATDService atdService = Context.getService(ATDService.class);
 		//see if an incomplete state exists for the JIT
 		State currState = atdService.getStateByName("JIT_incomplete");
