@@ -127,6 +127,9 @@ public class ViewEncounterController extends SimpleFormController {
 				Integer leftImageLocationId = null;
 				Integer leftImageFormId = null;
 				Integer leftImageFormInstanceId = null;
+				org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
+				org.openmrs.Encounter encounter = encounterService.getEncounter(encounterId);
+				ChicaService chicaService = Context.getService(ChicaService.class);
 				
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS")) {
 					leftImageLocationId = locationId;
@@ -156,6 +159,22 @@ public class ViewEncounterController extends SimpleFormController {
 									leftImageFormId = currState.getFormId();
 									leftImageFormInstanceId = currState.getFormInstanceId();
 									break;
+								}
+							}
+						} else {
+							if (leftName!=null&&leftName.equals("PSF")) {
+								Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
+								
+								if (chica1Appt != null) {
+									leftImageFormInstanceId = chica1Appt.getApptPsfId();
+									leftImageLocationId = encounter.getLocation().getLocationId();
+									
+									if (leftImageFormInstanceId != null) {
+										form = formService.getForms("PSF", null, null, false, null, null, null).get(0);
+										if (form != null) {
+											leftImageFormId = form.getFormId();
+										}
+									}
 								}
 							}
 						}
@@ -196,6 +215,22 @@ public class ViewEncounterController extends SimpleFormController {
 								rightImageFormId = currState.getFormId();
 								rightImageFormInstanceId = currState.getFormInstanceId();
 								break;
+							}
+						}
+					}else {
+						if (rightName!=null&&rightName.equals("PWS")) {
+							Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
+							
+							if (chica1Appt != null) {
+								rightImageFormInstanceId = chica1Appt.getApptPwsId();
+								rightImageLocationId = encounter.getLocation().getLocationId();
+								
+								if (rightImageFormInstanceId != null) {
+									form = formService.getForms("PWS", null, null, false, null, null, null).get(0);
+									if (form != null) {
+										rightImageFormId = form.getFormId();
+									}
+								}
 							}
 						}
 					}

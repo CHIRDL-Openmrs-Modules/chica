@@ -80,7 +80,7 @@ public class DisplayTiffController extends SimpleFormController {
 	private void setImageLocation(String defaultImageDirectory,String imageFormIdString,
 	                      String imageLocationIdString,String imageFormInstanceIdString,
 	                      Integer locationTagId, String na,Map map,
-	                      String filenameParameterName){
+	                      String filenameParameterName,Integer encounterId){
 		String imageDir = null;
 		String imageFilename = null;
 		
@@ -109,13 +109,21 @@ public class DisplayTiffController extends SimpleFormController {
 			}
 			
 			File imagefile = new File(imageFilename);
+
+			ChicaService chicaService = Context.getService(ChicaService.class);
 			
 			//if the file does not exist, look for the old style file name format
 			if (!imagefile.exists()) {
-				imageFilename = imageDir + imageFormInstanceId + ".tif";
-				imagefile = new File(imageFilename);
+				Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
 				
-				if (!imagefile.exists()) {
+				if (chica1Appt != null) {
+					imageFilename = imageDir + imageFormInstanceId + ".tif";
+					imagefile = new File(imageFilename);
+					
+					if (!imagefile.exists()) {
+						imageFilename = null;
+					}
+				}else{
 					imageFilename = null;
 				}
 			}
@@ -226,10 +234,10 @@ public class DisplayTiffController extends SimpleFormController {
 			}
 
 			setImageLocation(defaultImageDirectory,leftImageFormIdString,leftImageLocationIdString,
-				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename");
+				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename",encounterId);
 			
 			setImageLocation(defaultImageDirectory,rightImageFormIdString,rightImageLocationIdString,
-				rightImageFormInstanceIdString,locationTagId,na,map,"rightImagefilename");
+				rightImageFormInstanceIdString,locationTagId,na,map,"rightImagefilename",encounterId);
 
 			map.put("patientId", request.getParameter("patientId"));
 
