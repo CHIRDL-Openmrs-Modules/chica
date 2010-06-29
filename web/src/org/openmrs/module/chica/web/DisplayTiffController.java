@@ -93,41 +93,53 @@ public class DisplayTiffController extends SimpleFormController {
 		}
 						
 		if (imageDir != null && !imageDir.equals("") && imageFormInstanceId != null) {
-			// check if dir and file exists
-			imageFilename = imageLocationId + "-" + imageFormId + "-" + imageFormInstanceId;
 			
-			//This FilenameFilter will get ALL tifs starting with the filename
-			//including of rescan versions nnn_1.tif, nnn_2.tif, etc
-			FilenameFilter filtered = new FileListFilter(imageFilename, "tif");
-			File dir = new File(imageDir);
-			File[] files = dir.listFiles(filtered);
-			if (!(files == null || files.length == 0)) {
-				//This FileDateComparator will list in order
-				//with newest file first.
-				Arrays.sort(files, new FileDateComparator());
-				imageFilename = files[0].getPath();
-			}
-			
-			File imagefile = new File(imageFilename);
-
 			ChicaService chicaService = Context.getService(ChicaService.class);
 			
-			//if the file does not exist, look for the old style file name format
-			if (!imagefile.exists()) {
-				Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
+			//see if this is a chica1 form
+			File imagefile = null;
+			Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
+			if (chica1Appt != null) {
+				imageFilename = imageFormInstanceId.toString();
 				
-				if (chica1Appt != null) {
-					imageFilename = imageDir + imageFormInstanceId + ".tif";
-					imagefile = new File(imageFilename);
+				imagefile = searchForFile(imageFilename,imageDir);
+				
+				if (!imagefile.exists()) {
+					imageFilename = null;
+				}else{
+					imageFilename = imageDir+imageFilename+".tif";
+				}
+			}else{
+			
+				// check if dir and file exists
+				imageFilename = imageLocationId + "-" + imageFormId + "-" + imageFormInstanceId;
+				
+				imagefile = searchForFile(imageFilename,imageDir);
+				
+				LocationService locationService = Context.getLocationService();
+				Location location = locationService.getLocation(imageLocationId);
+				String locationName = location.getName();
+				
+				//check for formInstance.tif format if from Pecar
+				if (!imagefile.exists()) {
 					
-					if (!imagefile.exists()) {
+					if (locationName.equals("PEPS")) {
+						imageFilename = imageFormInstanceId.toString();
+						
+						imagefile = searchForFile(imageFilename, imageDir);
+						
+						if (!imagefile.exists()) {
+							imageFilename = null;
+						} else {
+							imageFilename = imageDir + imageFilename + ".tif";
+						}
+					}else{
 						imageFilename = null;
 					}
 				}else{
-					imageFilename = null;
+					imageFilename = imageDir+imageFilename+".tif";
 				}
 			}
-			
 		}
 		
 		if(imageFilename == null){
@@ -135,6 +147,24 @@ public class DisplayTiffController extends SimpleFormController {
 		}
 
 		map.put(filenameParameterName, imageFilename);
+	}
+	
+	private static File searchForFile(String imageFilename,String imageDir){
+		//This FilenameFilter will get ALL tifs starting with the filename
+		//including of rescan versions nnn_1.tif, nnn_2.tif, etc
+		FilenameFilter filtered = new FileListFilter(imageFilename, "tif");
+		File dir = new File(imageDir);
+		File[] files = dir.listFiles(filtered);
+		if (!(files == null || files.length == 0)) {
+			//This FileDateComparator will list in order
+			//with newest file first.
+			Arrays.sort(files, new FileDateComparator());
+			imageFilename = files[0].getPath();
+		}
+		
+		File imagefile = new File(imageFilename);
+		
+		return imagefile;
 	}
 	
 	/* @param request 
