@@ -82,7 +82,6 @@ public class DisplayTiffController extends SimpleFormController {
 	                      Integer locationTagId, String na,Map map,
 	                      String filenameParameterName,Integer encounterId){
 		String imageDir = null;
-		String imageFilename = null;
 		
 		Integer imageFormId = parseString(imageFormIdString);
 		Integer imageLocationId = parseString(imageLocationIdString);
@@ -91,28 +90,27 @@ public class DisplayTiffController extends SimpleFormController {
 			imageDir = IOUtil.formatDirectoryName(org.openmrs.module.atd.util.Util.getFormAttributeValue(imageFormId,
 			    "imageDirectory", locationTagId, imageLocationId));
 		}
-						
+		
+		File imagefile = null;
+		
 		if (imageDir != null && !imageDir.equals("") && imageFormInstanceId != null) {
 			
 			ChicaService chicaService = Context.getService(ChicaService.class);
 			
 			//see if this is a chica1 form
-			File imagefile = null;
 			Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
 			if (chica1Appt != null) {
-				imageFilename = imageFormInstanceId.toString();
+				String imageFilename = imageFormInstanceId.toString();
 				
 				imagefile = searchForFile(imageFilename,imageDir);
 				
 				if (!imagefile.exists()) {
-					imageFilename = null;
-				}else{
-					imageFilename = imageDir+imageFilename+".tif";
+					imagefile = null;
 				}
 			}else{
 			
 				// check if dir and file exists
-				imageFilename = imageLocationId + "-" + imageFormId + "-" + imageFormInstanceId;
+				String imageFilename = imageLocationId + "-" + imageFormId + "-" + imageFormInstanceId;
 				
 				imagefile = searchForFile(imageFilename,imageDir);
 				
@@ -129,21 +127,21 @@ public class DisplayTiffController extends SimpleFormController {
 						imagefile = searchForFile(imageFilename, imageDir);
 						
 						if (!imagefile.exists()) {
-							imageFilename = null;
-						} else {
-							imageFilename = imageDir + imageFilename + ".tif";
-						}
+							imagefile = null;
+						} 
 					}else{
-						imageFilename = null;
+						imagefile = null;
 					}
-				}else{
-					imageFilename = imageDir+imageFilename+".tif";
 				}
 			}
 		}
 		
-		if(imageFilename == null){
+		String imageFilename = null;
+		
+		if(imagefile == null){
 			imageFilename = defaultImageDirectory + na + ".tif";
+		}else{
+			imageFilename = imagefile.getPath();
 		}
 
 		map.put(filenameParameterName, imageFilename);
