@@ -1,0 +1,188 @@
+Maintenance:
+ Title: Research DevScreen SurveyPos 3-5 PWS                                                                         ;;
+ Filename: CHOOSE_ASQ_JIT;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author:Aaron Carroll                                       ;;
+Specialist:Pediatrics;;
+Date:2010-06-09 10:00:00;;
+Validation:;;
+Library:
+Purpose:PWS prompt to alert doc to do ASQ if surveillance is positive.                                                                                                                                                                                                                                                                                                                                                     ;;
+Explanation:Patient should get ASQ because surveillance was positive.                                                                                                                                                                                                                                                                                                                                                                    ;;
+Keywords:Developmental Screening ASQ                                                  ;;
+Citations:                                                                                   ;;
+Links:                                            ;;
+Knowledge:
+Type:data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+;;
+Priority:0       ;;
+Evoke:;;
+
+Logic:
+If (mode = PRODUCE) then
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+
+If (AgeInMonths >= 0) and (AgeInMonths < 3) then 
+
+call CREATE_JIT with "ASQ_2month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then 
+
+call CREATE_JIT with "ASQ_4month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then 
+
+call CREATE_JIT with "ASQ_6month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 7) and (AgeInDays < 259) then 
+
+call CREATE_JIT with "ASQ_8month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInDays >= 259) and (AgeInDays < 289) then 
+
+call CREATE_JIT with "ASQ_9month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInDays >= 289) and (AgeInMonths < 11) then 
+
+call CREATE_JIT with "ASQ_10month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then 
+
+call CREATE_JIT with "ASQ_12month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then 
+
+call CREATE_JIT with "ASQ_14month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then 
+
+call CREATE_JIT with "ASQ_16month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
+
+call CREATE_JIT with "ASQ_18month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then 
+
+call CREATE_JIT with "ASQ_20month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then 
+
+call CREATE_JIT with "ASQ_22month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 23) and (AgeInDays < 776) then 
+
+call CREATE_JIT with "ASQ_24month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInDays >= 776) and (AgeInMonths < 28) then 
+
+call CREATE_JIT with "ASQ_27month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 28) and (AgeInDays < 959) then 
+
+call CREATE_JIT with "ASQ_30month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInDays >= 959) and (AgeInDays < 1050) then 
+
+call CREATE_JIT with "ASQ_33month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInDays >= 1050) and (AgeInMonths < 40) then 
+
+call CREATE_JIT with "ASQ_36month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 40) and (AgeInMonths < 45) then 
+
+call CREATE_JIT with "ASQ_42month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then 
+
+call CREATE_JIT with "ASQ_48month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then 
+
+call CREATE_JIT with "ASQ_54month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+If (AgeInMonths >= 57) and (AgeInMonths < 63) then 
+
+call CREATE_JIT with "ASQ_60month";
+return false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif;
+
+endif;
+
+;;
+Action:
+;;
+Age_Min: 0          months     ;;
+Age_Max: 66         months     ;;
+end:
+
+}

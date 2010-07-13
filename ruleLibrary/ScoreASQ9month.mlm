@@ -1,0 +1,92 @@
+Maintenance:
+	Title:		ScoreASQ9month;;
+	Filename:		ScoreASQ9month;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This question will fire if the system recognizes a prior problem with breast feeding.  It will allow for follow-up.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+If (mode = CONSUME) then
+
+checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
+scoreJit := CALL ScoreJit;
+
+ASQ9CommunicationSubscore := read Last {ASQ9CommunicationSubscore} Where it Occurred Within Past 1 Day;
+ASQ9GrossmotorSubscore := read Last {ASQ9GrossmotorSubscore} Where it Occurred Within Past 1 Day;
+ASQ9FinemotorSubscore := read Last {ASQ9FinemotorSubscore} Where it Occurred Within Past 1 Day;
+ASQ9ProblemsolvingSubscore := read Last {ASQ9ProblemsolvingSubscore} Where it Occurred Within Past 1 Day;
+ASQ9PersonalsocialSubscore := read Last {ASQ9PersonalsocialSubscore} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+
+If (mode = CONSUME) then
+
+/* don't do anything if all the scores don't exist */
+If (ASQ9CommunicationSubscore = NULL) then 
+call CREATE_JIT with "Form Incomplete";
+conclude false;
+endif;
+
+If  (ASQ9CommunicationSubscore < 13.97) then
+ CALL storeObs With "ASQ9MonthAssessment ","Communication_Delay ";
+Else
+ CALL storeObs With "ASQ9MonthAssessment","Communication_Normal";
+endif;
+
+If  (ASQ9GrossmotorSubscore < 17.82) then
+ CALL storeObs With "ASQ9MonthAssessment ","Grossmotor_Delay ";
+Else
+ CALL storeObs With "ASQ9MonthAssessment","Grossmotor_Normal";
+endif;
+
+If  (ASQ9FinemotorSubscore < 31.32) then
+ CALL storeObs With "ASQ9MonthAssessment ","Finemotor_Delay ";
+Else
+ CALL storeObs With "ASQ9MonthAssessment","Finemotor_Normal";
+endif;
+
+If  (ASQ9ProblemsolvingSubscore < 28.72) then
+ CALL storeObs With "ASQ9MonthAssessment ","Problemsolving_Delay ";
+Else
+ CALL storeObs With "ASQ9MonthAssessment","Problemsolving_Normal";
+endif;
+
+If  (ASQ9PersonalsocialSubscore < 18.91) then
+ CALL storeObs With "ASQ9MonthAssessment ","Personalsocial_Delay ";
+Else
+ CALL storeObs With "ASQ9MonthAssessment","Personalsocial_Normal";
+endif;
+
+call CREATE_JIT with "ASQSummaryReport";
+
+endif
+
+;;
+Action:
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:
