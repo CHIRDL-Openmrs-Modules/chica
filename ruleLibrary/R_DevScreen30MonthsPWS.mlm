@@ -29,8 +29,8 @@ Box6:=read {box6 from Parameters};
 If (mode = PRODUCE) then      
 CurrentStatus := read {CHICA_DevScreen_Status from CHICA} ;   
 StatusDelayed:= read {CHICA_DevScreen_Status from CHICA} ;  
-Results:= read {CHICA_DevScreen_ASQ_Result from CHICA} Where it Occurred Within Past 2 days; 
-ASQDone:= read exist {CHICA_DevScreen_ASQ_Result from CHICA} Where it Occurred Within Past 2 days; 
+Results:= read {ASQ30MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+ASQDone:= read exist {ASQ30MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
