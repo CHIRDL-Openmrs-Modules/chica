@@ -51,56 +51,56 @@ conclude false;
 endif;
 
 If  (ASQ30CommunicationSubscore <= 33.30) then
- CALL storeObs With "ASQ30MonthAssessment ","Communication_Delay";
+ CALL storeObs With "ASQ30MonthAssessment","Communication_Delay";
 endif;
 If (ASQ30CommunicationSubscore>33.30) AND (ASQ30CommunicationSubscore<=43.56) then
- CALL storeObs With "ASQ30MonthAssessment ","Communication_Monitor";
+ CALL storeObs With "ASQ30MonthAssessment","Communication_Monitor";
 endif;
 If  (ASQ30CommunicationSubscore>43.56) then
  CALL storeObs With "ASQ30MonthAssessment","Communication_Normal";
 endif;
 
 If  (ASQ30GrossmotorSubscore <= 36.14) then
- CALL storeObs With "ASQ30MonthAssessment ","Grossmotor_Delay";
+ CALL storeObs With "ASQ30MonthAssessment","Grossmotor_Delay";
 endif;
 If (ASQ30GrossmotorSubscore>36.14) AND (ASQ30GrossmotorSubscore<=44.84) then
- CALL storeObs With "ASQ30MonthAssessment ","Grossmotor_Monitor";
+ CALL storeObs With "ASQ30MonthAssessment","Grossmotor_Monitor";
 endif;
 If  (ASQ30GrossmotorSubscore > 44.84) then
  CALL storeObs With "ASQ30MonthAssessment","Grossmotor_Normal";
 endif;
 
 If  (ASQ30FinemotorSubscore <= 19.25) then
- CALL storeObs With "ASQ30MonthAssessment ","Finemotor_Delay";
+ CALL storeObs With "ASQ30MonthAssessment","Finemotor_Delay";
 endif;
 If (ASQ30FinemotorSubscore>19.25) AND (ASQ30FinemotorSubscore<=33.02) then
- CALL storeObs With "ASQ30MonthAssessment ","Finemotor_Monitor"; 
+ CALL storeObs With "ASQ30MonthAssessment","Finemotor_Monitor"; 
 endif;
 If  (ASQ30FinemotorSubscore > 33.02) then
  CALL storeObs With "ASQ30MonthAssessment","Finemotor_Normal";
 endif;
 
 If  (ASQ30ProblemsolvingSubscore <= 27.08) then
- CALL storeObs With "ASQ30MonthAssessment ","Problemsolving_Delay";
+ CALL storeObs With "ASQ30MonthAssessment","Problemsolving_Delay";
 endif;
 If (ASQ30ProblemsolvingSubscore>27.08) AND (ASQ30ProblemsolvingSubscore<=38.63) then
- CALL storeObs With "ASQ30MonthAssessment ","Problemsolving_Monitor"; 
+ CALL storeObs With "ASQ30MonthAssessment","Problemsolving_Monitor"; 
 endif;
 If  (ASQ30ProblemsolvingSubscore > 38.63) then
  CALL storeObs With "ASQ30MonthAssessment","Problemsolving_Normal";
 endif;
 
 If  (ASQ30PersonalsocialSubscore <= 32.01) then
- CALL storeObs With "ASQ30MonthAssessment ","Personalsocial_Delay";
+ CALL storeObs With "ASQ30MonthAssessment","Personalsocial_Delay";
 endif;
 If (ASQ30PersonalsocialSubscore>32.01) AND (ASQ30PersonalsocialSubscore<=41.94) then
- CALL storeObs With "ASQ30MonthAssessment ","Personalsocial_Monitor";
+ CALL storeObs With "ASQ30MonthAssessment","Personalsocial_Monitor";
 endif;
 If  (ASQ30PersonalsocialSubscore > 41.94) then
  CALL storeObs With "ASQ30MonthAssessment","Personalsocial_Normal";
 endif;
 
-call CREATE_JIT with "ASQSummaryReport";
+/*call CREATE_JIT with "ASQSummaryReport";*/
 
 endif
 
