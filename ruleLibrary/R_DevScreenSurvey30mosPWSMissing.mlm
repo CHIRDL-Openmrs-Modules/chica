@@ -40,6 +40,7 @@ Priority: 1       ;;
 Logic:
 
 If (mode = PRODUCE) then
+
 asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
 
 If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
