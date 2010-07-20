@@ -29,149 +29,149 @@ AgeInMonths := call ChicaAgeRule with "months";
 AgeInDays := call ChicaAgeRule with "days";
 
 
-If (AgeInMonths >= 0) and (AgeInMonths < 3) then 
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then 
 
-call CREATE_JIT with "ASQ_2month";
+call CREATE_JIT with "ASQ_2";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 3) and (AgeInMonths < 5) then 
 
-call CREATE_JIT with "ASQ_4month";
+call CREATE_JIT with "ASQ_4";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 5) and (AgeInMonths < 7) then 
 
-call CREATE_JIT with "ASQ_6month";
+call CREATE_JIT with "ASQ_6";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInMonths >= 7) and (AgeInDays < 259) then 
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then 
 
-call CREATE_JIT with "ASQ_8month";
+call CREATE_JIT with "ASQ_8";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInDays >= 259) and (AgeInDays < 289) then 
+If (AgeInMonths = 9) then 
 
-call CREATE_JIT with "ASQ_9month";
+call CREATE_JIT with "ASQ_9";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInDays >= 289) and (AgeInMonths < 11) then 
+If (AgeInMonths = 10) then 
 
-call CREATE_JIT with "ASQ_10month";
+call CREATE_JIT with "ASQ_10";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 11) and (AgeInMonths < 13) then 
 
-call CREATE_JIT with "ASQ_12month";
+call CREATE_JIT with "ASQ_12";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 13) and (AgeInMonths < 15) then 
 
-call CREATE_JIT with "ASQ_14month";
+call CREATE_JIT with "ASQ_14";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 15) and (AgeInMonths < 17) then 
 
-call CREATE_JIT with "ASQ_16month";
+call CREATE_JIT with "ASQ_16";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
 
-call CREATE_JIT with "ASQ_18month";
+call CREATE_JIT with "ASQ_18";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 19) and (AgeInMonths < 21) then 
 
-call CREATE_JIT with "ASQ_20month";
+call CREATE_JIT with "ASQ_20";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 21) and (AgeInMonths < 23) then 
 
-call CREATE_JIT with "ASQ_22month";
+call CREATE_JIT with "ASQ_22";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 23) and (AgeInDays < 776) then 
 
-call CREATE_JIT with "ASQ_24month";
+call CREATE_JIT with "ASQ_24";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInDays >= 776) and (AgeInMonths < 28) then 
+If (AgeInDays >= 776) and (AgeInDays < 866) then 
 
-call CREATE_JIT with "ASQ_27month";
+call CREATE_JIT with "ASQ_27";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInMonths >= 28) and (AgeInDays < 959) then 
+If (AgeInDays >= 866) and (AgeInDays < 959) then 
 
-call CREATE_JIT with "ASQ_30month";
+call CREATE_JIT with "ASQ_30";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInDays >= 959) and (AgeInDays < 1050) then 
 
-call CREATE_JIT with "ASQ_33month";
+call CREATE_JIT with "ASQ_33";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInDays >= 1050) and (AgeInMonths < 40) then 
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then 
 
-call CREATE_JIT with "ASQ_36month";
+call CREATE_JIT with "ASQ_36";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInMonths >= 40) and (AgeInMonths < 45) then 
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then 
 
-call CREATE_JIT with "ASQ_42month";
+call CREATE_JIT with "ASQ_42";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 45) and (AgeInMonths < 51) then 
 
-call CREATE_JIT with "ASQ_48month";
+call CREATE_JIT with "ASQ_48";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
 If (AgeInMonths >= 51) and (AgeInMonths < 57) then 
 
-call CREATE_JIT with "ASQ_54month";
+call CREATE_JIT with "ASQ_54";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
 
-If (AgeInMonths >= 57) and (AgeInMonths < 63) then 
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then 
 
-call CREATE_JIT with "ASQ_60month";
+call CREATE_JIT with "ASQ_60";
 return false;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif;
