@@ -1,0 +1,205 @@
+Maintenance:
+	Title:		ASQSummaryReport;;
+	Filename:		ASQSummaryReport;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Fill in ASQSummaryReport.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+ASQ9MonthAssessment:= read {ASQ9MonthAssessment} Where it Occurred Within Past 1 Day;
+ASQ18MonthAssessment:= read {ASQ18MonthAssessment} Where it Occurred Within Past 1 Day;
+ASQ30MonthAssessment:= read {ASQ30MonthAssessment} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+If (AgeInMonths = 9) then || ASQ_Month || = "9 month";
+If (AgeInMonths = 9) then || Cm_Referral || = "13.97";
+If (AgeInMonths = 9) then || Gm_Referral || = "17.82";
+If (AgeInMonths = 9) then || Fm_Referral || = "31.32";
+If (AgeInMonths = 9) then || Ps_Referral || = "28.72";
+If (AgeInMonths = 9) then || Pers_Referral || = "18.91";
+If (AgeInMonths = 9) then || Cm_Monitor || = "13.97-30.00";
+If (AgeInMonths = 9) then || Gm_Monitor || = "17.82-32.27";
+If (AgeInMonths = 9) then || Fm_Monitor || = "31.32-41.82";
+If (AgeInMonths = 9) then || Ps_Monitor || = "28.72-39.11";
+If (AgeInMonths = 9) then || Pers_Monitor || = "18.91-30.69";
+
+If (AgeInMonths = 9) then
+If ('Communication_Delay' is in ASQ9MonthAssessment) then || Cm_Interp || = "DELAY";
+If ('Communication_Monitor' is in ASQ9MonthAssessment) then || Cm_Interp || = "MONITOR";
+If ('Communication_Normal' is in ASQ9MonthAssessment) then || Cm_Interp || = "NORMAL";
+
+If ('Grossmotor_Delay' is in ASQ9MonthAssessment) then || Gm_Interp || = "DELAY";
+If ('Grossmotor_Monitor' is in ASQ9MonthAssessment) then || Gm_Interp || = "MONITOR";
+If ('Grossmotor_Normal' is in ASQ9MonthAssessment) then || Gm_Interp || = "NORMAL";
+
+If ('Finemotor_Delay' is in ASQ9MonthAssessment) then || Fm_Interp || = "DELAY";
+If ('Finemotor_Monitor' is in ASQ9MonthAssessment) then || Fm_Interp || = "MONITOR";
+If ('Finemotor_Normal' is in ASQ9MonthAssessment) then || Fm_Interp || = "NORMAL";
+
+If ('Problemsolving_Delay' is in ASQ9MonthAssessment) then || Ps_Interp || = "DELAY";
+If ('Problemsolving_Monitor' is in ASQ9MonthAssessment) then || Ps_Interp || = "MONITOR";
+If ('Problemsolving_Normal' is in ASQ9MonthAssessment) then || Ps_Interp || = "NORMAL";
+
+If ('Personalsocial_Delay' is in ASQ9MonthAssessment) then || Pers_Interp || = "DELAY";
+If ('Personalsocial_Monitor' is in ASQ9MonthAssessment) then || Pers_Interp || = "MONITOR";
+If ('Personalsocial_Normal' is in ASQ9MonthAssessment) then || Pers_Interp || = "NORMAL";
+
+endif;
+
+ 
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQ_Month || = "18 month";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Cm_Referral || = "13.06";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Gm_Referral || = "37.38";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Fm_Referral || = "34.32";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Ps_Referral || = "25.74";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Pers_Referral || = "27.19";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Cm_Monitor || = "13.06-30.00";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Gm_Monitor || = "37.38-46.42";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Fm_Monitor || = "34.32-43.38";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Ps_Monitor || = "25.74-35.86";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Pers_Monitor || = "27.19-37.55";
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
+
+If ('Communication_Delay' is in ASQ18MonthAssessment) then || Cm_Interp || = "DELAY";
+If ('Communication_Monitor' is in ASQ18MonthAssessment) then || Cm_Interp || = "MONITOR";
+If ('Communication_Normal' is in ASQ18MonthAssessment) then || Cm_Interp || = "NORMAL";
+
+If ('Grossmotor_Delay' is in ASQ18MonthAssessment) then || Gm_Interp || = "DELAY";
+If ('Grossmotor_Monitor' is in ASQ18MonthAssessment) then || Gm_Interp || = "MONITOR";
+If ('Grossmotor_Normal' is in ASQ18MonthAssessment) then || Gm_Interp || = "NORMAL";
+
+If ('Finemotor_Delay' is in ASQ18MonthAssessment) then || Fm_Interp || = "DELAY";
+If ('Finemotor_Monitor' is in ASQ18MonthAssessment) then || Fm_Interp || = "MONITOR";
+If ('Finemotor_Normal' is in ASQ18MonthAssessment) then || Fm_Interp || = "NORMAL";
+
+If ('Problemsolving_Delay' is in ASQ18MonthAssessment) then || Ps_Interp || = "DELAY";
+If ('Problemsolving_Monitor' is in ASQ18MonthAssessment) then || Ps_Interp || = "MONITOR";
+If ('Problemsolving_Normal' is in ASQ18MonthAssessment) then || Ps_Interp || = "NORMAL";
+
+If ('Personalsocial_Delay' is in ASQ18MonthAssessment) then || Pers_Interp || = "DELAY";
+If ('Personalsocial_Monitor' is in ASQ18MonthAssessment) then || Pers_Interp || = "MONITOR";
+If ('Personalsocial_Normal' is in ASQ18MonthAssessment) then || Pers_Interp || = "NORMAL";
+
+endif;
+
+
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQ_Month || = "30 month";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Cm_Referral || = "33.30";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Gm_Referral || = "36.14";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Fm_Referral || = "19.25";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Ps_Referral || = "27.08";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Pers_Referral || = "32.01";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Cm_Monitor || = "33.30-43.56";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Gm_Monitor || = "36.14-44.84";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Fm_Monitor || = "19.25-33.02";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Ps_Monitor || = "27.08-38.63";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Pers_Monitor || = "32.01-41.94";
+
+If (AgeInDays >= 866) and (AgeInDays < 959) then 
+
+If ('Communication_Delay' is in ASQ30MonthAssessment) then || Cm_Interp || = "DELAY";
+If ('Communication_Monitor' is in ASQ30MonthAssessment) then || Cm_Interp || = "MONITOR";
+If ('Communication_Normal' is in ASQ30MonthAssessment) then || Cm_Interp || = "NORMAL";
+
+If ('Grossmotor_Delay' is in ASQ30MonthAssessment) then || Gm_Interp || = "DELAY";
+If ('Grossmotor_Monitor' is in ASQ30MonthAssessment) then || Gm_Interp || = "MONITOR";
+If ('Grossmotor_Normal' is in ASQ30MonthAssessment) then || Gm_Interp || = "NORMAL";
+
+If ('Finemotor_Delay' is in ASQ30MonthAssessment) then || Fm_Interp || = "DELAY";
+If ('Finemotor_Monitor' is in ASQ30MonthAssessment) then || Fm_Interp || = "MONITOR";
+If ('Finemotor_Normal' is in ASQ30MonthAssessment) then || Fm_Interp || = "NORMAL";
+
+If ('Problemsolving_Delay' is in ASQ30MonthAssessment) then || Ps_Interp || = "DELAY";
+If ('Problemsolving_Monitor' is in ASQ30MonthAssessment) then || Ps_Interp || = "MONITOR";
+If ('Problemsolving_Normal' is in ASQ30MonthAssessment) then || Ps_Interp || = "NORMAL";
+
+If ('Personalsocial_Delay' is in ASQ30MonthAssessment) then || Pers_Interp || = "DELAY";
+If ('Personalsocial_Monitor' is in ASQ30MonthAssessment) then || Pers_Interp || = "MONITOR";
+If ('Personalsocial_Normal' is in ASQ30MonthAssessment) then || Pers_Interp || = "NORMAL";
+
+endif;
+
+If (AgeInMonths = 9) then 
+Cm_Score := call getObs with "ASQ9CommunicationSubscore";
+Gm_Score := call getObs with "ASQ9GrossmotorSubscore";
+Fm_Score := call getObs with "ASQ9FinemotorSubscore";
+Ps_Score := call getObs with "ASQ9ProblemsolvingSubscore";
+Pers_Score := call getObs with "ASQ9PersonalsocialSubscore";
+endif;
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
+Cm_Score := call getObs with "ASQ18CommunicationSubscore";
+Gm_Score := call getObs with "ASQ18GrossmotorSubscore";
+Fm_Score := call getObs with "ASQ18FinemotorSubscore";
+Ps_Score := call getObs with "ASQ18ProblemsolvingSubscore";
+Pers_Score := call getObs with "ASQ18PersonalsocialSubscore";
+endif;
+
+If (AgeInDays >= 866) and (AgeInDays < 959) then 
+Cm_Score := call getObs with "ASQ30CommunicationSubscore";
+Gm_Score := call getObs with "ASQ30GrossmotorSubscore";
+Fm_Score := call getObs with "ASQ30FinemotorSubscore";
+Ps_Score := call getObs with "ASQ30ProblemsolvingSubscore";
+Pers_Score := call getObs with "ASQ30PersonalsocialSubscore";
+endif;
+
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| ASQ_Month ||") At ASQ_Month;
+write ("|| Cm_Referral ||") At Cm_Referral;
+write ("|| Gm_Referral ||") At Gm_Referral;
+write ("|| Fm_Referral ||") At Fm_Referral;
+write ("|| Ps_Referral ||") At Ps_Referral;
+write ("|| Pers_Referral ||") At Pers_Referral;
+write ("|| Cm_Monitor ||") At Cm_Monitor;
+write ("|| Gm_Monitor ||") At Gm_Monitor;
+write ("|| Fm_Monitor ||") At Fm_Monitor;
+write ("|| Ps_Monitor ||") At Ps_Monitor;
+write ("|| Pers_Monitor ||") At Pers_Monitor;
+write ("|| Cm_Interp ||") At Cm_Interp;
+write ("|| Gm_Interp ||") At Gm_Interp;
+write ("|| Fm_Interp ||") At Fm_Interp;
+write ("|| Ps_Interp ||") At Ps_Interp;
+write ("|| Pers_Interp ||") At Pers_Interp;
+write ("|| Cm_Score ||") At Cm_Score;
+write ("|| Gm_Score ||") At Gm_Score;
+write ("|| Fm_Score ||") At Fm_Score;
+write ("|| Ps_Score ||") At Ps_Score;
+write ("|| Pers_Score ||") At Pers_Score;
+
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:
