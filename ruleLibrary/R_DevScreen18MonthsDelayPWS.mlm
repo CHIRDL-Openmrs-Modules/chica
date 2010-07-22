@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research DevScreen 18mos Old PWS                                                                         ;;
- Filename: R_DevScreen18MonthsPWS                                 ;;
+ Filename: R_DevScreen18MonthsDelayPWS                                 ;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author: Aaron Carroll                                       ;;
@@ -50,17 +50,18 @@ If ('Delayed' is in StatusDelayed) then conclude False;
 If ('ASQ_18m_Done' is in CurrentStatus) then conclude False;
 If ASQDone = False then conclude False;
 
-If ('Communication_Normal' is in Results) AND ('Grossmotor_Normal' is in Results) AND
-   ('Finemotor_Normal' is in Results) AND ('Problemsolving_Normal' is in Results) AND
-   ('Personalsocial_Normal' is in Results) then conclude False;
- 
 If ('Communication_Delay' is in Results) then || prompttext1 || = "communication delay, ";
 If ('Finemotor_Delay' is in Results) then || prompttext2 || = "fine motor delay, ";
 If ('Grossmotor_Delay' is in Results) then || prompttext3 || = "gross motor delay, ";
 If ('Personalsocial_Delay' is in Results) then || prompttext4 || = "personal-social delay, ";
 If ('Problemsolving_Delay' is in Results) then || prompttext5 || = "problem solving delay, ";
 
-Else conclude True;
+If ('Communication_Delay' is in Results) OR ('Grossmotor_Delay' is in Results) OR
+   ('Finemotor_Delay' is in Results) OR ('Problemsolving_Delay' is in Results) OR
+   ('Personalsocial_Delay' is in Results) then conclude True;
+ 
+
+Else conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 endif

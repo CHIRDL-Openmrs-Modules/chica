@@ -100,7 +100,7 @@ If  (ASQ18PersonalsocialSubscore > 37.55) then
  CALL storeObs With "ASQ18MonthAssessment","Personalsocial_Normal";
 endif;
 
-/*call CREATE_JIT with "ASQSummaryReport";*/
+call CREATE_JIT with "SummaryReportASQ";
 
 endif
 

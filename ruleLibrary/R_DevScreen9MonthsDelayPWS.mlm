@@ -1,0 +1,105 @@
+Maintenance:
+ Title: Research DevScreen 9mos Old PWS                                                                         ;;
+ Filename: R_DevScreen9MonthsDelayPWS                                  ;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Aaron Carroll                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-15 10:00:00;;
+ Validation: ;;
+Library:
+ Purpose: PWS prompt to alert doc to do ASQ at certain age.                                                                                                                                                                                                                                                                                                                                                     ;;
+ Explanation: Patient should get ASQ at certain ages.                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: Developmental Screening ASQ                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+
+If (mode = PRODUCE) then      
+CurrentStatus := read {CHICA_DevScreen_Status from CHICA} ;   
+StatusDelayed:= read {CHICA_DevScreen_Status from CHICA} ;  
+Results:= read {ASQ9MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+ASQDone:= read exist {ASQ9MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority: 1       ;;
+ Evoke: ;;
+
+Logic:
+
+If (mode = PRODUCE) then
+
+asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+
+If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
+
+If ('Delayed' is in StatusDelayed) then conclude False;
+If ('ASQ_9m_Done' is in CurrentStatus) then conclude False;
+If ASQDone = False then conclude False;
+
+If ('Communication_Delay' is in Results) then || prompttext1 || = "communication delay, ";
+If ('Finemotor_Delay' is in Results) then || prompttext2 || = "fine motor delay, ";
+If ('Grossmotor_Delay' is in Results) then || prompttext3 || = "gross motor delay, ";
+If ('Personalsocial_Delay' is in Results) then || prompttext4 || = "personal-social delay, ";
+If ('Problemsolving_Delay' is in Results) then || prompttext5 || = "problem solving delay, ";
+
+If ('Communication_Delay' is in Results) OR ('Grossmotor_Delay' is in Results) OR
+   ('Finemotor_Delay' is in Results) OR ('Problemsolving_Delay' is in Results) OR
+   ('Personalsocial_Delay' is in Results) then conclude True;
+ 
+
+Else conclude False;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
+ CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
+endif;
+If  (Box4=true) then
+
+endif;
+If  (Box5=true) then
+ CALL storeObs With "CHICA_DevScreen_Status","NormalDevelopment";
+ CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
+ CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following.  First steps referral is attached.");
+ write ("Suspect Delay ->                       ");
+ write ("Refer to First Steps                      ");
+write ("Activities for Children form                       ");
+write ("Sched follow-up 1 month                      ");
+write ("Do not suspect delay");
+write ("");
+;;
+Age_Min: 8          months     ;;
+Age_Max: 10         months     ;;
+end:
+}
