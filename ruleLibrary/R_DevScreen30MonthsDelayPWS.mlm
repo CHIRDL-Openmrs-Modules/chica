@@ -35,7 +35,7 @@ ASQDone:= read exist {ASQ30MonthAssessment from CHICA} Where it Occurred Within 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority: 1       ;;
+Priority: 403       ;;
  Evoke: ;;
 
 Logic:
@@ -99,7 +99,7 @@ write ("Sched follow-up 1 month                      ");
 write ("Do not suspect delay");
 write ("");
 ;;
-Age_Min: 28          months     ;;
-Age_Max: 33         months     ;;
+Age_Min: 866          days     ;;
+Age_Max: 959         days     ;;
 end:
 }

@@ -30,7 +30,7 @@ asq := read Last {ASQ_18_month from CHICA} ;
 devref := read Last {Developmental_Referral from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 endif
 ;;
-Priority:		0         ;;
+Priority:		1000         ;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

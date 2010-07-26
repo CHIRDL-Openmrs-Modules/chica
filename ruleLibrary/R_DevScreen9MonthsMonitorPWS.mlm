@@ -35,7 +35,7 @@ ASQDone:= read exist {ASQ9MonthAssessment from CHICA} Where it Occurred Within P
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority: 1       ;;
+Priority: 404       ;;
  Evoke: ;;
 
 Logic:
@@ -102,7 +102,7 @@ write ("First Steps referral                      ");
 write ("There are no devel. concerns");
 write ("");
 ;;
-Age_Min: 8          months     ;;
+Age_Min: 9          months     ;;
 Age_Max: 10         months     ;;
 end:
 }
