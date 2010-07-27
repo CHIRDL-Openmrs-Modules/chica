@@ -46,7 +46,7 @@ If (mode = CONSUME) then
 
 /* don't do anything if all the scores don't exist */
 If (ASQ9CommunicationSubscore = NULL) then 
-call CREATE_JIT with "Form Incomplete ASQ";
+call CREATE_JIT with "FormIncompleteASQ";
 conclude false;
 endif;
 

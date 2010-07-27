@@ -94,9 +94,10 @@ endif;
 endif
 ;;
 Action:
-write ("|| firstname ||'s ASQ shows a score in the "monitoring zone" for || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 ||.  Close follow-up and repeat testing recommended. Also provide developmental exercises (attached sheet).");
+call CREATE_JIT with "FirstStepsReferral";
+write ("|| firstname ||'s ASQ shows a score in the "monitoring zone" for || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 ||.  Close follow-up and repeat testing recommended. Also provide developmental exercises.");
 write ("Rescheduled in 2-6 weeks                      ");
-write ("Provided attached sheet                       ");
+write ("Provided developmental exercises                       ");
 write ("I have developmental concerns ->                       ");
 write ("First Steps referral                      ");
 write ("There are no devel. concerns");

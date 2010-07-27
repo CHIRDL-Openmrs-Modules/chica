@@ -91,6 +91,7 @@ endif;
 endif
 ;;
 Action:
+call CREATE_JIT with "FirstStepsReferral";
 write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following.  First steps referral is attached.");
  write ("Suspect Delay ->                       ");
  write ("Refer to First Steps                      ");
