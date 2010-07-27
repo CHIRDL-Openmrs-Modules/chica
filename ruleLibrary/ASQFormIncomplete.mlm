@@ -1,0 +1,52 @@
+Maintenance:
+	Title:		ASQFormIncomplete;;
+	Filename:		ASQFormIncomplete;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Fill in ASQFormIncomplete.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+If (AgeInMonths = 9) then || ASQ_Month || = "9";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQ_Month || = "18";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQ_Month || = "30";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| ASQ_Month ||") At ASQ_Month;
+write ("|| ASQ_Month ||") At ASQ_Month_2;
+
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:
