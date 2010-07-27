@@ -27,7 +27,7 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
  
-BottleUse := Read Last(bottle_feed from CHICA) where it occurred in the last 3 months;
+BottleUse := Read Last(bottle_feed from CHICA) Where it Occurred Within Past 3 months;
 
 endif
 ;;

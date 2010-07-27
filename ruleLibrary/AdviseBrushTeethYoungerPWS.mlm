@@ -27,7 +27,7 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
  
-Advised = Read Last(Dental_Advice from CHICA) where it occurred in the last 1 year;
+Advised = Read Last(Dental_Advice from CHICA) Where it Occurred Within Past 1 year;
 
 endif
 ;;

@@ -28,7 +28,7 @@ Box6:=read {box6 from Parameters};
 If (mode = PRODUCE) then
  
 Teeth := Read Last(Tooth_erupted from CHICA);
-Advised = Read Exist(Dental Advice from CHICA) where it occurred in the last 1 year;
+Advised = Read Exist(Dental Advice from CHICA) Where it Occurred Within Past 1 year;
 
 endif
 ;;

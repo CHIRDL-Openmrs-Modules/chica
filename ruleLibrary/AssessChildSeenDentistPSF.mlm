@@ -27,7 +27,7 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
  
-evalDentist := Read Last(eval_dentist from CHICA) where it occurred in the last 3 months;
+evalDentist := Read Last(eval_dentist from CHICA) Where it Occurred Within Past 3 months;
 
 endif
 ;;
