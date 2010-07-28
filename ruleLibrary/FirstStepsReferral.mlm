@@ -1,0 +1,98 @@
+Maintenance:
+	Title:		FirstStepsReferral;;
+	Filename:		FirstStepsReferral;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Fill in FirstStepsReferral.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+
+ASQ9MonthAssessment:= read {ASQ9MonthAssessment} Where it Occurred Within Past 1 Day;
+ASQ18MonthAssessment:= read {ASQ18MonthAssessment} Where it Occurred Within Past 1 Day;
+ASQ30MonthAssessment:= read {ASQ30MonthAssessment} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+If (Gender = M) then || sex || = "male";
+If (Gender = F) then || sex || = "female";
+
+If (AgeInMonths = 9) then
+
+If ('Communication_Delay' is in ASQ9MonthAssessment) then || Sel_Receptive_Language || = "X";
+If ('Grossmotor_Delay' is in ASQ9MonthAssessment) OR ('Finemotor_Delay' is in ASQ9MonthAssessment) then || Sel_Gross_Fine_Motor || = "X";
+If ('Problemsolving_Delay' is in ASQ9MonthAssessment) then || Sel_Cognitive || = "X";
+If ('Personalsocial_Delay' is in ASQ9MonthAssessment) then || Sel_Social_Emotional || = "X";
+
+If ('Communication_Delay' is in ASQ9MonthAssessment) OR ('Grossmotor_Delay' is in ASQ9MonthAssessment) OR
+   ('Finemotor_Delay' is in ASQ9MonthAssessment) OR ('Problemsolving_Delay' is in ASQ9MonthAssessment) OR
+   ('Personalsocial_Delay' is in ASQ9MonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
+
+endif;
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
+
+If ('Communication_Delay' is in ASQ18MonthAssessment) then || Sel_Receptive_Language || = "X";
+If ('Grossmotor_Delay' is in ASQ18MonthAssessment) OR ('Finemotor_Delay' is in ASQ18MonthAssessment) then || Sel_Gross_Fine_Motor || = "X";
+If ('Problemsolving_Delay' is in ASQ18MonthAssessment) then || Sel_Cognitive || = "X";
+If ('Personalsocial_Delay' is in ASQ18MonthAssessment) then || Sel_Social_Emotional || = "X";
+
+If ('Communication_Delay' is in ASQ18MonthAssessment) OR ('Grossmotor_Delay' is in ASQ18MonthAssessment) OR
+   ('Finemotor_Delay' is in ASQ18MonthAssessment) OR ('Problemsolving_Delay' is in ASQ18MonthAssessment) OR
+   ('Personalsocial_Delay' is in ASQ18MonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
+
+endif;
+
+If (AgeInDays >= 866) and (AgeInDays < 959) then
+
+If ('Communication_Delay' is in ASQ30MonthAssessment) then || Sel_Receptive_Language || = "X";
+If ('Grossmotor_Delay' is in ASQ30MonthAssessment) OR ('Finemotor_Delay' is in ASQ30MonthAssessment) then || Sel_Gross_Fine_Motor || = "X";
+If ('Problemsolving_Delay' is in ASQ30MonthAssessment) then || Sel_Cognitive || = "X";
+If ('Personalsocial_Delay' is in ASQ30MonthAssessment) then || Sel_Social_Emotional || = "X";
+
+If ('Communication_Delay' is in ASQ30MonthAssessment) OR ('Grossmotor_Delay' is in ASQ30MonthAssessment) OR
+   ('Finemotor_Delay' is in ASQ30MonthAssessment) OR ('Problemsolving_Delay' is in ASQ30MonthAssessment) OR
+   ('Personalsocial_Delay' is in ASQ30MonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
+
+endif;
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| sex  ||") At sex;
+write ("|| Sel_Receptive_Language ||") At Sel_Receptive_Language;
+write ("|| Sel_Gross_Fine_Motor ||") At Sel_Gross_Fine_Motor;
+write ("|| Sel_Cognitive ||") At Sel_Cognitive;
+write ("|| Sel_Social_Emotional ||") At Sel_Social_Emotional;
+write ("|| Sel_Suspected_Dev_Delay ||") At Sel_Suspected_Dev_Delay;
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:
