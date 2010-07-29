@@ -11,6 +11,7 @@ import java.util.List;
  *     &lt;xs:sequence>
  *       &lt;xs:element ref="Field" maxOccurs="unbounded"/>
  *     &lt;/xs:sequence>
+ *     &lt;xs:attribute type="xs:string" use="optional" name="excludeEmpty"/>
  *   &lt;/xs:complexType>
  * &lt;/xs:element>
  * </pre>
@@ -18,6 +19,7 @@ import java.util.List;
 public class Mean
 {
     private List<Field> fields = new ArrayList<Field>();
+    private String excludeEmpty;
 
 	
     /**
@@ -35,4 +37,22 @@ public class Mean
     	this.fields = fields;
     }
 
+
+    /** 
+     * Get the 'excludeEmpty' attribute value.
+     * 
+     * @return value
+     */
+    public String getExcludeEmpty() {
+        return excludeEmpty;
+    }
+
+    /** 
+     * Set the 'excludeEmpty' attribute value.
+     * 
+     * @param excludeEmpty
+     */
+    public void setExcludeEmpty(String excludeEmpty) {
+        this.excludeEmpty = excludeEmpty;
+    }
 }

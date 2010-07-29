@@ -26,6 +26,7 @@
 <value name="id" field="id" style="attribute" />
 <value name="Value" field="value" usage="optional" />
 <value name="taborder" field="taborder" style="attribute" usage="optional" />
+<value style="attribute" name="substituteEstimate" get-method="getSubstituteEstimate" set-method="setSubstituteEstimate" usage="optional"/>
 </mapping>
 
 <mapping class="org.openmrs.module.chica.xmlBeans.ObsvDictionary" name="ObsvDictionary">
@@ -56,6 +57,7 @@
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Mean" name="mean">
     <collection item-type="org.openmrs.module.chica.xmlBeans.Field" get-method="getFields" set-method="setFields" create-type="java.util.ArrayList"/>
+    <value style="attribute" name="excludeEmpty" get-method="getExcludeEmpty" set-method="setExcludeEmpty" usage="optional"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Plus" name="plus">
     <structure ordered="false" choice="true">
@@ -70,8 +72,10 @@
     <collection item-type="org.openmrs.module.chica.xmlBeans.Score" get-method="getScores" set-method="setScores" create-type="java.util.ArrayList"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Score" name="score">
+    <value style="element" name="maxBlankFieldsAllowed" get-method="getMaxBlankFieldsAllowed" set-method="setMaxBlankFieldsAllowed" usage="optional"/>
     <structure type="org.openmrs.module.chica.xmlBeans.Concept" get-method="getConcept" set-method="setConcept"/>
     <structure type="org.openmrs.module.chica.xmlBeans.Value" get-method="getValue" set-method="setValue"/>
+    <structure type="org.openmrs.module.chica.xmlBeans.EstimatedScoreValue" get-method="getEstimatedScoreValue" set-method="setEstimatedScoreValue" usage="optional"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.If" name="if">
     <structure type="org.openmrs.module.chica.xmlBeans.Geq" get-method="getGeq" set-method="setGeq"/>
@@ -87,6 +91,9 @@
   <mapping class="org.openmrs.module.chica.xmlBeans.Concept" name="concept">
     <value style="attribute" name="system" get-method="getSystem" set-method="setSystem"/>
     <value style="attribute" name="name" get-method="getName" set-method="setName"/>
+  </mapping>
+  <mapping class="org.openmrs.module.chica.xmlBeans.EstimatedScoreValue" name="estimatedScoreValue">
+    <structure type="org.openmrs.module.chica.xmlBeans.Value" get-method="getValue" set-method="setValue"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Choose" name="choose">
     <structure type="org.openmrs.module.chica.xmlBeans.If" get-method="getIf" set-method="setIf"/>

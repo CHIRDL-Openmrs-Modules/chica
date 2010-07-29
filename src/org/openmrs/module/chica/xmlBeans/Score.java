@@ -6,8 +6,10 @@ package org.openmrs.module.chica.xmlBeans;
  * &lt;xs:element xmlns:xs="http://www.w3.org/2001/XMLSchema" name="score">
  *   &lt;xs:complexType>
  *     &lt;xs:sequence>
+ *       &lt;xs:element type="xs:string" name="maxBlankFieldsAllowed"/>
  *       &lt;xs:element ref="concept"/>
  *       &lt;xs:element ref="value"/>
+ *       &lt;xs:element ref="estimatedScoreValue"/>
  *     &lt;/xs:sequence>
  *   &lt;/xs:complexType>
  * &lt;/xs:element>
@@ -15,8 +17,28 @@ package org.openmrs.module.chica.xmlBeans;
  */
 public class Score
 {
+    private String maxBlankFieldsAllowed;
     private Concept concept;
     private Value value;
+    private EstimatedScoreValue estimatedScoreValue;
+
+    /** 
+     * Get the 'maxBlankFieldsAllowed' element value.
+     * 
+     * @return value
+     */
+    public String getMaxBlankFieldsAllowed() {
+        return maxBlankFieldsAllowed;
+    }
+
+    /** 
+     * Set the 'maxBlankFieldsAllowed' element value.
+     * 
+     * @param maxBlankFieldsAllowed
+     */
+    public void setMaxBlankFieldsAllowed(String maxBlankFieldsAllowed) {
+        this.maxBlankFieldsAllowed = maxBlankFieldsAllowed;
+    }
 
     /** 
      * Get the 'concept' element value.
@@ -52,5 +74,23 @@ public class Score
      */
     public void setValue(Value value) {
         this.value = value;
+    }
+
+    /** 
+     * Get the 'estimatedScoreValue' element value.
+     * 
+     * @return value
+     */
+    public EstimatedScoreValue getEstimatedScoreValue() {
+        return estimatedScoreValue;
+    }
+
+    /** 
+     * Set the 'estimatedScoreValue' element value.
+     * 
+     * @param estimatedScoreValue
+     */
+    public void setEstimatedScoreValue(EstimatedScoreValue estimatedScoreValue) {
+        this.estimatedScoreValue = estimatedScoreValue;
     }
 }

@@ -3246,6 +3246,19 @@ VALUES
  VALUES ('isADHDInterventionLocation', 'Indicates whether a given location is an ADHD intervention site');
 	</sql>
 	</diff>
+		<diff>
+		<version>1.4.5</version>
+		<author>Tammy Dugan</author>
+		<date>July 12, 2010</date>
+		<description>
+
+		</description>
+	<sql>	
+		 
+ INSERT INTO chirdlutil_location_attribute(name,description)
+ VALUES ('isASQInterventionLocation', 'Indicates whether a given location is an ASQ intervention site');
+	</sql>
+	</diff>
 </sqldiff>
 
 

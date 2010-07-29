@@ -15,6 +15,7 @@ public class Field
 	private String value = null;
 	private String taborder = null;
 	private String type = null;
+    private String substituteEstimate;
 	
 	/**
 	 * Constructor assigning id for the Field
@@ -96,4 +97,22 @@ public class Field
 	{
 		this.type = type;
 	}
+   
+    /** 
+     * Get the 'substituteEstimate' attribute value.
+     * 
+     * @return value
+     */
+    public String getSubstituteEstimate() {
+        return substituteEstimate;
+    }
+
+    /** 
+     * Set the 'substituteEstimate' attribute value.
+     * 
+     * @param substituteEstimate
+     */
+    public void setSubstituteEstimate(String substituteEstimate) {
+        this.substituteEstimate = substituteEstimate;
+    }
 }

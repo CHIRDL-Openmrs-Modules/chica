@@ -39,6 +39,7 @@ import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.xmlBeans.Choose;
+import org.openmrs.module.chica.xmlBeans.EstimatedScoreValue;
 import org.openmrs.module.chica.xmlBeans.Field;
 import org.openmrs.module.chica.xmlBeans.FormConfig;
 import org.openmrs.module.chica.xmlBeans.Geq;
@@ -403,13 +404,12 @@ public class Util
 		}
 	}
 	
-	public static void scoreJit(FormInstance formInstance, Integer locationTagId, Integer encounterId,
+	public static void scoreJit(FormInstance formInstance, Integer locationTagId, Integer encounterId, 
 	                            Patient patient) {
 		
 		ATDService atdService = Context.getService(ATDService.class);
 		Integer locationId = formInstance.getLocationId();
 		Integer formId = formInstance.getFormId();
-		
 		
 		//parse the scan xml
 		LogicService logicService = Context.getLogicService();
@@ -420,7 +420,7 @@ public class Util
 		FormAttributeValue scorableFormConfigAttrVal = atdService.getFormAttributeValue(formId, "scorableFormConfigFile",
 		    locationTagId, locationId);
 		
-		if(fieldMap == null){
+		if (fieldMap == null) {
 			return;
 		}
 		
@@ -477,116 +477,185 @@ public class Util
 		//parse the form configuration file
 		if (scorableFormConfigAttrVal != null) {
 			
-				try {
-					Scores scores = formConfig.getScores();
+			try {
+				Scores scores = formConfig.getScores();
+				
+				//compute each score and save it to a concept in the database
+				for (Score score : scores.getScores()) {
 					
-					//compute each score and save it to a concept in the database
-					for (Score score : scores.getScores()) {
-						
-						Value value = score.getValue(); //value that should be saved to the concept
-						Plus plus = value.getPlus();
-						Mean mean = value.getMean();
-						
-						//compute the sum
-						if (plus != null) {
-							Double scoreTotal = null;
-							
-							List<Choose> choices = plus.getChooses();
-							
-							//process conditional logic
-							if (choices != null) {
-								
-								for (Choose choose : choices) {
-									boolean ifSatisfied = false;
-									If ifObject = choose.getIf();
-									Then thenObject = choose.getThen();
-									
-									if (ifObject != null) {
-										Geq geq = ifObject.getGeq();
-										
-										if (geq != null) {
-											Field fieldOperand = geq.getField();
-											String cnOperand = geq.getCn();
-											
-											if (fieldOperand != null && cnOperand != null) {
-												Field matchingField = pickFieldLanguage(fieldOperand, childFields,
-												    langFieldsToConsume, formFieldsMap);
-												if (matchingField != null && fieldMap != null) {
-													org.openmrs.module.atd.xmlBeans.Field scorableFormField = fieldMap
-													        .get(matchingField.getId());
-													
-													if (scorableFormField!=null&&
-															scorableFormField.getValue() != null) {
-														if (Integer.parseInt(scorableFormField.getValue()) >= Integer
-														        .parseInt(cnOperand)) {
-															ifSatisfied = true;
-														}
-													}
-												}
-											}
-										}
-									}
-									
-									if (thenObject != null) {
-										String cnResult = thenObject.getCn();
-										
-										if (cnResult != null && ifSatisfied) {
-											if (scoreTotal == null) {
-												scoreTotal = 0D;
-											}
-											scoreTotal += Integer.parseInt(cnResult);
-										}
-									}
-								}
-							}
-							
-							List<Field> fields = plus.getFields();
-							
-							//sum the fields
-							if (fields != null) {
-								if (scoreTotal == null) {
-									scoreTotal = 0D;
-								}
-								Double computeSumResult = computeSum(fields, childFields, langFieldsToConsume, fieldMap, formFieldsMap);
-								if(computeSumResult != null){
-									scoreTotal += computeSumResult;
-								}
-							}
-							
-							if (scoreTotal != null) {
-								saveScore(score, scoreTotal, encounterId, patient);
-							}
-						}
-						//compute the average
-						if (mean != null) {
-							
-							List<Field> fields = mean.getFields();
-							Double computeSumResult = computeSum(fields, childFields, langFieldsToConsume, fieldMap, formFieldsMap);
-							Double scoreTotal = null;
-							
-							if(computeSumResult != null){
-								
-								scoreTotal = computeSumResult;
-							}
-							
-							if (scoreTotal != null) {
-								
-								saveScore(score, scoreTotal / fields.size(), encounterId, patient);
-							}
-						}
+					EstimatedScoreValue estimatedScoreValue = score.getEstimatedScoreValue();
+					Double estimatedScore = null;
+					if (estimatedScoreValue != null) {
+						estimatedScore = computeValue(estimatedScoreValue.getValue(), childFields, langFieldsToConsume,
+						    fieldMap, formFieldsMap,null);
+					}
+					
+					Value value = score.getValue(); //value that should be saved to the concept
+					Double scoreTotal = computeValue(value, childFields, langFieldsToConsume, 
+						fieldMap, formFieldsMap,estimatedScore);
+					
+					if (scoreTotal != null) {
+						saveScore(score.getConcept(), scoreTotal, encounterId, patient);
 					}
 				}
-				catch (Exception e) {
-					log.error("", e);
-				}
+			}
+			catch (Exception e) {
+				log.error("", e);
+			}
 		}
 		
 	}
 	
+	private static Double computeValue(Value value, HashMap<String, FormField> childFields,
+	                                   HashMap<String, Field> langFieldsToConsume,
+	                                   HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
+	                                   HashMap<String, HashMap<String, FormField>> formFieldsMap,
+	                                   Double estimatedScore) {
+		Double scoreTotal = null;
+		Plus plus = value.getPlus();
+		Mean mean = value.getMean();
+		
+		//compute the sum
+		if (plus != null) {
+			List<Choose> choices = plus.getChooses();
+			
+			//process conditional logic
+			if (choices != null) {
+				
+				for (Choose choose : choices) {
+					
+					Integer chooseResult = processChoose(choose, childFields, langFieldsToConsume,
+					    fieldMap, formFieldsMap);
+					if (chooseResult != null) {
+						if (scoreTotal == null) {
+							scoreTotal = 0D;
+						}
+						scoreTotal += chooseResult;
+					}
+				}
+			}
+			
+			List<Field> fields = plus.getFields();
+			
+			//sum the fields
+			if (fields != null) {
+				if (scoreTotal == null) {
+					scoreTotal = 0D;
+				}
+				Double computeSumResult = computeSum(fields, childFields, langFieldsToConsume, 
+					fieldMap, formFieldsMap, estimatedScore);
+				if (computeSumResult != null) {
+					scoreTotal += computeSumResult;
+				}
+			}
+		}
+		//compute the average
+		if (mean != null) {
+			
+			scoreTotal = computeMean(mean, childFields, langFieldsToConsume, fieldMap, formFieldsMap,
+				estimatedScore);
+		}
+		return scoreTotal;
+	}
+	
+	private static Integer processChoose(Choose choose, HashMap<String, FormField> childFields,
+	                                     HashMap<String, Field> langFieldsToConsume,
+	                                     HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
+	                                     HashMap<String, HashMap<String, FormField>> formFieldsMap) {
+		boolean ifSatisfied = false;
+		If ifObject = choose.getIf();
+		Then thenObject = choose.getThen();
+		
+		if (ifObject != null) {
+			Geq geq = ifObject.getGeq();
+			
+			if (geq != null) {
+				Field fieldOperand = geq.getField();
+				String cnOperand = geq.getCn();
+				
+				if (fieldOperand != null && cnOperand != null) {
+					Field matchingField = pickFieldLanguage(fieldOperand, childFields, 
+					  langFieldsToConsume, formFieldsMap);
+					if (matchingField != null && fieldMap != null) {
+						org.openmrs.module.atd.xmlBeans.Field scorableFormField = fieldMap
+								.get(matchingField.getId());
+						
+						if (scorableFormField!=null&&
+						scorableFormField.getValue() != null) {
+							if (Integer.parseInt(scorableFormField.getValue()) >= Integer
+									.parseInt(cnOperand)) {
+								ifSatisfied = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (thenObject != null) {
+			String cnResult = thenObject.getCn();
+			
+			if (cnResult != null && ifSatisfied) {
+				return Integer.parseInt(cnResult);
+			}
+		}
+		return null;
+	}
+	
+	private static Double computeMean(Mean mean, HashMap<String, FormField> childFields,
+	                                  HashMap<String, Field> langFieldsToConsume,
+	                                  HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
+	                                  HashMap<String, HashMap<String, FormField>> formFieldsMap,
+	                                  Double estimatedScore) {
+		List<Field> fields = mean.getFields();
+		Double computeSumResult = computeSum(fields, childFields, langFieldsToConsume, 
+			fieldMap, formFieldsMap, estimatedScore);
+		Double scoreTotal = null;
+		
+		if (computeSumResult != null) {
+			
+			scoreTotal = computeSumResult;
+		}
+		
+		boolean excludeEmpty = false;
+		String excludeEmptyString = mean.getExcludeEmpty();
+		if (excludeEmptyString != null) {
+			excludeEmptyString = excludeEmptyString.trim();
+			if (excludeEmptyString.length() > 0) {
+				try {
+					excludeEmpty = Boolean.parseBoolean(excludeEmptyString);
+				}
+				catch (Exception e) {}
+			}
+		}
+		
+		Integer numFields = fields.size();
+		if (excludeEmpty) {
+			numFields = 0;
+			
+			for (Field field : fields) {
+				Field matchingField = pickFieldLanguage(field, childFields, langFieldsToConsume, formFieldsMap);
+				org.openmrs.module.atd.xmlBeans.Field scorableFormField = fieldMap.get(matchingField.getId());
+				if(scorableFormField != null){
+					String fieldValue = scorableFormField.getValue();
+					if(fieldValue != null&&fieldValue.trim().length()>0){
+						numFields++;
+					}
+				}
+			}
+		}
+		
+		if (scoreTotal != null) {
+			return scoreTotal / numFields;
+		}
+		return scoreTotal;
+	}
+	
 	private static Double computeSum(List<Field> fields, HashMap<String, FormField> childFields,
-	                          HashMap<String, Field> langFieldsToConsume,
-	                          HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
-	                          HashMap<String, HashMap<String, FormField>> formFieldsMap) {
+	                                 HashMap<String, Field> langFieldsToConsume,
+	                                 HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
+	                                 HashMap<String, HashMap<String, FormField>> formFieldsMap,
+	                                 Double estimatedScore) {
 		Double scoreTotal = null;
 		
 		for (Field currField : fields) {
@@ -595,11 +664,31 @@ public class Util
 				Field matchingField = pickFieldLanguage(currField, childFields, langFieldsToConsume, formFieldsMap);
 				org.openmrs.module.atd.xmlBeans.Field scorableFormField = fieldMap.get(matchingField.getId());
 				
-				if(scorableFormField.getValue() != null){
-					if(scoreTotal == null){
+				if (scorableFormField.getValue() != null) {
+					if (scoreTotal == null) {
 						scoreTotal = 0D;
 					}
 					scoreTotal += Integer.parseInt(scorableFormField.getValue());
+				}else{
+					
+					boolean substituteEstimate = false;
+					String substituteEstimateString = currField.getSubstituteEstimate();
+					if (substituteEstimateString != null) {
+						substituteEstimateString = substituteEstimateString.trim();
+						if (substituteEstimateString.length() > 0) {
+							try {
+								substituteEstimate = Boolean.parseBoolean(substituteEstimateString);
+							}
+							catch (Exception e) {}
+						}
+					}
+					
+					if(substituteEstimate&&estimatedScore != null){
+						if (scoreTotal == null) {
+							scoreTotal = 0D;
+						}
+						scoreTotal+=estimatedScore;
+					}
 				}
 				
 			}
@@ -608,11 +697,11 @@ public class Util
 		return scoreTotal;
 	}
 	
-	private static void saveScore(Score score, Double scoreTotal, Integer encounterId, Patient patient) {
+	private static void saveScore(org.openmrs.module.chica.xmlBeans.Concept xmlConcept, Double scoreTotal,
+	                              Integer encounterId, Patient patient) {
 		
-		org.openmrs.module.chica.xmlBeans.Concept xmlConcept = score.getConcept();
 		String conceptName = xmlConcept.getName();
-				
+		
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConcept(conceptName);
 		if (concept != null) {

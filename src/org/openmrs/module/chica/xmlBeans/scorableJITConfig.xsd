@@ -14,6 +14,7 @@
 			<xs:sequence>
 				<xs:element ref="Field" maxOccurs="unbounded"/>
 			</xs:sequence>
+			<xs:attribute name="excludeEmpty" type="xs:string" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="plus">
@@ -38,12 +39,13 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
 	<xs:element name="score">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element name="maxBlankFieldsAllowed" type="xs:string" minOccurs="0"/>
 				<xs:element ref="concept"/>
 				<xs:element ref="value"/>
+				<xs:element ref="estimatedScoreValue" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -91,6 +93,13 @@
 			<xs:attribute name="name" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="estimatedScoreValue">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="value"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="cn" type="xs:string"/>
 	<xs:element name="choose">
 		<xs:complexType>
@@ -103,6 +112,7 @@
 	<xs:element name="Field">
 		<xs:complexType>
 			<xs:attribute name="id" type="xs:string" use="required"/>
+			<xs:attribute name="substituteEstimate" type="xs:string" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

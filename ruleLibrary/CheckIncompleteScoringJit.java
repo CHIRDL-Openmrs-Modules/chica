@@ -143,12 +143,27 @@ public class CheckIncompleteScoringJit implements Rule {
 		if (scorableFormConfigAttrVal != null) {
 			
 			try {
-				
+				boolean incomplete = false;
 				Scores scores = formConfig.getScores();
-				Integer numBlankScoringFields = 0;
+				PatientState openJITIncompleteState = null;
 
 				//compute each score and save it to a concept in the database
 				for (Score score : scores.getScores()) {
+					Integer numBlankFieldsPerScore = 0;
+					Integer maxNumBlankFieldsPerScore = 2;
+					String maxNumBlankString = score.getMaxBlankFieldsAllowed();
+					
+					if(maxNumBlankString != null){
+						maxNumBlankString = maxNumBlankString.trim();
+						
+						if(maxNumBlankString.length()>0){
+							try{
+								maxNumBlankFieldsPerScore = Integer.parseInt(maxNumBlankString);
+							}catch(Exception e){
+								
+							}
+						}
+					}
 					
 					Value value = score.getValue(); //value that should be saved to the concept
 					Plus plus = value.getPlus();
@@ -180,7 +195,7 @@ public class CheckIncompleteScoringJit implements Rule {
 												        .get(matchingField.getId());
 												if (scorableFormField!=null&&
 														scorableFormField.getValue() == null) {
-													numBlankScoringFields++;
+													numBlankFieldsPerScore++;
 												}
 											}
 										}
@@ -194,49 +209,51 @@ public class CheckIncompleteScoringJit implements Rule {
 						//sum the fields
 						if (fields != null) {
 							
-							numBlankScoringFields += computeSum(fields, childFields, langFieldsToConsume, fieldMap,
+							Integer computeSumResult =  computeSum(fields, childFields, langFieldsToConsume, fieldMap,
 							    formFieldsMap);
+							numBlankFieldsPerScore+=computeSumResult;
 						}
 					}
 					//compute the average
 					if (mean != null) {
 						
 						List<Field> fields = mean.getFields();
-						numBlankScoringFields += computeSum(fields, childFields, langFieldsToConsume, fieldMap,
+						Integer computeSumResult = computeSum(fields, childFields, langFieldsToConsume, fieldMap,
 						    formFieldsMap);
+						numBlankFieldsPerScore += computeSumResult;
 						
 					}
-				}
-				Integer sessionId = (Integer) parameters.get("sessionId");
-				
-				//see if an incomplete state exists for the JIT
-				State currState = atdService.getStateByName("JIT_incomplete");
-				List<PatientState> patientStates = atdService.getPatientStateByFormInstanceState(formInstance, currState);
-				
-				PatientState openJITIncompleteState = null;
-				
-				//look for an open JIT_incomplete state
-				for(PatientState patientState:patientStates){
-					if(patientState.getEndTime()==null){
-						openJITIncompleteState = patientState;
-						break;
-					}
-				}
-				
-				//if the form is incomplete store an incomplete state
-				if (numBlankScoringFields > 2) {
+					Integer sessionId = (Integer) parameters.get("sessionId");
 					
-					//add a JIT_incomplete state if there is no open JIT_incomplete states
-					if (openJITIncompleteState == null) {
-						PatientState patientState = atdService.addPatientState(patient, currState, sessionId, locationTagId, locationId);
-						patientState.setFormInstance(formInstance);
-						atdService.updatePatientState(patientState);
-					}else{
-						//update the start time if the state already exists
-						openJITIncompleteState.setStartTime(new java.util.Date());
-						atdService.updatePatientState(openJITIncompleteState);
+					//see if an incomplete state exists for the JIT
+					State currState = atdService.getStateByName("JIT_incomplete");
+					List<PatientState> patientStates = atdService.getPatientStateByFormInstanceState(formInstance, currState);
+										
+					//look for an open JIT_incomplete state
+					for(PatientState patientState:patientStates){
+						if(patientState.getEndTime()==null){
+							openJITIncompleteState = patientState;
+							break;
+						}
 					}
-				} else {
+					//if the form is incomplete store an incomplete state
+					if (numBlankFieldsPerScore > maxNumBlankFieldsPerScore) {
+						
+						//add a JIT_incomplete state if there is no open JIT_incomplete states
+						if (openJITIncompleteState == null) {
+							PatientState patientState = atdService.addPatientState(patient, currState, sessionId, locationTagId, locationId);
+							patientState.setFormInstance(formInstance);
+							atdService.updatePatientState(patientState);
+						}else{
+							//update the start time if the state already exists
+							openJITIncompleteState.setStartTime(new java.util.Date());
+							atdService.updatePatientState(openJITIncompleteState);
+						}
+						incomplete = true;
+					}
+				}
+				
+				if(!incomplete){
 					//if a JIT_incomplete state exists, make sure the state is ended
 					if (openJITIncompleteState != null) {
 						openJITIncompleteState.setEndTime(new java.util.Date());

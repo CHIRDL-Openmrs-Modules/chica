@@ -228,11 +228,14 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("CREATE_JIT",false);
 			dssService.loadRule("ChicaAgeRule",false);
 			dssService.loadRule("storeObs",false);
+			dssService.loadRule("getObs",false);
 			dssService.loadRule("DDST", false);
 			dssService.loadRule("LookupBPcentile", false);
 			dssService.loadRule("ScoreJit", false);
 			dssService.loadRule("CheckIncompleteScoringJit", false);
 			dssService.loadRule("VanderbiltParentADHD", false);
+			dssService.loadRule("LocationAttributeLookup", false);
+			dssService.loadRule("CHOOSE_ASQ_JIT", false);
 
 			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
@@ -670,12 +673,14 @@ public class ChicaServiceImpl implements ChicaService
 	        dssService.loadRule("CREATE_JIT",false);
 	        dssService.loadRule("ChicaAgeRule",false);
 	        dssService.loadRule("storeObs",false);
+			dssService.loadRule("getObs",false);
 	        dssService.loadRule("DDST", false);
 	        dssService.loadRule("LookupBPcentile", false);
 			dssService.loadRule("ScoreJit", false);
 			dssService.loadRule("CheckIncompleteScoringJit", false);
 			dssService.loadRule("VanderbiltParentADHD", false);
-
+			dssService.loadRule("LocationAttributeLookup", false);
+			dssService.loadRule("CHOOSE_ASQ_JIT", false);
         }
         catch (Exception e) {
 	        log.error("load rule failed", e);
