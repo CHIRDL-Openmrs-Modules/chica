@@ -146,7 +146,7 @@ endif;
 
 If (AgeInMonths = 9) then 
 Cm_Score := call getObs with "ASQ9CommunicationSubscore";
-Gm_Score := call getObs with "ASQ9GrossmotorSubscore";
+GM_Score := call getObs with "ASQ9GrossmotorSubscore";
 Fm_Score := call getObs with "ASQ9FinemotorSubscore";
 Ps_Score := call getObs with "ASQ9ProblemsolvingSubscore";
 Pers_Score := call getObs with "ASQ9PersonalsocialSubscore";
@@ -154,7 +154,7 @@ endif;
 
 If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
 Cm_Score := call getObs with "ASQ18CommunicationSubscore";
-Gm_Score := call getObs with "ASQ18GrossmotorSubscore";
+GM_Score := call getObs with "ASQ18GrossmotorSubscore";
 Fm_Score := call getObs with "ASQ18FinemotorSubscore";
 Ps_Score := call getObs with "ASQ18ProblemsolvingSubscore";
 Pers_Score := call getObs with "ASQ18PersonalsocialSubscore";
@@ -162,7 +162,7 @@ endif;
 
 If (AgeInDays >= 866) and (AgeInDays < 959) then 
 Cm_Score := call getObs with "ASQ30CommunicationSubscore";
-Gm_Score := call getObs with "ASQ30GrossmotorSubscore";
+GM_Score := call getObs with "ASQ30GrossmotorSubscore";
 Fm_Score := call getObs with "ASQ30FinemotorSubscore";
 Ps_Score := call getObs with "ASQ30ProblemsolvingSubscore";
 Pers_Score := call getObs with "ASQ30PersonalsocialSubscore";
@@ -193,7 +193,7 @@ write ("|| Fm_Interp ||") At Fm_Interp;
 write ("|| Ps_Interp ||") At Ps_Interp;
 write ("|| Pers_Interp ||") At Pers_Interp;
 write ("|| Cm_Score ||") At Cm_Score;
-write ("|| Gm_Score ||") At Gm_Score;
+write ("|| GM_Score ||") At GM_Score;
 write ("|| Fm_Score ||") At Fm_Score;
 write ("|| Ps_Score ||") At Ps_Score;
 write ("|| Pers_Score ||") At Pers_Score;
