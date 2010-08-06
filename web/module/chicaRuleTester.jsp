@@ -6,7 +6,7 @@
 <p>
 Please choose a rule to test:
 </p>
-<form name="input" action="ruleTester.form" method="get">
+<form name="input" action="chicaRuleTester.form" method="get">
 <select name="ruleName">
 <c:forEach items="${rules}" var="rule">
 <option value="${rule.tokenName}"

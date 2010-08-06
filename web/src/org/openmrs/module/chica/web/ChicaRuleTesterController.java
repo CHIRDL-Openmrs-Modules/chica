@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
  * @author tmdugan
  * 
  */
-public class RuleTesterController extends SimpleFormController
+public class ChicaRuleTesterController extends SimpleFormController
 {
 
 	protected final Log log = LogFactory.getLog(getClass());
