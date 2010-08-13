@@ -78,7 +78,6 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "FirstStepsReferral";
 write ("|| firstname ||'s ASQ was not scanned or is incomplete.  Please confirm that it was done.  If it is not normal, please do the following:");
 write ("Suspect Delay ->                       ");
 write ("Refer to First Steps                      ");
