@@ -45,6 +45,12 @@ asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocat
 
 If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
 
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+If (AgeInMonths = 9) then || age || = "9";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || age || = "18";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || age || = "30";
+
 If ('Delayed' is in StatusDelayed) then conclude False;
 If ('ASQ_9m_Done' is in CurrentStatus) then conclude False;
 If ASQDone = False then conclude True;
@@ -78,7 +84,7 @@ endif;
 endif
 ;;
 Action:
-write ("|| firstname ||'s ASQ was not scanned or is incomplete.  Please confirm that it was done.  If it is not normal, please do the following:");
+write ("|| firstname || is due for || hisher || formal || age || month developmental screening.  Check below to indicate that you have scored ASQ and discussed with family. CPT 96110");
 write ("Suspect Delay ->                       ");
 write ("Refer to First Steps                      ");
 write ("Activities for Children form                       ");
