@@ -191,6 +191,55 @@ public class GreaseBoardController extends SimpleFormController
 			parameters.put("param1","ADHD T");
 			logicService.eval(patient, "CREATE_JIT",parameters);
 		}
+		
+		//Print a First Steps Referral form
+		if (optionsString != null && optionsString.equalsIgnoreCase("Print FSR")) {
+			PatientService patientService = Context.getPatientService();
+			Patient patient = patientService.getPatient(patientId);
+	
+			LogicService logicService = Context.getLogicService();
+			
+			User user = Context.getUserContext().getAuthenticatedUser();
+			String locationString = user.getUserProperty("location");
+			String locationTags = user.getUserProperty("locationTags");
+			LocationService locationService = Context.getLocationService();
+			
+			Integer locationId = null;
+			Location location = null;
+			if(locationString != null){
+				location = locationService.getLocation(locationString);
+				if(location != null){
+					locationId = location.getLocationId();
+				}
+			}
+			
+			Integer locationTagId = null;
+			if(locationTags != null&location!=null){
+				StringTokenizer tokenizer = new StringTokenizer(locationTags,",");
+				while(tokenizer.hasMoreTokens()){
+					String locationTagName = tokenizer.nextToken();
+					locationTagName = locationTagName.trim();
+					Set<LocationTag> tags = location.getTags();
+					for(LocationTag tag:tags){
+						if(tag.getTag().equalsIgnoreCase(locationTagName)){
+							locationTagId = tag.getLocationTagId();
+						}
+					}
+				}
+				
+			}
+			//print the First Steps Referral form
+			Map<String, Object> parameters = new HashMap<String,Object>();
+			parameters.put("sessionId",sessionId);
+			parameters.put("locationTagId",locationTagId); 
+			FormInstance formInstance = new FormInstance();
+			formInstance.setLocationId(locationId);
+			parameters.put("formInstance",formInstance);
+			parameters.put("param1","FirstStepsReferral");
+			logicService.eval(patient, "CREATE_JIT",parameters);
+			
+			return new ModelAndView(new RedirectView("greaseBoard.form"));
+		}
 
 		if (optionsString != null && optionsString.startsWith("Print"))
 		{
@@ -513,8 +562,10 @@ public class GreaseBoardController extends SimpleFormController
 			map.put("refreshPeriod", adminService.getGlobalProperty(
 					"chica.greaseBoardRefresh"));
 		
-			boolean isADHDInterventionLocation = isADHDInterventionLocation(locationId);
+			boolean isADHDInterventionLocation = isInterventionLocation(locationId,"isADHDInterventionLocation");
 			map.put("isADHDInterventionLocation", isADHDInterventionLocation);
+			boolean isASQInterventionLocation = isInterventionLocation(locationId,"isASQInterventionLocation");
+			map.put("isASQInterventionLocation", isASQInterventionLocation);
 		}catch(UnexpectedRollbackException ex){
 			//ignore this exception since it happens with an APIAuthenticationException
 		}catch(APIAuthenticationException ex2){
@@ -647,12 +698,11 @@ public class GreaseBoardController extends SimpleFormController
 		
 	}
 	
-	private boolean isADHDInterventionLocation(Integer locationId) {
-		String locationAttributeName = "isADHDInterventionLocation";
+	private boolean isInterventionLocation(Integer locationId,String interLocationAttributeName) {
 		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
 		
 		LocationAttributeValue locationAttributeValue = chirdlUtilService.getLocationAttributeValue(locationId,
-		    locationAttributeName);
+			interLocationAttributeName);
 		if (locationAttributeValue != null) {
 			String interventionSiteString = locationAttributeValue.getValue();
 			if (interventionSiteString.equalsIgnoreCase("true")) {

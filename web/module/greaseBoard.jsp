@@ -139,6 +139,9 @@
 <c:if test="${isADHDInterventionLocation}">
 <option>ADHD WU</option>
 </c:if>
+<c:if test="${isASQInterventionLocation}">
+<option>Print FSR</option>
+</c:if>
 </select>
 <input type="hidden" value="${row.patientId}" name="patientId" />
 <input type="hidden" value="${row.sessionId}" name="sessionId" />
