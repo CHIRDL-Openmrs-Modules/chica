@@ -169,14 +169,6 @@ public class ProduceFormInstance implements ProcessStateAction
 		catch (IOException e) {
 			log.error("Could not produce merge xml for file: "+mergeFilename, e);
 		}
-		LogicService logicService = Context.getLogicService();
-
-		ObsChicaDatasource xmlDatasource = (ObsChicaDatasource) logicService
-				.getLogicDataSource("RMRS");
-
-		// clear the in-memory obs from the MRF dump at the end of each
-		// produce state
-		xmlDatasource.deleteRegenObsByPatientId(patientId);
 
 		StateManager.endState(patientState);
 		System.out.println("Produce: Total time to produce "+form.getName()+": "+(System.currentTimeMillis()-totalTime));

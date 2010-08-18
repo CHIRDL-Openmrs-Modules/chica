@@ -24,6 +24,8 @@ If (mode = PRODUCE) then
 ASQ9MonthAssessment:= read {ASQ9MonthAssessment} Where it Occurred Within Past 1 Day;
 ASQ18MonthAssessment:= read {ASQ18MonthAssessment} Where it Occurred Within Past 1 Day;
 ASQ30MonthAssessment:= read {ASQ30MonthAssessment} Where it Occurred Within Past 1 Day;
+birthWeight:= read last {BIRTH WEIGHT CHICA};
+gestAge:= read last {GEST AGE BY EXAM CHICA};
 
 endif
 ;;
@@ -91,6 +93,8 @@ write ("|| Sel_Gross_Fine_Motor ||") At Sel_Gross_Fine_Motor;
 write ("|| Sel_Cognitive ||") At Sel_Cognitive;
 write ("|| Sel_Social_Emotional ||") At Sel_Social_Emotional;
 write ("|| Sel_Suspected_Dev_Delay ||") At Sel_Suspected_Dev_Delay;
+write ("|| birthWeight_value  ||") At birthWeight;
+write ("|| gestAge_value  ||") At gestAge;
 
 ;;
 Age_Min: 0 years;;

@@ -3259,6 +3259,53 @@ VALUES
  VALUES ('isASQInterventionLocation', 'Indicates whether a given location is an ASQ intervention site');
 	</sql>
 	</diff>
+	<diff>
+		<version>1.4.6</version>
+		<author>Tammy Dugan</author>
+		<date>August 18, 2010</date>
+		<description>
+		Add state to clear inmemory obs after PSF/PWS created
+		</description>
+	<sql>		 
+INSERT INTO atd_state_action
+   (action_name, action_description, action_class)
+VALUES
+   ('CLEAR INMEMORY OBS', 'Clears the in-memory obs','org.openmrs.module.chica.action.ClearInmemoryObs');
+
+insert into atd_state(name,state_action_id)
+select 'CLEAR INMEMORY OBS PWS', state_action_id from atd_state_action where action_name='CLEAR INMEMORY OBS';
+
+insert into atd_state(name,state_action_id)
+select 'CLEAR INMEMORY OBS PSF', state_action_id from atd_state_action where action_name='CLEAR INMEMORY OBS';
+
+INSERT INTO atd_state_mapping
+   (initial_state, next_state,program_id)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='PSF_create' and b.name='CLEAR INMEMORY OBS PSF' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (initial_state, next_state,program_id)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='CLEAR INMEMORY OBS PSF' and b.name='PSF_printed' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (initial_state, next_state,program_id)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='PWS_create' and b.name='CLEAR INMEMORY OBS PWS' and c.name='chica';
+
+INSERT INTO atd_state_mapping
+   (initial_state, next_state,program_id)
+select  max(a.state_id),max(b.state_id),max(program_id)
+ from atd_state a,atd_state b, atd_program c where a.name='CLEAR INMEMORY OBS PWS' and b.name='PWS_printed' and c.name='chica';
+	
+	delete from atd_state_mapping where initial_state=(select state_id from atd_state where name='PSF_create')
+and next_state=(select state_id from atd_state where name='PSF_printed');
+
+delete from atd_state_mapping where initial_state=(select state_id from atd_state where name='PWS_create')
+and next_state=(select state_id from atd_state where name='PWS_printed');
+	
+	</sql>
+	</diff>
 </sqldiff>
 
 
