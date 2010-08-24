@@ -56,8 +56,8 @@ endif;
 endif
 ;;
 Action:
-write ("Does || firstname || OFTEN make careless mistakes or not pay close attention to details?");
-write ("¿|| firstname || comete seguidos errores por descuido o por no poner atención a los detalles?") At Spanish;                                                                                                                                                                                                                                                                            
+write ("Does || firstname || OFTEN make careless mistakes or not pay close attention to details, that is causing problems at home or school?");
+write ("¿Hace || firstname || con frecuencia errores por descuido o no pone él/ella atención a los detalles, ocasionando problemas en casa o en la escuela?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 5 years;;
 Age_Max: 13 years;;

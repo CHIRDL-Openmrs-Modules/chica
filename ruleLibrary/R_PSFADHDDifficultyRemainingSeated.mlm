@@ -55,8 +55,8 @@ endif;
 endif
 ;;
 Action:
-write ("Does || firstname || OFTEN have difficulty remaining seated when asked to do so?");
-write ("¿|| firstname || tiene seguido dificultad para permanecer sentado cuando se le pide?") At Spanish;                                                                                                                                                                                                                                                                            
+write ("Does || firstname || OFTEN have difficulty remaining seated when asked to do so, that is causing problems at home or school?");
+write ("¿Tiene || firstname || muchas veces problemas de mantenerse sentado cuando se le pide, ocasionando problemas en casa o en la escuela?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 5 years;;
 Age_Max: 13 years;;
