@@ -21,9 +21,9 @@ mode:=read {mode from Parameters};
 
 If (mode = PRODUCE) then
 
-ASQ9MonthAssessment:= read {ASQ9MonthAssessment} Where it Occurred Within Past 1 Day;
-ASQ18MonthAssessment:= read {ASQ18MonthAssessment} Where it Occurred Within Past 1 Day;
-ASQ30MonthAssessment:= read {ASQ30MonthAssessment} Where it Occurred Within Past 1 Day;
+ASQ9MonthAssessment:= read {ASQ9MonthAssessment} Where it Occurred Within Past 30 Days;
+ASQ18MonthAssessment:= read {ASQ18MonthAssessment} Where it Occurred Within Past 30 Days;
+ASQ30MonthAssessment:= read {ASQ30MonthAssessment} Where it Occurred Within Past 30 Days;
 birthWeight:= read last {BIRTH WEIGHT CHICA};
 gestAge:= read last {GEST AGE BY EXAM CHICA};
 
