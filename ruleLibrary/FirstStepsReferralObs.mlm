@@ -28,8 +28,12 @@ Priority:		;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
+If NOT (birthWeight = NULL) then
 CALL storeObs With "BIRTH WEIGHT CHICA","birthWeight_value";
-CALL storeObs With "GEST AGE BY EXAM CHICA","gestAge_value";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+If NOT (gestAge = NULL) then
+CALL storeObs With "GEST AGE BY EXAM CHICA","gestAge_value";   
+endif                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 endif
 
 ;;
