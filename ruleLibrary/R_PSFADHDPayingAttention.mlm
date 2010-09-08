@@ -60,7 +60,7 @@ endif
 Action:
 write ("Does || firstname || OFTEN have a hard time paying attention to tasks or play, that is causing problems at home or school?");
 write ("¿Tiene || firstname || muchas veces dificultad para prestar atención a las tareas o a los juegos, ocasionando problemas en casa o en la escuela?") At Spanish;
-
+;;
 Age_Min: 5 years;;
 Age_Max: 13 years;;
 end:
