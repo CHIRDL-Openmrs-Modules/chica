@@ -72,10 +72,12 @@ public class ChicaParameterHandler implements ParameterHandler
 				
 				if(answer.equalsIgnoreCase("Y")){
 					parameters.put("Box1", "true");
+					parameters.put("box1", "true");
 				}
 				
 				if(answer.equalsIgnoreCase("N")){
 					parameters.put("Box2", "true");
+					parameters.put("box2", "true");
 				}
 			}
 		}
@@ -87,10 +89,12 @@ public class ChicaParameterHandler implements ParameterHandler
 				
 				if(answer.equalsIgnoreCase("Y")){
 					parameters.put("Box1", "true");
+					parameters.put("box1", "true");
 				}
 				
 				if(answer.equalsIgnoreCase("N")){
 					parameters.put("Box2", "true");
+					parameters.put("box2", "true");
 				}
 			}
 		}
@@ -125,26 +129,32 @@ public class ChicaParameterHandler implements ParameterHandler
 				
 				if(answer.contains("1")&&!(error!=null&&error.contains("1"))){
 					parameters.put("Box1", "true");
+					parameters.put("box1", "true");
 					numBoxes++;
 				}
 				if(answer.contains("2")&&!(error!=null&&error.contains("2"))){
 					parameters.put("Box2", "true");
+					parameters.put("box2", "true");
 					numBoxes++;
 				}
 				if(answer.contains("3")&&!(error!=null&&error.contains("3"))){
 					parameters.put("Box3", "true");
+					parameters.put("box3", "true");
 					numBoxes++;
 				}
 				if(answer.contains("4")&&!(error!=null&&error.contains("4"))){
 					parameters.put("Box4", "true");
+					parameters.put("box4", "true");
 					numBoxes++;
 				}
 				if(answer.contains("5")&&!(error!=null&&error.contains("5"))){
 					parameters.put("Box5", "true");
+					parameters.put("box5", "true");
 					numBoxes++;
 				}
 				if(answer.contains("6")&&!(error!=null&&error.contains("6"))){
 					parameters.put("Box6", "true");
+					parameters.put("box6", "true");
 					numBoxes++;
 				}
 				if (numBoxes == 6){
