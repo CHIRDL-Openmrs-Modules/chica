@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research DevScreen 9mos Old PWS                                                                         ;;
- Filename: R_DevScreen9MonthsDelayPWS                                  ;;
+ Filename: R_DevScreen9MonthsMonitorPWS_ver2                                  ;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author: Aaron Carroll                                       ;;
@@ -35,7 +35,7 @@ ASQDone:= read exist {ASQ9MonthAssessment from CHICA} Where it Occurred Within P
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority: 1000       ;;
+Priority: 404       ;;
  Evoke: ;;
 
 Logic:
@@ -50,16 +50,19 @@ If ('Delayed' is in StatusDelayed) then conclude False;
 If ('ASQ_9m_Done' is in CurrentStatus) then conclude False;
 If ASQDone = False then conclude False;
 
-If ('Communication_Delay' is in Results) then || prompttext1 || = "communication delay, ";
-If ('Finemotor_Delay' is in Results) then || prompttext2 || = "fine motor delay, ";
-If ('Grossmotor_Delay' is in Results) then || prompttext3 || = "gross motor delay, ";
-If ('Personalsocial_Delay' is in Results) then || prompttext4 || = "personal-social delay, ";
-If ('Problemsolving_Delay' is in Results) then || prompttext5 || = "problem solving delay, ";
+If ('Communication_Monitor' is in Results) then || prompttext1 || = "communication, ";
+If ('Finemotor_Monitor' is in Results) then || prompttext2 || = "fine motor, ";
+If ('Grossmotor_Monitor' is in Results) then || prompttext3 || = "gross motor, ";
+If ('Personalsocial_Monitor' is in Results) then || prompttext4 || = "personal-social, ";
+If ('Problemsolving_Monitor' is in Results) then || prompttext5 || = "problem solving, ";
 
 If ('Communication_Delay' is in Results) OR ('Grossmotor_Delay' is in Results) OR
    ('Finemotor_Delay' is in Results) OR ('Problemsolving_Delay' is in Results) OR
-   ('Personalsocial_Delay' is in Results) then conclude True;
+   ('Personalsocial_Delay' is in Results) then conclude False;
  
+If ('Communication_Monitor' is in Results) OR ('Grossmotor_Monitor' is in Results) OR
+   ('Finemotor_Monitor' is in Results) OR ('Problemsolving_Monitor' is in Results) OR
+   ('Personalsocial_Monitor' is in Results) then conclude True;
 
 Else conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
@@ -69,19 +72,23 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
+endif;
+If  (Box3=true) then
  CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
  CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
 endif;
-If  (Box2=true) then
+If  (Box4=true) then
  CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
 endif;
-If  (Box3=true) then
- CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
-endif;
-If  (Box4=true) then
-
-endif;
 If  (Box5=true) then
+ CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
+ CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
+endif;
+If  (Box6=true) then
  CALL storeObs With "CHICA_DevScreen_Status","NormalDevelopment";
  CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
  CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
@@ -91,14 +98,14 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "FirstStepsReferral";
-write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following.  First steps referral is attached.");
- write ("Suspect Delay ->                       ");
- write ("Refer to First Steps                      ");
-write ("Activities for Children form                       ");
-write ("Sched follow-up 1 month                      ");
-write ("Do not suspect delay");
-write ("");
+write ("|| firstname ||'s ASQ shows a score in the 'monitoring zone' for || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 ||.  Close follow-up and repeat testing recommended. Also provide developmental exercises.");
+write ("Rescheduled in 2-6 weeks                      ");
+write ("Activities for Children form");
+write ("I have developmental concerns ->                       ");
+write ("First Steps referral                      ");
+write ("ASQ done, scored, discussed with family");
+write ("There are no devel. concerns");
+
 ;;
 Age_Min: 9          months     ;;
 Age_Max: 10         months     ;;

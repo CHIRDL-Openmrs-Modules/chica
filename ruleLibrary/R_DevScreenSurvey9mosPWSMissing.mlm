@@ -34,7 +34,7 @@ ASQDone:= read exist {ASQ9MonthAssessment from CHICA} Where it Occurred Within P
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority: 407       ;;
+Priority: 1000       ;;
  Evoke: ;;
 
 Logic:
