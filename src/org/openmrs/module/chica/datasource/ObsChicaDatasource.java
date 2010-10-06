@@ -14,6 +14,17 @@ import org.openmrs.logic.datasource.ObsDataSource;
  */
 public class ObsChicaDatasource extends ObsDataSource
 {
+
+	private LogicChicaObsDAO logicRgrtaObsDAO;
+	
+	public void setLogicRgrtaObsDAO(LogicChicaObsDAO logicRgrtaObsDAO) {
+		this.logicRgrtaObsDAO = logicRgrtaObsDAO;
+	}
+	
+	public LogicChicaObsDAO getLogicRgrtaObsDAO() {
+		return logicRgrtaObsDAO;
+	}
+	
 	public void parseHL7ToObs(String hl7Message,Integer patientId,String mrn)
 	{
 		((LogicChicaObsDAO) this.getLogicObsDAO()).parseHL7ToObs(hl7Message,
