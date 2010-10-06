@@ -17,7 +17,7 @@
 				<prop key="/module/@MODULE_ID@/weeklyReports.form">weeklyReports</prop>
 				<prop key="/module/@MODULE_ID@/manualCheckin.form">manualCheckin</prop>
 				<prop key="/module/@MODULE_ID@/manualCheckinSSNMRN.form">manualCheckinSSNMRN</prop>
-				<prop key="/module/@MODULE_ID@/ruleTester.form">ruleTester</prop>
+				<prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
 				<prop key="/module/@MODULE_ID@/pager.form">pager</prop>		
 				<prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
 				<prop key="/module/@MODULE_ID@/displayTiff.form">displayTiff</prop>
@@ -36,10 +36,10 @@
 		<property name="formView"><value>/module/@MODULE_ID@/parseDictionary</value></property>
 		<property name="successView"><value>parseDictionary.form</value></property>
 	</bean>
-	<bean id="ruleTester" class="org.openmrs.module.chica.web.RuleTesterController">
-		<property name="commandName"><value>ruleTesterObject</value></property>
-		<property name="formView"><value>/module/@MODULE_ID@/ruleTester</value></property>
-		<property name="successView"><value>ruleTester.form</value></property>
+	<bean id="chicaRuleTester" class="org.openmrs.module.chica.web.ChicaRuleTesterController">
+		<property name="commandName"><value>chicaRuleTesterObject</value></property>
+		<property name="formView"><value>/module/@MODULE_ID@/chicaRuleTester</value></property>
+		<property name="successView"><value>chicaRuleTester.form</value></property>
 	</bean>
 	<bean id="loadObs" class="org.openmrs.module.chica.web.LoadObsController">
 		<property name="commandName"><value>loadObsObject</value></property>
