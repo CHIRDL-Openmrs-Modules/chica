@@ -54,6 +54,11 @@ endif
 
 If (mode = CONSUME) then
 
+If  (Box1=true)OR(Box2=true)OR(Box3=true)OR(Box4=true)OR(Box5=true)OR(Box6=true) then
+ CALL storeObs With "CHICA_ADHD_DX","Workup_underway"; 
+
+endif;
+
 If  (Box1=true) then
  CALL storeObs With "CHICA_ADHD_DX","no";
 endif;
@@ -73,10 +78,6 @@ If  (Box6=true) then
  CALL storeObs With "ADHD_Workup","Follow-up_2wks_scheduled";
 endif;
 
-If  (Box1=true)OR(Box2=true)OR(Box3=true)OR(Box4=true)OR(Box5=true)OR(Box6=true) then
- CALL storeObs With "CHICA_ADHD_DX","Workup_underway"; 
-
-endif;
 endif
 ;;
 Action:
