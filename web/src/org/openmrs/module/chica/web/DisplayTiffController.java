@@ -186,7 +186,10 @@ public class DisplayTiffController extends SimpleFormController {
 			String leftImageLocationIdString = request.getParameter("leftImageLocationId");
 			Integer leftImageFormId = parseString(leftImageFormIdString);
 			FormService formService = Context.getFormService();
-			Form form = formService.getForm(leftImageFormId);
+			Form form = null;
+			if(leftImageFormId != null){
+				form = formService.getForm(leftImageFormId);
+			}
 			map.put("leftImageForminstance", leftImageFormInstanceIdString);
 			if(form != null){
 				map.put("leftImageFormname", form.getName());
