@@ -58,7 +58,7 @@ If  (Box2=true) then
  CALL storeObs With "sickle_cell_prophylaxis","True";
 endif;
 If  (Box3=true) then
- CALL storeObs With "FLU INJECT","True";
+ CALL storeObs With "FLU INJECT CHICA","True";
 endif;
 If  (Box5=true) then
  CALL storeObs With "PWSSickleCell","yes";
