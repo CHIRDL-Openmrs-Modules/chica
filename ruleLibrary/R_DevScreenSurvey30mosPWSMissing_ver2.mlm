@@ -47,8 +47,6 @@ If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclu
 
 AgeInMonths := call ChicaAgeRule with "months";
 AgeInDays := call ChicaAgeRule with "days";
-If (AgeInMonths = 9) then || age || = "9";
-If (AgeInMonths >= 17) and (AgeInMonths < 19) then || age || = "18";
 If (AgeInDays >= 866) and (AgeInDays < 959) then || age || = "30";
 
 If ('Delayed' is in StatusDelayed) then conclude False;
