@@ -62,6 +62,7 @@ If (mode = CONSUME) then
 If  (Box1=true) then
  CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
  CALL storeObs With "CHICA_DevScreen_Status","ASQ_30m_Done";
+ CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
 endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";

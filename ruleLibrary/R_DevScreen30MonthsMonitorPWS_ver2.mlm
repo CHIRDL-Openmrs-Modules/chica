@@ -80,6 +80,7 @@ endif;
 If  (Box3=true) then
  CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
  CALL storeObs With "CHICA_DevScreen_Status","ASQ_30m_Done";
+ CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
 endif;
 If  (Box4=true) then
  CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
