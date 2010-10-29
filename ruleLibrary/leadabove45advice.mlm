@@ -30,7 +30,7 @@ RMRS_Lead_Level := read Last {LEAD LEVEL-PEDS from RMRS} Where it Occurred Withi
 Addressed := read {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
 endif
 ;;
-Priority:		106;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 Deferred := read Last {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
 endif
 ;;
-Priority:		230;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
