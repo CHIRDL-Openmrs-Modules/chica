@@ -35,7 +35,7 @@ Priority:		616;;
 Logic:
 If (mode = PRODUCE) then
 
-If (BFProblems = "0") AND (breastfeeder = 1) then conclude True;
+If (BFProblems = "0") AND (breastfeeder = "1") then conclude True;
 conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
 endif
