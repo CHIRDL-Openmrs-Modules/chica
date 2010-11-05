@@ -26,7 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-scd :=  read Last {HGB-FP SCN};
+scd :=  read Last {HGB-FP SCN from RMRS};
 proph := read exist {sickle_cell_prophylaxis from CHICA} Where it Occurred Within Past 90 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
