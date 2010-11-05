@@ -28,6 +28,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.EmptyResult;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.atd.BaseStateActionHandler;
 import org.openmrs.module.atd.StateActionHandler;
 import org.openmrs.module.atd.StateManager;
 import org.openmrs.module.atd.TeleformFileMonitor;
@@ -51,7 +52,7 @@ import org.openmrs.module.chica.util.Util;
  * @author tmdugan
  * 
  */
-public class ChicaStateActionHandler implements StateActionHandler
+public class ChicaStateActionHandler extends BaseStateActionHandler
 {
 	private static Log log = LogFactory.getLog(ChicaStateActionHandler.class);
 	private static ChicaStateActionHandler stateActionHandler = null;
@@ -139,32 +140,11 @@ public class ChicaStateActionHandler implements StateActionHandler
 		return stateActionHandler;
 	}
 	
+	//deliberately public for scheduled task configuration
 	public ChicaStateActionHandler(){
 		
 	}
-	
-	private ProcessStateAction loadProcessStateAction(StateAction stateAction){
 		
-		ProcessStateAction processStateAction = null;
-		
-		try
-		{
-			String stateActionClass = stateAction.getActionClass();
-			Class classInstatiation = Class.forName(stateActionClass);
-			if(stateActionClass == null)
-			{
-				return null;
-			}
-			//class the initialization method is in
-			processStateAction = (ProcessStateAction) classInstatiation.newInstance();
-		} catch (Exception e)
-		{
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
-		}
-		return processStateAction;
-	}
-	
 	public synchronized void changeState(PatientState patientState,
 			HashMap<String,Object> parameters){
 		StateAction stateAction = patientState.getState().getAction();
@@ -178,28 +158,6 @@ public class ChicaStateActionHandler implements StateActionHandler
 		if (processStateAction != null)
 		{
 			processStateAction.changeState(patientState, parameters);
-		}	
-	}
-	
-	public synchronized void processAction(StateAction stateAction, Patient patient,
-			PatientState patientState,HashMap<String,Object> parameters)
-	{
-		if (stateAction == null)
-		{
-			return;
-		}
-
-		// lookup the patient again to avoid lazy initialization errors
-		PatientService patientService = Context.getPatientService();
-		Integer patientId = patient.getPatientId();
-		patient = patientService.getPatient(patientId);
-
-		ProcessStateAction processStateAction = loadProcessStateAction(stateAction);
-
-		if (processStateAction != null)
-		{
-			processStateAction.processAction(stateAction, patient,
-					patientState, parameters);
 		}	
 	}
 

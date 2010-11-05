@@ -43,6 +43,7 @@ import org.openmrs.module.chica.xmlBeans.EstimatedScoreValue;
 import org.openmrs.module.chica.xmlBeans.Field;
 import org.openmrs.module.chica.xmlBeans.FormConfig;
 import org.openmrs.module.chica.xmlBeans.Geq;
+import org.openmrs.module.chica.xmlBeans.Eq;
 import org.openmrs.module.chica.xmlBeans.If;
 import org.openmrs.module.chica.xmlBeans.Language;
 import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
@@ -568,10 +569,20 @@ public class Util
 		
 		if (ifObject != null) {
 			Geq geq = ifObject.getGeq();
+			Eq eq = ifObject.getEq();
 			
-			if (geq != null) {
-				Field fieldOperand = geq.getField();
-				String cnOperand = geq.getCn();
+			if (geq != null||eq != null) {
+				Field fieldOperand = null;
+				String cnOperand = null;
+				
+				if(geq != null){
+					fieldOperand = geq.getField();
+					cnOperand = geq.getCn();
+				}
+				if(eq != null){
+					fieldOperand = eq.getField();
+					cnOperand = eq.getCn();
+				}
 				
 				if (fieldOperand != null && cnOperand != null) {
 					Field matchingField = pickFieldLanguage(fieldOperand, childFields, 
@@ -582,9 +593,15 @@ public class Util
 						
 						if (scorableFormField!=null&&
 						scorableFormField.getValue() != null) {
-							if (Integer.parseInt(scorableFormField.getValue()) >= Integer
-									.parseInt(cnOperand)) {
-								ifSatisfied = true;
+							if (geq != null) {
+								if (Integer.parseInt(scorableFormField.getValue()) >= Integer.parseInt(cnOperand)) {
+									ifSatisfied = true;
+								}
+							}
+							if (eq != null) {
+								if (Integer.parseInt(scorableFormField.getValue()) == Integer.parseInt(cnOperand)) {
+									ifSatisfied = true;
+								}
 							}
 						}
 					}

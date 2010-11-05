@@ -543,7 +543,8 @@ public class GreaseBoardController extends SimpleFormController
 						String jitFormName = form.getName();
 						//only display ADHD forms for reprint
 						if(jitFormName.startsWith("ADHD")||
-								jitFormName.startsWith("ASQ")){
+								jitFormName.startsWith("ASQ")||
+								jitFormName.startsWith("MCHAT")){
 							printableJits.add("Print " + jitFormName);
 						}
 					}

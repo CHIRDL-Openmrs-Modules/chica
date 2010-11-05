@@ -3306,6 +3306,19 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
 	
 	</sql>
 	</diff>
+	<diff>
+		<version>1.4.7</version>
+		<author>Tammy Dugan</author>
+		<date>October 18, 2010</date>
+		<description>
+		Add location attribute for MCHAT intervention Location
+		</description>
+	<sql>		 
+ INSERT INTO chirdlutil_location_attribute(name,description)
+ VALUES ('isMchatInterventionLocation', 'Indicates whether a given location is an MCHAT intervention site');
+	
+	</sql>
+	</diff>
 </sqldiff>
 
 

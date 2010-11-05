@@ -78,9 +78,14 @@
     <structure type="org.openmrs.module.chica.xmlBeans.EstimatedScoreValue" get-method="getEstimatedScoreValue" set-method="setEstimatedScoreValue" usage="optional"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.If" name="if">
-    <structure type="org.openmrs.module.chica.xmlBeans.Geq" get-method="getGeq" set-method="setGeq"/>
+    <structure type="org.openmrs.module.chica.xmlBeans.Geq" get-method="getGeq" set-method="setGeq" usage="optional"/>
+    <structure type="org.openmrs.module.chica.xmlBeans.Eq" get-method="getEq" set-method="setEq" usage="optional"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Geq" name="geq">
+    <structure type="org.openmrs.module.chica.xmlBeans.Field" get-method="getField" set-method="setField"/>
+    <value name="cn" field="cn"/>
+  </mapping>
+  <mapping class="org.openmrs.module.chica.xmlBeans.Eq" name="eq">
     <structure type="org.openmrs.module.chica.xmlBeans.Field" get-method="getField" set-method="setField"/>
     <value name="cn" field="cn"/>
   </mapping>

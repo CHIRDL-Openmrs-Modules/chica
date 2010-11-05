@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 BFProblems := read Last {breast_feeding_help_needed from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 endif
 ;;
-Priority:		400;;
+Priority:		395;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
