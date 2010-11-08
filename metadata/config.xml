@@ -6,7 +6,7 @@
 	<!-- Chica Module Properties -->
 	<id>chica</id>
 	<name>Chica</name>
-	<version>1.47.3</version>
+	<version>1.47.4</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
 	<author>Vibha Anand and Tammy Dugan</author>
 	<description>

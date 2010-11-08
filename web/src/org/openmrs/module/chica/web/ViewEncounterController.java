@@ -255,6 +255,7 @@ public class ViewEncounterController extends SimpleFormController {
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception {
 		ATDService atdService = Context.getService(ATDService.class);
+		FormService formService = Context.getFormService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		PatientService patientService = Context
 				.getService(PatientService.class);
@@ -292,9 +293,29 @@ public class ViewEncounterController extends SimpleFormController {
 					.getEncountersByPatientId(Integer.valueOf(pidparam));
 			List<PatientRow> rows = new ArrayList<PatientRow>();
 
+			ArrayList<String> formsToProcess = new ArrayList<String>();
+			formsToProcess.add("PSF");
+			formsToProcess.add("PWS");
+			formsToProcess.add("ADHD P");
+			formsToProcess.add("ADHD PS");
+			formsToProcess.add("ADHD T");
+			formsToProcess.add("MCHAT");
+			String firstName = null;
+			String lastName = null;
+			String mrn = null;
+			if (patient != null) {
+				firstName = patient.getGivenName();
+				lastName = patient.getFamilyName();
+				PatientIdentifier pi = patient.getPatientIdentifier();
+				if (pi != null) {
+					mrn = pi.getIdentifier();	
+				}
+			}
 			for (org.openmrs.Encounter enc : list) {
 				Integer encounterId = enc.getEncounterId();
 				PatientRow row = new PatientRow();
+				row.setLastName(lastName);
+				row.setMrn(mrn);
 				Encounter enct = (Encounter) encounterService
 						.getEncounter(encounterId);
 				if (enct == null)
@@ -325,17 +346,7 @@ public class ViewEncounterController extends SimpleFormController {
 				User provider = enct.getProvider();
 				String providerName = getProviderName(provider);
 				String station = enct.getPrinterLocation();
-				String firstName = enct.getPatient().getGivenName();
-				Patient pat = enct.getPatient();
-				if (pat != null) {
-					String lastName = pat.getFamilyName();
-					row.setLastName(lastName);
-					PatientIdentifier pi = pat.getPatientIdentifier();
-					if (pi != null) {
-						String mrn = pi.getIdentifier();
-						row.setMrn(mrn);
-					}
-				}
+				
 
 				row.setFirstName(firstName);
 				row.setMdName(providerName);
@@ -347,34 +358,33 @@ public class ViewEncounterController extends SimpleFormController {
 						.adjustAgeUnits(dob, checkin));
 
 				// psf, pws form ids
-				
-				ArrayList<String> formsToProcess = new ArrayList<String>();
-				formsToProcess.add("PSF");
-				formsToProcess.add("PWS");
-				formsToProcess.add("ADHD P");
-				formsToProcess.add("ADHD PS");
-				formsToProcess.add("ADHD T");
-				
-				for (String formName : formsToProcess) {
-					
-					List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(formName, encounterId);
+							
+					List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(null,encounterId);
 					if (patientStates != null && !patientStates.isEmpty()) {
 						
 						for (PatientState currState : patientStates) {
 							if (currState.getEndTime() != null) {
+								Integer formId = currState.getFormId();
+								String formName = formNameMap.get(formId);
+								if(formName == null){
+									Form form = formService.getForm(formId);
+									formName = form.getName();
+								}
+								
 							    if(formName.equals("PSF")){
 							    	row.setPsfId(currState.getFormInstance());
 							    }
 							    if(formName.equals("PWS")){
 							    	row.setPwsId(currState.getFormInstance());
 							    }
+							    if(formsToProcess.contains(formName)){
 								row.addFormInstance(currState.getFormInstance());
-								formNameMap.put(currState.getFormId(), formName);
+							    }
+								formNameMap.put(formId, formName);
 								break;
 							}
 						}
 					}
-				}
 			
 				
 				//get CHICA 1 PSF and PWS ids
@@ -387,7 +397,6 @@ public class ViewEncounterController extends SimpleFormController {
 					Integer pwsId = chica1Appt.getApptPwsId();
 					Integer locationId = enct.getLocation().getLocationId();
 					
-					FormService formService = Context.getFormService();
 					
 					if(psfId != null){
 						Form form = formService.getForms("PSF",null,null,false,null,null,null).get(0);
@@ -423,16 +432,18 @@ public class ViewEncounterController extends SimpleFormController {
 				}
 
 				// From the encounter, get the obs for weight percentile
-
-				String result = searchEncounterForObs(enct, "WTCENTILE");
-				row.setWeightPercentile(result);
-
-				result = searchEncounterForObs(enct, "HTCENTILE");
-				row.setHeightPercentile(result);
+				//String result = searchEncounterForObs(enct, "WTCENTILE");
+				//row.setWeightPercentile(result);
+				row.setWeightPercentile("");
+				
+				//result = searchEncounterForObs(enct, "HTCENTILE");
+				//row.setHeightPercentile(result);
+				row.setHeightPercentile("");
 
 				rows.add(row);
-
 			}
+
+			
 
 			map.put("patientRows", rows);
 			map.put("formNameMap",formNameMap);
