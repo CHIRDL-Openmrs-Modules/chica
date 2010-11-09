@@ -131,7 +131,8 @@ public class ViewEncounterController extends SimpleFormController {
 				org.openmrs.Encounter encounter = encounterService.getEncounter(encounterId);
 				ChicaService chicaService = Context.getService(ChicaService.class);
 				
-				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS")) {
+				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
+						formName.equals("MCHAT")) {
 					leftImageLocationId = locationId;
 					leftImageFormId = formId;
 					leftImageFormInstanceId = formInstanceId;
@@ -185,50 +186,54 @@ public class ViewEncounterController extends SimpleFormController {
 				Integer rightImageFormId = null;
 				Integer rightImageFormInstanceId = null;
 				
-				if (formName.equals("PWS") || formName.equals("ADHD T")) {
-					rightImageLocationId = locationId;
-					rightImageFormId = formId;
-					rightImageFormInstanceId = formInstanceId;
-					
-				} else {
-					
-					String rightName = null;
-					
-					if(formName.equals("ADHD P")){
-						rightName = "ADHD T";
-					}
-					
-					if(formName.equals("ADHD PS")){
-						rightName = "ADHD T";
-					}
-					
-					if(formName.equals("PSF")){
-						rightName = "PWS";
-					}
-					
-					List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(rightName, encounterId);
-					if (patientStates != null && !patientStates.isEmpty()) {
+				//don't set a right image for MCHAT
+				if (!formName.equals("MCHAT")) {
+					if (formName.equals("PWS") || formName.equals("ADHD T")) {
+						rightImageLocationId = locationId;
+						rightImageFormId = formId;
+						rightImageFormInstanceId = formInstanceId;
 						
-						for (PatientState currState : patientStates) {
-							if (currState.getEndTime() != null) {
-								rightImageLocationId = currState.getLocationId();
-								rightImageFormId = currState.getFormId();
-								rightImageFormInstanceId = currState.getFormInstanceId();
-								break;
-							}
+					} else {
+						
+						String rightName = null;
+						
+						if (formName.equals("ADHD P")) {
+							rightName = "ADHD T";
 						}
-					}else {
-						if (rightName!=null&&rightName.equals("PWS")) {
-							Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
+						
+						if (formName.equals("ADHD PS")) {
+							rightName = "ADHD T";
+						}
+						
+						if (formName.equals("PSF")) {
+							rightName = "PWS";
+						}
+						
+						List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(rightName,
+						    encounterId);
+						if (patientStates != null && !patientStates.isEmpty()) {
 							
-							if (chica1Appt != null) {
-								rightImageFormInstanceId = chica1Appt.getApptPwsId();
-								rightImageLocationId = encounter.getLocation().getLocationId();
+							for (PatientState currState : patientStates) {
+								if (currState.getEndTime() != null) {
+									rightImageLocationId = currState.getLocationId();
+									rightImageFormId = currState.getFormId();
+									rightImageFormInstanceId = currState.getFormInstanceId();
+									break;
+								}
+							}
+						} else {
+							if (rightName != null && rightName.equals("PWS")) {
+								Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
 								
-								if (rightImageFormInstanceId != null) {
-									form = formService.getForms("PWS", null, null, false, null, null, null).get(0);
-									if (form != null) {
-										rightImageFormId = form.getFormId();
+								if (chica1Appt != null) {
+									rightImageFormInstanceId = chica1Appt.getApptPwsId();
+									rightImageLocationId = encounter.getLocation().getLocationId();
+									
+									if (rightImageFormInstanceId != null) {
+										form = formService.getForms("PWS", null, null, false, null, null, null).get(0);
+										if (form != null) {
+											rightImageFormId = form.getFormId();
+										}
 									}
 								}
 							}
@@ -361,7 +366,7 @@ public class ViewEncounterController extends SimpleFormController {
 							
 					List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(null,encounterId);
 					if (patientStates != null && !patientStates.isEmpty()) {
-						
+						ArrayList<String> rowFormNames = new ArrayList<String>();
 						for (PatientState currState : patientStates) {
 							if (currState.getEndTime() != null) {
 								Integer formId = currState.getFormId();
@@ -369,19 +374,28 @@ public class ViewEncounterController extends SimpleFormController {
 								if(formName == null){
 									Form form = formService.getForm(formId);
 									formName = form.getName();
+									formNameMap.put(formId, formName);
 								}
 								
-							    if(formName.equals("PSF")){
-							    	row.setPsfId(currState.getFormInstance());
-							    }
-							    if(formName.equals("PWS")){
-							    	row.setPwsId(currState.getFormInstance());
-							    }
-							    if(formsToProcess.contains(formName)){
-								row.addFormInstance(currState.getFormInstance());
-							    }
-								formNameMap.put(formId, formName);
-								break;
+							//make sure you only get the most recent psf/pws pair
+							if (row.getPsfId() == null) {
+								if (formName.equals("PSF")) {
+									row.setPsfId(currState.getFormInstance());
+								}
+							}
+							if (row.getPwsId() == null) {
+								if (formName.equals("PWS")) {
+									row.setPwsId(currState.getFormInstance());
+								}
+							}
+						
+							if (formsToProcess.contains(formName)) {
+								//only add form instance if form not in list yet
+								if (!rowFormNames.contains(formName)) {
+									row.addFormInstance(currState.getFormInstance());
+									rowFormNames.add(formName);
+								}
+								}
 							}
 						}
 					}
