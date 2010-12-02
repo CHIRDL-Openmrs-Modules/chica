@@ -1,0 +1,121 @@
+Maintenance:
+ Title: Research ADHD Previous Diagnosis PWS                                                                         ;;
+ Filename: R_ADHDPreviousDxPWS;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Steve Downs                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-02 09:00:00;;
+ Validation: ;;
+Library:
+	Purpose:		PWS promt to alert MD of previous ADHD Dx and put into maintainence mode.;;
+ Explanation: If an ICD-9 Dx of ADHD exists in RMRS, alert the MD and assure f/u with Vanderbilts.;                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: ADHD PWS Vanderbilt                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+locationName:= read {location from Parameters};
+clinic_billing_dx:= read {CLINIC BILLING DIAGNOSIS from RMRS} Where it Occurred Within Past 365 Days;
+dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within Past 365 Days;
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} Where it Occurred Within Past 365 Days ;    
+ParentVanderbilt := read exist {ParentAssessmentScale from CHICA}; 
+TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA}; 
+preferred_language:= read last {preferred_language from CHICA};   
+rxStatus := read {CHICA_ADHD_RX from CHICA};
+                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+endif
+;;
+Priority: 187       ;;
+ Evoke: ;;
+
+Logic:
+If (mode = PRODUCE) then
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+If (ParentVanderbilt = True) OR (TeacherVanderbilt = True) then conclude False;
+If (CurrentStatus = yes) OR (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred)  then conclude False;
+If ('Medication' is in rxStatus) then conclude False; 
+If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) then conclude True;
+If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints) then conclude True;
+If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) then conclude True;
+If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints) then conclude True;
+If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints) then conclude True;
+If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints) then conclude True;
+If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints) then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_ADHD_DX","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "ADHD_Workup","Parent_Vanderbilt_done";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "ADHD_Workup","Teacher_Vanderbilt_sent";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "CHICA_ADHD_DX","no";
+endif
+
+endif
+;;
+Action:
+If(ParentVanderbilt = False) AND (preferred_language = Spanish) then
+call CREATE_JIT with "ADHD PS";
+endif;
+If(ParentVanderbilt = False) AND (preferred_language = English) then
+call CREATE_JIT with "ADHD P";
+endif;
+If(ParentVanderbilt = False) AND (preferred_language = null) then
+call CREATE_JIT with "ADHD P";
+call CREATE_JIT with "ADHD PS";
+endif;
+
+If(TeacherVanderbilt = False) then
+call CREATE_JIT with "ADHD T";
+endif;
+
+call CREATE_JIT with "TargetOutcomes";
+
+If(preferred_language = Spanish) then
+call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
+endif;
+If(preferred_language = English) then
+call CREATE_JIT with "Evaluating ADHD Toolkit";
+endif;
+If(preferred_language = null) then
+call CREATE_JIT with "Evaluating ADHD Toolkit";
+call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
+endif;
+
+write ("|| firstname || has a record of ADHD or other hyperkinetic disorder. Vanderbilts at least annually are recommended (attached).");                                                                                                                                                                                                                                                                                                                   
+write ("Has ADHD");
+write ("On medication");
+write ("Parent Vanderbilt and scan now                   ");
+write ("Teacher Vanderbilt and fax ASAP                  ");
+write ("Vanderbilts done within last 6 mos ");
+write ("Does not have ADHD                          ");
+;;
+Age_Min: 5          years     ;;
+Age_Max: 13         years     ;;
+end:
