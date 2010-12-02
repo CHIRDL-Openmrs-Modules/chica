@@ -39,7 +39,9 @@ Priority: 183       ;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
-If (locationName = BBPS) OR (locationName = FMPS) then conclude False;
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
 If (ParentVanderbilt = True) OR (TeacherVanderbilt = True) then conclude False;
 If (CurrentStatus = yes) OR (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred)  then conclude False;
 If ('Hard_time_paying_attention' is in ScreenResults) then || prompttext1 || = "has hard time paying attention,";

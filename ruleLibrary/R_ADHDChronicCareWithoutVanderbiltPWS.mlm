@@ -42,7 +42,10 @@ Priority:		174       ;;
 
 Logic:
 If (mode = PRODUCE) then
-If (location = BBPS) OR (location = FMPS) then conclude False;
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+
 If (SideEffects = "yes") then || SEPrompt || = " Parent reports significant side effects.";
 If (SideEffects = "no") then || SEPrompt || = " Parent reports no significant side effects.";
 
