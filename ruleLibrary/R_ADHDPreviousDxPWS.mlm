@@ -27,8 +27,13 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
 locationName:= read {location from Parameters};
+
 clinic_billing_dx:= read {CLINIC BILLING DIAGNOSIS from RMRS} Where it Occurred Within Past 365 Days;
 dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd_dx:= read {HOSP ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
+
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} Where it Occurred Within Past 365 Days ;    
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA}; 
 TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA}; 
@@ -48,13 +53,13 @@ If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conc
 If (ParentVanderbilt = True) OR (TeacherVanderbilt = True) then conclude False;
 If (CurrentStatus = yes) OR (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred)  then conclude False;
 If ('Medication' is in rxStatus) then conclude False; 
-If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) then conclude True;
-If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints) then conclude True;
-If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) then conclude True;
-If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints) then conclude True;
-If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints) then conclude True;
-If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints) then conclude True;
-If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints) then conclude True;
+If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude True;
+If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude True;
+If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude True;
+If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints)  OR ('314.1' is in hosp_icd_dx)  OR ('314.1' is in admit_icd_dx)  OR ('314.1' is in axis_discharge_dx) then conclude True;
+If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints)  OR ('314.2' is in hosp_icd_dx)  OR ('314.2' is in admit_icd_dx)  OR ('314.2' is in axis_discharge_dx) then conclude True;
+If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints)  OR ('314.8' is in hosp_icd_dx)  OR ('314.8' is in admit_icd_dx)  OR ('314.8' is in axis_discharge_dx) then conclude True;
+If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints)  OR ('314.9' is in hosp_icd_dx)  OR ('314.9' is in admit_icd_dx)  OR ('314.9' is in axis_discharge_dx) then conclude True;
 conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 endif
