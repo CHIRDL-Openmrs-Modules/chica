@@ -29,6 +29,9 @@ If (mode = PRODUCE) then
 location:= read {location from Parameters};
 clinic_billing_dx:= read {CLINIC BILLING DIAGNOSIS from RMRS} Where it Occurred Within Past 365 Days;
 dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd_dx:= read {HOSP ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 RecentlyAsked := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
 endif
@@ -40,13 +43,13 @@ If (mode = PRODUCE) then
 adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
 
 If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
-If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) then conclude False;
-If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints) then conclude False;
-If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) then conclude False;
-If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints) then conclude False;
-If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints) then conclude False;
-If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints) then conclude False;
-If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints) then conclude False;
+If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude False;
+If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude False;
+If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude False;
+If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints)  OR ('314.1' is in hosp_icd_dx)  OR ('314.1' is in admit_icd_dx)  OR ('314.1' is in axis_discharge_dx) then conclude False;
+If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints)  OR ('314.2' is in hosp_icd_dx)  OR ('314.2' is in admit_icd_dx)  OR ('314.2' is in axis_discharge_dx) then conclude False;
+If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints)  OR ('314.8' is in hosp_icd_dx)  OR ('314.8' is in admit_icd_dx)  OR ('314.8' is in axis_discharge_dx) then conclude False;
+If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints)  OR ('314.9' is in hosp_icd_dx)  OR ('314.9' is in admit_icd_dx)  OR ('314.9' is in axis_discharge_dx) then conclude False;
 If (CurrentStatus = yes) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
 If ('Hard_time_paying_attention' is in RecentlyAsked) OR ('no_Hard_time_paying_attention' is in RecentlyAsked) then conclude False;
 Else conclude true;
