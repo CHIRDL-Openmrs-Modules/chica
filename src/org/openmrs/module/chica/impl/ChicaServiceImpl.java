@@ -236,7 +236,10 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("VanderbiltParentADHD", false);
 			dssService.loadRule("LocationAttributeLookup", false);
 			dssService.loadRule("CHOOSE_ASQ_JIT", false);
-
+			dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
+			dssService.loadRule("ASQWriteDoneObs", false);
+			dssService.loadRule("getLastObs",false);
+			
 			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
 			HashMap<String,Field> languageFieldsToConsume = 
@@ -681,7 +684,11 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("VanderbiltParentADHD", false);
 			dssService.loadRule("LocationAttributeLookup", false);
 			dssService.loadRule("CHOOSE_ASQ_JIT", false);
-        }
+			dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
+			dssService.loadRule("ASQWriteDoneObs", false);
+			dssService.loadRule("getLastObs",false);
+		
+		}
         catch (Exception e) {
 	        log.error("load rule failed", e);
         }

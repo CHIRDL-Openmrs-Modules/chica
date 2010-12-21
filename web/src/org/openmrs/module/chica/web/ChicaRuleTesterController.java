@@ -110,7 +110,10 @@ public class ChicaRuleTesterController extends SimpleFormController
 						dssService.loadRule("VanderbiltParentADHD", false);
 						dssService.loadRule("LocationAttributeLookup", false);
 						dssService.loadRule("CHOOSE_ASQ_JIT", false);
-						
+						dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
+						dssService.loadRule("ASQWriteDoneObs", false);
+						dssService.loadRule("getLastObs",false);
+
 						Result result = dssService.runRule(patient, currRule,
 								null, null);
 						
