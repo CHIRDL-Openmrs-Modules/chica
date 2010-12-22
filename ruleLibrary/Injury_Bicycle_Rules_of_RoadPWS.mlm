@@ -34,7 +34,8 @@ Priority:		964;;
 Logic:
 If (mode = PRODUCE) then
 
-If (rules = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+If (rules = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 
 endif
 
@@ -44,9 +45,9 @@ write ("The AAP states that there are four important rules of the road for child
 write ("Ride with traffic");
 write ("Look both ways entering street");
 write ("Stop at ALL intersections");
-write ("");
 write ("Before turning look both ways");
 write ("Use hand signals when turning");
+write ("N/A, never rides a bike");
 ;;
 Age_Min: 8 years;;
 Age_Max: 11 years;;

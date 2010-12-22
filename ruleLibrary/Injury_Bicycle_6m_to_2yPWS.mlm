@@ -34,7 +34,8 @@ Priority:		946;;
 Logic:
 If (mode = PRODUCE) then
 
-If (backseat = no) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+If (backseat = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
 endif
 
@@ -45,7 +46,7 @@ write ("Don't put child on bike backseat");
 write ("");
 write ("");
 write ("");
-write ("");
+write ("N/A, never uses a bike");
 write ("");
 ;;
 Age_Min: 6 months;;
