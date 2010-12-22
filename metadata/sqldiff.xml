@@ -3257,6 +3257,9 @@ VALUES
 		 
  INSERT INTO chirdlutil_location_attribute(name,description)
  VALUES ('isASQInterventionLocation', 'Indicates whether a given location is an ASQ intervention site');
+
+ INSERT INTO chirdlutil_location_attribute(name,description)
+ VALUES ('isASQInterventionLocationPart2', 'Indicates whether a given location is an ASQ intervention site Part 2');
 	</sql>
 	</diff>
 	<diff>
