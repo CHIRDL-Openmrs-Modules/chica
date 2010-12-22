@@ -88,15 +88,6 @@ public class GreaseBoardController extends SimpleFormController
 	
 		String optionsString = request.getParameter("options");
 		
-		if (optionsString != null && optionsString.equals("Encounters")){
-			//TODO: create form for view encounters
-			
-			String patientId = request.getParameter("patientId");
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("patientId", patientId);
-			return new ModelAndView(new RedirectView("viewEncounter.form"),map);
-		}
-		
 		String patientIdString = request.getParameter("patientId");
 		Integer patientId = null;
 		try

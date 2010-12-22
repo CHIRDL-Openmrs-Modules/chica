@@ -71,8 +71,13 @@
  		}
 
 		function confirmation(formName) {
-			var answer = true;
+			var answer = false;
 			var selectedIndex = formName.options.selectedIndex;
+			if(formName.options[selectedIndex].text == 'Encounters'){
+				var patientId = formName.patientId.value;
+				var str = 'viewEncounter.form?patientId='+patientId;
+				popupfull(str);
+			}
 			if(formName.options[selectedIndex].text == 'ADHD WU'){
              	answer = confirm("Are you sure you want to initiate an ADHD Workup?")
 			}
