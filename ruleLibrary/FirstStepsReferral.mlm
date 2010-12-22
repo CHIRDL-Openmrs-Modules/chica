@@ -21,9 +21,6 @@ mode:=read {mode from Parameters};
 
 If (mode = PRODUCE) then
 
-ASQ9MonthAssessment:= read {ASQ9MonthAssessment} Where it Occurred Within Past 30 Days;
-ASQ18MonthAssessment:= read {ASQ18MonthAssessment} Where it Occurred Within Past 30 Days;
-ASQ30MonthAssessment:= read {ASQ30MonthAssessment} Where it Occurred Within Past 30 Days;
 birthWeight:= read last {BIRTH WEIGHT CHICA};
 gestAge:= read last {GEST AGE BY EXAM CHICA};
 
@@ -41,44 +38,40 @@ AgeInDays := call ChicaAgeRule with "days";
 If (Gender = M) then || sex || = "male";
 If (Gender = F) then || sex || = "female";
 
-If (AgeInMonths = 9) then
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQMonthAssessmentText || ="ASQ2MonthAssessment";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQMonthAssessmentText || ="ASQ4MonthAssessment";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQMonthAssessmentText || ="ASQ6MonthAssessment";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQMonthAssessmentText || ="ASQ8MonthAssessment";
+If (AgeInMonths = 9) then || ASQMonthAssessmentText || ="ASQ9MonthAssessment";
+If (AgeInMonths = 10) then || ASQMonthAssessmentText || ="ASQ10MonthAssessment";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQMonthAssessmentText || ="ASQ12MonthAssessment";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQMonthAssessmentText || ="ASQ14MonthAssessment";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQMonthAssessmentText || ="ASQ16MonthAssessment";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQMonthAssessmentText || ="ASQ18MonthAssessment";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQMonthAssessmentText || ="ASQ20MonthAssessment";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQMonthAssessmentText || ="ASQ22MonthAssessment";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQMonthAssessmentText || ="ASQ24MonthAssessment";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQMonthAssessmentText || ="ASQ27MonthAssessment";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQMonthAssessmentText || ="ASQ30MonthAssessment";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQMonthAssessmentText || ="ASQ33MonthAssessment";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQMonthAssessmentText || ="ASQ36MonthAssessment";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQMonthAssessmentText || ="ASQ42MonthAssessment";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQMonthAssessmentText || ="ASQ48MonthAssessment";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQMonthAssessmentText || ="ASQ54MonthAssessment";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQMonthAssessmentText || ="ASQ60MonthAssessment";
 
-If ('Communication_Delay' is in ASQ9MonthAssessment) then || Sel_Receptive_Language || = "X";
-If ('Grossmotor_Delay' is in ASQ9MonthAssessment) OR ('Finemotor_Delay' is in ASQ9MonthAssessment) then || Sel_Gross_Fine_Motor || = "X";
-If ('Problemsolving_Delay' is in ASQ9MonthAssessment) then || Sel_Cognitive || = "X";
-If ('Personalsocial_Delay' is in ASQ9MonthAssessment) then || Sel_Social_Emotional || = "X";
+ASQMonthAssessment := call getObs with "ASQMonthAssessmentText";
 
-If ('Communication_Delay' is in ASQ9MonthAssessment) OR ('Grossmotor_Delay' is in ASQ9MonthAssessment) OR
-   ('Finemotor_Delay' is in ASQ9MonthAssessment) OR ('Problemsolving_Delay' is in ASQ9MonthAssessment) OR
-   ('Personalsocial_Delay' is in ASQ9MonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
+If ('Communication_Delay' is in ASQMonthAssessment) then || Sel_Receptive_Language || = "X";
+If ('Grossmotor_Delay' is in ASQMonthAssessment) OR ('Finemotor_Delay' is in ASQMonthAssessment) then || Sel_Gross_Fine_Motor || = "X";
+If ('Problemsolving_Delay' is in ASQMonthAssessment) then || Sel_Cognitive || = "X";
+If ('Personalsocial_Delay' is in ASQMonthAssessment) then || Sel_Social_Emotional || = "X";
 
-endif;
+If ('Communication_Delay' is in ASQMonthAssessment) OR ('Grossmotor_Delay' is in ASQMonthAssessment) OR
+   ('Finemotor_Delay' is in ASQMonthAssessment) OR ('Problemsolving_Delay' is in ASQMonthAssessment) OR
+   ('Personalsocial_Delay' is in ASQMonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
 
-If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
 
-If ('Communication_Delay' is in ASQ18MonthAssessment) then || Sel_Receptive_Language || = "X";
-If ('Grossmotor_Delay' is in ASQ18MonthAssessment) OR ('Finemotor_Delay' is in ASQ18MonthAssessment) then || Sel_Gross_Fine_Motor || = "X";
-If ('Problemsolving_Delay' is in ASQ18MonthAssessment) then || Sel_Cognitive || = "X";
-If ('Personalsocial_Delay' is in ASQ18MonthAssessment) then || Sel_Social_Emotional || = "X";
-
-If ('Communication_Delay' is in ASQ18MonthAssessment) OR ('Grossmotor_Delay' is in ASQ18MonthAssessment) OR
-   ('Finemotor_Delay' is in ASQ18MonthAssessment) OR ('Problemsolving_Delay' is in ASQ18MonthAssessment) OR
-   ('Personalsocial_Delay' is in ASQ18MonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
-
-endif;
-
-If (AgeInDays >= 866) and (AgeInDays < 959) then
-
-If ('Communication_Delay' is in ASQ30MonthAssessment) then || Sel_Receptive_Language || = "X";
-If ('Grossmotor_Delay' is in ASQ30MonthAssessment) OR ('Finemotor_Delay' is in ASQ30MonthAssessment) then || Sel_Gross_Fine_Motor || = "X";
-If ('Problemsolving_Delay' is in ASQ30MonthAssessment) then || Sel_Cognitive || = "X";
-If ('Personalsocial_Delay' is in ASQ30MonthAssessment) then || Sel_Social_Emotional || = "X";
-
-If ('Communication_Delay' is in ASQ30MonthAssessment) OR ('Grossmotor_Delay' is in ASQ30MonthAssessment) OR
-   ('Finemotor_Delay' is in ASQ30MonthAssessment) OR ('Problemsolving_Delay' is in ASQ30MonthAssessment) OR
-   ('Personalsocial_Delay' is in ASQ30MonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
-
-endif;
 
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 

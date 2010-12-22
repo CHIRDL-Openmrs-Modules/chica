@@ -27,22 +27,57 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
 CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;
-RecentlyAsked := read {CHICA_DevScreen_Sx from CHICA} Where it Occurred Within Past 50 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+devStatus := read {CHICA_DevScreen_Status from CHICA} ;
+RecentlyAsked := read {CHICA_DevScreen_Sx from CHICA} Where it Occurred Within Past 3 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};
+ASQDone24:= read exist {ASQ24MonthAssessment from CHICA}; 
+ASQDone27:= read exist {ASQ27MonthAssessment from CHICA};    
+ASQDone30:= read exist {ASQ30MonthAssessment from CHICA}; 
+ASQDone33:= read exist {ASQ33MonthAssessment from CHICA}; 
+ASQDone36:= read exist {ASQ36MonthAssessment from CHICA}; 
 endif
 ;;
-Priority:		1;;
+Priority:		7;;
 	Evoke:		;;
 Logic:
 
 asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
 
-If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then return False;
+If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
+If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
 
 If (mode = PRODUCE) then
 
-If (CurrentStatus = Delayed) OR (CurrentStatus = Survey_Pos) OR (CurrentStatus = ASQ_Concern)  then conclude False;
-If ('LDB_Concern' is in RecentlyAsked) OR ('no_LDB_Concern' is in Recently Asked) then conclude False;
-Else conclude true;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+/** If the child ever had a delay, don't ask surveillance again **/
+If ('Delayed' is in devStatus) then conclude False;
+
+/** If the parent or physician suspects a delay, suppress the surveillance because the child is in the middle of a workup. We don't need to check "Not_Delayed" explicitly because it will be the last CHICA_DevScreen_Status value if it was checked **/
+If (CurrentStatus = Survey_Pos) OR (CurrentStatus = Suspect_delay) OR (CurrentReferral = FirstSteps) OR (CurrentReferral = SchoolSystem) then conclude False;
+If ('LDB_Concern' is in RecentlyAsked) OR ('no_LDB_Concern' is in RecentlyAsked) then conclude False;
+
+/** Suppress this rule if the child is in the age range for the routine ASQ **/
+If (AgeInMonths = 9) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then conclude False;
+/** Suppress the surveillance if no evidence of 24 to 36 month ASQ for routine "30" month **/
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone24 = True) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone27 = True)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone30 = True) then conclude True; 
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone33 = True)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone36 = True)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_24m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_27m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_30m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_33m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_36m_Done' is in devStatus)  then conclude True;
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) then conclude False;
+
+conclude true;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 
 endif
 
@@ -50,7 +85,7 @@ If (mode = CONSUME) then
 
 If  (Box1=true) then
  CALL storeObs With "CHICA_DevScreen_Sx","LDB_Concern";
- CALL storeObs With "CHICA_DevScreen_Status","Screen_Pos";
+ CALL storeObs With "CHICA_DevScreen_Status","Survey_Pos";
 If  (Box2=true) then
  CALL storeObs With "CHICA_DevScreen_Sx","no_LDB_Concern";
 endif;
@@ -59,9 +94,8 @@ endif
 ;;
 Action:
 write ("Do you have any concerns about || firstname ||'s learning, development, and behavior?");
-write ("") At Spanish;                                                                                                                                                                                                                                                                            
+write ("¿Tiene Usted alguna preocupación acerca del aprendizaje, desarrollo y comportamiento de || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 2 months;;
-Age_Max: 6 years;;
+Age_Max: 66 months;;
 end:
-}

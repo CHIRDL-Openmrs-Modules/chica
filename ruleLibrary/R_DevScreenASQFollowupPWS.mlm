@@ -1,20 +1,20 @@
 Maintenance:
- Title: Research DevScreen 18mos Old PWS Missing                                                                         ;;
- Filename: R_DevScreenSurvey18mosPWSMissing_ver2                                  ;;
- Version: 1.0       ;;
- Institution: Indiana University School of Medicine             ;;
- Author: Aaron Carroll                                       ;;
- Specialist: Pediatrics;;
- Date: 2010-04-15 10:00:00;;
- Validation: ;;
+	Title:		R_DevScreenASQFollowupPWS                                                                         ;;
+	Filename:		R_DevScreenASQFollowupPWS                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Aaron Carroll                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2010-11-02 14:00:00;;
+	Validation:	;;
 Library:
- Purpose: PWS wasn't scanned.                                                                                                                                                                                                                                                                                                                                                     ;;
- Explanation: Patient should get ASQ at certain ages.                                                                                                                                                                                                                                                                                                                                                                    ;;
- Keywords: Developmental Screening ASQ                                                  ;;
- Citations:                                                                                    ;;
- Links:                                             ;;
+	Purpose:		PWS prompt to alert doc to follow-up positive ASQ.                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	Developmental Screening ASQ                                                  ;;
+	Citations:		                                                                                   ;;
+	Links:		                                            ;;
 Knowledge:
- Type: data_driven;;
+	Type:		data_driven;;
 Data:
 
 mode:=read {mode from Parameters};
@@ -27,34 +27,31 @@ Box6:=read {box6 from Parameters};
 
 
 If (mode = PRODUCE) then      
-CurrentStatus := read {CHICA_DevScreen_Status from CHICA} ;   
-StatusDelayed:= read {CHICA_DevScreen_Status from CHICA} ;  
-ASQDone:= read exist {ASQ18MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
-
+CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;   
+devStatus:= read {CHICA_DevScreen_Status from CHICA} ;   
+CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority: 408       ;;
- Evoke: ;;
+Priority:		172       ;;
+	Evoke:		;;
 
 Logic:
-
 If (mode = PRODUCE) then
 
 asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
 asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
 
+If (Gender = M) then || heshe || = "He";
+If (Gender = F) then || heshe || = "She";
+
 If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
-If(asqInterventionSitePartTwo = "true") then conclude False;
+If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
 
-AgeInMonths := call ChicaAgeRule with "months";
-AgeInDays := call ChicaAgeRule with "days";
-If (AgeInMonths >= 17) and (AgeInMonths < 19) then || age || = "18";
-
-If ('Delayed' is in StatusDelayed) then conclude False;
-If ('ASQ_18m_Done' is in CurrentStatus) then conclude False;
-If ASQDone = False then conclude True;
-Else conclude False;
+If ('Delayed' is in devStatus) OR ('Not_Delayed' is in devStatus) then conclude False;
+If (CurrentStatus = Suspect_delay) then conclude True;
+If (CurrentReferral = "FirstSteps") OR (CurrentReferral = "SchoolSystem") then conclude True;
+conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 endif
@@ -62,45 +59,32 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
- CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
- CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
+ CALL storeObs With "CHICA_DevScreen_Status","Delayed";
 endif;
 If  (Box2=true) then
- CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
+ CALL storeObs With "CHICA_DevScreen_Treatment","WrittenCarePlan";
 endif;
 If  (Box3=true) then
- CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
+ CALL storeObs With "CHICA_DevScreen_Status","Not_Delayed";
 endif;
 If  (Box4=true) then
-
-endif;
-If  (Box5=true) then
- CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
- CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
+ CALL storeObs With "CHICA_DevScreen_Treatment","FamilySupportServices";
 endif;
 
-If  (Box6=true) then
- CALL storeObs With "CHICA_DevScreen_Status","NormalDevelopment";
- CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
- CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
-endif;
 
 
 endif
 ;;
 Action:
-write ("|| firstname || is due for || hisher || formal || age || month developmental screening.  Check below to indicate that you have scored ASQ and discussed with family. CPT 96110");
-write ("Suspect Delay ->                       ");
-write ("Refer to First Steps                      ");
-write ("Activities for Children form                       ");
-write ("Sched follow-up 1 month                      ");
-write ("ASQ done, scored, discussed with family");
-write ("Do not suspect delay");
-
+write ("|| firstname || had a concerning ASQ at a previous visit. || heshe || should have been referred for a developmental evaluation and developmental services.  Please confirm the following:");
+write ("Evaluation confirms delay");	
+write ("Written care plan developed");	
+write ("Evaluation shows no delay");
+write ("Ref to ASK 1-800-964-4746");
+write ("");
+write ("");
 ;;
-Age_Min: 17          months     ;;
-Age_Max: 19         months     ;;
+Age_Min: 2          months     ;;
+Age_Max: 66         months     ;;
 end:
 
-}

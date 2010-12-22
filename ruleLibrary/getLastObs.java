@@ -26,7 +26,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.chica.util.Util;
 
-public class getObs implements Rule
+public class getLastObs implements Rule
 {
 	private Log log = LogFactory.getLog(this.getClass());
 	private LogicService logicService = Context.getLogicService();
@@ -102,15 +102,19 @@ public class getObs implements Rule
 				conceptName);
 		
 		LogicCriteria fullCriteria = null;
-
-		LogicCriteria encounterCriteria = 
-			new LogicCriteria("encounterId").equalTo(encounterId);
+		
+			LogicCriteria encounterCriteria = 
+				new LogicCriteria("encounterId").equalTo(encounterId);
 			
-		fullCriteria = conceptCriteria.and(encounterCriteria);
+			fullCriteria = conceptCriteria.and(encounterCriteria);
 
 		ruleResult = context.read(patient,context.getLogicDataSource("obs"), 
-				fullCriteria);
+				fullCriteria.last());
 
-		return ruleResult;
+		if (ruleResult != null&&ruleResult.size()>0)
+		{
+			return ruleResult.get(0);
+		}
+		return Result.emptyResult();
 	}
 }

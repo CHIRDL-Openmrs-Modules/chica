@@ -32,9 +32,28 @@ If (mode = PRODUCE) then
 AgeInMonths := call ChicaAgeRule with "months";
 AgeInDays := call ChicaAgeRule with "days";
 
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQ_Month || = "2";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQ_Month || = "4";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQ_Month || = "6";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQ_Month || = "8";
 If (AgeInMonths = 9) then || ASQ_Month || = "9";
+If (AgeInMonths = 10) then || ASQ_Month || = "10";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQ_Month || = "12";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQ_Month || = "14";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQ_Month || = "16";
 If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQ_Month || = "18";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQ_Month || = "20";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQ_Month || = "22";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then  || ASQ_Month || = "24";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQ_Month || = "27";
 If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQ_Month || = "30";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQ_Month || = "33";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQ_Month || = "36";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQ_Month || = "42";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQ_Month || = "48";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQ_Month || = "54";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQ_Month || = "60";
+
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
 endif

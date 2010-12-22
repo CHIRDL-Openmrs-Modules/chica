@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research DevScreen SurveyPos 3-5 PWS                                                                         ;;
- Filename: CHOOSE_ASQ_JIT;;
+ Filename: CHOOSE_ASQ_ACTIVITY_JIT;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author:Aaron Carroll                                       ;;
@@ -26,118 +26,67 @@ Logic:
 If (mode = PRODUCE) then
 
 AgeInMonths := call ChicaAgeRule with "months";
-AgeInDays := call ChicaAgeRule with "days";
 
+If (AgeInMonths >= 1) and (AgeInMonths < 4) then 
 
-If (AgeInMonths >= 1) and (AgeInMonths < 3) then 
+call CREATE_JIT with "Activities_1-4mo";
+conclude false;
 
-call CREATE_JIT with "ASQ_2";
+If (AgeInMonths >= 4) and (AgeInMonths < 8) then 
+
+call CREATE_JIT with "Activities_4-8mo";
 conclude false;
 
 
-If (AgeInMonths >= 3) and (AgeInMonths < 5) then 
+If (AgeInMonths >= 8) and (AgeInMonths < 12) then 
 
-call CREATE_JIT with "ASQ_4";
+call CREATE_JIT with "Activities_8-12mo";
+conclude false;
+ 
+
+If (AgeInMonths >= 12) and (AgeInMonths < 16) then 
+
+call CREATE_JIT with "Activities_12-16mo";
 conclude false;
 
 
-If (AgeInMonths >= 5) and (AgeInMonths < 7) then 
+If (AgeInMonths >= 16) and (AgeInMonths < 20) then 
 
-call CREATE_JIT with "ASQ_6";
+call CREATE_JIT with "Activities_16-20mo";
 conclude false;
 
 
-If (AgeInMonths >= 7) and (AgeInMonths < 9) then 
+If (AgeInMonths >= 20) and (AgeInMonths < 24) then 
 
-call CREATE_JIT with "ASQ_8";
+call CREATE_JIT with "Activities_20-24mo";
 conclude false;
 
 
-If (AgeInMonths = 9) then 
+If (AgeInMonths >= 24) and (AgeInMonths < 30) then 
 
-call CREATE_JIT with "ASQ_9";
+call CREATE_JIT with "Activities_24-30mo";
 conclude false;
 
 
-If (AgeInMonths = 10) then 
+If (AgeInMonths >= 30) and (AgeInMonths < 36) then 
 
-call CREATE_JIT with "ASQ_10";
+call CREATE_JIT with "Activities_30-36mo";
 conclude false;
 
 
-If (AgeInMonths >= 11) and (AgeInMonths < 13) then 
+If (AgeInMonths >= 36) and (AgeInMonths < 48) then 
 
-call CREATE_JIT with "ASQ_12";
+call CREATE_JIT with "Activities_36-48mo";
 conclude false;
 
-If (AgeInMonths >= 13) and (AgeInMonths < 15) then 
+If (AgeInMonths >= 48) and (AgeInMonths < 60) then 
 
-call CREATE_JIT with "ASQ_14";
-conclude false;
-  
-If (AgeInMonths >= 15) and (AgeInMonths < 17) then 
-
-call CREATE_JIT with "ASQ_16";
+call CREATE_JIT with "Activities_48-60mo";
 conclude false;
 
-If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
+If (AgeInMonths >= 60) and (AgeInMonths < 66) then 
 
-call CREATE_JIT with "ASQ_18";
-conclude false;
-
-If (AgeInMonths >= 19) and (AgeInMonths < 21) then 
-
-call CREATE_JIT with "ASQ_20";
-conclude false;
-
-If (AgeInMonths >= 21) and (AgeInMonths < 23) then 
-
-call CREATE_JIT with "ASQ_22";
-conclude false;
-
-If (AgeInMonths >= 23) and (AgeInDays < 776) then 
-
-call CREATE_JIT with "ASQ_24";
-conclude false;
-
-If (AgeInDays >= 776) and (AgeInDays < 866) then 
-
-call CREATE_JIT with "ASQ_27";
-conclude false;
-
-If (AgeInDays >= 866) and (AgeInDays < 959) then 
-
-call CREATE_JIT with "ASQ_30";
-conclude false;
-
-If (AgeInDays >= 959) and (AgeInDays < 1050) then 
-
-call CREATE_JIT with "ASQ_33";
-conclude false;
-
-If (AgeInDays >= 1050) and (AgeInMonths < 39) then 
-
-call CREATE_JIT with "ASQ_36";
-conclude false;
-
-If (AgeInMonths >= 39) and (AgeInMonths < 45) then 
-
-call CREATE_JIT with "ASQ_42";
-conclude false;
-
-If (AgeInMonths >= 45) and (AgeInMonths < 51) then 
-
-call CREATE_JIT with "ASQ_48";
-conclude false;
-
-If (AgeInMonths >= 51) and (AgeInMonths < 57) then 
-
-call CREATE_JIT with "ASQ_54";
-conclude false;
-
-If (AgeInMonths >= 57) and (AgeInMonths < 66) then 
-
-call CREATE_JIT with "ASQ_60";
+call CREATE_JIT with "Activities_60-66mo";
 conclude false;
 
 endif;

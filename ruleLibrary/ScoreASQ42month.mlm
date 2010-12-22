@@ -1,0 +1,112 @@
+Maintenance:
+	Title:		ScoreASQ42month;;
+	Filename:		ScoreASQ42month;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This question will fire if the system recognizes a prior problem with breast feeding.  It will allow for follow-up.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+If (mode = CONSUME) then
+
+checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
+scoreJit := CALL ScoreJit;
+
+ASQ42CommunicationSubscore := read Last {ASQ42CommunicationSubscore} Where it Occurred Within Past 1 Day;
+ASQ42GrossmotorSubscore := read Last {ASQ42GrossmotorSubscore} Where it Occurred Within Past 1 Day;
+ASQ42FinemotorSubscore := read Last {ASQ42FinemotorSubscore} Where it Occurred Within Past 1 Day;
+ASQ42ProblemsolvingSubscore := read Last {ASQ42ProblemsolvingSubscore} Where it Occurred Within Past 1 Day;
+ASQ42PersonalsocialSubscore := read Last {ASQ42PersonalsocialSubscore} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+
+If (mode = CONSUME) then
+
+/* don't do anything if all the scores don't exist */
+If (ASQ42CommunicationSubscore = NULL) then 
+call CREATE_JIT with "FormIncompleteASQ";
+conclude false;
+endif;
+
+If  (ASQ42CommunicationSubscore <= 27.06) then
+ CALL storeObs With "ASQ42MonthAssessment","Communication_Delay";
+endif;
+If (ASQ42CommunicationSubscore>27.06) AND (ASQ42CommunicationSubscore<=38.54) then
+ CALL storeObs With "ASQ42MonthAssessment","Communication_Monitor";
+endif;
+If  (ASQ42CommunicationSubscore>38.54) then
+ CALL storeObs With "ASQ42MonthAssessment","Communication_Normal";
+endif;
+
+If  (ASQ42GrossmotorSubscore <= 36.27) then
+ CALL storeObs With "ASQ42MonthAssessment","Grossmotor_Delay";
+endif;
+If (ASQ42GrossmotorSubscore>36.27) AND (ASQ42GrossmotorSubscore<=45.15) then
+ CALL storeObs With "ASQ42MonthAssessment","Grossmotor_Monitor";
+endif;
+If  (ASQ42GrossmotorSubscore > 45.15) then
+ CALL storeObs With "ASQ42MonthAssessment","Grossmotor_Normal";
+endif;
+
+If  (ASQ42FinemotorSubscore <= 19.82) then
+ CALL storeObs With "ASQ42MonthAssessment","Finemotor_Delay";
+endif;
+If (ASQ42FinemotorSubscore>19.82) AND (ASQ42FinemotorSubscore<=33.68) then
+ CALL storeObs With "ASQ42MonthAssessment","Finemotor_Monitor"; 
+endif;
+If  (ASQ42FinemotorSubscore > 33.68) then
+ CALL storeObs With "ASQ42MonthAssessment","Finemotor_Normal";
+endif;
+
+If  (ASQ42ProblemsolvingSubscore <= 28.11) then
+ CALL storeObs With "ASQ42MonthAssessment","Problemsolving_Delay";
+endif;
+If (ASQ42ProblemsolvingSubscore>28.11) AND (ASQ42ProblemsolvingSubscore<=39.82) then
+ CALL storeObs With "ASQ42MonthAssessment","Problemsolving_Monitor"; 
+endif;
+If  (ASQ42ProblemsolvingSubscore > 39.82) then
+ CALL storeObs With "ASQ42MonthAssessment","Problemsolving_Normal";
+endif;
+
+If  (ASQ42PersonalsocialSubscore <= 31.12) then
+ CALL storeObs With "ASQ42MonthAssessment","Personalsocial_Delay";
+endif;
+If (ASQ42PersonalsocialSubscore>31.12) AND (ASQ42PersonalsocialSubscore<=41.25) then
+ CALL storeObs With "ASQ42MonthAssessment","Personalsocial_Monitor";
+endif;
+If  (ASQ42PersonalsocialSubscore > 41.25) then
+ CALL storeObs With "ASQ42MonthAssessment","Personalsocial_Normal";
+endif;
+
+call CREATE_JIT with "SummaryReportASQ";
+
+endif
+
+;;
+Action:
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research DevScreen SurveyPos 3-5 PWS                                                                         ;;
- Filename: CHOOSE_ASQ_JIT;;
+ Filename: ASQWriteDoneObs;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author:Aaron Carroll                                       ;;
@@ -31,113 +31,117 @@ AgeInDays := call ChicaAgeRule with "days";
 
 If (AgeInMonths >= 1) and (AgeInMonths < 3) then 
 
-call CREATE_JIT with "ASQ_2";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_2m_Done";
 conclude false;
-
-
+ 
 If (AgeInMonths >= 3) and (AgeInMonths < 5) then 
 
-call CREATE_JIT with "ASQ_4";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_4m_Done";
 conclude false;
-
 
 If (AgeInMonths >= 5) and (AgeInMonths < 7) then 
 
-call CREATE_JIT with "ASQ_6";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_6m_Done";
 conclude false;
-
 
 If (AgeInMonths >= 7) and (AgeInMonths < 9) then 
 
-call CREATE_JIT with "ASQ_8";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_8m_Done";
 conclude false;
-
 
 If (AgeInMonths = 9) then 
 
-call CREATE_JIT with "ASQ_9";
-conclude false;
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
 
+conclude false;
 
 If (AgeInMonths = 10) then 
 
-call CREATE_JIT with "ASQ_10";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_10m_Done";
 conclude false;
-
 
 If (AgeInMonths >= 11) and (AgeInMonths < 13) then 
 
-call CREATE_JIT with "ASQ_12";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_12m_Done";
 conclude false;
 
 If (AgeInMonths >= 13) and (AgeInMonths < 15) then 
 
-call CREATE_JIT with "ASQ_14";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_14m_Done";
 conclude false;
-  
+
 If (AgeInMonths >= 15) and (AgeInMonths < 17) then 
 
-call CREATE_JIT with "ASQ_16";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_16m_Done";
 conclude false;
 
 If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
 
-call CREATE_JIT with "ASQ_18";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
 conclude false;
 
 If (AgeInMonths >= 19) and (AgeInMonths < 21) then 
 
-call CREATE_JIT with "ASQ_20";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_20m_Done";
 conclude false;
+
 
 If (AgeInMonths >= 21) and (AgeInMonths < 23) then 
 
-call CREATE_JIT with "ASQ_22";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_22m_Done";
 conclude false;
+
 
 If (AgeInMonths >= 23) and (AgeInDays < 776) then 
 
-call CREATE_JIT with "ASQ_24";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_24m_Done";
 conclude false;
+
 
 If (AgeInDays >= 776) and (AgeInDays < 866) then 
 
-call CREATE_JIT with "ASQ_27";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_27m_Done";
 conclude false;
+
 
 If (AgeInDays >= 866) and (AgeInDays < 959) then 
 
-call CREATE_JIT with "ASQ_30";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_30m_Done";
 conclude false;
+
 
 If (AgeInDays >= 959) and (AgeInDays < 1050) then 
 
-call CREATE_JIT with "ASQ_33";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_33m_Done";
 conclude false;
+
 
 If (AgeInDays >= 1050) and (AgeInMonths < 39) then 
 
-call CREATE_JIT with "ASQ_36";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_36m_Done";
 conclude false;
+
 
 If (AgeInMonths >= 39) and (AgeInMonths < 45) then 
 
-call CREATE_JIT with "ASQ_42";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_42m_Done";
 conclude false;
+
 
 If (AgeInMonths >= 45) and (AgeInMonths < 51) then 
 
-call CREATE_JIT with "ASQ_48";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_48m_Done";
 conclude false;
 
 If (AgeInMonths >= 51) and (AgeInMonths < 57) then 
 
-call CREATE_JIT with "ASQ_54";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_54m_Done";
 conclude false;
+
 
 If (AgeInMonths >= 57) and (AgeInMonths < 66) then 
 
-call CREATE_JIT with "ASQ_60";
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_60m_Done";
 conclude false;
 
 endif;

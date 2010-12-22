@@ -42,8 +42,10 @@ Logic:
 If (mode = PRODUCE) then
 
 asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
 
 If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
+If(asqInterventionSitePartTwo = "true") then conclude False;
 
 AgeInMonths := call ChicaAgeRule with "months";
 AgeInDays := call ChicaAgeRule with "days";

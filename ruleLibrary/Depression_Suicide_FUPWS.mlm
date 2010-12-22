@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 problems := read Last {past_depression_or_suicide from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
-Priority:		172;;
+Priority:		162;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
