@@ -99,7 +99,7 @@ endif
 ;;
 Action:
 call CHOOSE_ASQ_JIT;
-/**call CHOOSE_ASQ_ACTIVITY_JIT;**/
+call CHOOSE_ASQ_ACTIVITY_JIT;
 write ("|| firstname ||'s parent has concerns about || hisher |||| prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please have them complete the ASQ.");
 write ("Suspect Delay ->                       ");
 write ("Refer to School System                      ");

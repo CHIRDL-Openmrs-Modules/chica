@@ -125,7 +125,7 @@ endif;
 endif
 ;;
 Action:
-/**call CHOOSE_ASQ_ACTIVITY_JIT;**/
+call CHOOSE_ASQ_ACTIVITY_JIT;
 write ("|| firstname || is due for || hisher || formal || age || month developmental screening.  Check below to indicate that you have scored ASQ and discussed with family. CPT 96110");
 write ("Suspect Delay ->                       ");
 write ("Refer to First Steps                      ");
