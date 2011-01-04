@@ -86,6 +86,7 @@ If (mode = CONSUME) then
 If  (Box1=true) then
  CALL storeObs With "CHICA_DevScreen_Sx","HandsFingers_Concern";
  CALL storeObs With "CHICA_DevScreen_Status","Survey_Pos";
+ endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_DevScreen_Sx","no_HandsFingers_Concern";
 endif;
