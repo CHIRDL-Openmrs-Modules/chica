@@ -1,6 +1,6 @@
 Maintenance:
- Title: Research DevScreen 18mos Old PWS                                                                         ;;
- Filename: R_DevScreen18MonthsMonitorPWS_ver2                                 ;;
+ Title: Research DevScreen 9mos Old PWS                                                                         ;;
+ Filename: R_DevScreen9MonthsMonitorPWS_ver2                                  ;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author: Aaron Carroll                                       ;;
@@ -29,13 +29,13 @@ Box6:=read {box6 from Parameters};
 If (mode = PRODUCE) then      
 CurrentStatus := read {CHICA_DevScreen_Status from CHICA} ;   
 StatusDelayed:= read {CHICA_DevScreen_Status from CHICA} ;  
-Results:= read {ASQ18MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
-ASQDone:= read exist {ASQ18MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+Results:= read {ASQ9MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+ASQDone:= read exist {ASQ9MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority: 405       ;;
+Priority: 1000       ;;
  Evoke: ;;
 
 Logic:
@@ -49,7 +49,7 @@ If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclu
 If(asqInterventionSitePartTwo = "true") then conclude False;
 
 If ('Delayed' is in StatusDelayed) then conclude False;
-If ('ASQ_18m_Done' is in CurrentStatus) then conclude False;
+If ('ASQ_9m_Done' is in CurrentStatus) then conclude False;
 If ASQDone = False then conclude False;
 
 If ('Communication_Monitor' is in Results) then || prompttext1 || = "communication, ";
@@ -81,7 +81,7 @@ If  (Box2=true) then
 endif;
 If  (Box3=true) then
  CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
- CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
+ CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
  CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
 endif;
 If  (Box4=true) then
@@ -89,12 +89,12 @@ If  (Box4=true) then
 endif;
 If  (Box5=true) then
  CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
- CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
+ CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
 endif;
 If  (Box6=true) then
  CALL storeObs With "CHICA_DevScreen_Status","NormalDevelopment";
  CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
- CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
+ CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
 endif;
 
 
@@ -108,8 +108,9 @@ write ("I have developmental concerns ->                       ");
 write ("First Steps referral                      ");
 write ("ASQ done, scored, discussed with family");
 write ("There are no devel. concerns");
+
 ;;
-Age_Min: 17          months     ;;
-Age_Max: 19         months     ;;
+Age_Min: 9          months     ;;
+Age_Max: 10         months     ;;
 end:
 }
