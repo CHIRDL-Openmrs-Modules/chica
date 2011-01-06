@@ -71,9 +71,10 @@
  		}
 
 		function confirmation(formName) {
-			var answer = false;
+			var answer = true;
 			var selectedIndex = formName.options.selectedIndex;
 			if(formName.options[selectedIndex].text == 'Encounters'){
+			    answer = false;
 				var patientId = formName.patientId.value;
 				var str = 'viewEncounter.form?patientId='+patientId;
 				popupfull(str);
