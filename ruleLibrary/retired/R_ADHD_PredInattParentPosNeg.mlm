@@ -1,6 +1,6 @@
 Maintenance:
-	Title:		R_ADHD_PredHyperTeacherPosNeg;;
-	Filename:		R_ADHD_PredHyperTeacherPosNeg;;
+	Title:		R_ADHD_PredInattParentPosNeg;;
+	Filename:		R_ADHD_PredInattParentPosNeg;;
 	Version:	1.0;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Tammy Dugan;;
@@ -8,7 +8,7 @@ Maintenance:
 	Date:		2003-10-16T11:38:57-0400;;
 	Validation:	;;
 Library:
-	Purpose:		Merges Positive/Negative into Predominantly Inattentive subtype column of ADHD teacher scoring sheet.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Purpose:		Merges Positive/Negative into Predominantly Inattentive subtype column of ADHD parent scoring sheet.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
 	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
 	Keywords:	breastfeeding, nutrition;;
 	Citations:		;;
@@ -21,18 +21,18 @@ mode:=read {mode from Parameters};
 
 If (mode = PRODUCE) then
 
-teacherAssessScale := read {TeacherAssessmentScale} Where it Occurred Within Past 1 Day;
+parentAssessScale := read {ParentAssessmentScale} Where it Occurred Within Past 1 Day;
 
 endif
 ;;
-Priority:		0;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 
 If (mode = PRODUCE) then
 
-If ('PredominantlyHyperactiveImpulsiveSubtype' is in teacherAssessScale) then || prompttext || = "POSITIVE";
-If ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in teacherAssessScale) then || prompttext || = "NEGATIVE";
+If ('PredominantlyInattentiveSubtype' is in parentAssessScale) then || prompttext || = "POSITIVE";
+If ('NegativePredominantlyInattentiveSubtype' is in parentAssessScale) then || prompttext || = "NEGATIVE";
 
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 

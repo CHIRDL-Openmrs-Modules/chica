@@ -18,6 +18,15 @@ Knowledge:
 Data:
 
 mode:=read {mode from Parameters};
+
+If (mode = CONSUME) then
+
+checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
+scoreJit := CALL ScoreJit;
+
+ParentAssessFollowupSymptomTotal:= read Last {ParentAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;
+
+endif
 ;;
 Priority:		0;;
 	Evoke:		;;
@@ -29,11 +38,15 @@ conclude True;
 
 endif
 
-
 If (mode = CONSUME) then
 
-checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
-scoreJit := CALL ScoreJit;
+/* don't do anything if all the scores don't exist */
+If (ParentAssessFollowupSymptomTotal= NULL) then 
+call CREATE_JIT with "Form Incomplete";
+conclude false;
+endif;
+
+call CREATE_JIT with "ParentSummaryReport";
 
 endif
 ;;

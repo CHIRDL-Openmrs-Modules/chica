@@ -1,0 +1,138 @@
+Maintenance:
+	Title:		ADHDParentSummaryReport;;
+	Filename:		ADHDParentSummaryReport;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Fill in ADHDTeacherSummaryReport.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+ParentAssessPredomInattentiveCount := read Last {ParentAssessPredomInattentiveCount} Where it Occurred Within Past 1 Day;
+ParentAssessPerformanceCount := read Last {ParentAssessPerformanceCount} Where it Occurred Within Past 1 Day;
+ParentAssessPredomHyperImpulsiveCount := read Last {ParentAssessPredomHyperImpulsiveCount} Where it Occurred Within Past 1 Day;
+ParentAssessConductCount := read Last {ParentAssessConductCount} Where it Occurred Within Past 1 Day;
+ParentAssessOpposDefiantCount := read Last {ParentAssessOpposDefiantCount} Where it Occurred Within Past 1 Day;
+ParentAssessAnxDepressCount := read Last {ParentAssessAnxDepressCount} Where it Occurred Within Past 1 Day;
+ParentAssessPerformanceAvg:= read Last {ParentAssessPerformanceAvg} Where it Occurred Within Past 1 Day;
+ParentAssessSymptomTotal:= read Last {ParentAssessSymptomTotal} Where it Occurred Within Past 1 Day;
+parentAssessScale := read Last {ParentAssessmentScale} Where it Occurred Within Past 1 Day;
+
+ParentAssessFollowupPerformanceAvg:= read Last {ParentAssessFollowupPerformanceAvg} Where it Occurred Within Past 1 Day;
+ParentAssessFollowupSymptomTotal:= read Last {ParentAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+If ('PredominantlyInattentiveSubtype' is in parentAssessScale) then || PPISI || = "POSITIVE";
+If ('NegativePredominantlyInattentiveSubtype' is in parentAssessScale) then || PPISI || = "NEGATIVE";
+
+If ('PredominantlyHyperactiveImpulsiveSubtype' is in parentAssessScale) then || PPHISI || = "POSITIVE";
+If ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in parentAssessScale) then || PPHISI || = "NEGATIVE";
+
+If ('OppositionalDefiantDisorderScreen' is in parentAssessScale) then || PODDSI || = "POSITIVE";
+If ('NegativeOppositionalDefiantDisorderScreen' is in parentAssessScale) then || PODDSI || = "NEGATIVE";
+
+If ('ConductDisorderScreen' is in parentAssessScale) then || PCDSI || = "POSITIVE";
+If ('NegativeConductDisorderScreen' is in parentAssessScale) then || PCDSI || = "NEGATIVE";
+
+If ('AnxietyDepressionScreen' is in parentAssessScale) then || PADSI || = "POSITIVE";
+If ('NegativeAnxietyDepressionScreen' is in parentAssessScale) then || PADSI || = "NEGATIVE";
+
+If NOT (ParentAssessPerformanceAvg = NULL) then || PTSSText || = "ParentAssessSymptomTotal";
+If NOT (ParentAssessPerformanceAvg = NULL) then || PAPSText || = "ParentAssessPerformanceAvg";
+If (ParentAssessPerformanceAvg = NULL) then || PTSSText || = "ParentAssessFollowupSymptomTotal";
+If (ParentAssessPerformanceAvg = NULL) then || PAPSText || = "ParentAssessFollowupPerformanceAvg";
+
+PTSSFull := call getLastObs with "PTSSText";
+PTSS := call integerResult with "PTSSFull_value";
+
+PAPSFull := call getLastObs with "PAPSText";
+PAPS := call roundOnePlace with "PAPSFull_value";
+
+If NOT(ParentAssessPredomInattentiveCount = NULL) then
+PPIS := call integerResult with "ParentAssessPredomInattentiveCount_value";
+endif
+
+If (ParentAssessPredomInattentiveCount = NULL) then || PPIS || = "NA";
+
+
+If NOT(ParentAssessPredomHyperImpulsiveCount = NULL) then
+PPHIS := call integerResult with "ParentAssessPredomHyperImpulsiveCount_value";
+endif
+
+If (ParentAssessPredomHyperImpulsiveCount = NULL) then || PPHIS || = "NA";
+
+
+If NOT(ParentAssessOpposDefiantCount = NULL) then
+PODDS := call integerResult with "ParentAssessOpposDefiantCount_value";
+endif
+
+If (ParentAssessOpposDefiantCount = NULL) then || PODDS || = "NA";
+
+
+If NOT(ParentAssessConductCount = NULL) then
+PCDS := call integerResult with "ParentAssessConductCount_value";
+endif
+
+If (ParentAssessConductCount = NULL) then || PCDS || = "NA";
+
+
+If NOT(ParentAssessAnxDepressCount = NULL) then
+PADS := call integerResult with "ParentAssessAnxDepressCount_value";
+endif
+
+If (ParentAssessAnxDepressCount = NULL) then || PADS || = "NA";
+
+
+If NOT(ParentAssessPerformanceCount = NULL) then
+PPQ := call integerResult with "ParentAssessPerformanceCount_value";
+endif
+
+If (ParentAssessPerformanceCount = NULL) then || PPQ || = "NA";
+
+
+endif;
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| PPIS ||") At PPIS ;
+write ("|| PPHIS ||") At PPHIS;
+write ("|| PODDS ||") At PODDS ;
+write ("|| PCDS ||") At PCDS ;
+write ("|| PADS ||") At PADS ;
+write ("|| PPQ ||") At PPQ ;
+
+write ("|| PTSS ||") At PTSS ;
+write ("|| PAPS ||") At PAPS;
+
+write ("|| PPISI ||") At PPISI;
+write ("|| PPHISI ||") At PPHISI;
+write ("|| PODDSI ||") At PODDSI;
+write ("|| PCDSI ||") At PCDSI;
+write ("|| PADSI ||") At PADSI;
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

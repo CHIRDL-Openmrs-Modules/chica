@@ -1,6 +1,6 @@
 Maintenance:
-	Title:		R_ADHD_ODDParentPosNeg;;
-	Filename:		R_ADHD_ODDParentPosNeg;;
+	Title:		R_ADHD_ConductParentPosNeg;;
+	Filename:		R_ADHD_ConductParentPosNeg;;
 	Version:	1.0;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Tammy Dugan;;
@@ -25,14 +25,14 @@ parentAssessScale := read {ParentAssessmentScale} Where it Occurred Within Past 
 
 endif
 ;;
-Priority:		0;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 
 If (mode = PRODUCE) then
 
-If ('OppositionalDefiantDisorderScreen' is in parentAssessScale) then || prompttext || = "POSITIVE";
-If ('NegativeOppositionalDefiantDisorderScreen' is in parentAssessScale) then || prompttext || = "NEGATIVE";
+If ('ConductDisorderScreen' is in parentAssessScale) then || prompttext || = "POSITIVE";
+If ('NegativeConductDisorderScreen' is in parentAssessScale) then || prompttext || = "NEGATIVE";
 
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 

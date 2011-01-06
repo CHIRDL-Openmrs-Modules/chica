@@ -25,7 +25,7 @@ parentAssessScale := read {ParentAssessmentScale} Where it Occurred Within Past 
 
 endif
 ;;
-Priority:		0;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 
