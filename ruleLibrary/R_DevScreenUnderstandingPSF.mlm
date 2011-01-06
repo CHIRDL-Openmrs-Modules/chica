@@ -35,6 +35,7 @@ ASQDone27:= read exist {ASQ27MonthAssessment from CHICA};
 ASQDone30:= read exist {ASQ30MonthAssessment from CHICA}; 
 ASQDone33:= read exist {ASQ33MonthAssessment from CHICA}; 
 ASQDone36:= read exist {ASQ36MonthAssessment from CHICA}; 
+asqStatus:= read {CHICA_DevScreen_ASQ from CHICA} Where it Occurred Within Past 3 Months;
 endif
 ;;
 Priority:		5;;
@@ -53,6 +54,9 @@ AgeInDays := call ChicaAgeRule with "days";
 
 /** If the child ever had a delay, don't ask surveillance again **/
 If ('Delayed' is in devStatus) then conclude False;
+
+/** If an ASQ has been completed in the past 3 months, don't show prompt **/
+If 'Completed' is in asqStatus then conclude False;
 
 /** If the parent or physician suspects a delay, suppress the surveillance because the child is in the middle of a workup. We don't need to check "Not_Delayed" explicitly because it will be the last CHICA_DevScreen_Status value if it was checked **/
 If (CurrentStatus = Survey_Pos) OR (CurrentStatus = Suspect_delay) OR (CurrentReferral = FirstSteps) OR (CurrentReferral = SchoolSystem) then conclude False;
