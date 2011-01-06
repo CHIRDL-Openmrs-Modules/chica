@@ -12,12 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.datasource.ObsChicaDatasource;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -46,6 +48,8 @@ public class ChicaRuleTesterController extends SimpleFormController
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception
 	{
+		AdministrationService adminService = Context.getAdministrationService();
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		DssService dssService = Context
 				.getService(DssService.class);
@@ -113,7 +117,11 @@ public class ChicaRuleTesterController extends SimpleFormController
 						dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
 						dssService.loadRule("ASQWriteDoneObs", false);
 						dssService.loadRule("getLastObs",false);
-
+						String defaultPackagePrefix = Util.formatPackagePrefix(
+							adminService.getGlobalProperty("atd.defaultPackagePrefix"));
+						dssService.loadRule("roundOnePlace", defaultPackagePrefix, null, false);
+						dssService.loadRule("integerResult", defaultPackagePrefix, null,false);
+						
 						Result result = dssService.runRule(patient, currRule,
 								null, null);
 						

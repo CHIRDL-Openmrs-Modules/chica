@@ -117,6 +117,8 @@ public class ChicaServiceImpl implements ChicaService
 	{
 		long totalTime = System.currentTimeMillis();
 		long startTime = System.currentTimeMillis();
+		AdministrationService adminService = Context.getAdministrationService();
+
 		try
 		{
 			DssService dssService = Context
@@ -239,6 +241,11 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
 			dssService.loadRule("ASQWriteDoneObs", false);
 			dssService.loadRule("getLastObs",false);
+			String defaultPackagePrefix = Util.formatPackagePrefix(
+				adminService.getGlobalProperty("atd.defaultPackagePrefix"));
+			
+			dssService.loadRule("roundOnePlace", defaultPackagePrefix, null, false);
+			dssService.loadRule("integerResult", defaultPackagePrefix, null,false);
 			
 			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
@@ -662,6 +669,7 @@ public class ChicaServiceImpl implements ChicaService
 	{
 		long totalTime = System.currentTimeMillis();
 		long startTime = System.currentTimeMillis();
+		AdministrationService adminService = Context.getAdministrationService();
 
 		DssService dssService = Context
 				.getService(DssService.class);
@@ -687,7 +695,11 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
 			dssService.loadRule("ASQWriteDoneObs", false);
 			dssService.loadRule("getLastObs",false);
-		
+			String defaultPackagePrefix = Util.formatPackagePrefix(
+				adminService.getGlobalProperty("atd.defaultPackagePrefix"));
+			
+			dssService.loadRule("roundOnePlace", defaultPackagePrefix, null, false);
+			dssService.loadRule("integerResult", defaultPackagePrefix, null,false);
 		}
         catch (Exception e) {
 	        log.error("load rule failed", e);

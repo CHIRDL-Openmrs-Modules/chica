@@ -132,7 +132,7 @@ public class ViewEncounterController extends SimpleFormController {
 				ChicaService chicaService = Context.getService(ChicaService.class);
 				
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
-						formName.equals("MCHAT")) {
+						formName.equals("MCHAT")|| formName.equals("ADHD PFU")|| formName.equals("ADHD PSFU")) {
 					leftImageLocationId = locationId;
 					leftImageFormId = formId;
 					leftImageFormInstanceId = formInstanceId;
@@ -143,6 +143,11 @@ public class ViewEncounterController extends SimpleFormController {
 					if(formName.equals("ADHD T")){
 						leftNames.add("ADHD P");
 						leftNames.add("ADHD PS");
+					}
+					
+					if(formName.equals("ADHD TFU")){
+						leftNames.add("ADHD PFU");
+						leftNames.add("ADHD PSFU");
 					}
 					
 					if(formName.equals("PWS")){
@@ -188,7 +193,7 @@ public class ViewEncounterController extends SimpleFormController {
 				
 				//don't set a right image for MCHAT
 				if (!formName.equals("MCHAT")) {
-					if (formName.equals("PWS") || formName.equals("ADHD T")) {
+					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU")) {
 						rightImageLocationId = locationId;
 						rightImageFormId = formId;
 						rightImageFormInstanceId = formInstanceId;
@@ -201,8 +206,16 @@ public class ViewEncounterController extends SimpleFormController {
 							rightName = "ADHD T";
 						}
 						
+						if (formName.equals("ADHD PFU")) {
+							rightName = "ADHD TFU";
+						}
+						
 						if (formName.equals("ADHD PS")) {
 							rightName = "ADHD T";
+						}
+						
+						if (formName.equals("ADHD PSFU")) {
+							rightName = "ADHD TFU";
 						}
 						
 						if (formName.equals("PSF")) {
@@ -305,6 +318,10 @@ public class ViewEncounterController extends SimpleFormController {
 			formsToProcess.add("ADHD PS");
 			formsToProcess.add("ADHD T");
 			formsToProcess.add("MCHAT");
+			formsToProcess.add("ADHD PFU");
+			formsToProcess.add("ADHD TFU");
+			formsToProcess.add("ADHD PSFU");
+			
 			String firstName = null;
 			String lastName = null;
 			String mrn = null;
