@@ -28,7 +28,7 @@ ParentAssessOpposDefiantCount := read Last {ParentAssessOpposDefiantCount} Where
 ParentAssessAnxDepressCount := read Last {ParentAssessAnxDepressCount} Where it Occurred Within Past 1 Day;
 ParentAssessPerformanceAvg:= read Last {ParentAssessPerformanceAvg} Where it Occurred Within Past 1 Day;
 ParentAssessSymptomTotal:= read Last {ParentAssessSymptomTotal} Where it Occurred Within Past 1 Day;
-parentAssessScale := read Last {ParentAssessmentScale} Where it Occurred Within Past 1 Day;
+parentAssessScale := read {ParentAssessmentScale} Where it Occurred Within Past 1 Day;
 
 ParentAssessFollowupPerformanceAvg:= read Last {ParentAssessFollowupPerformanceAvg} Where it Occurred Within Past 1 Day;
 ParentAssessFollowupSymptomTotal:= read Last {ParentAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;

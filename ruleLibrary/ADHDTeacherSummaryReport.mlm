@@ -27,7 +27,7 @@ TeacherAssessOpposDefiantConductCount := read Last {TeacherAssessOpposDefiantCon
 TeacherAssessAnxDepressCount := read Last {TeacherAssessAnxDepressCount} Where it Occurred Within Past 1 Day;
 TeacherAssessPerformanceAvg:= read Last {TeacherAssessPerformanceAvg} Where it Occurred Within Past 1 Day;
 TeacherAssessSymptomTotal:= read Last {TeacherAssessSymptomTotal} Where it Occurred Within Past 1 Day;
-TeacherAssessScale := read Last {TeacherAssessmentScale} Where it Occurred Within Past 1 Day;
+TeacherAssessScale := read {TeacherAssessmentScale} Where it Occurred Within Past 1 Day;
 
 TeacherAssessFollowupPerformanceAvg:= read Last {TeacherAssessFollowupPerformanceAvg} Where it Occurred Within Past 1 Day;
 TeacherAssessFollowupSymptomTotal:= read Last {TeacherAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;
@@ -110,7 +110,7 @@ write ("|| TPQ ||") At TPQ;
 write ("|| TTSS ||") At TTSS;
 write ("|| TAPS ||") At TAPS;
 
-write ("|| TPISI||") At TPISI;
+write ("|| TPISI ||") At TPISI;
 write ("|| TPHISI ||") At TPHISI;
 write ("|| TODDSI ||") At TODDSI;
 write ("|| TADSI ||") At TADSI;
