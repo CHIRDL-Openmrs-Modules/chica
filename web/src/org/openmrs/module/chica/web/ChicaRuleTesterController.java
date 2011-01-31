@@ -117,6 +117,7 @@ public class ChicaRuleTesterController extends SimpleFormController
 						dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
 						dssService.loadRule("ASQWriteDoneObs", false);
 						dssService.loadRule("getLastObs",false);
+						dssService.loadRule("CHOOSE_ASQ_JIT_PWS",false);
 						String defaultPackagePrefix = Util.formatPackagePrefix(
 							adminService.getGlobalProperty("atd.defaultPackagePrefix"));
 						dssService.loadRule("roundOnePlace", defaultPackagePrefix, null, false);

@@ -241,6 +241,7 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
 			dssService.loadRule("ASQWriteDoneObs", false);
 			dssService.loadRule("getLastObs",false);
+			dssService.loadRule("CHOOSE_ASQ_JIT_PWS",false);
 			String defaultPackagePrefix = Util.formatPackagePrefix(
 				adminService.getGlobalProperty("atd.defaultPackagePrefix"));
 			
@@ -695,6 +696,7 @@ public class ChicaServiceImpl implements ChicaService
 			dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
 			dssService.loadRule("ASQWriteDoneObs", false);
 			dssService.loadRule("getLastObs",false);
+			dssService.loadRule("CHOOSE_ASQ_JIT_PWS",false);
 			String defaultPackagePrefix = Util.formatPackagePrefix(
 				adminService.getGlobalProperty("atd.defaultPackagePrefix"));
 			
@@ -712,12 +714,17 @@ public class ChicaServiceImpl implements ChicaService
 		startTime = System.currentTimeMillis();
 		Integer formInstanceId = formInstance.getFormInstanceId();
 		Integer locationId = formInstance.getLocationId();
-		this.saveStats(patient, formInstanceId, dssManager, encounterId,state.getLocationTagId(),locationId);
+		Integer formId = formInstance.getFormId();
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(formId);
+		String formName = form.getName();
+		this.saveStats(patient, formInstanceId, dssManager, encounterId,state.getLocationTagId(),
+			locationId,formName);
 	}
 
 	private void saveStats(Patient patient, Integer formInstanceId,
 			DssManager dssManager, Integer encounterId, 
-			Integer locationTagId,Integer locationId)
+			Integer locationTagId,Integer locationId,String formName)
 	{
 		HashMap<String, ArrayList<DssElement>> dssElementsByType = dssManager
 				.getDssElementsByType();
@@ -743,7 +750,7 @@ public class ChicaServiceImpl implements ChicaService
 				DssElement currDssElement = dssElements.get(i);
 
 					this.addStatistics(patient, currDssElement, formInstanceId, i,
-							encounter, type,locationTagId,locationId);
+							encounter, formName,locationTagId,locationId);
 				}
 			}
 		}
