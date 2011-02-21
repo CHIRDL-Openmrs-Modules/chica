@@ -492,11 +492,17 @@ public class Util
 					}
 					
 					Value value = score.getValue(); //value that should be saved to the concept
-					Double scoreTotal = computeValue(value, childFields, langFieldsToConsume, 
-						fieldMap, formFieldsMap,estimatedScore);
-					
-					if (scoreTotal != null) {
-						saveScore(score.getConcept(), scoreTotal, encounterId, patient);
+					Choose choose = value.getChoose();
+					if (choose != null) {
+						String result = processChoose(choose, childFields, langFieldsToConsume, fieldMap, formFieldsMap);
+						saveScore(score.getConcept(), result, encounterId, patient);
+					} else {
+						Double scoreTotal = computeValue(value, childFields, langFieldsToConsume, fieldMap, formFieldsMap,
+						    estimatedScore);
+						
+						if (scoreTotal != null) {
+							saveScore(score.getConcept(), String.valueOf(scoreTotal), encounterId, patient);
+						}
 					}
 				}
 			}
@@ -525,13 +531,13 @@ public class Util
 				
 				for (Choose choose : choices) {
 					
-					Integer chooseResult = processChoose(choose, childFields, langFieldsToConsume,
+					String chooseResult = processChoose(choose, childFields, langFieldsToConsume,
 					    fieldMap, formFieldsMap);
 					if (chooseResult != null) {
 						if (scoreTotal == null) {
 							scoreTotal = 0D;
 						}
-						scoreTotal += chooseResult;
+						scoreTotal += Integer.parseInt(chooseResult);
 					}
 				}
 			}
@@ -559,7 +565,7 @@ public class Util
 		return scoreTotal;
 	}
 	
-	private static Integer processChoose(Choose choose, HashMap<String, FormField> childFields,
+	private static String processChoose(Choose choose, HashMap<String, FormField> childFields,
 	                                     HashMap<String, Field> langFieldsToConsume,
 	                                     HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
 	                                     HashMap<String, HashMap<String, FormField>> formFieldsMap) {
@@ -577,11 +583,11 @@ public class Util
 				
 				if(geq != null){
 					fieldOperand = geq.getField();
-					cnOperand = geq.getCn();
+					cnOperand = geq.getResult();
 				}
 				if(eq != null){
 					fieldOperand = eq.getField();
-					cnOperand = eq.getCn();
+					cnOperand = eq.getResult();
 				}
 				
 				if (fieldOperand != null && cnOperand != null) {
@@ -610,11 +616,12 @@ public class Util
 		}
 		
 		if (thenObject != null) {
-			String cnResult = thenObject.getCn();
+			String result = thenObject.getResult();
 			
-			if (cnResult != null && ifSatisfied) {
-				return Integer.parseInt(cnResult);
+			if (result != null && ifSatisfied) {
+				return result;
 			}
+			
 		}
 		return null;
 	}
@@ -714,8 +721,12 @@ public class Util
 		return scoreTotal;
 	}
 	
-	private static void saveScore(org.openmrs.module.chica.xmlBeans.Concept xmlConcept, Double scoreTotal,
-	                              Integer encounterId, Patient patient) {
+	private static void saveScore(org.openmrs.module.chica.xmlBeans.Concept xmlConcept, String value, Integer encounterId,
+	                              Patient patient) {
+		
+		if (value == null || value.length() == 0) {
+			return;
+		}
 		
 		String conceptName = xmlConcept.getName();
 		
@@ -726,7 +737,27 @@ public class Util
 			EncounterService encounterService = Context.getService(EncounterService.class);
 			org.openmrs.Encounter encounter = encounterService.getEncounter(encounterId);
 			Obs obs = new Obs(patient, concept, new java.util.Date(), encounter.getLocation());
-			obs.setValueNumeric(scoreTotal);
+			String datatypeName = concept.getDatatype().getName();
+			
+			if (datatypeName.equalsIgnoreCase("Numeric")) {
+				try {
+					obs.setValueNumeric(Double.parseDouble(value));
+				}
+				catch (NumberFormatException e) {
+					log.error("Could not save value: " + value + " to the database for concept "
+					        + concept.getName().getName());
+				}
+			} else if (datatypeName.equalsIgnoreCase("Coded")) {
+				Concept answer = conceptService.getConceptByName(value);
+				if (answer == null) {
+					log.error(value + " is not a valid concept name. " + value + " will be stored as text.");
+					obs.setValueText(value);
+				} else {
+					obs.setValueCoded(answer);
+				}
+			} else {
+				obs.setValueText(value);
+			}
 			obs.setEncounter(encounter);
 			obsService.saveObs(obs, "");
 		} else {

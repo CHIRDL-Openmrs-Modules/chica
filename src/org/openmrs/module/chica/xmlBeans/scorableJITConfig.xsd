@@ -6,6 +6,7 @@
 			<xs:choice>
 				<xs:element ref="plus"/>
 				<xs:element ref="mean"/>
+				<xs:element ref="choose"/>
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
@@ -34,9 +35,10 @@
 	</xs:element>
 	<xs:element name="then">
 		<xs:complexType>
-			<xs:sequence>
+			<xs:choice>
 				<xs:element ref="cn"/>
-			</xs:sequence>
+				<xs:element ref="ccode"/>
+			</xs:choice>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="score">
@@ -112,6 +114,7 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="cn" type="xs:string"/>
+	<xs:element name="ccode" type="xs:string"/>
 	<xs:element name="choose">
 		<xs:complexType>
 			<xs:sequence>

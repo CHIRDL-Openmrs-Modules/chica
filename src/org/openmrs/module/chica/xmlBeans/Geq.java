@@ -16,7 +16,7 @@ package org.openmrs.module.chica.xmlBeans;
 public class Geq
 {
     private Field field;
-    private String cn;
+    private String result;
 
     /** 
      * Get the 'Field' element value.
@@ -37,20 +37,20 @@ public class Geq
     }
 
     /** 
-     * Get the 'cn' element value.
+     * Get the 'result' element value.
      * 
      * @return value
      */
-    public String getCn() {
-        return cn;
+    public String getResult() {
+        return result;
     }
 
     /** 
-     * Set the 'cn' element value.
+     * Set the 'result' element value.
      * 
-     * @param cn
+     * @param result
      */
-    public void setCn(String cn) {
-        this.cn = cn;
+    public void setResult(String result) {
+        this.result = result;
     }
 }

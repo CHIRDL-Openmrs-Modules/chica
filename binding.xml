@@ -53,6 +53,7 @@
     <structure ordered="false" choice="true">
       <structure type="org.openmrs.module.chica.xmlBeans.Plus" test-method="ifPlus" get-method="getPlus" set-method="setPlus" usage="optional"/>
       <structure type="org.openmrs.module.chica.xmlBeans.Mean" test-method="ifMean" get-method="getMean" set-method="setMean" usage="optional"/>
+      <structure type="org.openmrs.module.chica.xmlBeans.Choose" test-method="ifChoose" get-method="getChoose" set-method="setChoose" usage="optional"/>
     </structure>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Mean" name="mean">
@@ -66,7 +67,10 @@
     </structure>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Then" name="then">
-    <value name="cn" field="cn"/>
+  <structure ordered="false" choice="true">
+    <value name="cn" field="result"/>
+    <value name="ccode" field="result"/>
+    </structure>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Scores" name="scores">
     <collection item-type="org.openmrs.module.chica.xmlBeans.Score" get-method="getScores" set-method="setScores" create-type="java.util.ArrayList"/>
@@ -83,11 +87,11 @@
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Geq" name="geq">
     <structure type="org.openmrs.module.chica.xmlBeans.Field" get-method="getField" set-method="setField"/>
-    <value name="cn" field="cn"/>
+    <value name="cn" field="result"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.Eq" name="eq">
     <structure type="org.openmrs.module.chica.xmlBeans.Field" get-method="getField" set-method="setField"/>
-    <value name="cn" field="cn"/>
+    <value name="cn" field="result"/>
   </mapping>
   <mapping class="org.openmrs.module.chica.xmlBeans.FormConfig" name="form_config">
     <structure type="org.openmrs.module.chica.xmlBeans.Scores" get-method="getScores" set-method="setScores"/>

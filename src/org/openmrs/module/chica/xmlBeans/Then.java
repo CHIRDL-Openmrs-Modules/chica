@@ -5,32 +5,35 @@ package org.openmrs.module.chica.xmlBeans;
  * <pre>
  * &lt;xs:element xmlns:xs="http://www.w3.org/2001/XMLSchema" name="then">
  *   &lt;xs:complexType>
- *     &lt;xs:sequence>
+ *     &lt;xs:choice>
  *       &lt;xs:element ref="cn"/>
- *     &lt;/xs:sequence>
+ *       &lt;xs:element ref="ccode"/>
+ *     &lt;/xs:choice>
  *   &lt;/xs:complexType>
  * &lt;/xs:element>
  * </pre>
  */
 public class Then
 {
-    private String cn;
+    private String result;
+    
 
     /** 
-     * Get the 'cn' element value.
+     * Get the 'result' element value.
      * 
      * @return value
      */
-    public String getCn() {
-        return cn;
+    public String getResult() {
+        return result;
     }
-
+    
     /** 
-     * Set the 'cn' element value.
+     * Set the 'result' element value.
      * 
-     * @param cn
+     * @param result
      */
-    public void setCn(String cn) {
-        this.cn = cn;
+    public void setResult(String result) {
+        this.result = result;
     }
+  
 }

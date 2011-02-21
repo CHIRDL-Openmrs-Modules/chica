@@ -8,6 +8,7 @@ package org.openmrs.module.chica.xmlBeans;
  *     &lt;xs:choice>
  *       &lt;xs:element ref="plus"/>
  *       &lt;xs:element ref="mean"/>
+ *       &lt;xs:element ref="choose"/>
  *     &lt;/xs:choice>
  *   &lt;/xs:complexType>
  * &lt;/xs:element>
@@ -18,8 +19,10 @@ public class Value
     private int valueSelect = -1;
     private static final int PLUS_CHOICE = 0;
     private static final int MEAN_CHOICE = 1;
+    private static final int CHOOSE_CHOICE = 2;
     private Plus plus;
     private Mean mean;
+    private Choose choose;
 
     private void setValueSelect(int choice) {
         if (valueSelect == -1) {
@@ -91,5 +94,33 @@ public class Value
     public void setMean(Mean mean) {
         setValueSelect(MEAN_CHOICE);
         this.mean = mean;
+    }
+
+    /** 
+     * Check if Choose is current selection for choice.
+     * 
+     * @return <code>true</code> if selection, <code>false</code> if not
+     */
+    public boolean ifChoose() {
+        return valueSelect == CHOOSE_CHOICE;
+    }
+
+    /** 
+     * Get the 'choose' element value.
+     * 
+     * @return value
+     */
+    public Choose getChoose() {
+        return choose;
+    }
+
+    /** 
+     * Set the 'choose' element value.
+     * 
+     * @param choose
+     */
+    public void setChoose(Choose choose) {
+        setValueSelect(CHOOSE_CHOICE);
+        this.choose = choose;
     }
 }

@@ -192,11 +192,11 @@ public class CheckIncompleteScoringJit implements Rule {
 										
 										if(geq != null){
 											fieldOperand = geq.getField();
-											cnOperand = geq.getCn();
+											cnOperand = geq.getResult();
 										}
 										if(eq != null){
 											fieldOperand = eq.getField();
-											cnOperand = eq.getCn();
+											cnOperand = eq.getResult();
 										}
 										
 										if (fieldOperand != null && cnOperand != null) {
