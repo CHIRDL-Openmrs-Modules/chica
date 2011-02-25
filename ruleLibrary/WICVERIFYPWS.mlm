@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 lbw := read Last {LowBirthWeight from CHICA};insurance := read Last {Insurance from CHICA} ;wicactive := read Last {WICMember from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority:		247;;
+Priority:		233;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

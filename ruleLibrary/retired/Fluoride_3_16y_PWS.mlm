@@ -30,7 +30,7 @@ fluoride := read Last {Fluoride_supplemented from CHICA} Where it Occurred Withi
 ww := read Last {well_water from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 endif
 ;;
-Priority:		592;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
