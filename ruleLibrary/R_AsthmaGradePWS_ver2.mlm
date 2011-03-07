@@ -1,6 +1,6 @@
 Maintenance:
 	Title:		Research Asthma Grading PWS                                                                         ;;
-	Filename:		R_AsthmaGradePWS                                  ;;
+	Filename:		R_AsthmaGradePWS_ver2                                  ;;
 	Version:	1.0       ;;
 	Institution:	Indiana University School of Medicine             ;;
 	Author:		Steve Downs                                       ;;
@@ -30,7 +30,7 @@ CurrentStatus := read Last {AsthmaStatus from CHICA} ;
 Insurance := read Last {Insurance from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 endif
 ;;
-Priority:		1000       ;;
+Priority:		192       ;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
@@ -57,6 +57,9 @@ endif;
 If  (Box5=true) then
  CALL storeObs With "AsthmaStatus","Intermittent";
 endif;
+If (Box2=true) OR (Box4=true) OR (Box5=true) then
+ CALL storeObs With "PatientHandout","AsthmaActionPlan";
+endif;
 If  (Box6=true) then
  CALL storeObs With "AsthmaStatus","None";
 endif;
@@ -67,11 +70,11 @@ endif
 Action:
 call CREATE_JIT with "ASTHMA_JIT","Insurance_value";
 write ("|| firstname || reportedly has asthma or symptoms suggesting asthma.  Please evaluate and/or treatment (see attached ASTHMA ACTION PLAN):");                                                                                                                                                                                                                                                                                                                   
-write ("Day asthma Sx >2x/wk ----->                       ");
-write ("Persistent --> Rx controller                      ");
-write ("Night asthma Sx >2x/mo --->                       ");
-write ("Persistent --> Rx controller                      ");
-write ("Intermittent --> prn albut                        ");
+write ("Daytime Sx >2x/wk ----->                       ");
+write ("Persistent --> Rx controller+action plan");
+write ("Nighttime Sx >2x/mo --->                       ");
+write ("Persistent --> Rx controller+action plan");
+write ("Intermittent --> prn albut+action plan          ");
 write ("Does not have asthma                              ");
 ;;
 Age_Min: 3          years     ;;
