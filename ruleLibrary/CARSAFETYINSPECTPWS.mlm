@@ -41,7 +41,7 @@ endif
 ;;
 Action:
 call CREATE_JIT with "CARSEAT_JIT";
-write ("|| firstname ||'s parents have not confirmed that they have received a car safety seat installation inspection, which is recommended by the AAP.  Parents can call the Car Seat Safety Program at (317) 944-2977.");                                                                                
+write ("|| firstname ||'s parents have not confirmed that they have received a car safety seat installation inspection, which is recommended by the AAP.  Parents can call the Car Seat Safety Program at (317) 944-2977 or 1-800-kid-n-car (543-6227).");                                                                                
 write ("Parent was interested in info->");
 write ("Provided contact information");
 write ("");
