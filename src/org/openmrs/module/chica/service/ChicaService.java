@@ -2,6 +2,7 @@ package org.openmrs.module.chica.service;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
@@ -191,5 +192,21 @@ public interface ChicaService
 	public List<Object[]> getQuestionsScanned(String formName, String locationName);
 
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
+	
+	/**
+	 * Retrieves a list of URL objects referencing bad scans found for the provided location.
+	 * 
+	 * @param locationName The name of the location to search for bad scans.
+	 * @return List of URL objects of the bad scans.
+	 */
+	public List<URL> getBadScans(String locationName);
+	
+	/**
+	 * Moves the provided file to its parent directory named "resolved bad scans".
+	 * 
+	 * @param url The file (in URL format) to move to the "resolved bad scans" folder.
+	 * @throws Exception
+	 */
+	public void moveBadScan(String url) throws Exception;
 	
 }

@@ -61,7 +61,7 @@
                 function popupfull(url) 
                 {
  		params  = 'width='+screen.width;
- 		params += ', height='+screen.height;
+ 		params += ', height='+(screen.height -115);
  		params += ', top=0, left=0'
  		params += ', fullscreen=no';
 
@@ -86,6 +86,11 @@
 				formName.submit();
 			}
         }
+		
+		function displayBadScans(badScans) {
+			var str = 'displayBadScans.form?badScans='+badScans;
+			popupfull(str);
+		}
 
 		</script>
  
@@ -97,10 +102,34 @@
 <table width="100%"  style="height:100%;border:0;frame:void; cellspacing:0px;border-width:1px;border-bottom-width:3px;border-style:solid;border-color: black">
 	<tr  class="chicaBackground" style=>
 	<td  width = "100%" class="formTitleStyle" ><b>Arrivals&nbsp;&nbsp;&nbsp;&nbsp;${today}</b></td>
-	
+	   
 	</tr>
 </table>
 </div>
+<c:if test="${!empty badScans}">
+    <div>
+        <table width="100%"  style="border:0;frame:void; cellspacing:0px;border-width:1px;border-bottom-width:3px;border-style:solid;border-color: black">
+            <tr>
+               <td bgcolor="red" style="font-size:13px; color:white; padding: 5px 0px 5px 5px; vertical-align:middle">
+                   <b>Bad Scans Found: </b>
+                   <c:set var="tiffFiles" value=""/>
+                   <c:forEach items="${badScans}" var="badScan" varStatus="status">
+                       <c:choose>
+                        <c:when test="${status.count == 1 }">
+                            <c:set var="tiffFiles" value="${badScan}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="tiffFiles" value="${tiffFiles},${badScan}"/>
+                        </c:otherwise>
+                       </c:choose>
+                   </c:forEach>
+                   <button name="viewBadScans"  onClick="displayBadScans('${tiffFiles}')" onMouseOver="this.style.cursor='hand'" 
+                       style="background:gray; border:2px solid black; color:white"><b><c:out value="View"/></b></button>
+               </td>
+           </tr>
+        </table>
+    </div>
+</c:if>
 <div style="height:3%;font-size:15px; "  >
 <table  cellpadding="1" style="height:100%; overflow: hidden;  cellpadding:0; border:0;" class="greaseBoardHeader" >
 <tr class="chicaBackground" text-align:left>

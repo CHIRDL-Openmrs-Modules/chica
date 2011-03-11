@@ -22,6 +22,7 @@
 				<prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
 				<prop key="/module/@MODULE_ID@/displayTiff.form">displayTiff</prop>
 				<prop key="/module/@MODULE_ID@/viewPatient.form">viewPatient</prop>
+				<prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
 				
 			</props>
 		</property>
@@ -96,6 +97,11 @@
 		<property name="formView"><value>/module/@MODULE_ID@/viewPatient</value></property>
 		<property name="successView"><value>viewEncounter.form</value></property>
 	</bean>
+	<bean id="displayBadScans" class="@MODULE_PACKAGE@.web.DisplayBadScansController">
+        <property name="commandName"><value>displayBadScansObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/displayBadScans</value></property>
+        <property name="successView"><value>displayBadScans.form</value></property>
+    </bean>
 	<bean parent="serviceContext">
 		<property name="moduleService">
 			<list>

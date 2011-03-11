@@ -1,17 +1,22 @@
 package org.openmrs.module.chica.impl;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,9 +57,6 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
-import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Statistics;
@@ -62,18 +64,21 @@ import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.util.BadScansFileFilter;
 import org.openmrs.module.chica.xmlBeans.Field;
-import org.openmrs.module.chica.xmlBeans.Language;
 import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswers;
 import org.openmrs.module.chica.xmlBeans.StatsConfig;
+import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.dss.DssElement;
 import org.openmrs.module.dss.DssManager;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
-import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutil.util.XMLUtil;
 
 public class ChicaServiceImpl implements ChicaService
 {
@@ -1232,4 +1237,75 @@ public class ChicaServiceImpl implements ChicaService
 		public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName) {
 			return getChicaDAO().getQuestionsScannedAnswered(formName, locationName);
 		}
+
+        public List<URL> getBadScans(String locationName) {
+	        AdministrationService adminService = Context.getAdministrationService();
+	        String imageDirStr = adminService.getGlobalProperty("chica.defaultTifImageDirectory");
+	        if (imageDirStr == null || imageDirStr.length() == 0) {
+	        	log.equals("Please specify a value for the global property 'chica.defaultTifImageDirectory'");
+	        	return new ArrayList<URL>();
+	        }
+	        
+	        File imageDirectory = new File(imageDirStr, locationName);
+	        if (!imageDirectory.exists()) {
+	        	log.error("Cannot find directory: " + imageDirStr + File.separator + locationName);
+	        	return new ArrayList<URL>();
+	        }
+	        
+	        List<URL> badScans = new ArrayList<URL>();
+	        String ignoreExtensions = adminService.getGlobalProperty("chica.badScansExcludedExtensions");
+	        List<String> extensionList = new ArrayList<String>();
+	        if (ignoreExtensions != null) {
+	        	StringTokenizer tokenizer = new StringTokenizer(ignoreExtensions, ",");
+	        	while (tokenizer.hasMoreTokens()) {
+	        		extensionList.add(tokenizer.nextToken());
+	        	}
+	        }
+	        
+	        FilenameFilter fileFilter = new BadScansFileFilter(new Date(), extensionList);
+	        return getBadScans(imageDirectory, badScans, fileFilter);
+        }
+        
+        public void moveBadScan(String url) throws Exception {
+	        try {
+	        	URL urlLoc = new URL(url);
+	            File fileLoc = new File(urlLoc.getFile());
+	            File parentFile = fileLoc.getParentFile();
+	            File resolvedScansDir = new File(parentFile, "resolved bad scans");
+	            if (!resolvedScansDir.exists()) {
+	            	resolvedScansDir.mkdirs();
+	            }
+	            
+	            File newLoc = new File(resolvedScansDir, fileLoc.getName());
+	            IOUtil.copyFile(fileLoc.getAbsolutePath(), newLoc.getAbsolutePath());
+	            fileLoc.delete();
+	            
+            }
+            catch (Exception e) {
+	            log.error("Error moving bad scan", e);
+	            throw e;
+            }
+        }
+        
+        private List<URL> getBadScans(File imageDirectory, List<URL> badScans, FilenameFilter fileFilter) {
+    		File[] files = imageDirectory.listFiles(fileFilter);
+    		if (files != null) {
+    			for (File foundFile : files) {
+    				if (foundFile.isDirectory()) {
+    					getBadScans(foundFile, badScans, fileFilter);
+    				} else {
+	    				try {
+	    					URI foundUri = foundFile.toURI();
+	                        URL foundUrl = foundUri.toURL();
+	                        badScans.add(foundUrl);
+	                    }
+	                    catch (MalformedURLException e) {
+	                        log.error("Error converting file to URL", e);
+	                    }
+    				}
+    			}
+    		}
+        	
+        	return badScans;
+        }
 }

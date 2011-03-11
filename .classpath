@@ -37,7 +37,6 @@
 	<classpathentry kind="lib" path="/dss/dist"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-webmvc.jar"/>
-	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-bind.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-extras.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-run.jar"/>
@@ -142,6 +141,6 @@
 	<classpathentry kind="lib" path="lib-common/rgccd-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.3.21.jar" sourcepath="/sockethl7listener/src"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutil-1.0.12.jar"/>
-	<classpathentry kind="lib" path="lib-common/atd-1.58.jar"/>
+	<classpathentry kind="lib" path="lib-common/atd-1.60.2.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

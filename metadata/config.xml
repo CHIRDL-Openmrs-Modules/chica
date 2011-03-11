@@ -6,7 +6,7 @@
 	<!-- Chica Module Properties -->
 	<id>chica</id>
 	<name>Chica</name>
-	<version>1.47.9</version>
+	<version>1.48.0</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
 	<author>Vibha Anand and Tammy Dugan</author>
 	<description>
@@ -153,6 +153,12 @@
    		<description>Generic provider id to use for medication query when no other provider id.
    		</description>
 	</globalProperty>
+	<globalProperty>
+        <property>chica.badScansExcludedExtensions</property>
+        <defaultValue>.db</defaultValue>
+        <description>A comma delimited string of file extensions to ignore when looking for bad scans. Please include the '.' character as well.
+        </description>
+    </globalProperty>
 	
 	<!-- Internationalization -->
 	<!-- All message codes should start with @MODULE_ID@.* -->

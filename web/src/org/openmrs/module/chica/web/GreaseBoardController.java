@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.web;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -352,6 +353,8 @@ public class GreaseBoardController extends SimpleFormController
 				location = locationService.getLocation(locationString);
 				if(location != null){
 					locationId = location.getLocationId();
+					List<URL> badScans = chicaService.getBadScans(location.getName());
+					map.put("badScans", badScans);
 				}
 			}
 			
