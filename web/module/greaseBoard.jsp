@@ -110,7 +110,7 @@
     <div>
         <table width="100%"  style="border:0;frame:void; cellspacing:0px;border-width:1px;border-bottom-width:3px;border-style:solid;border-color: black">
             <tr>
-               <td bgcolor="red" style="font-size:13px; color:white; padding: 5px 0px 5px 5px; vertical-align:middle">
+               <td id="badScansCell" bgcolor="red" style="font-size:13px; color:white; padding: 5px 0px 5px 5px; vertical-align:middle">
                    <b>Bad Scans Found: </b>
                    <c:set var="tiffFiles" value=""/>
                    <c:forEach items="${badScans}" var="badScan" varStatus="status">
@@ -125,6 +125,27 @@
                    </c:forEach>
                    <button name="viewBadScans"  onClick="displayBadScans('${tiffFiles}')" onMouseOver="this.style.cursor='hand'" 
                        style="background:gray; border:2px solid black; color:white"><b><c:out value="View"/></b></button>
+                   <script language="JavaScript">
+                    var cell = document.getElementById('badScansCell');
+                    cell.bgColor='red';
+                    setInterval("Timer()", 500);
+                    x=1;
+                    function Timer() {
+                    	   set=1;
+                    	   if(x==0 && set==1) {
+                    		   cell.bgColor='white';
+                    		   cell.style.color='red';
+                    		   x=1;
+                    		   set=0;
+                    	   }
+                    	   if(x==1 && set==1) {
+                    		   cell.bgColor='red';
+                    		   cell.style.color='white';
+                    		   x=0;
+                    		   set=0;
+                    	   }
+                    }
+                   </script>
                </td>
            </tr>
         </table>
