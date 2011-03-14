@@ -6,7 +6,7 @@
 	<!-- Chica Module Properties -->
 	<id>chica</id>
 	<name>Chica</name>
-	<version>1.48.0</version>
+	<version>1.48.1</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
 	<author>Vibha Anand and Tammy Dugan</author>
 	<description>
@@ -157,6 +157,12 @@
         <property>chica.badScansExcludedExtensions</property>
         <defaultValue>.db</defaultValue>
         <description>A comma delimited string of file extensions to ignore when looking for bad scans. Please include the '.' character as well.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.showBadScans</property>
+        <defaultValue>true</defaultValue>
+        <description>Whether or not to display a notice on the greaseboard of bad scans.  Valid values are 'true' and 'false'.
         </description>
     </globalProperty>
 	
