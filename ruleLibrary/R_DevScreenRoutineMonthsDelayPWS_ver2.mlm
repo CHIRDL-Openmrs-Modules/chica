@@ -62,6 +62,9 @@ If ('Delayed' is in devStatus) then conclude False;
 
 If (CurrentStatus = Suspect_delay) OR (CurrentStatus = Survey_Pos) OR (CurrentReferral = FirstSteps) OR (CurrentReferral = SchoolSystem) then conclude False;
 
+If (AgeInMonths < 35) then || firstStepsText || = " First steps referral is attached.";
+
+
 /** ASQ was already completed for this age range **/
 If (AgeInMonths = 9) AND ('ASQ_9m_Done' is in devStatus) then conclude False;
 If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('ASQ_18m_Done' is in devStatus) then conclude False;
@@ -154,7 +157,7 @@ If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in 
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results27) then conclude True;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results30) then conclude True;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results33) then conclude True;
-If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results36) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results36) then conclude True; 
  
 conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
@@ -193,9 +196,14 @@ endif;
 endif
 ;;
 Action:
+AgeInMonths := call ChicaAgeRule with "months";
+
+If (AgeInMonths < 35) then
 call CREATE_JIT with "FirstStepsReferral";
+endif;
+
 call CHOOSE_ASQ_ACTIVITY_JIT;
-write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following.  First steps referral is attached.");
+write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following. || firstStepsText ||");
 write ("Suspect Delay ->                       ");
 write ("Refer to First Steps                      ");
 write ("Activities for Children form                       ");
