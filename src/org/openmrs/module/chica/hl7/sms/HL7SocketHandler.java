@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
@@ -21,23 +20,23 @@ import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.QueryKiteException;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
@@ -197,7 +196,7 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 			{
 				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
-				Patient matchedPatient = findPatient(mrn);
+				Patient matchedPatient = findPatient(hl7Patient);
 				if (matchedPatient == null)
 				{
 					resultPatient = createPatient(hl7Patient);
@@ -270,8 +269,11 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 		return session;
 	}
 	
-	private Patient findPatient(String mrn)
+	private Patient findPatient(Patient hl7Patient)
 	{
+		// Search by MRN
+		PatientIdentifier patientIdentifier = hl7Patient.getPatientIdentifier();
+		String mrn = patientIdentifier.getIdentifier();
 		PatientService patientService = Context.getPatientService();
 		List<Patient> lookupPatients = patientService.getPatients(null,
 				mrn, null, true);
@@ -280,8 +282,81 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 		{
 			return lookupPatients.iterator().next();
 		}
+		
+		// Search by SSN
+		PatientIdentifier ssnIdent = hl7Patient.getPatientIdentifier("SSN");
+		if (ssnIdent != null) 
+		{
+			String ssn = ssnIdent.getIdentifier();
+			lookupPatients = patientService.getPatients(null, ssn, null, true);
+			if (lookupPatients != null && lookupPatients.size() > 0)
+			{
+				Iterator<Patient> i = lookupPatients.iterator();
+				while (i.hasNext())
+				{
+					Patient patient = i.next();
+					if (matchPatients(patient, hl7Patient))
+					{
+						return patient;
+					}
+				}
+				
+				// If we didn't find a match, we need to remove the SSN because there's a duplicate.
+				hl7Patient.removeIdentifier(ssnIdent);
+				// Add a person attribute to store attempted SSN.
+				PersonAttributeType personAttrType = Context.getPersonService().getPersonAttributeTypeByName("SSN");
+				if (personAttrType != null) {
+					PersonAttribute personAttr = new PersonAttribute(personAttrType, ssn);
+					hl7Patient.addAttribute(personAttr);
+				}
+			}
+		}
 
 		return null;
+	}
+	
+	private boolean matchPatients(Patient patient1, Patient patient2) 
+	{
+		String familyName1 = patient1.getFamilyName();
+		String familyName2 = patient2.getFamilyName();
+		if ((familyName1 != null && familyName2 == null) || (familyName1 == null && familyName2 != null)) {
+			return false;
+		}
+		
+		if (familyName1 != null) {
+			if (!familyName1.equals(familyName2)) return false;
+		} else if (familyName2 != null) {
+			if (!familyName2.equals(familyName1)) return false;
+		}
+		
+		String givenName1 = patient1.getGivenName();
+		String givenName2 = patient2.getGivenName();
+		if ((givenName1 != null && givenName2 == null) || (givenName1 == null && givenName2 != null)) {
+			return false;
+		}
+		
+		if (givenName1 != null) {
+			if (!givenName1.equals(givenName2)) return false;
+		} else if (givenName2 != null) {
+			if (!givenName2.equals(givenName1)) return false;
+		}
+		
+		Date birthDate1 = patient1.getBirthdate();
+		Date birthDate2 = patient2.getBirthdate();
+		if ((birthDate1 != null && birthDate2 == null) || (birthDate1 == null && birthDate2 != null)) {
+			return false;
+		}
+		
+		if ((birthDate1 == null && birthDate2 == null))
+		{
+			return true;
+		}
+		
+		long time1 = birthDate1.getTime();
+		long time2 = birthDate2.getTime();
+		if (time1 != time2) return false;
+		
+		return true;
 	}
 
 	private void processAliasString(String mrn, Patient preferredPatient)
@@ -379,7 +454,18 @@ public class HL7SocketHandler extends org.openmrs.module.sockethl7listener.HL7So
 			PatientIdentifier currentSSN = resultPatient.getPatientIdentifier("SSN");
 			
 			if (currentSSN == null){
-				resultPatient.addIdentifier(newSSN);
+				// Check for a duplicate SSN.
+				List<Patient> lookupPatients = patientService.getPatients(null, newSSN.getIdentifier(), null, true);
+				if (lookupPatients == null || lookupPatients.size() == 0) {
+					resultPatient.addIdentifier(newSSN);
+				} else {
+					// Add a person attribute to store attempted SSN.
+					PersonAttributeType personAttrType = Context.getPersonService().getPersonAttributeTypeByName("SSN");
+					if (personAttrType != null) {
+						PersonAttribute personAttr = new PersonAttribute(personAttrType, newSSN.getIdentifier());
+						resultPatient.addAttribute(personAttr);
+					}
+				}
 			}
 			else {
 				//Check if hl7 SSN and existing SSN identical
