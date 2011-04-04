@@ -115,6 +115,8 @@ call CREATE_JIT with "Diagnosed Toolkit";
 call CREATE_JIT with "Diagnosed Toolkit Spanish";
 endif;
 
+call CREATE_JIT with "Medication_Handout_ADHD";
+
 write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following AND REFER TO MIDTOWN  ");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");
 write ("Send to Midtown                      ");
