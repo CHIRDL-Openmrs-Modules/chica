@@ -55,5 +55,5 @@ write ("Does || firstname ||'s car seat face forward?");
 write ("¿La silla de carro de || firstname || mira hacia adelante?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                          
 ;;
 Age_Min: 0 days;;
-Age_Max: 1 years;;
+Age_Max: 2 years;;
 end:
