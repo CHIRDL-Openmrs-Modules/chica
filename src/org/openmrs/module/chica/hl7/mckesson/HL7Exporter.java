@@ -603,8 +603,11 @@ public class HL7Exporter extends AbstractTask {
 				String value = obs.getValueAsString(locale);
 
 				if (chicaConcept.isNumeric()) {
-					Double obsRounded = org.openmrs.module.chirdlutil.util.Util.round(Double
-							.valueOf(obs.getValueNumeric()), 1);
+					Double obsRounded=null;
+					if(obs.getValueNumeric()!=null){
+						obsRounded = org.openmrs.module.chirdlutil.util.Util.round(Double
+								.valueOf(obs.getValueNumeric()), 1);
+					}
 					if (obsRounded != null) {
 						value = String.valueOf(obsRounded);
 					}
