@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chica.action;
+package org.openmrs.module.chica.util;
 
 import java.io.File;
 import java.io.FileFilter;
