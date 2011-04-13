@@ -5,6 +5,9 @@ package org.openmrs.module.chica;
  */
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Date;
@@ -14,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
+import org.openmrs.module.chica.action.FileFilterByDate;
 import org.openmrs.module.chica.datasource.ObsChicaDatasource;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.service.ATDService;
@@ -88,17 +92,13 @@ public class QueryKite
 		try
 		{
 		    response = queryKite(mrn, "FIND-ALIASES");
-		} catch (QueryKiteException qke) { 	
-			//if query kite fails, retry
-			response = queryKite(mrn, "FIND-ALIASES");
-			//if query fails again, throw QueryKiteException up to next level for processing
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			ATDError error = new ATDError("Error", "Query Kite Connection"
 					, e.getMessage()
 					, Util.getStackTrace(e), new Date(), null);
 			atdService.saveError(error);
+			response = null;
 		}
 		
 		//If the response is null this means the connection was broken
@@ -166,7 +166,7 @@ public class QueryKite
 		return response;
 	}
 
-	public static String mrfQuery(String mrn,Integer patientId) throws  QueryKiteException
+	public static String mrfQuery(String mrn,Integer patientId, boolean checkForCachedData) throws  QueryKiteException
 	{
 		ATDService atdService = Context.getService(ATDService.class);
 		AdministrationService adminService = Context.getAdministrationService();
@@ -174,21 +174,51 @@ public class QueryKite
 		String response = null;
 		long startTime = System.currentTimeMillis();
 		log.info("Starting mrf Query");
-		try
-		{
-		    response = queryKite(mrn, "ZET-MRF");
-		} catch (QueryKiteException qke) { 	
-			//if query kite fails, retry
-			response = queryKite(mrn, "ZET_MRF");
-			//if query fails again, throw QueryKiteException up to next level for processing
-		}
-		catch (Exception e)
-		{
-			ATDError error = new ATDError("Error", "Query Kite Connection"
+		
+		//look to see if the mrf dump has already been found for today
+		if (checkForCachedData) {
+			String mrfDirectory = adminService.getGlobalProperty("chica.mrfArchiveDirectory");
+			
+			if (mrfDirectory != null) {
+				//only look for a file within the past day
+				File dir = new File(mrfDirectory);
+				FileFilterByDate filter = new FileFilterByDate(24 * 60 * 60 * 1000, "_" + mrn + ".hl7");
+				File[] matchingFiles = dir.listFiles(filter);
+				if (matchingFiles != null && matchingFiles.length > 0) {
+					try {
+						FileInputStream input = new FileInputStream(matchingFiles[0].getPath());
+						ByteArrayOutputStream output = new ByteArrayOutputStream();
+						org.openmrs.module.chirdlutil.util.IOUtil.bufferedReadWrite(input, output);
+						response = output.toString();
+						if (response.length() == 0) {
+							response = null;
+						}
+					}
+					catch (Exception e) {
+						
+						log.error("File: " + matchingFiles[0].getPath() + "not found", e);
+					}
+				}
+				
+			} else {
+				log.error("mrfDirectory is null!!");
+			}
+		} 
+		
+		if(response == null){
+			
+			try
+			{
+				response = queryKite(mrn, "ZET-MRF");
+			} 
+			catch (Exception e)
+			{
+				ATDError error = new ATDError("Error", "Query Kite Connection"
 					, e.getMessage()
 					, Util.getStackTrace(e), new Date(), null);
 
-			atdService.saveError(error);
+				atdService.saveError(error);
+			}
 		}
 		
 		//If the response is null this means the connection was broken

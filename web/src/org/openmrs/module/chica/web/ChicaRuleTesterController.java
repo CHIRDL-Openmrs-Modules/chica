@@ -95,7 +95,7 @@ public class ChicaRuleTesterController extends SimpleFormController
 						currRule.setParameters(parameters);
 						try
 						{
-							QueryKite.mrfQuery(mrn, patientId);
+							QueryKite.mrfQuery(mrn, patientId,false);
 						} catch (Exception e)
 						{
 							//ignore the error if the kite query fails

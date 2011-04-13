@@ -48,7 +48,7 @@ public class TestChicaObsDatasource extends BaseModuleContextSensitiveTest
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		String mrn = "999995";
 
-		QueryKite.mrfQuery(mrn, patientId);// query and add to datasource
+		QueryKite.mrfQuery(mrn, patientId,false);// query and add to datasource
 
 		ArrayList<Rule> ruleList = new ArrayList<Rule>();
 		Rule rule = new Rule();

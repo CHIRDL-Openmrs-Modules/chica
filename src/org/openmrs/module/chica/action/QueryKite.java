@@ -55,7 +55,7 @@ public class QueryKite implements ProcessStateAction
 			try
 			{
 				org.openmrs.module.chica.QueryKite.mrfQuery(patient.getPatientIdentifier()
-						.getIdentifier(), patient.getPatientId());
+						.getIdentifier(), patient.getPatientId(),true);
 			}catch (QueryKiteException e){
 				ATDError ce = e.getATDError();
 				ce.setSessionId(sessionId);
