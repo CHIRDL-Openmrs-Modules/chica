@@ -40,7 +40,7 @@
     <c:if test="${!empty badScans}">
 	    <tr width="100%" align="center">
 	        <td colspan="3" style="padding: 0px 0px 10px 0px">
-	            <font color="white" size="4px">
+	            <font color="black" size="4px">
 	                <b>Please find and rescan the following form.  Click the "Rescanned" button once addressed or click "Ignore" to permanently remove it from the list.</b>
 	            </font>
 	        </td>
@@ -50,7 +50,7 @@
 	    <td align="center" style="padding: 0px 0px 10px 0px">
 	       <c:choose>
 		       <c:when test="${empty badScans}">
-		          <font color="white" size="4px">
+		          <font color="black" size="4px">
 		              <b>
 		                  <c:out value="No Bad Scans Found"/><br/>
 		                  <c:out value="Please allow a few seconds after clicking \"Exit\" for the GreaseBoard to refresh to see if any rescan attempts completed successfully."/>
@@ -58,7 +58,7 @@
 		          </font>
 		       </c:when>
 		       <c:otherwise>
-		           <font color="white" size="4px"><b>Form: </b></font>
+		           <font color="black" size="4px"><b>Form: </b></font>
 		           <c:set var="scanList" value=""/>
 		           <c:forEach items="${badScans}" var="badScan" varStatus="status">
 		              <c:choose>
