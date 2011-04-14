@@ -1,6 +1,6 @@
 Maintenance:
-	Title:		R_DevScreenASQFollowupPWS                                                                         ;;
-	Filename:		R_DevScreenASQFollowupPWS                                  ;;
+	Title:		R_DevScreenASQDelayedFollowupPWS                                                                         ;;
+	Filename:		R_DevScreenASQDelayedFollowupPWS                                  ;;
 	Version:	1.0       ;;
 	Institution:	Indiana University School of Medicine             ;;
 	Author:		Aaron Carroll                                       ;;
@@ -26,31 +26,28 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 
-If (mode = PRODUCE) then      
-CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;   
-devStatus:= read {CHICA_DevScreen_Status from CHICA} ;   
-CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+If (mode = PRODUCE) then     
+ 
+CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ; 
+StatusExists := read exist {CHICA_DevScreen_Status from CHICA} Where it Occurred Within Past 1 Year;   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 endif
 ;;
-Priority:		1000       ;;
+Priority:		173       ;;
 	Evoke:		;;
 
 Logic:
 If (mode = PRODUCE) then
-
 asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
 asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
-
-If (Gender = M) then || heshe || = "He";
-If (Gender = F) then || heshe || = "She";
 
 If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
 If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
 
-If ('Delayed' is in devStatus) OR ('Not_Delayed' is in devStatus) then conclude False;
-If (CurrentStatus = Suspect_delay) then conclude True;
-If (CurrentReferral = "FirstSteps") OR (CurrentReferral = "SchoolSystem") then conclude True;
+If (StatusExists = True) then conclude False;
+
+If (CurrentStatus = "Delayed") then conclude True;
+
 conclude False;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
@@ -64,11 +61,11 @@ endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_DevScreen_Treatment","WrittenCarePlan";
 endif;
-If  (Box3=true) then
- CALL storeObs With "CHICA_DevScreen_Status","Not_Delayed";
-endif;
 If  (Box4=true) then
  CALL storeObs With "CHICA_DevScreen_Treatment","FamilySupportServices";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "CHICA_DevScreen_Status","Not_Delayed";
 endif;
 
 
@@ -76,13 +73,16 @@ endif;
 endif
 ;;
 Action:
-write ("|| firstname || had a concerning ASQ at a previous visit. || heshe || should have been referred for a developmental evaluation and developmental services.  Please confirm the following:");
-write ("Evaluation confirms delay");	
-write ("Written care plan developed");	
-write ("Evaluation shows no delay");
+
+call CREATE_JIT with "Developmental_Care_Plan";
+write ("|| firstname || has been previously diagnosed with developmental delay. || he/she || should continue to receive developmental services.  Please confirm the following:");
+
+write ("Patient still delayed-->");	
+write ("Attached care plan given");
+write("");	
 write ("Ref to ASK 1-800-964-4746");
-write ("");
-write ("");
+write ("Patient no longer delayed-->");
+write("Please discard attached care plan");
 ;;
 Age_Min: 2          months     ;;
 Age_Max: 66         months     ;;

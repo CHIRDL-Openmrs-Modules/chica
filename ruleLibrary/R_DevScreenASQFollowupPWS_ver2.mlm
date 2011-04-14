@@ -1,6 +1,6 @@
 Maintenance:
 	Title:		R_DevScreenASQFollowupPWS                                                                         ;;
-	Filename:		R_DevScreenASQFollowupPWS                                  ;;
+	Filename:		R_DevScreenASQFollowupPWS_ver2                                  ;;
 	Version:	1.0       ;;
 	Institution:	Indiana University School of Medicine             ;;
 	Author:		Aaron Carroll                                       ;;
@@ -33,7 +33,7 @@ CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority:		1000       ;;
+Priority:		172       ;;
 	Evoke:		;;
 
 Logic:
@@ -64,25 +64,29 @@ endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_DevScreen_Treatment","WrittenCarePlan";
 endif;
-If  (Box3=true) then
- CALL storeObs With "CHICA_DevScreen_Status","Not_Delayed";
-endif;
 If  (Box4=true) then
  CALL storeObs With "CHICA_DevScreen_Treatment","FamilySupportServices";
 endif;
+If  (Box5=true) then
+ CALL storeObs With "CHICA_DevScreen_Status","Not_Delayed";
+endif;
+
 
 
 
 endif
 ;;
 Action:
+call CREATE_JIT with "Developmental_Care_Plan";
+
 write ("|| firstname || had a concerning ASQ at a previous visit. || heshe || should have been referred for a developmental evaluation and developmental services.  Please confirm the following:");
-write ("Evaluation confirms delay");	
-write ("Written care plan developed");	
-write ("Evaluation shows no delay");
+write ("Evaluation confirms delay-->");	
+write ("Attached care plan given");
+write("");	
 write ("Ref to ASK 1-800-964-4746");
-write ("");
-write ("");
+write ("Evaluation shows no delay-->");
+write("Please discard attached care plan");
+
 ;;
 Age_Min: 2          months     ;;
 Age_Max: 66         months     ;;
