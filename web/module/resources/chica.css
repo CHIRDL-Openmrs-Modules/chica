@@ -216,6 +216,14 @@ font-size:15;
 font-weight:bold;
 }
 
+.badScansButton{
+height:35px; 
+width:100px; 
+align:left; 
+font-size:15; 
+font-weight:bold;
+}
+
 .viewEncounterFooter{
 border-width:1px;
 border-bottom-width:1px;

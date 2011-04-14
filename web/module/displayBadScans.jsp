@@ -6,29 +6,59 @@
 	type="text/css" rel="stylesheet" />
 <SCRIPT LANGUAGE="JavaScript">
 	function changeSelection(scanList){
-		document.getElementById('deleteForm').value = 'false';
+		setWait();
+		document.getElementById('moveForm').value = 'false';
 		document.getElementById('scans').value = scanList;
-		document.forms["input"].submit();
+		document.forms['input'].submit();
 	}
 	
 	function setScans(scanList) {
+		setWait();
+		document.getElementById("ignoreButton").style.cursor = 'wait';
 		document.getElementById('scans').value = scanList;
 	}
+	
+	function ignoreForm(scanList) {
+		setWait();
+		document.getElementById("ignoreButton").style.cursor = 'wait';
+		document.getElementById('rescannedForm').value = 'false';
+		document.getElementById('scans').value = scanList;
+	}
+	
+	function setWait() {
+		document.body.style.cursor = 'wait';
+        document.getElementById("rescannedButton").style.cursor = 'wait';
+        document.getElementById("ignoreButton").style.cursor = 'wait';
+        document.getElementById("exitButton").style.cursor = 'wait';
+        document.getElementById("badScansSelection").style.cursor = 'wait';
+	}
 </script>
+<body>
 <form height="100%" name="input" method="post">
 
 <table height="5%" width="100%" class="displayTiffHeader chicaBackground">
-    <tr width="100%">
-        <td colspan="3" style="padding: 0px 0px 10px 0px"><font color="white" size="4px"><b>Please find and address the following forms.  Click the "Resolved" button once addressed to remove it from the list.</b></font></td>
-    </tr>
+    <c:if test="${!empty badScans}">
+	    <tr width="100%" align="center">
+	        <td colspan="3" style="padding: 0px 0px 10px 0px">
+	            <font color="white" size="4px">
+	                <b>Please find and rescan the following form.  Click the "Rescanned" button once addressed or click "Ignore" to permanently remove it from the list.</b>
+	            </font>
+	        </td>
+	    </tr>
+    </c:if>
 	<tr width="100%">
-	    <td width="48%" align="right" valign="bottom" style="vertical-align:middle">
-	       <font color="white" size="4px"><b>Form: </b></font>
+	    <td align="center" style="padding: 0px 0px 10px 0px">
 	       <c:choose>
 		       <c:when test="${empty badScans}">
-		          <font color="white" size="4px"><b><c:out value="No Bad Scans Found"/></b></font>
+		          <font color="white" size="4px">
+		              <b>
+		                  <c:out value="No Bad Scans Found"/><br/>
+		                  <c:out value="Please allow a few seconds after clicking \"Exit\" for the GreaseBoard to refresh to see if any rescan attempts completed successfully."/>
+		              </b>
+		          </font>
 		       </c:when>
 		       <c:otherwise>
+		           <font color="white" size="4px"><b>Form: </b></font>
 		           <c:set var="scanList" value=""/>
 		           <c:forEach items="${badScans}" var="badScan" varStatus="status">
 		              <c:choose>
@@ -55,13 +85,18 @@
 	           </c:otherwise>
            </c:choose>
 	    </td>
-	    <td width="4%"></td>
-		<td width="48%" align="left">
-		  <c:if test="${!empty badScans}">
-		      <INPUT TYPE="submit" class="exitButton"VALUE="Resolved" onClick="setScans('${scanList}')">
-		  </c:if>
-		  <INPUT TYPE="button" class="exitButton"VALUE="Exit" onClick="window.close()">
-		</td>
+	</tr>
+	<tr width="100%">
+	   <td align="center">
+	       <c:if test="${!empty badScans}">
+              <input type="submit" id="rescannedButton" class="badScansButton" value="Rescanned" onClick="setScans('${scanList}')" 
+                  onMouseOver="this.style.cursor='hand'">
+              <input type="submit" id="ignoreButton" class="badScansButton" value="Ignore" onClick="ignoreForm('${scanList}')" 
+                  onMouseOver="this.style.cursor='hand'">
+           </c:if>
+           <input type="button" id="exitButton" class="badScansButton" value="Exit" onClick="window.close()" 
+              onMouseOver="this.style.cursor='hand'">
+	   </td>
 	</tr>
 	<c:if test="${moveError == 'true'}">
 	   <tr width="100%">
@@ -85,9 +120,11 @@
 	    </td>
 	</tr>
 </table>
-<input type="hidden" value="true" name="deleteForm" id="deleteForm"/>
+<input type="hidden" value="true" name="moveForm" id="moveForm"/>
+<input type="hidden" value="true" name="rescannedForm" id="rescannedForm"/>
 <input type="hidden" value="" name="scans" id="scans"/>
 </form>
+</body>
 </page>
 
 

@@ -33,8 +33,6 @@
 	<classpathentry kind="lib" path="lib-common/xerces/resolver.jar"/>
 	<classpathentry kind="lib" path="lib-common/xerces/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib-common/xerces/xml-apis.jar"/>
-	<classpathentry kind="lib" path="/atd/dist"/>
-	<classpathentry kind="lib" path="/dss/dist"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-bind.jar"/>

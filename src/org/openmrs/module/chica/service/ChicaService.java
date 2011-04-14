@@ -205,8 +205,12 @@ public interface ChicaService
 	 * Moves the provided file to its parent directory named "resolved bad scans".
 	 * 
 	 * @param url The file (in URL format) to move to the "resolved bad scans" folder.
+	 * @param formRescanned Whether or not the form was attempted to be rescanned.  If so, 
+	 * the form file will be moved to the rescanned folder.  Otherwise, it will be moved to 
+	 * the ignored folder.
+	 * 
 	 * @throws Exception
 	 */
-	public void moveBadScan(String url) throws Exception;
+	public void moveBadScan(String url, boolean formRescanned) throws Exception;
 	
 }

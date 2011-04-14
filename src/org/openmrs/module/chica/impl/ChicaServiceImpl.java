@@ -1266,20 +1266,43 @@ public class ChicaServiceImpl implements ChicaService
 	        return getBadScans(imageDirectory, badScans, fileFilter);
         }
         
-        public void moveBadScan(String url) throws Exception {
+        public void moveBadScan(String url, boolean formRescanned) throws Exception {
 	        try {
 	        	URL urlLoc = new URL(url);
 	            File fileLoc = new File(urlLoc.getFile());
 	            File parentFile = fileLoc.getParentFile();
-	            File resolvedScansDir = new File(parentFile, "resolved bad scans");
-	            if (!resolvedScansDir.exists()) {
-	            	resolvedScansDir.mkdirs();
+	            File rescannedScansDir = null;
+	            if (formRescanned) {
+	            	rescannedScansDir = new File(parentFile, "rescanned bad scans");
+	            } else {
+	            	rescannedScansDir = new File(parentFile, "ignored bad scans");
 	            }
 	            
-	            File newLoc = new File(resolvedScansDir, fileLoc.getName());
+	            if (!rescannedScansDir.exists()) {
+	            	rescannedScansDir.mkdirs();
+	            }
+	            
+	            String filename = fileLoc.getName();
+	            File newLoc = new File(rescannedScansDir, filename);
+	            if (newLoc.exists()) {
+	            	int i = 1;
+	            	int index = filename.indexOf("."); 
+	            	String name = null;
+	            	String extension = "";
+	            	if (index >= 0) {
+	            		name = filename.substring(0, index);
+	            		extension = filename.substring(index, filename.length());
+	            	} else {
+	            		name = filename;
+	            	}
+	            	newLoc = new File(rescannedScansDir, name + "_" + i++ + extension);
+	            	while (newLoc.exists() && i < 1000) {
+	            		newLoc = new File(rescannedScansDir, name + "_" + i++ + extension);
+	            	}
+	            }
+	            
 	            IOUtil.copyFile(fileLoc.getAbsolutePath(), newLoc.getAbsolutePath());
 	            fileLoc.delete();
-	            
             }
             catch (Exception e) {
 	            log.error("Error moving bad scan", e);

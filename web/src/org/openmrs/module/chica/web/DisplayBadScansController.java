@@ -49,16 +49,21 @@ public class DisplayBadScansController extends SimpleFormController {
 	
 	@Override
 	protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object object, 
-	                                             BindException errors) throws Exception {
+	                                             BindException errors) throws Exception {		
 		String selectedForm = request.getParameter("badScansSelection");
 		String badScansStr = request.getParameter("scans");
-		String deleteForm = request.getParameter("deleteForm");
+		String moveForm = request.getParameter("moveForm");
 		List<String> badScans = parseBadScans(badScansStr);
 		String view = getSuccessView();
-		if ("true".equalsIgnoreCase(deleteForm)) {
+		if ("true".equalsIgnoreCase(moveForm)) {
+			boolean rescannedForm = false;
+			String rescannedFormStr = request.getParameter("rescannedForm");
+			if ("true".equalsIgnoreCase(rescannedFormStr)) {
+				rescannedForm = true;
+			}
 			ChicaService chicaService = Context.getService(ChicaService.class);
 			try {
-				chicaService.moveBadScan(selectedForm);
+				chicaService.moveBadScan(selectedForm, rescannedForm);
 				badScans.remove(selectedForm);
 				return new ModelAndView(
 					new RedirectView(view+"?badScans=" + createString(badScans)));

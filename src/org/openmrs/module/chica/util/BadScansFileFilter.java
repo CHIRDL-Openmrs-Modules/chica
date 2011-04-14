@@ -5,10 +5,8 @@ import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Filters files in a directory based on the extension.  The file
@@ -41,7 +39,8 @@ public class BadScansFileFilter implements FilenameFilter {
 		if (!filename.endsWith(".tif")) {
 			// We don't want the files in here because they've already been 
 			// taken care of.
-			if ("resolved bad scans".equals(filename)) {
+			if ("rescanned bad scans".equals(filename) || 
+					"ignored bad scans".equals(filename)) {
 				return false;
 			}
 			

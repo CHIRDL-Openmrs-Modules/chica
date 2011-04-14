@@ -60,7 +60,7 @@
 
                 function popupfull(url) 
                 {
- 		params  = 'width='+screen.width;
+ 		params  = 'width='+(screen.width - 20);
  		params += ', height='+(screen.height -115);
  		params += ', top=0, left=0'
  		params += ', fullscreen=no';
