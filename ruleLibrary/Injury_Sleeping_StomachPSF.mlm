@@ -55,5 +55,5 @@ write ("Has || firstname || ever slept on || gender || stomach?");
 write ("¿Alguna vez || firstname || ha dormido boca abajo?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                        
 ;;
 Age_Min: 0 months;;
-Age_Max: 12 months;;
+Age_Max: 7 months;;
 end:

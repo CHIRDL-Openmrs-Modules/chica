@@ -55,5 +55,5 @@ write ("Do you always place || firstname || on || gender || back or side to slee
 write ("¿Siempre acuesta a || firstname || boca arriba o de lado para dormir?") At Spanish;                                                                                                                          
 ;;
 Age_Min: 0 months;;
-Age_Max: 1 years;;
+Age_Max: 7 months;;
 end:
