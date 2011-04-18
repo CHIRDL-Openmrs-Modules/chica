@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 cis := read Last {Car_Seat_Inspection from CHICA} Where it Occurred Within Past 4 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
 ;;
-Priority:		630;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
