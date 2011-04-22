@@ -22,7 +22,7 @@
    		<require_module version="2.27.12">org.openmrs.module.dss</require_module>
    		<require_module version="1.57">org.openmrs.module.atd</require_module>
    		<require_module version="1.3.21">org.openmrs.module.sockethl7listener</require_module>
-		<require_module version="1.0.2">org.openmrs.module.rgccd</require_module>
+		<require_module version="1.0.4">org.openmrs.module.rgccd</require_module>
    		<require_module version="1.0.12">org.openmrs.module.chirdlutil</require_module>
 	</require_modules>
 	
@@ -165,6 +165,27 @@
         <description>Whether or not to display a notice on the greaseboard of bad scans.  Valid values are 'true' and 'false'.
         </description>
     </globalProperty>
+    <globalProperty>
+		<property>chica.immunizationInputDirectory</property>
+   		<description>Directory containing results of immunization queries of mrf dump. Becomes input to immunization forecasting.
+   		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>chica.immunizationOutputDirectory</property>
+   		<description>Directory containing results of the immunization forecasting.
+   		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>chica.immunXSLT</property>
+   		<description>Directory containing xslt transform needed for immunization query result xml.
+   		</description>
+	</globalProperty>
+		<globalProperty>
+		<property>chica.immunizationListTimeout</property>
+		<defaultValue>1</defaultValue>
+   		<description>Timeout for immunization list queries (in seconds).
+   		</description>
+	</globalProperty>
 	
 	<!-- Internationalization -->
 	<!-- All message codes should start with @MODULE_ID@.* -->

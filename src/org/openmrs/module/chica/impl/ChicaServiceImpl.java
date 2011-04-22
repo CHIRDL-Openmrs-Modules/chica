@@ -1,7 +1,10 @@
 package org.openmrs.module.chica.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1331,4 +1334,65 @@ public class ChicaServiceImpl implements ChicaService
         	
         	return badScans;
         }
+        
+        /**
+         * Query the mrf dump to find the list of immunizations for the patient
+         * @see org.openmrs.module.chica.service.ChicaService#immunizationQuery(java.io.OutputStream, java.lang.Integer, java.lang.Integer, org.openmrs.Encounter, java.lang.Integer, java.lang.Integer)
+         */
+        public void immunizationQuery(OutputStream outputFile, Integer locationId,
+    	                              Integer formId, org.openmrs.Encounter encounter,
+    	                              Integer locationTagId, Integer sessionId) {
+    		
+    		Patient patient = encounter.getPatient();
+    		
+    		ATDService atdService = Context.getService(ATDService.class);
+    		FormInstance formInstance = atdService.addFormInstance(formId, locationId);
+    				    		
+    		HashMap<String, Object> baseParameters = new HashMap<String, Object>();
+    				
+    		Integer encounterId = encounter.getEncounterId();
+    		
+    		//write the output to a string first so we can do some post-processing
+    		ByteArrayOutputStream output = new ByteArrayOutputStream();
+    		
+    		//create an xml file from a form definition with all the immunization terms to look for
+    		atdService.produce(patient, formInstance, output, encounterId, baseParameters, null, locationTagId,
+    			sessionId);
+    		
+    		try {
+    	        output.close();
+            }
+            catch (IOException e) {
+    	        log.error("Error generated", e);
+            }
+            
+            //transform the form xml into the immunization forecasting service input format
+            AdministrationService adminService = Context.getAdministrationService();
+            String xsltFilename = adminService.getGlobalProperty("chica.immunXSLT");
+            ByteArrayOutputStream transformedOutput = new ByteArrayOutputStream();
+            ByteArrayInputStream xmlInput = new ByteArrayInputStream(output.toByteArray());
+            try {
+    	        FileInputStream xslt = new FileInputStream(xsltFilename);
+    	        
+    	        XMLUtil.transformXML(xmlInput, transformedOutput, xslt, null);
+    	        transformedOutput.close();
+            }
+            catch (FileNotFoundException e) {
+    	        log.error("Error generated", e);
+            }
+            catch (IOException e) {
+    	        log.error("Error generated", e);
+            }
+            String resultString = transformedOutput.toString();
+            resultString = resultString.replaceAll("&lt;","<");
+            resultString = resultString.replaceAll("&gt;",">");
+            ByteArrayInputStream finalInput = new ByteArrayInputStream(resultString.getBytes());
+            try {
+    	        IOUtil.bufferedReadWrite(finalInput, outputFile);
+    	        outputFile.close();
+            }
+            catch (IOException e) {
+    	        log.error("Error generated", e);
+            }
+    	}
 }

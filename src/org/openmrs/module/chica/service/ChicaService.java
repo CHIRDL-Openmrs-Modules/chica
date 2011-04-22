@@ -212,5 +212,19 @@ public interface ChicaService
 	 * @throws Exception
 	 */
 	public void moveBadScan(String url, boolean formRescanned) throws Exception;
-	
+
+	/**
+	 * Query the mrf dump to find the list of immunizations for the patient
+     * @see org.openmrs.module.chica.service.ChicaService#immunizationQuery(java.io.OutputS
+	 * 
+	 * @param outputFile
+	 * @param locationId
+	 * @param formId
+	 * @param encounter
+	 * @param locationTagId
+	 * @param sessionId
+	 */
+	public void immunizationQuery(OutputStream outputFile, Integer locationId,
+	                              Integer formId, org.openmrs.Encounter encounter,
+	                              Integer locationTagId, Integer sessionId);
 }
