@@ -92,7 +92,7 @@ public class immunizationQuery implements Rule {
 				resultString += "<row>";
 				resultString += "<Vacc_term>" + conceptName + "</Vacc_term>\n";
 				resultString += "<Vacc_date>" + dateForm.format(currResult.getResultDate()) + "</Vacc_date>\n";
-				resultString += "<PatientID>"+patient.getPatientId()+"</PatientID>";
+				resultString += "<PatientID>1</PatientID>";
 				resultString += "</row>";			
 			}
 		}

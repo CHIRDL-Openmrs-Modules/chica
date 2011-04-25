@@ -82,7 +82,7 @@ public class dobImmune implements Rule {
 		resultString += "<row>";
 		resultString += "<Vacc_term>date_of_birth</Vacc_term>\n";
 		resultString += "<Vacc_date>"+ dateForm.format(patient.getBirthdate()) +"</Vacc_date>\n";
-		resultString += "<PatientID>"+patient.getPatientId()+"</PatientID>";
+		resultString += "<PatientID>1</PatientID>";
 		resultString += "</row>";
 		return new Result(resultString);
 	}
