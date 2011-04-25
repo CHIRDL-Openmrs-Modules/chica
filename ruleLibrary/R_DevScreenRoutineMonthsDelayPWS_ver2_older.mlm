@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research DevScreen Routine mos Old PWS                                                                         ;;
- Filename: R_DevScreenRoutineMonthsDelayPWS_ver2                                  ;;
+ Filename: R_DevScreenRoutineMonthsDelayPWS_ver2_older                                  ;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author: Aaron Carroll                                       ;;
@@ -41,7 +41,7 @@ CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;
 CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority: 401       ;;
+Priority: 402       ;;
  Evoke: ;;
 
 Logic:
@@ -173,7 +173,7 @@ If  (Box1=true) then
  CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
 endif;
 If  (Box2=true) then
- CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
+ CALL storeObs With "CHICA_DevScreen_DevRefer","SchoolSystem";
 endif;
 If  (Box3=true) then
  CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
@@ -195,19 +195,18 @@ endif
 Action:
 AgeInMonths := call ChicaAgeRule with "months";
 
-call CREATE_JIT with "FirstStepsReferral";
-
 call CHOOSE_ASQ_ACTIVITY_JIT;
-write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following. First steps referral is attached.");
+write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following.");
 write ("Suspect Delay ->                       ");
-write ("Refer to First Steps                      ");
+write ("Refer to School System                      ");
 write ("Activities for Children form                       ");
 write ("Sched follow-up 1 month                      ");
 write ("ASQ done, scored, discussed with family");
 write ("Do not suspect delay");
 
 ;;
-Age_Min: 9          months     ;;
-Age_Max: 1050 days     ;;
+Age_Min: 1050          days     ;;
+Age_Max: 39         months     ;;
 end:
+
 }

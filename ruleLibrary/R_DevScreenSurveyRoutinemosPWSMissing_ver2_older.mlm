@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research DevScreen Routine mos Old PWS Missing                                                                  ;;
- Filename: R_DevScreenSurveyRoutinemosPWSMissing_ver2                                  ;;
+ Filename: R_DevScreenSurveyRoutinemosPWSMissing_ver2_older                                  ;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author: Aaron Carroll                                       ;;
@@ -41,7 +41,7 @@ CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;
 CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority: 407       ;;
+Priority: 408       ;;
  Evoke: ;;
 
 Logic:
@@ -105,7 +105,7 @@ If  (Box1=true) then
  CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
 endif;
 If  (Box2=true) then
- CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
+ CALL storeObs With "CHICA_DevScreen_DevRefer","SchoolSystem";
 endif;
 If  (Box3=true) then
  CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
@@ -128,14 +128,14 @@ Action:
 call CHOOSE_ASQ_ACTIVITY_JIT;
 write ("|| firstname || is due for || hisher || formal || age || month developmental screening.  Check below to indicate that you have scored ASQ and discussed with family. CPT 96110");
 write ("Suspect Delay ->                       ");
-write ("Refer to First Steps                      ");
+write ("Refer to School System                      ");
 write ("Activities for Children form                       ");
 write ("Sched follow-up 1 month                      ");
 write ("ASQ done, scored, discussed with family");
 write ("Do not suspect delay");
 ;;
-Age_Min: 9          months     ;;
-Age_Max: 1050 days     ;;
+Age_Min: 1050          days     ;;
+Age_Max: 39         months     ;;
 end:
 
 }
