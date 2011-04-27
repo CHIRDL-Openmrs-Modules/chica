@@ -32,7 +32,7 @@ public class BadScansFileFilter implements FilenameFilter {
 	}
 
 	public boolean accept(File directory, String filename) {
-		boolean ok = true;
+		boolean accept = false;
 
 		// The File.isDirectory() check is extremely slow, so I chose to test the file
 		// extension since the only files in the directories are tif files.
@@ -55,16 +55,19 @@ public class BadScansFileFilter implements FilenameFilter {
 			return true;
 		}
 		
-		ok &= (filename.startsWith("~"));
-		if (!ok) return false;
+		int firstIndex = filename.indexOf("-");
+		int lastIndex = filename.lastIndexOf("-");
+		if ((firstIndex < 0) || (firstIndex == lastIndex)) {
+			accept = true;
+		}
 		
-		if (date != null && ok) {
+		if (accept && date != null) {
 			String current = sdf.format(date);
 			Date lastModDate = new Date(new File(directory, filename).lastModified());
-			ok &= (current.compareTo(sdf.format(lastModDate))) == 0;
+			accept &= (current.compareTo(sdf.format(lastModDate))) == 0;
 		}
 
-		return ok;
+		return accept;
 	}
 	
 }
