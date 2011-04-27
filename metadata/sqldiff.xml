@@ -3322,6 +3322,52 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
 	
 	</sql>
 	</diff>
+	<diff>
+        <version>1.4.8</version>
+        <author>Steve McKee</author>
+        <date>April 19, 2011</date>
+        <description>
+        Add the ability to fax JITs
+        </description>
+    <sql>
+    insert into atd_state_action (action_name,action_description,action_class) 
+    values ('FAX JIT','Faxes any applicable JIT','org.openmrs.module.chica.action.FaxJIT');
+    
+    insert into atd_state (name,state_action_id) 
+    values ('JIT_fax',(select state_action_id from atd_state_action where action_name = 'FAX JIT'));
+    
+    insert into atd_state_mapping (initial_state,next_state,program_id) 
+    values (
+       (select state_id from atd_state where name = 'JIT_fax')
+      ,(select state_id from atd_state where name = 'JIT_FINISHED')
+      ,(select program_id from atd_program where name = 'chica'));
+      
+    update atd_state_mapping set next_state = (select state_id from atd_state where name = 'JIT_fax')
+    where initial_state = (select state_id from atd_state where name = 'JIT_process');
+    
+    insert into atd_form_attribute (name, description) 
+    values ('auto-fax', 'Flag to indicate if a form should be faxed.');
+    
+    insert into atd_form_attribute_value (form_id, value, form_attribute_id, location_tag_id, location_id) 
+    select a.form_id, 'false', (select form_attribute_id from atd_form_attribute where name = 'auto-fax'), 
+    c.location_tag_id, c.location_id from form a, location_tag_map c, location b 
+    where a.retired=0 and c.location_id=b.location_id group by a.form_id, c.location_tag_id, c.location_id;
+    
+    insert into chirdlutil_location_attribute (name, description) 
+    values ('clinicFaxNumber', 'Clinic fax number where applicable forms will be routed');
+    
+    insert into chirdlutil_location_attribute_value (location_id, value, location_attribute_id) 
+    select a.location_id, '', (select location_attribute_id from chirdlutil_location_attribute where name='clinicFaxNumber')
+    from location a;
+    
+    insert into chirdlutil_location_attribute (name, description) 
+    values ('clinicFaxReceiver', 'The person, group, or general area that will receive faxes');
+    
+    insert into chirdlutil_location_attribute_value (location_id, value, location_attribute_id) 
+    select a.location_id, 'Clinical Staff', (select location_attribute_id from chirdlutil_location_attribute where name='clinicFaxReceiver')
+    from location a;
+    </sql>
+    </diff>
 </sqldiff>
 
 

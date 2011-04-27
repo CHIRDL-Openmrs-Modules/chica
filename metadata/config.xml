@@ -6,7 +6,7 @@
 	<!-- Chica Module Properties -->
 	<id>chica</id>
 	<name>Chica</name>
-	<version>1.48.5</version>
+	<version>1.49.0</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
 	<author>Vibha Anand and Tammy Dugan</author>
 	<description>
@@ -23,7 +23,7 @@
    		<require_module version="1.57">org.openmrs.module.atd</require_module>
    		<require_module version="1.3.21">org.openmrs.module.sockethl7listener</require_module>
 		<require_module version="1.0.4">org.openmrs.module.rgccd</require_module>
-   		<require_module version="1.0.12">org.openmrs.module.chirdlutil</require_module>
+   		<require_module version="1.0.18">org.openmrs.module.chirdlutil</require_module>
 	</require_modules>
 	
 	<extension>
@@ -186,6 +186,17 @@
    		<description>Timeout for immunization list queries (in seconds).
    		</description>
 	</globalProperty>
+	<globalProperty>
+        <property>chica.outgoingFaxFrom</property>
+        <defaultValue>CHICA</defaultValue>
+        <description>The user to place in the from section of outgoing faxes that are sent.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingFaxDirectory</property>
+        <description>The location to place the fax control file for outgoing faxes.
+        </description>
+    </globalProperty>
 	
 	<!-- Internationalization -->
 	<!-- All message codes should start with @MODULE_ID@.* -->

@@ -1,8 +1,6 @@
 package org.openmrs.module.chica.web;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,8 +22,6 @@ import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chirdlutil.util.FileDateComparator;
-import org.openmrs.module.chirdlutil.util.FileListFilter;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -102,7 +98,7 @@ public class DisplayTiffController extends SimpleFormController {
 			if (chica1Appt != null) {
 				String imageFilename = imageFormInstanceId.toString();
 				
-				imagefile = searchForFile(imageFilename,imageDir);
+				imagefile = IOUtil.searchForImageFile(imageFilename,imageDir);
 				
 				if (!imagefile.exists()) {
 					imagefile = null;
@@ -112,7 +108,7 @@ public class DisplayTiffController extends SimpleFormController {
 				// check if dir and file exists
 				String imageFilename = imageLocationId + "-" + imageFormId + "-" + imageFormInstanceId;
 				
-				imagefile = searchForFile(imageFilename,imageDir);
+				imagefile = IOUtil.searchForImageFile(imageFilename,imageDir);
 				
 				LocationService locationService = Context.getLocationService();
 				Location location = locationService.getLocation(imageLocationId);
@@ -124,7 +120,7 @@ public class DisplayTiffController extends SimpleFormController {
 					if (locationName.equals("PEPS")) {
 						imageFilename = imageFormInstanceId.toString();
 						
-						imagefile = searchForFile(imageFilename, imageDir);
+						imagefile = IOUtil.searchForImageFile(imageFilename, imageDir);
 						
 						if (!imagefile.exists()) {
 							imagefile = null;
@@ -145,24 +141,6 @@ public class DisplayTiffController extends SimpleFormController {
 		}
 
 		map.put(filenameParameterName, imageFilename);
-	}
-	
-	private static File searchForFile(String imageFilename,String imageDir){
-		//This FilenameFilter will get ALL tifs starting with the filename
-		//including of rescan versions nnn_1.tif, nnn_2.tif, etc
-		FilenameFilter filtered = new FileListFilter(imageFilename, "tif");
-		File dir = new File(imageDir);
-		File[] files = dir.listFiles(filtered);
-		if (!(files == null || files.length == 0)) {
-			//This FileDateComparator will list in order
-			//with newest file first.
-			Arrays.sort(files, new FileDateComparator());
-			imageFilename = files[0].getPath();
-		}
-		
-		File imagefile = new File(imageFilename);
-		
-		return imagefile;
 	}
 	
 	/* @param request 
