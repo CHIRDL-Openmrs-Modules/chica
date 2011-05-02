@@ -1273,6 +1273,11 @@ public class ChicaServiceImpl implements ChicaService
 	        try {
 	        	URL urlLoc = new URL(url);
 	            File fileLoc = new File(urlLoc.getFile());
+	            if (!fileLoc.exists()) {
+	            	log.warn("Bad scan does not exist: " + fileLoc.getAbsolutePath());
+	            	return;
+	            }
+	            
 	            File parentFile = fileLoc.getParentFile();
 	            File rescannedScansDir = null;
 	            if (formRescanned) {
