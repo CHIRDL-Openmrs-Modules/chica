@@ -10,8 +10,11 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.StateManager;
@@ -94,7 +97,8 @@ public class FaxJIT implements ProcessStateAction {
 									to = faxReceiverVal.getValue();
 								}
 								
-								createFaxControlFile(faxDirectory, imageFile, from, to, clinicFaxNumber, filename);
+								createFaxControlFile(faxDirectory, imageFile, from, to, clinicFaxNumber, filename, patient, 
+									formId);
 							} else {
 								String message = "Error locating form to auto-fax - Location: " + locationId + " Form: "
 								        + formId + " File: " + imageFile.getAbsolutePath();
@@ -125,7 +129,10 @@ public class FaxJIT implements ProcessStateAction {
 	}
 	
 	private void createFaxControlFile(String faxDirectory, File fileToFax, String from, String to, String faxNumber,
-	                                  String controlFilename) throws Exception {
+	                                  String controlFilename, Patient patient, Integer formId) throws Exception {
+		// get the form information.
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(formId);
 		// copy the image file to the fax directory
 		String name = fileToFax.getName();
 		String destination = faxDirectory + File.separator + name;
@@ -148,6 +155,21 @@ public class FaxJIT implements ProcessStateAction {
 		data.append("##to ");
 		data.append(to);
 		data.append(lineSeparator);
+		if (form != null) {
+			data.append("##message1 Form: " + form.getName());
+			data.append(lineSeparator);
+		}
+		
+		if (patient != null) {
+			data.append("##message2 Patient: " + patient.getGivenName() + " " + patient.getFamilyName());
+			data.append(lineSeparator);
+			PatientIdentifier ident = patient.getPatientIdentifier();
+			if (ident != null) {
+				data.append("##message3 MRN: " + ident.getIdentifier());
+				data.append(lineSeparator);
+			}
+		}
+		
 		data.append("##dial ");
 		data.append(faxNumber);
 		
