@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
@@ -161,4 +162,12 @@ public interface ChicaDAO {
 	public List<Object[]> getQuestionsScanned(String formName, String locationName);
 
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
+	/**
+	 * This is a method I added to get around lazy initialization errors with patient.getIdentifier() in rules
+	 * Auto generated method comment
+	 * 
+	 * @param patientId
+	 * @return
+	 */
+	public PatientIdentifier getPatientMRN(Integer patientId);
 }

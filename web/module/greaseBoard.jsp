@@ -79,6 +79,13 @@
 				var str = 'viewEncounter.form?patientId='+patientId;
 				popupfull(str);
 			}
+			if(formName.options[selectedIndex].text == 'Print JITS'){
+			    answer = false;
+				var patientId = formName.patientId.value;
+				var sessionId = formName.sessionId.value;
+				var str = 'forcePrintJITs.form?patientId='+patientId+'&sessionId='+sessionId;
+				popupfull(str);
+			}
 			if(formName.options[selectedIndex].text == 'ADHD WU'){
              	answer = confirm("Are you sure you want to initiate an ADHD Workup?")
 			}
@@ -187,16 +194,11 @@
 <select name="options"  onchange="confirmation(this.form)">
 <option>&lt;Options&gt;</option>
 <option>Encounters</option>
+<option>Print JITS</option>
 <option>Print PSF</option>
 <option>Print PWS</option>
-<c:forEach items="${row.printableJits}" var="printableJit">
-<option>${printableJit}</option>
-</c:forEach>
 <c:if test="${isADHDInterventionLocation}">
 <option>ADHD WU</option>
-</c:if>
-<c:if test="${isASQInterventionLocation}">
-<option>Print FSR</option>
 </c:if>
 </select>
 <input type="hidden" value="${row.patientId}" name="patientId" />

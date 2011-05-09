@@ -11,6 +11,7 @@ import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.chica.Percentile;
@@ -227,4 +228,14 @@ public interface ChicaService
 	public void immunizationQuery(OutputStream outputFile, Integer locationId,
 	                              Integer formId, org.openmrs.Encounter encounter,
 	                              Integer locationTagId, Integer sessionId);
+	
+    /**
+	 * This is a method I added to get around lazy initialization errors with patient.getIdentifier() in rules
+	 * Auto generated method comment
+	 * 
+	 * @param patientId
+	 * @return
+	 */
+	public PatientIdentifier getPatientMRN(Integer patientId);
+
 }

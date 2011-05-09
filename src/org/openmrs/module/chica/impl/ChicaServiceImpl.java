@@ -31,6 +31,7 @@ import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -1411,5 +1412,16 @@ public class ChicaServiceImpl implements ChicaService
             catch (IOException e) {
     	        log.error("Error generated", e);
             }
+    	}
+        
+        /**
+    	 * This is a method I added to get around lazy initialization errors with patient.getIdentifier() in rules
+    	 * Auto generated method comment
+    	 * 
+    	 * @param patientId
+    	 * @return
+    	 */
+        public PatientIdentifier getPatientMRN(Integer patientId){
+    		return getChicaDAO().getPatientMRN(patientId);
     	}
 }

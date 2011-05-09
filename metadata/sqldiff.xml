@@ -3380,6 +3380,26 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
     values ('Bad Scans', 'Recording user choices when handling bad scans');
     </sql>
     </diff>
+    <diff>
+		<version>1.4.10</version>
+		<author>Tammy Dugan</author>
+		<date>April 20, 2011</date>
+		<description>
+		Configure force printing of forms
+		</description>
+	<sql>	
+	
+	INSERT INTO atd_form_attribute
+   (`name`, `description`)
+VALUES
+   ('forcePrintable', 'Form can be force printed from the Print JITs screen.');
+   
+   	INSERT INTO atd_form_attribute
+   (`name`, `description`)
+VALUES
+   ('displayName', 'User friendly name for the form.');
+</sql>
+</diff>
 </sqldiff>
 
 

@@ -23,7 +23,7 @@
 				<prop key="/module/@MODULE_ID@/displayTiff.form">displayTiff</prop>
 				<prop key="/module/@MODULE_ID@/viewPatient.form">viewPatient</prop>
 				<prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
-				
+				<prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
 			</props>
 		</property>
 	</bean>
@@ -101,6 +101,11 @@
         <property name="commandName"><value>displayBadScansObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/displayBadScans</value></property>
         <property name="successView"><value>displayBadScans.form</value></property>
+    </bean>
+    <bean id="forcePrintJITs" class="@MODULE_PACKAGE@.web.ForcePrintJITsController">
+        <property name="commandName"><value>forcePrintJITsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/forcePrintJITs</value></property>
+        <property name="successView"><value>forcePrintJITs.form</value></property>
     </bean>
 	<bean parent="serviceContext">
 		<property name="moduleService">

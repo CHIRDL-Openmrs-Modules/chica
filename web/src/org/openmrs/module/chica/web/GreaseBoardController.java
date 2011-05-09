@@ -47,6 +47,7 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.dss.service.DssService;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -131,28 +132,31 @@ public class GreaseBoardController extends SimpleFormController
 			
 			Integer locationId = null;
 			Location location = null;
-			if(locationString != null){
-				location = locationService.getLocation(locationString);
-				if(location != null){
-					locationId = location.getLocationId();
-				}
-			}
-			
 			Integer locationTagId = null;
-			if(locationTags != null&location!=null){
-				StringTokenizer tokenizer = new StringTokenizer(locationTags,",");
-				while(tokenizer.hasMoreTokens()){
-					String locationTagName = tokenizer.nextToken();
-					locationTagName = locationTagName.trim();
-					Set<LocationTag> tags = location.getTags();
-					for(LocationTag tag:tags){
-						if(tag.getTag().equalsIgnoreCase(locationTagName)){
-							locationTagId = tag.getLocationTagId();
+			if (locationString != null) {
+				location = locationService.getLocation(locationString);
+				if (location != null) {
+					locationId = location.getLocationId();
+					
+					if (locationTags != null) {
+						StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+						while (tokenizer.hasMoreTokens()) {
+							String locationTagName = tokenizer.nextToken();
+							locationTagName = locationTagName.trim();
+							Set<LocationTag> tags = location.getTags();
+							for (LocationTag tag : tags) {
+								if (tag.getTag().equalsIgnoreCase(locationTagName)) {
+									locationTagId = tag.getLocationTagId();
+								}
+							}
 						}
 					}
+					
 				}
-				
 			}
+			DssService dssService = Context.getService(DssService.class);
+			dssService.loadRule("CREATE_JIT",false);
+			
 			//print the ADHD parent form
 			Map<String, Object> parameters = new HashMap<String,Object>();
 			parameters.put("sessionId",sessionId);
@@ -183,57 +187,9 @@ public class GreaseBoardController extends SimpleFormController
 			parameters.put("param1","ADHD T");
 			logicService.eval(patient, "CREATE_JIT",parameters);
 		}
-		
-		//Print a First Steps Referral form
-		if (optionsString != null && optionsString.equalsIgnoreCase("Print FSR")) {
-			PatientService patientService = Context.getPatientService();
-			Patient patient = patientService.getPatient(patientId);
-	
-			LogicService logicService = Context.getLogicService();
-			
-			User user = Context.getUserContext().getAuthenticatedUser();
-			String locationString = user.getUserProperty("location");
-			String locationTags = user.getUserProperty("locationTags");
-			LocationService locationService = Context.getLocationService();
-			
-			Integer locationId = null;
-			Location location = null;
-			if(locationString != null){
-				location = locationService.getLocation(locationString);
-				if(location != null){
-					locationId = location.getLocationId();
-				}
-			}
-			
-			Integer locationTagId = null;
-			if(locationTags != null&location!=null){
-				StringTokenizer tokenizer = new StringTokenizer(locationTags,",");
-				while(tokenizer.hasMoreTokens()){
-					String locationTagName = tokenizer.nextToken();
-					locationTagName = locationTagName.trim();
-					Set<LocationTag> tags = location.getTags();
-					for(LocationTag tag:tags){
-						if(tag.getTag().equalsIgnoreCase(locationTagName)){
-							locationTagId = tag.getLocationTagId();
-						}
-					}
-				}
-				
-			}
-			//print the First Steps Referral form
-			Map<String, Object> parameters = new HashMap<String,Object>();
-			parameters.put("sessionId",sessionId);
-			parameters.put("locationTagId",locationTagId); 
-			FormInstance formInstance = new FormInstance();
-			formInstance.setLocationId(locationId);
-			parameters.put("formInstance",formInstance);
-			parameters.put("param1","FirstStepsReferral");
-			logicService.eval(patient, "CREATE_JIT",parameters);
-			
-			return new ModelAndView(new RedirectView("greaseBoard.form"));
-		}
 
-		if (optionsString != null && optionsString.startsWith("Print"))
+		if (optionsString != null && (optionsString.equalsIgnoreCase("Print PSF")||
+				optionsString.equalsIgnoreCase("Print PWS")))
 		{
 			String formName = optionsString.replaceAll("Print", "");
 			formName = formName.trim();
@@ -269,8 +225,6 @@ public class GreaseBoardController extends SimpleFormController
 						formName.equalsIgnoreCase("PWS"))
 				{
 					stateName = formName+"_reprint";
-				}else{
-					stateName = "JIT_reprint";
 				}
 				
 				if (formName.equalsIgnoreCase("PSF"))
@@ -349,31 +303,31 @@ public class GreaseBoardController extends SimpleFormController
 			
 			Integer locationId = null;
 			Location location = null;
-			if(locationString != null){
+			if (locationString != null) {
 				location = locationService.getLocation(locationString);
-				if(location != null){
+				if (location != null) {
 					locationId = location.getLocationId();
 					String showBadScans = adminService.getGlobalProperty("chica.showBadScans");
 					if (showBadScans != null && showBadScans.equals("true")) {
 						List<URL> badScans = chicaService.getBadScans(location.getName());
 						map.put("badScans", badScans);
 					}
-				}
-			}
-			
-			if(locationTags != null&location!=null){
-				StringTokenizer tokenizer = new StringTokenizer(locationTags,",");
-				while(tokenizer.hasMoreTokens()){
-					String locationTagName = tokenizer.nextToken();
-					locationTagName = locationTagName.trim();
-					Set<LocationTag> tags = location.getTags();
-					for(LocationTag tag:tags){
-						if(tag.getTag().equalsIgnoreCase(locationTagName)){
-							locationTagIds.add(tag.getLocationTagId());
+					
+					if (locationTags != null) {
+						StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+						while (tokenizer.hasMoreTokens()) {
+							String locationTagName = tokenizer.nextToken();
+							locationTagName = locationTagName.trim();
+							Set<LocationTag> tags = location.getTags();
+							for (LocationTag tag : tags) {
+								if (tag.getTag().equalsIgnoreCase(locationTagName)) {
+									locationTagIds.add(tag.getLocationTagId());
+								}
+							}
 						}
+						
 					}
 				}
-				
 			}
 			
 			List<PatientState> unfinishedStates = new ArrayList<PatientState>();
@@ -526,27 +480,6 @@ public class GreaseBoardController extends SimpleFormController
 				}
 				getStatus(state, row, sessionId,currState);
 				
-				ArrayList<String> printableJits = new ArrayList<String>();
-				State createJitState = atdService.getStateByName("JIT_create");
-				List<PatientState> jitStates = 
-					atdService.getPatientStateByEncounterState(encounterId, createJitState.getStateId());
-				
-				for(PatientState jitState:jitStates){
-					FormService formService = Context.getFormService();
-					Integer formId = jitState.getFormId();
-					
-					if (formId != null) {
-						Form form = formService.getForm(formId);
-						String jitFormName = form.getName();
-						//only display ADHD forms for reprint
-						if(jitFormName.startsWith("ADHD")||
-								jitFormName.startsWith("ASQ")||
-								jitFormName.startsWith("MCHAT")){
-							printableJits.add("Print " + jitFormName);
-						}
-					}
-				}
-				row.setPrintableJits(printableJits);
 				rows.add(row);
 			}
 			

@@ -21,6 +21,7 @@ import org.openmrs.ConceptNameTag;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
@@ -1122,6 +1123,32 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * This is a method I added to get around lazy initialization errors with patient.getIdentifier() in rules
+	 * Auto generated method comment
+	 * 
+	 * @param patientId
+	 * @return
+	 */
+	public PatientIdentifier getPatientMRN(Integer patientId)
+	{
+		try
+		{
+			String sql = "select a.* from patient_identifier a "+
+				"inner join patient_identifier_type b on a.identifier_type=b.patient_identifier_type_id "+
+				"where patient_id=? and b.name='MRN_OTHER'";
+			SQLQuery qry = this.sessionFactory.getCurrentSession()
+					.createSQLQuery(sql);
+			qry.setInteger(0, patientId);
+			qry.addEntity(PatientIdentifier.class);
+			return (PatientIdentifier) qry.uniqueResult();
+		} catch (Exception e)
+		{
+			this.log.error(Util.getStackTrace(e));
 		}
 		return null;
 	}

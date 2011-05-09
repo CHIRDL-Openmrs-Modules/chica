@@ -14,6 +14,7 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chica.service.ChicaService;
 
 public class medicalRecordWithFormatting implements Rule
 {
@@ -62,7 +63,8 @@ public class medicalRecordWithFormatting implements Rule
 	public Result eval(LogicContext context, Patient patient,
 			Map<String, Object> parameters) throws LogicException
 	{	
-		PatientIdentifier patientIdentifier = patient.getPatientIdentifier();
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		PatientIdentifier patientIdentifier = chicaService.getPatientMRN(patient.getPatientId());
 		
 		if(patientIdentifier != null)
 		{
