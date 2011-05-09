@@ -3368,6 +3368,18 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
     from location a;
     </sql>
     </diff>
+    <diff>
+        <version>1.4.9</version>
+        <author>Steve McKee</author>
+        <date>May 9, 2011</date>
+        <description>
+        Add a new ATD Error Category for recording bad scan data
+        </description>
+    <sql>
+    insert into atd_error_category (name, description) 
+    values ('Bad Scans', 'Recording user choices when handling bad scans');
+    </sql>
+    </diff>
 </sqldiff>
 
 

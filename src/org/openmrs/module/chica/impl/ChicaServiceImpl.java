@@ -1311,6 +1311,18 @@ public class ChicaServiceImpl implements ChicaService
 	            
 	            IOUtil.copyFile(fileLoc.getAbsolutePath(), newLoc.getAbsolutePath());
 	            fileLoc.delete();
+	            
+	            // log the event
+	            String description = null;
+	            if (formRescanned) {
+	            	description = "User attempted to rescan a bad scan: " + newLoc.getAbsolutePath();
+	            } else {
+	            	description = "User ignored a bad scan: " + newLoc.getAbsolutePath();
+	            }
+	            
+	            ATDError event = new ATDError("Info", "Bad Scans", description, null, new Date(), null);
+	            ATDService atdService = Context.getService(ATDService.class);
+	            atdService.saveError(event);
             }
             catch (Exception e) {
 	            log.error("Error moving bad scan", e);
