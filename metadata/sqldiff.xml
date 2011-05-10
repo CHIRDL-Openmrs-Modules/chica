@@ -3400,6 +3400,20 @@ VALUES
    ('displayName', 'User friendly name for the form.');
 </sql>
 </diff>
+    <diff>
+        <version>1.5.2</version>
+        <author>Steve McKee</author>
+        <date>May 9, 2011</date>
+        <description>
+        Remove fax receiver information.  We are now using the provider's name for receiving faxes.
+        </description>
+	    <sql>
+	    delete from chirdlutil_location_attribute_value
+	    where location_attribute_id = (select location_attribute_id from chirdlutil_location_attribute where name = 'clinicFaxReceiver');
+	    
+	    delete from chirdlutil_location_attribute where name = 'clinicFaxReceiver';
+	    </sql>
+	</diff>
 </sqldiff>
 
 

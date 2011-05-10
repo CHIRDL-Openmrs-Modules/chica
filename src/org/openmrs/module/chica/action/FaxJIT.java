@@ -17,12 +17,15 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.logic.result.EmptyResult;
+import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.StateManager;
 import org.openmrs.module.atd.action.ProcessStateAction;
 import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.hibernateBeans.PatientState;
+import org.openmrs.module.atd.hibernateBeans.Session;
 import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.hibernateBeans.StateAction;
 import org.openmrs.module.atd.service.ATDService;
@@ -50,6 +53,9 @@ public class FaxJIT implements ProcessStateAction {
 		patient = patientService.getPatient(patientId);
 		State currState = patientState.getState();
 		Integer sessionId = patientState.getSessionId();
+		
+		Session session = atdService.getSession(sessionId);
+		Integer encounterId = session.getEncounterId();
 		
 		FormInstance formInstance = (FormInstance) parameters.get("formInstance");
 		Integer formId = formInstance.getFormId();
@@ -89,16 +95,32 @@ public class FaxJIT implements ProcessStateAction {
 							// check to see if the file exists
 							if (imageFile.exists()) {
 								String from = adminService.getGlobalProperty("chica.outgoingFaxFrom");
-								LocationAttributeValue faxReceiverVal = chirdlService.getLocationAttributeValue(locationId,
-								    "clinicFaxReceiver");
 								String to = "Clinical Staff";
-								if (faxReceiverVal != null && faxReceiverVal.getValue() != null
-								        && faxReceiverVal.getValue().trim().length() > 0) {
-									to = faxReceiverVal.getValue();
+								// try to get the provider's name
+								HashMap<String, Object> params = new HashMap<String, Object>();
+								params.put("encounterId",encounterId);
+								Result result = atdService.evaluateRule("providerName", patient, params, null);
+								if (!(result instanceof EmptyResult)) {
+									to = result.toString();
+								}
+								
+								// get the form name
+								FormAttributeValue displayNameVal = atdService.getFormAttributeValue(formId, "displayName",
+								    locationTagId, locationId);
+								String formName = null;
+								if (displayNameVal != null && displayNameVal.getValue() != null && 
+										displayNameVal.getValue().trim().length() > 0) {
+									formName = displayNameVal.getValue();
+								} else {
+									FormService formService = Context.getFormService();
+									Form form = formService.getForm(formId);
+									if (form != null) {
+										formName = form.getName();
+									}
 								}
 								
 								createFaxControlFile(faxDirectory, imageFile, from, to, clinicFaxNumber, filename, patient, 
-									formId);
+									formName);
 							} else {
 								String message = "Error locating form to auto-fax - Location: " + locationId + " Form: "
 								        + formId + " File: " + imageFile.getAbsolutePath();
@@ -129,10 +151,7 @@ public class FaxJIT implements ProcessStateAction {
 	}
 	
 	private void createFaxControlFile(String faxDirectory, File fileToFax, String from, String to, String faxNumber,
-	                                  String controlFilename, Patient patient, Integer formId) throws Exception {
-		// get the form information.
-		FormService formService = Context.getFormService();
-		Form form = formService.getForm(formId);
+	                                  String controlFilename, Patient patient, String formName) throws Exception {
 		// copy the image file to the fax directory
 		String name = fileToFax.getName();
 		String destination = faxDirectory + File.separator + name;
@@ -155,8 +174,8 @@ public class FaxJIT implements ProcessStateAction {
 		data.append("##to ");
 		data.append(to);
 		data.append(lineSeparator);
-		if (form != null) {
-			data.append("##message1 Form: " + form.getName());
+		if (formName != null) {
+			data.append("##message1 Form: " + formName);
 			data.append(lineSeparator);
 		}
 		
