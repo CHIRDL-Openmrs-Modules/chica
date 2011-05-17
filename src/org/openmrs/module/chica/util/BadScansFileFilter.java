@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Filters files in a directory based on the extension.  The file
@@ -40,7 +42,8 @@ public class BadScansFileFilter implements FilenameFilter {
 			// We don't want the files in here because they've already been 
 			// taken care of.
 			if ("rescanned bad scans".equals(filename) || 
-					"ignored bad scans".equals(filename)) {
+					"ignored bad scans".equals(filename) || 
+					"archive".equals(filename)) {
 				return false;
 			}
 			
@@ -55,9 +58,11 @@ public class BadScansFileFilter implements FilenameFilter {
 			return true;
 		}
 		
-		int firstIndex = filename.indexOf("-");
-		int lastIndex = filename.lastIndexOf("-");
-		if ((firstIndex < 0) || (firstIndex == lastIndex)) {
+		String newFilename = filename.replace("-", "");
+		newFilename = newFilename.replace("_", "");
+		Pattern pattern = Pattern.compile("^[0-9]+\\.tif");
+		Matcher matcher = pattern.matcher(newFilename);
+		if (!matcher.find()) {
 			accept = true;
 		}
 		
