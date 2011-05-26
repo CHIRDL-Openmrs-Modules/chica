@@ -1140,7 +1140,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		{
 			String sql = "select a.* from patient_identifier a "+
 				"inner join patient_identifier_type b on a.identifier_type=b.patient_identifier_type_id "+
-				"where patient_id=? and b.name='MRN_OTHER'";
+				"where patient_id=? and b.name='MRN_OTHER' and preferred=1";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setInteger(0, patientId);
