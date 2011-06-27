@@ -185,10 +185,11 @@ public class ProduceFormInstance implements ProcessStateAction
 			chicaService.updateStatistics(currStat);
 		}
 		startTime = System.currentTimeMillis();
-		//if this is a PWS, clear the medication list query results
-		if(form.getName().equals("PWS")){
-			MedicationListLookup.removeMedicationList(patientId);
-		}
+		//DON't clean out the medication list cache for the patient here
+		//It causes problems if other forms like the medication reconciliation
+		//form need the list. The cache will get purged once a day.
+		//If we run into memory issues we can add a TTL to the medication
+		//list data and purge it after a certain time period
 	}
 
 	public void changeState(PatientState patientState,
