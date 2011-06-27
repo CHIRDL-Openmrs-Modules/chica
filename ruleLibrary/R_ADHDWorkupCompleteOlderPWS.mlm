@@ -118,7 +118,7 @@ endif;
 
 call CREATE_JIT with "Medication_Handout_ADHD";
 
-write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following  ");                                                                                                                                                                                                                                                                                                                   
+write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following. CPT 96110");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");
 write ("Comorbidities Dx'd -> Send to Midtown");
 write ("Medication Begun                     ");

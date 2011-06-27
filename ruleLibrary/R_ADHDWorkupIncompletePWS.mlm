@@ -92,7 +92,7 @@ If(TeacherVanderbilt = False) then
 call CREATE_JIT with "ADHD T";
 endif;
 
-write ("A workup for ADHD has begun, but not all data are in. We are missing || prompttext1 || || prompttext2 || and need data to be complete ");                                                                                                                                                                                                                                                                                                                   
+write ("A workup for ADHD has begun, but not all data are in. We are missing || prompttext1 || || prompttext2 || and need data to be complete. CPT 96110");                                                                                                                                                                                                                                                                                                                   
 write ("Parent Vanderbilt Scanned                       ");
 write ("Teacher Vanderbilt Re-requested                      ");
 write ("Schedule f/u appt 2 wks                       ");

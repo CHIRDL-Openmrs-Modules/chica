@@ -123,7 +123,7 @@ call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
 endif;
 
 
-write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 ||. This Sx may imply ADHD.");                                                                                                                                                                                                                                                                                                                   
+write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 ||. This Sx may imply ADHD. CPT 96110");                                                                                                                                                                                                                                                                                                                   
 write ("H&P with respect to ADHD                         ");
 write ("Parent Vanderbilt and scan now                   ");
 write ("Vision and hearing screens                       ");
