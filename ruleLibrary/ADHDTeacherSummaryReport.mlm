@@ -10,7 +10,7 @@ Maintenance:
 Library:
 	Purpose:		Fill in ADHDTeacherSummaryReport.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
 	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
-	Keywords:	breastfeeding, nutrition;;
+	Keywords:	ADHD;;
 	Citations:		;;
 	Links:		;;
 Knowledge:
@@ -39,17 +39,28 @@ Logic:
 
 If (mode = PRODUCE) then
 
-If ('PredominantlyInattentiveSubtype' is in TeacherAssessScale) then || TPISI || = "POSITIVE";
-If ('NegativePredominantlyInattentiveSubtype' is in TeacherAssessScale) then || TPISI|| = "NEGATIVE";
+If  (TeacherAssessPredomInattentiveCount >= 6) then || TPISI || = "High";
+If  (TeacherAssessPredomInattentiveCount < 6) then || TPISI || = "Normal";
 
-If ('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessScale) then || TPHISI || = "POSITIVE";
-If ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessScale) then || TPHISI || = "NEGATIVE";
+If  (TeacherAssessPredomHyperImpulsiveCount >= 6) then || TPHISI || = "High"; 
+If  (TeacherAssessPredomHyperImpulsiveCount < 6) then || TPHISI || = "Normal"; 
 
-If ('OppositionalDefiantDisorderScreen' is in TeacherAssessScale) then || TODDSI || = "POSITIVE";
-If ('NegativeOppositionalDefiantDisorderScreen' is in TeacherAssessScale) then || TODDSI || = "NEGATIVE";
+If  (TeacherAssessOpposDefiantConductCount >= 3) then || TODDSI || = "High";
+If  (TeacherAssessOpposDefiantConductCount < 3) then || TODDSI || = "Normal";
 
-If ('AnxietyDepressionScreen' is in TeacherAssessScale) then || TADSI || = "POSITIVE";
-If ('NegativeAnxietyDepressionScreen' is in TeacherAssessScale) then || TADSI || = "NEGATIVE";
+If  (TeacherAssessAnxDepressCount >= 3) then || TADSI || = "High";
+If  (TeacherAssessAnxDepressCount < 3) then || TADSI || = "Normal";
+
+If  (TeacherAssessPerformanceCount <1) then || TPQSI || = "Does not meet DSM criteria"; 
+
+If ('PredominantlyInattentiveSubtype' is in TeacherAssessScale) OR ('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessScale) OR
+('OppositionalDefiantDisorderScreen' is in TeacherAssessScale) OR
+('AnxietyDepressionScreen' is in TeacherAssessScale) then || GI || = "C/W ADHD";
+
+If NOT('PredominantlyInattentiveSubtype' is in TeacherAssessScale) and NOT('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessScale) and
+NOT('OppositionalDefiantDisorderScreen' is in TeacherAssessScale) and
+NOT('ConductDisorderScreen' is in TeacherAssessScale) and
+NOT('AnxietyDepressionScreen' is in TeacherAssessScale) then || GI || = "NOT C/W ADHD";
 
 If NOT (TeacherAssessPerformanceAvg = NULL) then || TTSSText || = "TeacherAssessSymptomTotal";
 If NOT (TeacherAssessPerformanceAvg = NULL) then || TAPSText || = "TeacherAssessPerformanceAvg";
@@ -114,6 +125,9 @@ write ("|| TPISI ||") At TPISI;
 write ("|| TPHISI ||") At TPHISI;
 write ("|| TODDSI ||") At TODDSI;
 write ("|| TADSI ||") At TADSI;
+
+write ("|| TPQSI ||") At TPQSI;
+write ("|| GI ||") At GI;
 ;;
 Age_Min: 0 years;;
 Age_Max: 21 years;;

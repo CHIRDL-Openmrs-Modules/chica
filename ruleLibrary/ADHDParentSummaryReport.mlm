@@ -10,7 +10,7 @@ Maintenance:
 Library:
 	Purpose:		Fill in ADHDTeacherSummaryReport.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
 	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
-	Keywords:	breastfeeding, nutrition;;
+	Keywords:	ADHD;;
 	Citations:		;;
 	Links:		;;
 Knowledge:
@@ -28,7 +28,7 @@ ParentAssessOpposDefiantCount := read Last {ParentAssessOpposDefiantCount} Where
 ParentAssessAnxDepressCount := read Last {ParentAssessAnxDepressCount} Where it Occurred Within Past 1 Day;
 ParentAssessPerformanceAvg:= read Last {ParentAssessPerformanceAvg} Where it Occurred Within Past 1 Day;
 ParentAssessSymptomTotal:= read Last {ParentAssessSymptomTotal} Where it Occurred Within Past 1 Day;
-parentAssessScale := read {ParentAssessmentScale} Where it Occurred Within Past 1 Day;
+ParentAssessScale := read {ParentAssessmentScale} Where it Occurred Within Past 1 Day;
 
 ParentAssessFollowupPerformanceAvg:= read Last {ParentAssessFollowupPerformanceAvg} Where it Occurred Within Past 1 Day;
 ParentAssessFollowupSymptomTotal:= read Last {ParentAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;
@@ -40,20 +40,32 @@ Logic:
 
 If (mode = PRODUCE) then
 
-If ('PredominantlyInattentiveSubtype' is in parentAssessScale) then || PPISI || = "POSITIVE";
-If ('NegativePredominantlyInattentiveSubtype' is in parentAssessScale) then || PPISI || = "NEGATIVE";
+If  (ParentAssessPredomInattentiveCount >= 6) then || PPISI || = "High";
+If  (ParentAssessPredomInattentiveCount < 6) then || PPISI || = "Normal";
 
-If ('PredominantlyHyperactiveImpulsiveSubtype' is in parentAssessScale) then || PPHISI || = "POSITIVE";
-If ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in parentAssessScale) then || PPHISI || = "NEGATIVE";
+If  (ParentAssessPredomHyperImpulsiveCount >= 6) then || PPHISI || = "High"; 
+If  (ParentAssessPredomHyperImpulsiveCount < 6) then || PPHISI || = "Normal"; 
 
-If ('OppositionalDefiantDisorderScreen' is in parentAssessScale) then || PODDSI || = "POSITIVE";
-If ('NegativeOppositionalDefiantDisorderScreen' is in parentAssessScale) then || PODDSI || = "NEGATIVE";
+If  (ParentAssessOpposDefiantCount >= 4) then || PODDSI || = "High";
+If  (ParentAssessOpposDefiantCount < 4) then || PODDSI || = "Normal";
 
-If ('ConductDisorderScreen' is in parentAssessScale) then || PCDSI || = "POSITIVE";
-If ('NegativeConductDisorderScreen' is in parentAssessScale) then || PCDSI || = "NEGATIVE";
+If  (ParentAssessConductCount >= 3) then || PCDSI || = "High";
+If  (ParentAssessConductCount < 3) then || PCDSI || = "Normal";
 
-If ('AnxietyDepressionScreen' is in parentAssessScale) then || PADSI || = "POSITIVE";
-If ('NegativeAnxietyDepressionScreen' is in parentAssessScale) then || PADSI || = "NEGATIVE";
+If  (ParentAssessAnxDepressCount >= 3) then || PADSI || = "High";
+If  (ParentAssessAnxDepressCount < 3) then || PADSI || = "Normal";
+
+If  (ParentAssessPerformanceCount <1) then || PPQSI || = "Does not meet DSM criteria"; 
+
+If ('PredominantlyInattentiveSubtype' is in ParentAssessScale) OR ('PredominantlyHyperactiveImpulsiveSubtype' is in ParentAssessScale) OR
+('OppositionalDefiantDisorderScreen' is in ParentAssessScale) OR
+('ConductDisorderScreen' is in ParentAssessScale) OR
+('AnxietyDepressionScreen' is in ParentAssessScale) then || GI || = "C/W ADHD";
+
+If NOT('PredominantlyInattentiveSubtype' is in ParentAssessScale) and NOT('PredominantlyHyperactiveImpulsiveSubtype' is in ParentAssessScale) and
+NOT('OppositionalDefiantDisorderScreen' is in ParentAssessScale) and
+NOT('ConductDisorderScreen' is in ParentAssessScale) and
+NOT('AnxietyDepressionScreen' is in ParentAssessScale) then || GI || = "NOT C/W ADHD";
 
 If NOT (ParentAssessPerformanceAvg = NULL) then || PTSSText || = "ParentAssessSymptomTotal";
 If NOT (ParentAssessPerformanceAvg = NULL) then || PAPSText || = "ParentAssessPerformanceAvg";
@@ -132,6 +144,10 @@ write ("|| PPHISI ||") At PPHISI;
 write ("|| PODDSI ||") At PODDSI;
 write ("|| PCDSI ||") At PCDSI;
 write ("|| PADSI ||") At PADSI;
+
+write ("|| PPQSI ||") At PPQSI;
+write ("|| GI ||") At GI;
+
 ;;
 Age_Min: 0 years;;
 Age_Max: 21 years;;
