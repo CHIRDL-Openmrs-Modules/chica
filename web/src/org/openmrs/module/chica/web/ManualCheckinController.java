@@ -539,7 +539,7 @@ public class ManualCheckinController extends SimpleFormController
 		map.put("dob1", format.format(dob));
 		format = new SimpleDateFormat("dd");
 		map.put("dob2", format.format(dob));
-		format = new SimpleDateFormat("yy");
+		format = new SimpleDateFormat("yyyy");
 		map.put("dob3", format.format(dob));
 		PersonAttribute attribute = patient.getAttribute("Race");
 		if (attribute != null)
