@@ -52,7 +52,7 @@ endif
 ;;
 Action:
 write ("Does || firstname || make sounds that have both consonants and vowels such as 'da', 'ba', 'ga', or 'ma'?");
-write("¿|| firstname || hace sonidos con los consonantes y los vocales como ‘da’, ‘ba’, ‘ga’ o ‘ma’?") At Spanish;                                                                                                                                                                                                                                                                             
+write("¿|| firstname || hace sonidos con los consonantes y los vocales como 'da', 'ba', 'ga' o 'ma'?") At Spanish;                                                                                                                                                                                                                                                                             
 ;;
 Age_Min: 232 days;;
 Age_Max: 280 days;;
