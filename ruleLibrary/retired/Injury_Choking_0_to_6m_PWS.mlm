@@ -1,11 +1,11 @@
 Maintenance:
-	Title:		Injury  Choking 6m1y PWS;;
-	Filename:		Injury_Choking_6m_to_1y_PWS;;
+	Title:		Injury  Choking 06m PWS;;
+	Filename:		Injury_Choking_0_to_6m_PWS;;
 	Version:	1.0;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Aaron E. Carroll;;
 	Specialist:	Pediatrics;;
-	Date:		2003-12-18T11:55:11-0500;;
+	Date:		2003-12-18T11:47:11-0500;;
 	Validation:	;;
 Library:
 	Purpose:		This PWS advises clinicians on how to administer age-appropriate advice on choking prevention to parents.;;
@@ -26,15 +26,15 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-save := read Last {know_how_to_save_choking_child from CHICA} Where it Occurred Within Past 1 Years;plastic := read Last {plastic_wrappers_secured from CHICA} Where it Occurred Within Past 1 Years;latches := read Last {safety_latches_installed from CHICA} Where it Occurred Within Past 1 Years;bitesize := read Last {cutting_food_bite_size from CHICA} Where it Occurred Within Past 1 Years;
+save := read Last {know_how_to_save_choking_child from CHICA} Where it Occurred Within Past 1 Years;plastic := read Last {plastic_wrappers_secured from CHICA} Where it Occurred Within Past 1 Years;
 endif
 ;;
-Priority:		910;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (save = yes) AND (plastic = yes) AND (latches = yes) AND (bitesize = yes) then conclude False;conclude True;
+If (save = yes) AND (plastic = yes) then conclude False;conclude True;
 
 endif
 
@@ -45,9 +45,9 @@ write ("Rec learning peds BLS/CPR->");
 write ("317-4849622 (YMCA CPR)");
 write ("Store bags/wrappers safely");
 write ("");
-write ("Safety latch drawers/cupboards");
-write ("Cut food into small, thin pieces");
+write ("");
+write ("");
 ;;
-Age_Min: 6 months;;
-Age_Max: 1 years;;
+Age_Min: 0 months;;
+Age_Max: 6 months;;
 end:

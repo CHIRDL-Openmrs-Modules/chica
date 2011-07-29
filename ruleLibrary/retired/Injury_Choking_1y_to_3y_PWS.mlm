@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 save := read Last {know_how_to_save_choking_child from CHICA} Where it Occurred Within Past 1 Years;plastic := read Last {plastic_wrappers_secured from CHICA} Where it Occurred Within Past 1 Years;latches := read Last {safety_latches_installed from CHICA} Where it Occurred Within Past 1 Years;
 endif
 ;;
-Priority:		916;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -1,11 +1,11 @@
 Maintenance:
-	Title:		Injury  Choking 06m PWS;;
-	Filename:		Injury_Choking_0_to_6m_PWS;;
+	Title:		Injury  Choking 1y3y PWS;;
+	Filename:		Injury_Choking_1y_to_3y_PWS_new;;
 	Version:	1.0;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Aaron E. Carroll;;
 	Specialist:	Pediatrics;;
-	Date:		2003-12-18T11:47:11-0500;;
+	Date:		2003-12-18T11:56:27-0500;;
 	Validation:	;;
 Library:
 	Purpose:		This PWS advises clinicians on how to administer age-appropriate advice on choking prevention to parents.;;
@@ -26,15 +26,15 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-save := read Last {know_how_to_save_choking_child from CHICA} Where it Occurred Within Past 1 Years;plastic := read Last {plastic_wrappers_secured from CHICA} Where it Occurred Within Past 1 Years;
+save := read Last {know_how_to_save_choking_child from CHICA} Where it Occurred Within Past 1 Years;plastic := read Last {plastic_wrappers_secured from CHICA} Where it Occurred Within Past 1 Years;latches := read Last {safety_latches_installed from CHICA} Where it Occurred Within Past 1 Years;
 endif
 ;;
-Priority:		904;;
+Priority:		916;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (save = yes) AND (plastic = yes) then conclude False;conclude True;
+If (save = yes) AND (plastic = yes) AND (latches = yes) then conclude False;conclude True;
 
 endif
 
@@ -42,12 +42,12 @@ endif
 Action:
 write ("The AAP has age-specific recommendations for the prevention of choking in children.  Please review the following, and check those you review");
 write ("Rec learning peds BLS/CPR->");
-write ("317-4849622 (YMCA CPR)");
+write ("881-9347 (YMCA South) (~$40)");
+write ("");
+write ("547-9622 (YMCA East) (~$40)");
 write ("Store bags/wrappers safely");
-write ("");
-write ("");
-write ("");
+write ("Safety latch drawers/cupboards");
 ;;
-Age_Min: 0 months;;
-Age_Max: 6 months;;
+Age_Min: 1 years;;
+Age_Max: 3 years;;
 end:
