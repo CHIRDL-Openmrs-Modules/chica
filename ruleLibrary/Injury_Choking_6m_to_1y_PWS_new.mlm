@@ -42,8 +42,8 @@ endif
 Action:
 write ("The AAP has age-specific recommendations for the prevention of choking in children.  Please review the following, and check those you review");
 write ("Rec learning peds BLS/CPR->");
-write ("881-9347 (YMCA South) (~$40)");
-write ("547-9622 (YMCA East) (~$40)");
+write ("Methodist: 317-962-2480");
+write ("Riley: 317-944-4845");
 write ("Store bags/wrappers safely");
 write ("Safety latch drawers/cupboards");
 write ("Cut food into small, thin pieces");
