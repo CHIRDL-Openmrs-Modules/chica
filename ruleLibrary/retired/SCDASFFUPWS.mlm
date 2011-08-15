@@ -30,7 +30,7 @@ sickle := read Last {HGB-FP SCN from RMRS} ;
 chicasickle := read Exist {PWSSickleCell from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority:		262;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

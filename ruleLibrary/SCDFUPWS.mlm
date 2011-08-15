@@ -26,7 +26,6 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-scd := read Last {HGB-FP SCN from RMRS} ;
 proph := read Last {sickle_cell_prophylaxis from CHICA} Where it Occurred Within Past 90 Days;
 psf := read Last {PSFSickleCell from CHICA} ;
 pws := read Last {PWSSickleCell from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
@@ -40,11 +39,9 @@ If (mode = PRODUCE) then
 If (proph = "True") then conclude False;
 If (pws = no) then conclude False;
 If (psf = yes) then || rmrstext || = "Parent reports that child has sickle cell disease.";
-If (scd = "HGB S only") or (scd = "HGBS S and C") or (scd = "HGBS S+C and F") or (scd = "HGBS S and F") then || rmrstext || = "Record shows a positive sickle cell newborn screen.";
 If (pws = yes) then || rmrstext || = "Child has confirmed SCD.";
 If (psf = yes) then conclude True;
 If (pws = yes) then conclude True;
-If (scd = "HGB S only") then conclude True;
 conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 endif

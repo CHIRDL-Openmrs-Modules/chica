@@ -1,6 +1,6 @@
 Maintenance:
 	Title:		Sickle Cell Prophylaxis PSF;;
-	Filename:		SCDProphylaxisPSF;;
+	Filename:		SCDProphylaxisOlderPSF;;
 	Version:	1.0;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Aaron E. Carroll;;
@@ -30,7 +30,7 @@ proph := read exist {sickle_cell_prophylaxis from CHICA} Where it Occurred Withi
 pws := read Last {PWSSickleCell from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 endif
 ;;
-Priority:		45;;
+Priority:		46;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
@@ -57,9 +57,9 @@ endif;
 endif
 ;;
 Action:
-write ("|| firstname || has sickle cell disease (HbSS).  Is || text || taking antibiotics twice a day, every day?");
-write ("Tiene || firstname || anemia falciforme o algun tipo de anemia. ¿Toma, || spanishgender ||, antibióticos dos veces al día, todos los dias?") At Spanish;                                                                                                                                                                                                                             
+write ("You have sickle cell disease (HbSS).  Are you taking antibiotics twice a day, every day?");
+write ("Tiene Ud. la enfermedad de células falciformes.  ¿Toma Ud. antibióticos dos veces al día, cada día?") At Spanish;                                                                                                                                                                                                                             
 ;;
-Age_Min: 2 months;;
-Age_Max: 12 years;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
 end:
