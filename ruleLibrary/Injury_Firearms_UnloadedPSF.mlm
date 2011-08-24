@@ -51,8 +51,8 @@ endif;
 endif
 ;;
 Action:
-write ("Are all firearms in || firstname ||'s home kept unloaded and in a locked place separate from ammunition?");
-write("¿Todas las armas en la casa de || firstname ||, están descargadas y guardadas en un lugar seguro y estan lejos de las municiones?") At Spanish;                                                                                                                                                                                                                                         
+write ("Are all firearms or guns in || firstname ||'s home kept unloaded and in a locked place separate from ammunition?");
+write("¿Todas las armas de fuego o pistolas en la casa de || firstname ||, están descargadas y guardadas en un lugar seguro y estan lejos de las municiones?") At Spanish;                                                                                                                                                                                                                                         
 ;;
 Age_Min: 1 years;;
 Age_Max: 10 years;;

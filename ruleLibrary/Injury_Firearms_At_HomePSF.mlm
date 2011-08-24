@@ -51,8 +51,8 @@ endif;
 endif
 ;;
 Action:
-write ("Are any firearms kept in || firstname ||'s home?");
-write("¿Guarda usted armas de fuego en la casa de || firstname ||?") At Spanish;                                                                                                                                                               
+write ("Are any firearms or guns kept in || firstname ||'s home?");
+write("¿Guarda usted armas de fuego o pistolas en la casa de || firstname ||?") At Spanish;                                                                                                                                                               
 ;;
 Age_Min: 1 years;;
 Age_Max: 12 years;;
