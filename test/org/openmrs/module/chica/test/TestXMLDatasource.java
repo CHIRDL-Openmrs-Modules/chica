@@ -12,7 +12,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -66,7 +66,7 @@ public class TestXMLDatasource extends BaseModuleContextSensitiveTest
 		parameters.put("fieldName", "HearR_Cho_4");
 		rule.setParameters(parameters );
 		ruleList.add(rule);
-		String stringResult = dssService.runRulesAsString(patient,ruleList,null,null);
+		String stringResult = dssService.runRulesAsString(patient,ruleList);
 		System.out.println(stringResult);
 	}
 }

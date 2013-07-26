@@ -11,16 +11,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.chica.datasource.ObsChicaDatasource;
-import org.openmrs.module.chica.util.FileFilterByDate;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
-import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
+import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
+import org.openmrs.module.chirdlutil.util.FileFilterByDate;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 
@@ -36,7 +41,8 @@ public class QueryKite
 			throws QueryKiteException
 	{
 		AdministrationService adminService = Context.getAdministrationService();
-		Integer timeout = 0;
+		// Set the default to 5 seconds.  We don't want it to last forever by setting it to 0.
+		Integer timeout = 5000;
 		try
 		{
 			timeout = Integer.parseInt(adminService
@@ -46,47 +52,40 @@ public class QueryKite
 		} catch (NumberFormatException e)
 		{
 		}
+		
 		KiteQueryThread kiteQueryThread = new KiteQueryThread(mrn, queryPrefix);
 		Thread thread = new Thread(kiteQueryThread);
 		thread.start();
-		long startTime = System.currentTimeMillis();
-
-		while (true)
-		{
-			//processing is done
-			if(!thread.isAlive()){
+		try {
+			long startTime2 = System.currentTimeMillis();
+			thread.join(timeout);
+			log.info("Elapsed time for thread.join in queryKite "+
+				(System.currentTimeMillis()-startTime2)/1000);
+			startTime2 = System.currentTimeMillis();
+			if (!thread.isAlive()) {
 				//check for an exception
-				if(kiteQueryThread.getException()!=null){
+				if(kiteQueryThread.getException()!=null) {
 					log.error("Exception");
 					throw kiteQueryThread.getException();
-				}else{
+				} else {
 					//return the response if no exception
 					log.info("Success");
 					return kiteQueryThread.getResponse();
 				}
-			}
-			
-			if ((System.currentTimeMillis() - startTime) > timeout)
-			{
+			} else {
 				//the timeout was exceeded so return null
 				log.warn("Timeout exceeded.");
 				return null;
 			}
-			try
-			{
-				Thread.sleep(100);// wait for a tenth of a second
-
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				return null;
-			}
+		} catch (InterruptedException e) {
+			log.warn("Kite Query thread interrupted", e);
+			return null;
 		}
 	}
 	
 	public static String aliasQuery(String mrn) throws  QueryKiteException
 	{
-		ATDService atdService = Context.getService(ATDService.class); 
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		AdministrationService adminService = Context.getAdministrationService();
 		String response = null;
 		try
@@ -94,10 +93,10 @@ public class QueryKite
 		    response = queryKite(mrn, "FIND-ALIASES");
 		} catch (Exception e)
 		{
-			ATDError error = new ATDError("Error", "Query Kite Connection"
+			Error error = new Error("Error", "Query Kite Connection"
 					, e.getMessage()
 					, Util.getStackTrace(e), new Date(), null);
-			atdService.saveError(error);
+			chirdlutilbackportsService.saveError(error);
 			response = null;
 		}
 		
@@ -108,10 +107,10 @@ public class QueryKite
 			if(response != null){
 				log.info("Re-query of FIND-ALIASES for mrn: "+mrn+" successful");
 			}else{
-				ATDError error = new ATDError("Error", "Query Kite Connection"
+				Error error = new Error("Error", "Query Kite Connection"
 					, "Re-query of FIND-ALIASES after message dropped for mrn: "+mrn+" failed"
 					, null, new Date(), null);
-			atdService.saveError(error);
+				chirdlutilbackportsService.saveError(error);
 			}
 		}
 		
@@ -166,13 +165,14 @@ public class QueryKite
 		return response;
 	}
 
-	public static String mrfQuery(String mrn,Integer patientId, boolean checkForCachedData) throws  QueryKiteException
+	public static String mrfQuery(String mrn,Patient patient, boolean checkForCachedData) throws  QueryKiteException
 	{
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		AdministrationService adminService = Context.getAdministrationService();
 				
 		String response = null;
 		long startTime = System.currentTimeMillis();
+		long startTime2 = System.currentTimeMillis();
 		log.info("Starting mrf Query");
 		
 		//look to see if the mrf dump has already been found for today
@@ -205,6 +205,10 @@ public class QueryKite
 			}
 		} 
 		
+		log.info("Elapsed time for checkForCachedData in mrfQuery "+
+			(System.currentTimeMillis()-startTime2)/1000);
+		startTime2 = System.currentTimeMillis();
+		
 		if(response == null){
 			
 			try
@@ -213,13 +217,16 @@ public class QueryKite
 			} 
 			catch (Exception e)
 			{
-				ATDError error = new ATDError("Error", "Query Kite Connection"
+				Error error = new Error("Error", "Query Kite Connection"
 					, e.getMessage()
 					, Util.getStackTrace(e), new Date(), null);
 
-				atdService.saveError(error);
+				chirdlutilbackportsService.saveError(error);
 			}
 		}
+		log.info("Elapsed time for queryKite (first) in mrfQuery "+
+			(System.currentTimeMillis()-startTime2)/1000);
+		startTime2 = System.currentTimeMillis();
 		
 		//If the response is null this means the connection was broken
 		//Try querying again
@@ -232,13 +239,17 @@ public class QueryKite
 						+ " successful");
 			} else
 			{
-				ATDError error = new ATDError("Error",
+				Error error = new Error("Error",
 						"Query Kite Connection",
 						"Re-query of GET-MRF after message dropped for mrn: "
 								+ mrn + " failed", null, new Date(), null);
-				atdService.saveError(error);
+				chirdlutilbackportsService.saveError(error);
 			}
 		}
+		
+		log.info("Elapsed time for queryKite (re-query) in mrfQuery "+
+			(System.currentTimeMillis()-startTime2)/1000);
+		startTime2 = System.currentTimeMillis();
 		
 		if (response != null)
 		{
@@ -283,6 +294,8 @@ public class QueryKite
 				}
 			}
 			}
+			log.info("Elapsed time for writing hl7 file in mrfQuery "+
+				(System.currentTimeMillis()-startTime2)/1000);
 			log.info("Elapsed time for mrf Query is "+
 					(System.currentTimeMillis()-startTime)/1000);
 		
@@ -290,10 +303,12 @@ public class QueryKite
 			log.info("Starting mrf parsing");
 			LogicService logicService = Context.getLogicService();
 
-			ObsChicaDatasource xmlDatasource = (ObsChicaDatasource) logicService
+			ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
 					.getLogicDataSource("RMRS");
+			
+			HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
 
-			xmlDatasource.parseHL7ToObs(response,patientId,mrn);
+			HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);
 			log.info("Elapsed time for mrf parsing is "+
 					(System.currentTimeMillis()-startTime)/1000);
 		}

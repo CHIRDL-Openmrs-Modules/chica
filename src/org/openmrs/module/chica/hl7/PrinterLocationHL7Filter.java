@@ -13,7 +13,8 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 
@@ -30,20 +31,18 @@ public class PrinterLocationHL7Filter implements HL7Filter
 	public boolean ignoreMessage(HL7EncounterHandler hl7EncounterHandler,
 			Message message,String incomingMessageString)
 	{
-		ChicaService chicaService = Context
-				.getService(ChicaService.class);
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 		String printerLocation = null;
 		String locationString = null;
 		String locationTagAttributeName = "ActivePrinterLocation";
 
-		if (hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25)
+		if (hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25)
 		{
 
-			printerLocation = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) hl7EncounterHandler)
+			printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
 					.getPrinterLocation(message,incomingMessageString);
-			locationString = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) hl7EncounterHandler)
+			locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
 					.getLocation(message);
 		}
 
@@ -76,7 +75,7 @@ public class PrinterLocationHL7Filter implements HL7Filter
 		
 		if (targetLocationTag != null)
 		{
-			LocationTagAttributeValue locationTagAttributeValue = chirdlUtilService.getLocationTagAttributeValue(targetLocationTag
+			LocationTagAttributeValue locationTagAttributeValue = chirdlutilbackportsService.getLocationTagAttributeValue(targetLocationTag
 					.getLocationTagId(), locationTagAttributeName,location.getLocationId());
 			if (locationTagAttributeValue != null)
 			{

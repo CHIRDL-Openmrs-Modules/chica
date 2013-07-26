@@ -3,18 +3,19 @@ package org.openmrs.module.chica.advice;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.LogicService;
-import org.openmrs.module.atd.TeleformFileMonitor;
 import org.openmrs.module.atd.TeleformFileState;
-import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
 import org.openmrs.module.chica.MedicationListLookup;
-import org.openmrs.module.chica.datasource.LogicChicaObsDAO;
-import org.openmrs.module.chica.datasource.ObsChicaDatasource;
-import org.openmrs.module.sockethl7listener.ProcessedMessagesManager;
+import org.openmrs.module.chica.gis.PatientGISDataStorage;
+import org.openmrs.module.chica.gis.QueryGIS;
+import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
+import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.springframework.aop.AfterReturningAdvice;
 
 /**
@@ -38,15 +39,16 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 						"org.openmrs.Encounter") == 0)
 				{
 					org.openmrs.Encounter encounter = (org.openmrs.Encounter) args[0];
-					Thread thread = new Thread(new CheckinPatient(encounter));
-					ThreadManager.startThread(thread);
-					try {
-	                    MedicationListLookup.queryMedicationList(encounter, false);
-                    }
-                    catch (Exception e) {
-	                    log.error("medication list lookup failed",e);
-                    }
-					ProcessedMessagesManager.encountersProcessed();
+					
+					ThreadManager threadManager = ThreadManager.getInstance();
+					Location location = encounter.getLocation();
+					//spawn the checkin thread
+					threadManager.execute(new CheckinPatient(encounter), location.getLocationId());
+					//spawn the medication query thread
+					threadManager.execute(new QueryMeds(encounter), location.getLocationId());
+					//spawn the GIS query thread
+					Thread gisThread = new Thread(new QueryGIS(encounter));
+					gisThread.start();
 				}
 			} catch (Exception e)
 			{
@@ -55,18 +57,20 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 						.getStackTrace(e));
 			}
 		}
-
-		
-		if (method.getName().equals("fileProcessed"))
+		else if (method.getName().equals("fileProcessed"))
 		{
 			try
 			{
-				if (method.getParameterTypes()[0].getName().compareTo("java.util.ArrayList") == 0)
+				if (method.getParameterTypes()[0].getName().compareTo("org.openmrs.module.atd.TeleformFileState") == 0) 
+				{
+					TeleformFileState tfState = (TeleformFileState) args[0];
+					processState(tfState);
+				}
+				else if (method.getParameterTypes()[0].getName().compareTo("java.util.ArrayList") == 0)
 				{
 					ArrayList<TeleformFileState> tfStates = (ArrayList<TeleformFileState>) args[0];
 					
 					TeleformFileState tfState = null;
-					ArrayList<Thread> activeThreads = new ArrayList<Thread>();
 					Iterator<TeleformFileState> iter = tfStates.iterator();
 					if(tfStates.size() > 0)
 					{
@@ -74,23 +78,10 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 						while(iter.hasNext())
 						{
 							tfState = iter.next();
-							Thread thread = new Thread(new ProcessFile(tfState));
-							thread.start();
-							activeThreads.add(thread);
+							processState(tfState);
 						}
-						log.info("Waiting on threads to finish...");
-						for(Thread activeThread:activeThreads){
-							log.info("Waiting on thread: "+activeThread.getName()+" to finish...");
-							while(activeThread.isAlive()){
-								Thread.sleep(100);
-							}
-							log.info("Thread: "+activeThread.getName()+" finished.");
-						}
-						log.info("!!!! PROCESSED TF STATES DONE: " + tfStates.size());
-						TeleformFileMonitor.statesProcessed();
-						
 					}
-				}
+				} 
 			} catch (Exception e)
 			{
 				this.log.error(e.getMessage());
@@ -98,13 +89,33 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 						.getStackTrace(e));
 			}
 		}
-		
-	      
-        if(method.getName().equals("cleanCache")) {
-            log.info("clear regenObs and medicationList cache");
-            ((ObsChicaDatasource) Context.getLogicService().getLogicDataSource("RMRS")).clearRegenObs();
+		else if(method.getName().equals("cleanCache")) 
+		{
+            log.info("clear regenObs, medicationList, and GIS cache");
+            ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource("RMRS")).clearObs();
             MedicationListLookup.clearMedicationLists();
+            PatientGISDataStorage.clearAllPatientGISData();
         }
 	}
 
+	private void processState(TeleformFileState tfState) 
+	{
+		if (tfState == null) 
+		{
+			return;
+		}
+		
+		ThreadManager threadManager = ThreadManager.getInstance();
+		Map<String, Object> parameters = tfState.getParameters();
+		Integer locationId = -1;
+		if (parameters != null) 
+		{
+			PatientState patientState = (PatientState) parameters.get("patientState");
+			locationId = patientState.getLocationId();
+		}
+		
+		// Flush the session so the contents will be available for the thread.
+		Context.flushSession();
+		threadManager.execute(new ProcessFile(tfState), locationId);
+	}
 }

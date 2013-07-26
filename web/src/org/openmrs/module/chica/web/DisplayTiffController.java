@@ -24,6 +24,9 @@ import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -73,17 +76,17 @@ public class DisplayTiffController extends SimpleFormController {
 		return id;
 	}
 	
-	private void setImageLocation(String defaultImageDirectory,String imageFormIdString,
-	                      String imageLocationIdString,String imageFormInstanceIdString,
-	                      Integer locationTagId, String na,Map map,
-	                      String filenameParameterName,Integer encounterId){
+	private void setImageLocation(String defaultImageDirectory,String imageFormIdString, String imageLocationIdString, 
+	                              String imageFormInstanceIdString, Integer locationTagId, String na,Map map,
+	                              String filenameParameterName,Integer encounterId, String stylesheet, 
+	                              String htmlOutputParameterName){
 		String imageDir = null;
 		
 		Integer imageFormId = parseString(imageFormIdString);
 		Integer imageLocationId = parseString(imageLocationIdString);
 		Integer imageFormInstanceId = parseString(imageFormInstanceIdString);
 		if (imageFormId != null && locationTagId != null && imageLocationId != null) {
-			imageDir = IOUtil.formatDirectoryName(org.openmrs.module.atd.util.Util.getFormAttributeValue(imageFormId,
+			imageDir = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(imageFormId,
 			    "imageDirectory", locationTagId, imageLocationId));
 		}
 		
@@ -135,7 +138,31 @@ public class DisplayTiffController extends SimpleFormController {
 		String imageFilename = null;
 		
 		if(imagefile == null){
-			imageFilename = defaultImageDirectory + na + ".tif";
+			if (imageFormId != null && imageFormInstanceId != null && imageLocationId != null) {
+				// Check to see if it was populated using electronic means
+				ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
+				FormInstanceAttributeValue fiav = service.getFormInstanceAttributeValue(
+					imageFormId, imageFormInstanceId, imageLocationId, "medium");
+				if (fiav != null && "electronic".equals(fiav.getValue())) {
+					imageFilename = defaultImageDirectory + "NotAvailableTablet.tif";
+					File scanXmlFile = XMLUtil.getXmlFile(imageLocationId, imageFormId, imageFormInstanceId, 
+						XMLUtil.DEFAULT_EXPORT_DIRECTORY);
+					File stylesheetFile = XMLUtil.findStylesheet(stylesheet);
+					if (scanXmlFile != null  && stylesheetFile != null) {
+						try {
+							String output = XMLUtil.transformFile(scanXmlFile, stylesheetFile);
+							map.put(htmlOutputParameterName, output);
+						} catch (Exception e) {
+							log.error("Error transforming xml: " + scanXmlFile.getAbsolutePath() + " xslt: " + 
+								stylesheetFile.getAbsolutePath(), e);
+						}
+					}
+				}
+			}
+			
+			if (imageFilename == null) {
+				imageFilename = defaultImageDirectory + na + ".tif";
+			}
 		}else{
 			imageFilename = imagefile.getPath();
 		}
@@ -151,7 +178,7 @@ public class DisplayTiffController extends SimpleFormController {
 	protected Map referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		AdministrationService adminService = Context.getAdministrationService();
-		String defaultImageDirectory = adminService.getGlobalProperty("chica.defaultTifImageDirectory");
+		String defaultImageDirectory = adminService.getGlobalProperty("atd.defaultTifImageDirectory");
 
 		try {
 			// default 
@@ -163,6 +190,8 @@ public class DisplayTiffController extends SimpleFormController {
 			String leftImageFormIdString = request.getParameter("leftImageFormId");
 			String leftImageLocationIdString = request.getParameter("leftImageLocationId");
 			Integer leftImageFormId = parseString(leftImageFormIdString);
+			String leftStylesheet = request.getParameter("leftImageStylesheet");
+			String rightStylesheet = request.getParameter("rightImageStylesheet");
 			FormService formService = Context.getFormService();
 			Form form = null;
 			if(leftImageFormId != null){
@@ -243,10 +272,12 @@ public class DisplayTiffController extends SimpleFormController {
 			}
 
 			setImageLocation(defaultImageDirectory,leftImageFormIdString,leftImageLocationIdString,
-				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename",encounterId);
+				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename",encounterId,leftStylesheet,
+				"leftHtmlOutput");
 			
 			setImageLocation(defaultImageDirectory,rightImageFormIdString,rightImageLocationIdString,
-				rightImageFormInstanceIdString,locationTagId,na,map,"rightImagefilename",encounterId);
+				rightImageFormInstanceIdString,locationTagId,na,map,"rightImagefilename",encounterId,rightStylesheet,
+				"rightHtmlOutput");
 
 			map.put("patientId", request.getParameter("patientId"));
 

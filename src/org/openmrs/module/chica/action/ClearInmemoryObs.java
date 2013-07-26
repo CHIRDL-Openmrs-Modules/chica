@@ -10,13 +10,13 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.atd.StateManager;
-import org.openmrs.module.atd.action.ProcessStateAction;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.State;
-import org.openmrs.module.atd.hibernateBeans.StateAction;
-import org.openmrs.module.chica.ChicaStateActionHandler;
-import org.openmrs.module.chica.datasource.ObsChicaDatasource;
+import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 
 /**
  * @author tmdugan
@@ -34,7 +34,7 @@ public class ClearInmemoryObs implements ProcessStateAction
 	{
 		LogicService logicService = Context.getLogicService();
 
-		ObsChicaDatasource xmlDatasource = (ObsChicaDatasource) logicService
+		ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
 				.getLogicDataSource("RMRS");
 		
 		Integer patientId = patient.getPatientId();
@@ -44,9 +44,9 @@ public class ClearInmemoryObs implements ProcessStateAction
 		Integer sessionId = patientState.getSessionId();
 
 		// clear the in-memory obs from the MRF dump
-		xmlDatasource.deleteRegenObsByPatientId(patientId);
+		xmlDatasource.deleteObsByPatientId(patientId);
 		StateManager.endState(patientState);
-		ChicaStateActionHandler.changeState(patient, sessionId, currState, stateAction, parameters,
+		BaseStateActionHandler.changeState(patient, sessionId, currState, stateAction, parameters,
 				locationTagId, locationId);
 	}
 

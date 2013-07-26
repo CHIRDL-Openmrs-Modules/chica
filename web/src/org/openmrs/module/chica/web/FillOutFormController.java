@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.FieldType;
+import org.openmrs.Form;
+import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.api.FormService;
@@ -26,15 +28,14 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.TeleformTranslator;
 import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
-import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class FillOutFormController extends SimpleFormController
@@ -59,8 +60,7 @@ public class FillOutFormController extends SimpleFormController
 	protected Map referenceData(HttpServletRequest request) throws Exception
 	{		
 		Map<String, Object> map = new HashMap<String, Object>();
-		ATDService atdService = Context
-				.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 		String idString = request.getParameter("formInstanceId");
 		String formName = request.getParameter("formName");
@@ -126,15 +126,15 @@ public class FillOutFormController extends SimpleFormController
 				|| (submitAnswers != null && submitAnswers.length() > 0))
 		{
 			String defaultMergeDirectory = IOUtil
-					.formatDirectoryName(org.openmrs.module.atd.util.Util
+					.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
 							.getFormAttributeValue(chosenFormId,
 									"defaultMergeDirectory",
 									chosenLocationTagId, chosenLocationId));
 			String pendingMergeDirectory = IOUtil
-					.formatDirectoryName(org.openmrs.module.atd.util.Util
+					.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
 							.getFormAttributeValue(chosenFormId,
-									"pendingMergeDirectory",
-									chosenLocationTagId, chosenLocationId));
+									"defaultMergeDirectory",
+									chosenLocationTagId, chosenLocationId))+"Pending/";
 			
 			// Parse the merge file
 			FormInstance formInstance = new FormInstance(chosenLocationId,chosenFormId,chosenFormInstanceId);
@@ -210,7 +210,7 @@ public class FillOutFormController extends SimpleFormController
 			{
 				stateName = "JIT_printed";
 			}
-			states = atdService
+			states = chirdlutilbackportsService
 					.getUnfinishedPatientStateByStateName(stateName, null,
 							locationTagId, locationId);
 			if (states != null)
@@ -226,7 +226,7 @@ public class FillOutFormController extends SimpleFormController
 			{
 				stateName = "JIT_wait_to_scan";
 			}
-			states = atdService.getUnfinishedPatientStateByStateName(
+			states = chirdlutilbackportsService.getUnfinishedPatientStateByStateName(
 					stateName, null, locationTagId, locationId);
 			if (states != null)
 			{
@@ -265,11 +265,13 @@ public class FillOutFormController extends SimpleFormController
 		inputMergeFile.close();
 		fieldMap = xmlDatasource.getParsedFile(formInstance);
 
-		List<org.openmrs.Field> fields = formService.getAllFields();
+		Form form = formService.getForm(formId);
+		Set<FormField> formFields = form.getFormFields();
 
 		//store the values of fields in the jsp map
-		for (org.openmrs.Field currField : fields)
+		for (FormField formField : formFields)
 		{
+			org.openmrs.Field currField = formField.getField();
 			FieldType fieldType = currField.getFieldType();
 			if (fieldType==null||!fieldType.equals(
 					translator.getFieldType("Export Field")))
@@ -292,49 +294,67 @@ public class FillOutFormController extends SimpleFormController
 			//pull all the input fields from the database for the form
 			FormService formService = Context.getFormService();
 			HashSet<String> inputFields = new HashSet<String>();
-			List<org.openmrs.Field> fields = formService.getAllFields();
-
-			for (org.openmrs.Field currField : fields)
+			Form form = formService.getForm(formId);
+			Set<FormField> formFields = form.getFormFields();	
+			for (FormField formField : formFields)
 			{
+				org.openmrs.Field currField = formField.getField();
 				FieldType fieldType = currField.getFieldType();
 				if (fieldType!=null&&fieldType.equals(
 						translator.getFieldType("Export Field")))
 				{
 					inputFields.add(currField.getName());
 				}
-			}			
+			}
 			
-			Records records = (Records) XMLUtil.deserializeXML(Records.class,
-					inputMergeFile);
+			Records records = (Records) XMLUtil.deserializeXML(Records.class, inputMergeFile);
 			inputMergeFile.close();
 			Record record = records.getRecord();
-			
-			//Link the values from the submitted answers to 
-			//the form fields
-			for (Field currField : record.getFields())
-			{
-				String name = currField.getId();
-
-				if (inputFields.contains(name))
-				{
-					String inputVal = request.getParameter(name);
-					currField.setValue(inputVal);
+			for (String inputField : inputFields) {
+				String inputVal = request.getParameter(inputField);
+				if (inputVal == null) {
+					// Create a new Field with no value
+					Field field = new Field();
+					field.setId(inputField);
+					record.addField(field);
+					continue;
+				}
+				
+				// See if the field exists in the XML
+				boolean found = false;
+				for (Field currField : record.getFields()) {
+					String name = currField.getId();
+					if (inputField.equals(name)) {
+						found = true;
+						currField.setValue(inputVal);
+						break;
+					}
+				}
+				
+				if (!found) {
+					// Create a new Field
+					Field field = new Field();
+					field.setId(inputField);
+					field.setValue(inputVal);
+					record.addField(field);
 				}
 			}
+			
 			String exportDirectory = IOUtil
-			.formatDirectoryName(org.openmrs.module.atd.util.Util
+			.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
 					.getFormAttributeValue(formId,
 							"defaultExportDirectory",
 							locationTagId, locationId));
 			String defaultMergeDirectory = IOUtil
-			.formatDirectoryName(org.openmrs.module.atd.util.Util
+			.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
 					.getFormAttributeValue(formId,
 							"defaultMergeDirectory",
 							locationTagId, locationId));
 			
 			FormInstance formInstance = new FormInstance(locationId,formId,formInstanceId);
 			//Write the xml for the export file
-			String exportFilename = exportDirectory + formInstance.toString() + ".xml";
+			//Use xmle extension to represent form completion through electronic means.
+			String exportFilename = exportDirectory + formInstance.toString() + ".xmle";
 
 			OutputStream output = new FileOutputStream(exportFilename);
 			XMLUtil.serializeXML(records, output);

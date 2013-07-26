@@ -5,14 +5,15 @@ package org.openmrs.module.chica.xmlBeans;
 
 import java.util.ArrayList;
 
-import org.openmrs.module.chica.xmlBeans.Field;
+import org.openmrs.module.atd.xmlBeans.Field;
 
 /**
  * Object representation of <language> xml
- *
+ * This class is duplicated so that the jibx binding
+ * will work
  * @author Tammy Dugan
  */
-public class Language
+public class Language extends org.openmrs.module.atd.xmlBeans.Language
 {	
 	private ArrayList<Field> fields = null;
 	private String name = null;

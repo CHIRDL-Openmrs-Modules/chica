@@ -1,73 +1,0 @@
-Maintenance:
-	Title:		Sexuality  High Risk PWS;;
-	Filename:		Sexuality_Pregnancy_PWS;;
-	Version:	1.0;;
-	Institution:	Indiana University School of Medicine;;
-	Author:		Aaron E. Carroll;;
-	Specialist:	Pediatrics;;
-	Date:		2004-06-18T11:10:01-0400;;
-	Validation:	;;
-Library:
-	Purpose:		This is a GAPS PWS for anticipatory guidance for those at higher risk for pregnancy.                                                                                                                                                                                                                                                                                                                                                                                                                                ;;
-	Explanation:	Adolescents who are sexually active are at risk for pregnancy and STDs.  It is important to find out if a patient is sexually active so that we can help to prevent these outcomes.                                                                                                                                                                                                                                                                                                                                 ;;
-	Keywords:	GAPS, adolescent, sex, pregnancy, STD, HIV, PWS;;
-	Citations:		;;
-	Links:		;;
-Knowledge:
-	Type:		data_driven;;
-Data:
-
-mode:=read {mode from Parameters};
-Box1:=read {box1 from Parameters};
-Box2:=read {box2 from Parameters};
-Box3:=read {box3 from Parameters};
-Box4:=read {box4 from Parameters};
-Box5:=read {box5 from Parameters};
-Box6:=read {box6 from Parameters};
-
-If (mode = PRODUCE) then
-intercourse := read Last {has_had_intercourse from CHICA} ;condom := read Last {always_uses_condoms from CHICA} Where it Occurred Within Past 330 Days;BC := read Last {uses_birth_control from CHICA} Where it Occurred Within Past 330 Days;pregnant := read Last {might_be_pregnant from CHICA} Where it Occurred Within Past 14 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-endif
-;;
-Priority:		200;;
-	Evoke:		;;
-Logic:
-If (mode = PRODUCE) then
-
-If (intercourse = no) then conclude False;if (pregnant = yes) then conclude False;If (condom = no) then || condomT || = "patient does not always use condoms / ";If (BC = no) then || BCT || = "patient does not use birth control.";If (condom = no) OR (BC = no) then conclude True;conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-
-endif
-
-If (mode = CONSUME) then
-
-If  (Box5=true) then
- CALL storeObs With "might_be_pregnant","yes";
-endif;
-If  (Box6=true) then
- CALL storeObs With "has_had_intercourse","no";
-endif;
-If  (Box2=true) then
- CALL storeObs With "gave_out_condoms","yes";
-endif;
-If  (Box4=true) then
- CALL storeObs With "prescribed_birth_control","yes";
-endif;
-If  (Box5=true) then
- CALL storeObs With "pregnancy_test_performed","yes";
-endif;
-
-
-endif
-;;
-Action:
-write ("|| firstname || has acknowledged having had sexual intercourse. || firstname || has also reported the following risk factors for pregnancy and/or STD's: || condomT |||| BCT ||.  Please discuss the following:");                                                                                  
-write ("Recommend condoms");
-write ("Gave out condoms");
-write ("Recommend birth control");
-write ("Prescribed birth control");
-write ("May be pregnant -> test ->");
-write ("Never had intercourse");
-;;
-Age_Min: 11 years;;
-Age_Max: 21 years;;
-end:

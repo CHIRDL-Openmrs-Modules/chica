@@ -7,7 +7,6 @@ import java.util.List;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -21,9 +20,10 @@ import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
-import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -32,6 +32,7 @@ import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
  * @author Tammy Dugan
  * @version 1.0
  */
+@Transactional
 public interface ChicaDAO {
 
 	
@@ -63,15 +64,7 @@ public interface ChicaDAO {
 	 */
 	public Lenageinf getLenageinf(double ageMos,int sex);
 	
-	public void addStatistics(Statistics statistics);
-	
-	public void updateStatistics(Statistics statistics);
-	
 	public List<Study> getActiveStudies();
-	
-	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName, Integer locationId);
-
-	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName, Integer locationId);
 		
 	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
 
@@ -115,16 +108,14 @@ public interface ChicaDAO {
 	
 	public String getInsCategoryBySMS(String smsCode);
 	
+	public String getInsCategoryByECWName(String ecwName);
+	
 	public String getInsCategoryByInsCode(String insCode);
 	
 	public Integer getHighBP(Integer ageInYears, String sex,
 			Integer bpPercentile, String bpType, Integer heightPercentile);
 
 	public String getDDSTLeaf(String category, Integer ageInDays);
-	
-	public List<Statistics> getStatsByEncounterForm(Integer encounterId,String formName);
-
-	public List<Statistics> getStatsByEncounterFormNotPrioritized(Integer encounterId,String formName);
 	
 	public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export);
 
@@ -162,12 +153,4 @@ public interface ChicaDAO {
 	public List<Object[]> getQuestionsScanned(String formName, String locationName);
 
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
-	/**
-	 * This is a method I added to get around lazy initialization errors with patient.getIdentifier() in rules
-	 * Auto generated method comment
-	 * 
-	 * @param patientId
-	 * @return
-	 */
-	public PatientIdentifier getPatientMRN(Integer patientId);
 }

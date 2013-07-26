@@ -7,40 +7,388 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Location;
+import org.openmrs.LocationTag;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.PersonName;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
-import org.openmrs.module.atd.hibernateBeans.Session;
-import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.QueryKite;
+import org.openmrs.module.chica.QueryKiteException;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
+import org.openmrs.util.OpenmrsUtil;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.v25.segment.MSH;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * @author tmdugan
  * 
  */
 public class HL7SocketHandler extends
-		org.openmrs.module.chica.hl7.sms.HL7SocketHandler {
-	
+		org.openmrs.module.sockethl7listener.HL7SocketHandler {
+
+	protected final Log log = LogFactory.getLog(getClass());
+
+	private static final String ATTRIBUTE_RELIGION = "Religion";
+	private static final String ATTRIBUTE_MARITAL = "Civil Status";
+	private static final String ATTRIBUTE_MAIDEN = "Mother's maiden name";
+	private static final String ATTRIBUTE_NEXT_OF_KIN = "Next of Kin";
+	public static final String ATTRIBUTE_TELEPHONE = "Telephone Number";
+	protected static final String CITIZENSHIP = "Citizenship";
+	protected static final String ATTRIBUTE_RACE = "Race";
+
+	// search for patient based on medical record number then
+	// run alias query to see if any patient records to merge
+	@Override
+	public Patient findPatient(Patient hl7Patient, Date encounterDate,
+			HashMap<String, Object> parameters) {
+		Patient resultPatient = null;
+
+		try {
+			PatientIdentifier patientIdentifier = hl7Patient
+					.getPatientIdentifier();
+			if (patientIdentifier != null) {
+				String mrn = patientIdentifier.getIdentifier();
+				// look for matched patient
+				Patient matchedPatient = findPatient(hl7Patient);
+				if (matchedPatient == null) {
+					resultPatient = createPatient(hl7Patient);
+				} else {
+					resultPatient = updatePatient(matchedPatient, hl7Patient,
+							encounterDate);
+				}
+
+				parameters.put("processCheckinHL7End", new java.util.Date());
+
+				parameters.put("queryKiteAliasStart", new java.util.Date());
+
+				// merge alias medical record number patients with the matched
+				// patient
+				processAliasString(mrn, resultPatient);
+
+				parameters.put("queryKiteAliasEnd", new java.util.Date());
+			}
+
+		} catch (RuntimeException e) {
+			logger.error("Exception during patient lookup. " + e.getMessage());
+			logger.error(org.openmrs.module.chirdlutil.util.Util
+					.getStackTrace(e));
+
+		}
+		return resultPatient;
+
+	}
+
+	private Integer getLocationTagId(Encounter encounter) {
+		if (encounter != null) {
+			// lookup location tag id that matches printer location
+			if (encounter.getPrinterLocation() != null) {
+				Location location = encounter.getLocation();
+				Set<LocationTag> tags = location.getTags();
+
+				if (tags != null) {
+					for (LocationTag tag : tags) {
+						if (tag.getTag().equalsIgnoreCase(
+								encounter.getPrinterLocation())) {
+							return tag.getLocationTagId();
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private Integer getLocationId(Encounter encounter) {
+		if (encounter != null) {
+			return encounter.getLocation().getLocationId();
+		}
+		return null;
+	}
+
+	private Patient findPatient(Patient hl7Patient) {
+		// Search by MRN
+		PatientIdentifier patientIdentifier = hl7Patient.getPatientIdentifier();
+		String mrn = patientIdentifier.getIdentifier();
+		PatientService patientService = Context.getPatientService();
+		List<Patient> lookupPatients = patientService.getPatients(null, mrn,
+				null, true);
+
+		if (lookupPatients != null && lookupPatients.size() > 0) {
+			return lookupPatients.iterator().next();
+		}
+
+		// Search by SSN
+		PatientIdentifier ssnIdent = hl7Patient.getPatientIdentifier("SSN");
+		if (ssnIdent != null) {
+			String ssn = ssnIdent.getIdentifier();
+			lookupPatients = patientService.getPatients(null, ssn, null, true);
+			if (lookupPatients != null && lookupPatients.size() > 0) {
+				Iterator<Patient> i = lookupPatients.iterator();
+				while (i.hasNext()) {
+					Patient patient = i.next();
+					if (matchPatients(patient, hl7Patient)) {
+						return patient;
+					}
+				}
+
+				// If we didn't find a match, we need to remove the SSN because
+				// there's a duplicate.
+				hl7Patient.removeIdentifier(ssnIdent);
+				// Add a person attribute to store attempted SSN.
+				PersonAttributeType personAttrType = Context.getPersonService()
+						.getPersonAttributeTypeByName("SSN");
+				if (personAttrType != null) {
+					PersonAttribute personAttr = new PersonAttribute(
+							personAttrType, ssn);
+					hl7Patient.addAttribute(personAttr);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private boolean matchPatients(Patient patient1, Patient patient2) {
+		String familyName1 = patient1.getFamilyName();
+		String familyName2 = patient2.getFamilyName();
+		if ((familyName1 != null && familyName2 == null)
+				|| (familyName1 == null && familyName2 != null)) {
+			return false;
+		}
+
+		if (familyName1 != null) {
+			if (!familyName1.equals(familyName2))
+				return false;
+		} else if (familyName2 != null) {
+			if (!familyName2.equals(familyName1))
+				return false;
+		}
+
+		String givenName1 = patient1.getGivenName();
+		String givenName2 = patient2.getGivenName();
+		if ((givenName1 != null && givenName2 == null)
+				|| (givenName1 == null && givenName2 != null)) {
+			return false;
+		}
+
+		if (givenName1 != null) {
+			if (!givenName1.equals(givenName2))
+				return false;
+		} else if (givenName2 != null) {
+			if (!givenName2.equals(givenName1))
+				return false;
+		}
+
+		Date birthDate1 = patient1.getBirthdate();
+		Date birthDate2 = patient2.getBirthdate();
+		if ((birthDate1 != null && birthDate2 == null)
+				|| (birthDate1 == null && birthDate2 != null)) {
+			return false;
+		}
+
+		if ((birthDate1 == null && birthDate2 == null)) {
+			return true;
+		}
+
+		long time1 = birthDate1.getTime();
+		long time2 = birthDate2.getTime();
+		if (time1 != time2)
+			return false;
+
+		return true;
+	}
+
+	private void processAliasString(String mrn, Patient preferredPatient) {
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context
+				.getService(ChirdlUtilBackportsService.class);
+
+		PatientService patientService = Context.getPatientService();
+		String aliasString = null;
+		try {
+			aliasString = QueryKite.aliasQuery(mrn);
+		} catch (QueryKiteException e) {
+			Error ce = e.getError();
+			chirdlutilbackportsService.saveError(ce);
+
+		}
+
+		// alias query failed
+		if (aliasString == null) {
+			return;
+		}
+		String[] fields = PipeParser.split(aliasString, "|");
+		if (fields != null) {
+			int length = fields.length;
+
+			if (length >= 2) {
+				if (fields[1].equals("FAILED")) {
+					Error error = new Error("Error", "Query Kite Connection",
+							"Alias query returned FAILED for mrn: " + mrn,
+							null, new Date(), null);
+					chirdlutilbackportsService.saveError(error);
+					return;
+				}
+				if (fields[1].equals("unknown_patient")) {
+					Error error = new Error("Warning", "Query Kite Connection",
+							"Alias query returned unknown_patient for mrn: "
+									+ mrn, null, new Date(), null);
+					chirdlutilbackportsService.saveError(error);
+					return;
+				}
+			}
+
+			for (int i = 1; i < length; i++) {
+				if (fields[i].contains("DONE")) {
+					break;
+				}
+
+				// don't look up the preferred patient's mrn
+				// so we don't merge a patient to themselves
+				if (Util.removeLeadingZeros(fields[i]).equals(
+						Util.removeLeadingZeros(mrn))
+						|| fields[i].equals("NONE")) {
+					continue;
+				}
+
+				List<Patient> lookupPatients = patientService.getPatients(null,
+						Util.removeLeadingZeros(fields[i]), null);
+
+				if (lookupPatients != null && lookupPatients.size() > 0) {
+					Iterator<Patient> iter = lookupPatients.iterator();
+
+					while (iter.hasNext()) {
+						Patient currPatient = iter.next();
+						// only merge different patients
+						if (!preferredPatient.getPatientId().equals(
+								currPatient.getPatientId())) {
+							patientService.mergePatients(preferredPatient,
+									currPatient);
+						} else {
+							Error error = new Error("Error", "General Error",
+									"Tried to merge patient: "
+											+ currPatient.getPatientId()
+											+ " with itself.", null,
+									new Date(), null);
+							chirdlutilbackportsService.saveError(error);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Update matched patient to values from hl7 message (non-Javadoc)
+	 * 
+	 * @see org.openmrs.module.sockethl7listener.HL7SocketHandler#updatePatient(org
+	 *      .openmrs.Patient, org.openmrs.Patient, java.util.Date)
+	 */
+	@Override
+	protected Patient updatePatient(Patient matchPatient, Patient hl7Patient,
+			Date encounterDate) {
+
+		PatientService patientService = Context.getPatientService();
+
+		Patient currentPatient = patientService.getPatient(matchPatient
+				.getPatientId());
+
+		if (currentPatient == null || hl7Patient == null) {
+			return matchPatient;
+		}
+
+		currentPatient.setCauseOfDeath(hl7Patient.getCauseOfDeath());
+		currentPatient.setDead(hl7Patient.getDead());
+		currentPatient.setDeathDate(hl7Patient.getDeathDate());
+		currentPatient.setBirthdate(hl7Patient.getBirthdate());
+		addGender(currentPatient, hl7Patient);
+		addName(currentPatient, hl7Patient, encounterDate);
+		addAddress(currentPatient, hl7Patient, encounterDate);
+		addSSN(currentPatient, hl7Patient, encounterDate);
+		addReligion(currentPatient, hl7Patient, encounterDate);
+		addMaritalStatus(currentPatient, hl7Patient, encounterDate);
+		addMaidenName(currentPatient, hl7Patient, encounterDate);
+		addNK(currentPatient, hl7Patient, encounterDate);
+		addTelephoneNumber(currentPatient, hl7Patient, encounterDate);
+		AddCitizenship(currentPatient, hl7Patient, encounterDate);
+		AddRace(currentPatient, hl7Patient, encounterDate);
+		
+
+		Patient updatedPatient = null;
+		try {
+			updatedPatient = patientService.savePatient(currentPatient);
+		} catch (APIException e) {
+			log.error("Exception saving updated patient.", e);
+		}
+		return updatedPatient;
+
+	}
+
+	@Override
+	public org.openmrs.Encounter checkin(Provider provider, Patient patient,
+			Date encounterDate, Message message, String incomingMessageString,
+			org.openmrs.Encounter newEncounter,
+			HashMap<String, Object> parameters) {
+		Date processCheckinHL7Start = (Date) parameters
+				.get("processCheckinHL7Start");
+		if (processCheckinHL7Start == null) {
+			parameters.put("processCheckinHL7Start", new java.util.Date());
+		}
+
+		return super.checkin(provider, patient, encounterDate, message,
+				incomingMessageString, newEncounter, parameters);
+	}
+
+	@Override
+	public Obs CreateObservation(org.openmrs.Encounter enc,
+			boolean saveToDatabase, Message message, int orderRep, int obxRep,
+			Location existingLoc, Patient resultPatient) {
+		return super.CreateObservation(enc, saveToDatabase, message, orderRep,
+				obxRep, existingLoc, resultPatient);
+	}
+
 	/**
 	 * @param parser
 	 * @param patientHandler
@@ -48,9 +396,8 @@ public class HL7SocketHandler extends
 	public HL7SocketHandler(ca.uhn.hl7v2.parser.Parser parser,
 			PatientHandler patientHandler, HL7ObsHandler hl7ObsHandler,
 			HL7EncounterHandler hl7EncounterHandler,
-			HL7PatientHandler hl7PatientHandler,
-			ArrayList<HL7Filter> filters) {
-		
+			HL7PatientHandler hl7PatientHandler, ArrayList<HL7Filter> filters) {
+
 		super(parser, patientHandler, hl7ObsHandler, hl7EncounterHandler,
 				hl7PatientHandler, filters);
 	}
@@ -63,28 +410,49 @@ public class HL7SocketHandler extends
 	 * ca.uhn.hl7v2.model.Message)
 	 */
 	@Override
-	public synchronized Message processMessage(Message message,
-			HashMap<String,Object> parameters) throws ApplicationException {
+	public Message processMessage(Message message,
+			HashMap<String, Object> parameters) throws ApplicationException {
+		
 		AdministrationService adminService = Context.getAdministrationService();
+		parameters.put("processCheckinHL7Start", new java.util.Date());
+		Context.openSession();
+		String allowMessageSources = adminService.getGlobalProperty("chica.allowableHL7MessageSources");
+		Context.closeSession();
+		
 		String incomingMessageString = null;
-
+		String sendingFacility = null;
+		Segment inboundHeader = null;
+		Message ackMessage = null;
+		Message originalMessage = message;
 		// switch message version and type to values for default hl7 handlers
-		if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04) {
+		if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04 
+				|| message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01) {
 			try {
-				ca.uhn.hl7v2.model.v22.message.ADT_A04 adt = (ca.uhn.hl7v2.model.v22.message.ADT_A04) message;
-				adt.getMSH().getVersionID().setValue("2.5");
-				adt.getMSH().getMessageType().getTriggerEvent().setValue("A01");
+				if (message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01){
+					ca.uhn.hl7v2.model.v24.message.ADT_A01 adt = (ca.uhn.hl7v2.model.v24.message.ADT_A01) message;
+					adt.getMSH().getVersionID().getVersionID().setValue("2.5");
+					adt.getMSH().getMessageType().getTriggerEvent().setValue("A01");
+					}
+				
+				if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04){
+					ca.uhn.hl7v2.model.v22.message.ADT_A04 adt = (ca.uhn.hl7v2.model.v22.message.ADT_A04) message;
+					adt.getMSH().getVersionID().setValue("2.5");
+					adt.getMSH().getMessageType().getTriggerEvent().setValue("A01");
+				}
+				
 				incomingMessageString = this.parser.encode(message);
 				message = this.parser.parse(incomingMessageString);
+			
 			} catch (Exception e) {
-				ATDError error = new ATDError("Fatal", "Hl7 Parsing",
+				Error error = new Error("Fatal", "Hl7 Parsing",
 						"Error parsing the McKesson checkin hl7 "
 								+ e.getMessage(),
-						org.openmrs.module.chirdlutil.util.Util.getStackTrace(e),
-						new Date(), null);
-				ATDService atdService = Context.getService(ATDService.class);
+						org.openmrs.module.chirdlutil.util.Util
+								.getStackTrace(e), new Date(), null);
+				ChirdlUtilBackportsService chirdlutilbackportsService = Context
+						.getService(ChirdlUtilBackportsService.class);
 
-				atdService.saveError(error);
+				chirdlutilbackportsService.saveError(error);
 				String mckessonParseErrorDirectory = IOUtil
 						.formatDirectoryName(adminService
 								.getGlobalProperty("chica.mckessonParseErrorDirectory"));
@@ -121,48 +489,93 @@ public class HL7SocketHandler extends
 						}
 					}
 				}
-				return null;
+				try {
+					//Return an ACK response instead of defaulting to the HAPI error response.
+					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
+					ackMessage = makeACK(inboundHeader);
+				} catch (Exception e2) {
+					logger.error("Error sending an ack response after a parsing exception. " +
+							e2.getMessage());
+					logger.error(org.openmrs.module.chirdlutil.util.Util
+							.getStackTrace(e2));
+					ackMessage = originalMessage;
+				}
+				return ackMessage;
 			}
 		}
 
 		try {
+			
+			//All messages should be adt a01 v2.5 at this point
+			if (message instanceof ca.uhn.hl7v2.model.v25.message.ADT_A01){
+				ca.uhn.hl7v2.model.v25.message.ADT_A01 adt25 = (ca.uhn.hl7v2.model.v25.message.ADT_A01) message;
+				sendingFacility = adt25.getMSH().getSendingFacility().getNamespaceID().getValue();
+				
+				//Check if message is from a blocked source
+				incomingMessageString = this.parser.encode(message);
+				allowMessageSources.replaceAll("\\s","");
+				List<String> messageSourceList = 
+					new ArrayList<String>(Arrays.asList(allowMessageSources.split(",")));
+				
+				if (!messageSourceList.contains(sendingFacility)){
+					log.error("Message arrived from blocked source: " + sendingFacility );
+					log.error("Blocked MSH segment:" + 
+							incomingMessageString.substring(0, incomingMessageString.indexOf("EVN")));
+					try {
+						//Return an ACK response instead of defaulting to the HAPI error response
+						inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
+						ackMessage = makeACK(inboundHeader);
+					} catch (Exception e3) {
+						logger.error("Error sending an ack response after blocking a message " +
+								" facility." + e3.getMessage());
+						logger.error(org.openmrs.module.chirdlutil.util.Util
+								.getStackTrace(e3));
+						ackMessage = originalMessage;
+					}
+					return ackMessage;
+				}
+			}
+			
 			incomingMessageString = this.parser.encode(message);
 			message.addNonstandardSegment("ZPV");
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			logger.error(org.openmrs.module.chirdlutil.util.Util
+					.getStackTrace(e));
 		}
 
-		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25)
-		{
-			String printerLocation = ((org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25) this.hl7EncounterHandler)
-					.getPrinterLocation(message,incomingMessageString);
-			
-			if (printerLocation != null && printerLocation.equals("0"))
-			{
+		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
+			String printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+					.getPrinterLocation(message, incomingMessageString);
+
+			if (printerLocation != null && printerLocation.equals("0")) {
 				// ignore this message because it is just kids getting shots
 				return message;
 			}
 		}
-		return super.processMessage(message,parameters);
+		return super.processMessage(message, parameters);
 	}
-	
 
 	@Override
 	public org.openmrs.Encounter processEncounter(String incomingMessageString,
 			Patient p, Date encDate, org.openmrs.Encounter newEncounter,
-			Provider provider, HashMap<String, Object> parameters)
-	{
-		ATDService atdService = Context.getService(ATDService.class);
+			Provider provider, HashMap<String, Object> parameters) {
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context
+				.getService(ChirdlUtilBackportsService.class);
 		org.openmrs.Encounter encounter = super.processEncounter(
 				incomingMessageString, p, encDate, newEncounter, provider,
 				parameters);
-		//store the encounter id with the session
-		Integer encounterId = newEncounter.getEncounterId();
+		
+		if (encounter == null){
+			//Encounter will be null if encounter was not created or
+			//it was a duplicate encounter.
+			return null;
+		}
+		// store the encounter id with the session
+		Integer encounterId = encounter.getEncounterId();
 		getSession(parameters).setEncounterId(encounterId);
-		atdService.updateSession(getSession(parameters));
-		if (incomingMessageString == null)
-		{
+		chirdlutilbackportsService.updateSession(getSession(parameters));
+		if (incomingMessageString == null) {
 			return encounter;
 		}
 
@@ -173,16 +586,15 @@ public class HL7SocketHandler extends
 		String planCode = null;
 		String carrierCode = null;
 		String printerLocation = null;
+		String insuranceName = null;
 		Message message;
-		try
-		{
+		try {
 			message = this.parser.parse(incomingMessageString);
 			EncounterService encounterService = Context
 					.getService(EncounterService.class);
 			encounter = encounterService.getEncounter(encounter
 					.getEncounterId());
-			if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25)
-			{
+			if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
 				locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 						.getLocation(message);
 
@@ -197,18 +609,19 @@ public class HL7SocketHandler extends
 
 				printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 						.getPrinterLocation(message, incomingMessageString);
+				
+				insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+						.getInsuranceName(message);
 			}
 
-		} catch (EncodingNotSupportedException e)
-		{
+		} catch (EncodingNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (HL7Exception e)
-		{
+		} catch (HL7Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
 		encounter = encounterService.getEncounter(encounterId);
@@ -230,28 +643,522 @@ public class HL7SocketHandler extends
 				locationService.saveLocation(location);
 				logger.warn("Location '" + locationString
 						+ "' does not exist in the Location table."
-						+ "a new location was created for '"
-						+ locationString + "'");
+						+ "a new location was created for '" + locationString
+						+ "'");
 			}
 		}
 
 		chicaEncounter.setLocation(location);
 		chicaEncounter.setInsuranceSmsCode(null);
 
+		// This code must come after the code that sets the encounter values
+		// because the states can't be created until the locationTagId and
+		// locationId have been set
+		State state = chirdlutilbackportsService
+				.getStateByName("Clinic Registration");
+		PatientState patientState = chirdlutilbackportsService
+				.addPatientState(p, state, getSession(parameters)
+						.getSessionId(), getLocationTagId(chicaEncounter),
+						getLocationId(chicaEncounter));
+		patientState.setStartTime(chicaEncounter.getEncounterDatetime());
+		patientState.setEndTime(chicaEncounter.getEncounterDatetime());
+		chirdlutilbackportsService.updatePatientState(patientState);
+
+		state = chirdlutilbackportsService
+				.getStateByName("Process Checkin HL7");
+		patientState = chirdlutilbackportsService
+				.addPatientState(p, state, getSession(parameters)
+						.getSessionId(), getLocationTagId(chicaEncounter),
+						getLocationId(chicaEncounter));
+		Date processCheckinHL7Start = (Date) parameters
+				.get("processCheckinHL7Start");
+		Date processCheckinHL7End = (Date) parameters
+				.get("processCheckinHL7End");
+		patientState.setStartTime(processCheckinHL7Start);
+		patientState.setEndTime(processCheckinHL7End);
+		chirdlutilbackportsService.updatePatientState(patientState);
+
+		state = chirdlutilbackportsService.getStateByName("QUERY KITE Alias");
+		patientState = chirdlutilbackportsService
+				.addPatientState(p, state, getSession(parameters)
+						.getSessionId(), getLocationTagId(chicaEncounter),
+						getLocationId(chicaEncounter));
+		Date queryKiteAliasStart = (Date) parameters.get("queryKiteAliasStart");
+		Date queryKiteAliasEnd = (Date) parameters.get("queryKiteAliasEnd");
+		patientState.setStartTime(queryKiteAliasStart);
+		patientState.setEndTime(queryKiteAliasEnd);
+		chirdlutilbackportsService.updatePatientState(patientState);
+
 		encounterService.saveEncounter(chicaEncounter);
-		
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConceptByName("InsuranceName");
+		if (insuranceName != null){
+			org.openmrs.module.chirdlutil.util.Util.saveObs(p, concept, encounterId, insuranceName,encDate);
+		}else {
+			log.error("Insurance Name is null for patient: " + p.getPatientId());
+		}
 		return encounter;
 	}
-	
-	private Session getSession(HashMap<String,Object> parameters)
-	{
+
+	private Session getSession(HashMap<String, Object> parameters) {
 		Session session = (Session) parameters.get("session");
-		if (session == null)
-		{
-			ATDService atdService = Context.getService(ATDService.class);
-			session = atdService.addSession();
+		if (session == null) {
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context
+					.getService(ChirdlUtilBackportsService.class);
+			session = chirdlutilbackportsService.addSession();
 			parameters.put("session", session);
 		}
 		return session;
 	}
+
+	/**
+	 * Adds new name and sets most recent name to preferred. If the hl7 name
+	 * already exists the date created is updated to the encounter date. When
+	 * sorted the name with the latest date will be set as the preferred name
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 * @should update date created if name already exists
+	 */
+	void addName(Patient currentPatient, Patient hl7Patient, Date encounterDate) {
+
+		/*
+		 * Condition where newest hl7 name matches an older existing name ( not
+		 * currently the preferred name). OpenMRS equality checks will detect it
+		 * as equal and not add the name in addName(). So, that name will never
+		 * have an updated date, and will not get set as the preferred name.
+		 * Then, the wrong name will be displayed on the form.
+		 */
+
+		for (PersonName pn : currentPatient.getNames()) {
+			if (pn != null
+					&& OpenmrsUtil.nullSafeEquals(pn.getFamilyName()
+							, hl7Patient.getFamilyName())
+					&& OpenmrsUtil.nullSafeEquals(pn.getGivenName()
+							,hl7Patient.getGivenName())
+					&& OpenmrsUtil.nullSafeEquals(pn.getMiddleName()
+							, hl7Patient.getMiddleName())) {
+				pn.setDateCreated(encounterDate);
+			}
+
+		}
+
+		currentPatient.addName(hl7Patient.getPersonName());
+		Set<PersonName> names = currentPatient.getNames();
+
+		// reset all addresses preferred status
+		for (PersonName name : names) {
+			name.setPreferred(false);
+		}
+
+		// Sort the list of names based on date
+		List<PersonName> nameList = new ArrayList<PersonName>(names);
+
+		Collections.sort(nameList, new Comparator<PersonName>() {
+			public int compare(PersonName n1, PersonName n2) {
+				Date date1 = n1.getDateCreated();
+				Date date2 = n2.getDateCreated();
+				return date1.compareTo(date2) > 0 ? 0 : 1;
+			}
+		});
+
+		try {
+			// Latest to preferred
+			if (nameList.size() > 0 && nameList.get(0) != null) {
+				nameList.get(0).setPreferred(true);
+				Set<PersonName> nameSet = new TreeSet<PersonName>(nameList);
+				if (nameSet.size()> 0){
+					currentPatient.getNames().clear();
+					currentPatient.getNames().addAll(nameSet);
+				}else{
+					//Safety check. If nameSet is empty, don't clear.  There should
+					//at least be the new name from the hl7 message
+					log.error("Name set is empty, do not clear." 
+							+ "Name will not be updated.");
+				}
+			}
+		} catch (Exception e) {
+			log.error("Error setting preferred status to the updated patient name.",e);
+		}
+	}
+
+	/**
+	 * Adds new address and sets most recent address to preferred based on
+	 * encounter time.
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 * @should set latest address to preferred and add to addresses
+	 */
+	public void addAddress(Patient currentPatient, Patient hl7Patient,
+			Date encounterDate) {
+
+		/*
+		 * OpenMRS addAddress() first checks for equality based on id only, so
+		 * Patient.addAddress() will never result in a match between the
+		 * hl7patient address and existing address and will always be added
+		 * (because there are no ids for the hl7patient yet)
+		 */
+
+		PersonAddress hl7Address = hl7Patient.getPersonAddress();
+
+		if (hl7Address == null) {
+			return;
+		}
+
+		String hl7Address1 = hl7Address.getAddress1();
+		String hl7Address2 = hl7Address.getAddress2();
+		String hl7City = hl7Address.getCityVillage();
+		String hl7County = hl7Address.getCountyDistrict();
+		String hl7State = hl7Address.getStateProvince();
+		String hl7Zip = hl7Address.getPostalCode();
+		String hl7Country = hl7Address.getCountry();
+
+		boolean found = false;
+
+		for (PersonAddress pa : currentPatient.getAddresses()) {
+			if (!found && OpenmrsUtil.nullSafeEquals(pa.getAddress1(), hl7Address1)
+					&& OpenmrsUtil.nullSafeEquals(pa.getAddress2(), hl7Address2)
+					&& OpenmrsUtil.nullSafeEquals(pa.getCityVillage(), hl7City)
+					&& OpenmrsUtil.nullSafeEquals(pa.getCountyDistrict(), hl7County)
+					&& OpenmrsUtil.nullSafeEquals(pa.getStateProvince(), hl7State)
+					&& OpenmrsUtil.nullSafeEquals(pa.getPostalCode(), hl7Zip)
+					&& OpenmrsUtil.nullSafeEquals(pa.getCountry(), hl7Country)) {
+				pa.setDateCreated(encounterDate);
+				found = true;
+			}
+
+		}
+
+		if (!found) {
+			hl7Patient.getPersonAddress().setDateCreated(encounterDate);
+			currentPatient.addAddress(hl7Patient.getPersonAddress());
+		}
+
+		// reset all addresses preferred status
+		Set<PersonAddress> addresses = currentPatient.getAddresses();
+		for (PersonAddress address : addresses) {
+			address.setPreferred(false);
+		}
+
+		// Sort the list of names based on date
+		List<PersonAddress> addressList = new ArrayList<PersonAddress>(
+				addresses);
+
+		try {
+			Collections.sort(addressList, new Comparator<PersonAddress>() {
+				public int compare(PersonAddress a1, PersonAddress a2) {
+					Date date1 = a1.getDateCreated();
+					Date date2 = a2.getDateCreated();
+					return date1.compareTo(date2) > 0 ? 0 : 1;
+				}
+			});
+		} catch (Exception e) {
+			log.error("Sort exception for address list", e);
+			return;
+		}
+
+		try {
+			if (addressList.size() > 0 && addressList.get(0) != null) {
+				// Latest to preferred
+				addressList.get(0).setPreferred(true);
+				Set<PersonAddress> addressSet = new TreeSet<PersonAddress>(
+						addressList);
+				if (addressSet.size()> 0){
+					currentPatient.getAddresses().clear();
+					currentPatient.getAddresses().addAll(addressSet);
+				}else{
+					//Safety check.  The set should at least have the one hl7 address.
+					//Do not clear addresses.
+					log.error("Safety check.  The set should contain at least the new" +
+							" hl7Address. If empty, do not clear. Addresses are not updated.");
+				}
+			}
+		} catch (Exception e) {
+			log.error("Error adding addresses to patient", e);
+
+		}
+
+	}
+
+	/**
+	 * Add the new SSN from the hl7 message to the patient's identifiers.If SSN
+	 * does not exist for any patients, add the identifier. If another patient
+	 * uses the same SSN, store the SSN as an attribute.
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 * @should add SSN identifier and add to attributes if duplicate
+	 */
+	private void addSSN(Patient currentPatient, Patient hl7Patient,
+			Date encounterDate) {
+
+		PatientService patientService = Context.getPatientService();
+
+		PatientIdentifier newSSN = hl7Patient.getPatientIdentifier("SSN");
+		PatientIdentifier currentSSN = currentPatient
+				.getPatientIdentifier("SSN");
+
+		//hl7 has no SSN. Or hl7 SSN is the same as existing SSN
+		if (newSSN == null
+				|| newSSN.getIdentifier() == null
+				|| (currentSSN != null && currentSSN.getIdentifier()
+						.equalsIgnoreCase(newSSN.getIdentifier()))) {
+			return;
+		}
+
+		PersonAttributeType personAttrType = Context.getPersonService()
+				.getPersonAttributeTypeByName("SSN");
+
+		// If another patient owns the SSN, do NOT void and add identifier
+		// Instead, store the attempted SSN as an attribute for record
+
+		List<Patient> lookupPatients = patientService.getPatients(null, newSSN
+				.getIdentifier(), null, true);
+		if (lookupPatients != null && lookupPatients.size() > 0) {
+			if (personAttrType != null) {
+				PersonAttribute personAttr = new PersonAttribute(
+						personAttrType, newSSN.getIdentifier());
+				currentPatient.addAttribute(personAttr);
+			}
+			return;
+		}
+
+		if (currentSSN == null) {
+			// if patient has no SSN.
+			currentPatient.addIdentifier(newSSN);
+		} else {
+			// if patient has a different SSN
+				currentPatient.getPatientIdentifier("SSN").setVoided(true);
+				currentPatient.addIdentifier(newSSN);
+		}
+
+		
+
+	}
+
+	/**
+	 * Add religion from the hl7 patient to the existing patient attibutes
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 * @should add religion attribute
+	 */
+	private void addReligion(Patient currentPatient, Patient hl7Patient,
+			Date encounterDate) {
+		PersonAttribute newReligionAttr = hl7Patient
+			.getAttribute(ATTRIBUTE_RELIGION);
+		PersonAttribute currentReligionAttr = currentPatient
+			.getAttribute(ATTRIBUTE_RELIGION);
+		if (newReligionAttr == null || newReligionAttr.getValue() == null
+				|| newReligionAttr.getValue().equals("")){
+			return;
+		}
+		String newReligion = newReligionAttr.getValue();
+		//if current attr does not exist or is different than hl7, need to update
+		if (currentReligionAttr == null ||
+				!currentReligionAttr.getValue().equalsIgnoreCase(
+						newReligion)) {
+			currentPatient.addAttribute(newReligionAttr);
+		}
+
+	}
+
+	/**
+	 * 
+	 * Add marital status from the hl7 patient to the existing patient
+	 * attributes.
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 *
+	 */
+
+	private void addMaritalStatus(Patient currentPatient, Patient hl7Patient,
+			Date encounterDate) {
+		PersonAttribute newMaritalStatAttr = hl7Patient
+			.getAttribute(ATTRIBUTE_MARITAL);
+		PersonAttribute currentMaritalStatAttr = currentPatient
+			.getAttribute(ATTRIBUTE_MARITAL);
+
+		if (newMaritalStatAttr == null || newMaritalStatAttr.getValue() == null
+				|| newMaritalStatAttr.getValue().equals("")) {
+			return;
+		}
+		String newMaritalStat = newMaritalStatAttr.getValue();
+		if ( currentMaritalStatAttr == null 
+				|| !currentMaritalStatAttr.getValue().equalsIgnoreCase(newMaritalStat)) {
+			currentPatient.addAttribute(newMaritalStatAttr);
+		}
+
+	}
+
+	/**
+	 * Add maiden name from hl7 patient to the existing patient attributes.
+	 * Openmrs addAttribute() voids previous attribute.
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void addMaidenName(Patient currentPatient, Patient hl7Patient,
+			Date encounterDate) {
+		PersonAttribute newMaidenNameAttr = hl7Patient
+				.getAttribute(ATTRIBUTE_MAIDEN);
+		PersonAttribute currentMaidenNameAttr = currentPatient
+				.getAttribute(ATTRIBUTE_MAIDEN);
+		
+		if (newMaidenNameAttr == null || newMaidenNameAttr.getValue() == null
+				|| newMaidenNameAttr.getValue().equals("")){
+			return;
+		}
+		String newMaidenName = newMaidenNameAttr.getValue();
+		
+		if (currentMaidenNameAttr == null
+					|| currentMaidenNameAttr.getValue() == null
+					|| !currentMaidenNameAttr.getValue().equalsIgnoreCase(
+							newMaidenName)) {
+				currentPatient.addAttribute(newMaidenNameAttr);
+		}
+		
+	}
+
+	/**
+	 * Adds hl7 Next of Kin from NK1 hl7 segment to existing patient attributes.
+	 * Openmrs addAttribute() voids previous attribute
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void addNK(Patient currentPatient, Patient hl7Patient,
+			Date encounterDate) {
+		PersonAttribute newNextOfKinNameAttr = hl7Patient
+				.getAttribute(ATTRIBUTE_NEXT_OF_KIN);
+		PersonAttribute currentNextOfKinNameAttr = currentPatient
+				.getAttribute(ATTRIBUTE_NEXT_OF_KIN);
+
+		if (newNextOfKinNameAttr == null || newNextOfKinNameAttr.getValue() == null
+				|| newNextOfKinNameAttr.getValue().equals("")){
+			return;
+		}
+		
+		String newNextOfKinName = newNextOfKinNameAttr.getValue();
+		
+		if (currentNextOfKinNameAttr == null
+				|| currentNextOfKinNameAttr.getValue() == null
+				|| !currentNextOfKinNameAttr.getValue().equalsIgnoreCase(
+						newNextOfKinName)) {
+					currentPatient.addAttribute(newNextOfKinNameAttr);
+				}
+	}
+
+		
+	
+
+	/**
+	 * Updates telephone number from PID segment of hl7 to existing patient.
+	 * Openmrs addAttribute() voids previous attribute
+	 * 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void addTelephoneNumber(Patient currentPatient, Patient hl7Patient,
+			Date encounterDate) {
+		PersonAttribute hl7TelNumAttr = hl7Patient
+				.getAttribute(ATTRIBUTE_TELEPHONE);
+		PersonAttribute currentTelNumAttr = currentPatient
+				.getAttribute(ATTRIBUTE_TELEPHONE);
+
+		if (hl7TelNumAttr == null || hl7TelNumAttr.getValue() == null 
+				|| hl7TelNumAttr.getValue().equals("")){
+			return;
+		}
+		String newTelNumName = hl7TelNumAttr.getValue();
+		if (currentTelNumAttr == null || currentTelNumAttr.getValue() == null
+				||  !currentTelNumAttr.getValue().equals( newTelNumName)) {
+					currentPatient.addAttribute(hl7TelNumAttr);
+				}
+		}
+
+	/**
+	 * Updates hl7 citizenship value to attributes. 
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void AddCitizenship(Patient currentPatient, Patient hl7Patient,Date encounterDate){
+
+		PersonAttribute currentCitizenshipAttr = currentPatient.getAttribute(CITIZENSHIP);
+		PersonAttribute hl7CitizenshipAttr = hl7Patient.getAttribute(CITIZENSHIP);
+
+		if (hl7CitizenshipAttr == null || hl7CitizenshipAttr.getValue() == null 
+				|| hl7CitizenshipAttr.getValue().trim().equals("")){
+			return;
+		}
+
+		String hl7Citizenship = hl7CitizenshipAttr.getValue();
+
+		if (currentCitizenshipAttr == null || currentCitizenshipAttr.getValue() == null
+				|| ! currentCitizenshipAttr.getValue().equals(hl7Citizenship)){
+			currentPatient.addAttribute(hl7CitizenshipAttr);
+		}
+	}
+	
+	/**
+	 * Updates Race attribute from hl7 value. Literal value, not mapped.
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void AddRace(Patient currentPatient, Patient hl7Patient, Date encounterDate){
+		PersonAttribute currentRaceAttr = currentPatient.getAttribute(ATTRIBUTE_RACE);
+		PersonAttribute hl7RaceAttr = hl7Patient.getAttribute(ATTRIBUTE_RACE);
+		
+		if (hl7RaceAttr == null || hl7RaceAttr.getValue() == null 
+				|| hl7RaceAttr.getValue().trim().equals("")){
+			return;
+		}
+		
+		String hl7Race = hl7RaceAttr.getValue();
+		
+		if (currentRaceAttr == null || currentRaceAttr.getValue() == null
+			|| !currentRaceAttr.getValue().equals(hl7Race)){
+			currentPatient.addAttribute(hl7RaceAttr);
+		}
+		
+		
+	}
+	
+	/**
+	 * Updates Gender without overwriting known gender with "u"
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void addGender(Patient currentPatient, Patient hl7Patient){
+		String currentGender = currentPatient.getGender();
+		String hl7Gender = hl7Patient.getGender();
+
+		if (currentGender != null && 
+				(currentGender.equalsIgnoreCase("M")|| currentGender.equalsIgnoreCase("F") )
+				&& (hl7Gender == null || hl7Gender.trim().equalsIgnoreCase("") 
+						||hl7Gender.trim().equalsIgnoreCase("U"))
+			){
+			currentPatient.setGender(currentGender);
+			return;
+		}
+		
+		currentPatient.setGender(hl7Gender);
+		return ;
+			
+	}
+		
+
 }

@@ -8,14 +8,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.openmrs.patient.impl.LuhnIdentifierValidator;
+import java.util.StringTokenizer;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
@@ -30,15 +33,16 @@ import org.openmrs.api.PersonService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.hl7.sms.HL7EncounterHandler25;
-import org.openmrs.module.chica.hl7.sms.HL7PatientHandler25;
-import org.openmrs.module.chica.hl7.sms.HL7SocketHandler;
-import org.openmrs.module.chica.hl7.sms.PatientHandler;
+import org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25;
+import org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25;
+import org.openmrs.module.chica.hl7.mckesson.HL7SocketHandler;
+import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
+import org.openmrs.patient.impl.LuhnIdentifierValidator;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -308,6 +312,7 @@ public class ManualCheckinController extends SimpleFormController
 		name.setGivenName(request.getParameter("firstName"));
 		name.setMiddleName(request.getParameter("middleName"));
 		name.setFamilyName(request.getParameter("lastName"));
+		name.setDateCreated(new Date());
 		checkinPatient.addName(name);
 		
 		PersonAddress address = new PersonAddress();
@@ -322,29 +327,6 @@ public class ManualCheckinController extends SimpleFormController
 		
 		checkinPatient.setGender(request.getParameter("sex"));
 
-		String mothersMaidenName = request
-				.getParameter("mothersMaidenName");
-		if (mothersMaidenName != null && mothersMaidenName.length()>0)
-		{
-			PersonAttribute attribute = new PersonAttribute();
-			PersonAttributeType attributeType = personService
-					.getPersonAttributeTypeByName("Mother's maiden name");
-			attribute.setAttributeType(attributeType);
-			attribute.setValue(mothersMaidenName);
-			checkinPatient.addAttribute(attribute);
-		}
-
-		String religion = request.getParameter("religion");
-		if (religion != null && religion.length()>0)
-		{
-			PersonAttribute attribute = new PersonAttribute();
-			PersonAttributeType attributeType = personService
-					.getPersonAttributeTypeByName("Religion");
-			attribute.setAttributeType(attributeType);
-			attribute.setValue(religion);
-			checkinPatient.addAttribute(attribute);
-		}
-
 		String race = request.getParameter("race");
 		if (race != null && race.length()>0)
 		{
@@ -355,24 +337,26 @@ public class ManualCheckinController extends SimpleFormController
 			attribute.setValue(race);
 			checkinPatient.addAttribute(attribute);
 		}
-		String maritalStatus = request.getParameter("maritalStatus");
-		if (maritalStatus != null && maritalStatus.length()>0)
+		
+		String nextOfKinFirstName = request.getParameter("nextOfKinFirstName");
+		String nextOfKinLastName = request.getParameter("nextOfKinLastName");
+		if (nextOfKinFirstName != null && nextOfKinFirstName.trim().length()>0 && nextOfKinLastName != null && 
+				nextOfKinLastName.trim().length()>0)
 		{
 			PersonAttribute attribute = new PersonAttribute();
 			PersonAttributeType attributeType = personService
-					.getPersonAttributeTypeByName("Civil Status");
+					.getPersonAttributeTypeByName("Next of Kin");
+			if (attributeType == null) {
+				attributeType = new PersonAttributeType();
+				attributeType.setDateCreated(new Date());
+				attributeType.setName("Next of Kin");
+				attributeType.setDescription("Next of Kin");
+				attributeType.setUuid(UUID.randomUUID().toString());
+				attributeType = personService.savePersonAttributeType(attributeType);
+			}
+			
 			attribute.setAttributeType(attributeType);
-			attribute.setValue(maritalStatus);
-			checkinPatient.addAttribute(attribute);
-		}
-		String mothersFirstName = request.getParameter("mothersFirstName");
-		if (mothersFirstName != null && mothersFirstName.length()>0)
-		{
-			PersonAttribute attribute = new PersonAttribute();
-			PersonAttributeType attributeType = personService
-					.getPersonAttributeTypeByName("Mother's Name");
-			attribute.setAttributeType(attributeType);
-			attribute.setValue(mothersFirstName);
+			attribute.setValue(nextOfKinFirstName + "|" + nextOfKinLastName);
 			checkinPatient.addAttribute(attribute);
 		}
 
@@ -486,8 +470,6 @@ public class ManualCheckinController extends SimpleFormController
 		org.openmrs.module.chica.hibernateBeans.Encounter newEncounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
 		newEncounter.setLocation(encounterLocation);
 		newEncounter.setEncounterDatetime(encounterDate);
-		newEncounter
-				.setInsuranceSmsCode(request.getParameter("insuranceCode"));
 		newEncounter.setPrinterLocation(request.getParameter("station"));
 		newEncounter.setEncounterDatetime(encounterDate);
 		EncounterType encType = encounterService.getEncounterType("ManualCheckin");
@@ -506,12 +488,20 @@ public class ManualCheckinController extends SimpleFormController
 					 null, null, newEncounter,parameters);
 			if (enc != null){
 				checkinSuccess = true;
+				// Set the insurance category
+				String insuranceCategory = request.getParameter("insuranceCategory");
+				if (insuranceCategory != null && insuranceCategory.trim().length() > 0) {
+					Concept concept = Context.getConceptService().getConcept("Insurance");
+		    		org.openmrs.module.chirdlutil.util.Util.saveObs(enc.getPatient(), concept, enc.getEncounterId(), 
+		    			insuranceCategory, enc.getEncounterDatetime());
+				}
 			}
 		}
-			String checkinPatientName = checkinPatient.getFamilyName();
-			if(checkinPatient.getGivenName() != null){
-				checkinPatientName+=", "+checkinPatient.getGivenName();
-			}
+		
+		String checkinPatientName = checkinPatient.getFamilyName();
+		if(checkinPatient.getGivenName() != null){
+			checkinPatientName+=", "+checkinPatient.getGivenName();
+		}
 			
 		map.put("checkinSuccess", checkinSuccess);
 		map.put("checkinPatient",checkinPatientName);
@@ -581,22 +571,18 @@ public class ManualCheckinController extends SimpleFormController
 			}
 		}
 
-		attribute = patient.getAttribute("Mother's maiden name");
+		attribute = patient.getAttribute("Next of Kin");
 		if (attribute != null)
 		{
-			map.put("mothersMaidenName", attribute.getValue());
-		}
-
-		attribute = patient.getAttribute("Civil Status");
-		if (attribute != null)
-		{
-			map.put("maritalStatus", attribute.getValue());
-		}
-
-		attribute = patient.getAttribute("Mother's Name");
-		if (attribute != null)
-		{
-			map.put("mothersFirstName", attribute.getValue());
+			String value = attribute.getValue();
+			StringTokenizer tokenizer = new StringTokenizer(value, "|");
+			if (tokenizer.hasMoreTokens()) {
+				map.put("nextOfKinFirstName", tokenizer.nextToken());
+			}
+			
+			if (tokenizer.hasMoreTokens()) {
+				map.put("nextOfKinLastName", tokenizer.nextToken());
+			}
 		}
 
 		PatientIdentifier patientIdentifier = patient.getPatientIdentifier();
@@ -614,7 +600,12 @@ public class ManualCheckinController extends SimpleFormController
 		if (encounters != null && encounters.size() > 0)
 		{
 			Encounter encounter = (Encounter) encounters.get(0);
-			User provider = encounter.getProvider();
+			UserService userService = Context.getUserService();
+			List<User> providers = userService.getUsersByPerson(encounter.getProvider(), true);
+			User provider = null;
+			if(providers != null&& providers.size()>0){
+				provider = providers.get(0);
+			}
 			if (provider != null)
 			{
 				map.put("doctor", provider.getUserId());

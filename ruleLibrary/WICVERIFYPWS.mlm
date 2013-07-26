@@ -26,28 +26,47 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 lbw := read Last {LowBirthWeight from CHICA};insurance := read Last {Insurance from CHICA} ;wicactive := read Last {WICMember from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority:		233;;
+Priority:		235;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
+If  (VisitType = SickVisit) then conclude false;
 If (wicactive = no) then conclude False;If (wicactive = yes) then conclude False;If (wicactive = eligible) then conclude True;If (insurance = Indigent) OR (insurance = Self-Pay) OR (insurance = Medicaid) then conclude True;If (lbw = yes) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 
 endif
 
 If (mode = CONSUME) then
 
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) then || description || = "|| firstname || was identified as potentially eligible for the WIC program.";
+If  (Box1=true) then || note1 || = "I determined that || firstname || is already on WIC.";
+If  (Box2=true) then || note2 || = "I determined that || firstname || is ineligible for WIC.";
+If  (Box4=true) then || note4 || = "|| firstname ||'s parent was not interested in WIC.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","DIET AND NUTRITION";
+endif;
+
 If  (Box1=true) then
  CALL storeObs With "WICMember","yes";
+ CALL storeNote With "note1","DIET AND NUTRITION";
 endif;
 If  (Box3=true) then
  CALL storeObs With "WICMember","eligible";
+ CALL storeNote With "I recommended enrollment in WIC.","DIET AND NUTRITION";
 endif;
 If  (Box2=true) then
  CALL storeObs With "WICMember","no";
+ CALL storeNote With "note2","DIET AND NUTRITION";
+endif;
+If  (Box4=true) then
+CALL storeNote With "note4","DIET AND NUTRITION";
 endif;
 
 

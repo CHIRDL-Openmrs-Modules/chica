@@ -34,7 +34,7 @@ public class TestSetConceptRule extends BaseModuleContextSensitiveTest
 		Rule rule = new Rule();
 		rule.setTokenName("testSetConcept");
 		ruleList.add(rule);
-		String stringResult = dssService.runRulesAsString(patient,ruleList,null,null);
+		String stringResult = dssService.runRulesAsString(patient,ruleList);
 		System.out.println(stringResult);
 	}
 

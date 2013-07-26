@@ -1,7 +1,7 @@
 
 package org.openmrs.module.chica;
 
-import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 
 /**
  * @author tmdugan
@@ -9,7 +9,7 @@ import org.openmrs.module.atd.hibernateBeans.ATDError;
 public class QueryImmunizationsException extends Exception {
 
     private static final long serialVersionUID = -2985522122680870005L;
-    private ATDError atdError = null;
+    private Error Error = null;
 
     public QueryImmunizationsException() {
         super();
@@ -19,9 +19,9 @@ public class QueryImmunizationsException extends Exception {
         super(message);
     }
     
-    public QueryImmunizationsException(String message, ATDError error) {
+    public QueryImmunizationsException(String message, Error error) {
         super(message);
-        atdError = error;
+        Error = error;
     }
 
     public QueryImmunizationsException(Throwable cause) {
@@ -31,8 +31,8 @@ public class QueryImmunizationsException extends Exception {
     public QueryImmunizationsException(String message, Throwable cause) {
         super(message, cause);
     }
-    public ATDError getATDError (){
-    	return atdError;
+    public Error getError (){
+    	return Error;
     }
 
 }

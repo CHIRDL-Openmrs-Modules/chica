@@ -23,11 +23,12 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
-import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chica.advice.QueryImmunizationForecast;
 import org.openmrs.module.chirdlutil.ReadWriteManager;
-import org.openmrs.module.rgccd.Immunization;
+import org.openmrs.module.chica.ImmunizationForecast;
+import org.openmrs.module.chica.ImmunizationQueryOutput;
 
 /**
  * @author tmdugan
@@ -37,16 +38,16 @@ public class ImmunizationForecastLookup {
 	
 	private static Log log = LogFactory.getLog(ImmunizationForecastLookup.class);
 	
-	private static Hashtable<Integer, List<Immunization>> immunizationLists = new Hashtable<Integer, List<Immunization>>();
+	private static Hashtable<Integer, ImmunizationQueryOutput> immunizationLists = new Hashtable<Integer, ImmunizationQueryOutput>();
 	private static ReadWriteManager immunizationListsLock = new ReadWriteManager();
 	
 	/**
 	 * add a list of forecasted immunizations for a patient
 	 */
-	public static synchronized void addImmunizationList(Integer patientId, List<Immunization> immunizationList) {
+	public static synchronized void addImmunizationList(Integer patientId, ImmunizationQueryOutput immunization) {
 		immunizationListsLock.getWriteLock();
 		try {
-			immunizationLists.put(patientId, immunizationList);
+			immunizationLists.put(patientId, immunization);
         }
         catch (Exception e) {
 	        log.error("",e);
@@ -58,31 +59,29 @@ public class ImmunizationForecastLookup {
 	/**
 	 * get the forecasted immunization list for a given patient
 	 */
-	public static synchronized LinkedList<Immunization> getImmunizationList(Integer patientId) {
-		immunizationListsLock.getReadLock();
-		LinkedList<Immunization> immunizations = new LinkedList<Immunization>();
+	public static synchronized ImmunizationQueryOutput getImmunizationList(Integer patientId) {
+ 		immunizationListsLock.getReadLock();
+		LinkedList<ImmunizationForecast> immunizations = new LinkedList<ImmunizationForecast>();
         try {
-	        List<Immunization> immunizationList = immunizationLists.get(patientId);
-	        if(immunizationList == null){
-	        	return null;
-	        }
+	        ImmunizationQueryOutput immunizationList = immunizationLists.get(patientId);
+ 	        if(immunizationList == null){
+ 	        	return null;
+ 	        }
 	        
-	        for(Immunization currImmunization:immunizationList){
-	        	immunizations.add(new Immunization(currImmunization));
-	        }
+	        return immunizationList;
         }
         catch (Exception e) {
 	        log.error("",e);
         }finally{
         	immunizationListsLock.releaseReadLock();
         }
-		return immunizations;
+		return null;
 	}
 	
 	/**
 	 * remove the forecasted immunization list for a given patient
 	 */
-	public static synchronized void removeImmunizationList(Integer patientId) {
+	public static void removeImmunizationList(Integer patientId) {
 		immunizationListsLock.getWriteLock();
 		try {
 	        immunizationLists.remove(patientId);
@@ -97,9 +96,12 @@ public class ImmunizationForecastLookup {
 	/**
 	 * create a thread with a timeout to query the immunization forecasting service
 	 */
-	public static void queryImmunizationList(Encounter encounter, boolean useTimeout,String queryInputFilename) throws QueryImmunizationsException {
+	/* Used by Vivienne's immunization forecasting service
+	 * We are using CHIRP instead
+	 * 
+	 * public static void queryImmunizationList(Encounter encounter, boolean useTimeout) throws QueryImmunizationsException {
 		AdministrationService adminService = Context.getAdministrationService();
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		Integer timeout = null;
 		
 		try {
@@ -110,7 +112,7 @@ public class ImmunizationForecastLookup {
 			}
 		}
 		catch (NumberFormatException e) {}
-		QueryImmunizationForecast queryImmunizationsThread = new QueryImmunizationForecast(encounter,queryInputFilename);
+		QueryImmunizationForecast queryImmunizationsThread = new QueryImmunizationForecast(encounter);
 		Thread thread = new Thread(queryImmunizationsThread);
 		thread.start();
 		long startTime = System.currentTimeMillis();
@@ -129,11 +131,11 @@ public class ImmunizationForecastLookup {
 				
 				if ((System.currentTimeMillis() - startTime) > timeout) {
 					//the timeout was exceeded so return null
-					ATDError error = new ATDError("Warning", "Query Immunization List Connection", 
+					Error error = new Error("Warning", "Query Immunization List Connection", 
 						"Timeout of "+timeout/1000+" seconds was exceeded for patientId: "+
 						encounter.getPatientId()+"."
 						, null, new Date(), null);
-					atdService.saveError(error);
+					chirdlutilbackportsService.saveError(error);
 					return;
 				}
 				try {
@@ -147,7 +149,7 @@ public class ImmunizationForecastLookup {
 			}
 		}
 	}
-	
+	*/
 	/**
 	 * clear the entire forecasted immunization list
 	 */

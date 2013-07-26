@@ -10,17 +10,15 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.StateManager;
-import org.openmrs.module.atd.action.ProcessStateAction;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.State;
-import org.openmrs.module.atd.hibernateBeans.StateAction;
-import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.QueryKiteException;
-import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 /**
  * @author tmdugan
@@ -28,7 +26,7 @@ import org.openmrs.module.chica.service.ChicaService;
  */
 public class QueryKite implements ProcessStateAction
 {
-	private static Log log = LogFactory.getLog(ChicaStateActionHandler.class);
+	private static Log log = LogFactory.getLog(QueryKite.class);
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)
 	 */
@@ -43,7 +41,7 @@ public class QueryKite implements ProcessStateAction
 		Integer locationTagId = patientState.getLocationTagId();
 		Integer locationId = patientState.getLocationId();
 		
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State currState = patientState.getState();
 		Integer sessionId = patientState.getSessionId();
 				
@@ -55,11 +53,11 @@ public class QueryKite implements ProcessStateAction
 			try
 			{
 				org.openmrs.module.chica.QueryKite.mrfQuery(patient.getPatientIdentifier()
-						.getIdentifier(), patient.getPatientId(),true);
+						.getIdentifier(), patient,true);
 			}catch (QueryKiteException e){
-				ATDError ce = e.getATDError();
+				Error ce = e.getError();
 				ce.setSessionId(sessionId);
-				atdService.saveError(ce);
+				chirdlutilbackportsService.saveError(ce);
 				
 			}catch (Exception e)
 			{
@@ -70,7 +68,7 @@ public class QueryKite implements ProcessStateAction
 			}
 		}
 		StateManager.endState(patientState);
-		ChicaStateActionHandler.changeState(patient, sessionId, currState,
+		BaseStateActionHandler.changeState(patient, sessionId, currState,
 				stateAction,parameters,locationTagId,locationId);
 
 	}

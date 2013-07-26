@@ -1,0 +1,106 @@
+Maintenance:
+	Title:		Research ADHD Chronic Care Without Vanderbilt PWS                                                                         ;;
+	Filename:		R_ADHDChronicCareWithoutVanderbiltPWS                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Aaron Carroll                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2010-04-20 12:00:00;;
+	Validation:	;;
+Library:
+	Purpose:		PWS for managing ADHD chronic care when a Vanderbilt is NOT needed.                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	ADHD is in chronic care.                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ADHD PWS Vanderbilt                                                  ;;
+	Citations:		                                                                                   ;;
+	Links:		                                            ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;  
+location:= read {location from Parameters};    
+CurrentStatus := read last {CHICA_ADHD_RX from CHICA} ; 
+
+   
+SideEffects := read last {CHICA_ADHD_Side_Effects from CHICA} Where it occurred within past 7 days; 
+ParentVanderbiltDone := read exist {ParentAssessmentScale from CHICA} Where it occurred within past 6 months;
+ParentVanderbiltDoneFU := read exist {ParentAssessFollowupSymptomTotal from CHICA} Where it occurred within past 6 months;     
+TeacherVanderbiltDone := read exist {TeacherAssessmentScale from CHICA} Where it occurred within past 6 months;
+TeacherVanderbiltDoneFU := read exist {TeacherAssessFollowupSymptomTotal from CHICA} Where it occurred within past 6 months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+endif
+;;
+Priority:		174       ;;
+	Evoke:		;;
+
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+
+If (SideEffects = "yes") then || SEPrompt || = " Parent reports significant side effects.";
+If (SideEffects = "no") then || SEPrompt || = " Parent reports no significant side effects.";
+
+
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDone = true) AND (TeacherVanderbiltDone = true) then conclude true;
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDoneFU = true) AND (TeacherVanderbiltDone = true) then conclude true;
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDone = true) AND (TeacherVanderbiltDoneFU = true) then conclude true;
+If (CurrentStatus = "Chronic_Care") AND (ParentVanderbiltDoneFU = true) AND (TeacherVanderbiltDoneFU = true) then conclude true;
+
+
+conclude False;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box6=true) then
+ CALL storeNote With "We followed up on ADHD.", "DEVELOPMENT";
+endif;
+
+If  (Box1=true) then
+  CALL storeNote With "Pt doing Well.", "DEVELOPMENT";
+endif;
+If  (Box2=true) then
+  CALL storeNote With "Follow-up 3-4 mos.", "DEVELOPMENT";
+endif;
+If  (Box3=true) then
+  CALL storeNote With "I have some concerns about ADHD.", "DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
+ CALL storeNote With "I adjusted the ADHD medication.", "DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ 
+endif;
+If  (Box6=true) then
+  CALL storeNote With "Will follow-up in 2-3 wks.", "DEVELOPMENT";
+endif;
+
+
+endif
+;;
+Action:
+call CREATE_JIT with "TargetOutcomes";
+write ("ADHD follow-up visit. || SEPrompt ||");                                                                                                                                                                                                                                                                                                                   
+write ("Doing Well ->                                           ");
+write ("Follow-up 3-4 mos                    ");
+write ("Concerns about ADHD ->                      ");
+write ("Change Medication dose");
+write ("" );
+write ("Follow-up 2-3 wks                            ");
+;;
+Age_Min: 5          years     ;;
+Age_Max: 18         years     ;;
+end:

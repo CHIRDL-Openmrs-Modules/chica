@@ -6,10 +6,11 @@ package org.openmrs.module.chica.xmlBeans;
 
 /**
  * Object representation of <Field> xml
- * 
+ * This class is duplicated so that the jibx binding
+ * will work
  * @author Tammy Dugan
  */
-public class Field
+public class Field extends org.openmrs.module.atd.xmlBeans.Field
 {
 	private String id = null;
 	private String value = null;

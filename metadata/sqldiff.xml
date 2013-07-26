@@ -899,74 +899,7 @@ INSERT INTO `chica_hcageinf` VALUES ('2', '33.5', '2.256943216', '48.44653703', 
 INSERT INTO `chica_hcageinf` VALUES ('2', '34.5', '2.296844024', '48.52401894', '0.031597939', '45.52047097', '45.91130407', '46.50481123', '47.47518307', '48.52401894', '49.54424855', '50.43973755', '50.96593013', '51.30391674', '150');
 INSERT INTO `chica_hcageinf` VALUES ('2', '35.5', '2.333589434', '48.59782828', '0.031830942', '45.56291074', '45.95837475', '46.55858812', '47.53910827', '48.59782828', '49.62664932', '50.52889019', '51.05872021', '51.39891816', '151');
 INSERT INTO `chica_hcageinf` VALUES ('2', '36', '2.350847202', '48.63342328', '0.031948378', '45.58283802', '45.98061022', '46.58416826', '47.56975632', '48.63342328', '49.66655746', '50.57220052', '51.1038697', '51.44518843', '152');
-INSERT INTO `chica_high_bp` VALUES ('1', '1', 'M', '94', '95', '97', '98', '100', '102', '102', '50', '51', '52', '53', '54', '54', '55', '90');
-INSERT INTO `chica_high_bp` VALUES ('2', '2', 'M', '98', '99', '100', '102', '104', '105', '106', '55', '55', '56', '57', '58', '59', '59', '90');
-INSERT INTO `chica_high_bp` VALUES ('3', '3', 'M', '100', '101', '103', '105', '107', '108', '109', '59', '59', '60', '61', '62', '63', '63', '90');
-INSERT INTO `chica_high_bp` VALUES ('4', '4', 'M', '102', '103', '105', '107', '109', '110', '111', '62', '62', '63', '64', '65', '66', '66', '90');
-INSERT INTO `chica_high_bp` VALUES ('5', '5', 'M', '104', '105', '106', '108', '110', '112', '112', '65', '65', '66', '67', '68', '69', '69', '90');
-INSERT INTO `chica_high_bp` VALUES ('6', '6', 'M', '105', '106', '108', '110', '111', '113', '114', '67', '68', '69', '70', '70', '71', '72', '90');
-INSERT INTO `chica_high_bp` VALUES ('7', '7', 'M', '106', '107', '109', '111', '113', '114', '115', '69', '70', '71', '72', '72', '73', '74', '90');
-INSERT INTO `chica_high_bp` VALUES ('8', '8', 'M', '107', '108', '110', '112', '114', '115', '116', '71', '71', '72', '73', '74', '75', '75', '90');
-INSERT INTO `chica_high_bp` VALUES ('9', '9', 'M', '109', '110', '112', '113', '115', '117', '117', '72', '73', '73', '74', '75', '76', '77', '90');
-INSERT INTO `chica_high_bp` VALUES ('10', '10', 'M', '110', '112', '113', '115', '117', '118', '119', '73', '74', '74', '75', '76', '77', '78', '90');
-INSERT INTO `chica_high_bp` VALUES ('11', '11', 'M', '112', '113', '115', '117', '119', '120', '121', '74', '74', '75', '76', '77', '78', '78', '90');
-INSERT INTO `chica_high_bp` VALUES ('12', '12', 'M', '115', '116', '117', '119', '121', '123', '123', '75', '75', '76', '77', '78', '78', '79', '90');
-INSERT INTO `chica_high_bp` VALUES ('13', '13', 'M', '117', '118', '120', '122', '124', '125', '126', '75', '76', '76', '77', '78', '79', '80', '90');
-INSERT INTO `chica_high_bp` VALUES ('14', '14', 'M', '120', '121', '123', '125', '126', '128', '128', '76', '76', '77', '78', '79', '80', '80', '90');
-INSERT INTO `chica_high_bp` VALUES ('15', '15', 'M', '123', '124', '125', '127', '129', '131', '131', '77', '77', '78', '79', '80', '81', '81', '90');
-INSERT INTO `chica_high_bp` VALUES ('16', '16', 'M', '125', '126', '128', '130', '132', '133', '134', '79', '79', '80', '81', '82', '82', '83', '90');
-INSERT INTO `chica_high_bp` VALUES ('17', '17', 'M', '128', '129', '131', '133', '134', '136', '136', '81', '81', '82', '83', '84', '85', '85', '90');
-INSERT INTO `chica_high_bp` VALUES ('18', '1', 'F', '97', '98', '99', '100', '102', '103', '104', '53', '53', '53', '54', '55', '56', '56', '90');
-INSERT INTO `chica_high_bp` VALUES ('19', '2', 'F', '99', '99', '100', '102', '103', '104', '105', '57', '57', '58', '58', '59', '60', '61', '90');
-INSERT INTO `chica_high_bp` VALUES ('20', '3', 'F', '100', '100', '102', '103', '104', '105', '106', '61', '61', '61', '62', '63', '63', '64', '90');
-INSERT INTO `chica_high_bp` VALUES ('21', '4', 'F', '101', '102', '103', '104', '106', '107', '108', '63', '63', '64', '65', '65', '66', '67', '90');
-INSERT INTO `chica_high_bp` VALUES ('22', '5', 'F', '103', '103', '104', '106', '107', '108', '109', '65', '66', '66', '67', '68', '68', '69', '90');
-INSERT INTO `chica_high_bp` VALUES ('23', '6', 'F', '104', '105', '106', '107', '109', '110', '111', '67', '67', '68', '69', '69', '70', '71', '90');
-INSERT INTO `chica_high_bp` VALUES ('24', '7', 'F', '106', '107', '108', '109', '110', '112', '112', '69', '69', '69', '70', '71', '72', '72', '90');
-INSERT INTO `chica_high_bp` VALUES ('25', '8', 'F', '108', '109', '110', '111', '112', '113', '114', '70', '70', '71', '71', '72', '73', '74', '90');
-INSERT INTO `chica_high_bp` VALUES ('26', '9', 'F', '110', '110', '112', '113', '114', '115', '116', '71', '72', '72', '73', '74', '74', '75', '90');
-INSERT INTO `chica_high_bp` VALUES ('27', '10', 'F', '112', '112', '114', '115', '116', '117', '118', '73', '73', '73', '74', '75', '76', '76', '90');
-INSERT INTO `chica_high_bp` VALUES ('28', '11', 'F', '114', '114', '116', '117', '118', '119', '120', '74', '74', '75', '75', '76', '77', '77', '90');
-INSERT INTO `chica_high_bp` VALUES ('29', '12', 'F', '116', '116', '118', '119', '120', '121', '122', '75', '75', '76', '76', '77', '78', '78', '90');
-INSERT INTO `chica_high_bp` VALUES ('30', '13', 'F', '118', '118', '119', '121', '122', '123', '124', '76', '76', '77', '78', '78', '79', '80', '90');
-INSERT INTO `chica_high_bp` VALUES ('31', '14', 'F', '119', '120', '121', '122', '124', '125', '126', '77', '77', '78', '79', '79', '80', '81', '90');
-INSERT INTO `chica_high_bp` VALUES ('32', '15', 'F', '121', '121', '122', '124', '125', '126', '127', '78', '78', '79', '79', '80', '81', '82', '90');
-INSERT INTO `chica_high_bp` VALUES ('33', '16', 'F', '122', '122', '123', '125', '126', '127', '128', '79', '79', '79', '80', '81', '82', '82', '90');
-INSERT INTO `chica_high_bp` VALUES ('34', '17', 'F', '122', '123', '124', '125', '126', '128', '128', '79', '79', '79', '80', '81', '82', '82', '90');
-INSERT INTO `chica_high_bp` VALUES ('35', '1', 'F', '101', '102', '103', '104', '105', '107', '107', '57', '57', '57', '58', '59', '60', '60', '95');
-INSERT INTO `chica_high_bp` VALUES ('36', '1', 'M', '98', '99', '101', '102', '104', '106', '106', '55', '55', '56', '57', '58', '59', '59', '95');
-INSERT INTO `chica_high_bp` VALUES ('37', '2', 'F', '102', '103', '104', '105', '107', '108', '109', '61', '61', '62', '62', '63', '64', '65', '95');
-INSERT INTO `chica_high_bp` VALUES ('38', '2', 'M', '101', '102', '104', '106', '108', '109', '110', '59', '59', '60', '61', '62', '63', '63', '95');
-INSERT INTO `chica_high_bp` VALUES ('39', '3', 'F', '104', '104', '105', '107', '108', '109', '110', '65', '65', '65', '66', '67', '67', '68', '95');
-INSERT INTO `chica_high_bp` VALUES ('40', '3', 'M', '104', '105', '107', '109', '111', '112', '113', '63', '63', '64', '65', '66', '67', '67', '95');
-INSERT INTO `chica_high_bp` VALUES ('41', '4', 'F', '105', '106', '107', '108', '109', '111', '111', '67', '67', '68', '69', '69', '70', '71', '95');
-INSERT INTO `chica_high_bp` VALUES ('42', '4', 'M', '106', '107', '109', '111', '113', '114', '115', '66', '67', '67', '68', '69', '70', '71', '95');
-INSERT INTO `chica_high_bp` VALUES ('43', '5', 'F', '107', '107', '108', '110', '111', '112', '113', '69', '70', '70', '71', '72', '72', '73', '95');
-INSERT INTO `chica_high_bp` VALUES ('44', '5', 'M', '108', '109', '110', '112', '114', '115', '116', '69', '70', '70', '71', '72', '73', '74', '95');
-INSERT INTO `chica_high_bp` VALUES ('45', '6', 'F', '108', '109', '110', '111', '112', '114', '114', '71', '71', '72', '73', '73', '74', '75', '95');
-INSERT INTO `chica_high_bp` VALUES ('46', '6', 'M', '109', '110', '112', '114', '115', '117', '117', '72', '72', '73', '74', '75', '76', '76', '95');
-INSERT INTO `chica_high_bp` VALUES ('47', '7', 'F', '110', '110', '112', '113', '114', '115', '116', '73', '73', '73', '74', '75', '76', '76', '95');
-INSERT INTO `chica_high_bp` VALUES ('48', '7', 'M', '110', '111', '113', '115', '116', '118', '119', '74', '74', '75', '76', '77', '78', '78', '95');
-INSERT INTO `chica_high_bp` VALUES ('49', '8', 'F', '112', '112', '113', '115', '116', '117', '118', '74', '74', '75', '75', '76', '77', '78', '95');
-INSERT INTO `chica_high_bp` VALUES ('50', '8', 'M', '111', '112', '114', '116', '118', '119', '120', '75', '76', '76', '77', '78', '79', '80', '95');
-INSERT INTO `chica_high_bp` VALUES ('51', '9', 'F', '114', '114', '115', '117', '118', '119', '120', '75', '76', '76', '77', '78', '78', '79', '95');
-INSERT INTO `chica_high_bp` VALUES ('52', '9', 'M', '113', '114', '116', '117', '119', '121', '121', '76', '77', '78', '79', '80', '80', '81', '95');
-INSERT INTO `chica_high_bp` VALUES ('53', '10', 'F', '116', '116', '117', '119', '120', '121', '122', '77', '77', '77', '78', '79', '80', '80', '95');
-INSERT INTO `chica_high_bp` VALUES ('54', '10', 'M', '114', '115', '117', '119', '121', '122', '123', '77', '78', '79', '80', '80', '81', '82', '95');
-INSERT INTO `chica_high_bp` VALUES ('55', '11', 'F', '118', '118', '119', '121', '122', '123', '124', '78', '78', '79', '79', '80', '81', '81', '95');
-INSERT INTO `chica_high_bp` VALUES ('56', '11', 'M', '116', '117', '119', '121', '123', '124', '125', '78', '79', '79', '80', '81', '82', '83', '95');
-INSERT INTO `chica_high_bp` VALUES ('57', '12', 'F', '120', '120', '121', '123', '124', '125', '126', '79', '79', '80', '80', '81', '82', '82', '95');
-INSERT INTO `chica_high_bp` VALUES ('58', '12', 'M', '119', '120', '121', '123', '125', '126', '127', '79', '79', '80', '81', '82', '83', '83', '95');
-INSERT INTO `chica_high_bp` VALUES ('59', '13', 'F', '121', '122', '123', '125', '126', '127', '128', '80', '80', '81', '82', '82', '83', '84', '95');
-INSERT INTO `chica_high_bp` VALUES ('60', '13', 'M', '121', '122', '124', '126', '128', '129', '130', '79', '80', '81', '82', '83', '83', '84', '95');
-INSERT INTO `chica_high_bp` VALUES ('61', '14', 'F', '123', '124', '125', '126', '128', '129', '130', '81', '81', '82', '83', '83', '84', '85', '95');
-INSERT INTO `chica_high_bp` VALUES ('62', '14', 'M', '124', '125', '127', '128', '130', '132', '132', '80', '81', '81', '82', '83', '84', '85', '95');
-INSERT INTO `chica_high_bp` VALUES ('63', '15', 'F', '124', '125', '126', '128', '129', '130', '131', '82', '82', '83', '83', '84', '85', '86', '95');
-INSERT INTO `chica_high_bp` VALUES ('64', '15', 'M', '127', '128', '129', '131', '133', '134', '135', '81', '82', '83', '83', '84', '85', '86', '95');
-INSERT INTO `chica_high_bp` VALUES ('65', '16', 'F', '125', '126', '128', '128', '130', '131', '132', '83', '83', '83', '84', '85', '86', '86', '95');
-INSERT INTO `chica_high_bp` VALUES ('66', '16', 'M', '129', '130', '132', '134', '136', '137', '138', '83', '83', '84', '85', '86', '87', '87', '95');
-INSERT INTO `chica_high_bp` VALUES ('67', '17', 'F', '126', '126', '129', '129', '130', '131', '132', '83', '83', '83', '84', '85', '86', '86', '95');
-INSERT INTO `chica_high_bp` VALUES ('68', '17', 'M', '132', '133', '135', '136', '138', '140', '140', '85', '85', '86', '87', '88', '89', '89', '95');
+INSERT INTO `chica_high_bp` VALUES (1,1,'M',94,95,97,99,100,102,103,49,50,51,52,53,53,54,90),(2,2,'M',97,99,100,102,104,105,106,54,55,56,57,58,58,59,90),(3,3,'M',100,101,103,105,107,108,109,59,59,60,61,62,63,63,90),(4,4,'M',102,103,105,107,109,110,111,62,63,64,65,66,66,67,90),(5,5,'M',104,105,106,108,110,111,112,65,66,67,68,69,69,70,90),(6,6,'M',105,106,108,110,111,113,113,68,68,69,70,71,72,72,90),(7,7,'M',106,107,109,111,113,114,115,70,70,71,72,73,74,74,90),(8,8,'M',107,109,110,112,114,115,116,71,72,72,73,74,75,76,90),(9,9,'M',109,110,112,114,115,117,118,72,73,74,75,76,76,77,90),(10,10,'M',111,112,114,115,117,119,119,73,73,74,75,76,77,78,90),(11,11,'M',113,114,115,117,119,120,121,74,74,75,76,77,78,78,90),(12,12,'M',115,116,118,120,121,123,123,74,75,75,76,77,78,79,90),(13,13,'M',117,118,120,122,124,125,126,75,75,76,77,78,79,79,90),(14,14,'M',120,121,123,125,126,128,128,75,76,77,78,79,79,80,90),(15,15,'M',122,124,125,127,129,130,131,76,77,78,79,80,80,81,90),(16,16,'M',125,126,128,130,131,133,134,78,78,79,80,81,82,82,90),(17,17,'M',127,128,130,132,134,135,136,80,80,81,82,83,84,84,90),(18,1,'F',97,97,98,100,101,102,103,52,53,53,54,55,55,56,90),(19,2,'F',98,99,100,101,103,104,105,57,58,58,59,60,61,61,90),(20,3,'F',100,100,102,103,104,106,106,61,62,62,63,64,64,65,90),(21,4,'F',101,102,103,104,106,107,108,64,64,65,66,67,67,68,90),(22,5,'F',103,103,105,106,107,109,109,66,67,67,68,69,69,70,90),(23,6,'F',104,105,106,108,109,110,111,68,68,69,70,70,71,72,90),(24,7,'F',106,107,108,109,111,112,113,69,70,70,71,72,72,73,90),(25,8,'F',108,109,110,111,113,114,114,71,71,71,72,73,74,74,90),(26,9,'F',110,110,112,113,114,116,116,72,72,72,73,74,75,75,90),(27,10,'F',112,112,114,115,116,118,118,73,73,73,74,75,76,76,90),(28,11,'F',114,114,116,117,118,119,120,74,74,74,75,76,77,77,90),(29,12,'F',116,116,117,119,120,121,122,75,75,75,76,77,78,78,90),(30,13,'F',117,118,119,121,122,123,124,76,76,76,77,78,79,79,90),(31,14,'F',119,120,121,122,124,125,125,77,77,77,78,79,80,80,90),(32,15,'F',120,121,122,123,125,126,127,78,78,78,79,80,81,81,90),(33,16,'F',121,122,123,124,126,127,128,78,78,79,80,81,81,82,90),(34,17,'F',122,122,123,125,126,127,128,78,79,79,80,81,81,82,90),(35,1,'F',100,101,102,104,105,106,107,56,57,57,58,59,59,60,95),(36,1,'M',98,99,101,103,104,106,106,54,54,55,56,57,58,58,95),(37,2,'F',102,103,104,105,107,108,109,61,62,62,63,64,65,65,95),(38,2,'M',101,102,104,106,108,109,110,59,59,60,61,62,63,63,95),(39,3,'F',104,104,105,107,108,109,110,65,66,66,67,68,68,69,95),(40,3,'M',104,105,107,109,110,112,113,63,63,64,65,66,67,67,95),(41,4,'F',105,106,107,108,110,111,112,68,68,69,70,71,71,72,95),(42,4,'M',106,107,109,111,112,114,115,66,67,68,69,70,71,71,95),(43,5,'F',107,107,108,110,111,112,113,70,71,71,72,73,73,74,95),(44,5,'M',108,109,110,112,114,115,116,69,70,71,72,73,74,74,95),(45,6,'F',108,109,110,111,113,114,115,72,72,73,74,74,75,76,95),(46,6,'M',109,110,112,114,115,117,117,72,72,73,74,75,76,76,95),(47,7,'F',110,111,112,113,115,116,116,73,74,74,75,76,76,77,95),(48,7,'M',110,111,113,115,117,118,119,74,74,75,76,77,78,78,95),(49,8,'F',112,112,114,115,116,118,118,75,75,75,76,77,78,78,95),(50,8,'M',111,112,114,116,118,119,120,75,76,77,78,79,79,80,95),(51,9,'F',114,114,115,117,118,119,120,76,76,76,77,78,79,79,95),(52,9,'M',113,114,116,118,119,121,121,76,77,78,79,80,81,81,95),(53,10,'F',116,116,117,119,120,121,122,77,77,77,78,79,80,80,95),(54,10,'M',115,116,117,119,121,122,123,77,78,79,80,81,81,82,95),(55,11,'F',118,118,119,121,122,123,124,78,78,78,79,80,81,81,95),(56,11,'M',117,118,119,121,123,124,125,78,78,79,80,81,82,82,95),(57,12,'F',119,120,121,123,124,125,126,79,79,79,80,81,82,82,95),(58,12,'M',119,120,122,123,125,127,127,78,79,80,81,82,82,83,95),(59,13,'F',121,122,123,124,126,127,128,80,80,80,81,82,83,83,95),(60,13,'M',121,122,124,126,128,129,130,79,79,80,81,82,83,83,95),(61,14,'F',123,123,125,126,127,129,129,81,81,81,82,83,84,84,95),(62,14,'M',124,125,127,128,130,132,132,80,80,81,82,83,84,84,95),(63,15,'F',124,125,126,127,129,130,131,82,82,82,83,84,85,85,95),(64,15,'M',126,127,129,131,133,134,135,81,81,82,83,84,85,85,95),(65,16,'F',125,126,127,128,130,131,132,82,82,83,84,85,85,86,95),(66,16,'M',129,130,132,134,135,137,137,82,83,83,84,85,86,87,95),(67,17,'F',125,126,127,129,130,131,132,82,83,83,84,85,85,86,95),(68,17,'M',131,132,134,136,138,139,140,84,85,86,87,87,88,89,95);
 INSERT INTO `chica_insurance_category` VALUES ('1', 'A01', 'Medicare', null, 'Medicare Inpatient/Outpatient', '100', '100', '100100');
 INSERT INTO `chica_insurance_category` VALUES ('2', 'A02', 'Medicare', null, 'Medicare Advantra HMO Inpatient/Outpatient', '100', '103', '100103');
 INSERT INTO `chica_insurance_category` VALUES ('3', 'A03', 'Medicare', null, 'Medicare HMO - Inpatient/Outpatient', '100', '102', '100102');
@@ -2318,60 +2251,60 @@ INSERT INTO chica_error_category
    (`name`, `description`)
 VALUES
    ('Support Page', 'A support page was sent from the grease board');
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('WAIT FOR PRINT', 'Waiting for teleform to print xml file');
 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('WAIT FOR SCAN', 'Waiting for person to scan printed telform form back');
 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('CONSUME FORM INSTANCE', 'Processing scanned teleform form xml');
 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('RANDOMIZE', 'Randomize patient to given study');
 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('QUERY KITE', 'Query kite.regenstrief.org for patient information');
 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('REPRINT', 'Reprints a form');
 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('RESCAN', 'Rescans and processes a form');
 
-INSERT INTO atd_program
+INSERT INTO chirdlutilbackports_program
    (`name`,`version`)
 VALUES
    ('chica', '1.0');
-INSERT INTO atd_form_attribute
+INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('medRecNumberTag', 'XML tagname that contains the patient\'s medical record number within a form instance.');
 
-INSERT INTO atd_form_attribute
+INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('numQuestions', 'Number of Questions on the PSF form');
 
-INSERT INTO atd_form_attribute
+INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('numPrompts', 'Number of Prompts on the PWS form');
-   INSERT INTO atd_form_attribute
+   INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('medRecNumberTag2', 'Alternate XML tagname that contains the patient\'s medical record number within a form instance.');
@@ -2381,188 +2314,173 @@ INSERT INTO chica_study_attribute
 VALUES
    ('Custom Randomizer', 'Custom randomization class');
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'JIT', max(state_action_id)  from atd_state_action where action_name='PRODUCE JIT';
+select  'JIT', max(state_action_id)  from chirdlutilbackports_state_action where action_name='PRODUCE JIT';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`)
 VALUES
    ('CHECKIN');
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`)
 VALUES
    ('FINISHED');
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`)
 VALUES
    ('ErrorState');
    
    
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'PSF_printed', max(state_action_id) from atd_state_action where action_name='WAIT FOR PRINT';
+select  'PSF_printed', max(state_action_id) from chirdlutilbackports_state_action where action_name='WAIT FOR PRINT';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'PSF_wait_to_scan', max(state_action_id)  from atd_state_action where action_name='WAIT FOR SCAN';
+select  'PSF_wait_to_scan', max(state_action_id)  from chirdlutilbackports_state_action where action_name='WAIT FOR SCAN';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'PWS_printed', max(state_action_id)  from atd_state_action where action_name='WAIT FOR PRINT';
+select  'PWS_printed', max(state_action_id)  from chirdlutilbackports_state_action where action_name='WAIT FOR PRINT';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'PWS_wait_to_scan', max(state_action_id)  from atd_state_action where action_name='WAIT FOR SCAN';
+select  'PWS_wait_to_scan', max(state_action_id)  from chirdlutilbackports_state_action where action_name='WAIT FOR SCAN';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'PWS_process', max(state_action_id)  from atd_state_action where action_name='CONSUME FORM INSTANCE';
+select  'PWS_process', max(state_action_id)  from chirdlutilbackports_state_action where action_name='CONSUME FORM INSTANCE';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'Randomize', max(state_action_id)  from atd_state_action where action_name='RANDOMIZE';
+select  'Randomize', max(state_action_id)  from chirdlutilbackports_state_action where action_name='RANDOMIZE';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'PSF_process', max(state_action_id)  from atd_state_action where action_name='CONSUME FORM INSTANCE';
+select  'PSF_process', max(state_action_id)  from chirdlutilbackports_state_action where action_name='CONSUME FORM INSTANCE';
    
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'QUERY KITE PWS', max(state_action_id)  from atd_state_action where action_name='QUERY KITE';
+select  'QUERY KITE PWS', max(state_action_id)  from chirdlutilbackports_state_action where action_name='QUERY KITE';
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'QUERY KITE PSF', max(state_action_id)  from atd_state_action where action_name='QUERY KITE';
+select  'QUERY KITE PSF', max(state_action_id)  from chirdlutilbackports_state_action where action_name='QUERY KITE';
    
-   INSERT INTO atd_state
-   (`name`,`state_action_id`, `form_id`)
-select  'PSF_reprint', max(state_action_id),max(b.form_id) from atd_state_action a,form b where action_name='REPRINT' and b.name='PSF' and b.retired=0;
+   INSERT INTO chirdlutilbackports_state
+   (`name`,`state_action_id`, `form_name`)
+select  'PSF_reprint', max(state_action_id), b.name from chirdlutilbackports_state_action a,form b where action_name='REPRINT' and b.name='PSF' and b.retired=0;
 
-INSERT INTO atd_state
-   (`name`,`state_action_id`, `form_id`)
-select  'PWS_reprint', max(state_action_id),max(b.form_id) from atd_state_action a,form b where action_name='REPRINT' and b.name='PWS' and b.retired=0;
+INSERT INTO chirdlutilbackports_state
+   (`name`,`state_action_id`, `form_name`)
+select  'PWS_reprint', max(state_action_id), b.name from chirdlutilbackports_state_action a,form b where action_name='REPRINT' and b.name='PWS' and b.retired=0;
 
-INSERT INTO atd_state
-   (`name`,`state_action_id`, `form_id`)
-select  'PSF_rescan', max(state_action_id),max(b.form_id) from atd_state_action a,form b where action_name='RESCAN' and b.name='PSF' and b.retired=0;
+INSERT INTO chirdlutilbackports_state
+   (`name`,`state_action_id`, `form_name`)
+select  'PSF_rescan', max(state_action_id), b.name from chirdlutilbackports_state_action a,form b where action_name='RESCAN' and b.name='PSF' and b.retired=0;
 
-INSERT INTO atd_state
-   (`name`,`state_action_id`, `form_id`)
-select  'PWS_rescan', max(state_action_id),max(b.form_id) from atd_state_action a,form b where action_name='RESCAN' and b.name='PWS' and b.retired=0;
+INSERT INTO chirdlutilbackports_state
+   (`name`,`state_action_id`, `form_name`)
+select  'PWS_rescan', max(state_action_id), b.name from chirdlutilbackports_state_action a,form b where action_name='RESCAN' and b.name='PWS' and b.retired=0;
 
-INSERT INTO atd_state
-   (`name`,`state_action_id`, `form_id`)
-select  'PSF_create', max(state_action_id),max(b.form_id) from atd_state_action a,form b where action_name='PRODUCE FORM INSTANCE' and b.name='PSF' and b.retired=0;
+INSERT INTO chirdlutilbackports_state
+   (`name`,`state_action_id`, `form_name`)
+select  'PSF_create', max(state_action_id), b.name from chirdlutilbackports_state_action a,form b where action_name='PRODUCE FORM INSTANCE' and b.name='PSF' and b.retired=0;
 
-INSERT INTO atd_state
-   (`name`,`state_action_id`, `form_id`)
-select  'PWS_create', max(state_action_id),max(b.form_id) from atd_state_action a,form b where action_name='PRODUCE FORM INSTANCE' and b.name='PWS' and b.retired=0;
+INSERT INTO chirdlutilbackports_state
+   (`name`,`state_action_id`, `form_name`)
+select  'PWS_create', max(state_action_id), b.name from chirdlutilbackports_state_action a,form b where action_name='PRODUCE FORM INSTANCE' and b.name='PWS' and b.retired=0;
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='CHECKIN' and b.name='QUERY KITE PSF' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='CHECKIN' and b.name='QUERY KITE PSF' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_printed' and b.name='PSF_wait_to_scan' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_printed' and b.name='PSF_wait_to_scan' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_wait_to_scan' and b.name='PSF_process' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_wait_to_scan' and b.name='PSF_process' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PWS_create' and b.name='PWS_printed' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PWS_create' and b.name='PWS_printed' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PWS_printed' and b.name='PWS_wait_to_scan' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PWS_printed' and b.name='PWS_wait_to_scan' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PWS_wait_to_scan' and b.name='PWS_process' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PWS_wait_to_scan' and b.name='PWS_process' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PWS_process' and b.name='FINISHED' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PWS_process' and b.name='FINISHED' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_create' and b.name='PSF_printed' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_create' and b.name='PSF_printed' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='Randomize' and b.name='PSF_create' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='Randomize' and b.name='PSF_create' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='QUERY KITE PSF' and b.name='Randomize' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='QUERY KITE PSF' and b.name='Randomize' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_process' and b.name='QUERY KITE PWS' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_process' and b.name='QUERY KITE PWS' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='QUERY KITE PWS' and b.name='PWS_create' and c.name='chica';
-
-INSERT INTO scheduler_task_config
-   (`name`, `schedulable_class`, `start_time_pattern`, `repeat_interval`, `start_on_startup`, `started`, `created_by`, `date_created`)
-select 'McKessonCheckinProcessor', 'org.openmrs.module.chica.hl7.mckesson.CheckinProcessor', 
-'MM/dd/yyyy HH:mm:ss', 86400000, 1, 0, 1,NOW() from 
-(select count(*) as cnt from scheduler_task_config where name='McKessonCheckinProcessor') a
-where a.cnt=0;
-
-   INSERT INTO scheduler_task_config_property
-   (`name`, `value`, `task_config_id`)
-select a.* from 
-(select 'port', '5002', max(task_config_id) from scheduler_task_config where name='McKessonCheckinProcessor')a,
-(select count(*) as cnt from scheduler_task_config_property where name='port'
-and task_config_id=(select max(task_config_id) from scheduler_task_config where name='McKessonCheckinProcessor') )b
-where b.cnt=0;
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='QUERY KITE PWS' and b.name='PWS_create' and c.name='chica';
 
 INSERT INTO patient_identifier_type
-   (`name`, `description`,  `check_digit`, `creator`, `date_created`,`validator`)
-select 'SSN', 'social security number',  1, 1, NOW(), 'org.openmrs.module.chica.hl7.SSNValidator' from 
+   (`name`, `description`,  `check_digit`, `creator`, `date_created`,`validator`, `uuid`)
+select 'SSN', 'social security number',  1, 1, NOW(), 'org.openmrs.module.chica.hl7.SSNValidator', UUID() from 
 (select count(*) as cnt from patient_identifier_type where name='SSN') a
 where a.cnt=0;
    
 INSERT INTO person_attribute_type
-   (`name`, `description`, `format`, `searchable`, `creator`, `date_created`)
-select 'SSN', 'social security number', 'java.lang.String',0, 1, NOW() from 
+   (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
+select 'SSN', 'social security number', 'java.lang.String',0, 1, NOW(), UUID() from 
 (select count(*) as cnt from person_attribute_type where name='SSN') a
 where a.cnt=0;
 
 INSERT INTO person_attribute_type
-   (`name`, `description`, `format`, `searchable`, `creator`, `date_created`)
-select 'Mother\'s maiden name', 'mother\'s maiden name', 'java.lang.String', 1, 1, NOW() from 
+   (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
+select 'Mother\'s maiden name', 'mother\'s maiden name', 'java.lang.String', 1, 1, NOW(), UUID() from 
 (select count(*) as cnt from person_attribute_type where name='Mother\'s maiden name') a
 where a.cnt=0;
 
 INSERT INTO person_attribute_type
-   (`name`, `description`, `format`,`searchable`, `creator`, `date_created`)
-select 'Civil Status', 'marital status', 'java.lang.String', 1, 1, NOW() from 
+   (`name`, `description`, `format`,`searchable`, `creator`, `date_created`, `uuid`)
+select 'Civil Status', 'marital status', 'java.lang.String', 1, 1, NOW(), UUID() from 
 (select count(*) as cnt from person_attribute_type where name='Civil Status') a
 where a.cnt=0;
 
 INSERT INTO person_attribute_type
-   (`name`, `description`, `format`,`searchable`, `creator`, `date_created`)
-select 'Religion', 'religion', 'java.lang.String', 1, 1, NOW() from 
+   (`name`, `description`, `format`,`searchable`, `creator`, `date_created`, `uuid`)
+select 'Religion', 'religion', 'java.lang.String', 1, 1, NOW(), UUID() from 
 (select count(*) as cnt from person_attribute_type where name='Religion') a
 where a.cnt=0;
 
@@ -2603,24 +2521,25 @@ CREATE TABLE IF NOT EXISTS `chica_response` (
 
 delete from user_role where role='Provider' and user_id=(select max(user_id) from users where system_id='admin');
 
+
 INSERT INTO `person`
-(creator,date_created)
-values( 1, NOW() );
+(creator,date_created,uuid)
+values( 1, NOW(), UUID() );
 
 INSERT INTO `users`
-(user_id,system_id,creator,date_created,username)
+(system_id,creator,date_created,username,uuid,person_id)
 select a.* from 
 (
-select max(person_id), '2-6','1', NOW(),'.Other.' from person
+select '2-6','1', NOW(),'.Other.', UUID(), (select max(person_id) from person)
 )a,
 (select count(*) as cnt from users where username='.Other.')b
 where b.cnt=0;
 
 INSERT INTO `person_name` 
-(person_id,family_name,creator,date_created)
+(person_id,family_name,creator,date_created,uuid)
 select a.* from 
-(select max(user_id),'Other',1, NOW() from users where system_id='2-6')a,
-(select count(*) as cnt from person_name where family_name='Other' and person_id=(select max(user_id) from users where system_id='2-6'))b
+(select person_id,'Other',1, NOW(), UUID() from users where system_id='2-6')a,
+(select count(*) as cnt from person_name where family_name='Other' and person_id=(select person_id from users where system_id='2-6'))b
 where b.cnt=0;
 
 INSERT INTO `user_role` 
@@ -2639,10 +2558,10 @@ where b.cnt=0;
 		Added mapping for PSF_rescan state that creates a new PWS.
 		</description>
 <sql>
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_rescan' and b.name='QUERY KITE PWS' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_rescan' and b.name='QUERY KITE PWS' and c.name='chica';
 </sql>
 </diff>
 <diff>
@@ -2655,14 +2574,14 @@ select  max(a.state_id),max(b.state_id),max(program_id)
 		</description>
 <sql>
 
-INSERT into encounter_type  (name, description, creator, date_created)
-(select  distinct 'HL7Message','Arrival from HL7 message', 1, NOW() 
+INSERT into encounter_type  (name, description, creator, date_created, uuid)
+(select  distinct 'HL7Message','Arrival from HL7 message', 1, NOW(), UUID() 
 from encounter_type
 WHERE 
 'HL7Message'  NOT IN (SELECT name FROM encounter_type where name = 'HL7Message'));
 
-INSERT into encounter_type  (name, description, creator, date_created)
-(select  distinct 'ManualCheckin','Patient checked in manually', 1, NOW() 
+INSERT into encounter_type  (name, description, creator, date_created, uuid)
+(select  distinct 'ManualCheckin','Patient checked in manually', 1, NOW(), UUID() 
 from encounter_type
 WHERE 
 'ManualCheckin'  NOT IN (SELECT name FROM encounter_type where name = 'ManualCheckin'));
@@ -2680,7 +2599,7 @@ WHERE
 <sql>
 
 UPDATE `users`
-set voided = 0 where username='.Other.'
+set retired = 0 where username='.Other.'
 
 </sql>
 </diff>
@@ -2709,9 +2628,9 @@ set retired = 0 where name='ManualCheckin' or name='HL7Message'
 		</description>
 	<sql>
 	INSERT INTO scheduler_task_config
-   (`name`, `schedulable_class`, `start_time`, `start_time_pattern`, `repeat_interval`, `start_on_startup`, `started`, `created_by`, `date_created`)
+   (`name`, `schedulable_class`, `start_time`, `start_time_pattern`, `repeat_interval`, `start_on_startup`, `started`, `created_by`, `date_created`, `uuid`)
 select 'Cron job retiring Inactive Providers', 'org.openmrs.module.chica.ChicaProvidersCron', 
-NOW(), 'MM/dd/yyyy HH:mm:ss',86400, 1, 0, 1, NOW() from 
+NOW(), 'MM/dd/yyyy HH:mm:ss',86400, 1, 0, 1, NOW(), UUID() from 
 (select count(*) as cnt from scheduler_task_config where name='Cron job retiring Inactive Providers') a
 where a.cnt=0;
 	
@@ -2737,9 +2656,9 @@ where a.cnt=0;
 		Add two new states for timing chica process.
 		</description>
 		<sql>
-		insert into atd_state(name) values('QUERY KITE Alias');
-		insert into atd_state(name) values ('Clinic Registration');
-		insert into atd_state(name) value ('Process Checkin HL7');
+		insert into chirdlutilbackports_state(name) values('QUERY KITE Alias');
+		insert into chirdlutilbackports_state(name) values ('Clinic Registration');
+		insert into chirdlutilbackports_state(name) value ('Process Checkin HL7');
 		</sql>
 	</diff>
 	<diff>
@@ -2809,28 +2728,28 @@ CREATE TABLE `chica_location_tag_attribute_value` (
 
 insert into chica_hl7_export(queue_id,encounter_id,date_processed)
 select queue_id,b.encounter_id,process_date from chica_response a
-inner join atd_session b on a.session_id=b.session_id;
+inner join chirdlutilbackports_session b on a.session_id=b.session_id;
 
 drop table chica_response;
 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('LOAD HL7 EXPORT QUEUE', 'Loads a queue for sending results to Regenstrief');
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`, `state_action_id`)
-select  'Export', max(state_action_id)  from atd_state_action where action_name='LOAD HL7 EXPORT QUEUE';
+select  'Export', max(state_action_id)  from chirdlutilbackports_state_action where action_name='LOAD HL7 EXPORT QUEUE';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='Export' and b.name='Query Kite PWS' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='Export' and b.name='Query Kite PWS' and c.name='chica';
 
-update atd_state_mapping a, atd_state b, atd_program c
+update chirdlutilbackports_state_mapping a, chirdlutilbackports_state b, chirdlutilbackports_program c
 set a.next_state=b.state_id
 where c.name='chica' and a.initial_state in (select state_id
-from atd_state where name='PSF_process') and b.name='Export';
+from chirdlutilbackports_state where name='PSF_process') and b.name='Export';
 	</sql>
 	</diff>
 	<diff>
@@ -2861,11 +2780,11 @@ from atd_state where name='PSF_process') and b.name='Export';
 		ADD FOREIGN KEY (status) REFERENCES chica_hl7_export_status (hl7_export_status_id);
 		
 		INSERT INTO `scheduler_task_config` ( name, description, schedulable_class, start_time,
-		start_time_pattern, repeat_interval, start_on_startup, started, date_created, created_by)
+		start_time_pattern, repeat_interval, start_on_startup, started, date_created, created_by, uuid)
 		values
 		 ('HL7Exporter', 'Task to export outbound hl7 to RMRS',
 		 'org.openmrs.module.chica.hl7.mckesson.HL7Exporter', null,
-		 'MM/dd/yyyy HH:mm:ss', '86400', '0', '0', now(), '1');
+		 'MM/dd/yyyy HH:mm:ss', '86400', '0', '0', now(), '1', UUID());
 		 
 		INSERT INTO `scheduler_task_config_property` (name, value, task_config_id)
 		VALUES ('port', '', (select task_config_id from scheduler_task_config
@@ -2887,9 +2806,9 @@ from atd_state where name='PSF_process') and b.name='Export';
 		</description>
 	<sql>
 		
-	update atd_program
-set start_state=(select state_id from atd_state where name='CHECKIN'),
-end_state=(select state_id from atd_state where name='FINISHED')
+	update chirdlutilbackports_program
+set start_state=(select state_id from chirdlutilbackports_state where name='CHECKIN'),
+end_state=(select state_id from chirdlutilbackports_state where name='FINISHED')
 where name='chica';
 		alter table chica_statistics add column location_tag_id int NOT NULL default 1;
 	    	alter table chica_statistics add CONSTRAINT chica_stat_fk_loc_tag FOREIGN KEY (location_tag_id) REFERENCES location_tag (location_tag_id);
@@ -2897,10 +2816,10 @@ where name='chica';
 		alter table chica_statistics add column location_id int NOT NULL default 1;
 	    	alter table chica_statistics add CONSTRAINT chica_stat_fk_loc FOREIGN KEY (location_id) REFERENCES location (location_id);
 		
-		insert into atd_error_category
+		insert into chirdlutilbackports_error_category
 select * from chica_error_category;
 
-insert into atd_error(error_id,error_category_id,level,session_id,message,details,date_time)
+insert into chirdlutilbackports_error(error_id,error_category_id,level,session_id,message,details,date_time)
 select * from chica_error;
 
 drop table chica_error;
@@ -2937,54 +2856,54 @@ INSERT INTO `chica_location_attribute`(name,description)
 INSERT INTO `chica_location_attribute`(name,description)
  VALUES ('clinicPhone', 'Contact phone number for the clinic.');
 
-   INSERT INTO atd_form_attribute
+   INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('defaultPrinter', 'Default printer for a given printer location.');
    
-      INSERT INTO atd_form_attribute
+      INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('alternatePrinter', 'Alternate printer for a given printer location.');
    
-      INSERT INTO atd_form_attribute
+      INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('useAlternatePrinter', 'Flag used to indicate when alternate printer should be used.');
 
-	update atd_state_action
+	update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.ProduceFormInstance'
 where action_name='PRODUCE FORM INSTANCE';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.ConsumeFormInstance'
 where action_name='CONSUME FORM INSTANCE';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.WaitForPrint'
 where action_name='WAIT FOR PRINT';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.WaitForScan'
 where action_name='WAIT FOR SCAN';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.Rescan'
 where action_name='RESCAN';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.Reprint'
 where action_name='REPRINT';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.Randomize'
 where action_name='RANDOMIZE';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.QueryKite'
 where action_name='QUERY KITE';
 
-update atd_state_action
+update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.LoadHL7ExportQueue'
 where action_name='LOAD HL7 EXPORT QUEUE';
 
@@ -3002,22 +2921,19 @@ insert into chica_location_tag_attribute_value(location_tag_id,value,location_ta
 select location_tag_id,form_id,location_tag_attribute_id,location_id from location_tag_map a, form b, chica_location_tag_attribute c
 where b.retired=0 and b.name='PSF' and c.name='PSF';
 
-ALTER TABLE atd_state DROP FOREIGN KEY state_fk_form;
-alter table atd_state drop column form_id;
-
 INSERT INTO scheduler_task_config
-   (`name`, `schedulable_class`, `start_time_pattern`, `repeat_interval`, `start_on_startup`, `started`, `created_by`, `date_created`)
-select 'PccCheckinProcessor', 'org.openmrs.module.chica.hl7.mckesson.CheckinProcessor', 
-'MM/dd/yyyy HH:mm:ss', 86400000, 1, 0, 1,NOW() from 
-(select count(*) as cnt from scheduler_task_config where name='PccCheckinProcessor') a
+   (`name`, `schedulable_class`, `start_time_pattern`, `repeat_interval`, `start_on_startup`, `started`, `created_by`, `date_created`, `uuid`)
+select 'CheckinProcessor', 'org.openmrs.module.chica.hl7.mckesson.CheckinProcessor', 
+'MM/dd/yyyy HH:mm:ss', 86400000, 1, 0, 1,NOW(), UUID() from 
+(select count(*) as cnt from scheduler_task_config where name='CheckinProcessor') a
 where a.cnt=0;
 
    INSERT INTO scheduler_task_config_property
    (`name`, `value`, `task_config_id`)
 select a.* from 
-(select 'port', '5001', max(task_config_id) from scheduler_task_config where name='PccCheckinProcessor')a,
+(select 'port', '5001', max(task_config_id) from scheduler_task_config where name='CheckinProcessor')a,
 (select count(*) as cnt from scheduler_task_config_property where name='port'
-and task_config_id=(select max(task_config_id) from scheduler_task_config where name='PccCheckinProcessor') )b
+and task_config_id=(select max(task_config_id) from scheduler_task_config where name='CheckinProcessor') )b
 where b.cnt=0;
 	</sql>
 	</diff>
@@ -3041,16 +2957,16 @@ values ('HL7ConfigFile', 'Configuration file for outbound hl7 messages');
 		Remove chica_location_* tables since they were moved to the chirdlutil module
 		</description>
 	<sql>	
-	insert into chirdlutil_location_tag_attribute 
+	insert into chirdlutilbackports_location_tag_attribute 
 	select * from chica_location_tag_attribute;
 	
-	insert into chirdlutil_location_attribute 
+	insert into chirdlutilbackports_location_attribute 
 	select * from chica_location_attribute;
 	
-	insert into chirdlutil_location_tag_attribute_value 
+	insert into chirdlutilbackports_location_tag_attribute_value 
 	select * from chica_location_tag_attribute_value;
 	
-	insert into chirdlutil_location_attribute_value 
+	insert into chirdlutilbackports_location_attribute_value 
 	select * from chica_location_attribute_value;
 	
 	drop table chica_location_tag_attribute_value;
@@ -3068,16 +2984,16 @@ values ('HL7ConfigFile', 'Configuration file for outbound hl7 messages');
 		Added configuration needed for medication list lookup.
 		</description>
 	<sql>	
-	INSERT INTO `chirdlutil_location_attribute`(name,description)
+	INSERT INTO `chirdlutilbackports_location_attribute`(name,description)
  VALUES ('medicationListQueryUser', 
  'Location based user for querying the rg ccd service for a patient medication list');
 
-	INSERT INTO atd_error_category
+	INSERT INTO chirdlutilbackports_error_category
    (`name`, `description`)
 VALUES
    ('Query Medication List Connection', 'Query Medication List connection timeout');
    
-   INSERT INTO atd_state
+   INSERT INTO chirdlutilbackports_state
    (`name`)
 VALUES
    ('Query medication list');
@@ -3092,7 +3008,7 @@ VALUES
 		Added location tag attribute for medications that should always display on the medication list.
 		</description>
 	<sql>
-	insert into chirdlutil_location_tag_attribute (name, description)
+	insert into chirdlutilbackports_location_tag_attribute (name, description)
 values ('unfilteredMedicationFile', 'Configuration file listing medications that should always appear on the medication list');
 	</sql>
 	</diff>
@@ -3122,27 +3038,27 @@ values ('unfilteredMedicationFile', 'Configuration file listing medications that
 	alter table chica_hl7_export_status
 			add date_created  datetime after description;
 		
-	insert into atd_state (name , state_action_id)
-values ('Export POC',  (select state_action_id from atd_state_action
+	insert into chirdlutilbackports_state (name , state_action_id)
+values ('Export POC',  (select state_action_id from chirdlutilbackports_state_action
 where action_name='LOAD HL7 EXPORT QUEUE'));
 
-update atd_state set name = 'Export Vitals' 
+update chirdlutilbackports_state set name = 'Export Vitals' 
 where name ='Export';
 
-update atd_state_mapping a set next_state =
-(select state_id from  atd_state where name='Export POC')
-where  initial_state = (select state_id from atd_state where name='PWS_process');
+update chirdlutilbackports_state_mapping a set next_state =
+(select state_id from  chirdlutilbackports_state where name='Export POC')
+where  initial_state = (select state_id from chirdlutilbackports_state where name='PWS_process');
 	
-insert into atd_state_mapping (initial_state, next_state, program_id)
-values( (select state_id from atd_state where name='Export POC'),
-(select state_id from atd_state where name='FINISHED'), (select program_id from atd_program where name='chica'));		
-		insert into chirdlutil_location_tag_attribute (name, description)
+insert into chirdlutilbackports_state_mapping (initial_state, next_state, program_id)
+values( (select state_id from chirdlutilbackports_state where name='Export POC'),
+(select state_id from chirdlutilbackports_state where name='FINISHED'), (select program_id from chirdlutilbackports_program where name='chica'));		
+		insert into chirdlutilbackports_location_tag_attribute (name, description)
 	values( 'POCConceptMapLocation', 'File containing concept mappings for POC');
-    insert into chirdlutil_location_tag_attribute (name, description)
+    insert into chirdlutilbackports_location_tag_attribute (name, description)
 	values( 'PSFTiffConceptMapLocation', 'File containing concept mappings for PSF tiff images');
-    insert into chirdlutil_location_tag_attribute (name, description)
+    insert into chirdlutilbackports_location_tag_attribute (name, description)
 	values( 'VitalsConceptMapLocation', 'File containing concept mappings for Vitals');
-    insert into chirdlutil_location_tag_attribute (name, description)
+    insert into chirdlutilbackports_location_tag_attribute (name, description)
 	values( 'PWSTiffConceptMapLocation', 'File containing concept mappings for PWS tiff images');
 	
 	</sql>
@@ -3155,94 +3071,94 @@ values( (select state_id from atd_state where name='Export POC'),
 
 		</description>
 	<sql>	
-		insert into atd_state(name,state_action_id)
-select 'JIT_create', state_action_id from atd_state_action where action_name='PRODUCE FORM INSTANCE';
+		insert into chirdlutilbackports_state(name,state_action_id)
+select 'JIT_create', state_action_id from chirdlutilbackports_state_action where action_name='PRODUCE FORM INSTANCE';
 
-insert into atd_state(name,state_action_id)
-select 'JIT_printed', state_action_id from atd_state_action where action_name='WAIT FOR PRINT';
+insert into chirdlutilbackports_state(name,state_action_id)
+select 'JIT_printed', state_action_id from chirdlutilbackports_state_action where action_name='WAIT FOR PRINT';
 
-insert into atd_state(name,state_action_id)
-select 'JIT_wait_to_scan', state_action_id from atd_state_action where action_name='WAIT FOR SCAN';
+insert into chirdlutilbackports_state(name,state_action_id)
+select 'JIT_wait_to_scan', state_action_id from chirdlutilbackports_state_action where action_name='WAIT FOR SCAN';
 
-insert into atd_state(name,state_action_id)
-select 'JIT_process', state_action_id from atd_state_action where action_name='CONSUME FORM INSTANCE';
+insert into chirdlutilbackports_state(name,state_action_id)
+select 'JIT_process', state_action_id from chirdlutilbackports_state_action where action_name='CONSUME FORM INSTANCE';
 
-insert into atd_state(name,state_action_id)
-select 'JIT_rescan', state_action_id from atd_state_action where action_name='RESCAN';
+insert into chirdlutilbackports_state(name,state_action_id)
+select 'JIT_rescan', state_action_id from chirdlutilbackports_state_action where action_name='RESCAN';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='JIT_rescan' and b.name='JIT_process' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='JIT_rescan' and b.name='JIT_process' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='JIT_create' and b.name='JIT_printed' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='JIT_create' and b.name='JIT_printed' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='JIT_printed' and b.name='JIT_wait_to_scan' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='JIT_printed' and b.name='JIT_wait_to_scan' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='JIT_wait_to_scan' and b.name='JIT_process' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='JIT_wait_to_scan' and b.name='JIT_process' and c.name='chica';
  
- 	insert into atd_state(name) values( 'JIT_FINISHED');
+ 	insert into chirdlutilbackports_state(name) values( 'JIT_FINISHED');
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='JIT_process' and b.name='JIT_FINISHED' and c.name='chica';
-	delete a.* from atd_state_mapping a inner join atd_state b on a.initial_state=b.state_id where b.name='PSF_rescan';
-	INSERT INTO atd_state_mapping
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='JIT_process' and b.name='JIT_FINISHED' and c.name='chica';
+	delete a.* from chirdlutilbackports_state_mapping a inner join chirdlutilbackports_state b on a.initial_state=b.state_id where b.name='PSF_rescan';
+	INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_reprint' and b.name='PSF_printed' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_reprint' and b.name='PSF_printed' and c.name='chica';
 
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_rescan' and b.name='PSF_process' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_rescan' and b.name='PSF_process' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PWS_reprint' and b.name='PWS_printed' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PWS_reprint' and b.name='PWS_printed' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (`initial_state`, `next_state`,`program_id`)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PWS_rescan' and b.name='PWS_process' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PWS_rescan' and b.name='PWS_process' and c.name='chica';
  
- update atd_state
+ update chirdlutilbackports_state
 set form_name=null
 where name='PSF_rescan';
 
-update atd_state
+update chirdlutilbackports_state
 set form_name=null
 where name='PWS_rescan';
 
-insert into atd_state(name,state_action_id)
-select 'JIT_reprint', state_action_id from atd_state_action where action_name='REPRINT';
+insert into chirdlutilbackports_state(name,state_action_id)
+select 'JIT_reprint', state_action_id from chirdlutilbackports_state_action where action_name='REPRINT';
 	
-INSERT INTO atd_form_attribute
+INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('scorableFormConfigFile', 'Configuration file telling how to score values on a form.');
 
-INSERT INTO atd_state
+INSERT INTO chirdlutilbackports_state
    (`name`)
 VALUES
    ('JIT_incomplete');	
    
-     INSERT INTO chirdlutil_location_attribute(name,description)
+     INSERT INTO chirdlutilbackports_location_attribute(name,description)
  VALUES ('faxNumber', 'Fax number for the clinic.');
  
- INSERT INTO chirdlutil_location_attribute(name,description)
+ INSERT INTO chirdlutilbackports_location_attribute(name,description)
  VALUES ('isADHDInterventionLocation', 'Indicates whether a given location is an ADHD intervention site');
 	</sql>
 	</diff>
@@ -3255,10 +3171,10 @@ VALUES
 		</description>
 	<sql>	
 		 
- INSERT INTO chirdlutil_location_attribute(name,description)
+ INSERT INTO chirdlutilbackports_location_attribute(name,description)
  VALUES ('isASQInterventionLocation', 'Indicates whether a given location is an ASQ intervention site');
 
- INSERT INTO chirdlutil_location_attribute(name,description)
+ INSERT INTO chirdlutilbackports_location_attribute(name,description)
  VALUES ('isASQInterventionLocationPart2', 'Indicates whether a given location is an ASQ intervention site Part 2');
 	</sql>
 	</diff>
@@ -3270,42 +3186,42 @@ VALUES
 		Add state to clear inmemory obs after PSF/PWS created
 		</description>
 	<sql>		 
-INSERT INTO atd_state_action
+INSERT INTO chirdlutilbackports_state_action
    (action_name, action_description, action_class)
 VALUES
    ('CLEAR INMEMORY OBS', 'Clears the in-memory obs','org.openmrs.module.chica.action.ClearInmemoryObs');
 
-insert into atd_state(name,state_action_id)
-select 'CLEAR INMEMORY OBS PWS', state_action_id from atd_state_action where action_name='CLEAR INMEMORY OBS';
+insert into chirdlutilbackports_state(name,state_action_id)
+select 'CLEAR INMEMORY OBS PWS', state_action_id from chirdlutilbackports_state_action where action_name='CLEAR INMEMORY OBS';
 
-insert into atd_state(name,state_action_id)
-select 'CLEAR INMEMORY OBS PSF', state_action_id from atd_state_action where action_name='CLEAR INMEMORY OBS';
+insert into chirdlutilbackports_state(name,state_action_id)
+select 'CLEAR INMEMORY OBS PSF', state_action_id from chirdlutilbackports_state_action where action_name='CLEAR INMEMORY OBS';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (initial_state, next_state,program_id)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PSF_create' and b.name='CLEAR INMEMORY OBS PSF' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PSF_create' and b.name='CLEAR INMEMORY OBS PSF' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (initial_state, next_state,program_id)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='CLEAR INMEMORY OBS PSF' and b.name='PSF_printed' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='CLEAR INMEMORY OBS PSF' and b.name='PSF_printed' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (initial_state, next_state,program_id)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='PWS_create' and b.name='CLEAR INMEMORY OBS PWS' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='PWS_create' and b.name='CLEAR INMEMORY OBS PWS' and c.name='chica';
 
-INSERT INTO atd_state_mapping
+INSERT INTO chirdlutilbackports_state_mapping
    (initial_state, next_state,program_id)
 select  max(a.state_id),max(b.state_id),max(program_id)
- from atd_state a,atd_state b, atd_program c where a.name='CLEAR INMEMORY OBS PWS' and b.name='PWS_printed' and c.name='chica';
+ from chirdlutilbackports_state a,chirdlutilbackports_state b, chirdlutilbackports_program c where a.name='CLEAR INMEMORY OBS PWS' and b.name='PWS_printed' and c.name='chica';
 	
-	delete from atd_state_mapping where initial_state=(select state_id from atd_state where name='PSF_create')
-and next_state=(select state_id from atd_state where name='PSF_printed');
+	delete from chirdlutilbackports_state_mapping where initial_state=(select state_id from chirdlutilbackports_state where name='PSF_create')
+and next_state=(select state_id from chirdlutilbackports_state where name='PSF_printed');
 
-delete from atd_state_mapping where initial_state=(select state_id from atd_state where name='PWS_create')
-and next_state=(select state_id from atd_state where name='PWS_printed');
+delete from chirdlutilbackports_state_mapping where initial_state=(select state_id from chirdlutilbackports_state where name='PWS_create')
+and next_state=(select state_id from chirdlutilbackports_state where name='PWS_printed');
 	
 	</sql>
 	</diff>
@@ -3317,7 +3233,7 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
 		Add location attribute for MCHAT intervention Location
 		</description>
 	<sql>		 
- INSERT INTO chirdlutil_location_attribute(name,description)
+ INSERT INTO chirdlutilbackports_location_attribute(name,description)
  VALUES ('isMchatInterventionLocation', 'Indicates whether a given location is an MCHAT intervention site');
 	
 	</sql>
@@ -3330,41 +3246,41 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
         Add the ability to fax JITs
         </description>
     <sql>
-    insert into atd_state_action (action_name,action_description,action_class) 
+    INSERT INTO chirdlutilbackports_state_action (action_name,action_description,action_class) 
     values ('FAX JIT','Faxes any applicable JIT','org.openmrs.module.chica.action.FaxJIT');
     
-    insert into atd_state (name,state_action_id) 
-    values ('JIT_fax',(select state_action_id from atd_state_action where action_name = 'FAX JIT'));
+    insert into chirdlutilbackports_state (name,state_action_id) 
+    values ('JIT_fax',(select state_action_id from chirdlutilbackports_state_action where action_name = 'FAX JIT'));
     
-    insert into atd_state_mapping (initial_state,next_state,program_id) 
+    insert into chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
     values (
-       (select state_id from atd_state where name = 'JIT_fax')
-      ,(select state_id from atd_state where name = 'JIT_FINISHED')
-      ,(select program_id from atd_program where name = 'chica'));
+       (select state_id from chirdlutilbackports_state where name = 'JIT_fax')
+      ,(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED')
+      ,(select program_id from chirdlutilbackports_program where name = 'chica'));
       
-    update atd_state_mapping set next_state = (select state_id from atd_state where name = 'JIT_fax')
-    where initial_state = (select state_id from atd_state where name = 'JIT_process');
+    update chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'JIT_fax')
+    where initial_state = (select state_id from chirdlutilbackports_state where name = 'JIT_process');
     
-    insert into atd_form_attribute (name, description) 
+    insert into chirdlutilbackports_form_attribute (name, description) 
     values ('auto-fax', 'Flag to indicate if a form should be faxed.');
     
-    insert into atd_form_attribute_value (form_id, value, form_attribute_id, location_tag_id, location_id) 
-    select a.form_id, 'false', (select form_attribute_id from atd_form_attribute where name = 'auto-fax'), 
+    insert into chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id, location_id) 
+    select a.form_id, 'false', (select form_attribute_id from chirdlutilbackports_form_attribute where name = 'auto-fax'), 
     c.location_tag_id, c.location_id from form a, location_tag_map c, location b 
     where a.retired=0 and c.location_id=b.location_id group by a.form_id, c.location_tag_id, c.location_id;
     
-    insert into chirdlutil_location_attribute (name, description) 
+    insert into chirdlutilbackports_location_attribute (name, description) 
     values ('clinicFaxNumber', 'Clinic fax number where applicable forms will be routed');
     
-    insert into chirdlutil_location_attribute_value (location_id, value, location_attribute_id) 
-    select a.location_id, '', (select location_attribute_id from chirdlutil_location_attribute where name='clinicFaxNumber')
+    insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+    select a.location_id, '', (select location_attribute_id from chirdlutilbackports_location_attribute where name='clinicFaxNumber')
     from location a;
     
-    insert into chirdlutil_location_attribute (name, description) 
+    insert into chirdlutilbackports_location_attribute (name, description) 
     values ('clinicFaxReceiver', 'The person, group, or general area that will receive faxes');
     
-    insert into chirdlutil_location_attribute_value (location_id, value, location_attribute_id) 
-    select a.location_id, 'Clinical Staff', (select location_attribute_id from chirdlutil_location_attribute where name='clinicFaxReceiver')
+    insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+    select a.location_id, 'Clinical Staff', (select location_attribute_id from chirdlutilbackports_location_attribute where name='clinicFaxReceiver')
     from location a;
     </sql>
     </diff>
@@ -3376,7 +3292,7 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
         Add a new ATD Error Category for recording bad scan data
         </description>
     <sql>
-    insert into atd_error_category (name, description) 
+    insert into chirdlutilbackports_error_category (name, description) 
     values ('Bad Scans', 'Recording user choices when handling bad scans');
     </sql>
     </diff>
@@ -3389,12 +3305,12 @@ and next_state=(select state_id from atd_state where name='PWS_printed');
 		</description>
 	<sql>	
 	
-	INSERT INTO atd_form_attribute
+	INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('forcePrintable', 'Form can be force printed from the Print JITs screen.');
    
-   	INSERT INTO atd_form_attribute
+   	INSERT INTO chirdlutilbackports_form_attribute
    (`name`, `description`)
 VALUES
    ('displayName', 'User friendly name for the form.');
@@ -3408,12 +3324,266 @@ VALUES
         Remove fax receiver information.  We are now using the provider's name for receiving faxes.
         </description>
 	    <sql>
-	    delete from chirdlutil_location_attribute_value
-	    where location_attribute_id = (select location_attribute_id from chirdlutil_location_attribute where name = 'clinicFaxReceiver');
+	    delete from chirdlutilbackports_location_attribute_value
+	    where location_attribute_id = (select location_attribute_id from chirdlutilbackports_location_attribute where name = 'clinicFaxReceiver');
 	    
-	    delete from chirdlutil_location_attribute where name = 'clinicFaxReceiver';
+	    delete from chirdlutilbackports_location_attribute where name = 'clinicFaxReceiver';
 	    </sql>
 	</diff>
+	<diff>
+        <version>1.5.3</version>
+        <author>Steve McKee</author>
+        <date>July 5, 2011</date>
+        <description>
+        Move defaultTifImageDirectory and badScansExcludedExtensions global properties from CHICA to ATD.
+        </description>
+        <sql>
+        update global_property a, global_property b 
+        set a.property_value = b.property_value 
+        where a.property = 'atd.defaultTifImageDirectory' 
+        and b.property = 'chica.defaultTifImageDirectory' 
+        and b.property_value is not null 
+        and char_length(b.property_value) > 0;
+        
+        delete from global_property where property = 'chica.defaultTifImageDirectory';
+        
+        update global_property a, global_property b 
+        set a.property_value = b.property_value 
+        where a.property = 'atd.badScansExcludedExtensions' 
+        and b.property = 'chica.badScansExcludedExtensions' 
+        and b.property_value is not null 
+        and char_length(b.property_value) > 0;
+        
+        delete from global_property where property = 'chica.badScansExcludedExtensions';
+        
+        update global_property a, global_property b 
+        set a.property_value = b.property_value 
+        where a.property = 'atd.showBadScans' 
+        and b.property = 'chica.showBadScans' 
+        and b.property_value is not null 
+        and char_length(b.property_value) > 0;
+        
+        delete from global_property where property = 'chica.showBadScans';
+        </sql>
+    </diff>
+    
+    <diff>
+        <version>1.5.4</version>
+        <author>Tammy Dugan</author>
+        <date>July 7, 2011</date>
+        <description>
+        Move chica_statistics to atd_statistics.
+        Delete initMethod and initClass properties from TeleformFileMonitor task.
+        Update action classes in state_action table.
+        </description>
+        <sql>
+    Insert into atd_statistics
+select * from chica_statistics;
+
+drop TABLE IF EXISTS chica_statistics;
+
+delete b.* from scheduler_task_config a
+inner join scheduler_task_config_property b on a.task_config_id=b.task_config_id
+where a.name='TeleformMonitor'
+and b.name in ('initMethod','initClass');
+
+update chirdlutilbackports_state_action
+set action_class='org.openmrs.module.atd.action.WaitForScan'
+where action_name='WAIT FOR SCAN';
+
+update chirdlutilbackports_state_action
+set action_class='org.openmrs.module.atd.action.WaitForPrint'
+where action_name='WAIT FOR PRINT';
+
+update chirdlutilbackports_state_action
+set action_class='org.openmrs.module.atd.action.Reprint'
+where action_name='REPRINT';
+</sql>
+    </diff>
+    <diff>
+        <version>1.5.5</version>
+        <author>Steve McKee</author>
+        <date>July 11, 2011</date>
+        <description>
+        Move the FAX JIT action from the chica module to the atd module.
+        </description>
+        <sql>
+        update chirdlutilbackports_state_action
+        set action_class='org.openmrs.module.atd.action.FaxJIT'
+        where action_name='FAX JIT';
+        
+        update global_property a, global_property b 
+        set a.property_value = b.property_value 
+        where a.property = 'atd.outgoingFaxDirectory' 
+        and b.property = 'chica.outgoingFaxDirectory';
+        
+        update global_property a, global_property b 
+        set a.property_value = b.property_value 
+        where a.property = 'atd.outgoingFaxFrom' 
+        and b.property = 'chica.outgoingFaxFrom';
+        
+        delete from global_property where property = 'chica.outgoingFaxDirectory';
+        
+        delete from global_property where property = 'chica.outgoingFaxFrom';
+        </sql>
+    </diff>
+    <diff>
+        <version>1.5.6</version>
+        <author>Tammy Dugan</author>
+        <date>Aug 24, 2011</date>
+        <description>
+		Added necessary configuration for immunization query
+        </description>
+        <sql>
+        INSERT INTO chirdlutilbackports_error_category
+   		(`name`, `description`)
+		VALUES
+   		('Query Immunization List Connection', 'Query Immunization List connection timeout');
+   
+   		INSERT INTO chirdlutilbackports_state
+   		(`name`)
+		VALUES
+  		 ('Query Immunization Forecast');
+       	</sql>
+    </diff>
+    <diff>
+        <version>1.5.7</version>
+        <author>Steve McKee</author>
+        <date>Nov 18, 2011</date>
+        <description>
+        Add necessary configuration for the growth charts
+        </description>
+        <sql>
+        insert into chirdlutilbackports_location_attribute (name, description)
+        values ('growthChartDirectory', 'Location where the growth chart images will be placed');
+        
+        insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+        select a.location_id, '', (select location_attribute_id from chirdlutilbackports_location_attribute where name='growthChartDirectory')
+        from location a;
+        </sql>
+    </diff>
+    <diff>
+        <version>1.5.8</version>
+        <author>Steve McKee</author>
+        <date>Jan 19, 2012</date>
+        <description>
+        Add necessary configuration for CHICA GIS
+        </description>
+        <sql>
+        insert into chirdlutilbackports_location_attribute (name, description)
+        values ('GISDirectory', 'Location where the CHICA GIS map images will be placed');
+        
+        insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+        select a.location_id, '', (select location_attribute_id from chirdlutilbackports_location_attribute where name='GISDirectory')
+        from location a;
+        
+        INSERT INTO chirdlutilbackports_location_attribute(name,description)
+        VALUES ('isGISInterventionLocation', 'Indicates whether a given location is a GIS intervention site');
+        
+        INSERT INTO chirdlutilbackports_location_attribute(name,description)
+        VALUES ('clinicDisplayName', 'Clinic name for display purposes');
+        </sql>
+    </diff>
+    <diff>
+        <version>1.5.9</version>
+        <author>Steve McKee</author>
+        <date>August 29, 2012</date>
+        <description>
+        Add necessary configuration for CHICA GIS
+        </description>
+        <sql>
+        insert into chirdlutilbackports_location_attribute (name, description)
+        values ('clinicFaxNumberDisplay', 'Clinic fax number for display purposes');
+        
+        insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+        select a.location_id, '', (select location_attribute_id from chirdlutilbackports_location_attribute where name='clinicFaxNumberDisplay')
+        from location a;
+        </sql>
+    </diff>
+    <diff>
+        <version>1.6.0</version>
+        <author>Steve McKee</author>
+        <date>October 31, 2012</date>
+        <description>
+        Add pager configuration for Medical Legal and Diabetes
+        </description>
+        <sql>
+        insert into chirdlutilbackports_location_attribute (name, description)
+        values ('medicalLegalPager', 'Comma delimeted list of pager numbers for the Medical Legal Study');
+        
+        insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+        select a.location_id, '', (select location_attribute_id from chirdlutilbackports_location_attribute where name='medicalLegalPager')
+        from location a;
+        
+        insert into chirdlutilbackports_location_attribute (name, description)
+        values ('diabetesPager', 'Comma delimeted list of pager numbers for the Type 2 Diabetes Study');
+        
+        insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+        select a.location_id, '', (select location_attribute_id from chirdlutilbackports_location_attribute where name='diabetesPager')
+        from location a;
+        </sql>
+    </diff>
+    <diff>
+        <version>1.6.1</version>
+        <author>Steve McKee</author>
+        <date>October 31, 2012</date>
+        <description>
+        Add medical legal and pager error categories.
+        </description>
+        <sql>
+        insert into chirdlutilbackports_error_category (name, description)
+        values ('Medical Legal Page', 'A page was sent because a medical legal patient was encountered');
+        
+        insert into chirdlutilbackports_error_category (name, description)
+        values ('Diabetes Page', 'A page was sent because a type 2 Diabetes patient was encountered');
+        </sql>
+    </diff>
+    <diff>
+        <version>1.6.2</version>
+        <author>Steve McKee</author>
+        <date>Feb 2, 2012</date>
+        <description>
+        Add new error category for web services
+        </description>
+        <sql>
+        insert into chirdlutilbackports_error_category (name, description)
+        values ('Web Service Error', 'Errors provided through web services');
+        </sql>
+    </diff>
+    <diff>
+        <version>1.6.3</version>
+        <author>Steve McKee</author>
+        <date>Feb 12, 2013</date>
+        <description>
+        Removed unused global property
+        </description>
+        <sql>
+        delete from global_property where property = 'chica.presnetMedicalLegalPostUrl';
+        </sql>
+    </diff>
+    <diff>
+        <version>1.6.4</version>
+        <author>Steve McKee</author>
+        <date>May 22, 2013</date>
+        <description>
+        Add necessary configuration for Type 2 Diabetes
+        </description>
+        <sql>
+        update chirdlutilbackports_location_attribute
+        set name = 'diabetesEndoPager'
+        where name = 'diabetesPager';
+        
+        INSERT INTO chirdlutilbackports_location_attribute(name,description)
+        VALUES ('isDiabetesInterventionLocation', 'Indicates whether a given location is a Type 2 Diabetes intervention site');
+        
+        insert into chirdlutilbackports_location_attribute (name, description)
+        values ('diabetesEndoEmail', 'Comma delimeted list of email addresses for the Type 2 Diabetes Study Endocrinology Form');
+        
+        insert into chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+        select a.location_id, '', (select location_attribute_id from chirdlutilbackports_location_attribute where name='diabetesEndoEmail')
+        from location a;
+        </sql>
+    </diff>
 </sqldiff>
 
 

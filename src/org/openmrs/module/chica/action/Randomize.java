@@ -11,15 +11,14 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.StateManager;
-import org.openmrs.module.atd.action.ProcessStateAction;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.Session;
-import org.openmrs.module.atd.hibernateBeans.State;
-import org.openmrs.module.atd.hibernateBeans.StateAction;
-import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.ChicaStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.randomizer.BasicRandomizer;
@@ -33,7 +32,7 @@ import org.openmrs.module.chica.service.EncounterService;
  */
 public class Randomize implements ProcessStateAction
 {
-	private static Log log = LogFactory.getLog(ChicaStateActionHandler.class);
+	private static Log log = LogFactory.getLog(Randomize.class);
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)
@@ -51,12 +50,11 @@ public class Randomize implements ProcessStateAction
 		
 		ChicaService chicaService = Context
 				.getService(ChicaService.class);
-		ATDService atdService = Context
-				.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State currState = patientState.getState();
 		Integer sessionId = patientState.getSessionId();
 		
-		Session session = atdService.getSession(sessionId);
+		Session session = chirdlutilbackportsService.getSession(sessionId);
 		Integer encounterId = session.getEncounterId();
 		List<Study> activeStudies = chicaService.getActiveStudies();
 
@@ -96,7 +94,7 @@ public class Randomize implements ProcessStateAction
 			}
 		}
 		StateManager.endState(patientState);
-		ChicaStateActionHandler.changeState(patient, sessionId, currState,
+		BaseStateActionHandler.changeState(patient, sessionId, currState,
 				stateAction,parameters,locationTagId,locationId);
 
 	}

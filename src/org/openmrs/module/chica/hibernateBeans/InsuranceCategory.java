@@ -16,6 +16,7 @@ public class InsuranceCategory implements java.io.Serializable
 	private String starCarrierCode;
 	private String starPlanCode;
 	private String insCode;
+	private String ecwInsName;
 
 	
 	public InsuranceCategory()
@@ -97,6 +98,14 @@ public class InsuranceCategory implements java.io.Serializable
 	public void setInsCode(String insCode)
 	{
 		this.insCode = insCode;
+	}
+
+	public String getEcwInsName() {
+		return ecwInsName;
+	}
+
+	public void setEcwInsName(String ecwInsName) {
+		this.ecwInsName = ecwInsName;
 	}
 	
 }

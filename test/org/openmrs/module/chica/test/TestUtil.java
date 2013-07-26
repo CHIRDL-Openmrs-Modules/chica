@@ -72,10 +72,10 @@ public class TestUtil
 	public static void createDTDFile(Connection jdbcConnection,
 			String dtdFilename) throws DataSetException, FileNotFoundException, IOException, SQLException
 	{
-		IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
+		//IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
 
         // write DTD file
-        FlatDtdDataSet.write(connection.createDataSet(),
-                new FileOutputStream(dtdFilename));
+        //FlatDtdDataSet.write(connection.createDataSet(),
+          //      new FileOutputStream(dtdFilename));
 	}
 }

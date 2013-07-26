@@ -11,12 +11,10 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.Session;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
-import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 
 /**
@@ -61,11 +59,25 @@ public class ChicaParameterHandler implements ParameterHandler
 	private void processPSFParameters(Map<String, Object> parameters,
 			HashMap<String,Field> fieldMap)
 	{
+		
+		if(fieldMap == null){
+			System.out.println("Field map is null!");
+			return;
+		}
+		
 		//TODO figure out which child value to read from
 		String child0Val = (String) parameters.get("child0");
 		String child1Val = (String) parameters.get("child1");
 		
-		if(child0Val != null){
+		if (child0Val != null && fieldMap.get(child0Val) == null) {
+			System.out.println("The fieldMap object for child0Val is null!");
+		}
+		
+		if (child1Val != null && fieldMap.get(child1Val) == null) {
+			System.out.println("The fieldMap object for child1Val is null!");
+		}
+		
+		if(child0Val != null&&fieldMap.get(child0Val) != null){
 			String answer = fieldMap.get(child0Val).getValue();
 			if(answer != null){
 				answer = answer.trim();
@@ -82,7 +94,7 @@ public class ChicaParameterHandler implements ParameterHandler
 			}
 		}
 		
-		if(child1Val != null){
+		if(child1Val != null&&fieldMap.get(child1Val) != null){
 			String answer = fieldMap.get(child1Val).getValue();
 			if(answer != null){
 				answer = answer.trim();
@@ -104,13 +116,15 @@ public class ChicaParameterHandler implements ParameterHandler
 			HashMap<String,Field> fieldMap)
 	{
 		
-		ATDService atdService = 
-			(ATDService) Context.getService(ATDService.class);
-		ChicaService chicaService = (ChicaService) Context.getService(ChicaService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		String child0Val = (String) parameters.get("child0");
 		String child1Val = (String) parameters.get("child1");
 		String answerValues = null;
 		String errorValues = null;
+		
+		if(fieldMap == null){
+			return;
+		}
 		
 		if(child0Val.contains("Err")){
 			answerValues = child1Val;
@@ -120,52 +134,52 @@ public class ChicaParameterHandler implements ParameterHandler
 			errorValues = child1Val;
 		}
 		
-		if(answerValues != null){
+		if(answerValues != null&&fieldMap.get(answerValues)!=null){
 			String answer = fieldMap.get(answerValues).getValue();
-			String error = fieldMap.get(errorValues).getValue();
+			String errorString = fieldMap.get(errorValues).getValue();
 			Integer numBoxes = 0;
 			if(answer != null){
 				answer = answer.trim();
 				
-				if(answer.contains("1")&&!(error!=null&&error.contains("1"))){
+				if(answer.contains("1")&&!(errorString!=null&&errorString.contains("1"))){
 					parameters.put("Box1", "true");
 					parameters.put("box1", "true");
 					numBoxes++;
 				}
-				if(answer.contains("2")&&!(error!=null&&error.contains("2"))){
+				if(answer.contains("2")&&!(errorString!=null&&errorString.contains("2"))){
 					parameters.put("Box2", "true");
 					parameters.put("box2", "true");
 					numBoxes++;
 				}
-				if(answer.contains("3")&&!(error!=null&&error.contains("3"))){
+				if(answer.contains("3")&&!(errorString!=null&&errorString.contains("3"))){
 					parameters.put("Box3", "true");
 					parameters.put("box3", "true");
 					numBoxes++;
 				}
-				if(answer.contains("4")&&!(error!=null&&error.contains("4"))){
+				if(answer.contains("4")&&!(errorString!=null&&errorString.contains("4"))){
 					parameters.put("Box4", "true");
 					parameters.put("box4", "true");
 					numBoxes++;
 				}
-				if(answer.contains("5")&&!(error!=null&&error.contains("5"))){
+				if(answer.contains("5")&&!(errorString!=null&&errorString.contains("5"))){
 					parameters.put("Box5", "true");
 					parameters.put("box5", "true");
 					numBoxes++;
 				}
-				if(answer.contains("6")&&!(error!=null&&error.contains("6"))){
+				if(answer.contains("6")&&!(errorString!=null&&errorString.contains("6"))){
 					parameters.put("Box6", "true");
 					parameters.put("box6", "true");
 					numBoxes++;
 				}
 				if (numBoxes == 6){
 					
-					ATDError atdError = new ATDError("Warning", "PWS Scan"
+					Error error = new Error("Warning", "PWS Scan"
 							, "All six PWS boxes were checked - possible scan error. "
 							,null, new Date(), null);
 					//Get the session id
 					Integer sessionId = (Integer) parameters.get("sessionId");
-					atdError.setSessionId(sessionId);
-					atdService.saveError(atdError);
+					error.setSessionId(sessionId);
+					chirdlutilbackportsService.saveError(error);
 					
 				}
 			}

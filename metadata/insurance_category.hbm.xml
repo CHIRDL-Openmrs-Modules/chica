@@ -18,6 +18,6 @@
 		<property name="starCarrierCode" type="java.lang.String" column="star_carrier_code" />
 		<property name="starPlanCode" type="java.lang.String" column="star_plan_code" />
 		<property name="insCode" type="java.lang.String" column="ins_code" />
+		<property name="ecwInsName" type="java.lang.String" column="ecw_ins_name" />
 	</class>
-	
 </hibernate-mapping>

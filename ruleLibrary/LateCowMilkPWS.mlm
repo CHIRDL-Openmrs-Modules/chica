@@ -26,6 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 ecm := read Last {EarlyCowMilkIntro from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 endif
 ;;
@@ -33,6 +34,7 @@ Priority:		934;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
 
 If (ecm = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 
@@ -40,11 +42,23 @@ endif
 
 If (mode = CONSUME) then
 
+If  (Box1=true) OR (Box3=true) OR (Box5=true) then
+ CALL storeNote With "After a child is 1 year old, they should be fed whole cow's milk or breast milk.  Formula is no longer recommended.","DIET AND NUTRITION";
+endif;
+If  (Box1=true) then || note1 || = "|| firstname ||'s parent stopped giving formula.";
+If  (Box3=true) then || note3 || = "|| firstname ||'s parent is breastfeeding.";
+If  (Box5=true) then || note5 || = "|| firstname ||'s parent is giving whole cow's milk.";
+
 If  (Box3=true) then
  CALL storeObs With "BREASTFED 0-1","1";
+ CALL storeNote With "note3","DIET AND NUTRITION";
 endif;
 If  (Box1=true) then
  CALL storeObs With "EarlyCowMilkIntro","yes";
+ CALL storeNote With "note1","DIET AND NUTRITION";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "note5","DIET AND NUTRITION";
 endif;
 
 

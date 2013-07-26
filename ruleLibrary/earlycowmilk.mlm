@@ -71,7 +71,7 @@ endif;
 endif
 ;;
 Action:
-write ("Have you given || firstname || cow's milk to drink?");
+write ("Have you given || firstname || anything other than formula or breast milk to drink?");
 write("¿Alguna vez le ha dado a || firstname || leche de vaca para tomar?") At Spanish;
 ;;
 Age_Min: 0 days;;

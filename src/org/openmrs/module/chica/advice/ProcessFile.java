@@ -3,31 +3,35 @@
  */
 package org.openmrs.module.chica.advice;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.TeleformFileState;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.Program;
-import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.ChicaStateActionHandler;
+import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 
 /**
  * @author tmdugan
  * 
  */
-public class ProcessFile implements Runnable
+public class ProcessFile implements ChirdlRunnable
 {
 	private Log log = LogFactory.getLog(this.getClass());
 
-	private Integer patientStateId = null;
+	private PatientState patientState = null;
 	private String filename = null;
 	private FormInstance formInstance = null;
+	private Integer patientId = null;
+	private String stateName = null;
 
 	public ProcessFile(TeleformFileState tfState)
 	{
@@ -39,8 +43,15 @@ public class ProcessFile implements Runnable
 		Map<String, Object> parameters = tfState.getParameters();
 		if (parameters != null)
 		{
-			PatientState patientState = (PatientState) parameters.get("patientState");
-			this.patientStateId = patientState.getPatientStateId();
+			patientState = (PatientState) parameters.get("patientState");
+			Hibernate.initialize(patientState);
+			Hibernate.initialize(patientState.getState());
+			Hibernate.initialize(patientState.getState().getAction());
+			Hibernate.initialize(patientState.getPatient());
+			this.patientId = patientState.getPatientId();
+			if (patientState.getState() != null) {
+				this.stateName = patientState.getState().getName();
+			}
 		}
 	}
 
@@ -52,6 +63,8 @@ public class ProcessFile implements Runnable
 
 	public void run()
 	{
+		log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+			new Timestamp(new Date().getTime()) + ")");
 		Context.openSession();
 		try
 		{
@@ -60,11 +73,6 @@ public class ProcessFile implements Runnable
 			Context.authenticate(adminService
 					.getGlobalProperty("scheduler.username"), adminService
 					.getGlobalProperty("scheduler.password"));
-			ATDService atdService = Context.getService(ATDService.class);
-
-			//this prevents lazy initialization exceptions from the
-			//object being passed across the aop call
-			PatientState patientState = atdService.getPatientState(this.patientStateId);
 			HashMap<String, Object> stateParameters = patientState
 					.getParameters();
 			if (stateParameters == null)
@@ -74,12 +82,39 @@ public class ProcessFile implements Runnable
 			stateParameters.put("filename", this.filename);
 			stateParameters.put("formInstance", this.formInstance);
 	
-			ChicaStateActionHandler.getInstance().changeState(patientState,
+			BaseStateActionHandler.getInstance().changeState(patientState,
 					stateParameters);
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
-		}finally{
+			log.error("Error processing file", e);
+		} 
+		finally
+		{
 			Context.closeSession();
+			log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+				new Timestamp(new Date().getTime()) + ")");
 		}
 	}
+
+	/**
+	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
+	 */
+    public String getName() {
+	    return "Process File (State: " + stateName + " Patient: " + patientId + " Patient State: " + 
+	    	patientState.getPatientStateId() + ")";
+    }
+
+	/**
+	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getPriority()
+	 */
+    public int getPriority() {
+    	if ("PWS_wait_to_scan".equalsIgnoreCase(stateName) || 
+    			"PWS_process".equalsIgnoreCase(stateName) || 
+    			"PWS_rescan".equalsIgnoreCase(stateName)) {
+    		return ChirdlRunnable.PRIORITY_FOUR;
+    	}
+    	
+	    return ChirdlRunnable.PRIORITY_ONE;
+    }
 }

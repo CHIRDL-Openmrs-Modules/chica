@@ -26,8 +26,11 @@ public class TestCalculator extends BaseModuleContextSensitiveTest
 	 */
 	@Before
 	public void runBeforeEachTest() throws Exception {
-		// authenticate to the temp database
-		authenticate();
+		
+			initializeInMemoryDatabase();
+			executeDataSet(TestUtil.DBUNIT_SETUP_FILE);
+			// authenticate to the temp database
+			authenticate();
 	}
 	/**
 	 * 
@@ -38,16 +41,16 @@ public class TestCalculator extends BaseModuleContextSensitiveTest
 		Calculator calculator = new Calculator();
 
 		// male
-		assertEquals(1, calculator.translateGender("M"));
+		assertEquals(new Integer(1), calculator.translateGender("M"));
 
 		// female
-		assertEquals(2, calculator.translateGender("F"));
+		assertEquals(new Integer(2), calculator.translateGender("F"));
 
 		// null
-		assertEquals(0, calculator.translateGender(null));
+		assertEquals(null, calculator.translateGender(null));
 
 		// invalid string
-		assertEquals(0, calculator.translateGender("U"));
+		assertEquals(null, calculator.translateGender("U"));
 	}
 
 	@Test
@@ -58,23 +61,23 @@ public class TestCalculator extends BaseModuleContextSensitiveTest
 
 		//height
 		calendar.set(2007, Calendar.SEPTEMBER, 4);
-		Double percentile = calculator.calculatePercentile(29, "M", calendar
+		Double percentile = calculator.calculatePercentile(new Double(29), "M", calendar
 				.getTime(), "length", "in");
 		System.out.println(percentile);
 		
 		calendar.set(2006, Calendar.APRIL,6);
-		percentile = calculator.calculatePercentile(34, "M", calendar
+		percentile = calculator.calculatePercentile(new Double(34), "M", calendar
 				.getTime(), "length", "in");
 		System.out.println(percentile);
 		
 		calendar.set(2001, Calendar.MAY,5);
-		percentile = calculator.calculatePercentile(45, "M", calendar
+		percentile = calculator.calculatePercentile(new Double(45), "M", calendar
 				.getTime(), "length", "in");
 		System.out.println(percentile);
 		
 		//weight
 		calendar.set(2007, Calendar.SEPTEMBER, 4);
-		percentile = calculator.calculatePercentile(22, "M", calendar
+		percentile = calculator.calculatePercentile(new Double(22), "M", calendar
 				.getTime(), "weight", "lb");
 		System.out.println(percentile);
 		

@@ -19,12 +19,12 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
-import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -67,7 +67,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				.getService(EncounterService.class);
 		PatientService patientService = Context.getPatientService();
 		UserService userService = Context.getUserService();
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 
 		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
@@ -97,15 +97,13 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 		Integer formInstanceId = 1;
 		Integer formId = null;
 		FormService formService = Context.getFormService();
-		Integer pwsFormId = formService.getForms("PWS", null, null, false,
-				null, null, null).get(0).getFormId();
-		Integer psfFormId = formService.getForms("PSF", null, null, false,
-				null, null, null).get(0).getFormId();
+		Integer pwsFormId = formService.getForm("PWS").getFormId();
+		Integer psfFormId = formService.getForm("PSF").getFormId();
 
 		String PWSMergeDirectory = null;
 		Integer locationTagId = 1;
 		Integer locationId = 1;
-		FormAttributeValue formAttributeValue = atdService
+		FormAttributeValue formAttributeValue = chirdlutilbackportsService
 						.getFormAttributeValue(pwsFormId,
 								"defaultMergeDirectory", locationTagId,locationId);
 
@@ -120,7 +118,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				// create the PSF form
 				state = "PSF_create";
 				LocationTagAttributeValue locTagAttrValue = 
-					chirdlUtilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -141,7 +139,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				formInstance.setLocationId(locationId);
 				int maxPWSDssElements = 0;
 
-				formAttributeValue = atdService.getFormAttributeValue(
+				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
 						pwsFormId, "numPrompts", locationTagId,locationId);
 
 				if (formAttributeValue != null)
@@ -154,7 +152,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				int sessionId = 1;
 				state = "PWS_create";
 				locTagAttrValue = 
-					chirdlUtilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -167,8 +165,8 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 						}
 					}
 				}
-				formAttributeValue = atdService.getFormAttributeValue(
-						psfFormId, "numQuestions", locationTagId,locationId);
+				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
+						psfFormId, "numPrompts", locationTagId,locationId);
 
 				if (formAttributeValue != null)
 				{
@@ -176,7 +174,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 							.getValue());
 				}
 
-				chicaService.produce(new ByteArrayOutputStream(), patientState,
+				atdService.produce(new ByteArrayOutputStream(), patientState,
 						patient, encounterId, "PSF", maxPSFDssElements,sessionId);
 
 				// read in the export xml and store observations
@@ -186,7 +184,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				// create the PWS form
 				state = "PWS_create";
 				locTagAttrValue = 
-					chirdlUtilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -205,7 +203,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				formInstance.setFormId(formId);
 				formInstance.setLocationId(locationId);
 				generatedXML = new ByteArrayOutputStream();
-				chicaService.produce(generatedXML, patientState, patient,
+				atdService.produce(generatedXML, patientState, patient,
 						encounterId, "PWS", maxPWSDssElements,sessionId);
 				ByteArrayOutputStream targetXML = new ByteArrayOutputStream();
 				IOUtil.bufferedReadWrite(new FileInputStream(PWSFilename),

@@ -7,12 +7,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.test.TestUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 
 public class CalculatorTest extends BaseModuleContextSensitiveTest 
 {
+	
+	@Before
+	public void runBeforeEachTest() throws Exception {
+		// create the basic user and give it full rights
+		initializeInMemoryDatabase();
+		executeDataSet(TestUtil.DBUNIT_SETUP_FILE);
+		// authenticate to the temp database
+		authenticate();
+	}
+	
 	/**
 	 * @see {@link Calculator#calculatePercentile(double,double,double,double,String)}
 	 * 
@@ -29,7 +40,7 @@ public class CalculatorTest extends BaseModuleContextSensitiveTest
 
 		//height
 		calendar.set(2007, Calendar.SEPTEMBER, 4);
-		Double percentile = calculator.calculatePercentile(29, "M", calendar
+		Double percentile = calculator.calculatePercentile(new Double(29), "M", calendar
 				.getTime(), "length", "in");
 		System.out.println(percentile);
 		

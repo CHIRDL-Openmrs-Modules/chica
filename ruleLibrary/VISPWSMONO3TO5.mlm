@@ -1,70 +1,0 @@
-Maintenance:
-	Title:		Vision  Monocular Abnormality PWS (35 yo);;
-	Filename:		VISPWSMONO3TO5;;
-	Version:	1.0;;
-	Institution:	Indiana University School of Medicine;;
-	Author:		Paul Biondich;;
-	Specialist:	Pediatrics;;
-	Date:		2003-12-17T09:39:23-0500;;
-	Validation:	;;
-Library:
-	Purpose:		The following rule will alert practitioners that the corresponding 3-5 year old failed vision screening by monocular criteria and suggest a optho referral.                                                                                                                                                                                                                                                                                                                                                         ;;
-	Explanation:	According to the AAP visual screening policy statement, referrals are recommended for all children 3-5 who show a greater than 20/40 deficit monocularly.                                                                                                                                                                                                                                                                                                                                                           ;;
-	Keywords:	PWS, vision;;
-	Citations:		Eye examination in infants, children, and young ad;;
-	Links:		http://www.aap.org/policy/s0208.html;;
-Knowledge:
-	Type:		data_driven;;
-Data:
-
-mode:=read {mode from Parameters};
-Box1:=read {box1 from Parameters};
-Box2:=read {box2 from Parameters};
-Box3:=read {box3 from Parameters};
-Box4:=read {box4 from Parameters};
-Box5:=read {box5 from Parameters};
-Box6:=read {box6 from Parameters};
-
-If (mode = PRODUCE) then
-visionl := read Last {VisionL from CHICA};visionr := read Last {VisionR from CHICA};screen := read Last {VisionScreen from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-endif
-;;
-Priority:		148;;
-	Evoke:		;;
-Logic:
-If (mode = PRODUCE) then
-
-If (screen = referral) OR (screen = alreadyreferred) then conclude False;If (visionl > 40) then || side || = "left side.";If (visionr > 40) then || side || = "right side.";If (visionl > 40) AND (visionr > 40) then || side || = "eyes bilaterally.";If (visionl > 40) then conclude True;If (visionr > 40) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-
-endif
-
-If (mode = CONSUME) then
-
-If  (Box2=true) then
- CALL storeObs With "VisionScreen","alreadyreferred";
-endif;
-If  (Box4=true) then
- CALL storeObs With "VisionScreen","alreadyreferred";
-endif;
-If  (Box6=true) then
- CALL storeObs With "VisionScreen","refused";
-endif;
-If  (Box5=true) then
- CALL storeObs With "VisionScreen","referral";
-endif;
-
-
-endif
-;;
-Action:
-write ("|| firstname || had an abnormal vision screen on || gender || || side || on || visionl_date ||.  The AAP recommends an opthalmologic referral at this time.");                                                                                                                                                                                                                                                                                                                                              
-write ("Referral unneccesary -->");
-write ("Optho already involved");
-write ("");
-write ("Referral made previously.");
-write ("Made referral today");
-write ("Disagree with need.");
-;;
-Age_Min: 3 years;;
-Age_Max: 5 years;;
-end:

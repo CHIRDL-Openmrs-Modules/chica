@@ -112,6 +112,9 @@
 <td><input type="checkbox" value="P" name="HearR"/></td>
 <td><input type="checkbox" value="F" name="HearR"/></td>
 </tr>
+<tr>
+<td colspan="2"><input type="checkbox" name="SickVisit" value="Y"/>Sick Visit</td>
+</tr>
 </table>
 </td>
 </tr>

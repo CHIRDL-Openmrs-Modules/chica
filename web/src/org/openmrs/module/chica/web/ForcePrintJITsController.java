@@ -1,11 +1,11 @@
 package org.openmrs.module.chica.web;
 
 import java.util.HashMap;
-import java.util.TreeSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,13 +20,11 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.atd.hibernateBeans.FormAttribute;
-import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
-import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
-import org.openmrs.module.dss.service.DssService;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -46,7 +44,7 @@ public class ForcePrintJITsController extends SimpleFormController {
 	
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception {
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		String patientIdString = request.getParameter("patientId");
 		String resultMessage = request.getParameter("resultMessage");
 		Integer patientId = null;
@@ -100,7 +98,7 @@ public class ForcePrintJITsController extends SimpleFormController {
 		FormService formService = Context.getFormService();
 		
 		Set<FormDisplay> printableJits = new TreeSet<FormDisplay>();
-		List<FormAttributeValue> attributes = atdService.getFormAttributesByName("forcePrintable");
+		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributesByName("forcePrintable");
 		
 		for (FormAttributeValue attribute : attributes) {
 			if (attribute.getValue().equalsIgnoreCase("true") && attribute.getLocationId().equals(locationId)) {
@@ -109,7 +107,7 @@ public class ForcePrintJITsController extends SimpleFormController {
 					FormDisplay formDisplay = new FormDisplay();
 					formDisplay.setFormName(form.getName());
 					formDisplay.setFormId(form.getFormId());
-					FormAttributeValue attributeValue = atdService.getFormAttributeValue(form.getFormId(), "displayName",
+					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "displayName",
 					    locationTagId, locationId);
 					if (attributeValue == null || attributeValue.getValue() == null) {
 						formDisplay.setDisplayName(form.getName());
@@ -141,7 +139,8 @@ public class ForcePrintJITsController extends SimpleFormController {
 	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
 	                                BindException errors) throws Exception {
 		String optionsString = request.getParameter("options");
-		
+		ATDService atdService = Context.getService(ATDService.class);
+
 		String patientIdString = request.getParameter("patientId");
 		Integer patientId = null;
 		try {
@@ -195,8 +194,7 @@ public class ForcePrintJITsController extends SimpleFormController {
 			}
 		}
 		Map<String, Object> parameters = new HashMap<String, Object>();
-		DssService dssService = Context.getService(DssService.class);
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		FormService formService = Context.getFormService();
 		
 		parameters = new HashMap<String, Object>();
@@ -205,16 +203,18 @@ public class ForcePrintJITsController extends SimpleFormController {
 		FormInstance formInstance = new FormInstance();
 		formInstance.setLocationId(locationId);
 		parameters.put("formInstance", formInstance);
-		dssService.loadRule("CREATE_JIT", false);
 		String formName = null;
 		Form form = null;
 		
 		//print the form
 		if (optionsString != null && optionsString.equalsIgnoreCase("ASQ")) {
 			parameters.put("mode", "PRODUCE");
-			dssService.loadRule("ChicaAgeRule", false);
-			atdService.evaluateRule("CHOOSE_ASQ_JIT_PWS", patient, parameters, null);
+			atdService.evaluateRule("CHOOSE_ASQ_JIT_PWS", patient, parameters);
 			formName = "ASQ";
+		} else if (optionsString != null && optionsString.equalsIgnoreCase("ASQ Activity Sheet")) {
+			parameters.put("mode", "PRODUCE");
+			atdService.evaluateRule("CHOOSE_ASQ_ACTIVITY_JIT", patient, parameters);
+			formName = "ASQ Activity Sheet";
 		} else {
 			String formIdString = optionsString;
 			Integer formId = null;
@@ -227,14 +227,14 @@ public class ForcePrintJITsController extends SimpleFormController {
 			form = formService.getForm(formId);
 			formName = form.getName();
 			parameters.put("param1", formName);
-			logicService.eval(patient, "CREATE_JIT", parameters);
+			logicService.eval(patientId, "CREATE_JIT", parameters);
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		map.put("patientId", patientId);
 		map.put("sessionId", sessionId);
 		if (form != null) {
-			FormAttributeValue attributeValue = atdService.getFormAttributeValue(form.getFormId(), "displayName",
+			FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "displayName",
 			    locationTagId, locationId);
 			if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
 				formName = attributeValue.getValue();
@@ -249,9 +249,9 @@ public class ForcePrintJITsController extends SimpleFormController {
 	}
 	
 	private boolean isInterventionLocation(Integer locationId, String interLocationAttributeName) {
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
-		LocationAttributeValue locationAttributeValue = chirdlUtilService.getLocationAttributeValue(locationId,
+		LocationAttributeValue locationAttributeValue = chirdlutilbackportsService.getLocationAttributeValue(locationId,
 		    interLocationAttributeName);
 		if (locationAttributeValue != null) {
 			String interventionSiteString = locationAttributeValue.getValue();

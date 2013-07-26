@@ -16,9 +16,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Expression;
 import org.openmrs.Concept;
-import org.openmrs.ConceptName;
-import org.openmrs.ConceptNameTag;
-import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -27,7 +24,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.db.ChicaDAO;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
@@ -43,12 +40,11 @@ import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
-import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.Wtageinf;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutil.util.Util;
 
 /**
@@ -84,48 +80,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		this.sessionFactory = sessionFactory;
 	}
 
-	public void addStatistics(Statistics statistics)
-	{
-		try
-		{
-			this.sessionFactory.getCurrentSession().save(statistics);
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-	}
-
-	public void updateStatistics(Statistics statistics)
-	{
-		try
-		{
-			this.sessionFactory.getCurrentSession().update(statistics);
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-	}
-
-	public List<Statistics> getStatByFormInstance(int formInstanceId,
-			String formName, Integer locationId)
-	{
-		try
-		{
-			String sql = "select * from chica_statistics where form_instance_id=? and form_name=? "+
-			"and location_id=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setInteger(0, formInstanceId);
-			qry.setString(1, formName);
-			qry.setInteger(2,locationId);
-			qry.addEntity(Statistics.class);
-			return qry.list();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
+	
 
 	public List<OldRule> getAllOldRules()
 	{
@@ -135,28 +90,6 @@ public class HibernateChicaDAO implements ChicaDAO
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.addEntity(OldRule.class);
-			return qry.list();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
-
-	public List<Statistics> getStatByIdAndRule(int formInstanceId, int ruleId,
-			String formName, Integer locationId)
-	{
-		try
-		{
-			String sql = "select * from chica_statistics where form_instance_id=? "+
-			"and rule_id=? and form_name=? and location_id=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setInteger(0, formInstanceId);
-			qry.setInteger(1, ruleId);
-			qry.setString(2, formName);
-			qry.setInteger(3,locationId);
-			qry.addEntity(Statistics.class);
 			return qry.list();
 		} catch (Exception e)
 		{
@@ -342,6 +275,27 @@ public class HibernateChicaDAO implements ChicaDAO
 					.createSQLQuery(sql);
 			qry.addScalar("category");
 			qry.setString(0, insCode);
+			List<String> list = qry.list();
+			// if result is not unique, return null
+			if (list.size() == 1){
+				return (String) list.get(0);
+			}
+		} catch (Exception e)
+		{
+			this.log.error(Util.getStackTrace(e));
+		}
+		return null;
+	}
+	
+	public String getInsCategoryByECWName(String ecwName)
+	{
+		try
+		{
+			String sql = "select distinct category from chica_insurance_category where ecw_ins_name=?";
+			SQLQuery qry = this.sessionFactory.getCurrentSession()
+					.createSQLQuery(sql);
+			qry.addScalar("category");
+			qry.setString(0, ecwName);
 
 			return (String) qry.uniqueResult();
 		} catch (Exception e)
@@ -771,41 +725,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public List<Statistics> getStatsByEncounterForm(Integer encounterId,String formName)
-	{
-		try
-		{
-			String sql = "select * from chica_statistics where obsv_id is not null and encounter_id=? and form_name=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setInteger(0, encounterId);
-			qry.setString(1, formName);
-			qry.addEntity(Statistics.class);
-			return qry.list();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
 	
-	public List<Statistics> getStatsByEncounterFormNotPrioritized(Integer encounterId,String formName)
-	{
-		try
-		{
-			String sql = "select * from chica_statistics where rule_id is null and obsv_id is not null and encounter_id=? and form_name=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setInteger(0, encounterId);
-			qry.setString(1, formName);
-			qry.addEntity(Statistics.class);
-			return qry.list();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
 	
 	public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export){
 		sessionFactory.getCurrentSession().saveOrUpdate(export);
@@ -852,10 +772,10 @@ public class HibernateChicaDAO implements ChicaDAO
 				dateRestriction = " and start_time >= ?";
 			} 
 			
-			String sql = "select * from atd_patient_state a "+
-						"inner join atd_session b on a.session_id=b.session_id where state in ("+
-						"select state_id from atd_state where state_action_id in ("+
-						"select state_action_id from atd_state_action where action_name in ('RESCAN','REPRINT')) "+
+			String sql = "select * from chirdlutilbackports_patient_state a "+
+						"inner join chirdlutilbackports_session b on a.session_id=b.session_id where state in ("+
+						"select state_id from chirdlutilbackports_state where state_action_id in ("+
+						"select state_action_id from chirdlutilbackports_state_action where action_name in ('RESCAN','REPRINT')) "+
 						") "+
 						"and encounter_id=? and retired=? and location_tag_id=? and location_id=? "+dateRestriction;
 			
@@ -985,7 +905,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
 			            + ",'%Y-%m-%d') as end_date,location_id from (select form_name, form_instance_id, "
 			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
-			            + "scanned_timestamp,location_id from chica_statistics where form_name=? and location_id=? and printed_timestamp is not null group by form_name,"
+			            + "scanned_timestamp,location_id from atd_statistics where form_name=? and location_id=? and printed_timestamp is not null group by form_name,"
 			            + "form_instance_id,location_id) a "
 			            + ")a group by start_date,end_date order by start_date desc,end_date desc");
 			qry.setString(0, formName);
@@ -1009,7 +929,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
 			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id, "
 			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
-			            + "scanned_timestamp,location_id from chica_statistics where form_name=? and location_id=? "+
+			            + "scanned_timestamp,location_id from atd_statistics where form_name=? and location_id=? "+
 			            "and printed_timestamp is not null and scanned_timestamp is not null group by form_name,"
 			            + "form_instance_id,location_id) a "
 			            + ")a group by start_date,end_date order by start_date desc,end_date desc");
@@ -1034,7 +954,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
 			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id, "
 			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
-			            + "scanned_timestamp,location_id from chica_statistics where answer is "+
+			            + "scanned_timestamp,location_id from atd_statistics where answer is "+
 			            "not null and answer not in ('NoAnswer') and form_name=? and location_id=? "+
 			            "and printed_timestamp is not null and scanned_timestamp is not null group by form_name,"
 			            + "form_instance_id,location_id) a "
@@ -1060,7 +980,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
 			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id, "
 			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
-			            + "scanned_timestamp,a.location_id from chica_statistics a inner join obs e "+
+			            + "scanned_timestamp,a.location_id from atd_statistics a inner join obs e "+
 			            "on a.obsv_id=e.obs_id where form_name=? and a.location_id=? "+
 			            "and printed_timestamp is not null and scanned_timestamp is not null group by form_name,"
 			            + "form_instance_id,location_id) a "
@@ -1086,7 +1006,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			    "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY) "+
 			    ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, "+
 			    "form_instance_id,rule_id,max(printed_timestamp) as printed_timestamp,"+
-			    "max(scanned_timestamp) as scanned_timestamp,location_id from chica_statistics "+
+			    "max(scanned_timestamp) as scanned_timestamp,location_id from atd_statistics "+
 			    "where rule_id is not null and form_name=? and location_id=? "+
 			    "and printed_timestamp is not null and scanned_timestamp is not null group by form_name, "+
 			    "form_instance_id,rule_id,location_id) a)a group by start_date,end_date "+
@@ -1112,7 +1032,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			            + "DATE_FORMAT(DATE_SUB(printed_timestamp,INTERVAL  DAYOFWEEK(printed_timestamp)-4 DAY)"
 			            + ",'%Y-%m-%d') as end_date,scanned_timestamp,location_id from (select form_name, form_instance_id,rule_id, "
 			            + "max(printed_timestamp) as printed_timestamp,max(scanned_timestamp) as "
-			            + "scanned_timestamp,location_id from chica_statistics where rule_id is not null "+
+			            + "scanned_timestamp,location_id from atd_statistics where rule_id is not null "+
 			            "and answer is not null and answer not in ('NoAnswer') group by form_name,"
 			            + "form_instance_id,rule_id,location_id) a where form_name=? and location_id=? "+
 			            "and printed_timestamp is not null and scanned_timestamp is not null"
@@ -1123,32 +1043,6 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * This is a method I added to get around lazy initialization errors with patient.getIdentifier() in rules
-	 * Auto generated method comment
-	 * 
-	 * @param patientId
-	 * @return
-	 */
-	public PatientIdentifier getPatientMRN(Integer patientId)
-	{
-		try
-		{
-			String sql = "select a.* from patient_identifier a "+
-				"inner join patient_identifier_type b on a.identifier_type=b.patient_identifier_type_id "+
-				"where patient_id=? and b.name='MRN_OTHER' and preferred=1";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setInteger(0, patientId);
-			qry.addEntity(PatientIdentifier.class);
-			return (PatientIdentifier) qry.uniqueResult();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
 		}
 		return null;
 	}

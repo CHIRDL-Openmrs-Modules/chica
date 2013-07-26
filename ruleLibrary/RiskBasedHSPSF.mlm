@@ -26,6 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 deaf := read Last {fhx_deafness from CHICA} ;
 premie := read Last {premature from CHICA} ;
 screened := read Exist {risk_based_hearing_screen from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
@@ -35,6 +36,7 @@ Priority:		394;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
 
 if (screened = True) then conclude False;
 If (premie = "True") then || premieF || = "PREMATURITY;";

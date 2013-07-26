@@ -5,80 +5,80 @@
 
 <%@ page  import="org.openmrs.web.WebConstants" %>
 <%
-	pageContext.setAttribute("msg", session.getAttribute(WebConstants.OPENMRS_MSG_ATTR));
-	pageContext.setAttribute("msgArgs", session.getAttribute(WebConstants.OPENMRS_MSG_ARGS));
-	pageContext.setAttribute("err", session.getAttribute(WebConstants.OPENMRS_ERROR_ATTR));
-	pageContext.setAttribute("errArgs", session.getAttribute(WebConstants.OPENMRS_ERROR_ARGS));
-	session.removeAttribute(WebConstants.OPENMRS_MSG_ATTR);
-	session.removeAttribute(WebConstants.OPENMRS_MSG_ARGS);
-	session.removeAttribute(WebConstants.OPENMRS_ERROR_ATTR);
-	session.removeAttribute(WebConstants.OPENMRS_ERROR_ARGS);
+    pageContext.setAttribute("msg", session.getAttribute(WebConstants.OPENMRS_MSG_ATTR));
+    pageContext.setAttribute("msgArgs", session.getAttribute(WebConstants.OPENMRS_MSG_ARGS));
+    pageContext.setAttribute("err", session.getAttribute(WebConstants.OPENMRS_ERROR_ATTR));
+    pageContext.setAttribute("errArgs", session.getAttribute(WebConstants.OPENMRS_ERROR_ARGS));
+    session.removeAttribute(WebConstants.OPENMRS_MSG_ATTR);
+    session.removeAttribute(WebConstants.OPENMRS_MSG_ARGS);
+    session.removeAttribute(WebConstants.OPENMRS_ERROR_ATTR);
+    session.removeAttribute(WebConstants.OPENMRS_ERROR_ARGS);
 %>
 
 <html  style="height:100%;"  xmlns="http://www.w3.org/1999/xhtml">
-	<head >
-	    <meta http-equiv="refresh" content="${refreshPeriod}"/>
-		<openmrs:htmlInclude file="/openmrs.css" />
-		<openmrs:htmlInclude file="/style.css" />
-		<openmrs:htmlInclude file="/openmrs.js" />
-			<title>CHICA Greaseboard</title>
-		
-		<script type="text/javascript">
-			/* variable used in js to know the context path */
-			var openmrsContextPath = '${pageContext.request.contextPath}';
-		</script>
-		
-		<!--  Page Title : '${pageTitle}' 
-			OpenMRS Title: <spring:message code="openmrs.title"/>
-		-->
-		<c:choose>
-			<c:when test="${!empty pageTitle}">
-				<title>${pageTitle}</title>
-			</c:when>
-			<c:otherwise>
-				<title><spring:message code="openmrs.title"/></title>
-			</c:otherwise>
-		</c:choose>		
-		<SCRIPT LANGUAGE="JavaScript">
-		<!-- Idea by:  Nic Wolfe -->
-		<!-- This script and many more are available free online at -->
-		<!-- The JavaScript Source!! http://javascript.internet.com -->
-		function popUp(URL) {
-			day = new Date();
-			id = day.getTime();
-			eval("page" + id + " = window.open(URL, '" + id + "', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=250,height=250,left = 312,top = 284');");
-		}
+    <head >
+        <meta http-equiv="refresh" content="${refreshPeriod}"/>
+        <openmrs:htmlInclude file="/openmrs.css" />
+        <openmrs:htmlInclude file="/style.css" />
+        <openmrs:htmlInclude file="/openmrs.js" />
+            <title>CHICA Greaseboard</title>
+        
+        <script type="text/javascript">
+            /* variable used in js to know the context path */
+            var openmrsContextPath = '${pageContext.request.contextPath}';
+        </script>
+        
+        <!--  Page Title : '${pageTitle}' 
+            OpenMRS Title: <spring:message code="openmrs.title"/>
+        -->
+        <c:choose>
+            <c:when test="${!empty pageTitle}">
+                <title>${pageTitle}</title>
+            </c:when>
+            <c:otherwise>
+                <title><spring:message code="openmrs.title"/></title>
+            </c:otherwise>
+        </c:choose>     
+        <SCRIPT LANGUAGE="JavaScript">
+        <!-- Idea by:  Nic Wolfe -->
+        <!-- This script and many more are available free online at -->
+        <!-- The JavaScript Source!! http://javascript.internet.com -->
+        function popUp(URL) {
+            day = new Date();
+            id = day.getTime();
+            eval("page" + id + " = window.open(URL, '" + id + "', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=250,height=250,left = 312,top = 284');");
+        }
 
-		function pagerPopUp(URL) {
-			window.open(URL, '', 'toolbar=0, scrollbars=0,location=0,locationbar=0,statusbar=0,menubar=0,resizable=0,width=400,height=100,left = 312,top = 284');
-		}
-		
-		function lookupPatient(){
-			document.location.href = "viewPatient.form";
-			return false;
-		}
+        function pagerPopUp(URL) {
+            window.open(URL, '', 'toolbar=0, scrollbars=0,location=0,locationbar=0,statusbar=0,menubar=0,resizable=0,width=400,height=100,left = 312,top = 284');
+        }
+        
+        function lookupPatient(){
+            document.location.href = "viewPatient.form";
+            return false;
+        }
 
                 function popupfull(url) 
                 {
  		params  = 'width='+(screen.width - 20);
  		params += ', height='+(screen.height -115);
- 		params += ', top=0, left=0'
- 		params += ', fullscreen=no';
+        params += ', top=0, left=0'
+        params += ', fullscreen=no';
 
- 		newwin=window.open(url,'windowname4', params);
- 		if (window.focus) {newwin.focus()}
- 		return false;
- 		}
+        newwin=window.open(url,'windowname4', params);
+        if (window.focus) {newwin.focus()}
+        return false;
+        }
 
-		function confirmation(formName) {
-			var answer = true;
-			var selectedIndex = formName.options.selectedIndex;
-			if(formName.options[selectedIndex].text == 'Encounters'){
-			    answer = false;
-				var patientId = formName.patientId.value;
-				var str = 'viewEncounter.form?patientId='+patientId;
-				popupfull(str);
-			}
+        function confirmation(formName) {
+            var answer = true;
+            var selectedIndex = formName.options.selectedIndex;
+            if(formName.options[selectedIndex].text == 'Encounters'){
+                answer = false;
+                var patientId = formName.patientId.value;
+                var str = 'viewEncounter.form?patientId='+patientId;
+                popupfull(str);
+            }
 			if(formName.options[selectedIndex].text == 'Print JITS'){
 			    answer = false;
 				var patientId = formName.patientId.value;
@@ -86,20 +86,20 @@
 				var str = 'forcePrintJITs.form?patientId='+patientId+'&sessionId='+sessionId;
 				popupfull(str);
 			}
-			if(formName.options[selectedIndex].text == 'ADHD WU'){
-             	answer = confirm("Are you sure you want to initiate an ADHD Workup?")
-			}
-			if(answer){
-				formName.submit();
-			}
+            if(formName.options[selectedIndex].text == 'ADHD WU'){
+                answer = confirm("Are you sure you want to initiate an ADHD Workup?")
+            }
+            if(answer){
+                formName.submit();
+            }
         }
-		
-		function displayBadScans(badScans) {
-			var str = 'displayBadScans.form?badScans='+badScans;
+
+		function displayBadScans(context, badScans) {
+			var str = context + '/module/atd/displayBadScans.form?badScans='+badScans;
 			popupfull(str);
 		}
 
-		</script>
+        </script>
  
 </head>
 
@@ -107,10 +107,10 @@
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <div  class="greaseBoardPageBorder headerarea" style="overflow:hidden;">
 <table width="100%"  style="height:100%;border:0;frame:void; cellspacing:0px;border-width:1px;border-bottom-width:3px;border-style:solid;border-color: black">
-	<tr  class="chicaBackground" style=>
-	<td  width = "100%" class="formTitleStyle" ><b>Arrivals&nbsp;&nbsp;&nbsp;&nbsp;${today}</b></td>
-	   
-	</tr>
+    <tr  class="chicaBackground" style=>
+    <td  width = "100%" class="formTitleStyle" ><b>Arrivals&nbsp;&nbsp;&nbsp;&nbsp;${today}</b></td>
+    
+    </tr>
 </table>
 </div>
 <c:if test="${!empty badScans}">
@@ -130,7 +130,7 @@
                         </c:otherwise>
                        </c:choose>
                    </c:forEach>
-                   <button name="viewBadScans"  onClick="displayBadScans('${tiffFiles}')" onMouseOver="this.style.cursor='hand'" 
+                   <button name="viewBadScans"  onClick="displayBadScans('${pageContext.request.contextPath}','${tiffFiles}')" onMouseOver="this.style.cursor='hand'" 
                        style="background:gray; border:2px solid black; color:white"><b><c:out value="View"/></b></button>
                    <script language="JavaScript">
                     var cell = document.getElementById('badScansCell');
@@ -234,6 +234,9 @@
 <input type="button" value="View Encounters" 
 name="viewEncountersButton" onClick="javascript:popupfull('viewPatient.form')"  style="width:250px;height:27px;font-size:15px;font-weight:bold;" ></a>
 
+</tr>
+<tr>
+<td align="center"><button style="width:250px;height:27px;font-size:15px;" onClick="javascript:popUp('forcePrintSSNMRN.form')"><b>Print Patient Handouts</b></button></td>
 </tr>
 <tr>
 <td align="center">

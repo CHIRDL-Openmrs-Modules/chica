@@ -19,9 +19,8 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
-import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hl7.sms.PatientHandler;
+import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
@@ -36,12 +35,12 @@ import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.datatype.TS;
 import ca.uhn.hl7v2.model.v23.datatype.TX;
 import ca.uhn.hl7v2.model.v23.group.ORU_R01_ORDER_OBSERVATION;
+import ca.uhn.hl7v2.model.v23.message.ADT_A01;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.segment.MSH;
 import ca.uhn.hl7v2.model.v23.segment.OBR;
 import ca.uhn.hl7v2.model.v23.segment.OBX;
 import ca.uhn.hl7v2.model.v23.segment.PID;
-import ca.uhn.hl7v2.model.v23.message.ADT_A01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
@@ -433,7 +432,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		return conceptResult;
 	}
 	
-	public ArrayList<Obs> getObs(Message message) throws HL7Exception
+	public ArrayList<Obs> getObs(Message message,Patient patient) throws HL7Exception
 	{
 		ConceptService conceptService = Context.getConceptService();
 
@@ -450,22 +449,6 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		String sendingFacility = getSendingFacility(message);
 		Location existingLoc = locationService.getLocation(sendingFacility);
 		
-		// Set the patient
-		String[] pIdentifierList = hl7PatientHandler.getPatientIdentifierList(message);
-		Patient resultPatient = null;
-		PatientService patientService = Context.getPatientService();
-		
-		if (pIdentifierList != null)
-		{
-			for (String currIdent : pIdentifierList)
-			{
-				for (Patient pa : patientService.getPatients(null, currIdent,
-						null))
-				{
-					resultPatient = pa;
-				}
-			}
-
 			if (message instanceof ORU_R01)
 			{
 				ORU_R01 oru = (ORU_R01) message;
@@ -482,7 +465,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 					{
 						Obs obs = hl7SocketHandler.CreateObservation(null,
 								false, message, i, j, existingLoc,
-								resultPatient);
+								patient);
 						
 						Concept obsConcept = obs.getConcept();
 						//if the concept datatype is null,
@@ -516,7 +499,6 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 					}
 				}
 			}
-		}
 		return allObs;
 	}
 

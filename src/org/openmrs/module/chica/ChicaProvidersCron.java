@@ -32,20 +32,15 @@ public class ChicaProvidersCron extends AbstractTask
 	private Log log = LogFactory.getLog(this.getClass());
 
 	
-	private Date startDate;
 	private Date lastRunDate;
 	private Date thresholdDate;
-	private TaskDefinition taskConfig;
 	private int retireProvidersPriorToDays = -1; // in days
 
 	@Override
 	public void initialize(TaskDefinition config)
 	{
-		Context.openSession();
-		if (Context.isAuthenticated() == false)
-			authenticate();
-		
-		this.taskConfig = config;
+		super.initialize(config);
+		Context.openSession();		
 		init();
 		Context.closeSession();
 	}
@@ -58,8 +53,6 @@ public class ChicaProvidersCron extends AbstractTask
 		try
 		{
 			
-			if (Context.isAuthenticated() == false)
-				authenticate();
 			if(retireProvidersPriorToDays == -1)
 			{
 				// Moved here from init() because of openSession and closeSession errors with rule token fetch 
@@ -97,7 +90,12 @@ public class ChicaProvidersCron extends AbstractTask
 				{
 					for (Encounter e: encounters)
 					{
-						if(e.getProvider().getUserId().equals(doctor.getUserId())) 
+						List<User> providers = userService.getUsersByPerson(e.getProvider(), true);
+						User provider = null;
+						if(providers != null&& providers.size()>0){
+							provider = providers.get(0);
+						}
+						if(provider.getUserId().equals(doctor.getUserId())) 
 						{
 							active = true;
 							break;			// provider is active in this time period
@@ -105,7 +103,7 @@ public class ChicaProvidersCron extends AbstractTask
 					}
 					if(!active && !encounters.isEmpty() )
 					{
-						userService.voidUser(doctor, "Inactive in the clinic");  // retires states
+						userService.retireUser(doctor, "Inactive in the clinic");  // retires states
 					}
 				}
 				
@@ -129,7 +127,6 @@ public class ChicaProvidersCron extends AbstractTask
 		
 		try
 		{
-			startDate = GregorianCalendar.getInstance().getTime();
 			AdministrationService adminService = Context.getAdministrationService();
 			// configurable time in days before today's date and time, convert it to a negative number
 			retireProvidersPriorToDays = -Integer.parseInt(adminService.getGlobalProperty("chica.retireProvidersPeriod"));  // in days

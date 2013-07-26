@@ -19,9 +19,10 @@ import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -69,7 +70,7 @@ public class PagerController extends SimpleFormController
 			String thresholdTime = adminService.getGlobalProperty("chica.pagerWaitTimeBeforeRepage");
 			
 			User user = Context.getAuthenticatedUser();
-			ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			LocationService locationService = Context.getLocationService();
 			String locationString = user.getUserProperty("location");
 			Integer locationId = null;
@@ -79,7 +80,7 @@ public class PagerController extends SimpleFormController
 					locationId = location.getLocationId();
 				}
 			}
-			LocationAttributeValue locAttrValue = chirdlUtilService.getLocationAttributeValue(locationId, "pagerMessage");
+			LocationAttributeValue locAttrValue = chirdlutilbackportsService.getLocationAttributeValue(locationId, "pagerMessage");
 			String message = locAttrValue.getValue();
 			
 			String reporter = request.getParameter("reporter");
@@ -92,9 +93,8 @@ public class PagerController extends SimpleFormController
 			if (pageResponse != null && pageResponse.contains("Send message results")
 			        && !pageResponse.contains("send failed")) {
 				map.put("pagerSuccess", true);
-				ATDError error = new ATDError("Warning","Support Page","Support page sent: "+message,null,new java.util.Date(),null);
-				ATDService atdService = Context.getService(ATDService.class);
-				atdService.saveError(error);
+				Error error = new Error("Warning","Support Page","Support page sent: "+message,null,new java.util.Date(),null);
+				chirdlutilbackportsService.saveError(error);
 			} else {
 				map.put("pagerSuccess", false);
 				if(pageResponse != null){

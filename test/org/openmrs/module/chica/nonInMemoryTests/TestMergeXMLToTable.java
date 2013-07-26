@@ -9,7 +9,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.dss.DssManager;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -66,7 +66,7 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 				formInstance.setFormInstanceId(formInstanceId);
 				formInstance.setLocationId(locationId);
 				atdService.produce(patient, formInstance, output,
-						dssManager, encounterId, null, null,
+						dssManager, encounterId, null,
 						locationTagId, sessionId);
 			
 		} catch (Exception e)

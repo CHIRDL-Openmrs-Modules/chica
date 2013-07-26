@@ -106,10 +106,10 @@ function exitForm(){
 				<c:if test= "${!empty row.psfId.formInstanceId}">${row.psfId.formInstanceId}</c:if>
 			</td>
 			<td class="viewEncounterPWSID"><c:if test = "${empty row.pwsId.formInstanceId}">N/A</c:if>
-				<c:if test= "${!empty row.pwsId.formInstanceId}">${row.pwsId.formInstanceId}</c:if></td>
+				<c:if test= "${!empty row.pwsId.formInstanceId}">${row.pwsId.formInstanceId}<c:if test="${row.pwsScanned}"><span style="color:red"><b>*</b></span></c:if></c:if></td>
 			<td class="viewEncounterAction">
 				<form method="post" STYLE="margin: 0px; padding: 0px" action="">
-				<select name="options" onchange="this.form.submit();">
+				<select name="options" onchange="this.form.submit();" style="width:170px">
 				<option>&lt;Forms&gt;</option>
 				<c:forEach items="${row.formInstances}" var="formInstance">
 				<option value="${formInstance.locationId}_${formInstance.formId}_${formInstance.formInstanceId}">
@@ -132,6 +132,9 @@ function exitForm(){
 <a href="" onclick="return lookupPatient();"><input type="button" value="View Patient" name="viewPatientButton" style="width:100px; height:50px"></a>
 <a href="" onClick="javascript:window.close();"><input type="button" value="Exit" name="exitButton" style="width:100px; height:50px"></a>
 </td>
+</tr>
+<tr>
+<td><span style="color:red"><b>*</b></span>&nbsp;Indicates that the PWS was scanned for the given encounter</td>
 </tr>
 <tr>
 <td>&nbsp</td>

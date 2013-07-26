@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.OutputStream;
 import java.util.Calendar;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,16 +23,16 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.FormAttributeValue;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
-import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
@@ -61,8 +60,6 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		onDate.set(2008, Calendar.DECEMBER, 22);
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		Patient patient = new Patient();
-		EncounterService encounterService = Context.getEncounterService();
-		Encounter encounter = encounterService.getEncounter(3);
 		Calendar birthDate = null;
 		Calendar baseBirthDate = Calendar.getInstance();
 		baseBirthDate.set(2006, Calendar.DECEMBER, 22);
@@ -283,19 +280,18 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		String booleanString = adminService
 				.getGlobalProperty("atd.mergeTestCaseXML");
 		boolean merge = Boolean.parseBoolean(booleanString);
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 		String PSFMergeDirectory = null;
 		FormService formService = Context.getFormService();
 
-		Integer psfFormId = formService.getForms("PSF", null, null, false,
-				null, null, null).get(0).getFormId();
+		Integer psfFormId = formService.getForm("PSF").getFormId();
 		Integer locationTagId = 1;
 		Integer locationId = 1;
 		
 		try
 		{
-				FormAttributeValue formAttributeValue = atdService
+				FormAttributeValue formAttributeValue = chirdlutilbackportsService
 						.getFormAttributeValue(psfFormId,
 								"defaultMergeDirectory", locationTagId,locationId);
 
@@ -307,15 +303,14 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				String PSFFilename = "test/testFiles/PSF.xml";
 				String removeCurrentTimeXSLT = "test/testFiles/removeCurrentTime.xslt";
 
-				ChirdlUtilService chirdlutilService = Context.getService(ChirdlUtilService.class);
-				ChicaService chicaService = Context.getService(ChicaService.class);
+				ATDService atdService = Context.getService(ATDService.class);
 				PatientState patientState = new PatientState();
 				patientState.setPatient(patient);
 
 				// test create PSF merge file
 				String state = "PSF_create";
 				LocationTagAttributeValue locTagAttrValue = 
-					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
 				
 				Integer formId = null;
 				
@@ -337,8 +332,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				formInstance.setLocationId(locationId);
 				patientState.setSessionId(sessionId);
 				OutputStream generatedXML = new ByteArrayOutputStream();
-				formAttributeValue = atdService.getFormAttributeValue(
-						psfFormId, "numQuestions", locationTagId,locationId);
+				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
+						psfFormId, "numPrompts", locationTagId,locationId);
 				int maxDssElements = 0;
 
 				if (formAttributeValue != null)
@@ -346,7 +341,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 					maxDssElements = Integer.parseInt(formAttributeValue.getValue());
 				}
 
-				chicaService.produce(generatedXML, patientState, patient,
+				atdService.produce(generatedXML, patientState, patient,
 						encounterId, "PSF", maxDssElements,sessionId);
 				OutputStream targetXML = new ByteArrayOutputStream();
 				IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
@@ -374,7 +369,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				// test create PSF merge file
 				state = "PSF_create";
 				locTagAttrValue = 
-					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -393,7 +388,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				formInstance.setFormId(formId);
 				formInstance.setLocationId(locationId);
 				generatedXML = new ByteArrayOutputStream();
-				chicaService.produce(generatedXML, patientState, patient,
+				atdService.produce(generatedXML, patientState, patient,
 						encounterId, "PSF", maxDssElements,sessionId);
 				targetXML = new ByteArrayOutputStream();
 				IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
@@ -435,7 +430,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				.getService(EncounterService.class);
 		PatientService patientService = Context.getPatientService();
 		UserService userService = Context.getUserService();
-
+		ATDService atdService = Context.getService(ATDService.class);
 		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
@@ -454,19 +449,18 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		String booleanString = adminService
 				.getGlobalProperty("atd.mergeTestCaseXML");
 		boolean merge = Boolean.parseBoolean(booleanString);
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 		String PWSMergeDirectory = null;
 		FormService formService = Context.getFormService();
 
-		Integer pwsFormId = formService.getForms("PWS", null, null, false,
-				null, null, null).get(0).getFormId();
+		Integer pwsFormId = formService.getForm("PWS").getFormId();
 		Integer locationTagId = 1;
 		Integer locationId = 1;
 		
 		try
 		{
-				FormAttributeValue formAttributeValue = atdService
+				FormAttributeValue formAttributeValue = chirdlutilbackportsService
 						.getFormAttributeValue(pwsFormId,
 								"defaultMergeDirectory", locationTagId,locationId);
 
@@ -478,17 +472,13 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				String PWSFilename = "test/testFiles/PWS.xml";
 				String removeCurrentTimeXSLT = "test/testFiles/removeCurrentTime.xslt";
 
-				ChicaService chicaService = Context
-						.getService(ChicaService.class);
-				
-				ChirdlUtilService chirdlutilService = Context.getService(ChirdlUtilService.class);
 				PatientState patientState = new PatientState();
 				patientState.setPatient(patient);
 
 				// test create PWS merge file
 				String state = "PWS_create";
 				LocationTagAttributeValue locTagAttrValue = 
-					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
 				Integer formId = null;
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -508,8 +498,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				patientState.setFormInstance(formInstance);
 
 				OutputStream generatedXML = new ByteArrayOutputStream();
-				formAttributeValue = atdService.getFormAttributeValue(
-						pwsFormId, "numQuestions", locationTagId,locationId);
+				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
+						pwsFormId, "numPrompts", locationTagId,locationId);
 				int maxDssElements = 0;
 				int sessionId = 1;
 
@@ -519,7 +509,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 							.getValue());
 				}
 
-				chicaService.produce(generatedXML, patientState, patient,
+				atdService.produce(generatedXML, patientState, patient,
 						encounterId, "PWS", maxDssElements,sessionId);
 				OutputStream targetXML = new ByteArrayOutputStream();
 				IOUtil.bufferedReadWrite(new FileInputStream(PWSFilename),
@@ -548,7 +538,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				// test create PWS merge file
 				state = "PWS_create";
 				locTagAttrValue = 
-					chirdlutilService.getLocationTagAttributeValue(locationTagId, atdService.getStateByName(state).getFormName(), locationId);
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
@@ -567,7 +557,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				formInstance.setFormId(formId);
 				formInstance.setLocationId(locationId);
 				generatedXML = new ByteArrayOutputStream();
-				chicaService.produce(generatedXML, patientState, patient,
+				atdService.produce(generatedXML, patientState, patient,
 						encounterId, "PWS", maxDssElements,sessionId);
 				targetXML = new ByteArrayOutputStream();
 				IOUtil.bufferedReadWrite(new FileInputStream(PWSFilename),

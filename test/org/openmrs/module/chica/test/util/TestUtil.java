@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import java.util.Calendar;
 
-import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 

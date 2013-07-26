@@ -2,7 +2,6 @@ package org.openmrs.module.chica.service;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
@@ -12,8 +11,6 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -27,26 +24,17 @@ import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
-import org.openmrs.module.chica.hibernateBeans.Statistics;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
-import org.springframework.transaction.annotation.Transactional;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 
-@Transactional
 public interface ChicaService
 {
 	public void consume(InputStream input, Patient patient,
 			Integer encounterId,FormInstance formInstance,Integer sessionId,
 			List<FormField> fieldsToConsume,Integer locationTagId);
 
-	public void produce(OutputStream output, PatientState state,
-			Patient patient,Integer encounterId,String dssType,
-			int maxDssElements,Integer sessionId);
-
-	public void updateStatistics(Statistics statistics);
-
-	public void createStatistics(Statistics statistics);
-	
 	/**
 	 * @param ageMos
 	 * @param sex
@@ -77,15 +65,8 @@ public interface ChicaService
 
 	public List<Study> getActiveStudies();
 
-	public List<Statistics> getStatByFormInstance(int formInstanceId,String formName,
-			Integer locationId);
-
 	public StudyAttributeValue getStudyAttributeValue(Study study,
 			String studyAttributeName);
-
-	public List<Statistics> getStatByIdAndRule(int formInstanceId,int ruleId,String formName,
-			Integer locationId);
-
 	
 	public List<OldRule> getAllOldRules();
 
@@ -132,9 +113,9 @@ public interface ChicaService
 
 	public String getInsCategoryBySMS(String smsCode);
 	
-	public String getInsCategoryByInsCode(String insCode);
+	public String getInsCategoryByECWName(String ecwName);
 	
-	public PatientState getPrevProducePatientState(Integer sessionId, Integer patientStateId );
+	public String getInsCategoryByInsCode(String insCode);
 	
 	public Double getHighBP(Patient patient, Integer bpPercentile, String bpType, org.openmrs.Encounter encounter);
 	
@@ -142,10 +123,6 @@ public interface ChicaService
 			Double heightPercentile, Date onDate);
 		
 	public String getDDSTLeaf(String category, Integer ageInDays);
-	
-	public List<Statistics> getStatsByEncounterForm(Integer encounterId,String formName);
-
-	public List<Statistics> getStatsByEncounterFormNotPrioritized(Integer encounterId,String formName);
 	
 	public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export);
 
@@ -193,26 +170,6 @@ public interface ChicaService
 	public List<Object[]> getQuestionsScanned(String formName, String locationName);
 
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
-	
-	/**
-	 * Retrieves a list of URL objects referencing bad scans found for the provided location.
-	 * 
-	 * @param locationName The name of the location to search for bad scans.
-	 * @return List of URL objects of the bad scans.
-	 */
-	public List<URL> getBadScans(String locationName);
-	
-	/**
-	 * Moves the provided file to its parent directory named "resolved bad scans".
-	 * 
-	 * @param url The file (in URL format) to move to the "resolved bad scans" folder.
-	 * @param formRescanned Whether or not the form was attempted to be rescanned.  If so, 
-	 * the form file will be moved to the rescanned folder.  Otherwise, it will be moved to 
-	 * the ignored folder.
-	 * 
-	 * @throws Exception
-	 */
-	public void moveBadScan(String url, boolean formRescanned) throws Exception;
 
 	/**
 	 * Query the mrf dump to find the list of immunizations for the patient
@@ -225,17 +182,13 @@ public interface ChicaService
 	 * @param locationTagId
 	 * @param sessionId
 	 */
+	/* 
+     * Used by Vivienne's immunization forecasting service
+     * Commenting out since we are using CHIRP's
+     * 
 	public void immunizationQuery(OutputStream outputFile, Integer locationId,
 	                              Integer formId, org.openmrs.Encounter encounter,
 	                              Integer locationTagId, Integer sessionId);
-	
-    /**
-	 * This is a method I added to get around lazy initialization errors with patient.getIdentifier() in rules
-	 * Auto generated method comment
-	 * 
-	 * @param patientId
-	 * @return
-	 */
-	public PatientIdentifier getPatientMRN(Integer patientId);
 
+	*/
 }

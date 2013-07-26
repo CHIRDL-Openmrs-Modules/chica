@@ -25,33 +25,65 @@ Box4:=read {box4 from Parameters};
 Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
-If (mode = PRODUCE) then
-ps_passed := read Exist {PS_Passed from CHICA} Where it Occurred Within Past 2 months;
-gm_passed := read Exist {GM_Passed from CHICA} Where it Occurred Within Past 2 months;
-fm_passed := read Exist {FM_Passed from CHICA} Where it Occurred Within Past 2 months;
-lg_passed := read Exist {LG_Passed from CHICA} Where it Occurred Within Past 2 months;
+If (mode = PRODUCE) OR (mode = CONSUME) then
 ps_failed := read Last {PS_Failed from CHICA} Where it Occurred Within Past 2 months;
 gm_failed := read Last {GM_Failed from CHICA} Where it Occurred Within Past 2 months;
 fm_failed := read Last {FM_Failed from CHICA} Where it Occurred Within Past 2 months;
 lg_failed := read Last {LG_Failed from CHICA} Where it Occurred Within Past 2 months;
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+ps_passed := read Exist {PS_Passed from CHICA} Where it Occurred Within Past 2 months;
+gm_passed := read Exist {GM_Passed from CHICA} Where it Occurred Within Past 2 months;
+fm_passed := read Exist {FM_Passed from CHICA} Where it Occurred Within Past 2 months;
+lg_passed := read Exist {LG_Passed from CHICA} Where it Occurred Within Past 2 months;
 referral := read Last {Developmental_Referral from CHICA} Where it Occurred Within Past 6 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+devStatus := read {CHICA_DevScreen_Status from CHICA} ;
+ASQDone9:= read exist {ASQ9MonthAssessment from CHICA}; 
+ASQDone18:= read exist {ASQ18MonthAssessment from CHICA};   
+ASQDone24:= read exist {ASQ24MonthAssessment from CHICA}; 
+ASQDone27:= read exist {ASQ27MonthAssessment from CHICA};    
+ASQDone30:= read exist {ASQ30MonthAssessment from CHICA}; 
+ASQDone33:= read exist {ASQ33MonthAssessment from CHICA}; 
+ASQDone36:= read exist {ASQ36MonthAssessment from CHICA};
+
 endif
 ;;
 Priority:		412       ;;
 	Evoke:		;;
 Logic:
 
-Age := call ChicaAgeRule With "days";
-Box1_Text := call DDST with "PS", "Age";
-Box2_Text := call DDST with "FM", "Age";
-Box3_Text := call DDST with "GM", "Age";
-Box4_Text := call DDST with "LG", "Age";
+Box1_Text := call DDST with "PS";
+Box2_Text := call DDST with "FM";
+Box3_Text := call DDST with "GM";
+Box4_Text := call DDST with "LG";
 
-If (mode = PRODUCE) then
-If (ps_passed = True) AND (gm_passed = True) AND (fm_passed = True) AND (lg_passed = True) then conclude False;
-If (referral = Made) then conclude False;
+If (mode = PRODUCE) OR (mode = CONSUME) then
 If (ps_failed = null) AND (gm_failed = null) AND (fm_failed = null) AND (lg_failed = null) then || DevText || = "";
 Else || DevText || = "Milestones failed in the last 2 mos:";
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+If (ps_passed = True) AND (gm_passed = True) AND (fm_passed = True) AND (lg_passed = True) then conclude False;
+If (referral = Made) then conclude False;
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
+
+/** suppress the prompt if ASQ was not completed for the age range so there
+are not two developmental PWS prompts (intervention sites only) **/
+If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths = 9) AND NOT('ASQ_9m_Done' is in devStatus) then conclude False;
+If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 17) and (AgeInMonths < 19) AND NOT('ASQ_18m_Done' is in devStatus) then conclude False;
+If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 23) and (AgeInMonths < 39) AND NOT('ASQ_24m_Done' is in devStatus) AND NOT('ASQ_27m_Done' is in devStatus) AND NOT('ASQ_30m_Done' is in devStatus) AND NOT('ASQ_33m_Done' is in devStatus) AND NOT('ASQ_36m_Done' is in devStatus) then conclude False;
+
+If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths = 9) AND NOT(ASQDone9 = True) then conclude False;
+If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 17) and (AgeInMonths < 19) AND NOT(ASQDone18 = True) then conclude False;
+If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 23) and (AgeInMonths < 39) AND NOT(ASQDone24 = True) AND NOT(ASQDone27 = True) AND NOT(ASQDone30 = True) AND NOT(ASQDone33 = True) AND NOT(ASQDone36 = True) then conclude False;
+
 Conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 endif
@@ -60,24 +92,35 @@ endif
 
 
 If (mode = CONSUME) then
-/*
-Age := call ChicaAgeRule With "days";
-Box1_Text := Call DDST With "PS", "Age";
-Box2_Text := Call DDST With "FM", "Age";
-Box3_Text := Call DDST With "GM", "Age";
-Box4_Text := Call DDST With "LG", "Age";
-*/
+
+If (Gender = M) then || himHer || = "him";
+If (Gender = F) then || himHer || = "her";
+If  (Box1=true) then || note1 || = "|| firstname || passed || Box1_Text ||.";
+If  (Box2=true) then || note2 || = "|| firstname || passed || Box2_Text ||.";
+If  (Box3=true) then || note3 || = "|| firstname || passed || Box3_Text ||.";
+If  (Box4=true) then || note4 || = "|| firstname || passed || Box4_Text ||.";
+If  (Box5=true) then || note5 || = "|| firstname || did fail at least one milestone.";
+If  (Box6=true) then || note6 || = "I referred || himher || for developmental evaluation.";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "I evaluated milestones today: || DevText || || ps_failed_value || || gm_failed_value || || fm_failed_value || || lg_failed_value ||";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","DEVELOPMENT";
+endif;
+
 If  (Box1=true) then
  CALL storeObs With "PS_Passed", "Box1_Text";
+ CALL storeNote With "note1","DEVELOPMENT";
 endif;
 If  (Box2=true) then
  CALL storeObs With "FM_Passed", "Box2_Text";
+ CALL storeNote With "note2","DEVELOPMENT";
 endif;
 If  (Box3=true) then
  CALL storeObs With "GM_Passed", "Box3_Text";
+ CALL storeNote With "note3","DEVELOPMENT";
 endif;
 If  (Box4=true) then
  CALL storeObs With "LG_Passed", "Box4_Text";
+ CALL storeNote With "note4","DEVELOPMENT";
 endif;
 If  (Box5=true) AND NOT  (Box1=true) then
  CALL storeObs With "PS_Failed", "Box1_Text";
@@ -91,8 +134,12 @@ endif;
 If  (Box5=true) AND NOT  (Box4=true) then
  CALL storeObs With "LG_Failed", "Box4_Text";
 endif;
+If  (Box5=true) then
+ CALL storeNote With "note5","DEVELOPMENT";
+endif;
 If  (Box6=true) then
  CALL storeObs With "Developmental_Referral","Made";
+ CALL storeNote With "note6","DEVELOPMENT";
 endif;
 
 

@@ -26,6 +26,7 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 solids := read Last {taking_solid_food from CHICA} Where it Occurred Within Past 30 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 endif
 ;;
@@ -33,6 +34,7 @@ Priority:		874;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
 
 If (solids = "0") then conclude True;
 conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -41,11 +43,23 @@ endif
 
 If (mode = CONSUME) then
 
+If  (Box1=true) OR (Box2=true) OR (Box3=true) then
+ CALL storeNote With "Between 4-6 months, infants should start cereals, followed by fruits and vegetables. Meats should start at 8 months.","DIET AND NUTRITION";
+endif;
+If  (Box1=true) then || note1 || = "|| firstname || is not taking solids.";
+If  (Box2=true) then || note2 || = "I advised || firstname ||'s parent to start giving solids.";
+If  (Box3=true) then || note3 || = "|| firstname || is already getting solids.";
+
 If  (Box1=true) then
  CALL storeObs With "taking_solid_food","0";
+ CALL storeNote With "note1","DIET AND NUTRITION";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "note2","DIET AND NUTRITION";
 endif;
 If  (Box3=true) then
  CALL storeObs With "taking_solid_food","1";
+ CALL storeNote With "note3","DIET AND NUTRITION";
 endif;
 
 

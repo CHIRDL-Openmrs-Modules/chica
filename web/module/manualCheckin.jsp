@@ -31,19 +31,13 @@
 
 
 function setSize(width,height) {
-	if (window.outerWidth) {
-		window.outerWidth = width;
-		window.outerHeight = height;
-	}
-	else if (window.resizeTo) {
-		window.resizeTo(width,height);
-	}
+	window.resizeTo(width,height);
 	window.moveTo(50,50);
 }
 
 function useConfirmationForm() {
 	setTimeout('self.close();',5000);
-	window.resizeTo(525,100); 
+	window.resizeTo(525,150); 
 	window.moveTo(400,300);
 }
 
@@ -55,7 +49,6 @@ function writeConfirmationMessage(success, name,  mrn) {
 		text =  "Unable to check in "+ name + " (MRN: " + mrn + "). Please contact CHICA support.";
 	}
 	document.write(text.bold());
-	
 }
 
 function checkform()
@@ -95,11 +88,28 @@ function checkform()
 	{
 		alert('The patient must have a birthdate.');
 		return false;
+	} 
+	else if (document.manualCheckin.nextOfKinFirstName.value != '' &&
+			   document.manualCheckin.nextOfKinLastName.value == '')
+	{
+		alert('A next of kin first name has been entered.  Please enter a next of kin last name.');
+        return false;
+	}
+	else if (document.manualCheckin.nextOfKinLastName.value != '' &&
+            document.manualCheckin.nextOfKinFirstName.value == '')
+	{
+		alert('A next of kin last name has been entered.  Please enter a next of kin first name.');
+		return false;
+    }
+	else if (document.manualCheckin.sex.value == 'U') 
+	{
+		alert('Please select a valid sex.');
+        return false;
 	}
 	
-	var day = document.getElementById("dob2").value;
-    var month = document.getElementById("dob1").value;
-    var year= document.getElementById("dob3").value;
+	var day = document.manualCheckin.dob2.value;
+    var month = document.manualCheckin.dob1.value;
+    var year= document.manualCheckin.dob3.value;
     var leap = 0;
     var err = 0;
 	if (year.length == 2) {
@@ -176,10 +186,10 @@ if (err != 0)
       return false;
   	}
    }
-    
-    if(!document.getElementById("lastName").readOnly)
+    var new_p = (document.manualCheckin.newPatientHidden.value);
+    if(new_p == 'true')
    {
-     var where_to= confirm("Are you sure you want to add " + document.getElementById("firstName").value + " " + document.getElementById("lastName").value +  " as a new patient?");
+     var where_to= confirm("Are you sure you want to add " + document.manualCheckin.firstName.value + " " + document.manualCheckin.lastName.value +  " as a new patient?");
 
     if (where_to== false)
     {
@@ -222,8 +232,8 @@ if (err != 0)
 		
 	</head>
 
-<body  style="scrollbars:no"onload="javascript:setSize(800,475); <c:if test="${!empty checkinPatient}"> javascript:useConfirmationForm();</c:if>" onkeydown="if (event.keyCode==8) {event.keyCode=0; return event.keyCode }">
-	<div id="pageBody" class="greaseBoardBackground"  style="width:100%">		
+<body onload="javascript:setSize(800,550); <c:if test="${!empty checkinPatient}"> javascript:useConfirmationForm();</c:if>" onkeydown="if (event.keyCode==8) {event.keyCode=0; return event.keyCode }">
+	<div id="pageBody" class="greaseBoardBackground"  style="width:100%; height:100%; overflow:auto">		
 		<div id="contentMinimal">
 			<c:if test="${msg != null}">
 				<div id="openmrs_msg"><spring:message code="${msg}" text="${msg}" arguments="${msgArgs}" /></div>
@@ -243,6 +253,14 @@ if (err != 0)
 	<c:otherwise>
 						
 <form height="100%" name="manualCheckin" action="manualCheckin.form" method="get" onSubmit="return checkform()">
+<c:choose>
+ <c:when test="${!empty newPatient}">
+    <input type="hidden" name="newPatientHidden" value="true"/>
+ </c:when>    
+ <c:otherwise>
+    <input type="hidden" name="newPatientHidden" value="false"/>
+ </c:otherwise>
+ </c:choose>
 <table height="100%" style="border-width:0px;" cellspacing="0">
 <tr>
 <td style="text-align:left"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>Station</b>
@@ -257,36 +275,37 @@ if (err != 0)
 <select name="doctor" tabindex="2" id="doctorName">
 <c:forEach items="${doctors}" var="doctorListDoctor">
 <option 
-<c:if test="${doctorListDoctor.familyName == 'Other'}">selected</c:if> value="${doctorListDoctor.userId}">${doctorListDoctor.familyName}<c:if test="${!empty doctorListDoctor.givenName}">, ${doctorListDoctor.givenName}</c:if><c:if test="${!empty doctorListDoctor.middleName}">${doctorListDoctor.middleName}</c:if>
+<c:if test="${doctorListDoctor.person.familyName == 'Other'}">selected</c:if> value="${doctorListDoctor.userId}">${doctorListDoctor.person.familyName}<c:if test="${!empty doctorListDoctor.person.givenName}">, ${doctorListDoctor.person.givenName}</c:if><c:if test="${!empty doctorListDoctor.person.middleName}">${doctorListDoctor.person.middleName}</c:if>
 </option>
 </c:forEach>	
 </select>
 </td><td "text-align:left"></td></tr>
 <tr>
 <td style="text-align:right"><b>SSN</b></td>
-<td style="text-align:left"> <input type="text" name="ssn1" size="3" maxlength="3" value="${ssn1}" tabindex="3" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/>&nbsp;-&nbsp;<input type="text" name="ssn2" size="2" maxlength="2" value="${ssn2}" tabindex="4" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/>&nbsp;-&nbsp;<input type="text" name="ssn3" size="4" maxlength="4" value="${ssn3}" tabindex="5" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td>
+<td style="text-align:left"> <input type="text" name="ssn1" size="3" maxlength="3" value="${ssn1}" tabindex="3"/>&nbsp;-&nbsp;<input type="text" name="ssn2" size="2" maxlength="2" value="${ssn2}" tabindex="4"/>&nbsp;-&nbsp;<input type="text" name="ssn3" size="4" maxlength="4" value="${ssn3}" tabindex="5"/></td>
 <td style="text-align:left" rowspan="2"> <input type="submit" value="${checkinButton}"  class="CheckinFormButton" tabindex="22"></td>
 </tr>
-<tr><td style="text-align:right"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>Last Name</b> </td><td style="text-align:left"><input type="text" name="lastName" tabindex="6" id="lastName" value="${lastName}" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
-<tr><td style="text-align:right"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>First Name</b> </td><td style="text-align:left"><input type="text" name="firstName" tabindex="7" value="${firstName}" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td>
+<tr><td style="text-align:right"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>Last Name</b> </td><td style="text-align:left"><input type="text" name="lastName" tabindex="6" id="lastName" value="${lastName}"/></td></tr>
+<tr><td style="text-align:right"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>First Name</b> </td><td style="text-align:left"><input type="text" name="firstName" tabindex="7" value="${firstName}"/></td>
 <td rowspan="2" ><input type="button" value="Cancel" class="CheckinFormButton" onclick='window.close()' tabindex="23"/>
 </tr>
-<tr><td style="text-align:right"><b>Middle Name </b></td><td style="text-align:left"><input type="text" name="middleName" value="${middleName}" tabindex="8" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
-<tr><td style="text-align:right"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>DOB</b></td><td style="text-align:left"> <input type="text" name="dob1" size="2" maxlength="2" value="${dob1}" tabindex="9" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/>/<input type="text" name="dob2" size="2" maxlength="2" value="${dob2}" tabindex="10" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/>/<input type="text" name="dob3" size="4" maxlength="4" value="${dob3}" tabindex="11" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
+<tr><td style="text-align:right"><b>Middle Name </b></td><td style="text-align:left"><input type="text" name="middleName" value="${middleName}" tabindex="8"/></td></tr>
+<tr><td style="text-align:right"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>DOB</b></td><td style="text-align:left"> <input type="text" name="dob1" size="2" maxlength="2" value="${dob1}" tabindex="9"/>/<input type="text" name="dob2" size="2" maxlength="2" value="${dob2}" tabindex="10"/>/<input type="text" name="dob3" size="4" maxlength="4" value="${dob3}" tabindex="11"/></td></tr>
 <tr><td style="text-align:right"><c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if><b>Sex</b></td><td style="text-align:left">
-<SELECT NAME="sex" tabindex="12" <c:if test="${empty newPatient}">READONLY class="readonly"<c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if>onfocus="this_index1 = this.selectedIndex;" onchange="this.selectedIndex = this_index1;"></c:if>>
-<OPTION <c:if test="${sex == 'U'}">selected</c:if> value="U">U - unknown</OPTION>
+<SELECT NAME="sex" tabindex="12" <c:if test="${!empty newPatient}"><span style="color:red">*</span>&nbsp;</c:if>>
+<OPTION <c:if test="${sex == 'U'}">selected</c:if> value="U">Select One</OPTION>
 <OPTION <c:if test="${sex == 'F'}">selected</c:if> value="F">F - female</OPTION>
 <OPTION <c:if test="${sex == 'M'}">selected</c:if> value="M">M - male</OPTION>
 </SELECT>
 </tr>
-<tr><td style="text-align:right"><b>Mother's First Name</b></td><td style="text-align:left"> <input type="text" name="mothersFirstName" tabindex="13" value="${mothersFirstName}" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
-<tr><td style="text-align:right"><b>Day Phone</b></td><td style="text-align:left"><input type="text" name="dayPhone" value="${dayPhone}" tabindex="14" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
-<tr><td style="text-align:right"><b>Street Address</b> </td><td style="text-align:left"><input type="text" size="50" name="address1" tabindex="15" value="${address1}" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
-<tr><td style="text-align:right"><b>Street Address2</b></td><td style="text-align:left"> <input type="text" size="50" name="address2" tabindex="16" value="${address2}" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
-<tr><td style="text-align:right"><b>City</b></td><td><input type="text" name="city" value="${city}" tabindex="17" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
+<tr><td style="text-align:right"><b>Next of Kin Last Name</b></td><td style="text-align:left"> <input type="text" name="nextOfKinLastName" tabindex="14" value="${nextOfKinLastName}"/></td></tr>
+<tr><td style="text-align:right"><b>Next of Kin First Name</b></td><td style="text-align:left"> <input type="text" name="nextOfKinFirstName" tabindex="13" value="${nextOfKinFirstName}"/></td></tr>
+<tr><td style="text-align:right"><b>Day Phone</b></td><td style="text-align:left"><input type="text" name="dayPhone" value="${dayPhone}" tabindex="15"/></td></tr>
+<tr><td style="text-align:right"><b>Street Address</b> </td><td style="text-align:left"><input type="text" size="50" name="address1" tabindex="16" value="${address1}"/></td></tr>
+<tr><td style="text-align:right"><b>Street Address2</b></td><td style="text-align:left"> <input type="text" size="50" name="address2" tabindex="17" value="${address2}"/></td></tr>
+<tr><td style="text-align:right"><b>City</b></td><td><input type="text" name="city" value="${city}" tabindex="18"/></td></tr>
 <tr><td style="text-align:right"><b>State</b></td><td>
-<SELECT NAME="state" tabindex="18" <c:if test="${empty newPatient}">READONLY class="readonly" onfocus="this_index2 = this.selectedIndex;" onchange="this.selectedIndex = this_index2;"></c:if>>
+<SELECT NAME="state" tabindex="19">
 <OPTION></OPTION>
 <OPTION <c:if test="${state == 'AL'}">selected</c:if> value="AL">AL - Alabama</OPTION>
 <OPTION <c:if test="${state == 'AK'}">selected</c:if> value="AK">AK - Alaska</OPTION>
@@ -340,9 +359,9 @@ if (err != 0)
 <OPTION <c:if test="${state == 'WI'}">selected</c:if> value="WI">WI - Wisconsin</OPTION>
 <OPTION <c:if test="${state == 'WY'}">selected</c:if> value="WY">WY - Wyoming</OPTION>
 </SELECT></td></tr>
-<tr><td style="text-align:right"><b>ZIP </b></td><td><input type="text" size="15" name="zip" value="${zip}" tabindex="19" <c:if test="${empty newPatient}">READONLY class="readonly"</c:if>/></td></tr>
+<tr><td style="text-align:right"><b>ZIP </b></td><td><input type="text" size="15" name="zip" value="${zip}" tabindex="20"/></td></tr>
 <tr><td style="text-align:right"><b>Race</b></td><td style="text-align:left">
-<SELECT NAME="race" tabindex="20" <c:if test="${empty newPatient}">READONLY class="readonly" onfocus="this_index3 = this.selectedIndex;" onchange="this.selectedIndex = this_index3;"></c:if>>
+<SELECT NAME="race" tabindex="21">
 <OPTION></OPTION>
 <OPTION <c:if test="${race == 'B' || race == '1'}">selected</c:if> value="B">B - Black</OPTION>
 <OPTION <c:if test="${race == 'H' || race == '4' || race == '8'}">selected</c:if> value="H">H - Hispanic / Latino</OPTION>
@@ -355,7 +374,7 @@ if (err != 0)
 </td></tr>
 <tr><td style="text-align:right"><b>Insurance Category</b></td>
 <td style="text-align:left">
-<select name="insuranceCategory" tabindex="21" >
+<select name="insuranceCategory" tabindex="22" >
 <option></option>		
 <c:forEach items="${insuranceCategories}" var="insurCategory">
 <option <c:if test="${insuranceCategory == insurCategory}">selected</c:if> value="${insurCategory}">${insurCategory}</option>
@@ -363,7 +382,7 @@ if (err != 0)
 </select>
 	</td>
 	</tr>
-	<tr></tr>
+	<tr><td><br/></td><td></td></tr>
 </table>
 <input  type="hidden" name="checkin" value="checkin"/>
 <input type="hidden" name="checkinForm" value="true"/>

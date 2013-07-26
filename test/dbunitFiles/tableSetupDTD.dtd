@@ -1,18 +1,18 @@
 <!ELEMENT dataset (
-    atd_form_attribute*,
-    atd_form_attribute_value*,
+    chirdlutilbackports_form_attribute*,
+    chirdlutilbackports_form_attribute_value*,
     atd_form_instance*,
     atd_patient_atd*,
     atd_patient_state*,
-    atd_program*,
+    chirdlutilbackports_program*,
     atd_session*,
-    atd_state*,
-    atd_state_action*,
-    atd_state_mapping*,
+    chirdlutilbackports_state*,
+    chirdlutilbackports_state_action*,
+    chirdlutilbackports_state_mapping*,
     chica_bmiage*,
     chica_ddst*,
-    atd_error*,
-    atd_error_category*,
+    chirdlutilbackports_error*,
+    chirdlutilbackports_error_category*,
     chica_family*,
     chica_hcageinf*,
     chica_high_bp*,
@@ -105,15 +105,15 @@
     user_role*,
     users*)>
 
-<!ELEMENT atd_form_attribute EMPTY>
-<!ATTLIST atd_form_attribute
+<!ELEMENT chirdlutilbackports_form_attribute EMPTY>
+<!ATTLIST chirdlutilbackports_form_attribute
     form_attribute_id CDATA #REQUIRED
     name CDATA #REQUIRED
     description CDATA #IMPLIED
 >
 
-<!ELEMENT atd_form_attribute_value EMPTY>
-<!ATTLIST atd_form_attribute_value
+<!ELEMENT chirdlutilbackports_form_attribute_value EMPTY>
+<!ATTLIST chirdlutilbackports_form_attribute_value
     form_attribute_value_id CDATA #REQUIRED
     form_id CDATA #REQUIRED
     value CDATA #IMPLIED
@@ -151,8 +151,8 @@
     form_id CDATA #IMPLIED
 >
 
-<!ELEMENT atd_program EMPTY>
-<!ATTLIST atd_program
+<!ELEMENT chirdlutilbackports_program EMPTY>
+<!ATTLIST chirdlutilbackports_program
     program_id CDATA #REQUIRED
     name CDATA #IMPLIED
     description CDATA #IMPLIED
@@ -169,8 +169,8 @@
     encounter_id CDATA #IMPLIED
 >
 
-<!ELEMENT atd_state EMPTY>
-<!ATTLIST atd_state
+<!ELEMENT chirdlutilbackports_state EMPTY>
+<!ATTLIST chirdlutilbackports_state
     state_id CDATA #REQUIRED
     name CDATA #IMPLIED
     description CDATA #IMPLIED
@@ -182,8 +182,8 @@
     creator CDATA #IMPLIED
 >
 
-<!ELEMENT atd_state_action EMPTY>
-<!ATTLIST atd_state_action
+<!ELEMENT chirdlutilbackports_state_action EMPTY>
+<!ATTLIST chirdlutilbackports_state_action
     state_action_id CDATA #REQUIRED
     action_name CDATA #REQUIRED
     action_description CDATA #IMPLIED
@@ -193,8 +193,8 @@
     creator CDATA #IMPLIED
 >
 
-<!ELEMENT atd_state_mapping EMPTY>
-<!ATTLIST atd_state_mapping
+<!ELEMENT chirdlutilbackports_state_mapping EMPTY>
+<!ATTLIST chirdlutilbackports_state_mapping
     initial_state CDATA #REQUIRED
     next_state CDATA #REQUIRED
     state_mapping_id CDATA #REQUIRED
@@ -224,8 +224,8 @@
     ddst_id CDATA #REQUIRED
 >
 
-<!ELEMENT atd_error EMPTY>
-<!ATTLIST atd_error
+<!ELEMENT chirdlutilbackports_error EMPTY>
+<!ATTLIST chirdlutilbackports_error
     error_id CDATA #REQUIRED
     error_category_id CDATA #IMPLIED
     level CDATA #IMPLIED
@@ -235,8 +235,8 @@
     date_time CDATA #IMPLIED
 >
 
-<!ELEMENT atd_error_category EMPTY>
-<!ATTLIST atd_error_category
+<!ELEMENT chirdlutilbackports_error_category EMPTY>
+<!ATTLIST chirdlutilbackports_error_category
     error_category_id CDATA #REQUIRED
     name CDATA #REQUIRED
     description CDATA #IMPLIED
@@ -498,6 +498,7 @@
     voided_by CDATA #IMPLIED
     date_voided CDATA #IMPLIED
     void_reason CDATA #IMPLIED
+    locale_preferred CDATA #REQUIRED
 >
 
 <!ELEMENT concept_name_tag EMPTY>

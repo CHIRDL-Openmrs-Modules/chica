@@ -31,12 +31,13 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.advice.QueryMeds;
 import org.openmrs.module.chica.xmlBeans.UnfilteredMedications;
 import org.openmrs.module.chirdlutil.ReadWriteManager;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
@@ -54,7 +55,7 @@ public class MedicationListLookup {
 	private static ReadWriteManager medicationListsLock = new ReadWriteManager();
 	
 	
-	public static synchronized void addMedicationList(Integer patientId, List<Medication> medicationList) {
+	public static void addMedicationList(Integer patientId, List<Medication> medicationList) {
 		medicationListsLock.getWriteLock();
 		try {
 	        medicationLists.put(patientId, medicationList);
@@ -66,7 +67,7 @@ public class MedicationListLookup {
         }
 	}
 	
-	public static synchronized LinkedList<Medication> getMedicationList(Integer patientId) {
+	public static LinkedList<Medication> getMedicationList(Integer patientId) {
 		medicationListsLock.getReadLock();
 		LinkedList<Medication> medications = new LinkedList<Medication>();
         try {
@@ -87,7 +88,7 @@ public class MedicationListLookup {
 		return medications;
 	}
 	
-	public static synchronized void removeMedicationList(Integer patientId) {
+	public static void removeMedicationList(Integer patientId) {
 		medicationListsLock.getWriteLock();
 		try {
 	        medicationLists.remove(patientId);
@@ -101,7 +102,7 @@ public class MedicationListLookup {
 	
 	public static void queryMedicationList(Encounter encounter, boolean useTimeout) throws QueryMedicationListException {
 		AdministrationService adminService = Context.getAdministrationService();
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		Integer timeout = null;
 		
 		try {
@@ -115,11 +116,10 @@ public class MedicationListLookup {
 		QueryMeds queryMedsThread = new QueryMeds(encounter);
 		Thread thread = new Thread(queryMedsThread);
 		thread.start();
-		long startTime = System.currentTimeMillis();
 		
 		if (timeout != null) {
-			while (true) {
-				//processing is done
+			try {
+				thread.join(timeout);
 				if (!thread.isAlive()) {
 					//check for an exception
 					if (queryMedsThread.getException() != null) {
@@ -127,26 +127,18 @@ public class MedicationListLookup {
 					} else {
 						return;
 					}
-				}
-				
-				if ((System.currentTimeMillis() - startTime) > timeout) {
+				} else {
 					//the timeout was exceeded so return null
-					//the timeout was exceeded so return null
-					ATDError error = new ATDError("Warning", "Query Medication List Connection", 
+					Error error = new Error("Warning", "Query Medication List Connection", 
 						"Timeout of "+timeout/1000+" seconds was exceeded for patientId: "+
 						encounter.getPatientId()+"."
 						, null, new Date(), null);
-					atdService.saveError(error);
+					chirdlutilbackportsService.saveError(error);
 					return;
 				}
-				try {
-					Thread.sleep(100);// wait for a tenth of a second
-					
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					return;
-				}
+			} catch (InterruptedException e) {
+				log.warn("Kite Query thread interrupted", e);
+				return;
 			}
 		}
 	}
@@ -155,8 +147,8 @@ public class MedicationListLookup {
 	                                       Integer numMonths,Integer locationTagId,
 	                                       Integer locationId) {
 		
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
-		LocationTagAttributeValue locationTagAttrVal = chirdlUtilService.getLocationTagAttributeValue(locationTagId, "unfilteredMedicationFile",
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTagAttributeValue locationTagAttrVal = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, "unfilteredMedicationFile",
 	                                                              locationId);
 		
 		String medExceptionConfigFilename = null;

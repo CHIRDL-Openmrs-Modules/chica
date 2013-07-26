@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -18,11 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Arrays;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,8 +29,8 @@ import org.openmrs.ConceptMap;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.ConceptSet;
-import org.openmrs.LocationTag;
 import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -44,23 +40,22 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationTagAttributeValue;
-import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.Base64;
 import org.openmrs.module.chirdlutil.util.FileDateComparator;
 import org.openmrs.module.chirdlutil.util.FileListFilter;
 import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7MessageConstructor;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
@@ -83,7 +78,6 @@ import ca.uhn.hl7v2.model.v25.segment.OBX;
 public class HL7Exporter extends AbstractTask {
 
 	private Log log = LogFactory.getLog(this.getClass());
-	private TaskDefinition taskConfig;
 	private String host;
 	private Integer port;
 	private Integer socketReadTimeout;
@@ -91,18 +85,14 @@ public class HL7Exporter extends AbstractTask {
 
 	@Override
 	public void initialize(TaskDefinition config) {
-
+		super.initialize(config);
 		Context.openSession();
 
 		try {
-			if (Context.isAuthenticated() == false)
-				authenticate();
-
-			this.taskConfig = config;
 			// port to export
-			String portName = this.taskConfig.getProperty("port");
-			host = this.taskConfig.getProperty("host");
-			String socketReadTimeoutString = this.taskConfig.getProperty("socketReadTimeout");
+			String portName = this.taskDefinition.getProperty("port");
+			host = this.taskDefinition.getProperty("host");
+			String socketReadTimeoutString = this.taskDefinition.getProperty("socketReadTimeout");
 
 			if (host == null) {
 				host = "localhost";
@@ -134,7 +124,7 @@ public class HL7Exporter extends AbstractTask {
 	public void execute() {
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		socketHandler = new HL7SocketHandler();
 
@@ -143,9 +133,6 @@ public class HL7Exporter extends AbstractTask {
 		Context.openSession();
 
 		try {
-
-			if (Context.isAuthenticated() == false)
-				authenticate();
 
 			// get list of pending exports
 			List<ChicaHL7Export> exportList = chicaService.getPendingHL7Exports();
@@ -173,7 +160,7 @@ public class HL7Exporter extends AbstractTask {
 						continue;
 					}
 
-					doc = getDocument(conceptMapFile);
+					doc = XMLUtil.parseXMLFromFile(conceptMapFile);
 					if (doc == null) {
 						export.setStatus(chicaService
 								.getChicaExportStatusByName("XML_parsing_error"));
@@ -191,7 +178,7 @@ public class HL7Exporter extends AbstractTask {
 
 					Hashtable<String, String> mappings = this.loadHashTable(doc);
 					conceptCategory = doc.getDocumentElement().getAttribute("category");
-					Properties hl7Properties = Util.getProps(configFileName);
+					Properties hl7Properties = IOUtil.getProps(configFileName);
 					if (hl7Properties == null) {
 						export.setStatus(chicaService
 								.getChicaExportStatusByName("no_hl7_config_properties"));
@@ -328,11 +315,11 @@ public class HL7Exporter extends AbstractTask {
 
 				} catch (Exception e) {
 					Integer sessionId = export.getSessionId();
-					ATDError ce = new ATDError("Error", "Hl7 Export",
+					Error ce = new Error("Error", "Hl7 Export",
 							"Error sending or saving hl7 export message: " + e.getMessage(),
 							org.openmrs.module.chirdlutil.util.Util.getStackTrace(e), new Date(),
 							sessionId);
-					atdService.saveError(ce);
+					chirdlutilbackportsService.saveError(ce);
 					log.error("Error sending or saving hl7 export message:", e);
 				}
 
@@ -341,10 +328,10 @@ public class HL7Exporter extends AbstractTask {
 
 		{
 			Integer sessionId = export.getSessionId();
-			ATDError ce = new ATDError("Error", "Hl7 Export", "Error creating hl7 export: "
+			Error ce = new Error("Error", "Hl7 Export", "Error creating hl7 export: "
 					+ e.getMessage(), org.openmrs.module.chirdlutil.util.Util.getStackTrace(e),
 					new Date(), sessionId);
-			atdService.saveError(ce);
+			chirdlutilbackportsService.saveError(ce);
 			log.error("Error creating hl7 export:", e);
 
 		} finally {
@@ -431,11 +418,14 @@ public class HL7Exporter extends AbstractTask {
 		try {
 			ConceptClass rmrsClass = cs.getConceptClassByName("RMRS");
 			classList.add(rmrsClass);
-
-			List<Concept> conceptsWithSameName = cs.getConcepts(rmrsname, Context.getLocale(),
-					false, classList, null);
-
-			if (conceptsWithSameName != null && conceptsWithSameName.size() > 0) {
+			Concept concept = cs.getConceptByName(rmrsname);
+			List<Concept> conceptsWithSameName = new ArrayList<Concept>();
+			
+			if (concept.getConceptClass().getName().equals("RMRS")) {
+				conceptsWithSameName.add(concept);
+			}
+			
+			if (conceptsWithSameName.size() > 0) {
 				if (conceptsWithSameName.size() > 1) {
 					log.error("More than one RMRS concept exist with exact name of " + rmrsname);
 				}
@@ -485,21 +475,16 @@ public class HL7Exporter extends AbstractTask {
 			return false;
 		}
 
-		List<Concept> conceptsWithBatteryName = new ArrayList<Concept>();
-		conceptsWithBatteryName = cs.getConcepts(batteryName + " CHICA", Context.getLocale(),
-				false, null, null);
+		Concept concept = cs.getConceptByName(batteryName + " CHICA");
 
 		Concept batteryConcept = new Concept();
-		for (Concept concept : conceptsWithBatteryName) {
-			if (concept.isSet()) {
-				batteryConcept = concept;
-				continue;
-			}
+		if (concept.isSet()) {
+			batteryConcept = concept;
 		}
 		Collection<ConceptSet> allConceptsInBattery = cs.getConceptSetsByConcept(batteryConcept);
-		for (ConceptSet concept : allConceptsInBattery) {
+		for (ConceptSet conceptSet : allConceptsInBattery) {
 
-			if (conceptToTest.getConceptId().equals(concept.getConcept().getConceptId())) {
+			if (conceptToTest.getConceptId().equals(conceptSet.getConcept().getConceptId())) {
 				match = true;
 				continue;
 			}
@@ -693,7 +678,7 @@ public class HL7Exporter extends AbstractTask {
 		String filename = "";
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		LocationService locationService = Context.getLocationService();
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		LocationTag locTag = null;
 
 		org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounterService
@@ -710,7 +695,7 @@ public class HL7Exporter extends AbstractTask {
 			locTag = locationService.getLocationTagByName(printerLocation);
 		}
 		if (printerLocation == null) {
-			LocationAttributeValue locAttrValue = chirdlUtilService.getLocationAttributeValue(
+			LocationAttributeValue locAttrValue = chirdlutilbackportsService.getLocationAttributeValue(
 					locId, "defaultPrinterLocation");
 			if (locAttrValue != null) {
 				String locTagStr = locAttrValue.getValue();
@@ -722,7 +707,7 @@ public class HL7Exporter extends AbstractTask {
 		}
 
 		if (locTag != null) {
-			LocationTagAttributeValue locationTagValue = chirdlUtilService
+			LocationTagAttributeValue locationTagValue = chirdlutilbackportsService
 					.getLocationTagAttributeValue(locTag.getId(), "HL7ConfigFile", chicaEncounter
 							.getLocation().getLocationId());
 			if (locationTagValue != null)
@@ -745,7 +730,7 @@ public class HL7Exporter extends AbstractTask {
 
 	private String getChicaExportConceptMapByQueueId(Integer hl7ExportQueueId) {
 		String filename = null;
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ChicaHL7ExportMap exportmap = chicaService.getChicaExportMapByQueueId(hl7ExportQueueId);
 
@@ -756,7 +741,7 @@ public class HL7Exporter extends AbstractTask {
 		String locationTagAttributeIdStr = exportmap.getValue();
 		if (locationTagAttributeIdStr != null) {
 			Integer locationTagAttributeId = Integer.valueOf(locationTagAttributeIdStr);
-			LocationTagAttributeValue value = chirdlUtilService
+			LocationTagAttributeValue value = chirdlutilbackportsService
 					.getLocationTagAttributeValueById(locationTagAttributeId);
 			if (value != null) {
 				filename = value.getValue();
@@ -766,31 +751,6 @@ public class HL7Exporter extends AbstractTask {
 		return filename;
 	}
 
-	private Document getDocument(String conceptMapFile) {
-		File file = new File(conceptMapFile);
-		Document doc = null;
-		if (file.exists()) {
-			try {
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder builder = factory.newDocumentBuilder();
-				doc = builder.parse(file);
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-
-			} catch (ParserConfigurationException e) {
-
-				log.error("Unable to parse XML map file");
-			} catch (SAXException e) {
-
-				log.error("SAX handler exeception when parsing XML map file");
-			}
-		}
-		return doc;
-	}
-	
-  	
 	private boolean addOBXForTiff(HL7MessageConstructor constructor, Encounter encounter,
 			String form, Hashtable<String, String> mappings, Properties hl7Properties) {
 		boolean obxcreated = false;
@@ -798,7 +758,7 @@ public class HL7Exporter extends AbstractTask {
 		String attachmentConceptName = hl7Properties.getProperty("attachment_battery_name");
 		String attachmentText = hl7Properties.getProperty("attachment_text");
 
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 		String formDir = "";
 		String hl7Abbreviation = "ED";
@@ -807,7 +767,7 @@ public class HL7Exporter extends AbstractTask {
 
 		
 		
-		List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(form,
+		List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(form,
 				encounterId);
 
 		FormInstance formInstance = null;
@@ -840,7 +800,7 @@ public class HL7Exporter extends AbstractTask {
 			}
 
 			formDir = IOUtil
-					.formatDirectoryName(org.openmrs.module.atd.util.Util.getFormAttributeValue(
+					.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(
 							formId, "imageDirectory", locationTagId, formLocationId));
 
 			if (formDir == null || formDir.equals("")) {

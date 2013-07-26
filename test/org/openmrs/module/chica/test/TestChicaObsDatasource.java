@@ -48,7 +48,7 @@ public class TestChicaObsDatasource extends BaseModuleContextSensitiveTest
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		String mrn = "999995";
 
-		QueryKite.mrfQuery(mrn, patientId,false);// query and add to datasource
+		QueryKite.mrfQuery(mrn, patient,false);// query and add to datasource
 
 		ArrayList<Rule> ruleList = new ArrayList<Rule>();
 		Rule rule = new Rule();
@@ -58,8 +58,7 @@ public class TestChicaObsDatasource extends BaseModuleContextSensitiveTest
 		rule.setParameters(parameters);
 
 		ruleList.add(rule);
-		ArrayList<Result> results = dssService.runRules(patient, ruleList,
-				 null, null);
+		ArrayList<Result> results = dssService.runRules(patient, ruleList);
 
 		for (Result result : results)
 		{

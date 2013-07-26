@@ -10,7 +10,8 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 
@@ -72,7 +73,7 @@ public class KiteMessageHandler
 
 	public String getMessage()
 	{
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		ByteArrayOutputStream outputString = new ByteArrayOutputStream();
 
 		try
@@ -81,10 +82,10 @@ public class KiteMessageHandler
 		
 		} catch (Exception e)
 		{	
-			ATDError error = new ATDError("Error","Query Kite Connection"
+			Error error = new Error("Error","Query Kite Connection"
 					, "Message dropped"
 					, "Partial message: "+outputString.toString(), new Date(), null);
-			atdService.saveError(error);
+			chirdlutilbackportsService.saveError(error);
 			return null;
 		}finally{
 			try {

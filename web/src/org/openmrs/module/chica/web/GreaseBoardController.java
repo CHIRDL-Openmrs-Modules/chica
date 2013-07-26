@@ -23,6 +23,7 @@ import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
@@ -33,21 +34,22 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
-import org.openmrs.module.atd.StateManager;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.hibernateBeans.Program;
-import org.openmrs.module.atd.hibernateBeans.Session;
-import org.openmrs.module.atd.hibernateBeans.State;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.ChicaStateActionHandler;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chirdlutil.hibernateBeans.LocationAttributeValue;
-import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
+import org.openmrs.module.chica.util.PatientRow;
+import org.openmrs.module.chica.util.PatientRowComparator;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.dss.service.DssService;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -86,7 +88,7 @@ public class GreaseBoardController extends SimpleFormController
 			HttpServletResponse response, Object command, BindException errors)
 			throws Exception
 	{
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 	
 		String optionsString = request.getParameter("options");
 		
@@ -117,10 +119,10 @@ public class GreaseBoardController extends SimpleFormController
 			Patient patient = patientService.getPatient(patientId);
 			ConceptService conceptService = Context.getConceptService();
 			Concept currConcept = conceptService.getConceptByName("CHICA_ADHD_SX");
-			Session session = atdService.getSession(sessionId);
+			Session session = chirdlutilbackportsService.getSession(sessionId);
 			Integer encounterId = session.getEncounterId();
-			org.openmrs.module.chica.util.Util.saveObs(patient, currConcept, encounterId, 
-				"workup_initiated", null,null, null);
+			org.openmrs.module.chirdlutil.util.Util.saveObs(patient, currConcept, encounterId, 
+				"workup_initiated",new Date());
 			
 			LogicService logicService = Context.getLogicService();
 			
@@ -154,8 +156,6 @@ public class GreaseBoardController extends SimpleFormController
 					
 				}
 			}
-			DssService dssService = Context.getService(DssService.class);
-			dssService.loadRule("CREATE_JIT",false);
 			
 			//print the ADHD parent form
 			Map<String, Object> parameters = new HashMap<String,Object>();
@@ -165,7 +165,7 @@ public class GreaseBoardController extends SimpleFormController
 			formInstance.setLocationId(locationId);
 			parameters.put("formInstance",formInstance);
 			parameters.put("param1","ADHD P");
-			logicService.eval(patient, "CREATE_JIT",parameters);
+			logicService.eval(patientId, "CREATE_JIT",parameters);
 			
 			//print the ADHD Spanish parent form
 			parameters = new HashMap<String,Object>();
@@ -175,7 +175,7 @@ public class GreaseBoardController extends SimpleFormController
 			formInstance.setLocationId(locationId);
 			parameters.put("formInstance",formInstance);
 			parameters.put("param1","ADHD PS");
-			logicService.eval(patient, "CREATE_JIT",parameters);
+			logicService.eval(patientId, "CREATE_JIT",parameters);
 			
 			//print the ADHD teacher form
 			parameters = new HashMap<String,Object>();
@@ -185,7 +185,7 @@ public class GreaseBoardController extends SimpleFormController
 			formInstance.setLocationId(locationId);
 			parameters.put("formInstance",formInstance);
 			parameters.put("param1","ADHD T");
-			logicService.eval(patient, "CREATE_JIT",parameters);
+			logicService.eval(patientId, "CREATE_JIT",parameters);
 		}
 
 		if (optionsString != null && (optionsString.equalsIgnoreCase("Print PSF")||
@@ -198,18 +198,18 @@ public class GreaseBoardController extends SimpleFormController
 			if (patientId != null && sessionId != null && formName != null)
 			{
 				FormService formService = Context.getFormService();
-				Session session = atdService.getSession(sessionId);
+				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
 				
-				List<Form> forms = formService.getForms(formName,null,null,false,null,null,null);
+				Form form = formService.getForm(formName);
 				Integer formId = null;
-				if (forms != null && forms.size() > 0)
+				if (form != null)
 				{
-					formId = forms.get(0).getFormId();
+					formId = form.getFormId();
 				}
 				String action = "PRODUCE FORM INSTANCE";
 				
-				PatientState patientStateProduce = atdService
+				PatientState patientStateProduce = chirdlutilbackportsService
 						.getPatientStateByEncounterFormAction(encounterId, formId,
 								action);
 
@@ -229,18 +229,18 @@ public class GreaseBoardController extends SimpleFormController
 				
 				if (formName.equalsIgnoreCase("PSF"))
 				{
-					currState = atdService
+					currState = chirdlutilbackportsService
 							.getStateByName(stateName);
 				} else
 				{
 					// reprint if the state exists
 					if (patientStateProduce != null)
 					{
-						currState = atdService.getStateByName(stateName);
+						currState = chirdlutilbackportsService.getStateByName(stateName);
 					} else
 					{
 						// create for the first time if it does not exist
-						currState = atdService.getStateByName("QUERY KITE "
+						currState = chirdlutilbackportsService.getStateByName("QUERY KITE "
 								+ formName);
 					}
 				}
@@ -250,14 +250,14 @@ public class GreaseBoardController extends SimpleFormController
 
 				if (currState != null)
 				{
-					PatientState patientState = atdService.getLastPatientState(sessionId);
+					PatientState patientState = chirdlutilbackportsService.getLastPatientState(sessionId);
 					PatientService patientService = Context.getPatientService();
 					Patient patient = patientService.getPatient(patientId);
 
 					StateManager.runState(patient, sessionId, currState,actionParameters,
 							patientState.getLocationTagId(),
 							patientState.getLocationId(),
-							ChicaStateActionHandler.getInstance());
+							BaseStateActionHandler.getInstance());
 				}
 			}
 			
@@ -274,6 +274,8 @@ public class GreaseBoardController extends SimpleFormController
 		if(Context.getUserContext().getAuthenticatedUser()== null){
 			return null;
 		}
+		ATDService atdService = Context.getService(ATDService.class);
+
 		AdministrationService adminService = Context.getAdministrationService();
 		numRefreshes++;
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -283,8 +285,7 @@ public class GreaseBoardController extends SimpleFormController
 		
 		try
 		{
-			ATDService atdService = Context
-					.getService(ATDService.class);
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			ChicaService chicaService = Context.getService(ChicaService.class);
 			
 			Calendar todaysDate = Calendar.getInstance();
@@ -307,9 +308,9 @@ public class GreaseBoardController extends SimpleFormController
 				location = locationService.getLocation(locationString);
 				if (location != null) {
 					locationId = location.getLocationId();
-					String showBadScans = adminService.getGlobalProperty("chica.showBadScans");
+					String showBadScans = adminService.getGlobalProperty("atd.showBadScans");
 					if (showBadScans != null && showBadScans.equals("true")) {
-						List<URL> badScans = chicaService.getBadScans(location.getName());
+						List<URL> badScans = atdService.getBadScans(location.getName());
 						map.put("badScans", badScans);
 					}
 					
@@ -334,8 +335,8 @@ public class GreaseBoardController extends SimpleFormController
 
 			for (Integer locationTagId : locationTagIds)
 			{
-				Program program = atdService.getProgram(locationTagId,locationId);
-				List<PatientState> currUnfinishedStates = atdService
+				Program program = chirdlutilbackportsService.getProgram(locationTagId,locationId);
+				List<PatientState> currUnfinishedStates = chirdlutilbackportsService
 					.getLastPatientStateAllPatients(todaysDate.getTime(),
 						program.getProgramId(),program.getStartState().getName(), 
 						locationTagId,locationId);
@@ -349,9 +350,9 @@ public class GreaseBoardController extends SimpleFormController
 			for (PatientState currState : unfinishedStates)
 			{
 				String checkoutStateString = adminService.getGlobalProperty("chica.greaseboardCheckoutState");
-				State checkoutState = atdService.getStateByName(checkoutStateString);
+				State checkoutState = chirdlutilbackportsService.getStateByName(checkoutStateString);
 				Integer sessionId = currState.getSessionId();
-				List<PatientState> checkoutPatientStates = atdService.getPatientStateBySessionState(sessionId, checkoutState.getStateId());
+				List<PatientState> checkoutPatientStates = chirdlutilbackportsService.getPatientStateBySessionState(sessionId, checkoutState.getStateId());
 				if(checkoutPatientStates != null && checkoutPatientStates.size()>0){
 					continue;
 				}
@@ -361,15 +362,15 @@ public class GreaseBoardController extends SimpleFormController
 				String firstName = Util.toProperCase(patient.getGivenName());
 
 				String mrn = atdService.evaluateRule("medicalRecordNoFormatting", 
-						patient, null, null).toString();
+						patient, null).toString();
 			
 
 				String dob = atdService.evaluateRule("birthdate>fullDateFormat", 
-						patient, null, null).toString();
+						patient, null).toString();
 				String sex = patient.getGender();
 				State state = currState.getState();
 				
-				Session session = atdService.getSession(sessionId);
+				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
 				EncounterService encounterService = Context
 						.getService(EncounterService.class);
@@ -379,7 +380,7 @@ public class GreaseBoardController extends SimpleFormController
 				Map<String,Object> parameters = new HashMap<String,Object>();
 				parameters.put("encounterId", encounterId);
 				String appointment = atdService.evaluateRule("scheduledTime>fullTimeFormat", 
-						patient, parameters, null).toString();
+						patient, parameters).toString();
 				PatientRow row = new PatientRow();
 				Date encounterDate  = null;
 				
@@ -397,8 +398,8 @@ public class GreaseBoardController extends SimpleFormController
 					parameters.put("param0", new Result(encounter
 							.getEncounterDatetime()));
 					String checkin = atdService.evaluateRule("fullTimeFormat",
-							patient, parameters, null).toString();
-					User provider = encounter.getProvider();
+							patient, parameters).toString();
+					Person provider = encounter.getProvider();
 					String mdName = "";
 					//Ensure proper case even though we store provider names in proper case
 					//Any provider names stored before the hl7sockethandler update need to be
@@ -513,8 +514,8 @@ public class GreaseBoardController extends SimpleFormController
 	private void getStatus(State state, PatientRow row, Integer sessionId,PatientState currState)
 	{
 		//see if an incomplete state exists for the JIT
-		ATDService atdService = Context.getService(ATDService.class);
-		State jitIncompleteState = atdService.getStateByName("JIT_incomplete");
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		State jitIncompleteState = chirdlutilbackportsService.getStateByName("JIT_incomplete");
 		FormInstance formInstance = currState.getFormInstance();
 		Integer formId = null;
 		String formName = null;
@@ -525,7 +526,7 @@ public class GreaseBoardController extends SimpleFormController
 			formName = formService.getForm(formId).getName();
 		}
 		
-		List<PatientState> patientStates = atdService.getPatientStateBySessionState(sessionId,jitIncompleteState.getStateId());
+		List<PatientState> patientStates = chirdlutilbackportsService.getPatientStateBySessionState(sessionId,jitIncompleteState.getStateId());
 		
 		//color the row a different color if there is an incomplete JIT state
 		if (patientStates != null) {
@@ -630,9 +631,9 @@ public class GreaseBoardController extends SimpleFormController
 	}
 	
 	private boolean isInterventionLocation(Integer locationId,String interLocationAttributeName) {
-		ChirdlUtilService chirdlUtilService = Context.getService(ChirdlUtilService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
-		LocationAttributeValue locationAttributeValue = chirdlUtilService.getLocationAttributeValue(locationId,
+		LocationAttributeValue locationAttributeValue = chirdlutilbackportsService.getLocationAttributeValue(locationId,
 			interLocationAttributeName);
 		if (locationAttributeValue != null) {
 			String interventionSiteString = locationAttributeValue.getValue();

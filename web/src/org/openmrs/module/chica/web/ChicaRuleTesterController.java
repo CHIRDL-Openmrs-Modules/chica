@@ -12,14 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.QueryKite;
-import org.openmrs.module.chica.datasource.ObsChicaDatasource;
-import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -48,8 +46,6 @@ public class ChicaRuleTesterController extends SimpleFormController
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception
 	{
-		AdministrationService adminService = Context.getAdministrationService();
-
 		Map<String, Object> map = new HashMap<String, Object>();
 		DssService dssService = Context
 				.getService(DssService.class);
@@ -95,7 +91,7 @@ public class ChicaRuleTesterController extends SimpleFormController
 						currRule.setParameters(parameters);
 						try
 						{
-							QueryKite.mrfQuery(mrn, patientId,false);
+							QueryKite.mrfQuery(mrn, patient,false);
 						} catch (Exception e)
 						{
 							//ignore the error if the kite query fails
@@ -103,34 +99,14 @@ public class ChicaRuleTesterController extends SimpleFormController
 						}
 						// query and add to
 						// datasource
-						dssService.loadRule("CREATE_JIT",false);
-						dssService.loadRule("ChicaAgeRule",false);
-						dssService.loadRule("storeObs",false);
-						dssService.loadRule("getObs",false);
-						dssService.loadRule("DDST", false);
-						dssService.loadRule("LookupBPcentile", false);
-						dssService.loadRule("ScoreJit", false);
-						dssService.loadRule("CheckIncompleteScoringJit", false);
-						dssService.loadRule("VanderbiltParentADHD", false);
-						dssService.loadRule("LocationAttributeLookup", false);
-						dssService.loadRule("CHOOSE_ASQ_JIT", false);
-						dssService.loadRule("CHOOSE_ASQ_ACTIVITY_JIT", false);
-						dssService.loadRule("ASQWriteDoneObs", false);
-						dssService.loadRule("getLastObs",false);
-						dssService.loadRule("CHOOSE_ASQ_JIT_PWS",false);
-						String defaultPackagePrefix = Util.formatPackagePrefix(
-							adminService.getGlobalProperty("atd.defaultPackagePrefix"));
-						dssService.loadRule("roundOnePlace", defaultPackagePrefix, null, false);
-						dssService.loadRule("integerResult", defaultPackagePrefix, null,false);
-						
-						Result result = dssService.runRule(patient, currRule,
-								null, null);
+												
+						Result result = dssService.runRule(patient, currRule);
 						
 						LogicService logicService = Context.getLogicService();
-						ObsChicaDatasource xmlDatasource = (ObsChicaDatasource) logicService
+						ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
 							.getLogicDataSource("RMRS");
 						//purge these obs from the datasource
-						xmlDatasource.deleteRegenObsByPatientId(patientId);
+						xmlDatasource.deleteObsByPatientId(patientId);
 
 						if (result.size() < 2)
 						{

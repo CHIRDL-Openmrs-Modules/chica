@@ -1,13 +1,13 @@
 
 package org.openmrs.module.chica;
 
-import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 
 
 public class QueryKiteException extends Exception {
 
     private static final long serialVersionUID = -2985522122680870005L;
-    private ATDError atdError = null;
+    private Error Error = null;
 
     public QueryKiteException() {
         super();
@@ -17,9 +17,9 @@ public class QueryKiteException extends Exception {
         super(message);
     }
     
-    public QueryKiteException(String message, ATDError error) {
+    public QueryKiteException(String message, Error error) {
         super(message);
-        atdError = error;
+        Error = error;
     }
 
     public QueryKiteException(Throwable cause) {
@@ -29,8 +29,8 @@ public class QueryKiteException extends Exception {
     public QueryKiteException(String message, Throwable cause) {
         super(message, cause);
     }
-    public ATDError getATDError (){
-    	return atdError;
+    public Error getError (){
+    	return Error;
     }
 
 }

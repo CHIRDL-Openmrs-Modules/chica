@@ -24,15 +24,18 @@ import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.FormInstance;
-import org.openmrs.module.atd.hibernateBeans.PatientState;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -123,20 +126,29 @@ public class ViewEncounterController extends SimpleFormController {
 				FormService formService = Context.getFormService();
 				Form form = formService.getForm(formId);
 				String formName = form.getName();
-				ATDService atdService = Context.getService(ATDService.class);
+				ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 				Integer leftImageLocationId = null;
 				Integer leftImageFormId = null;
 				Integer leftImageFormInstanceId = null;
+				String leftImageStylesheet = null;
+				String rightImageStylesheet = null;
+				boolean displayMergeForms = false;
 				org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
 				org.openmrs.Encounter encounter = encounterService.getEncounter(encounterId);
 				ChicaService chicaService = Context.getService(ChicaService.class);
 				
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
-						formName.equals("MCHAT")|| formName.equals("ADHD PFU")|| formName.equals("ADHD PSFU")) {
+						formName.equals("MCHAT")|| formName.equals("ADHD PFU")|| formName.equals("ADHD PSFU") || 
+						formName.equals("ParentSummaryReport")) {
 					leftImageLocationId = locationId;
 					leftImageFormId = formId;
 					leftImageFormInstanceId = formInstanceId;
-					
+					if (formName.equals("ParentSummaryReport")) {
+						leftImageStylesheet = "parentSummaryReport.xsl";
+						displayMergeForms = true;
+					} else if (formName.equals("PSF")) {
+						leftImageStylesheet = "psf.xsl";
+					}
 				} else {
 					ArrayList<String> leftNames = new ArrayList<String>();
 					
@@ -152,10 +164,17 @@ public class ViewEncounterController extends SimpleFormController {
 					
 					if(formName.equals("PWS")){
 						leftNames.add("PSF");
+						leftImageStylesheet = "psf.xsl";
+					}
+					
+					if (formName.equals("TeacherSummaryReport")) {
+						leftNames.add("ParentSummaryReport");
+						leftImageStylesheet = "parentSummaryReport.xsl";
+						displayMergeForms = true;
 					}
 					
 					for (String leftName : leftNames) {
-						List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(leftName,
+						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName,
 						    encounterId);
 						if (patientStates != null && !patientStates.isEmpty()) {
 							
@@ -176,7 +195,7 @@ public class ViewEncounterController extends SimpleFormController {
 									leftImageLocationId = encounter.getLocation().getLocationId();
 									
 									if (leftImageFormInstanceId != null) {
-										form = formService.getForms("PSF", null, null, false, null, null, null).get(0);
+										form = formService.getForm("PSF");
 										if (form != null) {
 											leftImageFormId = form.getFormId();
 										}
@@ -193,11 +212,15 @@ public class ViewEncounterController extends SimpleFormController {
 				
 				//don't set a right image for MCHAT
 				if (!formName.equals("MCHAT")) {
-					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU")) {
+					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || 
+							formName.equals("TeacherSummaryReport")) {
 						rightImageLocationId = locationId;
 						rightImageFormId = formId;
 						rightImageFormInstanceId = formInstanceId;
-						
+						if (formName.equals("TeacherSummaryReport")) {
+							rightImageStylesheet = "teacherSummaryReport.xsl";
+							displayMergeForms = true;
+						}
 					} else {
 						
 						String rightName = null;
@@ -222,7 +245,13 @@ public class ViewEncounterController extends SimpleFormController {
 							rightName = "PWS";
 						}
 						
-						List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(rightName,
+						if (formName.equals("ParentSummaryReport")) {
+							rightName = "TeacherSummaryReport";
+							rightImageStylesheet = "teacherSummaryReport.xsl";
+							displayMergeForms = true;
+						}
+						
+						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName,
 						    encounterId);
 						if (patientStates != null && !patientStates.isEmpty()) {
 							
@@ -243,7 +272,7 @@ public class ViewEncounterController extends SimpleFormController {
 									rightImageLocationId = encounter.getLocation().getLocationId();
 									
 									if (rightImageFormInstanceId != null) {
-										form = formService.getForms("PWS", null, null, false, null, null, null).get(0);
+										form = formService.getForm("PWS");
 										if (form != null) {
 											rightImageFormId = form.getFormId();
 										}
@@ -257,12 +286,17 @@ public class ViewEncounterController extends SimpleFormController {
 					map.put("rightImageLocationId", rightImageLocationId);
 					map.put("rightImageFormId", rightImageFormId);
 					map.put("rightImageFormInstanceId", rightImageFormInstanceId);
+					map.put("rightImageStylesheet", rightImageStylesheet);
 					map.put("leftImageLocationId", leftImageLocationId);
 					map.put("leftImageFormId", leftImageFormId);
 					map.put("leftImageFormInstanceId", leftImageFormInstanceId);
+					map.put("leftImageStylesheet", leftImageStylesheet);
+					
+					if (displayMergeForms) {
+						return new ModelAndView(new RedirectView("displayMergeForm.form"), map);
+					}
 
-					return new ModelAndView(new RedirectView("displayTiff.form"),
-						map);
+					return new ModelAndView(new RedirectView("displayTiff.form"), map);
 			}
 
 		}
@@ -272,7 +306,7 @@ public class ViewEncounterController extends SimpleFormController {
 
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception {
-		ATDService atdService = Context.getService(ATDService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);		
 		FormService formService = Context.getFormService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		PatientService patientService = Context
@@ -321,6 +355,8 @@ public class ViewEncounterController extends SimpleFormController {
 			formsToProcess.add("ADHD PFU");
 			formsToProcess.add("ADHD TFU");
 			formsToProcess.add("ADHD PSFU");
+			formsToProcess.add("ParentSummaryReport");
+			formsToProcess.add("TeacherSummaryReport");
 			
 			String firstName = null;
 			String lastName = null;
@@ -365,7 +401,12 @@ public class ViewEncounterController extends SimpleFormController {
 				}
 
 				// Calculate age at visit
-				User provider = enct.getProvider();
+				UserService userService = Context.getUserService();
+				List<User> providers = userService.getUsersByPerson(enct.getProvider(), true);
+				User provider = null;
+				if(providers != null&& providers.size()>0){
+					provider = providers.get(0);
+				}
 				String providerName = getProviderName(provider);
 				String station = enct.getPrinterLocation();
 				
@@ -376,12 +417,12 @@ public class ViewEncounterController extends SimpleFormController {
 				row.setCheckin(checkinDateString);
 				row.setEncounter(enct);
 				row.setStation(station);
-				row.setAgeAtVisit(org.openmrs.module.chica.util.Util
+				row.setAgeAtVisit(org.openmrs.module.chirdlutil.util.Util
 						.adjustAgeUnits(dob, checkin));
 
 				// psf, pws form ids
 							
-					List<PatientState> patientStates = atdService.getPatientStatesWithFormInstances(null,encounterId);
+					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
 					if (patientStates != null && !patientStates.isEmpty()) {
 						ArrayList<String> rowFormNames = new ArrayList<String>();
 						for (PatientState currState : patientStates) {
@@ -430,7 +471,7 @@ public class ViewEncounterController extends SimpleFormController {
 					
 					
 					if(psfId != null){
-						Form form = formService.getForms("PSF",null,null,false,null,null,null).get(0);
+						Form form = formService.getForm("PSF");
 						Integer formId = null;
 						if (form != null)
 						{
@@ -446,7 +487,7 @@ public class ViewEncounterController extends SimpleFormController {
 					}
 					
 					if(pwsId != null){
-						Form form = formService.getForms("PWS",null,null,false,null,null,null).get(0);
+						Form form = formService.getForm("PWS");
 						Integer formId = null;
 						if (form != null)
 						{
@@ -471,6 +512,18 @@ public class ViewEncounterController extends SimpleFormController {
 				//row.setHeightPercentile(result);
 				row.setHeightPercentile("");
 
+				FormInstance pwsId = row.getPwsId();
+				if (pwsId != null) {
+					State currState = chirdlutilbackportsService.getStateByName("PWS_wait_to_scan");
+					List<PatientState> pwsScanStates = chirdlutilbackportsService.getPatientStateByFormInstanceState(pwsId,
+					    currState,true);
+					if (pwsScanStates != null && pwsScanStates.size() > 0) {
+						PatientState pwsScanState = pwsScanStates.get(0);
+						if (pwsScanState.getEndTime() != null) {
+							row.setPwsScanned(true);
+						}
+					}
+				}
 				rows.add(row);
 			}
 
@@ -500,7 +553,7 @@ public class ViewEncounterController extends SimpleFormController {
 				firstInit = "";
 			}
 
-			String middleInit = Util.toProperCase(prov.getMiddleName());
+			String middleInit = Util.toProperCase(prov.getPerson().getMiddleName());
 			if (middleInit != null && middleInit.length() > 0) {
 				middleInit = middleInit.substring(0, 1);
 			} else {

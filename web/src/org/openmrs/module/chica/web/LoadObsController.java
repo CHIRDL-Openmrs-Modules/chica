@@ -42,6 +42,7 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.SSNValidator;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -226,7 +227,7 @@ public class LoadObsController extends SimpleFormController
 							ssn = ssn.trim();
 							if (ssn.length() > 0)
 							{
-								if (Util.isValidSSN(ssn))
+								if ((new SSNValidator()).isValid(ssn))
 								{
 									PatientIdentifierType type = patientService
 											.getPatientIdentifierTypeByName("SSN");

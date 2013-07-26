@@ -6,7 +6,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.hibernateBeans.ATDError;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -115,11 +116,11 @@ public class KiteQueryThread implements Runnable
 
 		} catch (Exception e)
 		{
-			ATDError error = new ATDError("Error", "Query Kite Connection",
+			Error error = new Error("Error", "Query Kite Connection",
 					queryPrefix + ": " + e.getMessage(), Util.getStackTrace(e),
 					new Date(), null);
-			ATDService atdService = Context.getService(ATDService.class);
-			atdService.saveError(error);
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			chirdlutilbackportsService.saveError(error);
 			throw new QueryKiteException("Query Kite Connection timed out",
 					error);
 
