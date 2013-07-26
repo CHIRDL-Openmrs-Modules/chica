@@ -22,8 +22,10 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
+import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.LogicException;
 import org.openmrs.logic.Rule;
+import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
@@ -101,7 +103,15 @@ public class pageByClinic implements Rule {
 			return Result.emptyResult();
 		}
 		
-		String pagerMessage = "Loc: " + location.getName() + " PID: " + patientId + " - " + message;
+		// Get the patient's preferred language
+		LogicCriteria conceptCriteria = new LogicCriteriaImpl("preferred_language");
+		Result languageResult = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria.last());
+		String language = "Unknown";
+		if (languageResult != null && languageResult.toString().length() > 0) {
+			language = languageResult.toString();
+		}
+		
+		String pagerMessage = "Loc: " + location.getName() + " PID: " + patientId + " Lang: " + language +" - " + message;
 		
 		// Get the pager numbers
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
