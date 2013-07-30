@@ -382,7 +382,11 @@ public class Calculator
 		final double STANDARD_DEV_FEMALE_DIASTOLIC = 10.9573;
 		
 		height = Util.convertUnitsToMetric(height, measurementUnits);
-		double heightZscore = calculateZscore(height, gender, birthdate, "length", currDate);
+		Double heightZscore = calculateZscore(height, gender, birthdate, "length", currDate);
+		if (heightZscore == null) {
+			return null;
+		}
+		
 		double age = Util.getAgeInUnits(birthdate, new Date(), Util.YEAR_ABBR);
 		
 		double a1 = 0;
