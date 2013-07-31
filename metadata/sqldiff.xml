@@ -3584,6 +3584,23 @@ where action_name='REPRINT';
         from location a;
         </sql>
     </diff>
+    <diff>
+        <version>1.6.5</version>
+        <author>Steve McKee</author>
+        <date>July 31, 2013</date>
+        <description>
+        Add location tag attribute to filter printer stations on the Greaseboard.
+        </description>
+        <sql>
+        INSERT INTO `chirdlutilbackports_location_tag_attribute`(name,description) 
+        VALUES ( 'ActivePrinterStation', 'Printer locations that should be displayed on the Grease Board.');
+        
+        insert into chirdlutilbackports_location_tag_attribute_value (location_id, value, location_tag_attribute_id, location_tag_id) 
+        select a.location_id, CONCAT_WS('',(select value from chirdlutilbackports_location_tag_attribute_value where location_tag_id = b.location_tag_id AND location_tag_attribute_id = (select location_tag_attribute_id from chirdlutilbackports_location_tag_attribute where name='ActivePrinterLocation'))), (select location_tag_attribute_id from chirdlutilbackports_location_tag_attribute where name='ActivePrinterStation'), b.location_tag_id
+        from location a, location_tag b, location_tag_map c
+        where a.location_id = c.location_id AND c.location_tag_id = b.location_tag_id AND a.retired = 0 AND b.retired = 0;
+        </sql>
+    </diff>
 </sqldiff>
 
 

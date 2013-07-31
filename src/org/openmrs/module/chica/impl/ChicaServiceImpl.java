@@ -1,12 +1,8 @@
 package org.openmrs.module.chica.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -62,7 +58,6 @@ import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswers;
 import org.openmrs.module.chica.xmlBeans.StatsConfig;
-import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -909,7 +904,7 @@ public class ChicaServiceImpl implements ChicaService
 		}
 		
 		public List<String> getPrinterStations(Location location){
-			String locationTagAttributeName = "ActivePrinterLocation";
+			String locationTagAttributeName = "ActivePrinterStation";
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 			Set<LocationTag> tags = location.getTags();
@@ -925,7 +920,7 @@ public class ChicaServiceImpl implements ChicaService
 					//only display active printer locations
 					if (activePrinterLocationString.equalsIgnoreCase("true"))
 					{
-						stationNames.add(tag.getTag());
+						stationNames.add(tag.getName());
 					}
 				}
 				

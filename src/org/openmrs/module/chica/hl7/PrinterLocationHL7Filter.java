@@ -11,12 +11,10 @@ import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
-import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.chirdlutil.service.ChirdlUtilService;
-import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
+import org.openmrs.module.sockethl7listener.HL7Filter;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -87,8 +85,13 @@ public class PrinterLocationHL7Filter implements HL7Filter
 									// active
 				}
 			}
+			
+			log.error("Location tag "+printerLocation+" for location "+locationString+" is not set as an active " +
+				"printer location (ActivePrinterLocation). Cannot process this message.");
+			return true;
 		}
 
+		log.error("No location tag "+printerLocation+" found for location "+locationString+". Cannot process this message.");
 		return true;
 	}
 }
