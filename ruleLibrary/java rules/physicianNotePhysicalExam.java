@@ -147,8 +147,16 @@ public class physicianNotePhysicalExam implements Rule {
 			rule.setParameters(map);
     		Result roundedResult = dssService.runRule(patient, rule);
     		noteBuffer.append(roundedResult.toString());
-    		noteBuffer.append(" lbs. (");
+    		noteBuffer.append(" lb./");
+    		rule.setTokenName("weightKG");
+    		Result weightKg = dssService.runRule(patient, rule);
+    		rule.setTokenName("roundTwoPlace");
+    		map.put("param0", weightKg);
+    		roundedResult = dssService.runRule(patient, rule);
+    		noteBuffer.append(roundedResult.toString());
+    		noteBuffer.append(" kg. (");
     		rule.setTokenName("percentile");
+    		map.put("param0", weightResult);
     		Result percentile = dssService.runRule(patient, rule);
     		noteBuffer.append(percentile.toString());
     		noteBuffer.append("%)\n");
