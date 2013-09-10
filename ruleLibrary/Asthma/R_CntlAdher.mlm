@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 StatusKnown := read Exist {AsthmaStatus from CHICA} Where it Occurred Within Past 30 Days;CurrentStatus := read Last {AsthmaStatus from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 endif
 ;;
-Priority:		60;;
+Priority:		63;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

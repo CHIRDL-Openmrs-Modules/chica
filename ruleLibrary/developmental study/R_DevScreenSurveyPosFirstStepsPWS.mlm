@@ -37,7 +37,7 @@ asqStatus:= read {CHICA_DevScreen_ASQ from CHICA} Where it Occurred Within Past 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority:		171       ;;
+Priority:		168       ;;
 	Evoke:		;;
 
 Logic:

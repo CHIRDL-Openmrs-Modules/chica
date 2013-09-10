@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 CurrentStatus := read Last {AsthmaStatus from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 endif
 ;;
-Priority:		63;;
+Priority:		66;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

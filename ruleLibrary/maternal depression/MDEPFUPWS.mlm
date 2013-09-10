@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 Depr_Concern := read Last {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 365 Days;
 endif
 ;;
-Priority:		225;;
+Priority:		222;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
