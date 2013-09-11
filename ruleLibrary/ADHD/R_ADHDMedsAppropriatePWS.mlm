@@ -36,7 +36,7 @@ Target := read last {CHICA_ADHD_Targets from CHICA} ;
 SideEffects := read last {CHICA_ADHD_Side_Effects from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 endif
 ;;
-Priority: 178       ;;
+Priority: 180       ;;
  Evoke: ;;
 
 Logic:

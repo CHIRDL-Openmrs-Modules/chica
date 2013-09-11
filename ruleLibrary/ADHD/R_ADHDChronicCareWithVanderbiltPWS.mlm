@@ -39,7 +39,7 @@ TeacherVanderbiltDoneFU := read exist {TeacherAssessFollowupSymptomTotal from CH
 preferred_language:= read last {preferred_language from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 endif
 ;;
-Priority:		175       ;;
+Priority:		177       ;;
 	Evoke:		;;
 
 Logic:

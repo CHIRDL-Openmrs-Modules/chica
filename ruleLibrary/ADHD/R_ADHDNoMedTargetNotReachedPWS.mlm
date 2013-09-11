@@ -35,7 +35,7 @@ Meds := read {CHICA_ADHD_RX from CHICA} Where it Occurred Within Past 365 Days;
 Target := read last {CHICA_ADHD_Targets from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
-Priority: 180      ;;
+Priority: 182      ;;
  Evoke: ;;
 
 Logic:
