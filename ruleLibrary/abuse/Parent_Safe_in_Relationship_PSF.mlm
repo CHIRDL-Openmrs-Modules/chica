@@ -1,6 +1,6 @@
 Maintenance:
 	Title:		Domestic Violence  Safe at home PSF;;
-	Filename:		Parent_Safe_at_Home_PSF;;
+	Filename:		Parent_Safe_in_Relationship_PSF;;
 	Version:	1.0;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Steve Downs;;
@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 Dom_Viol := read Exist {Domest_Violence_Concern from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority:		1000;;
+Priority:		41;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
@@ -41,18 +41,18 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
- CALL storeObs With "Domest_Violence_Concern","Safe_at_Home";
+ CALL storeObs With "Domest_Violence_Concern","Safe_in_Relationship";
 endif;
 If  (Box2=true) then
- CALL storeObs With "Domest_Violence_Concern","Not_Safe_Home";
+ CALL storeObs With "Domest_Violence_Concern","Not_Safe_in_Relationship";
 endif;
 
 
 endif
 ;;
 Action:
-write ("Do you feel safe in your home?");
-write ("¿Se siente seguro en su casa?") At Spanish;                                                                                                                                                                                                              
+write ("Do you feel safe in your current relationship?");
+write ("¿Siente Ud. seguro en su relación actual?") At Spanish;                                                                                                                                                                                                              
 ;;
 Age_Min: 0 days;;
 Age_Max: 12 years;;

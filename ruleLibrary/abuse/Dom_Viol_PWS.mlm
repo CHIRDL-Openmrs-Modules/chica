@@ -32,21 +32,21 @@ DomViolElement := read Last 2 {Domest_Violence_Concern from CHICA} Where it Occu
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 endif
 ;;
-Priority:		163;;
+Priority:		161;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
 If (Dom_Viol = Not_Confirmed) OR (AbuseConcern = yes_md) OR (Dom_Viol = Addressed) then conclude False;
 
-If 'Kick_Hit_Slap' is in DomViolElement or 'Not_Safe_Home' is in DomViolElement then conclude True;
+If 'Kick_Hit_Slap' is in DomViolElement or 'Not_Safe_Home' is in DomViolElement or 'Not_Safe_in_Relationship' is in DomViolElement then conclude True;
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 
 endif
 
 If (mode = CONSUME) then
 
-If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "On a recent prescreening for || firstname ||, parent reported being abused or feeling unsafe at home.";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "On a recent prescreening for || firstname ||, parent reported being abused or feeling unsafe.";
 If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
  CALL storeNote With "description", "PSYCHOSOCIAL";
 endif;
