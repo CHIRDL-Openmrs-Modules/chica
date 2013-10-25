@@ -34,8 +34,15 @@ public class HL7EncounterHandler25 extends
 	
 	public Date getAppointmentTime(Message message)
 	{
-		PV1 pv1 = getPV1(message);
-		return TranslateDate(pv1.getAdmitDateTime());
+		MSH msh = getMSH(message);
+		String sendingFacility = msh.getSendingFacility().getNamespaceID().getValue();
+		if ("ECW".equalsIgnoreCase(sendingFacility)) {
+			PV1 pv1 = getPV1(message);
+			return TranslateDate(pv1.getAdmitDateTime());
+		}
+		
+		PV2 pv2 = getPV2(message);
+		return TranslateDate(pv2.getExpectedAdmitDateTime());
 	}
 
 	public String getInsuranceCode(Message message)
@@ -194,14 +201,26 @@ public class HL7EncounterHandler25 extends
 			MSH msh = getMSH(message);
 			OBR obr = getOBR(message, 0);
 			timeStamp = null;
-			
-			if (message instanceof ORU_R01) {
-				if (obr != null)
-					timeStamp = obr.getObservationDateTime();
-			} else if ((message instanceof ADT_A01)) {
-				 if (msh != null){
-					 timeStamp = msh.getDateTimeOfMessage();
-			 	}
+			String sendingFacility = msh.getSendingFacility().getNamespaceID().getValue();
+			if ("ECW".equalsIgnoreCase(sendingFacility)) {
+				if (message instanceof ORU_R01) {
+					if (obr != null)
+						timeStamp = obr.getObservationDateTime();
+				} else if ((message instanceof ADT_A01)) {
+					 if (msh != null){
+						 timeStamp = msh.getDateTimeOfMessage();
+				 	}
+				}
+			} else {
+				if (message instanceof ORU_R01) {
+					if (obr != null)
+						timeStamp = obr.getObservationDateTime();
+				} else if ((message instanceof ADT_A01)) {
+					 if (msh != null){
+						 PV1 pv1 = getPV1(message);
+						 timeStamp = pv1.getAdmitDateTime();
+				 	}
+				}
 			}
 			
 			if (timeStamp != null && timeStamp.getTime()!= null) { 

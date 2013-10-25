@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -58,7 +57,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.v25.segment.MSH;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -416,7 +414,7 @@ public class HL7SocketHandler extends
 		AdministrationService adminService = Context.getAdministrationService();
 		parameters.put("processCheckinHL7Start", new java.util.Date());
 		Context.openSession();
-		String allowMessageSources = adminService.getGlobalProperty("chica.allowableHL7MessageSources");
+//		String allowMessageSources = adminService.getGlobalProperty("chica.allowableHL7MessageSources");
 		Context.closeSession();
 		
 		String incomingMessageString = null;
@@ -507,34 +505,34 @@ public class HL7SocketHandler extends
 		try {
 			
 			//All messages should be adt a01 v2.5 at this point
-			if (message instanceof ca.uhn.hl7v2.model.v25.message.ADT_A01){
-				ca.uhn.hl7v2.model.v25.message.ADT_A01 adt25 = (ca.uhn.hl7v2.model.v25.message.ADT_A01) message;
-				sendingFacility = adt25.getMSH().getSendingFacility().getNamespaceID().getValue();
-				
-				//Check if message is from a blocked source
-				incomingMessageString = this.parser.encode(message);
-				allowMessageSources.replaceAll("\\s","");
-				List<String> messageSourceList = 
-					new ArrayList<String>(Arrays.asList(allowMessageSources.split(",")));
-				
-				if (!messageSourceList.contains(sendingFacility)){
-					log.error("Message arrived from blocked source: " + sendingFacility );
-					log.error("Blocked MSH segment:" + 
-							incomingMessageString.substring(0, incomingMessageString.indexOf("EVN")));
-					try {
-						//Return an ACK response instead of defaulting to the HAPI error response
-						inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-						ackMessage = makeACK(inboundHeader);
-					} catch (Exception e3) {
-						logger.error("Error sending an ack response after blocking a message " +
-								" facility." + e3.getMessage());
-						logger.error(org.openmrs.module.chirdlutil.util.Util
-								.getStackTrace(e3));
-						ackMessage = originalMessage;
-					}
-					return ackMessage;
-				}
-			}
+//			if (message instanceof ca.uhn.hl7v2.model.v25.message.ADT_A01){
+//				ca.uhn.hl7v2.model.v25.message.ADT_A01 adt25 = (ca.uhn.hl7v2.model.v25.message.ADT_A01) message;
+//				sendingFacility = adt25.getMSH().getSendingFacility().getNamespaceID().getValue();
+//				
+//				//Check if message is from a blocked source
+//				incomingMessageString = this.parser.encode(message);
+//				allowMessageSources.replaceAll("\\s","");
+//				List<String> messageSourceList = 
+//					new ArrayList<String>(Arrays.asList(allowMessageSources.split(",")));
+//				
+//				if (!messageSourceList.contains(sendingFacility)){
+//					log.error("Message arrived from blocked source: " + sendingFacility );
+//					log.error("Blocked MSH segment:" + 
+//							incomingMessageString.substring(0, incomingMessageString.indexOf("EVN")));
+//					try {
+//						//Return an ACK response instead of defaulting to the HAPI error response
+//						inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
+//						ackMessage = makeACK(inboundHeader);
+//					} catch (Exception e3) {
+//						logger.error("Error sending an ack response after blocking a message " +
+//								" facility." + e3.getMessage());
+//						logger.error(org.openmrs.module.chirdlutil.util.Util
+//								.getStackTrace(e3));
+//						ackMessage = originalMessage;
+//					}
+//					return ackMessage;
+//				}
+//			}
 			
 			incomingMessageString = this.parser.encode(message);
 			message.addNonstandardSegment("ZPV");
