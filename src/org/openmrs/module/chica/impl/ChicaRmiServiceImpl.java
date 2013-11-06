@@ -643,6 +643,19 @@ public class ChicaRmiServiceImpl extends RemoteServer implements ChicaRmiService
 			}
 			
 			if (formInstanceId == null) {
+				List<PatientState> states = Context.getService(
+					ChirdlUtilBackportsService.class).getPatientStatesWithFormInstances(formName, encounterId);
+				if (states != null) {
+					for (PatientState state : states) {
+						if (state.getFormId() == formId && state.getLocationId() == locationId && 
+								state.getFormInstanceId() != null) {
+							formInstanceId = state.getFormInstanceId();
+						}
+					}
+				}
+			}
+			
+			if (formInstanceId == null) {
 				throw new RemoteException("Unable to find a valid form instance ID");
 			}
 			
