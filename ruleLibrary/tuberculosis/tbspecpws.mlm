@@ -1,0 +1,124 @@
+Maintenance:
+	Title:		Tuberculosis  Specific PWS Reminder;;
+	Filename:		tbspecpws;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 15:45:40;;
+	Validation:	;;
+Library:
+	Purpose:		Provides a specific reminder, tailored to the patient who identified one or more tuberculosis exposure risk factors;;
+	Explanation:	Based on AAP screening recommendations;;
+	Keywords:	PWS, TB, tuberculosis, exposure, specific;;
+	Citations:		2004 Pediatric Tuberculosis Collaborative Group Report - AAP;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+Env_History := read {ENVIRONMENTAL HISTORY from CHICA} Where it Occurred Within Past 1 Year;
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+PPD := read Exist {PPD - QUALITATIVE from CHICA} Where it Occurred Within Past 1 Year;
+endif
+;;
+Priority:		264;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+/********************
+Indirect_Contact_Travel := read Exist (FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA) 
+If (Indirect_Contact_Travel = True) then || Risk_Factor || = "a close family contact has visited a TB endemic country.";
+*********************/
+If 'FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Env_History then || Risk_Factor || = "a close family contact has visited a TB endemic country.";
+
+/********
+Indirect_Exposure := read Exist (FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE) 
+If (Indirect_Exposure = True) then || Risk_Factor || = "a close family contact has been exposed to high risk TB environment.";
+******/
+If 'FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE' is in Env_History then || Risk_Factor || = "a close family contact has been exposed to high risk TB environment.";
+
+/**************
+Direct_Travel_Contact := read Exist (TRAVEL TO ENDEMIC TUBERCULOSIS AREA)
+If (Direct_Travel_Contact = True) then || Risk_Factor || = "travelled to a TB endemic country.";
+***************/
+If 'TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Env_History then || Risk_Factor || = "traveled to a TB endemic country.";
+
+If 'FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Env_History then || Risk_Factor || = "traveled to or has a close family contact that has visited a TB endemic country.";
+
+/********
+Direct_Exposure := read Exist (DIRECT TUBERCULOSIS CONTACT) 
+If (Direct_Contact = True) then || Risk_Factor || = "had direct contact with someone with TB."; 
+*********/
+If 'DIRECT TUBERCULOSIS CONTACT' is in Env_History then || Risk_Factor || = "had direct contact with someone with TB."; 	
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (Risk_Factor = True) then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If (Gender = M) then || himher || = "him";
+If (Gender = F) then || himher || = "her";
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || reportedly has || Risk_Factor || This places || himher || at risk for tuberculosis.";
+If  (Box5=true) then || note5 || = "I ordered an interdermal PPD test for || firstname ||.";
+/* */
+
+If  (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","SCREENING";
+endif;
+
+If  (Box3=true) then
+ CALL storeObs With "PPD - QUALITATIVE","NOT INDICATED";
+ CALL storeNote With "I confirmed a PPD was no longer indicated.","SCREENING";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "PPD - QUALITATIVE","PENDING";
+ CALL storeNote With "note5","SCREENING";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "PPD - QUALITATIVE","POSITIVE";
+ CALL storeNote With "I confirmed that a recent PPD was positive.","SCREENING";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "PPD - QUALITATIVE","NEGATIVE";
+ CALL storeNote With "I confirmed that a recent PPD was negative.","SCREENING";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "PPD - QUALITATIVE","DEFERRED";
+ CALL storeNote With "The interdermal PPD test was not placed at this time.","SCREENING";
+endif;
+
+
+endif
+;;
+Action:
+write ("**High TB Risk Patient**:  || firstname || reportedly has || Risk_Factor ||  Place PPD 5TU IQ now.");
+write ("PPD already done ->");
+write ("Positive");
+write ("PPD not indicated");
+write ("Negative");
+write ("PPD placed");
+write ("PPD deferred/refused");
+;;
+Age_Min: 11 months;;
+Age_Max: 13 years;;
+end:

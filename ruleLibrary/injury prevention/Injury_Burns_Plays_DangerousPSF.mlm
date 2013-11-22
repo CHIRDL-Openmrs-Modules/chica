@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Burns Plays Dangerous PSF;;
+	Filename:		Injury_Burns_Plays_DangerousPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-12T11:54:10-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether a child ever plays with dangerous objects.                                                                                                                                                                                                                                                                                                                                                                                                                                                  ;;
+	Explanation:	Items like irons, ovens, wall heaters, or outdoor grills can burn children long after they have been used.                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Keywords:	injury, burns, infant;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/2to4yrs.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+dangerous := read Exist {plays_dangerpus_items from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+endif
+;;
+Priority:		922;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (dangerous = True) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "plays_dangerpus_items","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "plays_dangerpus_items","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Has || firstname || ever played around irons, ovens, wall heaters, or outdoor grills?");
+write("¿Alguna vez || firstname || ha jugado cerca de planchas, hornos, calentadores, o parrillas?") At Spanish;                                                                                          
+;;
+Age_Min: 6 months;;
+Age_Max: 8 years;;
+end:
