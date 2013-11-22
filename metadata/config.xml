@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.57.2</version>
+    <version>1.58.4</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -276,6 +276,49 @@
         <description>Comma delimited list of allowable sources for hl7 ADT messages.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryActivated</property>
+        <defaultValue>true</defaultValue>
+        <description>Activate query to CHIRP registry
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryConfigFile</property>
+        <description>Location the configuration file for the hl7 immunization query.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryPassword</property>
+        <description>Password to CHIRP registry.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryURL</property>
+        <description>CHIRP URL
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryUserId</property>
+        <description>Userid for access to CHIRP.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.chica.activateVXU</property>
+        <defaultValue>false</defaultValue>
+        <description>Allow hl7 VXU update to CHIRP immunization registry</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationOutputDirectory</property>
+        <description>CHIRP hl7 query and response file directory
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.activateVXUToCreatePatient</property>
+        <description>Activate VXU to create a patient in the CHIRP registry.
+        </description>
+    </globalProperty>
+    
+    
     
     <!-- Internationalization -->
     <!-- All message codes should start with @MODULE_ID@.* -->

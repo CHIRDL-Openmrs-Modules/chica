@@ -83,11 +83,11 @@ public class vaccineStarRule implements Rule
 
 	public Result eval(LogicContext context, Integer patientId,
 	       			Map<String, Object> parameters) throws LogicException
-	{
+	{ 
 				String vaccineName = (String) parameters.get("concept");
 				ImmunizationQueryOutput immunizations = 
 					ImmunizationForecastLookup.getImmunizationList(patientId);
-				
+				 
 				if(immunizations != null){
 					HashMap<String,ImmunizationForecast> forecastedImmunizations = 
 						immunizations.getImmunizationForecast();
@@ -99,10 +99,11 @@ public class vaccineStarRule implements Rule
 						
 						if(immunForecast != null&&immunForecast.getDateDue().compareTo(todaysDate)<=0){
 							return new Result("*");
-						}
-					}	
-				}
-				
-		return Result.emptyResult();
+						}else{
+							return new Result(" ");
+						}	
+					}
+			}	
+		return new Result(" ");
 	}
 }

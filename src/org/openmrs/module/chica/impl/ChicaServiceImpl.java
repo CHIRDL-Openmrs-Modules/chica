@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -976,6 +977,14 @@ public class ChicaServiceImpl implements ChicaService
 			return getChicaDAO().getQuestionsScannedAnswered(formName, locationName);
 		}
         
+		
+		public Integer getMergeFieldCount(String form_name, String vaccine_name){
+			return getChicaDAO().getMergeFieldCount(form_name, vaccine_name);
+		}
+		
+		public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source){
+			return getChicaDAO().getConceptMapsByVaccine(concept, source);
+		}
         /**
          * Query the mrf dump to find the list of immunizations for the patient
          * @see org.openmrs.module.chica.service.ChicaService#immunizationQuery(java.io.OutputStream, java.lang.Integer, java.lang.Integer, org.openmrs.Encounter, java.lang.Integer, java.lang.Integer)

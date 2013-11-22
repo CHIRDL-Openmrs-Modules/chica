@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
-import org.openmrs.PatientIdentifier;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -153,4 +153,8 @@ public interface ChicaDAO {
 	public List<Object[]> getQuestionsScanned(String formName, String locationName);
 
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
+	
+	public Integer getMergeFieldCount(String form_name, String vaccine_name);
+	
+	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
 }

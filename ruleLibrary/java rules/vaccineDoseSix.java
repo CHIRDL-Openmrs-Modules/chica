@@ -36,7 +36,7 @@ import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.ImmunizationPrevious;
 import org.openmrs.module.chica.ImmunizationQueryOutput;
 
-public class vaccineDoseTwo implements Rule
+public class vaccineDoseSix implements Rule
 {
 
 	/**
@@ -94,7 +94,7 @@ public class vaccineDoseTwo implements Rule
 			if(prevImmunizations != null){
 				HashMap<Integer,ImmunizationPrevious> prevImmunDoses = prevImmunizations.get(vaccineName);
 				if(prevImmunDoses != null){
-					ImmunizationPrevious doseOneImmunization = prevImmunDoses.get(2);
+					ImmunizationPrevious doseOneImmunization = prevImmunDoses.get(6);
 					if(doseOneImmunization != null){
 						SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 						return new Result(formatter.format(doseOneImmunization.getDate()));

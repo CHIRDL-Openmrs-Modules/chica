@@ -98,7 +98,7 @@ public class vaccineDoseOne implements Rule
 						if(prevImmunDoses != null){
 							ImmunizationPrevious doseOneImmunization = prevImmunDoses.get(1);
 							if(doseOneImmunization != null){
-								SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+								SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 								return new Result(formatter.format(doseOneImmunization.getDate()));
 							}
 						}

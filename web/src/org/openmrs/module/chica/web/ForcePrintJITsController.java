@@ -227,6 +227,7 @@ public class ForcePrintJITsController extends SimpleFormController {
 			form = formService.getForm(formId);
 			formName = form.getName();
 			parameters.put("param1", formName);
+			parameters.put("param2", "forcePrint");
 			logicService.eval(patientId, "CREATE_JIT", parameters);
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -241,7 +242,7 @@ public class ForcePrintJITsController extends SimpleFormController {
 			}
 		}
 		
-		String resultMessage = formName + " successfully printed.";
+		String resultMessage = formName + " successfully sent to the printer.";
 		map.put("resultMessage", resultMessage);
 		
 		return new ModelAndView(new RedirectView("forcePrintJITs.form"), map);

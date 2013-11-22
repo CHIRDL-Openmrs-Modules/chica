@@ -4,8 +4,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -170,7 +172,10 @@ public interface ChicaService
 	public List<Object[]> getQuestionsScanned(String formName, String locationName);
 
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
-
+	
+	public Integer getMergeFieldCount(String form_name, String vaccine_name);
+	
+	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
 	/**
 	 * Query the mrf dump to find the list of immunizations for the patient
      * @see org.openmrs.module.chica.service.ChicaService#immunizationQuery(java.io.OutputS

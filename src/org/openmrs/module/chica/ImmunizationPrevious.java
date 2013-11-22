@@ -106,6 +106,9 @@ public class ImmunizationPrevious {
         }
         catch (ParseException e) {
         }
+        catch (NullPointerException e) {
+        	log.error("Null pointer exception for " + dateString);
+        }
 	}
 	
 	/**

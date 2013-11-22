@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.TeleformFileState;
+import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.MedicationListLookup;
 import org.openmrs.module.chica.gis.PatientGISDataStorage;
 import org.openmrs.module.chica.gis.QueryGIS;
@@ -49,6 +50,11 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					//spawn the GIS query thread
 					Thread gisThread = new Thread(new QueryGIS(encounter));
 					gisThread.start();
+					//spawn the immunization query thread
+					Thread immunThread = new Thread(new QueryImmunizationForecast(encounter));
+					immunThread.start();
+					//ImmunizationForecastLookup.queryImmunizationList(encounter, true);
+					
 				}
 			} catch (Exception e)
 			{
@@ -95,6 +101,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
             ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource("RMRS")).clearObs();
             MedicationListLookup.clearMedicationLists();
             PatientGISDataStorage.clearAllPatientGISData();
+            ImmunizationForecastLookup.clearimmunizationLists();
         }
 	}
 

@@ -33,6 +33,7 @@ public class ImmunizationForecast {
 	private Integer patientId = null;
 	private Date dateDue = null;
 	private Date earliestDate = null;
+	private Date pastDue = null;;
 	
 	public ImmunizationForecast(){
 		
@@ -45,6 +46,7 @@ public class ImmunizationForecast {
 		this.patientId=immunization.getPatientId();
 		this.dateDue = immunization.getDateDue();
 		this.earliestDate = immunization.getEarliestDate();
+		this.pastDue = immunization.getPastDue();
 	}
 	
     /**
@@ -152,4 +154,12 @@ public class ImmunizationForecast {
         catch (ParseException e) {
         }
     }
+
+	public Date getPastDue() {
+		return pastDue;
+	}
+
+	public void setPastDue(Date pastDue) {
+		this.pastDue = pastDue;
+	}
 }

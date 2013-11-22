@@ -221,7 +221,7 @@ public class HL7Exporter extends AbstractTask {
 						if (!addOBXForTiff(constructor, openmrsEncounter, "PSF", mappings,
 								hl7Properties)) {
 							export.setStatus(chicaService
-									.getChicaExportStatusByName("Image_not_found"));
+									.getChicaExportStatusByName("PSF_Image_not_found"));
 							chicaService.saveChicaHL7Export(export);
 							continue;
 						}
@@ -233,7 +233,7 @@ public class HL7Exporter extends AbstractTask {
 						if (!addOBXForTiff(constructor, openmrsEncounter, "PWS", mappings,
 								hl7Properties)) {
 							export.setStatus(chicaService
-									.getChicaExportStatusByName("Image_not_found"));
+									.getChicaExportStatusByName("PWS_Image_not_found"));
 							chicaService.saveChicaHL7Export(export);
 							continue;
 						}
@@ -823,6 +823,7 @@ public class HL7Exporter extends AbstractTask {
 		
 			encodedForm = encodeForm(files[0]);
 			if (encodedForm == null) {
+				log.error(form + " image not found: " + filename );
 				return false;
 			}
 

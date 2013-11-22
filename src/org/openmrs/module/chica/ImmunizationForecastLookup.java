@@ -16,19 +16,17 @@ package org.openmrs.module.chica;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chica.advice.QueryImmunizationForecast;
 import org.openmrs.module.chirdlutil.ReadWriteManager;
-import org.openmrs.module.chica.ImmunizationForecast;
-import org.openmrs.module.chica.ImmunizationQueryOutput;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 /**
  * @author tmdugan
@@ -37,7 +35,7 @@ import org.openmrs.module.chica.ImmunizationQueryOutput;
 public class ImmunizationForecastLookup {
 	
 	private static Log log = LogFactory.getLog(ImmunizationForecastLookup.class);
-	
+	//Hashtable < [patient id], ImmunizationQueryOutput>
 	private static Hashtable<Integer, ImmunizationQueryOutput> immunizationLists = new Hashtable<Integer, ImmunizationQueryOutput>();
 	private static ReadWriteManager immunizationListsLock = new ReadWriteManager();
 	
@@ -96,60 +94,67 @@ public class ImmunizationForecastLookup {
 	/**
 	 * create a thread with a timeout to query the immunization forecasting service
 	 */
-	/* Used by Vivienne's immunization forecasting service
-	 * We are using CHIRP instead
-	 * 
-	 * public static void queryImmunizationList(Encounter encounter, boolean useTimeout) throws QueryImmunizationsException {
+	public static void queryImmunizationList(Encounter encounter, boolean useTimeout) throws QueryImmunizationsException {
 		AdministrationService adminService = Context.getAdministrationService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		org.openmrs.module.chica.service.EncounterService encounterService = Context
+		.getService(org.openmrs.module.chica.service.EncounterService.class);
+		
 		Integer timeout = null;
 		
-		try {
-			if (useTimeout) {
-				timeout = Integer.parseInt(adminService.getGlobalProperty("chica.immunizationListTimeout"));
-				timeout = timeout * 1000; // convert seconds to
-				// milliseconds
-			}
-		}
-		catch (NumberFormatException e) {}
-		QueryImmunizationForecast queryImmunizationsThread = new QueryImmunizationForecast(encounter);
-		Thread thread = new Thread(queryImmunizationsThread);
-		thread.start();
-		long startTime = System.currentTimeMillis();
+		Patient patient = encounter.getPatient();
+		String queryOn = adminService.getGlobalProperty("chica.ImmunizationQueryActivated");
+		if (queryOn.equalsIgnoreCase("true")){
 		
-		if (timeout != null) {
-			while (true) {
-				//processing is done
-				if (!thread.isAlive()) {
-					//check for an exception
-					if (queryImmunizationsThread.getException() != null) {
-						throw queryImmunizationsThread.getException();
-					} else {
+			try {
+				if (useTimeout) {
+					timeout = Integer.parseInt(adminService.getGlobalProperty("chica.immunizationListTimeout"));
+					timeout = timeout * 1000; // convert seconds to
+					// milliseconds
+				}
+			}
+			catch (NumberFormatException e) {};
+			
+			QueryImmunizationForecast queryImmunizationsThread = new QueryImmunizationForecast(encounter);
+			Thread thread = new Thread(queryImmunizationsThread);
+			thread.start();
+			long startTime = System.currentTimeMillis();
+			
+			if (timeout != null) {
+				while (true) {
+					//processing is done
+					if (!thread.isAlive()) {
+						//check for an exception
+						if (queryImmunizationsThread.getException() != null) {
+							throw queryImmunizationsThread.getException();
+						} else {
+							return;
+						}
+					}
+					
+					if ((System.currentTimeMillis() - startTime) > timeout) {
+						//the timeout was exceeded so return null
+						Error error = new Error("Warning", "Query Immunization List Connection", 
+							"Timeout of "+timeout/1000+" seconds was exceeded for patientId: "+
+							encounter.getPatientId()+"."
+							, null, new Date(), null);
+						chirdlutilbackportsService.saveError(error);
+						return;
+					}
+					try {
+						Thread.sleep(100);// wait for a tenth of a second
+						
+					}
+					catch (Exception e) {
+						e.printStackTrace();
 						return;
 					}
 				}
-				
-				if ((System.currentTimeMillis() - startTime) > timeout) {
-					//the timeout was exceeded so return null
-					Error error = new Error("Warning", "Query Immunization List Connection", 
-						"Timeout of "+timeout/1000+" seconds was exceeded for patientId: "+
-						encounter.getPatientId()+"."
-						, null, new Date(), null);
-					chirdlutilbackportsService.saveError(error);
-					return;
-				}
-				try {
-					Thread.sleep(100);// wait for a tenth of a second
-					
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					return;
-				}
 			}
 		}
+		
 	}
-	*/
+	
 	/**
 	 * clear the entire forecasted immunization list
 	 */

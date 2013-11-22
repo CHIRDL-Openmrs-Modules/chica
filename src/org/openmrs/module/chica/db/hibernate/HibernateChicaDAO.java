@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.db.hibernate;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,20 +12,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Expression;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.db.ChicaDAO;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
@@ -44,8 +44,8 @@ import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.Wtageinf;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 
 /**
  * Hibernate implementation of chica database methods.
@@ -1045,5 +1045,55 @@ public class HibernateChicaDAO implements ChicaDAO
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public Integer getMergeFieldCount(String form_name, String vaccine_name){
+		
+		Integer vaccineCode = null;
+		ConceptService conceptService = Context.getConceptService();
+		Concept vaccineConcept = conceptService.getConceptByName(vaccine_name);
+		if (vaccineConcept != null){
+			vaccineCode = vaccineConcept.getConceptId();
+		}
+		try
+		{
+			
+			String SQL = 
+				"select count(*) from form_field ff " +
+				"join (select field.* from field " +
+				"join concept_name cn on field.concept_id = cn.concept_id " +
+				"where cn.name like ? )b " +
+				"on ff.field_id = b.field_id " +
+				"join form on ff.form_id = form.form_id " +
+				"where form.name like ? " +
+				"and form.retired =0 " +
+				"and b.default_value not like 'vaccinestarrule'";
+
+			SQLQuery qry = this.sessionFactory.getCurrentSession()
+					.createSQLQuery(SQL);
+			qry.setString(0, vaccine_name);
+			qry.setString(1, form_name);
+			BigInteger count = (BigInteger)qry.uniqueResult();
+			return count.intValue();
+			
+		} catch (Exception e)
+		{
+			this.log.error(Util.getStackTrace(e));
+		}
+		return null;
+		
+	}
+	
+	//Get maps for a concepts for a specific type 
+	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String sourceName){
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConceptMap.class, "map");
+		if (sourceName != null){
+			criteria.createAlias("source", "conceptSource");
+			criteria.add(Expression.eq("conceptSource.name", sourceName));
+		}
+		
+		criteria.add(Expression.eq("concept", concept));
+		List<ConceptMap> conceptMaps = (List<ConceptMap>) criteria.list();
+		return conceptMaps;
 	}
 }
