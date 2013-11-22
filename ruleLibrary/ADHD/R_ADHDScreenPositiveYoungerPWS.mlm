@@ -1,0 +1,149 @@
+Maintenance:
+ Title: Research ADHD Screen Positive Younger PWS                                                                         ;;
+ Filename: R_ADHDScreenPositiveYoungerPWS                                  ;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Aaron Carroll                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-02 09:00:00;;
+ Validation: ;;
+Library:
+	Purpose:		PWS promt to alert MD of positive case-finding screen for ADHS so they can do a complete work-up.;;
+ Explanation: If ADHD screen questions are answered affirmatively, then a ful workup should be initiated.                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: ADHD PWS Vanderbilt                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+ScreenResults := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;        
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} Where it Occurred Within Past 365 Days ;    
+ParentVanderbilt := read exist {ParentAssessmentScale from CHICA}; 
+TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA}; 
+preferred_language:= read last {preferred_language from CHICA};   
+clinic_billing_dx:= read {CLINIC BILLING DIAGNOSIS from RMRS} Where it Occurred Within Past 365 Days;
+dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd_dx:= read {HOSP ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif
+;;
+Priority: 231       ;;
+ Evoke: ;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If ('Hard_time_paying_attention' is in ScreenResults) then || prompttext1 || = "has hard time paying attention,";
+If ('Careless_mistakes' is in ScreenResults) then || prompttext2 || = "makes careless mistakes,";
+If ('Difficulty_Remaining_Seated' is in ScreenResults) then || prompttext3 || = "has difficulty remaining seated,";
+If ('workup_initiated' is in ScreenResults) then || prompttext1 || = "is suspected to have ADHD,";
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+If (ParentVanderbilt = True) OR (TeacherVanderbilt = True) then conclude False;
+If (CurrentStatus = yes) OR (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred)  then conclude False;
+If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude False;
+If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude False;
+If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude False;
+If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints)  OR ('314.1' is in hosp_icd_dx)  OR ('314.1' is in admit_icd_dx)  OR ('314.1' is in axis_discharge_dx) then conclude False;
+If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints)  OR ('314.2' is in hosp_icd_dx)  OR ('314.2' is in admit_icd_dx)  OR ('314.2' is in axis_discharge_dx) then conclude False;
+If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints)  OR ('314.8' is in hosp_icd_dx)  OR ('314.8' is in admit_icd_dx)  OR ('314.8' is in axis_discharge_dx) then conclude False;
+If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints)  OR ('314.9' is in hosp_icd_dx)  OR ('314.9' is in admit_icd_dx)  OR ('314.9' is in axis_discharge_dx) then conclude False;
+If ('Hard_time_paying_attention' is in ScreenResults) OR ('Careless_mistakes' is in ScreenResults) OR ('Difficulty_Remaining_Seated' is in ScreenResults) OR ('workup_initiated' is in ScreenResults) then conclude True;
+
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "By report, || firstname || || prompttext1 || || prompttext2 || || prompttext3 || suggesting possible ADHD.";
+If  (Box1=true)OR(Box2=true)OR(Box3=true)OR(Box4=true)OR(Box5=true)OR(Box6=true) then
+ CALL storeObs With "CHICA_ADHD_DX","Workup_underway"; 
+ CALL storeNote With "description", "DEVELOPMENT";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_ADHD_DX","no";
+ CALL storeNote With "Based on my H&P, I do not suspect ADHD.", "DEVELOPMENT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "ADHD_Workup","Parent_Vanderbilt_done";
+ CALL storeNote With "I administered a parent Vanderbilt form.", "DEVELOPMENT";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "ADHD_Workup", "Vision&Hearing_Screen";
+ CALL storeNote With "I conducted a vision screen and referred for hearing screen.", "DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "ADHD_Workup","Teacher_Vanderbilt_sent";
+ CALL storeNote With "Family given a teacher Vanderbilt to take to school.", "DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "ADHD_Workup","Midtown_Referral";
+ CALL storeNote With "I made a referral to Midtown mental health services.", "DEVELOPMENT";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "ADHD_Workup","Follow-up_2wks_scheduled";
+ CALL storeNote With "Plan follow up in 2-3 weeks.", "DEVELOPMENT";
+endif;
+
+endif
+;;
+Action:
+If(ParentVanderbilt = False) AND (preferred_language = Spanish) then
+call CREATE_JIT with "ADHD PS";
+endif;
+If(ParentVanderbilt = False) AND (preferred_language = English) then
+call CREATE_JIT with "ADHD P";
+endif;
+If(ParentVanderbilt = False) AND (preferred_language = null) then
+call CREATE_JIT with "ADHD P";
+call CREATE_JIT with "ADHD PS";
+endif;
+
+If(TeacherVanderbilt = False) then
+call CREATE_JIT with "ADHD T";
+endif;
+
+If(preferred_language = Spanish) then
+call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
+endif;
+If(preferred_language = English) then
+call CREATE_JIT with "Evaluating ADHD Toolkit";
+endif;
+If(preferred_language = null) then
+call CREATE_JIT with "Evaluating ADHD Toolkit";
+call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
+endif;
+
+write ("|| firstname || || prompttext1 || || prompttext2 || || prompttext3 || therefore, w/u ADHD. CPT 96110");                                                                                                                                                                                                                                                                                                                   
+write ("H&P suggest NO ADHD                       ");
+write ("Parent Vanderbilt and scan now                   ");
+write ("Vision and hearing screens                       ");
+write ("Teacher Vanderbilt and fax ASAP                  ");
+write ("Consult Midtown                        ");
+write ("Sched f/u in 2-3 weeks                           ");
+;;
+Age_Min: 5          years     ;;
+Age_Max: 6         years     ;;
+end:

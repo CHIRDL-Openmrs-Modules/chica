@@ -1,0 +1,63 @@
+Maintenance:
+	Title:		Child Abuse Screening on PSF                                                                        ;;
+	Filename:		Child_Abuse_PSF                                   ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Steve Downs                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2004-01-01 21:24:54;;
+	Validation:	;;
+Library:
+	Purpose:		Ask parents if they have concerns that their partner or other adult is abusing their child.                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	Asked bi-annually through age two, then annually to age 12.                                                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Keywords:	abuse violence screening, PSF                                                                       ;;
+	Citations:		                                                                                                    ;;
+	Links:		                                                                                                    ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Abuse_Concern_6mo := read Exist {Abuse_Concern from CHICA} Where it Occurred Within Past 6 Months;
+Abuse_Concern_12mo := read Exist {Abuse_Concern from CHICA} Where it Occurred Within Past 12 Months;  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority:		202       ;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+Age := call ChicaAgeRule with "years";
+If (Abuse_Concern_6mo = True) then conclude False;
+If (Age > 2 ) AND (Abuse_Concern_12mo = True) then conclude False;
+Else conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "Abuse_Concern","yes_parent";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "Abuse_Concern","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Has your partner or another adult threatened or hurt your children?");
+write ("¿Alguna vez su pareja o algún otro adulto a amenazado o lastimado sus hijos?") At Spanish;
+;;
+Age_Min: 0          days      ;;
+Age_Max: 12         years     ;;
+end:

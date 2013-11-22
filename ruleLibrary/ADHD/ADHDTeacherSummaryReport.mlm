@@ -1,0 +1,135 @@
+Maintenance:
+	Title:		ADHDTeacherSummaryReport;;
+	Filename:		ADHDTeacherSummaryReport;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Fill in ADHDTeacherSummaryReport.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ADHD;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+TeacherAssessPredomInattentiveCount := read Last {TeacherAssessPredomInattentiveCount} Where it Occurred Within Past 1 Day;
+TeacherAssessPerformanceCount := read Last {TeacherAssessPerformanceCount} Where it Occurred Within Past 1 Day;
+TeacherAssessPredomHyperImpulsiveCount := read Last {TeacherAssessPredomHyperImpulsiveCount} Where it Occurred Within Past 1 Day;
+TeacherAssessOpposDefiantConductCount := read Last {TeacherAssessOpposDefiantConductCount} Where it Occurred Within Past 1 Day;
+TeacherAssessAnxDepressCount := read Last {TeacherAssessAnxDepressCount} Where it Occurred Within Past 1 Day;
+TeacherAssessPerformanceAvg:= read Last {TeacherAssessPerformanceAvg} Where it Occurred Within Past 1 Day;
+TeacherAssessSymptomTotal:= read Last {TeacherAssessSymptomTotal} Where it Occurred Within Past 1 Day;
+TeacherAssessScale := read {TeacherAssessmentScale} Where it Occurred Within Past 1 Day;
+
+TeacherAssessFollowupPerformanceAvg:= read Last {TeacherAssessFollowupPerformanceAvg} Where it Occurred Within Past 1 Day;
+TeacherAssessFollowupSymptomTotal:= read Last {TeacherAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+If  (TeacherAssessPredomInattentiveCount >= 6) then || TPISI || = "High";
+If  (TeacherAssessPredomInattentiveCount < 6) then || TPISI || = "Normal";
+
+If  (TeacherAssessPredomHyperImpulsiveCount >= 6) then || TPHISI || = "High"; 
+If  (TeacherAssessPredomHyperImpulsiveCount < 6) then || TPHISI || = "Normal"; 
+
+If  (TeacherAssessOpposDefiantConductCount >= 3) then || TODDSI || = "High";
+If  (TeacherAssessOpposDefiantConductCount < 3) then || TODDSI || = "Normal";
+
+If  (TeacherAssessAnxDepressCount >= 3) then || TADSI || = "High";
+If  (TeacherAssessAnxDepressCount < 3) then || TADSI || = "Normal";
+
+If  (TeacherAssessPerformanceCount <1) then || TPQSI || = "Does not meet DSM criteria"; 
+
+If ('PredominantlyInattentiveSubtype' is in TeacherAssessScale) OR ('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessScale) then || GI || = "C/W ADHD";
+If ('OppositionalDefiantDisorderScreen' is in TeacherAssessScale) then || ODD || = "C/W ODD";
+If ('AnxietyDepressionScreen' is in TeacherAssessScale) then || AD || = "C/W Anx/Dep";
+
+If NOT('PredominantlyInattentiveSubtype' is in TeacherAssessScale) AND NOT('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessScale) then || GI || = "NOT C/W ADHD";
+If NOT('OppositionalDefiantDisorderScreen' is in TeacherAssessScale) AND NOT (TeacherAssessPerformanceAvg = NULL) then || ODD || = "NOT C/W ODD";
+If NOT('AnxietyDepressionScreen' is in TeacherAssessScale) AND NOT (TeacherAssessPerformanceAvg = NULL) then || AD || = "NOT C/W Anx/Dep";
+
+If NOT (TeacherAssessPerformanceAvg = NULL) then || TTSSText || = "TeacherAssessSymptomTotal";
+If NOT (TeacherAssessPerformanceAvg = NULL) then || TAPSText || = "TeacherAssessPerformanceAvg";
+If (TeacherAssessPerformanceAvg = NULL) then || TTSSText || = "TeacherAssessFollowupSymptomTotal";
+If (TeacherAssessPerformanceAvg = NULL) then || TAPSText || = "TeacherAssessFollowupPerformanceAvg";
+
+TTSSFull := call getLastObs with "TTSSText";
+TTSS := call integerResult with "TTSSFull_value";
+
+TAPSFull := call getLastObs with "TAPSText";
+TAPS := call roundOnePlace with "TAPSFull_value";
+
+If NOT (TeacherAssessPredomInattentiveCount = NULL) then
+TPIS := call integerResult with "TeacherAssessPredomInattentiveCount_value";
+endif
+
+If (TeacherAssessPredomInattentiveCount = NULL) then || TPIS || = "NA";
+
+If NOT (TeacherAssessPredomHyperImpulsiveCount = NULL) then
+TPHIS := call integerResult with "TeacherAssessPredomHyperImpulsiveCount_value";
+endif
+
+If (TeacherAssessPredomHyperImpulsiveCount = NULL) then || TPHIS || = "NA";
+
+If NOT (TeacherAssessOpposDefiantConductCount = NULL) then
+TODDS := call integerResult with "TeacherAssessOpposDefiantConductCount_value";
+endif
+
+If (TeacherAssessOpposDefiantConductCount = NULL) then || TODDS || = "NA";
+
+If NOT (TeacherAssessAnxDepressCount = NULL) then
+TADS := call integerResult with "TeacherAssessAnxDepressCount_value";
+endif
+
+If (TeacherAssessAnxDepressCount = NULL) then || TADS || = "NA";
+
+If NOT (TeacherAssessPerformanceCount = NULL) then
+TPQ := call integerResult with "TeacherAssessPerformanceCount_value";
+endif
+
+If (TeacherAssessPerformanceCount = NULL) then || TPQ || = "NA";
+
+endif;
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| TPIS ||") At TPIS ;
+write ("|| TPHIS ||") At TPHIS;
+write ("|| TODDS ||") At TODDS;
+write ("|| TADS ||") At TADS;
+write ("|| TPQ ||") At TPQ;
+
+write ("|| TTSS ||") At TTSS;
+write ("|| TAPS ||") At TAPS;
+
+write ("|| TPISI ||") At TPISI;
+write ("|| TPHISI ||") At TPHISI;
+write ("|| TODDSI ||") At TODDSI;
+write ("|| TADSI ||") At TADSI;
+
+write ("|| TPQSI ||") At TPQSI;
+write ("|| GI ||") At GI;
+write ("|| ODD ||") At ODD;
+write ("|| AD ||") At AD;
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

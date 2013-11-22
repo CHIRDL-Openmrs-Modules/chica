@@ -1,0 +1,91 @@
+Maintenance:
+	Title:		Relapse PWS;;
+	Filename:		relapsePWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Vivienne Zhu, Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2012-06-17 11:19:06;;
+	Validation:	;;
+Library:
+	Purpose:		To handle relapse;;
+	Explanation:	;;
+	Keywords:	Environmental smoking, smoking cessation, parental smoking,;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+smokerL := read Last {any_household_members_smoke from CHICA};
+arm:= read last {smoking_study_arm};
+endif
+;;
+Priority:		521;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (arm = NULL) then conclude False;
+If (arm = Control) then conclude False;
+If (smokerL = relapse) then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "A smoker in the child's home who had quit is reportedly smoking again.", "PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "any_household_members_smoke","yes_ready_to_quit";
+ CALL storeNote With "Smoker is reportedly motivated to quit.", "PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "referral","Wishard smoking cessation 630-7653";
+ CALL storeNote With "I provided the phone number for the Wishard quit smoking program.", "PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "any_household_members_smoke","yes_not_ready_to_quit";
+ CALL storeNote With "The smoker is reportedly not motivated to quit.", "PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "counseling topic","Environmental tobacco smoke risks to child";
+ CALL storeNote With "I reviewed the health risks to the child of environmental tobacco smoke.", "PSYCHOSOCIAL";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "any_household_members_smoke","no";
+ CALL storeNote With "By history today, there is no smoker in the home.", "PSYCHOSOCIAL";
+endif;
+If (Box6=true) then
+ CALL storeObs With "counseling topic","Cost and risks of smoking";
+ CALL storeNote With "I reviewed the costs and health risks of smoking to the smoker.", "PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+write (" The former smoker in || firstname ||'s family started smoking again,  please assess motivation.");
+write ("Ready to quit");
+write ("Wishard smoking cessation 630-7653");
+write ("Not ready");
+write ("Review risks to child");
+write ("No smoker in home");
+write ("Review cost and risk to parent");
+;;
+Age_Min: 0 days;;
+Age_Max: 11 years;;
+end:

@@ -1,0 +1,79 @@
+Maintenance:
+	Title:		Injury  Sports Protective Gear PWS;;
+	Filename:		Injury_Sports_Protective_GearPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T04:59:37-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advises clinicians on counseling parents about their children wearing protective equipment when playing sports,                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	The AAP recommends your child wear all the protective equipment made for the sport (such as shin pads, mouth guards, wrist guards, eye protection, or helmets).                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	injury, sports, protective, PWS;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/8years.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+sports := read Last {wears_sports_protective_gear from CHICA} Where it Occurred Within Past 1 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority:		988;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (sports = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then || note1 || = "The parent says that || firstname || always wears proper gear when playing sports.";
+If  (Box3=true) then || note3 || = "The parent says that || firstname || DOESN'T wear proper gear when playing sports.";
+If  (Box4=true) then || note4 || = "I advised the parent to make sure || firstname || ALWAYS wear proper gear when playing sports.";
+
+If  (Box1=true) OR (Box3=true) OR (Box4=true) then
+ CALL storeNote With "I discussed with the parent that the AAP recommends if a child plays a sport, the child should wear all the protective equipment made for the sport (such as shin pads, mouth guards, wrist guards, eye protection, or helmets).","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "wears_sports_protective_gear","yes";
+ CALL storeNote With "note1","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "wears_sports_protective_gear","no";
+ CALL storeNote With "note3","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "note4","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+;;
+Action:
+write ("The AAP recommends your child wear all the protective equipment made for the sport (such as shin pads, mouth guards, wrist guards, eye protection, or helmets).  Check those that apply:");                                                                                                         
+write ("Always wears proper gear");
+write ("");
+write ("Child DOESN'T wear gear ->");
+write ("Advise to ALWAYS wear gear");
+write ("");
+write ("");
+;;
+Age_Min: 5 years;;
+Age_Max: 11 years;;
+end:

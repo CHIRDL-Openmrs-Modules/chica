@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Growth  Abnormal Height %ile PWS Flag;;
+	Filename:		HEIGHTPWSFLAG;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T10:08:53-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Flags height as being abnormal on PWS.                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	Abnormal criteria are less than the 5th percentile and greater than the 95th percentile for age.                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	PWS, vitalflag, growth;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+pcile := read Last {HtCentile from CHICA} Where it Occurred Within Past 7 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority:	 ;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (pcile < 5) OR (pcile > 95) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+;;
+Action:
+write ("*") At HeightA;                                                                                                                                                                                                                                                                                         
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 1 days;;
+Age_Max: 21 years;;
+end:

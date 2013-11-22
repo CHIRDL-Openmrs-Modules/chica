@@ -1,0 +1,49 @@
+Maintenance:
+	Title:		R_ADHD_PredHyperTeacherPosNeg;;
+	Filename:		R_ADHD_PredHyperTeacherPosNeg;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Merges Positive/Negative into Predominantly Inattentive subtype column of ADHD teacher scoring sheet.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+
+teacherAssessScale := read {TeacherAssessmentScale} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+If ('PredominantlyHyperactiveImpulsiveSubtype' is in teacherAssessScale) then || prompttext || = "POSITIVE";
+If ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in teacherAssessScale) then || prompttext || = "NEGATIVE";
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| prompttext ||"); 
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

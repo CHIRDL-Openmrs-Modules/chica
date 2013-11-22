@@ -1,0 +1,230 @@
+Maintenance:
+ Title: Research DevScreen Routine mos Old PWS                                                                         ;;
+ Filename: R_DevScreenRoutineMonthsDelayPWS_ver2                                  ;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Aaron Carroll                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-15 10:00:00;;
+ Validation: ;;
+Library:
+ Purpose: PWS prompt to alert doc to do ASQ at certain age.                                                                                                                                                                                                                                                                                                                                                     ;;
+ Explanation: Patient should get ASQ at certain ages.                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: Developmental Screening ASQ                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+Results9:= read {ASQ9MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+Results18:= read {ASQ18MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+Results24:= read {ASQ24MonthAssessment from CHICA} Where it Occurred Within Past 2 days;  
+Results27:= read {ASQ27MonthAssessment from CHICA} Where it Occurred Within Past 2 days;  
+Results30:= read {ASQ30MonthAssessment from CHICA} Where it Occurred Within Past 2 days;  
+Results33:= read {ASQ33MonthAssessment from CHICA} Where it Occurred Within Past 2 days;  
+Results36:= read {ASQ36MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;      
+devStatus := read {CHICA_DevScreen_Status from CHICA} ;   
+
+CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;
+CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority: 401       ;;
+ Evoke: ;;
+
+Logic:
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+If (mode = PRODUCE) OR (mode = CONSUME) then
+
+If (AgeInMonths = 9) AND ('Communication_Delay' is in Results9) then || prompttext1 || = "communication delay, ";
+If (AgeInMonths = 9) AND ('Finemotor_Delay' is in Results9) then || prompttext2 || = "fine motor delay, ";
+If (AgeInMonths = 9) AND ('Grossmotor_Delay' is in Results9) then || prompttext3 || = "gross motor delay, ";
+If (AgeInMonths = 9) AND ('Personalsocial_Delay' is in Results9) then || prompttext4 || = "personal-social delay, ";
+If (AgeInMonths = 9) AND ('Problemsolving_Delay' is in Results9) then || prompttext5 || = "problem solving delay, ";
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Communication_Delay' is in Results18) then || prompttext1 || = "communication delay, ";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Finemotor_Delay' is in Results18) then || prompttext2 || = "fine motor delay, ";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Grossmotor_Delay' is in Results18) then || prompttext3 || = "gross motor delay, ";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Personalsocial_Delay' is in Results18) then || prompttext4 || = "personal-social delay, ";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Problemsolving_Delay' is in Results18) then || prompttext5 || = "problem solving delay, ";
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results24) then || prompttext1 || = "communication delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results27) then || prompttext1 || = "communication delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results30) then || prompttext1 || = "communication delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results33) then || prompttext1 || = "communication delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results36) then || prompttext1 || = "communication delay, ";
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results24) then || prompttext2 || = "fine motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results27) then || prompttext2 || = "fine motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results30) then || prompttext2 || = "fine motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results33) then || prompttext2 || = "fine motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results36) then || prompttext2 || = "fine motor delay, ";
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results24) then || prompttext3 || = "gross motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results27) then || prompttext3 || = "gross motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results30) then || prompttext3 || = "gross motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results33) then || prompttext3 || = "gross motor delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results36) then || prompttext3 || = "gross motor delay, ";
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results24) then || prompttext4 || = "personal-social delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results27) then || prompttext4 || = "personal-social delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results30) then || prompttext4 || = "personal-social delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results33) then || prompttext4 || = "personal-social delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results36) then || prompttext4 || = "personal-social delay, ";
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results24) then || prompttext5 || = "problem solving delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results27) then || prompttext5 || = "problem solving delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results30) then || prompttext5 || = "problem solving delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results33) then || prompttext5 || = "problem solving delay, ";
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results36) then || prompttext5 || = "problem solving delay, ";	
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
+
+If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
+If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
+
+/** Confirmed developmental delay **/
+If ('Delayed' is in devStatus) then conclude False;
+
+If (CurrentStatus = Suspect_delay) OR (CurrentStatus = Survey_Pos) OR (CurrentReferral = FirstSteps) OR (CurrentReferral = SchoolSystem) then conclude False;
+
+/** ASQ was already completed for this age range **/
+If (AgeInMonths = 9) AND ('ASQ_9m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('ASQ_18m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_24m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_27m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_30m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_33m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_36m_Done' is in devStatus) then conclude False;
+
+/** Make sure the child has a score with a delay **/
+If (AgeInMonths = 9) AND ('Communication_Delay' is in Results9) then conclude True;
+If (AgeInMonths = 9) AND ('Grossmotor_Delay' is in Results9) then conclude True;
+If (AgeInMonths = 9) AND ('Finemotor_Delay' is in Results9) then conclude True;
+If (AgeInMonths = 9) AND ('Problemsolving_Delay' is in Results9) then conclude True; 
+If (AgeInMonths = 9) AND ('Personalsocial_Delay' is in Results9) then conclude True;
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Communication_Delay' is in Results18) then conclude True;
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Grossmotor_Delay' is in Results18) then conclude True;
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Finemotor_Delay' is in Results18) then conclude True;
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Problemsolving_Delay' is in Results18) then conclude True; 
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('Personalsocial_Delay' is in Results18) then conclude True;
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results24) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results27) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results30) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results33) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Communication_Delay' is in Results36) then conclude True;
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results24) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results27) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results30) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results33) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Grossmotor_Delay' is in Results36) then conclude True;
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results24) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results27) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results30) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results33) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Finemotor_Delay' is in Results36) then conclude True;
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results24) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results27) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results30) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results33) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Delay' is in Results36) then conclude True;
+ 
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results24) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results27) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results30) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results33) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Personalsocial_Delay' is in Results36) then conclude True; 
+ 
+conclude False;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname ||'s ASQ showed || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 ||.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","DEVELOPMENT";
+endif;
+
+If (Box1=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
+ CALL ASQWriteDoneObs;
+endif;
+
+If  (Box1=true) then
+ /** obs saved above in multi-box check **/
+ CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
+ CALL storeNote With "I suspected developmental delay.","DEVELOPMENT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
+ CALL storeNote With "I referred them to First Steps for further testing.","DEVELOPMENT";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
+ CALL storeNote With "I gave them an Activities for Children form.","DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I scheduled them for a follow-up visit in 1 month.","DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ /** obs saved above in multi-box check **/
+ CALL storeNote With "The ASQ was done, scored, and discussed with the family.","DEVELOPMENT";
+endif;
+If  (Box6=true) then
+ /** obs saved above in multi-box check **/
+ CALL storeObs With "CHICA_DevScreen_Status","NormalDevelopment";
+ CALL storeNote With "I did not suspect developmental delay.","DEVELOPMENT";
+endif;
+
+
+endif
+;;
+Action:
+AgeInMonths := call ChicaAgeRule with "months";
+
+call CREATE_JIT with "FirstStepsReferral";
+
+call CHOOSE_ASQ_ACTIVITY_JIT;
+write ("|| firstname ||'s ASQ shows || prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please consider the following. First steps referral is attached.");
+write ("Suspect Delay ->                       ");
+write ("Refer to First Steps                      ");
+write ("Activities for Children form                       ");
+write ("Sched follow-up 1 month                      ");
+write ("ASQ done, scored, discussed with family");
+write ("Do not suspect delay");
+
+;;
+Age_Min: 9          months     ;;
+Age_Max: 1050 days     ;;
+end:
+}

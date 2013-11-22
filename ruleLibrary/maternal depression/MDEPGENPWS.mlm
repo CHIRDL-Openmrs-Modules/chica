@@ -1,0 +1,100 @@
+Maintenance:
+	Title:		Depression  Maternal Depression Generic PWS Screener;;
+	Filename:		MDEPGENPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2004-07-28T04:58:03-0400;;
+	Validation:	;;
+Library:
+	Purpose:		If maternal depression has not been addressed previously, this reminds provider to screen.                                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Explanation:	Looks for previous address of maternal depression on PWS or PSF.  If not present, prompts MD for screening symptoms.                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Keywords:	depression, PWS, study, maternal, mom;;
+	Citations:		Brody, et al, Arch Intern Med.1998;158:2469-2475;;
+	Links:		http://medicine.ucsf.edu/resources/guidelines/guide5.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+Mat_depr := read Exist {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 365 Days;
+study := read Last {MatDepressionStudy_Repeat from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority:		330;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (Mat_depr = True) then conclude False;
+Else conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "I screened || firstname ||'s mother for maternal depression.";
+If  (Box1=true) then || note1 || = "|| firstname ||'s mother reports a depressed mood.";
+If  (Box2=true) then || note2 || = "|| firstname ||'s mother may be depressed, so I referred her for help.";
+If  (Box3=true) then || note3 || = "|| firstname ||'s mother reports anhedonia.";
+If  (Box4=true) then || note4 || = "|| firstname ||'s mother is not depressed, though.";
+If  (Box5=true) then || note5 || = "|| firstname ||'s mother reports an appetite problem.";
+If  (Box6=true) then || note6 || = "|| firstname ||'s mother was not present at the visit, though.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Depressed_Mood";
+ CALL storeNote With "note1","PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Referred";
+ CALL storeNote With "note2","PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Anhedonia";
+ CALL storeNote With "note3","PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Not_Confirmed";
+ CALL storeNote With "note4","PSYCHOSOCIAL";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Sleep_Appetite_Problems";
+ CALL storeNote With "note5","PSYCHOSOCIAL";
+endif;
+If (Box6=true) then
+ CALL storeObs With "MatDepressionStudyExclusion","yes";
+ CALL storeNote With "note6","PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+write ("Maternal depression is common and impairs child health and development.  Depressed mood, not enjoying things (anhedonia), sleep and appetite disturbances may all suggest depression.  Is || firstname ||'s mother depressed?");                                                                                                                                                                                                                                                                             
+write ("Depressed mood");
+write ("May be depressed -> Referred");
+write ("Anhedonia");
+write ("NOT depressed");
+write ("Sleep/appetite problem");
+write ("Mom not present");
+;;
+Age_Min: 0 days;;
+Age_Max: 15 months;;
+end:

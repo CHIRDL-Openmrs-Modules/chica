@@ -1,0 +1,66 @@
+Maintenance:
+ Title: Research PSF ADHD Improved Relationships;;
+ Filename: R_PSFADHDImprovedRelationships;;
+ Version: 1.0;;
+ Institution: Indiana University School of Medicine;;
+ Author: Aaron Carroll;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-013T11:00:00-0400;;
+ Validation: ;;
+Library:
+ Purpose: Assess whether patient has met target goal.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+ Explanation:            ;;
+ Keywords: ADHD attention Vanderbilt research;;
+ Citations: ;;
+ Links: ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+location:= read {location from Parameters};
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
+Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+endif
+;;
+Priority: 51;;
+ Evoke: ;;
+Logic:
+If (mode = PRODUCE) then
+If (Gender = M) then || text || = "his";
+If (Gender = F) then || text || = "her";
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+If (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
+If (Target = "Improved_Relationships") then conclude True;
+
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_ADHD_Targets","Target_Met";
+
+endif;
+
+
+endif
+;;
+Action:
+write ("Has || firstname || met || text || ADHD treatment target of Improved Relationships?");
+write ("¿Ha alcanzado || firstname || su objetivo de tratamiento de ADHD en la mejoría de relaciones?") At Spanish;                                                                                                                                                                                                                                                                            
+;;
+Age_Min: 5 years;;
+Age_Max: 13 years;;
+end:

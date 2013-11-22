@@ -1,0 +1,56 @@
+Maintenance:
+	Title:		Research PSF Asthma Limit Activity Symptoms;;
+	Filename:		R_PSFAsthmaActiveSx;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2005-05-12T03:54:39-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Assess whether symptoms limit normal activity in patients with known asthma.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	If a patient is known to the system to have asthma, this PSF asks if symptoms interfere with normal activities                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Keywords:	asthma PSF symptoms grade limit activities school;;
+	Citations:		NHLBI asthma guidelines;;
+	Links:		http://www.nhlbi.nih.gov/guidelines/asthma/asthgdln.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+CurrentStatus := read Last {AsthmaStatus from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority:		61;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || HimHer || = "him";If (Gender = F) then || HimHer || = "her";If (CurrentStatus = Intermittent) OR (CurrentStatus = Persistent-controller) OR (CurrentStatus = Persistent-no-controller) OR (CurrentStatus = Persistent-non-adherent) then conclude True;Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "AsthmaSymptoms","Prevent Usual Activities";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname ||'s asthma prevent || HimHer || from || hisher || usual activities in school or at home?");
+write ("¿El asma de || firstname || le impide hacer sus actividades normales en la casa o escuela?") At Spanish;                                                                                                                                                                                                                                                                            
+;;
+Age_Min: 3 years;;
+Age_Max: 12 years;;
+end:

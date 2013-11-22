@@ -1,0 +1,519 @@
+Maintenance:
+	Title:		ASQSummaryReport;;
+	Filename:		ASQSummaryReport;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Fill in ASQSummaryReport.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ASQ;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQMonthAssessmentText || ="ASQ2MonthAssessment";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQMonthAssessmentText || ="ASQ4MonthAssessment";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQMonthAssessmentText || ="ASQ6MonthAssessment";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQMonthAssessmentText || ="ASQ8MonthAssessment";
+If (AgeInMonths = 9) then || ASQMonthAssessmentText || ="ASQ9MonthAssessment";
+If (AgeInMonths = 10) then || ASQMonthAssessmentText || ="ASQ10MonthAssessment";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQMonthAssessmentText || ="ASQ12MonthAssessment";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQMonthAssessmentText || ="ASQ14MonthAssessment";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQMonthAssessmentText || ="ASQ16MonthAssessment";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQMonthAssessmentText || ="ASQ18MonthAssessment";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQMonthAssessmentText || ="ASQ20MonthAssessment";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQMonthAssessmentText || ="ASQ22MonthAssessment";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQMonthAssessmentText || ="ASQ24MonthAssessment";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQMonthAssessmentText || ="ASQ27MonthAssessment";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQMonthAssessmentText || ="ASQ30MonthAssessment";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQMonthAssessmentText || ="ASQ33MonthAssessment";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQMonthAssessmentText || ="ASQ36MonthAssessment";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQMonthAssessmentText || ="ASQ42MonthAssessment";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQMonthAssessmentText || ="ASQ48MonthAssessment";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQMonthAssessmentText || ="ASQ54MonthAssessment";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQMonthAssessmentText || ="ASQ60MonthAssessment";
+
+ASQMonthAssessment := call getObs with "ASQMonthAssessmentText";
+
+If ('Communication_Delay' is in ASQMonthAssessment) then || Cm_Interp || = "DELAY";
+If ('Communication_Monitor' is in ASQMonthAssessment) then || Cm_Interp || = "MONITOR";
+If ('Communication_Normal' is in ASQMonthAssessment) then || Cm_Interp || = "NORMAL";
+
+If ('Grossmotor_Delay' is in ASQMonthAssessment) then || Gm_Interp || = "DELAY";
+If ('Grossmotor_Monitor' is in ASQMonthAssessment) then || Gm_Interp || = "MONITOR";
+If ('Grossmotor_Normal' is in ASQMonthAssessment) then || Gm_Interp || = "NORMAL";
+
+If ('Finemotor_Delay' is in ASQMonthAssessment) then || Fm_Interp || = "DELAY";
+If ('Finemotor_Monitor' is in ASQMonthAssessment) then || Fm_Interp || = "MONITOR";
+If ('Finemotor_Normal' is in ASQMonthAssessment) then || Fm_Interp || = "NORMAL";
+
+If ('Problemsolving_Delay' is in ASQMonthAssessment) then || Ps_Interp || = "DELAY";
+If ('Problemsolving_Monitor' is in ASQMonthAssessment) then || Ps_Interp || = "MONITOR";
+If ('Problemsolving_Normal' is in ASQMonthAssessment) then || Ps_Interp || = "NORMAL";
+
+If ('Personalsocial_Delay' is in ASQMonthAssessment) then || Pers_Interp || = "DELAY";
+If ('Personalsocial_Monitor' is in ASQMonthAssessment) then || Pers_Interp || = "MONITOR";
+If ('Personalsocial_Normal' is in ASQMonthAssessment) then || Pers_Interp || = "NORMAL";
+
+
+/* 2 months */
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQ_Month || = "2 month";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Cm_Referral || = "22.77";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Gm_Referral || = "41.84";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Fm_Referral || = "30.16";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Ps_Referral || = "24.62";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Pers_Referral || = "33.71";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Cm_Monitor || = "22.77-35.19";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Gm_Monitor || = "41.84-48.58";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Fm_Monitor || = "30.16-39.98";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Ps_Monitor || = "24.62-36.55";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || Pers_Monitor || = "33.71-42.14";
+
+
+/* 4 months */
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQ_Month || = "4 month";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Cm_Referral || = "34.60";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Gm_Referral || = "38.41";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Fm_Referral || = "29.62";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Ps_Referral || = "34.98";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Pers_Referral || = "33.16";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Cm_Monitor || = "34.60-43.44";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Gm_Monitor || = "38.41-46.52";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Fm_Monitor || = "29.62-40.60";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Ps_Monitor || = "34.98-44.38";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || Pers_Monitor || = "33.16-42.54";
+
+/* 6 months */
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQ_Month || = "6 month";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Cm_Referral || = "29.65";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Gm_Referral || = "22.25";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Fm_Referral || = "25.14";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Ps_Referral || = "27.72";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Pers_Referral || = "25.34";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Cm_Monitor || = "29.65-39.27";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Gm_Monitor || = "22.25-33.95";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Fm_Monitor || = "25.14-37.04";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Ps_Monitor || = "27.72-39.06";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || Pers_Monitor || = "25.34-36.83";
+
+/* 8 months */
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQ_Month || = "8 month";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Cm_Referral || = "33.06";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Gm_Referral || = "30.61";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Fm_Referral || = "40.15";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Ps_Referral || = "36.17";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Pers_Referral || = "35.84";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Cm_Monitor || = "33.06-42.73";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Gm_Monitor || = "30.61-41.35";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Fm_Monitor || = "40.15-47.95";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Ps_Monitor || = "36.17-45.05";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || Pers_Monitor || = "35.84-44.60";
+
+/* 9 months */
+If (AgeInMonths = 9) then || ASQ_Month || = "9 month";
+If (AgeInMonths = 9) then || Cm_Referral || = "13.97";
+If (AgeInMonths = 9) then || Gm_Referral || = "17.82";
+If (AgeInMonths = 9) then || Fm_Referral || = "31.32";
+If (AgeInMonths = 9) then || Ps_Referral || = "28.72";
+If (AgeInMonths = 9) then || Pers_Referral || = "18.91";
+If (AgeInMonths = 9) then || Cm_Monitor || = "13.97-30.00";
+If (AgeInMonths = 9) then || Gm_Monitor || = "17.82-32.27";
+If (AgeInMonths = 9) then || Fm_Monitor || = "31.32-41.82";
+If (AgeInMonths = 9) then || Ps_Monitor || = "28.72-39.11";
+If (AgeInMonths = 9) then || Pers_Monitor || = "18.91-30.69";
+
+/* 10 months */
+If (AgeInMonths = 10) then || ASQ_Month || = "10 month";
+If (AgeInMonths = 10) then || Cm_Referral || = "22.87";
+If (AgeInMonths = 10) then || Gm_Referral || = "30.07";
+If (AgeInMonths = 10) then || Fm_Referral || = "37.97";
+If (AgeInMonths = 10) then || Ps_Referral || = "32.51";
+If (AgeInMonths = 10) then || Pers_Referral || = "27.25";
+If (AgeInMonths = 10) then || Cm_Monitor || = "22.87-35.52";
+If (AgeInMonths = 10) then || Gm_Monitor || = "30.07-41.54";
+If (AgeInMonths = 10) then || Fm_Monitor || = "37.97-46.36";
+If (AgeInMonths = 10) then || Ps_Monitor || = "32.51-42.35";
+If (AgeInMonths = 10) then || Pers_Monitor || = "27.25-38.37";
+
+/* 12 months */
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQ_Month || = "12 month";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Cm_Referral || = "15.64";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Gm_Referral || = "21.49";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Fm_Referral || = "34.50";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Ps_Referral || = "27.32";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Pers_Referral || = "21.73";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Cm_Monitor || = "15.64-30.00";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Gm_Monitor || = "21.49-35.71";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Fm_Monitor || = "34.50-43.36";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Ps_Monitor || = "27.32-38.16";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || Pers_Monitor || = "21.73-33.73";
+
+/* 14 months */
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQ_Month || = "14 month";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Cm_Referral || = "17.40";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Gm_Referral || = "25.80";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Fm_Referral || = "23.06";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Ps_Referral || = "22.56";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Pers_Referral || = "23.18";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Cm_Monitor || = "17.40-31.63";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Gm_Monitor || = "25.80-39.44";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Fm_Monitor || = "23.06-34.97";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Ps_Monitor || = "22.56-34.82";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || Pers_Monitor || = "23.18-35.76";
+
+/* 16 months */
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQ_Month || = "16 month";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Cm_Referral || = "16.81";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Gm_Referral || = "37.91";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Fm_Referral || = "31.98";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Ps_Referral || = "30.51";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Pers_Referral || = "26.43";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Cm_Monitor || = "16.81-30.45";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Gm_Monitor || = "37.91-47.11";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Fm_Monitor || = "31.98-41.97";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Ps_Monitor || = "30.51-40.95";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || Pers_Monitor || = "26.43-37.22";
+
+/* 18 month */
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQ_Month || = "18 month";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Cm_Referral || = "13.06";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Gm_Referral || = "37.38";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Fm_Referral || = "34.32";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Ps_Referral || = "25.74";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Pers_Referral || = "27.19";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Cm_Monitor || = "13.06-30.00";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Gm_Monitor || = "37.38-46.42";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Fm_Monitor || = "34.32-43.38";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Ps_Monitor || = "25.74-35.86";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || Pers_Monitor || = "27.19-37.55";
+
+/* 20 months */
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQ_Month || = "20 month";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Cm_Referral || = "20.50";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Gm_Referral || = "39.89";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Fm_Referral || = "36.05";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Ps_Referral || = "28.84";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Pers_Referral || = "33.36";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Cm_Monitor || = "20.50-34.32";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Gm_Monitor || = "39.89-47.85";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Fm_Monitor || = "36.05-44.39";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Ps_Monitor || = "28.84-38.54";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || Pers_Monitor || = "33.36-42.70";
+
+/* 22 months */
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQ_Month || = "22 month";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Cm_Referral || = "13.04";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Gm_Referral || = "27.75";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Fm_Referral || = "29.61";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Ps_Referral || = "29.30";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Pers_Referral || = "30.07";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Cm_Monitor || = "13.04-30.00";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Gm_Monitor || = "27.75-39.11";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Fm_Monitor || = "29.61-39.09";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Ps_Monitor || = "29.30-39.16";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || Pers_Monitor || = "30.07-40.31";
+
+/* 24 month */
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQ_Month || = "24 month";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Cm_Referral || = "25.17";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Gm_Referral || = "38.07";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Fm_Referral || = "35.16";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Ps_Referral || = "29.78";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Pers_Referral || = "31.54";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Cm_Monitor || = "25.17-38.20";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Gm_Monitor || = "38.07-46.40";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Fm_Monitor || = "35.16-43.43";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Ps_Monitor || = "29.78-39.59";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || Pers_Monitor || = "31.54-41.34";
+
+/* 27 month */
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQ_Month || = "27 month";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Cm_Referral || = "24.02";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Gm_Referral || = "28.01";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Fm_Referral || = "18.42";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Ps_Referral || = "27.62";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Pers_Referral || = "25.31";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Cm_Monitor || = "24.02-37.22";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Gm_Monitor || = "28.01-39.14";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Fm_Monitor || = "18.42-31.08";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Ps_Monitor || = "27.62-38.79";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || Pers_Monitor || = "25.31-36.11";
+
+/* 30 month */
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQ_Month || = "30 month";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Cm_Referral || = "33.30";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Gm_Referral || = "36.14";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Fm_Referral || = "19.25";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Ps_Referral || = "27.08";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Pers_Referral || = "32.01";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Cm_Monitor || = "33.30-43.56";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Gm_Monitor || = "36.14-44.84";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Fm_Monitor || = "19.25-33.02";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Ps_Monitor || = "27.08-38.63";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || Pers_Monitor || = "32.01-41.94";
+
+/* 33 months */
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQ_Month || = "33 month";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Cm_Referral || = "25.36";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Gm_Referral || = "34.80";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Fm_Referral || = "12.28";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Ps_Referral || = "26.92";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Pers_Referral || = "28.96";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Cm_Monitor || = "25.36-37.37";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Gm_Monitor || = "34.80-44.04";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Fm_Monitor || = "12.28-27.90";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Ps_Monitor || = "26.92-38.78";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || Pers_Monitor || = "28.96-39.85";
+
+/* 36 months */
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQ_Month || = "36 month";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Cm_Referral || = "30.99";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Gm_Referral || = "36.99";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Fm_Referral || = "18.07";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Ps_Referral || = "30.29";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Pers_Referral || = "35.33";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Cm_Monitor || = "30.99-41.43";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Gm_Monitor || = "36.99-45.84";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Fm_Monitor || = "18.07-32.57";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Ps_Monitor || = "30.29-41.13";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || Pers_Monitor || = "35.33-44.07";
+
+/* 42 months */
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQ_Month || = "42 month";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Cm_Referral || = "27.06";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Gm_Referral || = "36.27";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Fm_Referral || = "19.82";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Ps_Referral || = "28.11";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Pers_Referral || = "31.12";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Cm_Monitor || = "27.06-38.54";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Gm_Monitor || = "36.27-45.15";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Fm_Monitor || = "19.82-33.68";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Ps_Monitor || = "28.11-39.82";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || Pers_Monitor || = "31.12-41.25";
+
+/* 48 months */
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQ_Month || = "48 month";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Cm_Referral || = "30.72";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Gm_Referral || = "32.78";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Fm_Referral || = "15.81";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Ps_Referral || = "31.30";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Pers_Referral || = "26.60";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Cm_Monitor || = "30.72-41.82";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Gm_Monitor || = "32.78-42.74";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Fm_Monitor || = "15.81-30.58";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Ps_Monitor || = "31.30-42.04";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || Pers_Monitor || = "26.60-38.47";
+
+/* 54 months */
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQ_Month || = "54 month";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Cm_Referral || = "31.85";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Gm_Referral || = "35.18";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Fm_Referral || = "17.32";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Ps_Referral || = "28.12";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Pers_Referral || = "32.33";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Cm_Monitor || = "31.85-42.82";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Gm_Monitor || = "35.18-44.58";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Fm_Monitor || = "17.32-31.72";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Ps_Monitor || = "28.12-39.68";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || Pers_Monitor || = "32.33-42.55";
+
+/* 60 months */
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQ_Month || = "60 month";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Cm_Referral || = "33.19";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Gm_Referral || = "31.28";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Fm_Referral || = "26.54";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Ps_Referral || = "29.99";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Pers_Referral || = "39.07";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Cm_Monitor || = "33.19-42.80";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Gm_Monitor || = "31.28-41.72";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Fm_Monitor || = "26.54-39.05";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Ps_Monitor || = "29.99-41.29";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || Pers_Monitor || = "39.07-46.96";
+
+
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQCommunicationSubscoreText || ="ASQ2CommunicationSubscore";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQGrossmotorSubscoreText || ="ASQ2GrossmotorSubscore";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQFinemotorSubscoreText || ="ASQ2FinemotorSubscore";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQProblemsolvingSubscoreText || ="ASQ2ProblemsolvingSubscore";
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then || ASQPersonalsocialSubscoreText || ="ASQ2PersonalsocialSubscore";
+
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQCommunicationSubscoreText || ="ASQ4CommunicationSubscore";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQGrossmotorSubscoreText || ="ASQ4GrossmotorSubscore";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQFinemotorSubscoreText || ="ASQ4FinemotorSubscore";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQProblemsolvingSubscoreText || ="ASQ4ProblemsolvingSubscore";
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then || ASQPersonalsocialSubscoreText || ="ASQ4PersonalsocialSubscore";
+
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQCommunicationSubscoreText || ="ASQ6CommunicationSubscore";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQGrossmotorSubscoreText || ="ASQ6GrossmotorSubscore";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQFinemotorSubscoreText || ="ASQ6FinemotorSubscore";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQProblemsolvingSubscoreText || ="ASQ6ProblemsolvingSubscore";
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then || ASQPersonalsocialSubscoreText || ="ASQ6PersonalsocialSubscore";
+
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQCommunicationSubscoreText || ="ASQ8CommunicationSubscore";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQGrossmotorSubscoreText || ="ASQ8GrossmotorSubscore";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQFinemotorSubscoreText || ="ASQ8FinemotorSubscore";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQProblemsolvingSubscoreText || ="ASQ8ProblemsolvingSubscore";
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then || ASQPersonalsocialSubscoreText || ="ASQ8PersonalsocialSubscore";
+
+If (AgeInMonths = 9) then || ASQCommunicationSubscoreText || ="ASQ9CommunicationSubscore";
+If (AgeInMonths = 9) then || ASQGrossmotorSubscoreText || ="ASQ9GrossmotorSubscore";
+If (AgeInMonths = 9) then || ASQFinemotorSubscoreText || ="ASQ9FinemotorSubscore";
+If (AgeInMonths = 9) then || ASQProblemsolvingSubscoreText || ="ASQ9ProblemsolvingSubscore";
+If (AgeInMonths = 9) then || ASQPersonalsocialSubscoreText || ="ASQ9PersonalsocialSubscore";
+
+If (AgeInMonths = 10) then || ASQCommunicationSubscoreText || ="ASQ10CommunicationSubscore";
+If (AgeInMonths = 10) then || ASQGrossmotorSubscoreText || ="ASQ10GrossmotorSubscore";
+If (AgeInMonths = 10) then || ASQFinemotorSubscoreText || ="ASQ10FinemotorSubscore";
+If (AgeInMonths = 10) then || ASQProblemsolvingSubscoreText || ="ASQ10ProblemsolvingSubscore";
+If (AgeInMonths = 10) then || ASQPersonalsocialSubscoreText || ="ASQ10PersonalsocialSubscore";
+
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQCommunicationSubscoreText || ="ASQ12CommunicationSubscore";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQGrossmotorSubscoreText || ="ASQ12GrossmotorSubscore";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQFinemotorSubscoreText || ="ASQ12FinemotorSubscore";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQProblemsolvingSubscoreText || ="ASQ12ProblemsolvingSubscore";
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then || ASQPersonalsocialSubscoreText || ="ASQ12PersonalsocialSubscore";
+
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQCommunicationSubscoreText || ="ASQ14CommunicationSubscore";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQGrossmotorSubscoreText || ="ASQ14GrossmotorSubscore";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQFinemotorSubscoreText || ="ASQ14FinemotorSubscore";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQProblemsolvingSubscoreText || ="ASQ14ProblemsolvingSubscore";
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then || ASQPersonalsocialSubscoreText || ="ASQ14PersonalsocialSubscore";
+
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQCommunicationSubscoreText || ="ASQ16CommunicationSubscore";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQGrossmotorSubscoreText || ="ASQ16GrossmotorSubscore";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQFinemotorSubscoreText || ="ASQ16FinemotorSubscore";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQProblemsolvingSubscoreText || ="ASQ16ProblemsolvingSubscore";
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then || ASQPersonalsocialSubscoreText || ="ASQ16PersonalsocialSubscore";
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQCommunicationSubscoreText || ="ASQ18CommunicationSubscore";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQGrossmotorSubscoreText || ="ASQ18GrossmotorSubscore";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQFinemotorSubscoreText || ="ASQ18FinemotorSubscore";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQProblemsolvingSubscoreText || ="ASQ18ProblemsolvingSubscore";
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then || ASQPersonalsocialSubscoreText || ="ASQ18PersonalsocialSubscore";
+
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQCommunicationSubscoreText || ="ASQ20CommunicationSubscore";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQGrossmotorSubscoreText || ="ASQ20GrossmotorSubscore";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQFinemotorSubscoreText || ="ASQ20FinemotorSubscore";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQProblemsolvingSubscoreText || ="ASQ20ProblemsolvingSubscore";
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then || ASQPersonalsocialSubscoreText || ="ASQ20PersonalsocialSubscore";
+
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQCommunicationSubscoreText || ="ASQ22CommunicationSubscore";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQGrossmotorSubscoreText || ="ASQ22GrossmotorSubscore";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQFinemotorSubscoreText || ="ASQ22FinemotorSubscore";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQProblemsolvingSubscoreText || ="ASQ22ProblemsolvingSubscore";
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then || ASQPersonalsocialSubscoreText || ="ASQ22PersonalsocialSubscore";
+
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQCommunicationSubscoreText || ="ASQ24CommunicationSubscore";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQGrossmotorSubscoreText || ="ASQ24GrossmotorSubscore";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQFinemotorSubscoreText || ="ASQ24FinemotorSubscore";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQProblemsolvingSubscoreText || ="ASQ24ProblemsolvingSubscore";
+If (AgeInMonths >= 23) and (AgeInDays < 776) then || ASQPersonalsocialSubscoreText || ="ASQ24PersonalsocialSubscore";
+
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQCommunicationSubscoreText || ="ASQ27CommunicationSubscore";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQGrossmotorSubscoreText || ="ASQ27GrossmotorSubscore";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQFinemotorSubscoreText || ="ASQ27FinemotorSubscore";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQProblemsolvingSubscoreText || ="ASQ27ProblemsolvingSubscore";
+If (AgeInDays >= 776) and (AgeInDays < 866) then || ASQPersonalsocialSubscoreText || ="ASQ27PersonalsocialSubscore";
+
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQCommunicationSubscoreText || ="ASQ30CommunicationSubscore";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQGrossmotorSubscoreText || ="ASQ30GrossmotorSubscore";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQFinemotorSubscoreText || ="ASQ30FinemotorSubscore";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQProblemsolvingSubscoreText || ="ASQ30ProblemsolvingSubscore";
+If (AgeInDays >= 866) and (AgeInDays < 959) then || ASQPersonalsocialSubscoreText || ="ASQ30PersonalsocialSubscore";
+
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQCommunicationSubscoreText || ="ASQ33CommunicationSubscore";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQGrossmotorSubscoreText || ="ASQ33GrossmotorSubscore";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQFinemotorSubscoreText || ="ASQ33FinemotorSubscore";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQProblemsolvingSubscoreText || ="ASQ33ProblemsolvingSubscore";
+If (AgeInDays >= 959) and (AgeInDays < 1050) then || ASQPersonalsocialSubscoreText || ="ASQ33PersonalsocialSubscore";
+
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQCommunicationSubscoreText || ="ASQ36CommunicationSubscore";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQGrossmotorSubscoreText || ="ASQ36GrossmotorSubscore";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQFinemotorSubscoreText || ="ASQ36FinemotorSubscore";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQProblemsolvingSubscoreText || ="ASQ36ProblemsolvingSubscore";
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then || ASQPersonalsocialSubscoreText || ="ASQ36PersonalsocialSubscore";
+
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQCommunicationSubscoreText || ="ASQ42CommunicationSubscore";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQGrossmotorSubscoreText || ="ASQ42GrossmotorSubscore";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQFinemotorSubscoreText || ="ASQ42FinemotorSubscore";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQProblemsolvingSubscoreText || ="ASQ42ProblemsolvingSubscore";
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then || ASQPersonalsocialSubscoreText || ="ASQ42PersonalsocialSubscore";
+
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQCommunicationSubscoreText || ="ASQ48CommunicationSubscore";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQGrossmotorSubscoreText || ="ASQ48GrossmotorSubscore";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQFinemotorSubscoreText || ="ASQ48FinemotorSubscore";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQProblemsolvingSubscoreText || ="ASQ48ProblemsolvingSubscore";
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then || ASQPersonalsocialSubscoreText || ="ASQ48PersonalsocialSubscore";
+
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQCommunicationSubscoreText || ="ASQ54CommunicationSubscore";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQGrossmotorSubscoreText || ="ASQ54GrossmotorSubscore";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQFinemotorSubscoreText || ="ASQ54FinemotorSubscore";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQProblemsolvingSubscoreText || ="ASQ54ProblemsolvingSubscore";
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then || ASQPersonalsocialSubscoreText || ="ASQ54PersonalsocialSubscore";
+
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQCommunicationSubscoreText || ="ASQ60CommunicationSubscore";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQGrossmotorSubscoreText || ="ASQ60GrossmotorSubscore";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQFinemotorSubscoreText || ="ASQ60FinemotorSubscore";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQProblemsolvingSubscoreText || ="ASQ60ProblemsolvingSubscore";
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then || ASQPersonalsocialSubscoreText || ="ASQ60PersonalsocialSubscore";
+
+
+Cm_Score := call getLastObs with "ASQCommunicationSubscoreText";
+GM_Score := call getLastObs with "ASQGrossmotorSubscoreText";
+Fm_Score := call getLastObs with "ASQFinemotorSubscoreText";
+Ps_Score := call getLastObs with "ASQProblemsolvingSubscoreText";
+Pers_Score := call getLastObs with "ASQPersonalsocialSubscoreText";
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| ASQ_Month ||") At ASQ_Month;
+write ("|| Cm_Referral ||") At Cm_Referral;
+write ("|| Gm_Referral ||") At Gm_Referral;
+write ("|| Fm_Referral ||") At Fm_Referral;
+write ("|| Ps_Referral ||") At Ps_Referral;
+write ("|| Pers_Referral ||") At Pers_Referral;
+write ("|| Cm_Monitor ||") At Cm_Monitor;
+write ("|| Gm_Monitor ||") At Gm_Monitor;
+write ("|| Fm_Monitor ||") At Fm_Monitor;
+write ("|| Ps_Monitor ||") At Ps_Monitor;
+write ("|| Pers_Monitor ||") At Pers_Monitor;
+write ("|| Cm_Interp ||") At Cm_Interp;
+write ("|| Gm_Interp ||") At Gm_Interp;
+write ("|| Fm_Interp ||") At Fm_Interp;
+write ("|| Ps_Interp ||") At Ps_Interp;
+write ("|| Pers_Interp ||") At Pers_Interp;
+write ("|| Cm_Score ||") At Cm_Score;
+write ("|| GM_Score ||") At GM_Score;
+write ("|| Fm_Score ||") At Fm_Score;
+write ("|| Ps_Score ||") At Ps_Score;
+write ("|| Pers_Score ||") At Pers_Score;
+
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

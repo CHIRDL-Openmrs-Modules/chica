@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.Bmiage" table="chica_bmiage">
+		
+		<id name="bmiageId" type="java.lang.Integer" column="bmiage_id">
+			<generator class="native" />
+		</id>
+	
+		<property name="s" type="java.lang.Double" column="S"/>
+		<property name="m" type="java.lang.Double" column="M"/>
+		<property name="l" type="java.lang.Double" column="L"/>
+		<property name="agemos" type="java.lang.Double" column="Agemos"/>
+		<property name="sex" type="java.lang.Integer" column="Sex"/>
+	</class>
+	
+</hibernate-mapping>

@@ -1,0 +1,126 @@
+Maintenance:
+	Title:		Physical Evaluation;;
+	Filename:		PhysicalEvaluation;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve McKee;;
+	Specialist:	Pediatrics;;
+	Date:		2012-09-11T01:37:45-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This populates entries on the Physical Evaluation form.;;
+	Explanation:;;
+	Keywords:	physical, exam;;
+	Citations:		;;
+	Links:		http://www.ama-assn.org/ama/pub/category/2280.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+allergies := read Last {MEDICATION ALLERGIES from CHICA};
+asthma := read Last {AsthmaStatus from CHICA};
+corrected := read Last {Corrected Vision from CHICA};
+visionR := read Last {VISIONR from CHICA};
+visionL := read Last {VISIONL from CHICA};
+ears := read {Ears/Hearing_Exam from CHICA} Where it Occurred Within Past 12 Months;
+nose := read {Nose/Throat_Exam from CHICA} Where it Occurred Within Past 12 Months;
+general := read {General_Exam from CHICA} Where it Occurred Within Past 12 Months;
+nodes := read {Nodes_Exam from CHICA} Where it Occurred Within Past 12 Months;
+heart := read {Heart/Pulses_Exam from CHICA} Where it Occurred Within Past 12 Months;
+lungs := read {Chest/Lungs_Exam from CHICA} Where it Occurred Within Past 12 Months;
+abdomen := read {Abdomen_Exam from CHICA} Where it Occurred Within Past 12 Months;
+genitalia := read {ExtGenitalia_Exam from CHICA} Where it Occurred Within Past 12 Months;
+skin := read {Skin_Exam from CHICA} Where it Occurred Within Past 12 Months;
+neuro := read {Neuro_Exam from CHICA} Where it Occurred Within Past 12 Months;
+endif
+;;
+Priority:		;;
+Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If NOT(allergies = null) AND NOT(allergies = "NONE") then || yesAllergySel || = "X";
+If NOT(asthma = null) AND NOT(asthma = "None") AND NOT(asthma = "NoSymptoms") then || asthmaSel || = "X";
+If NOT(corrected = "yes") then || noCorrectedSel || = "X";
+If (corrected = "yes") then || yesCorrectedSel || = "X";
+If (Gender = "M") then || maleSel || = "X";
+If (Gender = "F") then || femaleSel || = "X";
+
+ears_final := call getLatestNonSickVisitObs with "ears_object";
+nose_final := call getLatestNonSickVisitObs with "nose_object";
+If (ears_final = "normal") AND (nose_final = "normal") then || earsNoseSel || = "X";
+
+general_final := call getLatestNonSickVisitObs with "general_object";
+If (general_final = "normal") then || generalSel || = "X";
+
+nodes_final := call getLatestNonSickVisitObs with "nodes_object";
+If (nodes_final = "normal") then || nodesSel || = "X";
+
+heart_final := call getLatestNonSickVisitObs with "heart_object";
+If (heart_final = "normal") then || heartSel || = "X";
+
+lungs_final := call getLatestNonSickVisitObs with "lungs_object";
+If (lungs_final = "normal") then || lungsSel || = "X";
+
+abdomen_final := call getLatestNonSickVisitObs with "abdomen_object";
+If (abdomen_final = "normal") then || abdomenSel || = "X";
+
+genitalia_final := call getLatestNonSickVisitObs with "genitalia_object";
+If (genitalia_final = "normal") then || genitaliaSel || = "X";
+
+skin_final := call getLatestNonSickVisitObs with "skin_object";
+If (skin_final = "normal") then || skinSel || = "X";
+
+neuro_final := call getLatestNonSickVisitObs with "neuro_object";
+If (neuro_final = "normal") then || neuroSel || = "X";
+
+If NOT(visionR = null) then
+ roundedVisionR := call integerResult with "visionR";
+endif;
+
+If NOT(visionL = null) then
+ roundedVisionL := call integerResult with "visionL";
+endif;
+
+conclude true;
+
+endif
+
+;;
+Action:
+write ("|| Gender ||") At sex;
+write ("|| Gender ||") At sex2;
+write ("|| yesAllergySel ||") At Sel_Allergie_Yes;
+write ("|| yesAllergySel ||") At Sel_Allergie_Medicine;
+write ("|| maleSel ||") At Sel_Male;
+write ("|| femaleSel ||") At Sel_Female;
+write ("|| maleSel ||") At Sel_Male_2;
+write ("|| femaleSel ||") At Sel_Female_2;
+write ("|| earsNoseSel ||") At Sel_Eye_Ear_Nose_Throat;
+write ("|| generalSel ||") At Sel_Appearance;
+write ("|| nodesSel ||") At Sel_LymphNodes;
+write ("|| heartSel ||") At Sel_Heart;
+write ("|| heartSel ||") At Sel_Pulses;
+write ("|| lungsSel ||") At Sel_Lungs;
+write ("|| abdomenSel ||") At Sel_Abdomen;
+write ("|| genitaliaSel ||") At Sel_Genitourinary;
+write ("|| skinSel ||") At Sel_Skin;
+write ("|| neuroSel ||") At Sel_Neurologic;
+write ("|| asthmaSel ||") At Sel_Asthma;
+write ("|| noCorrectedSel ||") At Sel_Corrected_No;
+write ("|| yesCorrectedSel ||") At Sel_Corrected_Yes;
+write ("|| roundedVisionR ||") At Vision_R;
+write ("|| roundedVisionL ||") At Vision_L;
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

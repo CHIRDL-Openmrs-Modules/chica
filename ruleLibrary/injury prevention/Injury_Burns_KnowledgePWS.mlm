@@ -1,0 +1,81 @@
+Maintenance:
+	Title:		Injury  Burns Knowledge PWS;;
+	Filename:		Injury_Burns_KnowledgePWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll; Revised by Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T02:21:33-0500; revised 2012-2-27;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advises clinicians on how to counsel parents about caring for burns.                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	Proper burn care is important to minimize morbidity from burns.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	injury, burns, infant, PWS;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/1to2yrs.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+burns := read Last {burns_knowledge from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		712;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (burns = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "I reviewed with the parent how to respond if a child is burned.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I advised the parent to put the burned area in cold water.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "I determined that the parent knows how to call either 9-1-1 or how to call their doctor.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "I advised the parent to keep the burned area in cold water until the child stops crying.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I advised the parent to cover the burned area with loose bandages or a clean cloth.","ANTICIPATORY GUIDANCE";
+endif;
+If (Box6=true) then
+ CALL storeObs With "burns_knowledge","yes";
+ CALL storeNote With "My impression is that the parent knows how to respond if a child is burned.","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+;;
+Action:
+write ("It is important for parents to know what to do if a child is burned.  Please review the following with them:");                                                                                                                                                                                     
+write ("1)Put burned area in cold H20");
+write ("4)Call your doctor");
+write ("2)Keep there until stops crying");
+write ("");
+write ("3)Cover loose bandage/clean cloth");
+write ("Parent knows what to do");
+;;
+Age_Min: 9 months;;
+Age_Max: 8 years;;
+end:

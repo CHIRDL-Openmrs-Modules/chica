@@ -1,0 +1,94 @@
+Maintenance:
+	Title:		Lead Toxicity  Advice for Blood Leads Between 10 and 14;;
+	Filename:		lead10_14advice.mlm;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs, Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 15:26:31;;
+	Validation:	;;
+Library:
+	Purpose:		Advise provider how to respond when blood lead is 10-14 mg/dl;;
+	Explanation:	Checks LEAD LEVEL-PEDS from RMRS.  If >=10 and <15 recommends repeat in 3 mos and a CBC;;
+	Keywords:	lead screening PWS;;
+	Citations:		CDC guideline and IUMG-PC guidelines;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+RMRS_Lead_Level := read Last {LEAD LEVEL-PEDS from RMRS} Where it Occurred Within Past 365 Days;
+vblq := read {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+/********
+higher := read Exist (GREATER THAN 19 MG/DL, 15 - 19 MG/DL) {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
+If (higher = True) then conclude False;
+*********/
+
+If '15 - 19 MG/DL' is in vblq then conclude False;
+If 'GREATER THAN 19 MG/DL' is in vblq then conclude False;
+/*** If 'LESS THAN 10 MG/DL' is in vblq then conclude False; ---Needs to be discussed with Steve 12/14/09 ****/
+
+
+
+If (RMRS_Lead_Level < 10) OR (RMRS_Lead_Level >= 15)  then conclude False;
+
+/*********
+Addressed := read Exist (ADDRESSED)
+If (RMRS_Lead_Level >= 10) AND (RMRS_Lead_Level < 15) AND (Addressed = FALSE) then conclude True;
+*********/
+If (RMRS_Lead_Level >= 10) AND (RMRS_Lead_Level < 15) AND 'ADDRESSED' is in vblq then conclude True;
+
+/*****
+Positive := read Exist (10 - 14 MG/DL)
+If (Positive = True) then || variable || = "10 - 14 mg/dl";
+******/
+If '10 - 14 MG/DL' is in vblq then || variable || = "10 - 14 mg/dl";
+
+/******
+If (Positive = True) then conclude True;
+********/
+If (variable = True) then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) AND (Box3=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","ADDRESSED";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","LESS THAN 10 MG/DL";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname || has a blood lead of || RMRS_Lead_Level_value |||| variable ||.  For children with blood lead at this level, the following are recommended. Check what was done.");
+write ("Obtain a CBC");
+write ("");
+write ("Sched rpt Pb in 3 months");
+write ("");
+write ("");
+write ("Bld Pb OK (<10 mg/dl)");
+;;
+Age_Min: 10 months;;
+Age_Max: 4 years;;
+end:
