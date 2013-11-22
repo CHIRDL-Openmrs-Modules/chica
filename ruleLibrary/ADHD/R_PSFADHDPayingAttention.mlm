@@ -1,0 +1,78 @@
+Maintenance:
+	Title:		Research PSF ADHD Screen Trouble Paying Attention;;
+	Filename:		R_PSFADHDPayingAttention;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2010-04-02T09:00:00-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Assess whether patient has trouble paying attention.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	            Kronenberger says this question has high sensitivity for ADHD                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Keywords:	ADHD attention Vanderbilt research;;
+	Citations:		Kronenberger;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+location:= read {location from Parameters};
+clinic_billing_dx:= read {CLINIC BILLING DIAGNOSIS from RMRS} Where it Occurred Within Past 365 Days;
+dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd_dx:= read {HOSP ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
+RecentlyAsked := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
+endif
+;;
+Priority:		55;;
+Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude False;
+If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude False;
+If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude False;
+If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints)  OR ('314.1' is in hosp_icd_dx)  OR ('314.1' is in admit_icd_dx)  OR ('314.1' is in axis_discharge_dx) then conclude False;
+If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints)  OR ('314.2' is in hosp_icd_dx)  OR ('314.2' is in admit_icd_dx)  OR ('314.2' is in axis_discharge_dx) then conclude False;
+If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints)  OR ('314.8' is in hosp_icd_dx)  OR ('314.8' is in admit_icd_dx)  OR ('314.8' is in axis_discharge_dx) then conclude False;
+If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints)  OR ('314.9' is in hosp_icd_dx)  OR ('314.9' is in admit_icd_dx)  OR ('314.9' is in axis_discharge_dx) then conclude False;
+If (CurrentStatus = yes) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
+If ('Hard_time_paying_attention' is in RecentlyAsked) OR ('no_Hard_time_paying_attention' is in RecentlyAsked) then conclude False;
+Else conclude true;
+
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_ADHD_SX","Hard_time_paying_attention";
+ endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_ADHD_SX","no_Hard_time_paying_attention";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || OFTEN have a hard time paying attention to tasks or play, that is causing problems at home or school?");
+write ("¿Tiene || firstname || muchas veces dificultad para prestar atención a las tareas o a los juegos, ocasionando problemas en casa o en la escuela?") At Spanish;
+;;
+Age_Min: 5 years;;
+Age_Max: 13 years;;
+end:

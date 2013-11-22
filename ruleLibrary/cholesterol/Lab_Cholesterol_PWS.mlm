@@ -1,0 +1,90 @@
+Maintenance:
+	Title:		Followup Lab Cholesterol PWS;;
+	Filename:		Lab_Cholesterol_PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-07T01:23:21-0400;;
+	Validation:	;;
+Library:
+	Purpose:		If a cholesterol exists in the RMRS, reports value and recommends action:
+<170 -> OK
+170-199 repeat
+>199 measure LDL                                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	cholesterol screening AAP PSF;;
+	Citations:		PEDIATRICS Vol. 101 No. 1 January 1998, pp. 141-147;;
+	Links:		http://aappolicy.aappublications.org/cgi/content/full/pediatrics;101/1/141;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+Lab_Cholesterol := read Last {CHOLESTEROL from RMRS} Where it Occurred Within Past 5 Years;
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;cholest_screen := read Last {Cholesterol_Screen from CHICA} Where it Occurred Within Past 5 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+endif
+;;
+Priority:		249;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If (Lab_Cholesterol < 170) then || Action_Text || = "take no action.  Repeat cholesterol in 5 years if at risk.";
+If (Lab_Cholesterol > 199) then || Action_Text || = "obtain a lipoprotein profile, including LDL.";
+Else || Action_Text || = "repeat a blood cholesterol within 1 year.";
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (cholest_screen = Addressed) then conclude False;If (Lab_Cholesterol = Null) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box3=true) OR (Box5=true) then || description || = "|| firstname ||'s cholesterol on || Lab_Cholesterol_date || was || Lab_Cholesterol_value ||.  The AAP recommends you || Action_Text ||  Indicate action taken.";
+/* */
+
+If  (Box1=true) OR (Box3=true) OR (Box5=true) then
+ CALL storeObs With "Cholesterol_Screen","Addressed";
+ CALL storeNote With "description","SCREENING";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "No action.","SCREENING";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "I plan to repeat cholesterol within one year.","SCREENING";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I ordered a follow up fasting lipid analysis (including LDL).","SCREENING";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname ||'s cholesterol on || Lab_Cholesterol_date || was || Lab_Cholesterol_value ||.  The AAP recommends you || Action_Text ||  Indicate action taken.");                                                                                                                                   
+write ("No action");
+write ("");
+write ("Repeat cholesterol w/in 1y");
+write ("");
+write ("Lipoprotien analysis (incl LDL)");
+write ("");
+;;
+Age_Min: 12 months;;
+Age_Max: 11 years;;
+end:

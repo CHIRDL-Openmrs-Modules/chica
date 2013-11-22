@@ -1,0 +1,95 @@
+Maintenance:
+ Title: Research ADHD Med Change PWS                                                                         ;;
+ Filename: R_ADHDMedChangePWS                                  ;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Aaron Carroll                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-15 10:00:00;;
+ Validation: ;;
+Library:
+ Purpose: PWS prompt to alert MD to change meds.                                                                                                                                                                                                                                                                                                                                                     ;;
+ Explanation: ADHD meeds need changing.                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: ADHD PWS Vanderbilt                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day; 
+location:= read {location from Parameters};     
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
+ChronicCareStatus := read last {CHICA_ADHD_RX from CHICA} ; 
+
+Meds := read {CHICA_ADHD_RX from CHICA} Where it Occurred Within Past 365 Days;
+Target := read last {CHICA_ADHD_Targets from CHICA} ; 
+SideEffects := read last {CHICA_ADHD_Side_Effects from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+endif
+;;
+Priority: 176       ;;
+ Evoke: ;;
+
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
+
+If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
+If (Target = "Target_Met") then conclude False;
+If ('Medication' is in Meds) AND SideEffects=yes then conclude True;
+Else conclude False;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then
+ CALL storeNote With "Patient reports ADHD treatment goals not yet met, but patient reports some medication side effects.", "DEVELOPMENT";
+endif;
+If  (Box1=true) then
+ CALL storeObs With "CHICA_ADHD_Side_Effects","yes";
+ CALL storeNote With "The medication side effects are significant.", "DEVELOPMENT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
+ CALL storeNote With "I plan to change medication.", "DEVELOPMENT";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "CHICA_ADHD_Targets","Target_Met";
+ CALL storeNote With "I think treatment goals have been met.", "DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
+ CALL storeNote With "I plan to lower the medication dose.", "DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "Follow up in 2-3 weeks.", "DEVELOPMENT";
+endif;
+
+
+endif
+;;
+Action:
+call CREATE_JIT with "TargetOutcomes";
+write ("|| firstname || has not met target goals for ADHD management, and seems to be experiencing significant side effects.  Confirm this and consider changing the medication.");
+write ("Significant Side Effects ->                       ");
+write ("Change Medication                      ");
+write ("Targets Met ->                        ");
+write ("Lower dose                      ");
+write ("Follow-up 2-3wks                        ");
+write ("");
+;;
+Age_Min: 5          years     ;;
+Age_Max: 13         years     ;;
+end:

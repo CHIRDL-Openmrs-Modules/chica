@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.PatientFamily" table="chica_patient_family">
+		
+	<id name="patientFamilyId" type="java.lang.Integer" column="patient_family_id">
+			<generator class="native" />
+	</id>
+	
+		<property name="patientId" type="java.lang.Integer" column="patient_id" />
+		<property name="familyId" type="java.lang.Integer" column="family_id" />
+		<property name="creationTime" type="java.util.Date" column="creation_time" />
+		<property name="flag" type="java.lang.String" column="flag" />
+		<property name="streetAddress" type="java.lang.String" column="street_address" />
+		<property name="phoneNum" type="java.lang.String" column="phone_num" />
+				
+   </class>
+   			
+</hibernate-mapping>

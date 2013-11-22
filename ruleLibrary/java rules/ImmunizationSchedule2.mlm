@@ -1,0 +1,76 @@
+Maintenance:
+	Title:		ImmunizationSchedule;;
+	Filename:		ImmunizationSchedule;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		303-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Fill in ImmunizationSchedule.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	Developmental;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+notInCHIRP := read last {not_in_CHIRP_registry} Where it Occurred Within Past 1 Day;
+
+endif
+
+If (mode = CONSUME) then
+vaccines_given := read {CHICA Vaccine Given from CHICA} Where it Occurred within Past 90 Days;
+
+ 
+ endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+
+If (mode = CONSUME) then
+/*CALL TestLotNumbers;*/
+
+ 
+VXUResult := CALL createVXUMessage with "vaccines_given";
+	
+VXUFinalResult := CALL addVaccineRecords with "VXUResult_object", "dtap_records_object", "Hib_records_object", "var_records_object", "mmr_records_object", "hepa_records_objects", "IPV_record_object",
+"Hib_records_object", "PCV_records_object", "hepb_records_object",
+"Rotavirus_records_object", "Pneumococcal_records_object",
+"Influenza_records_object", "InfluenzaNasal_records_object";
+ 
+ CALL sendCHIRPUpdate with "VXUFinalResult_object";
+
+endif
+
+If (mode = PRODUCE) then
+
+/*if (notInCHIRP = True) then || CHIRP_Status || ="This child could not be matched to any records in CHIRP.  Please fill out any immunization information you have so a record can be created.";*/
+
+
+
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+conclude False;
+;;
+Action:
+
+/*write ("|| CHIRP_Status  ||") At CHIRP_Status;*/
+
+
+
+
+
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

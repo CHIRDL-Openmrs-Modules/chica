@@ -1,0 +1,74 @@
+Maintenance:
+	Title:		Inform physician in control group PWS;;
+	Filename:		controlGroupPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Vivienne Zhu;;
+	Specialist:	Pediatrics;;
+	Date:		2008-02-08 11:17:15;;
+	Validation:	;;
+Library:
+	Purpose:		for the control group, to inform physician that there?s smoker in home;;
+	Explanation:	;;
+	Keywords:	Environmental smoking, smoking cessation, parental smoking;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+smokerL := read Last {any_household_members_smoke  from CHICA};
+arm := read Last {smoking_study_arm from CHICA};
+counsel := read Last {counseling topic from CHICA} ;
+endif
+;;
+Priority:		491;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || himher || = "him";
+If (Gender = F) then || himher || = "her";
+If (arm = Intervention)  then conclude False;
+If (counsel = "Environmental tobacco smoke risks to child") then conclude False;
+If (counsel = "Not Discussed Environmental tobacco smoke risks to child") then conclude False;
+If (smokerL = yes) then conclude True;
+Else conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "counseling topic","Environmental tobacco smoke risks to child";
+ CALL storeNote With "There is reportedly a smoker in the patient's home.", "PSYCHOSOCIAL";
+ CALL storeNote With "We discussed the risks of smoking in the home.", "PSYCHOSOCIAL";
+endif;
+If NOT  (Box1=true) then
+ CALL storeObs With "counseling topic","Not Discussed Environmental tobacco smoke risks to child";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname || has a smoker in the home. This may pose health risk to || himher ||.");
+write ("Discuss Smoking risks");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 11 years;;
+end:

@@ -1,0 +1,82 @@
+Maintenance:
+	Title:		Newborn Screening Results Followup PWS;;
+	Filename:		NBScreenFUPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-17T03:29:03-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS will prompt the clinician to follow up on the results of NB Screening tests until all results are known in the system.                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	Nerborn screening occurs on 31 diseases in Indiana.  Abnormal results should be followed up immediately.                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	newborn, screening;;
+	Citations:		;;
+	Links:		http://www.savebabies.org/states/indiana.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+bio := read Exist {BIOTINIDASE SCN FP from RMRS} Where it Occurred Within Past 365 Days;cah := read Exist {17-OH Progest Bld FP QL from RMRS} Where it Occurred Within Past 365 Days;gal := read Exist {GALACTOSEMIA SCN from RMRS} Where it Occurred Within Past 365 Days;hcy := read Exist {HOMOCYSTINURIA SCN from RMRS} Where it Occurred Within Past 365 Days;msud := read Exist {MSUD SCREEN from RMRS} Where it Occurred Within Past 365 Days;pku := read Exist {PKU SCREEN from RMRS} Where it Occurred Within Past 365 Days;ch1 := read Exist {T4 FILTER PAPER from RMRS} Where it Occurred Within Past 365 Days;ch2 := read Exist {TSH-FP from RMRS} Where it Occurred Within Past 365 Days;scd := read Exist {HGB-FP SCN from RMRS} Where it Occurred Within Past 365 Days;norm := read Exist {normal_newborn_screen from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority:		298;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (bio = True) AND (cah = True) AND (gal = True) AND (hcy = True) AND (ch1 = True) AND (msud = True) AND (pku = True) AND (ch2 = True) then conclude False;If (norm = True) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then || note1 || = "After checking, || firstname ||'s screen was normal.";
+If  (Box3=true) then || note3 || = "|| firstname ||'s screen was abnormal.";
+If  (Box1=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "Newborn Screening occurs on thirty-one disease processes in Indiana.  For some reason, we do not have a complete newborn screen on record for || firstname ||.";
+If  (Box1=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","HISTORY";
+endif;
+
+If  (Box3=true) then
+ CALL storeObs With "normal_newborn_screen","False";
+ CALL storeNote With "note3","HISTORY";
+endif;
+If  (Box1=true) then
+ CALL storeObs With "normal_newborn_screen","True";
+ CALL storeNote With "note1","HISTORY";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I scheduled follow-up for the newborn screen.","HISTORY";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "The newborn screen was not done for some reason.","HISTORY";
+endif;
+If  (Box6=true) then
+ CALL storeNote With "I sent a repeat screen.","HISTORY";
+endif;
+
+
+endif
+;;
+Action:
+write ("Newborn Screening occurs on thirty-one disease processes in Indiana.  For some reason, we do not have a complete newborn screen on record for || firstname ||.");                                                                                                                                                                                                                                                                                                                                           
+write ("Screen Normal");
+write ("");
+write ("Screen Abnormal ->");
+write ("Follow-up Scheduled");
+write ("Screen not done/bad sample->");
+write ("Repeat Screen Sent");
+;;
+Age_Min: 14 days;;
+Age_Max: 90 days;;
+end:

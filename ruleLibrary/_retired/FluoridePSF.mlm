@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Fluoride Supplementation PSF;;
+	Filename:		FluoridePSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-17T02:25:46-0400;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question to determine whether a child is receiving fluoride supplementation.                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	Children should receive fluoride supplemetation if they are not drinking water supplemented with fluoride.                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Keywords:	Fluoride, dental, oral health, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+fluoride := read Last {Fluoride_supplemented from CHICA} Where it Occurred Within Past 180 Days;
+ww := read Last {well_water from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (fluoride = "1") then conclude False;
+If (ww = "0") then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "Fluoride_supplemented","1";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "Fluoride_supplemented","0";
+endif;
+
+
+endif
+;;
+Action:
+write ("Is || firstname || receiving Fluoride to help protect || hisher || teeth?");
+write ("¿Esta || firstname || recibiendo fluor para ayudar a proteger sus dientes?") At Spanish;                                                                                                                                                                                                                                                                                                                              
+;;
+Age_Min: 6 months;;
+Age_Max: 10 years;;
+end:

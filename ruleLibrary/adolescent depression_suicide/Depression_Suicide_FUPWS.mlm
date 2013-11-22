@@ -1,0 +1,106 @@
+Maintenance:
+	Title:		Depression/Suicide  Followup PWS;;
+	Filename:		Depression_Suicide_FUPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-20T03:03:33-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS will help the clinician to follow-up on adolescents who iwere previously diagnosed with problems concerning depression or suicide.                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	This PWS will fire for patients who were previously identified with problems of depression or suicide.                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Keywords:	adolescent, depression, suicide, PWS;;
+	Citations:		;;
+	Links:		http://www.ama-assn.org/ama/pub/category/2280.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+problems := read Last {past_depression_or_suicide from CHICA} ;
+endif
+
+If (mode = PRODUCE) then 
+suicide_concern := read Last {suicide_concerns from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		162;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If (problems = Mild) then || mild || = "MILD DEPRESSION";
+If (problems = Moderate/severe) then || mod || = "MODERATE/SEVERE DEPRESSION";
+If (problems = Suicide) then || suicide || = "RISK FOR SUICIDE";
+endif
+
+If (mode = PRODUCE) then
+If (problems = Mild) OR (problems = Moderate/severe) OR (problems = Suicide) then conclude True;conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || has been diagnosed in the past with || mild |||| mod |||| suicide || and I followed up. ";
+If  (Box2=true) then || note2 || = "|| firstname || was mildly depressed and I recommended resources for support/counseling.";
+If  (Box3=true) then || note3 || = "|| firstname || was moderately/severely depressed.";
+If  (Box4=true) then || note4 || = "I referred || firstname || for psychiatric evaluation.";
+If  (Box5=true) then || note5 || = "|| firstname || was at high risk for suicide.";
+If  (Box6=true) then || note6 || = "|| firstname || was immediately hospitalized for psychiatric evaluation.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "past_depression_or_suicide","None";
+ CALL storeNote With "I am no longer concerned regarding depression or suicide.","PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "past_depression_or_suicide","Mild";
+ CALL storeNote With "note2","PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "past_depression_or_suicide","Moderate/severe";
+ CALL storeNote With "note3","PSYCHOSOCIAL";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "past_depression_or_suicide","Suicide";
+ CALL storeNote With "note5","PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "past_depression_or_suicide","Moderate/severe";
+ CALL storeNote With "note4","PSYCHOSOCIAL";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "past_depression_or_suicide","Suicide";
+ CALL storeNote With "note6","PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+If (suicide_concern = "True") then highlightResult:= call PWSHighlightRule;
+write ("** ATTENTION ** || firstname || has been diagnosed in the past with || mild |||| mod |||| suicide ||.  Please follow up and see how things are going. || firstname || now has:");                                                                                                                   
+write ("No depression/suicide concerns");
+write ("Mild dep-> Support/Counseling");
+write ("Moderate/severe depression ->");
+write ("Refer for psychiatric evaluation");
+write ("High risk for suicide ->");
+write ("Immediate hosp & psych eval");
+write ("|| highlightResult ||");
+;;
+Age_Min: 11 years;;
+Age_Max: 21 years;;
+end:

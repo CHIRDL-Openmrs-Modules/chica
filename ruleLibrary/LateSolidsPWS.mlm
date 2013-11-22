@@ -1,0 +1,79 @@
+Maintenance:
+	Title:		Late Solid food PWS;;
+	Filename:		LateSolidsPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-20T11:12:18-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This question will screen whether an infant is being fed solid food.                                                                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Explanation:	Recommendations state that solids should not be introduced until an infant is 4 months old.  Between 4-6 months the introduction of single grain cereals, like rice cereal, is a good idea.  After that, pureed foods can be introduced, one every few days to look for allergic reactions.                                                                                                                                                                                                                         ;;
+	Keywords:	food, solids, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+solids := read Last {taking_solid_food from CHICA} Where it Occurred Within Past 30 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+endif
+;;
+Priority:		874;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (solids = "0") then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) then
+ CALL storeNote With "Between 4-6 months, infants should start cereals, followed by fruits and vegetables. Meats should start at 8 months.","DIET AND NUTRITION";
+endif;
+If  (Box1=true) then || note1 || = "|| firstname || is not taking solids.";
+If  (Box2=true) then || note2 || = "I advised || firstname ||'s parent to start giving solids.";
+If  (Box3=true) then || note3 || = "|| firstname || is already getting solids.";
+
+If  (Box1=true) then
+ CALL storeObs With "taking_solid_food","0";
+ CALL storeNote With "note1","DIET AND NUTRITION";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "note2","DIET AND NUTRITION";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "taking_solid_food","1";
+ CALL storeNote With "note3","DIET AND NUTRITION";
+endif;
+
+
+endif
+;;
+Action:
+write ("Between 4-6 months, start cereals, followed by fruits and vegetables. Meats at 8 months. Space each new food a few days apart to watch for allergies.  Small finger foods may be introduced when appropriate after 6 months.");                                                                     
+write ("Not taking solids ->");
+write ("Advised to start");
+write ("Taking solids");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 4 months;;
+Age_Max: 12 months;;
+end:

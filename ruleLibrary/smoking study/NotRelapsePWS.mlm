@@ -1,0 +1,86 @@
+Maintenance:
+	Title:		Not Relapse PWS;;
+	Filename:		NotRelapsePWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Vivienne Zhu, Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2012-06-17 11:18:18;;
+	Validation:	;;
+Library:
+	Purpose:		To handle relapse;;
+	Explanation:	;;
+	Keywords:	Environmental smoking, smoking cessation, parental smoking, not;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+smokerL := read Last {any_household_members_smoke from CHICA};
+arm:=read last {smoking_study_arm};
+endif
+;;
+Priority:		720;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (arm = NULL) then conclude False;
+If (arm = Control) then conclude False;
+If (smokerL = former) then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box6=true) then
+ CALL storeNote With "Family reported the smoker in the child's home has quit.", "PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true)  then
+ CALL storeObs With "any_household_members_smoke","former";
+ CALL storeNote With "I congratulated them.", "PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "JIT hand out given","Smoking cessation certificate";
+ CALL storeNote With "I gave the family a congratulatory cetificate.", "PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "any_household_members_smoke","yes";
+ CALL storeNote With "On further history, there IS a smoker in the home.", "PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "any_household_members_smoke","yes_ready_to_quit";
+ CALL storeNote With "The smoker at home is motivated to quit.", "PSYCHOSOCIAL";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "any_household_members_smoke","yes_not_ready_to_quit";
+ CALL storeNote With "The smoker at home is not motivated to quit.", "PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+call CREATE_JIT with "Smoking_JIT_CONGRATULATE";
+write ("The smoker in || firstname ||'s home has quit, please reinforce?");
+write ("Congratulate");
+write ("Give attached certificate");
+write ("Started Smoking --->");
+write ("Motivated to quit");
+write ("");
+write ("Not motivated");
+;;
+Age_Min: 0 days;;
+Age_Max: 11 years;;
+end:

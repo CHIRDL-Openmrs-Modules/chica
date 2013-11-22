@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!-- Beans to add to the current Application context definition -->
+  
+<beans>
+    
+    <bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/module/@MODULE_ID@/testCheckin.form">testCheckin</prop>
+                <prop key="/module/@MODULE_ID@/parseDictionary.form">parseDictionary</prop>
+                <prop key="/module/@MODULE_ID@/loadObs.form">loadObs</prop>
+                <prop key="/module/@MODULE_ID@/fillOutPSF.form">fillOutPSF</prop>
+                <prop key="/module/@MODULE_ID@/fillOutPWS.form">fillOutPWS</prop>
+                <prop key="/module/@MODULE_ID@/greaseBoard.form">greaseBoard</prop>
+                <prop key="/module/@MODULE_ID@/weeklyReports.form">weeklyReports</prop>
+                <prop key="/module/@MODULE_ID@/manualCheckin.form">manualCheckin</prop>
+                <prop key="/module/@MODULE_ID@/manualCheckinSSNMRN.form">manualCheckinSSNMRN</prop>
+                <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
+                <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
+                <prop key="/module/@MODULE_ID@/pager.form">pager</prop>     
+                <prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
+                <prop key="/module/@MODULE_ID@/displayTiff.form">displayTiff</prop>
+                <prop key="/module/@MODULE_ID@/viewPatient.form">viewPatient</prop>
+				<prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
+				<prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="testCheckin" class="org.openmrs.module.chica.web.TestCheckinController">
+        <property name="commandName"><value>testCheckinObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/testCheckin</value></property>
+        <property name="successView"><value>testCheckin.form</value></property>
+    </bean>
+    <bean id="parseDictionary" class="org.openmrs.module.chica.web.ParseDictionaryController">
+        <property name="commandName"><value>parseDictionaryObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/parseDictionary</value></property>
+        <property name="successView"><value>parseDictionary.form</value></property>
+    </bean>
+    <bean id="chicaRuleTester" class="org.openmrs.module.chica.web.ChicaRuleTesterController">
+        <property name="commandName"><value>chicaRuleTesterObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/chicaRuleTester</value></property>
+        <property name="successView"><value>chicaRuleTester.form</value></property>
+    </bean>
+    <bean id="loadObs" class="org.openmrs.module.chica.web.LoadObsController">
+        <property name="commandName"><value>loadObsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/loadObs</value></property>
+        <property name="successView"><value>loadObs.form</value></property>
+    </bean>
+    <bean id="displayTiff" class="org.openmrs.module.chica.web.DisplayTiffController">
+        <property name="commandName"><value>displayTiffObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/displayTiff</value></property>
+        <property name="successView"><value>displayTiff.form</value></property>
+    </bean>
+    <bean id="fillOutPSF" class="@MODULE_PACKAGE@.web.FillOutFormController">
+        <property name="commandName"><value>fillOutPSFObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/fillOutPSF</value></property>
+        <property name="successView"><value>fillOutPSF.form</value></property>
+    </bean>
+    <bean id="fillOutPWS" class="@MODULE_PACKAGE@.web.FillOutFormController">
+        <property name="commandName"><value>fillOutPWSObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/fillOutPWS</value></property>
+        <property name="successView"><value>fillOutPWS.form</value></property>
+    </bean>
+    <bean id="greaseBoard" class="@MODULE_PACKAGE@.web.GreaseBoardController">
+        <property name="commandName"><value>greaseBoardObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/greaseBoard</value></property>
+        <property name="successView"><value>greaseBoard.form</value></property>
+    </bean>
+    <bean id="weeklyReports" class="@MODULE_PACKAGE@.web.WeeklyReportsController">
+        <property name="commandName"><value>weeklyReportsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/weeklyReports</value></property>
+        <property name="successView"><value>weeklyReports.form</value></property>
+    </bean>
+    <bean id="viewEncounter" class="@MODULE_PACKAGE@.web.ViewEncounterController">
+        <property name="commandName"><value>greaseBoardObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/viewEncounter</value></property>
+        <property name="successView"><value>viewEncounter.form</value></property>
+    </bean>
+    <bean id="manualCheckin" class="@MODULE_PACKAGE@.web.ManualCheckinController">
+        <property name="commandName"><value>manualCheckinObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/manualCheckin</value></property>
+        <property name="successView"><value>manualCheckin.form</value></property>
+    </bean>
+    <bean id="manualCheckinSSNMRN" class="@MODULE_PACKAGE@.web.ManualCheckinSSNMRNController">
+        <property name="commandName"><value>manualCheckinSSNMRNObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/manualCheckinSSNMRN</value></property>
+        <property name="successView"><value>manualCheckin.form</value></property>
+    </bean>
+    <bean id="forcePrintSSNMRN" class="@MODULE_PACKAGE@.web.ForcePrintSSNMRNController">
+        <property name="commandName"><value>forcePrintSSNMRNObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/forcePrintSSNMRN</value></property>
+        <property name="successView"><value>forcePrintJITs.form</value></property>
+    </bean>
+    <bean id="pager" class="@MODULE_PACKAGE@.web.PagerController">
+        <property name="commandName"><value>PagerObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/pager</value></property>
+        <property name="successView"><value>pager.form</value></property>
+    </bean>
+    <bean id="viewPatient" class="@MODULE_PACKAGE@.web.ViewPatientController">
+        <property name="commandName"><value>viewPatientObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/viewPatient</value></property>
+        <property name="successView"><value>viewEncounter.form</value></property>
+    </bean>
+    <bean id="forcePrintJITs" class="@MODULE_PACKAGE@.web.ForcePrintJITsController">
+        <property name="commandName"><value>forcePrintJITsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/forcePrintJITs</value></property>
+        <property name="successView"><value>forcePrintJITs.form</value></property>
+    </bean>
+    <bean id="displayMergeForm" class="@MODULE_PACKAGE@.web.DisplayMergeFormController">
+        <property name="commandName"><value>displayMergeFormObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/displayMergeForm</value></property>
+        <property name="successView"><value>displayMergeForm.form</value></property>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.chica.service.EncounterService</value> <!-- service interface name -->
+                <bean class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+                    <property name="transactionManager"><ref bean="transactionManager"/></property>
+                    <property name="target">
+                        <bean class="org.openmrs.module.chica.impl.EncounterServiceImpl">
+                            <property name="chicaEncounterDAO">
+                                <bean class="org.openmrs.module.chica.db.hibernate.HibernateEncounterDAO">
+                                    <property name="sessionFactory"><ref bean="sessionFactory"/></property> 
+                                </bean>
+                            </property> 
+                        </bean>
+                    </property>
+                    <property name="preInterceptors">
+                        <list>
+                            <ref bean="authorizationInterceptor"/>
+                        </list>
+                    </property>
+                    <property name="transactionAttributeSource">
+                        <bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.chica.service.ChicaService</value> <!-- service interface name -->
+                <bean class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+                    <property name="transactionManager"><ref bean="transactionManager"/></property>
+                    <property name="target">
+                        <bean class="org.openmrs.module.chica.impl.ChicaServiceImpl">
+                            <property name="chicaDAO">
+                                <bean class="org.openmrs.module.chica.db.hibernate.HibernateChicaDAO">
+                                    <property name="sessionFactory"><ref bean="sessionFactory"/></property> 
+                                </bean>
+                            </property> 
+                        </bean>
+                    </property>
+                    <property name="preInterceptors">
+                        <list>
+                            <ref bean="authorizationInterceptor"/>
+                        </list>
+                    </property>
+                    <property name="transactionAttributeSource">
+                        <bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="obsChicaDataSource" class="org.openmrs.module.chica.datasource.ObsDataSource">
+    </bean>
+    
+    <bean parent="patientServiceTarget">
+        <property name="identifierValidators">
+        <map>
+            <entry>
+                   <key><value>org.openmrs.module.chirdlutil.SSNValidator</value></key>
+                   <bean class="org.openmrs.module.chirdlutil.SSNValidator"/>
+               </entry> 
+        </map>
+        </property>
+    </bean> 
+    
+    <bean id="chicaRmiService" class="org.openmrs.module.chica.impl.ChicaRmiServiceImpl">
+    </bean>
+    
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="ChicaRmiService"/>
+        <property name="service" ref="chicaRmiService"/>
+        <property name="serviceInterface" value="org.openmrs.module.chica.service.ChicaRmiService"/>
+        <property name="registryPort" value="1197"/>
+    </bean>
+</beans>
