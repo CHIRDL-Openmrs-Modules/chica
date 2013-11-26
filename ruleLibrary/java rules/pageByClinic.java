@@ -19,7 +19,9 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
+import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
@@ -33,6 +35,7 @@ import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.module.dss.service.DssService;
 
 public class pageByClinic implements Rule {
 	
@@ -82,6 +85,7 @@ public class pageByClinic implements Rule {
 	 */
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		Integer locationId = (Integer) parameters.get("locationId");
+		Integer encounterId = (Integer) parameters.get("encounterId");
 		String locationAttr = (String) parameters.get("param1");
 		String message = (String) parameters.get("param2");
 		
@@ -111,7 +115,16 @@ public class pageByClinic implements Rule {
 			language = languageResult.toString();
 		}
 		
-		String pagerMessage = "Loc: " + location.getName() + " PID: " + patientId + " Lang: " + language +" - " + message;
+		// Get the PCP
+		Encounter encounter = Context.getEncounterService().getEncounter(encounterId);
+		Person physician = encounter.getProvider();
+		String pcp = "";
+		if (physician != null) {
+			pcp = physician.getGivenName() + " " + physician.getFamilyName();
+		}
+		
+		String pagerMessage = "Loc: " + location.getName() + " PID: " + patientId + " Lang: " + language + " PCP: " + pcp + 
+			" - " + message;
 		
 		// Get the pager numbers
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
