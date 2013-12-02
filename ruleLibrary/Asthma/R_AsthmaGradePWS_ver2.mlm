@@ -30,7 +30,7 @@ CurrentStatus := read Last {AsthmaStatus from CHICA} ;
 Insurance := read Last {Insurance from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 endif
 ;;
-Priority:		192       ;;
+Priority:		198       ;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

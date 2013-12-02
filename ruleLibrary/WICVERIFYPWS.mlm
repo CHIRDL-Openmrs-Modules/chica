@@ -30,7 +30,7 @@ VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 lbw := read Last {LowBirthWeight from CHICA};insurance := read Last {Insurance from CHICA} ;wicactive := read Last {WICMember from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority:		235;;
+Priority:		239;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -40,7 +40,7 @@ primary_care_dx:= read {PRIMARY CARE DX from RMRS} Where it Occurred Within Past
    
 endif
 ;;
-Priority:		196       ;;
+Priority:		202       ;;
 	Evoke:		;;
 
 Logic:

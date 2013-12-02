@@ -34,7 +34,7 @@ If (mode = PRODUCE) then
 intercourse := read Last {has_had_intercourse from CHICA} ;pregnant := read Last {might_be_pregnant from CHICA} Where it Occurred Within Past 14 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 endif
 ;;
-Priority:		200;;
+Priority:		204;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then

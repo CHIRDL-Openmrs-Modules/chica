@@ -44,7 +44,7 @@ axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Withi
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif
 ;;
-Priority: 231       ;;
+Priority: 235       ;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
