@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Smoking  Live With PSF;;
+	Filename:		Smoking_Live_WithPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-22T02:41:28-0400;;
+	Validation:	;;
+Library:
+	Purpose:		GAPS screening question for tobacco use.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	More than 4.5 million adolescents use tobacco regularly.  Adolescence is a key time to prevent tobacco use and try and change behavior.                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Keywords:	GAPS, adolescent, tobacco, smoking, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+live := read Exist {cigarettes_snuff_live_with from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+endif
+;;
+Priority:		436;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (live = True) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "cigarettes_snuff_live_with","True";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "cigarettes_snuff_live_with","False";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does anyone you live with ever smoke cigarettes or use snuff or chewing tobacco?");
+write("¿Alguien con quien usted vive fuma, inhala o mastica tabaco?") At Spanish;                                                                                                                                                                                                                                                                                                                                      
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

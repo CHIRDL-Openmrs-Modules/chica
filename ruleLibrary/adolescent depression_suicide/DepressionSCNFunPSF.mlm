@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Depression  Screen Fun PSF;;
+	Filename:		DepressionSCNFunPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-20T11:27:07-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This is the first screening question looking for depression or suicide in adolescents.                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	GAPS  recommends 5 screening questions looking for depression or suicide.                                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Keywords:	adolescent, depression, suicide, PSF;;
+	Citations:		;;
+	Links:		http://www.ama-assn.org/ama/pub/category/2280.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+fun := read Exist {fun_in_past_two_weeks from CHICA} Where it Occurred Within Past 180 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+endif
+;;
+Priority:		688;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (fun = False) then conclude True;conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "fun_in_past_two_weeks","true";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "fun_in_past_two_weeks","false";
+endif;
+
+
+endif
+;;
+Action:
+write ("Have you had fun during the past two weeks?");
+write("¿En las ultimas dos semanas, usted se ha divertido?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                    
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

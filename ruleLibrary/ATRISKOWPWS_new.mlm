@@ -1,0 +1,102 @@
+Maintenance:
+	Title:		Growth  At Risk for Overweight PWS Reminder;;
+	Filename:		ATRISKOWPWS_new;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-19T05:09:43-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Identifies children as being at risk for overweight, and fires off a lower priority reminder for the PWS.                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Explanation:	In May 2000, the CDC published BMI charts for children from 2 to 20 years old.  BMIs which fall above the 85th percentile are defined by the CDC is being "at risk for overweight" and should be evaluated as such.                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	growth, PWS, obesity;;
+	Citations:		Pediatrics 112(2):424-430, 2003 Aug.;;
+	Links:		http://www.aafp.org/afp/20020501/practice.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+bmic := read Last {BMICentile from CHICA} Where it Occurred Within Past 2 Days;
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+addressed:=read Exist {Obesity_Advice from CHICA} Where it Occurred Within Past 7 Months;
+endif
+;;
+Priority:		434;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+gisInterventionSite := call LocationAttributeLookup With "isGISInterventionLocation";
+If(gisInterventionSite = "true") then conclude False;
+
+If (addressed = True) then conclude False;
+If (Gender = M) then || himher || = "him";
+If (Gender = F) then || himher || = "her";
+If (bmic > 85.0) AND (bmic < 95.0) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then 
+If (bmic=null) then
+ If (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || had a high BMI percentile and is at risk of overweight. I discussed several changes regarding physical activity and diet.";
+endif;
+If NOT (bmic=null) then
+ If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || had a BMI percentile of || bmic_value || on || bmic_date || and is at risk of overweight. I discussed several changes regarding physical activity and diet.";
+endif;
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","DIET AND NUTRITION";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "Obesity_Advice","Physical Activity";
+ CALL storeNote With "I discussed physical activity.","DIET AND NUTRITION";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "Obesity_Advice","Portion Sizes";
+ CALL storeNote With "I advised the family to reduce food portion sizes.","DIET AND NUTRITION";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "Obesity_Advice","Drinks/Snacks";
+ CALL storeNote With "I advised the family to choose healthy drinks and snacks.","DIET AND NUTRITION";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "Obesity_Advice","Screen Time";
+ CALL storeNote With "I advised the family to limit TV/Video time to 2 hrs/d.","DIET AND NUTRITION";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "Obesity_Advice","Follow up 4-6months";
+ CALL storeNote With "I advised a follow up appointment in 4-6 months.","DIET AND NUTRITION";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "Obesity_Advice","Risk Factors";
+ CALL storeNote With "I will monitor obesity risk factors for CVD & Diabetes.","DIET AND NUTRITION";
+endif;
+
+endif
+
+;;
+Action:
+write ("|| firstname || was recently measured as having a BMI percentile of || bmic_value || on || bmic_date ||.  This places || himher || at risk for overweight by AAP and CDC criteria.  Nonjudgmental counseling has shown to be effective.  Consider the following:");
+write ("Discuss physical activity");
+write ("Reduce food portion sizes");
+write ("Choose healthy drinks/snacks");
+write ("Electronic screen time < 2 hrs/d");
+write ("Follow up appt in 4-6 months");
+write ("Monitor obesity risk factors");
+;;
+Age_Min: 2 years;;
+Age_Max: 21 years;;
+end:

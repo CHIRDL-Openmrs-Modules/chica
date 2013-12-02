@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.Study" table="chica_study">
+		
+		<id name="studyId" type="java.lang.Integer" column="study_id">
+			<generator class="native" />
+		</id>
+	
+	    <property name="startDate" type="java.util.Date" column="start_date" />
+	    <property name="endDate" type="java.util.Date" column="end_date" />
+	    <property name="title" type="java.lang.String" column="title" />
+	    <property name="investigators" type="java.lang.String" column="investigators" />
+		<property name="studyConceptId" type="java.lang.Integer" column="study_concept_id" />
+		<property column="status" name="status" type="boolean" />
+		<property name="purpose" type="java.lang.String" column="purpose" />
+		
+	</class>
+	
+</hibernate-mapping>

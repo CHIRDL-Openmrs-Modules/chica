@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Falls Left Alone PSF;;
+	Filename:		Injury_Falls_AlonePSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-12T11:48:23-0500;;
+	Validation:	;;
+Library:
+	Purpose:		The AAP and USPSTF suggest that parents are counseled about babies ability to wiggle, move and push against things soon after birth and that these movements can result in a fall.                                                                                                                                                                                                                                                                                                                                  ;;
+	Explanation:	Parent counseling has been effective in preventing infant falls and other injuries and should be part of any prevention program                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	injury, falls, infant, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=7596695&dopt=Abstract;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+falls := read Exist {baby_left_alone_could_fall from CHICA} Where it Occurred Within Past 31 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+endif
+;;
+Priority:		160;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "solo";If (Gender = F) then || spanishgender || = "sola";If (falls = True) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "baby_left_alone_could_fall","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "baby_left_alone_could_fall","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Has || firstname || ever been left alone on changing tables, beds, sofas, or chairs?");
+write ("¿Alguna vez has dejado || spanishgender || a || firstname ||  en la cama, cama de cambios, en el sofá o en una silla?") At Spanish;                                                                                                                                                                                                                                                                        
+;;
+Age_Min: 0 days;;
+Age_Max: 6 months;;
+end:

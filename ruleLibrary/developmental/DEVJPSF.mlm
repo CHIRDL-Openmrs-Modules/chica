@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Development  Jabbers PSF;;
+	Filename:		DEVJPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-30T09:39:24-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child jabbering.                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		10;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || text || = "he";If (Gender = F) then || text || = "she";If (Gender = M) then || spanishgender || = "solo";If (Gender = F) then || spanishgender || = "sola";conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "LG_Passed","Jabbers";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "LG_Failed","Jabbers";
+endif;
+
+
+endif
+;;
+Action:
+write ("When || firstname || is playing alone, does || text || jabber as though really talking?  This jabbering sound does not have to be understandable.");
+write("¿Cuándo || firstname || esta jugando || spanishgender || hace sonidos como si esta hablando sola? No tiene que ser algo que se entiende? ") At Spanish;                                                                                                                                                                                        
+;;
+Age_Min: 368 days;;
+Age_Max: 410 days;;
+end:

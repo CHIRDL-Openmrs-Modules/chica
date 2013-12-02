@@ -1,0 +1,7 @@
+clear_chica1_patient_data.sql -- clears all data related to chica 1 obs and patients
+
+clear_all_patient_data.sql -- clears all obs and patients
+
+form_update_scripts -- contains scripts to update forms. It has instructions on how to create a new form and how to copy metadata from the old version of the form to the new version and then activate the new form and retire the old form in chica.
+
+import_chica1.0_data -- contains scripts and instructions on how to import chica1.0 data to chica2.0

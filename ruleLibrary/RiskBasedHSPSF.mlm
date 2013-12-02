@@ -1,0 +1,84 @@
+Maintenance:
+	Title:		Risk Based Hearing Screening PWS;;
+	Filename:		RiskBasedHSPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-17T03:21:29-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Risk based hearing screening is recommended for children age 7 months to 3 years by audiology.  Risk factors include prematurity and family history of deafness.                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	This PWS will fire to remind clinicians to screen infants with risk once a year between ages 6 months and 3 years.                                                                                                                                                                                                                                                                                                                                                                                                  ;;
+	Keywords:	hearing, screening, prematurity;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+deaf := read Last {fhx_deafness from CHICA} ;
+premie := read Last {premature from CHICA} ;
+screened := read Exist {risk_based_hearing_screen from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		394;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+if (screened = True) then conclude False;
+If (premie = "True") then || premieF || = "PREMATURITY;";
+If (deaf = "True") then || deafF || = "FAMILY HISTORY OF DEAFNESS;";
+If (deaf = "True") OR (premie = "True") then conclude True;
+conclude False;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "premature","True";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "fhx_deafness","True";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "premature","False";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "fhx_deafness","False";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "risk_based_hearing_screen","True";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "risk_based_hearing_screen","True";
+endif;
+
+
+endif
+;;
+Action:
+write ("Infants with risk factors of prematurity or a family history of deafness should have yearly hearing screening between 6 months and 3 years.  This child either has a positive or unknown risk factor of || premieF || || deafF ||");                                                                
+write ("Prematurity ->");
+write ("Refer for Audiology screening");
+write ("Family history of deafness->");
+write ("Refer for Audiology screening");
+write ("No risk factors present");
+write ("");
+;;
+Age_Min: 6 months;;
+Age_Max: 3 years;;
+end:
