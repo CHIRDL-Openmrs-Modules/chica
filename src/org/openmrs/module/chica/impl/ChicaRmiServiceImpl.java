@@ -647,10 +647,16 @@ public class ChicaRmiServiceImpl extends RemoteServer implements ChicaRmiService
 					ChirdlUtilBackportsService.class).getPatientStatesWithFormInstances(formName, encounterId);
 				if (states != null) {
 					for (PatientState state : states) {
-						if (state.getFormId() == formId && state.getLocationId() == locationId && 
-								state.getFormInstanceId() != null) {
-							formInstanceId = state.getFormInstanceId();
+						if (formId == null || !formId.equals(state.getFormId())) {
+							continue;
+						} else if (location == null || !locationId.equals(state.getLocationId())) {
+							continue;
+						} else if (state.getFormInstanceId() == null) {
+							continue;
 						}
+						
+						formInstanceId = state.getFormInstanceId();
+						break;
 					}
 				}
 			}
@@ -727,6 +733,20 @@ public class ChicaRmiServiceImpl extends RemoteServer implements ChicaRmiService
 			}
 			
 			fileStr = directory + File.separator + "_" + locationId + "_" + formId + "_" + formInstanceId + "_.xml";
+			file = new File(fileStr);
+			if (file.exists()) {
+				return fileStr;
+			}
+			
+			fileStr = directory + File.separator + "Pending" + File.separator + locationId + "_" + formId + "_" + 
+				formInstanceId + ".xml";
+			file = new File(fileStr);
+			if (file.exists()) {
+				return fileStr;
+			}
+			
+			fileStr = directory + File.separator + "Pending" + File.separator + "_" + locationId + "_" + formId + "_" + 
+				formInstanceId + "_.xml";
 			file = new File(fileStr);
 			if (file.exists()) {
 				return fileStr;
