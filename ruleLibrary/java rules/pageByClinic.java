@@ -108,11 +108,17 @@ public class pageByClinic implements Rule {
 		}
 		
 		// Get the patient's preferred language
+		// Send Spanish if ever spoken Spanish.  Otherwise send English if has spoken English.
 		LogicCriteria conceptCriteria = new LogicCriteriaImpl("preferred_language");
-		Result languageResult = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria.last());
+		Result languageResult = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria);
 		String language = "Unknown";
-		if (languageResult != null && languageResult.toString().length() > 0) {
-			language = languageResult.toString();
+		if (languageResult != null && !languageResult.isEmpty()) {
+			for (Result result : languageResult) {
+				language = result.toString();
+				if ("Spanish".equalsIgnoreCase(language)) {
+					break;
+				}
+			}
 		}
 		
 		// Get the PCP

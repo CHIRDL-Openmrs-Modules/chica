@@ -16,6 +16,8 @@ package org.openmrs.module.chica.rule;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +25,13 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.ConceptName;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.PersonAttribute;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -172,52 +177,65 @@ public class informPresnet implements Rule {
 			pcp = physician.getGivenName() + " " + physician.getFamilyName();
 		}
 		
-		String studyParams = getStudySpecificParams(study);
-		
-		// Find out if patient is Spanish speaking and/or on Medicaid
+		// Send Spanish if ever spoken Spanish.  Otherwise send English if has spoken English.
 		LogicCriteria conceptCriteria = new LogicCriteriaImpl("preferred_language");
-		Result languageResult = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria.last());
+		Result languageResult = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria);
 		String language = null;
-		if (languageResult != null && languageResult.toString().length() > 0) {
-			language = languageResult.toString();
+		if (languageResult != null && !languageResult.isEmpty()) {
+			for (Result result : languageResult) {
+				language = result.toString();
+				if ("Spanish".equalsIgnoreCase(language)) {
+					break;
+				}
+			}
 		}
 		
+		// Get patient phone number
+		PersonAttribute phoneAttribute = patient.getAttribute("Telephone Number");
+		
+		String studyParams = null;
 		StringBuffer data = new StringBuffer();
 		try {
 			data.append(URLEncoder.encode("clinic", "UTF-8") + "=" + URLEncoder.encode(locationName, "UTF-8"));
 			data.append("&" + URLEncoder.encode("study", "UTF-8") + "=" + URLEncoder.encode(study, "UTF-8"));
-			data.append("&" + URLEncoder.encode("patientid", "UTF-8") + "=" + 
-				URLEncoder.encode(patientId.toString(), "UTF-8"));
-			data.append("&" + URLEncoder.encode("encounterid", "UTF-8") + "=" + 
-				URLEncoder.encode(encounterId.toString(), "UTF-8"));
+			data.append("&" + URLEncoder.encode("patientid", "UTF-8") + "="
+			        + URLEncoder.encode(patientId.toString(), "UTF-8"));
+			data.append("&" + URLEncoder.encode("encounterid", "UTF-8") + "="
+			        + URLEncoder.encode(encounterId.toString(), "UTF-8"));
 			data.append("&" + URLEncoder.encode("patientmrn", "UTF-8") + "=" + URLEncoder.encode(mrn, "UTF-8"));
 			data.append("&" + URLEncoder.encode("patientfirstname", "UTF-8") + "=" + URLEncoder.encode(firstName, "UTF-8"));
 			data.append("&" + URLEncoder.encode("patientlastname", "UTF-8") + "=" + URLEncoder.encode(lastName, "UTF-8"));
 			data.append("&" + URLEncoder.encode("physicianname", "UTF-8") + "=" + URLEncoder.encode(pcp, "UTF-8"));
 			data.append("&" + URLEncoder.encode("patientgender", "UTF-8") + "=" + URLEncoder.encode(gender, "UTF-8"));
 			if (birthdateStr != null) {
-				data.append("&" + URLEncoder.encode("patientbirthdate", "UTF-8") + "=" + URLEncoder.encode(
-					birthdateStr, "UTF-8"));
+				data.append("&" + URLEncoder.encode("patientbirthdate", "UTF-8") + "="
+				        + URLEncoder.encode(birthdateStr, "UTF-8"));
 			}
 			
 			if (encounterDateStr != null) {
-				data.append("&" + URLEncoder.encode("appointmenttime", "UTF-8") + "=" + URLEncoder.encode(
-					encounterDateStr, "UTF-8"));
+				data.append("&" + URLEncoder.encode("appointmenttime", "UTF-8") + "="
+				        + URLEncoder.encode(encounterDateStr, "UTF-8"));
 			}
 			
 			if (language != null) {
-				data.append("&" + URLEncoder.encode("patientlanguage", "UTF-8") + "=" + 
-					URLEncoder.encode(language, "UTF-8"));
+				data.append("&" + URLEncoder.encode("patientlanguage", "UTF-8") + "=" + URLEncoder.encode(language, "UTF-8"));
 			} else {
-				data.append("&" + URLEncoder.encode("patientlanguage", "UTF-8") + "=" + 
-					URLEncoder.encode("unknown", "UTF-8"));
+				data.append("&" + URLEncoder.encode("patientlanguage", "UTF-8") + "="
+				        + URLEncoder.encode("unknown", "UTF-8"));
+			}
+			
+			if (phoneAttribute != null && phoneAttribute.getValue() != null && phoneAttribute.getValue().trim().length() > 0) {
+				data.append("&" + URLEncoder.encode("patientphone", "UTF-8") + "="
+				        + URLEncoder.encode(phoneAttribute.getValue(), "UTF-8"));
 			}
 			
 			if (condition != null) {
 				data.append("&" + URLEncoder.encode("condition", "UTF-8") + "=" + URLEncoder.encode(condition, "UTF-8"));
 			}
+			
+			studyParams = getStudySpecificParams(study, context, patientId, parameters);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			log.error("Error creating POST data for Presnet", e);
 			return Result.emptyResult();
 		}
@@ -236,6 +254,7 @@ public class informPresnet implements Rule {
 			log.error("Presnet POST URL failure: " + studyUrl + "?" + postData);
 		}
 		
+		log.info("Presnet POST URL success: " + studyUrl + "?" + postData);
 		return new Result(result);
 	}
 	
@@ -262,25 +281,103 @@ public class informPresnet implements Rule {
 		return null;
 	}
 	
-	private String getStudySpecificParams(String study) {
+	private String getStudySpecificParams(String study, LogicContext context, Integer patientId,
+	                                      Map<String, Object> parameters) throws Exception {
 		if ("MLP".equalsIgnoreCase(study)) {
-			return getMedicalLegalParams();
+			return getMedicalLegalParams(context, patientId, parameters);
 		} else if ("diabetes".equalsIgnoreCase(study)) {
-			return getDiabetesParams();
+			return getDiabetesParams(context, patientId, parameters);
 		}
 		
 		return "";
 	}
 	
-	private String getMedicalLegalParams() {
-		// homelessness
-		// unsaferental
-		// inadequateutilities
-		// foodinsecurity
+	private String getMedicalLegalParams(LogicContext context, Integer patientId, Map<String, Object> parameters)
+	                                                                                                             throws Exception {
+		// Get target visit date
+		String condition = (String) parameters.get("param2");
+		StringBuffer data = new StringBuffer();
+		if ("housing".equals(condition)) {
+			LogicCriteria conceptCriteria = new LogicCriteriaImpl("Housing_Status");
+			Result result = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria);
+			Date match1 = getFirstResultDateByConceptName("Behind on Rent", result);
+			Date match2 = getFirstResultDateByConceptName("Eviction Letter", result);
+			Date match3 = getFirstResultDateByConceptName("Housing Problems", result);
+			String resultDate = getFirstDate(match1, match2, match3);
+			data.append("&" + URLEncoder.encode("targetvisitdate", "UTF-8") + "=" + URLEncoder.encode(resultDate, "UTF-8"));
+		} else if ("food".equals(condition)) {
+			LogicCriteria conceptCriteria = new LogicCriteriaImpl("Food_Insecurity");
+			Result result = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria);
+			Date match1 = getFirstResultDateByConceptName("Worried_not_enough_food", result);
+			conceptCriteria = new LogicCriteriaImpl("SNAPDeniedLast30Days");
+			result = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria);
+			Date match2 = getFirstResultDateByConceptName("yes", result);
+			String resultDate = getFirstDate(match1, match2);
+			data.append("&" + URLEncoder.encode("targetvisitdate", "UTF-8") + "=" + URLEncoder.encode(resultDate, "UTF-8"));
+		} else if ("utilities".equals(condition)) {
+			LogicCriteria conceptCriteria = new LogicCriteriaImpl("Utility_Status");
+			Result result = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria);
+			Date match1 = getFirstResultDateByConceptName("Heat Shut-off", result);
+			Date match2 = getFirstResultDateByConceptName("Utility Shutoff", result);
+			String resultDate = getFirstDate(match1, match2);
+			data.append("&" + URLEncoder.encode("targetvisitdate", "UTF-8") + "=" + URLEncoder.encode(resultDate, "UTF-8"));
+		} else if ("rental".equals(condition)) {
+			LogicCriteria conceptCriteria = new LogicCriteriaImpl("Rental_Status");
+			Result result = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria);
+			Date match1 = getFirstResultDateByConceptName("Not Clean & Safe", result);
+			Date match2 = getFirstResultDateByConceptName("Systems Do Not Work", result);
+			String resultDate = getFirstDate(match1, match2);
+			data.append("&" + URLEncoder.encode("targetvisitdate", "UTF-8") + "=" + URLEncoder.encode(resultDate, "UTF-8"));
+		}
+		return data.toString();
+	}
+	
+	private String getDiabetesParams(LogicContext context, Integer patientId, Map<String, Object> parameters) {
 		return "";
 	}
 	
-	private String getDiabetesParams() {
+	private Date getFirstResultDateByConceptName(String conceptName, List<Result> lst) {
+		if (conceptName == null) {
+			return null;
+		}
+		List<Date> dateList = new ArrayList<Date>();
+		for (Result element : lst) {
+			Concept concept = element.toConcept();
+			if (concept == null) {
+				continue;
+			}
+			String elementString = ((ConceptName) concept.getNames().toArray()[0]).getName();
+			if (conceptName.equalsIgnoreCase(elementString) && element.getResultDate() != null) {
+				dateList.add(element.getResultDate());
+			}
+		}
+		if (dateList.size() == 0) {
+			return null;
+		}
+		Collections.sort(dateList);
+		return dateList.get(0);
+	}
+	
+	private String getFirstDate(Date...dates) {
+		List<Date> dateList = new ArrayList<Date>();
+		for (Date date : dates) {
+			if (date != null) {
+				dateList.add(date);
+			}
+		}
+		if (dateList.size() > 0) {
+			Collections.sort(dateList);
+			Date date = dateList.get(0);
+			return getFormattedResultDate(date);
+		}
 		return "";
+	}
+	
+	private String getFormattedResultDate(Date date) {
+		if (date == null) {
+			return "";
+		}
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return dateFormatter.format(date);
 	}
 }
