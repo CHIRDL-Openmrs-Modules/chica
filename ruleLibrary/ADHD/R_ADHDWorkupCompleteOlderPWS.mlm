@@ -74,9 +74,9 @@ endif
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
 
-adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
 
-If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+
+
 If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
 
 If (ParentVanderbilt = TRUE) AND (TeacherVanderbilt = TRUE) then conclude TRUE;

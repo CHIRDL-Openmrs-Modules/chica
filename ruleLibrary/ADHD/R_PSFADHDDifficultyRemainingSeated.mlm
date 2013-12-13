@@ -40,9 +40,9 @@ Priority:		48;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
-adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
 
-If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
+
+
 
 If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude False;
 If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude False;

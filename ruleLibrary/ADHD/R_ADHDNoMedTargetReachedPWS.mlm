@@ -41,9 +41,7 @@ Priority: 191       ;;
 Logic:
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
-adhdInterventionSite := call LocationAttributeLookup With "isADHDInterventionLocation";
 
-If(adhdInterventionSite = null) OR NOT (adhdInterventionSite = "true") then conclude False;
 If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
 If (Target = Target_Met) AND NOT ('Medication' is in Meds) then conclude True;
 
