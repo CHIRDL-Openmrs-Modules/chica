@@ -325,23 +325,29 @@ public class PatientMatching {
 			PersonAddress chirpAddress = chirpPatient.getPersonAddress();
 			if (chirpAddress == null || chirpAddress.getPostalCode() == null
 					|| chirpAddress.getPostalCode().trim().equalsIgnoreCase("")){
-				//chirp address or zip code is not null;
+				//chirp address or zip code is  null;
 				log.info("Immunization: CHIRP SIIS# " + chirpPatient.getPatientIdentifier() +
 						" Zip code or address is null.");
 				return 0;
 			}
 			
 			String chirpZip  = chirpAddress.getPostalCode();
+			chirpZip = chirpZip.split("-")[0].trim();
+				
 			for (PersonAddress chicaAddress: chicaAddresses){
+				
 				personId = chicaAddress.getPerson().getPersonId();
 				String chicaZip = chicaAddress.getPostalCode();
-					
-				if (chicaZip != null 
-						&& chirpZip.startsWith(chicaZip.substring(0,4))){
+				
+				if(chicaZip == null) chicaZip = "";
+				chicaZip = chicaZip.split("-")[0].trim();
+				
+				if (chirpZip.equals(chicaZip)){
 					  log.info("Immunization: SIIS# " + chirpPatient.getPatientIdentifier() + " Zip codes match. PatientId= " + personId);
 						return 1;
 				}		
 			}
+			
 			log.info("Immunization: SIIS# " + chirpPatient.getPatientIdentifier() + "Zip codes do not match. PersonId = " + personId);
 			return 0;
 		}
