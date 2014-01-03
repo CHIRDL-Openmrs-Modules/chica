@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Choking Cutting Food PSF;;
+	Filename:		Injury_Choking_Cutting_FoodPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:26:30-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether a child's food is cut into small, thin pieces.                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	The AAP recommends all table foods you feed your baby are cut into thin pieces to prevent choking.                                                                                                                                                                                                                                                                                                                                                                                                                  ;;
+	Keywords:	injury, choking, food, size, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/1to2yrs.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+bitesize := read Last {cutting_food_bite_size from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority:		454;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (bitesize = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "cutting_food_bite_size","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "cutting_food_bite_size","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you cut || firstname ||'s food into small, thin pieces?");
+write("¿Usted corta la comida en pedazos chiquitos y finos para || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                                                                                               
+;;
+Age_Min: 6 months;;
+Age_Max: 1 years;;
+end:

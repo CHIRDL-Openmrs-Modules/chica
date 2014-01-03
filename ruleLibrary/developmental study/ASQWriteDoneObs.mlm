@@ -1,0 +1,156 @@
+Maintenance:
+ Title: Research DevScreen SurveyPos 3-5 PWS                                                                         ;;
+ Filename: ASQWriteDoneObs;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author:Aaron Carroll                                       ;;
+Specialist:Pediatrics;;
+Date:2010-06-09 10:00:00;;
+Validation:;;
+Library:
+Purpose:PWS prompt to alert doc to do ASQ if surveillance is positive.                                                                                                                                                                                                                                                                                                                                                     ;;
+Explanation:Patient should get ASQ because surveillance was positive.                                                                                                                                                                                                                                                                                                                                                                    ;;
+Keywords:Developmental Screening ASQ                                                  ;;
+Citations:                                                                                   ;;
+Links:                                            ;;
+Knowledge:
+Type:data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+;;
+Priority:0       ;;
+Evoke:;;
+
+Logic:
+If (mode = CONSUME) then
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_2m_Done";
+conclude false;
+ 
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_4m_Done";
+conclude false;
+
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_6m_Done";
+conclude false;
+
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_8m_Done";
+conclude false;
+
+If (AgeInMonths = 9) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_9m_Done";
+
+conclude false;
+
+If (AgeInMonths = 10) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_10m_Done";
+conclude false;
+
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_12m_Done";
+conclude false;
+
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_14m_Done";
+conclude false;
+
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_16m_Done";
+conclude false;
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_18m_Done";
+conclude false;
+
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_20m_Done";
+conclude false;
+
+
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_22m_Done";
+conclude false;
+
+
+If (AgeInMonths >= 23) and (AgeInDays < 776) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_24m_Done";
+conclude false;
+
+
+If (AgeInDays >= 776) and (AgeInDays < 866) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_27m_Done";
+conclude false;
+
+
+If (AgeInDays >= 866) and (AgeInDays < 959) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_30m_Done";
+conclude false;
+
+
+If (AgeInDays >= 959) and (AgeInDays < 1050) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_33m_Done";
+conclude false;
+
+
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_36m_Done";
+conclude false;
+
+
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_42m_Done";
+conclude false;
+
+
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_48m_Done";
+conclude false;
+
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_54m_Done";
+conclude false;
+
+
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then 
+
+CALL storeObs With "CHICA_DevScreen_Status","ASQ_60m_Done";
+conclude false;
+
+endif;
+
+;;
+Action:
+;;
+Age_Min: 0          months     ;;
+Age_Max: 66         months     ;;
+end:
+
+}

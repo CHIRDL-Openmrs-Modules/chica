@@ -1,0 +1,68 @@
+Maintenance:
+	Title:		Breastfeeding Known PWS;;
+	Filename:		BFKnownPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-17T01:57:17-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This question is a follow up to known previous breastfeeding with no problems.                                                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeeding, nutrition;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+BFProblems := read Last {breast_feeding_help_needed from CHICA} ;
+breastfeeder := read Last {BREASTFED from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority:		616;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (BFProblems = "0") AND (breastfeeder = "1") then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box3=true) then
+ CALL storeObs With "breast_feeding_help_needed","1";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "BREASTFED","0";
+endif;
+
+
+endif
+;;
+Action:
+write ("This mother has been breastfeeding.  How is it going?");                                                                                                                                                                                                                                            
+write ("No problems");
+write ("");
+write ("Some problems ->");
+write ("Physician Counseling");
+write ("Not breast feeding");
+write ("Materials given");
+;;
+Age_Min: 0 days;;
+Age_Max: 12 months;;
+end:
