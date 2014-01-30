@@ -239,12 +239,18 @@ public class getGrowthChartFilename implements Rule {
 			return null;
 		}
 		
-		String imageFilename = convertPdfToImage(growthChartDirectory, pdfFilename, rotation);
-		
-		// Delete the PDF file.  It is no longer needed since we now have the image.
-		File pdfFile = new File(growthChartDirectory, pdfFilename);
-		if (pdfFile.exists()) {
-			pdfFile.delete();
+		String imageFilename = null;
+		if (pdfFilename != null) {
+			imageFilename = convertPdfToImage(growthChartDirectory, pdfFilename, rotation);
+			
+			// Delete the PDF file.  It is no longer needed since we now have the image.
+			File pdfFile = new File(growthChartDirectory, pdfFilename);
+			if (pdfFile.exists()) {
+				pdfFile.delete();
+			}
+		} else {
+			log.error("No growth chart created for patient: " + patient.getPatientId() + ", age: " + ageInMonths + 
+				" months, gender: " + gender + ", type of chart: " + typeOfChart + ".");
 		}
 		
 		return imageFilename;
