@@ -197,9 +197,7 @@
 <option>Print JITS</option>
 <option>Print PSF</option>
 <option>Print PWS</option>
-<c:if test="${isADHDInterventionLocation}">
 <option>ADHD WU</option>
-</c:if>
 </select>
 <input type="hidden" value="${row.patientId}" name="patientId" />
 <input type="hidden" value="${row.sessionId}" name="sessionId" />

@@ -494,8 +494,6 @@ public class GreaseBoardController extends SimpleFormController
 			map.put("refreshPeriod", adminService.getGlobalProperty(
 					"chica.greaseBoardRefresh"));
 		
-			boolean isADHDInterventionLocation = isInterventionLocation(locationId,"isADHDInterventionLocation");
-			map.put("isADHDInterventionLocation", isADHDInterventionLocation);
 			boolean isASQInterventionLocation = isInterventionLocation(locationId,"isASQInterventionLocation");
 			map.put("isASQInterventionLocation", isASQInterventionLocation);
 		}catch(UnexpectedRollbackException ex){
