@@ -1,0 +1,134 @@
+Maintenance:
+	Title:		Tuberculosis  Generic PWS Reminder;;
+	Filename:		tbgenpws;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 15:42:15;;
+	Validation:	;;
+Library:
+	Purpose:		Provides a generic reminder for assessing tuberculosis exposure risk factors, and provides an opportunity for clinicians to note that a PPD was placed.;;
+	Explanation:	Based on AAP screening recommendations;;
+	Keywords:	PWS, TB, tuberculosis, exposure, generic;;
+	Citations:		2004 Pediatric Tuberculosis Collaborative Group Report - AAP;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+eh := read  {ENVIRONMENTAL HISTORY from CHICA} Where it Occurred Within Past 1 Year;
+endif
+;;
+Priority:		802;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+If (Gender = M) then || heshe || = "he";
+If (Gender = F) then || heshe || = "she";
+/*********
+Risk_Factor := read Exist (DIRECT TUBERCULOSIS CONTACT, TRAVEL TO ENDEMIC TUBERCULOSIS AREA, FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE, FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA)
+If (Risk_Factor = True) then conclude False;
+*********/
+If 'DIRECT TUBERCULOSIS CONTACT' is in eh then conclude False;
+If 'TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in eh then conclude False;
+If 'FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE' is in eh then conclude False;
+If 'FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in eh then conclude False;
+
+/***********
+dtb := read Exist (DIRECT TUBERCULOSIS CONTACT)
+ttb := read Exist (TRAVEL TO ENDEMIC TUBERCULOSIS AREA) 
+ftb := read Exist (FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE)
+fttb := read Exist (FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA) 
+If (dtb = True) AND (ttb = True) AND (ftb = True) AND (fttb = True) then conclude False;
+************/
+
+If 'DIRECT TUBERCULOSIS CONTACT' is in eh 
+AND 
+'TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in eh 
+AND 
+'FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE' is in eh
+AND
+'FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in eh
+then conclude False;
+
+Else conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "I investigated whether || firstname || had any risk factors for tuberculosis.";
+If  (Box1=true) then || note1 || = "|| firstname || had contact with someone who has tuberculosis.";
+If  (Box2=true) then || note2 || = "|| firstname || travelled to a high-risk country for tuberculosis.";
+If  (Box3=true) then || note3 || = "|| firstname || had a household contact who was at high risk for tuberculosis.";
+If  (Box4=true) then || note4 || = "|| firstname || had a household contact who travelled to a high risk-country.";
+If  (Box5=true) then || note5 || = "I ordered an interdermal PPD test for || firstname ||.";
+If  (Box6=true) then || note6 || = "I confirmed that || firstname || had no risk factors for tuberculosis.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","SCREENING";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "ENVIRONMENTAL HISTORY","DIRECT TUBERCULOSIS CONTACT";
+ CALL storeNote With "note1","SCREENING";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "ENVIRONMENTAL HISTORY","TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
+ CALL storeNote With "note2","SCREENING";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "ENVIRONMENTAL HISTORY","FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE";
+ CALL storeNote With "note3","SCREENING";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "ENVIRONMENTAL HISTORY","FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
+ CALL storeNote With "note4","SCREENING";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "PPD - QUALITATIVE","PENDING";
+ CALL storeNote With "note5","SCREENING";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","DIRECT TUBERCULOSIS CONTACT";
+ CALL storeNote With "note6","SCREENING";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
+endif;
+
+
+endif
+;;
+Action:
+write ("PPD indicated if:  || firstname || spent >1 week in Asia, Africa, Lat. America, E. Europe or || heshe || has household contacts with: TB, travel to above areas, or hi-risk (jail, shelter, illegal drugs, HIV)");
+write ("Contact with TB");
+write ("Exposure to hi-risk country");
+write ("High risk contact");
+write ("Contact with hi-risk travel");
+write ("PPD 5 TU intradermally ordered");
+write ("No risk factors");
+;;
+Age_Min: 9 months;;
+Age_Max: 7 years;;
+end:

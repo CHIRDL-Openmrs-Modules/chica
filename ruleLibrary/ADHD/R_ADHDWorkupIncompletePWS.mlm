@@ -1,0 +1,118 @@
+Maintenance:
+	Title:		Research ADHD Workup Incomplete PWS                                                                         ;;
+	Filename:		R_ADHDWorkupIncompletePWS                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Aaron Carroll                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2010-04-02 09:00:00;;
+	Validation:	;;
+Library:
+	Purpose:		PWS promt to alert MD of that data are incomplete for ADHD workup.;;
+	Explanation:	ADHD workup is underway, but data are incomplete.;;
+	Keywords:	ADHD PWS Vanderbilt                                                  ;;
+	Citations:		                                                                                   ;;
+	Links:		                                            ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;   
+location:= read {location from Parameters};   
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;   
+ParentVanderbilt := read exist {ParentAssessmentScale from CHICA};
+TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA};
+preferred_language:= read last {preferred_language from CHICA};               
+
+endif
+;;
+Priority:		194       ;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+
+
+If (CurrentStatus = yes) OR (CurrentStatus = no)  then conclude False;
+If (ParentVanderbilt = TRUE) AND (TeacherVanderbilt = TRUE) then conclude FALSE;
+If (ParentVanderbilt = FALSE) then || prompttext1 || = " Parent Vanderbilt,";
+If (TeacherVanderbilt = FALSE) then || prompttext2 || = " Teacher Vanderbilt,";
+If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude True;
+Else conclude False;
+
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || is undergoing evaluation for ADHD.";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description", "DEVELOPMENT";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "ADHD_Workup","Parent_Vanderbilt_done";
+ CALL storeNote With "The parent Vanderbilt form was completed.", "DEVELOPMENT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "ADHD_Workup","Teacher_Vanderbilt_sent";
+ CALL storeNote With "I gave the family a teacher Vanderbilt to take to school.", "DEVELOPMENT";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "ADHD_Workup","Follow-up_2wks_scheduled";
+ CALL storeNote With "Plan to have the patient back in 2 weeks.", "DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "ADHD_Workup","Complete";
+ CALL storeNote With "I have all of the information needed for a diagnosis.", "DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "CHICA_ADHD_DX","no";
+ CALL storeNote With "The patient does NOT have ADHD.", "DEVELOPMENT";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "CHICA_ADHD_DX","yes";
+ CALL storeNote With "The patient HAS ADHD.", "DEVELOPMENT";
+endif;
+
+
+endif
+;;
+Action:
+If(ParentVanderbilt = False) AND (preferred_language = Spanish) then
+call CREATE_JIT with "ADHD PS";
+endif;
+If(ParentVanderbilt = False) AND (preferred_language = English) then
+call CREATE_JIT with "ADHD P";
+endif;
+
+If(ParentVanderbilt = False) AND (preferred_language = null) then
+call CREATE_JIT with "ADHD P";
+call CREATE_JIT with "ADHD PS";
+endif;
+
+If(TeacherVanderbilt = False) then
+call CREATE_JIT with "ADHD T";
+endif;
+
+write ("A workup for ADHD has begun, but not all data are in. We are missing || prompttext1 || || prompttext2 || and need data to be complete. CPT 96110");                                                                                                                                                                                                                                                                                                                   
+write ("Parent Vanderbilt Scanned                       ");
+write ("Teacher Vanderbilt Re-requested                      ");
+write ("Schedule f/u appt 2 wks                       ");
+write ("Information all in                      ");
+write ("ADHD NOT DIAGNOSED                        ");
+write ("ADHD DIAGNOSED                              ");
+;;
+Age_Min: 5          years     ;;
+Age_Max: 18         years     ;;
+end:

@@ -1,0 +1,303 @@
+td{
+	vertical-align: top;
+}
+
+.area {
+	  height:69%;
+	  width: 100%;
+	  overflow: scroll;
+	  font-size:13px;
+}
+.encounterarea {
+	  height:75%;
+	  width: 100%;
+	  overflow: auto;
+	  font-size:13px;
+}
+
+.headerarea {
+	  height:5%;
+	  width: 100%;
+}
+
+td.ln{
+	width:12%;
+}
+
+td.fn{
+	width:10%;
+}
+
+td.mrn		{
+	width:10%;
+}
+td.dob{
+	width:10%;
+}
+td.sex{
+	width:3%;
+	text-align:center;
+}
+td.MD{
+	width:10%;
+}
+
+td.aptTime{
+	width:9%;
+}
+
+td.chkTime{
+	width:9%;
+}
+
+td.reprint{
+	width:4%;
+	text-align:center;
+}
+
+td.status{
+	width:12%;
+}
+td.action{
+	width:11%;
+}
+
+td.viewEncounterDate{
+	width:12%;
+}
+td.viewEncounterStation{
+	width:7%;
+}
+td.viewEncounterAge{
+	width:7%;
+}
+td.viewEncounterWeight{
+	width:7%;
+}
+td.viewEncounterHeight{
+	width:7%;
+}
+td.viewEncounterDoctor{
+	width:20%;
+}
+td.viewEncounterPSFID{
+	width:9%;
+}
+td.viewEncounterPWSID{
+	width:9%;
+}
+td.viewEncounterJITID{
+	width:8%;
+}
+td.viewEncounterAction{
+	width:14%;
+}
+
+
+
+.rightAlign{
+	text-align: right;
+}
+
+.red_highlight{
+	background-color:red;
+}
+
+.yellow_highlight{
+	background-color:yellow;
+}
+
+.green_highlight{
+	background-color:#33CC00;
+}
+
+.purple_highlight{
+	background-color:#CC66FF;
+}
+
+.blue_highlight{
+	background-color:blue;
+}
+.almond_highlight{
+	background-color:#FFC;
+}
+
+input.readonly {
+background-color: #8FABC7;
+}
+
+select.readonly {
+background-color: #8FABC7;
+}
+
+input.CheckinFormButton {
+   height: 50px;
+   width: 140px;
+   font-weight: bold;
+   font-size: 15px;
+} 
+
+.chicaBackground {
+text-align:left; 
+background-color:#8FABC7;
+}
+
+
+
+.pagerButtonStyle{
+width:250px;
+color:red;
+font-weight:bold;
+height:45px;
+font-size:16px;
+}
+
+.waitTextStyle{
+ background-color:red;
+ color:red;
+ width:1px;
+}
+
+.inProcessTextStyle{
+background-color:yellow;
+color:yellow;
+width:1px;
+}
+
+.formReadyTextStyle{
+background-color:green;
+color:green;
+width:1px;
+}
+
+.psfReprintTextStyle{
+background-color:purple;
+color:purple;
+width:1px;
+}
+.pwsReprintTextStyle{
+background-color:blue;
+color:blue;
+width:1px;
+}
+
+.greaseBoardHeader{
+border-top-width:0px;
+border-bottom-width:1px;
+border-style:solid;
+border-color: black;
+width:100%;
+}
+
+.displayTiffHeader{
+border-width:1px;
+border-style:solid;
+border-color: black;
+width:100%;
+}
+
+.greaseBoardPageBorder{
+border-width:0px;
+border-style:solid;
+border-color: black;
+}
+
+.formTitleStyle{
+text-align:center; 
+font-size: 20px;
+vertical-aligh:center;
+}
+
+.exitButton{
+height:35px; 
+width:80px; 
+align:left; 
+font-size:15; 
+font-weight:bold;
+}
+
+.badScansButton{
+height:35px; 
+width:100px; 
+align:left; 
+font-size:15; 
+font-weight:bold;
+}
+
+.viewEncounterFooter{
+border-width:1px;
+border-bottom-width:1px;
+border-top-width:1px;
+border-style:solid;
+border-color: black;
+height:100%;
+}
+
+.displayLeftTiffHeaderSegment{
+text-align:left; 
+font-size: 20px;
+}
+
+.displayRighttiffHeaderSegment{
+text-align:center; 
+font-size: 20px;
+}
+
+.tiffs{
+height:100%;
+border-width:1px;
+border-bottom-width:3px;
+border-style:solid;
+border-color: black;
+}
+.viewEncounterHeaderArea{
+height:10%;
+border-width:0px;
+border-style:solid;
+border-color: black;
+}
+
+.viewEncounterHeaderText{
+height:100%;
+border-width:1px;
+border-bottom-width:3px;
+border-style:solid;
+border-color: black;
+}
+.greaseBoardFooter{
+height:100%;
+width:100%;
+vertical-align:bottom;
+overflow: hidden;
+}
+
+.alert{
+border-top: 1px solid lightgrey;
+font-size: .8em;
+font-weight: bold;
+padding-left: 2px;
+background-color:lightpink;
+}
+
+.reportTable td{
+border:1px;
+border-bottom-style:solid;
+border-right-style:solid;
+border-color: black;
+padding:5px;
+text-align:right;
+}
+
+.reportTable th{
+border:1px;
+border-bottom-style:solid;
+border-color: black;
+padding:5px;
+text-align:center;
+}
+
+input[masktype=password] {
+    -webkit-text-security: disc;
+}
+
+

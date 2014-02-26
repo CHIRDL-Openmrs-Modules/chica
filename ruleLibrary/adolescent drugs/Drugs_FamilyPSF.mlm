@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Drug Abuse  Family PSF;;
+	Filename:		Drugs_FamilyPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-07T11:13:18-0400;;
+	Validation:	;;
+Library:
+	Purpose:		GAPS screening question for anyone in family having a problem with drugs or alcohol?                                                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Explanation:	Most adolescents will use alcohol or other drugs before age 21.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	GAPS, adolescent, drugs, alcohol, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+family := read Exist {family_substance_abuse from CHICA} Where it Occurred Within Past 330 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		435;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (family = True) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "family_substance_abuse","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "family_substance_abuse","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does anyone in your family have a problem with alcohol or other drugs?");
+write ("¿Alguien en su familia tiene problemas con alcohol o de drogas?") At Spanish;                                                                                                                                                                                                                                                                                                                                            
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

@@ -1,0 +1,133 @@
+Maintenance:
+	Title:		Research DevScreen SurveyPos School System PWS                                                                         ;;
+	Filename:		R_DevScreenSurveyPosSchoolSystemPWS                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Aaron Carroll                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2010-04-15 10:00:00;;
+	Validation:	;;
+Library:
+	Purpose:		PWS prompt to alert doc to do ASQ if surveillance is positive.                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	Patient should get ASQ because surveillance was positive.                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	Developmental Screening ASQ                                                  ;;
+	Citations:		                                                                                   ;;
+	Links:		                                            ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+CurrentSymptoms:= read {CHICA_DevScreen_Sx from CHICA} Where it Occurred Within Past 3 Months;
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;      
+CurrentStatus:= read last {CHICA_DevScreen_Status from CHICA} Where it Occurred Within Past 3 Months;
+devStatus:= read {CHICA_DevScreen_Status from CHICA}; 
+asqStatus:= read {CHICA_DevScreen_ASQ from CHICA} Where it Occurred Within Past 3 Months;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority:		167       ;;
+	Evoke:		;;
+
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If 'LDB_concern' is in CurrentSymptoms then || prompttext1 || = " learning, development, and behavior,";
+If 'Talking_concern' is in CurrentSymptoms then || prompttext2 || = " talking or speech sounds,";
+If 'Understanding_concern' is in CurrentSymptoms then || prompttext3 || = " understanding speech,";
+If 'HandsFingers_concern' is in CurrentSymptoms then || prompttext4 || = " using hands and fingers,";
+If 'ArmsLegs_concern' is in CurrentSymptoms then || prompttext5 || = " using arms and legs,";
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
+
+If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
+If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
+
+/** If there is a delay, don't show prompt **/
+If 'Delayed' is in devStatus then conclude False;
+
+/** If an ASQ has been completed in the past 3 months, don't show prompt **/
+If 'Completed' is in asqStatus then conclude False;
+
+If (CurrentStatus = Survey_Pos) then conclude True;
+
+conclude False;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname ||'s parent had concerns about || hisher |||| prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 ||.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","DEVELOPMENT";
+endif;
+
+If (Box1=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeObs With "CHICA_DevScreen_ASQ","Completed";
+ CALL ASQWriteDoneObs;
+
+endif;
+
+If  (Box1=true) then
+ /** obs saved above in multi-box check **/
+ CALL storeObs With "CHICA_DevScreen_Status","Suspect_delay";
+ CALL storeNote With "I suspected developmental delay.","DEVELOPMENT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_DevScreen_DevRefer","SchoolSystem";
+ CALL storeNote With "I referred them to the school system for further testing.","DEVELOPMENT";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "CHICA_DevScreen_Management","ActivitiesForChildren";
+ CALL storeNote With "I gave them an Activities for Children form.","DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I scheduled them for a follow-up visit in 1 month.","DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ /** obs saved above in multi-box check **/
+ CALL storeNote With "The ASQ was done, scored, and discussed with the family.","DEVELOPMENT";
+endif;
+If  (Box6=true) then
+ /** obs saved above in multi-box check **/
+ CALL storeObs With "CHICA_DevScreen_Status","NormalDevelopment";
+ CALL storeNote With "I did not suspect developmental delay.","DEVELOPMENT";
+endif;
+
+
+endif
+;;
+Action:
+call CHOOSE_ASQ_JIT_PWS;
+call CHOOSE_ASQ_ACTIVITY_JIT;
+write ("|| firstname ||'s parent has concerns about || hisher |||| prompttext1 |||| prompttext2 |||| prompttext3 |||| prompttext4 |||| prompttext5 || so please have them complete the ASQ.");
+write ("Suspect Delay ->                       ");
+write ("Refer to School System                      ");
+write ("Activities for Children form                       ");
+write ("Sched follow-up 1 month                      ");
+write ("ASQ done, scored, discussed");
+write ("Do not suspect delay");
+;;
+Age_Min: 1050          days     ;;
+Age_Max: 66         months     ;;
+end:
+

@@ -1,0 +1,64 @@
+Maintenance:
+	Title:		Medication Allergies _1121 yo  PSF;;
+	Filename:		medicationAllergy_11_21yo;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2008-02-08T09:28:10-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Assess medication allergies;;
+	Explanation:	;;
+	Keywords:	PSF, allergy, medication, allergies;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+allergies := read Last {MEDICATION ALLERGIES from CHICA} ;
+endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (allergies = "FAMILY REPORTED") then conclude False;
+If (allergies = "PHYSICIAN CONFIRMED") then conclude False;
+If (Gender = M) then || spanishgender || = "alergico";
+If (Gender = F) then || spanishgender || = "alergica";
+conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "MEDICATION ALLERGIES","FAMILY REPORTED";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "MEDICATION ALLERGIES","NONE";
+ CALL storeObs With "MEDICATION ALLERGIES CAREWEB","no known allergies";
+endif;
+
+
+endif
+;;
+Action:
+write ("Are you allergic to any medicines?");
+write("¿Eres || spanishgender || a alguna medicina?") At Spanish;
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

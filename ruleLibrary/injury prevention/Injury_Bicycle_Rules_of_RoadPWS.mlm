@@ -1,0 +1,86 @@
+Maintenance:
+	Title:		Injury  Bicycle Rules of Road PWS;;
+	Filename:		Injury_Bicycle_Rules_of_RoadPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T12:35:41-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advised clinicians on how to prepare parents to teach "rules of the road."                                                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	The APP states the most important "Rules of the Road" for children to learn are: a. Ride with traffic, b. Stop and look both ways before entering the street, c. Stop at all intersections, marked and unmarked, and d. Before turning, use hand signals and look all ways.                                                                                                                                                                                                                                         ;;
+	Keywords:	injury, bicycle, rules, PWS;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/bicycle.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+rules := read Last {knows_rules_of_road from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority:		964;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (rules = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box6=true) then || note6 || = "I did not review the rules of the road because || firstname || never rides a bike.";
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "I discussed with the parent and child that the AAP states that there are four important rules of the road for children to know for bicycle safety.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I advised the parent and child to ride a bicycle in the same direction as traffic.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "I advised the parent and child to look both ways before entering a street.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "I advised the parent and child to stop at ALL intersections when riding a bicycle.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I advised the parent and child to look both ways before turning a bicycle.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I reviewed the use of hand signals when turning or stopping on a bicycle.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box6=true) then
+ CALL storeNote With "note6","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+
+;;
+Action:
+write ("The AAP states that there are four important rules of the road for children to know for bicycle safety.  Review the following:?");                                                                                                                                                                  
+write ("Ride with traffic");
+write ("Look both ways entering street");
+write ("Stop at ALL intersections");
+write ("Before turning look both ways");
+write ("Use hand signals when turning");
+write ("N/A, never rides a bike");
+;;
+Age_Min: 8 years;;
+Age_Max: 12 years;;
+end:

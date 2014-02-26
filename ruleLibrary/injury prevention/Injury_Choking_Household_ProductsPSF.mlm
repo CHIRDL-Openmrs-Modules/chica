@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Choking Household Pruducts PSF;;
+	Filename:		Injury_Choking_Household_ProductsPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:27:10-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether household products are kept out of reach of the child.                                                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Explanation:	The AAP reminds parents that young children may put anything in their mouths and this is part of normal learning. Parents must be encouraged to securely store hazardous household products.                                                                                                                                                                                                                                                                                                                        ;;
+	Keywords:	injury, choking, products, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+products := read Last {household_products_out_of_reach from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+endif
+;;
+Priority:		544;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (products= yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "household_products_out_of_reach","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "household_products_out_of_reach","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Are all household products (medicines, cleaning supplies, other chemicals) being securely placed out of || firstname ||'s reach?");
+write("¿Estan todos los productos de casa (medicinas, quimicos o productos de limpieza) fuera del alcance de || firstname ||?") At Spanish;                    
+;;
+Age_Min: 0 months;;
+Age_Max: 6 years;;
+end:

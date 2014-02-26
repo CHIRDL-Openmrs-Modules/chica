@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Breastfeeding PSF;;
+	Filename:		BFPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2004-12-10T12:12:12-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question to assess breastfeeding status.                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	breastfeed, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+breastfed := read Exist {BREASTFED from CHICA} Where it Occurred Within Past 30 Days;
+breastfeeding := read Last {BREASTFED from CHICA};
+endif
+;;
+Priority:		225;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (breastfeeding = 0) then conclude False;
+If (breastfed = False) then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "BREASTFED","1";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "BREASTFED","0";
+endif;
+
+
+endif
+;;
+Action:
+write ("Is || firstname || breastfed?");
+write ("¿Toma || firstname || pecho?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                                        
+;;
+Age_Min: 0 days;;
+Age_Max: 6 months;;
+end:
