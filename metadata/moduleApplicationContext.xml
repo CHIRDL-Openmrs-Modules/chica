@@ -25,6 +25,10 @@
                 <prop key="/module/@MODULE_ID@/viewPatient.form">viewPatient</prop>
 				<prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
 				<prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
+				<prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
+                <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
+                <prop key="/module/@MODULE_ID@/psfMobile.form">psfMobile</prop>
+                <prop key="/module/@MODULE_ID@/loginMobile.form">loginMobile</prop>
             </props>
         </property>
     </bean>
@@ -112,6 +116,26 @@
         <property name="commandName"><value>displayMergeFormObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/displayMergeForm</value></property>
         <property name="successView"><value>displayMergeForm.form</value></property>
+    </bean>
+    <bean id="finishFormsMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
+        <property name="commandName"><value>finishFormsMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/finishFormsMobile</value></property>
+        <property name="successView"><value>greaseBoardMobile.form</value></property>
+    </bean>
+    <bean id="greaseBoardMobile" class="@MODULE_PACKAGE@.web.MobileGreaseBoardController">
+        <property name="commandName"><value>greaseBoardMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/greaseBoardMobile</value></property>
+        <property name="successView"><value>greaseBoardMobile.form</value></property>
+    </bean>
+    <bean id="psfMobile" class="@MODULE_PACKAGE@.web.MobileFormQueueController">
+        <property name="commandName"><value>psfMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/psfMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="loginMobile" class="@MODULE_PACKAGE@.web.LoginMobileController">
+        <property name="commandName"><value>loginMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/loginMobile</value></property>
+        <property name="successView"><value>loginMobile.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">

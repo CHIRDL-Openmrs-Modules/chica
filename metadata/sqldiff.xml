@@ -3601,6 +3601,17 @@ where action_name='REPRINT';
         where a.location_id = c.location_id AND c.location_tag_id = b.location_tag_id AND a.retired = 0 AND b.retired = 0;
         </sql>
     </diff>
+    <diff>
+        <version>1.6.6</version>
+        <author>Steve McKee</author>
+        <date>Feb 4, 2014</date>
+        <description>
+        Remove the unused chica.presnetStudyPostUrl global property
+        </description>
+        <sql>
+        delete from global_property where property = 'chica.presnetStudyPostUrl';
+        </sql>
+    </diff>
 </sqldiff>
 
 
