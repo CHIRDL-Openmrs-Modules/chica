@@ -1,0 +1,91 @@
+<binding>
+<mapping class="org.openmrs.module.chica.xmlBeans.StatsConfig" name="stats_config">
+<structure field="pwsPromptAnswers"/>
+<structure field="pwsPromptAnswerErrs"/>
+<structure field="languageAnswers"/>
+</mapping>
+
+<mapping class="org.openmrs.module.chica.xmlBeans.Field" name="Field">
+<value name="id" field="id" style="attribute" />
+<value name="Value" field="value" usage="optional" />
+<value name="taborder" field="taborder" style="attribute" usage="optional" />
+<value style="attribute" name="substituteEstimate" get-method="getSubstituteEstimate" set-method="setSubstituteEstimate" usage="optional"/>
+</mapping>
+
+ <mapping class="org.openmrs.module.chica.xmlBeans.LanguageAnswers" name="language_answers">
+	<collection field="languages"/>
+  </mapping>
+  
+  <mapping class="org.openmrs.module.chica.xmlBeans.Language" name="language">
+	<collection field="fields"/>
+	<value name="name" field="name" style="attribute" />
+  </mapping>
+
+<mapping class="org.openmrs.module.chica.xmlBeans.PWSPromptAnswers" name="pws_prompt_answers">
+<collection field="fields"/>
+</mapping>
+
+<mapping class="org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs" name="pws_prompt_answer_errs">
+<collection field="fields"/>
+</mapping>
+
+<mapping class="org.openmrs.module.chica.xmlBeans.ObsvDictionary" name="ObsvDictionary">
+<collection field="terms"/>
+</mapping>
+
+<mapping class="org.openmrs.module.chica.xmlBeans.FindObsvTerm" name="FindObsvTerm">
+<value name="OBSV_NAME" field="name"/>
+<value name="OBSV_DEF" field="description" usage="optional"/>
+<value name="OBSV_TYPE" field="type"/>
+<value name="OBSV_EXPORT" field="export" usage="optional" />
+<value name="ANSWERS" field="answers" usage="optional" />
+<value name="UNITS" field="units" usage="optional" />
+</mapping>
+
+<mapping class="org.openmrs.module.chica.xmlBeans.UnfilteredMedications" name="unfilteredMedications">
+    <collection item-type="org.openmrs.module.chica.xmlBeans.Medication" get-method="getUnfilteredMedications" set-method="setUnfilteredMedications" create-type="java.util.ArrayList"/>
+  </mapping>
+  <mapping class="org.openmrs.module.chica.xmlBeans.Medication" name="medication">
+    <value style="attribute" name="name" get-method="getName" set-method="setName"/>
+    <value style="attribute" name="system" get-method="getSystem" set-method="setSystem"/>
+  </mapping>
+  
+  <mapping class="org.openmrs.module.chica.xmlBeans.growthcharts.GrowthChartConfig" name="growthChartConfig">
+    <structure field="growthCharts" usage="optional"/>
+  </mapping>
+  
+  <mapping class="org.openmrs.module.chica.xmlBeans.growthcharts.GrowthCharts" name="growthCharts">
+        <collection field="growthCharts">
+            <structure name="growthChart" type="org.openmrs.module.chica.xmlBeans.growthcharts.GrowthChart">
+                <value name="fileLocation" field="fileLocation" />
+                <value name="chartType" field="chartType" />
+                <value name="ageInMonthsMin" field="ageInMonthsMin" />
+                <value name="ageInMonthsMax" field="ageInMonthsMax" />
+                <value name="gender" field="gender" />
+                <structure field="chartConcepts"/>
+            </structure>
+        </collection>
+   </mapping>
+   <mapping class="org.openmrs.module.chica.xmlBeans.growthcharts.ChartConcepts" name="chartConcepts">
+        <collection field="chartConcepts">
+            <structure name="chartConcept" type="org.openmrs.module.chica.xmlBeans.growthcharts.ChartConcept">
+                <structure field="conceptXAxis" type="org.openmrs.module.chica.xmlBeans.growthcharts.ConceptXAxis"/>
+                <structure field="conceptYAxis" type="org.openmrs.module.chica.xmlBeans.growthcharts.ConceptYAxis"/>
+            </structure>
+        </collection>
+   </mapping>
+   <mapping class="org.openmrs.module.chica.xmlBeans.growthcharts.ConceptXAxis" name="conceptXAxis">
+        <value name="name" field="name" />
+        <value name="minVal" field="minVal" />
+        <value name="maxVal" field="maxVal" />
+        <value name="minPosition" field="minPosition" />
+        <value name="maxPosition" field="maxPosition" />
+   </mapping>
+   <mapping class="org.openmrs.module.chica.xmlBeans.growthcharts.ConceptYAxis" name="conceptYAxis">
+        <value name="name" field="name" />
+        <value name="minVal" field="minVal" />
+        <value name="maxVal" field="maxVal" />
+        <value name="minPosition" field="minPosition" />
+        <value name="maxPosition" field="maxPosition" />
+   </mapping>
+</binding>

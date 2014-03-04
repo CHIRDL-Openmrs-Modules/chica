@@ -1,0 +1,63 @@
+Maintenance:
+	Title:		Development  Feed Self PSF;;
+	Filename:		DEVFSPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-18T02:46:08-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child feeding him/herself.                                                                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		14;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || text || = "himself";
+If (Gender = F) then || text || = "herself";
+If (Gender = M) then || himher || = "him";
+If (Gender = F) then || himher || = "her";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "PS_Passed","Feed Self";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "PS_Failed","Feed Self";
+endif;
+
+
+endif
+;;
+Action:
+write ("Can || firstname || feed || text || a cracker or cookie?  If you've never given || himher || one, fill in no.");
+write ("¿Puede || firstname || comer una galleta sola? Si nunca le ha dado una, marque no") At Spanish;                                                                                                                                                                                                                                                                                   
+;;
+Age_Min: 195 days;;
+Age_Max: 345 days;;
+end:

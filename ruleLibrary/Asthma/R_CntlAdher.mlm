@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Research Assess Asthma Controller Adherence PSF;;
+	Filename:		R_CntlAdher;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2005-05-12T03:41:09-0400;;
+	Validation:	;;
+Library:
+	Purpose:		For patients on asthma controller meds, ask once a month whether they are taking them daily.                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	If patient's asthma status is persistent and they are on a controller (or non-adherent with controller) and adherence hasn't been checked in a month, ask on PWS if they are using meds everyday.                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	asthma PSF adherence compliance controller persistent;;
+	Citations:		NHLBI Guideline;;
+	Links:		http://www.nhlbi.nih.gov/guidelines/asthma/asthgdln.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+StatusKnown := read Exist {AsthmaStatus from CHICA} Where it Occurred Within Past 30 Days;CurrentStatus := read Last {AsthmaStatus from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority:		63;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (StatusKnown = True) then conclude False;If (CurrentStatus = Persistent-controller) OR (CurrentStatus = Persistent-non-adherent) then conclude True;Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "AsthmaStatus","Persistent-controller";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "AsthmaStatus","Persistent-non-adherent";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || use || hisher || 'controller' medication (e.g. steroid inhaler or puffer, NOT Albuterol) every day?");
+write ("¿Usa || firstname || su medicamento (inhalador excepto Albuterol) todos los diàs?") At Spanish;                                                                                                                                                                                                                                                                        
+;;
+Age_Min: 3 years;;
+Age_Max: 12 years;;
+end:
