@@ -1,33 +1,30 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <!DOCTYPE html>
-<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobile.form" />
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobile_tabs.form" />
 <html>
 <head>
-<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+<script>
+$(document).bind("mobileinit", function(){
+    $('#confirm_page').on('pageshow', function (event, ui) {
+    	$("#confirm_page_tab").addClass('ui-btn-active');
+    });
+});
+</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/psfMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
-
 <style>
 #quit_dialog .ui-header a {
     display: none;
 }
 
 #quit_dialog_sp .ui-header a {
-    display: none;
-}
-
-#quit_confirm_dialog .ui-header a {
-    display: none;
-}
-
-#quit_confirm_dialog_sp .ui-header a {
     display: none;
 }
 
@@ -60,21 +57,18 @@
 }
 </style>
 </head>
-<body onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}')">
-<form id="psfForm" method="POST" data-ajax="false">
-<c:if test="${errorMessage != null}">
-	<div id="error_dialog" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-	    <div data-role="header" data-theme="b">
-	        <h1>Error</h1>
-	    </div>
-	    <div data-role="content">
-	        <span>${errorMessage}</span>
-	        <div style="margin: 0 auto;text-align: center;">
-	            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="submitEmptyForm()" style="width: 150px;">OK</a>
-	        </div>
-	    </div>
+<body>
+<form id="psfForm" method="POST">
+<div data-role="page" id="tab_page" data-theme="b">
+	<div data-role="tabs" id="tabs">
+	  <div data-role="navbar">
+	    <ul>
+	      <li><a id="confirm_page_tab" href="#confirm_page" data-ajax="false">Questions</a></li>
+	      <li><a id="questions_tab" href="#vitals_page" data-ajax="false">Vitals</a></li>
+	    </ul>
+	  </div>
 	</div>
-</c:if>
+</div>
 <div data-role="page" id="confirm_page" data-theme="b">
     <div data-role="header" data-position="fixed">
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -88,29 +82,29 @@
         <strong><span id="instructions"><p>1) Please return the device back to the front desk if the patient information listed is incorrect.</p><p>2) Please confirm this form is for:<br/>Name: ${patient.givenName}&nbsp;${patient.familyName}<br/>Date of Birth: ${patient.birthdate}</p></span></strong>
         <div id="deny_dialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
-		        <h1>Confirm</h1>
-		    </div>
-		    <div data-role="content">
-		        <span>If you are sure the incorrect patient is displayed, Press 'OK' and return the device to the receptionist.</span>
-		        <div style="margin: 0 auto;text-align: center;">
-		            <a href="${pageContext.request.contextPath}/module/chica/greaseBoardMobile.form" data-inline="true" data-theme="b" data-role="button" rel="external" style="width: 150px;">OK</a>
-		            <a href="#confirm_page" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancel</a>
-		        </div>
-		    </div>
-		</div>
-		
-		<div id="deny_dialog_sp" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-		    <div data-role="header" data-theme="b">
+                <h1>Confirm</h1>
+            </div>
+            <div data-role="content">
+                <span>If you are sure the incorrect patient is displayed, Press 'OK' and return the device to the receptionist.</span>
+                <div style="margin: 0 auto;text-align: center;">
+                    <a href="${pageContext.request.contextPath}/module/chica/greaseBoardMobile.form" data-inline="true" data-theme="b" data-role="button" rel="external" style="width: 150px;">OK</a>
+                    <a href="#confirm_page" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancel</a>
+                </div>
+            </div>
+        </div>
+        
+        <div id="deny_dialog_sp" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+            <div data-role="header" data-theme="b">
                 <h1>Confirmar</h1>
             </div>
-		    <div data-role="content">
-		        <span>Si est&#225; seguro de que el paciente incorrecta aparece, pulse 'Aceptar' y devolver el dispositivo a la recepcionista.</span>
-		        <div style="margin: 0 auto;text-align: center;">
-		            <a href="${pageContext.request.contextPath}/module/chica/greaseBoardMobile.form" data-inline="true" data-theme="b" data-role="button" rel="external" style="width: 150px;">Acceptar</a>
-		            <a href="#confirm_page" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancelar</a>
-		        </div>
-		    </div>
-		</div>
+            <div data-role="content">
+                <span>Si est&#225; seguro de que el paciente incorrecta aparece, pulse 'Aceptar' y devolver el dispositivo a la recepcionista.</span>
+                <div style="margin: 0 auto;text-align: center;">
+                    <a href="${pageContext.request.contextPath}/module/chica/greaseBoardMobile.form" data-inline="true" data-theme="b" data-role="button" rel="external" style="width: 150px;">Acceptar</a>
+                    <a href="#confirm_page" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancelar</a>
+                </div>
+            </div>
+        </div>
     </div><!-- /content -->
     
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -132,7 +126,7 @@
     </div>
 </div>
 
-<div id="quit_confirm_dialog" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+<div id="quit_confirm_dialog" data-role="dialog" data-dismissible="false" data-close-btn="none" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Confirm Quit</h1>
     </div>
@@ -813,18 +807,18 @@
         <a id='lnkVitalsPasscode' href="#vitals_passcode_dialog" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
         <a id='lnkPasscodeError' href="#passcodeError" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
         <div id="vitals_passcode_dialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-		    <div data-role="header" data-theme="b">
-		        <h1>Passcode</h1>
-		    </div>
-		    <div data-role="content">
-		        <span>Please enter the passcode to access the vitals page.</span>
-		        <div style="margin: 0 auto;text-align: center;">
-		            <input type="number" masktype="password" id="vitals_passcode" name="vitals_passcode" placeholder="Passcode"/>
-		            <a href="#" id="goButton" onclick="checkPasscode()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Go</a>
-		        </div>
-		    </div>
-		</div>
-		<div id="passcodeError" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+            <div data-role="header" data-theme="b">
+                <h1>Passcode</h1>
+            </div>
+            <div data-role="content">
+                <span>Please enter the passcode to access the vitals page.</span>
+                <div style="margin: 0 auto;text-align: center;">
+                    <input type="number" masktype="password" id="vitals_passcode" name="vitals_passcode" placeholder="Passcode"/>
+                    <a href="#" id="goButton" onclick="checkPasscode()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Go</a>
+                </div>
+            </div>
+        </div>
+        <div id="passcodeError" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="c">
             <div data-role="header" data-theme="b">
                 <div>
                     <h3 style="text-align: center;">Passcode Error</h3>
@@ -841,14 +835,7 @@
             <div class="ui-block-a" style="width: 42%">
               <div class="ui-grid-c">
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
-                      <c:choose>
-	                      <c:when test="${Height_HL != null }">
-	                        <strong><span style="line-height: 50px;"><c:out value="${Height_HL}"/>&nbsp;Height:</span></strong>
-	                      </c:when>
-	                      <c:otherwise>
-	                        <strong><span style="line-height: 50px;">Height:</span></strong>
-	                      </c:otherwise>
-	                  </c:choose>
+                      <strong><span style="line-height: 50px;">Height:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
                       <span style="line-height: 50px;"><input type="number" id="height" name="height"/></span>
@@ -857,14 +844,7 @@
                       <strong><span style="line-height: 50px;">${HeightSUnits}</span></strong>
                   </div>
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
-                      <c:choose>
-                          <c:when test="${Weight_HL != null }">
-                            <strong><span style="line-height: 50px;"><c:out value="${Weight_HL}"/>&nbsp;Weight:</span></strong>
-                          </c:when>
-                          <c:otherwise>
-                            <strong><span style="line-height: 50px;">Weight:</span></strong>
-                          </c:otherwise>
-                      </c:choose>
+                      <strong><span style="line-height: 50px;">Weight:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
                       <span style="line-height: 50px;"><input type="number" id="weight" name="weight"/></span>
@@ -880,14 +860,7 @@
                       </c:choose>
                   </div>
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
-                      <c:choose>
-                          <c:when test="${HC_HL != null }">
-                            <strong><span style="line-height: 50px;"><c:out value="${HC_HL}"/>&nbsp;HC:</span></strong>
-                          </c:when>
-                          <c:otherwise>
-                            <strong><span style="line-height: 50px;">HC:</span></strong>
-                          </c:otherwise>
-                      </c:choose>
+                      <strong><span style="line-height: 50px;">HC:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
                       <span style="line-height: 50px;"><input type="number" id="hc" name="hc"/></span>
@@ -896,14 +869,7 @@
                       <strong><span style="line-height: 50px;">cm.</span></strong>
                   </div>
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
-                      <c:choose>
-                          <c:when test="${BP_HL != null }">
-                            <strong><span style="line-height: 50px;"><c:out value="${BP_HL}"/>&nbsp;BP:</span></strong>
-                          </c:when>
-                          <c:otherwise>
-                            <strong><span style="line-height: 50px;">BP:</span></strong>
-                          </c:otherwise>
-                      </c:choose>
+                      <strong><span style="line-height: 50px;">BP:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
                       <span style="line-height: 50px;"><input type="number" id="BPS" name="BPS"/></span>
@@ -980,14 +946,7 @@
                   <div class="ui-block-b" style="height: 50px;text-align: center;width: 70%;">
                       <div class="ui-grid-a" style="text-align: center;">
                         <div class="ui-block-a" style="height: 50px;text-align: right;width: 40%;">
-                            <c:choose>
-                              <c:when test="${VisionL_HL != null }">
-                                <strong><span style="line-height: 50px;"><c:out value="${VisionL_HL}"/>&nbsp;Vision Left: 20/</span></strong>
-                              </c:when>
-                              <c:otherwise>
-                                <strong><span style="line-height: 50px;">Vision Left: 20/</span></strong>
-                              </c:otherwise>
-                            </c:choose>
+                            <strong><span style="line-height: 50px;">Vision Left: 20/</span></strong>
                         </div>
                         <div class="ui-block-b" style="height: 50px;width: 60%;padding-left: 10px;margin-bottom: 10px;">
                             <span><input type="number" id="VisionL" name="VisionL"/></span>
@@ -999,14 +958,7 @@
                   <div class="ui-block-b" style="height: 50px;text-align: center;width: 70%;">
                       <div class="ui-grid-a" style="text-align: center;">
                         <div class="ui-block-a" style="height: 50px;text-align: right;width: 40%;">
-                            <c:choose>
-                              <c:when test="${VisionR_HL != null }">
-                                <strong><span style="line-height: 50px;"><c:out value="${VisionR_HL}"/>&nbsp;Vision Right: 20/</span></strong>
-                              </c:when>
-                              <c:otherwise>
-                                <strong><span style="line-height: 50px;">Vision Right: 20/</span></strong>
-                              </c:otherwise>
-                            </c:choose>
+                            <strong><span style="line-height: 50px;">Vision Right: 20/</span></strong>
                         </div>
                         <div class="ui-block-b" style="height: 50px;width: 60%;padding-left: 10px;margin-bottom: 10px;">
                             <span><input type="number" id="VisionR" name="VisionR"/></span>
@@ -1022,14 +974,7 @@
                   <div class="ui-block-a" style="height: 60px;width: 100%;padding-top:10px;">
                       <div class="ui-grid-a">
                           <div class="ui-block-a" style="text-align: right;width: 50%;padding-right:10px;">
-                           <c:choose>
-	                          <c:when test="${HearL_HL != null }">
-	                            <strong><span style="line-height: 50px;"><c:out value="${HearL_HL}"/>&nbsp;Left Ear @ 25db:</span></strong>
-	                          </c:when>
-	                          <c:otherwise>
-	                            <strong><span style="line-height: 50px;">Left Ear @ 25db:</span></strong>
-	                          </c:otherwise>
-	                       </c:choose>
+                           <strong><span style="line-height: 50px;">Left Ear @ 25db:</span></strong>
                           </div>
                           <div class="ui-block-b" style="width: 50%;height: 50px;display: table">
                               <div data-role="fieldcontain" style="display: table-cell;">
@@ -1046,14 +991,7 @@
                   <div class="ui-block-a" style="height: 60px;width: 100%;padding-top:10px;">
                       <div class="ui-grid-a">
                           <div class="ui-block-a" style="text-align: right;width: 50%;padding-right:10px;">
-                           <c:choose>
-                              <c:when test="${HearR_HL != null }">
-                                <strong><span style="line-height: 50px;"><c:out value="${HearR_HL}"/>&nbsp;Right Ear @ 25db:</span></strong>
-                              </c:when>
-                              <c:otherwise>
-                                <strong><span style="line-height: 50px;">Right Ear @ 25db:</span></strong>
-                              </c:otherwise>
-                           </c:choose>
+                           <strong><span style="line-height: 50px;">Right Ear @ 25db:</span></strong>
                           </div>
                           <div class="ui-block-b" style="width: 50%;height: 50px;display: table">
                               <div data-role="fieldcontain" style="display: table-cell;">
@@ -1086,17 +1024,15 @@
         </div>
         <div id="validation_error_dialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
-                <div>
-                    <h3 style="text-align: center;">Validation Error</h3>
+                <h1>Validation Error</h1>
+            </div>
+            <div data-role="content">
+                <span id="validationError"></span>
+                <div style="margin: 0 auto;text-align: center;">
+                    <a id="validationOkButton" href="#" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">OK</a>
                 </div>
             </div>
-		    <div data-role="content">
-		        <span id="validationError"></span>
-		        <div style="margin: 0 auto;text-align: center;">
-		            <a id="validationOkButton" href="#" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">OK</a>
-		        </div>
-		    </div>
-		</div>
+        </div>
         <div id="invalidLogin" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Invalid Login</h1>
@@ -1134,11 +1070,11 @@
         </div>
         <a id='lnkLoadingDialog' href="#loadingDialog" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
         <div id="loadingDialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
-	        <div data-role="content">
-	            <div style="margin: 0 auto;text-align: center;">
-	                Loading...
-	            </div>
-	        </div>
+            <div data-role="content">
+                <div style="margin: 0 auto;text-align: center;">
+                    Loading...
+                </div>
+            </div>
         </div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">

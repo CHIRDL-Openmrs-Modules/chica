@@ -1,4 +1,13 @@
 $(document).on("pagecreate", "#patient_list_page", function(){
+	
+	$(document).ajaxStart(function() {
+	    $.mobile.loading('show');
+	});
+
+	$(document).ajaxStop(function() {
+	    $.mobile.loading('hide');
+	});
+	
 	$("#hiddenField").click(function() {
 		$("#passcode").focus();
 	});
@@ -32,7 +41,6 @@ $(document).on("pageshow", "#passcode_page", function(){
 });
 
 function startTimer() {
-    populateList();
     var timer = $.timer(function () {
         populateList();
     });
@@ -41,6 +49,10 @@ function startTimer() {
         time: 30000,
         autostart: true
     });
+    
+//    populateList();
+    // This delay allows the wait cursor to display when loading the patient list.
+    setTimeout("populateList()", 250);
 }
 
 function finishForm(id) {
@@ -51,7 +63,7 @@ function finishForm(id) {
 }
 
 function checkPasscode() {
-    $.mobile.loading("show");
+//    $.mobile.loading("show");
     var passcode = $("#passcode").val();
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
     var action = "action=verifyPasscode&passcode=" + passcode;
@@ -64,14 +76,15 @@ function checkPasscode() {
             "timeout": 30000, // optional if you want to handle timeouts (which you should)
         "error": handlePasscodeAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
+//        	$.mobile.loading("show");
             parsePasscodeResult(xml);
-            $.mobile.loading("hide");
+//            $.mobile.loading("hide");
         }
     });
 }
 
 function populateList() {
-    $.mobile.loading("show");
+//    $.mobile.loading("show");
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
     $.ajax({
         "cache": false,
@@ -83,13 +96,13 @@ function populateList() {
         "error": handlePatientListAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
             parsePatientList(xml);
-            $.mobile.loading("hide");
+//            $.mobile.loading("hide");
         }
     });
 }
 
 function handlePatientListAjaxError(xhr, textStatus, error) {
-	$.mobile.loading("hide");
+//	$.mobile.loading("hide");
     var error = "An error occurred on the server.";
     if (textStatus === "timeout") {
         error = "The server took too long to retrieve the patient list.";
@@ -100,7 +113,7 @@ function handlePatientListAjaxError(xhr, textStatus, error) {
 }
 
 function handlePasscodeAjaxError(xhr, textStatus, error) {
-    $.mobile.loading("hide");
+//    $.mobile.loading("hide");
     var error = "An error occurred on the server.";
     if (textStatus === "timeout") {
         error = "The server took too long to verify the passcode.";
@@ -212,13 +225,13 @@ function parsePatientSelectionResult(responseXML) {
 }
 
 function handleListAuthenticationAjaxError(xhr, textStatus, error) {
-    $.mobile.loading("hide");
+//    $.mobile.loading("hide");
     $("#listLoginResultDiv").html("<p>An error occurred on the patient list: " + error + ".  Please log in.</p>");
     $("#listLogIn").popup("open");
 }
 
 function handlePasscodeAuthenticationAjaxError(xhr, textStatus, error) {
-    $.mobile.loading("hide");
+//    $.mobile.loading("hide");
     $("#passcodeLoginDiv").html("<p>An error occurred checking the passcode: " + error + ".  Please log in.</p>");
     $("#logInPasscode").popup("open");
 }
@@ -231,6 +244,7 @@ function parsePasscodeResult(responseXML) {
         var result = $(responseXML).find("result").text();
         if (result == "success") {
         	$.mobile.changePage("#patient_list_page", { transition: "fade"});
+//        	$.mobile.loading("show");
             startTimer();
         } else {
         	if (result == "Please log in.") {

@@ -726,6 +726,18 @@ public class ChicaRmiServiceImpl extends RemoteServer implements ChicaRmiService
 				return fileStr;
 			}
 			
+			fileStr = directory + File.separator + locationId + "_" + formId + "_" + formInstanceId + ".19";
+			file = new File(fileStr);
+			if (file.exists()) {
+				return fileStr;
+			}
+			
+			fileStr = directory + File.separator + "_" + locationId + "_" + formId + "_" + formInstanceId + "_.19";
+			file = new File(fileStr);
+			if (file.exists()) {
+				return fileStr;
+			}
+			
 			fileStr = directory + File.separator + locationId + "_" + formId + "_" + formInstanceId + ".xml";
 			file = new File(fileStr);
 			if (file.exists()) {

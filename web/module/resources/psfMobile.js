@@ -1,6 +1,14 @@
 ﻿var english = false;
 var formInstance = null;
 $(document).ready(function () {
+	$(document).ajaxStart(function() {
+	    $.mobile.loading('show');
+	});
+
+	$(document).ajaxStop(function() {
+	    $.mobile.loading('hide');
+	});
+	
     $("#denyButton").click(function () {
     	if (english) {
     	    $( "#deny_dialog" ).popup( "open" );
@@ -190,10 +198,30 @@ function checkSession() {
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
-    // Reset answers
-    $("input[id^='QuestionEntry']").prop("checked", false).checkboxradio("refresh");
+//    // Reset answers
+//    $("input[id^='QuestionEntry']").prop("checked", false).checkboxradio("refresh");
+    
+    // Transfer answers
+    for (var i = 1; i < 21; i++) {
+	    if (english) {
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_Yes", "#QuestionEntry_" + i + "_Yes");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_No", "#QuestionEntry_" + i + "_No");
+	    } else {
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_Yes", "#QuestionEntry_" + i + "_2_Yes");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_No", "#QuestionEntry_" + i + "_2_No");
+	    }
+    }
     
     nextPage(1);
+}
+
+function setQuestionCheckboxes(initialCheckBoxId, newCheckBoxId) {
+	if ($(initialCheckBoxId).is(":checked")) {
+		$(newCheckBoxId).prop("checked", true);
+		$(initialCheckBoxId).prop("checked", false);
+		$(newCheckBoxId).checkboxradio('refresh');
+		$(initialCheckBoxId).checkboxradio('refresh');
+	}
 }
 
 function setLanguage(patientName, birthdate) {
@@ -280,7 +308,7 @@ function submitEmptyForm() {
 }
 
 function handleAuthenticationAjaxError(xhr, textStatus, error) {
-    $.mobile.loading("hide");
+//    $.mobile.loading("hide");
     //$("#confirm_submit_dialog").popup("close");
     if (textStatus === "timeout") {
         var submitDiv = document.getElementById("submitErrorDiv");
@@ -302,7 +330,7 @@ function parseLoginResult(responseXML) {
     } else {
         var result = $(responseXML).find("result").text();
         if (result == "true") {
-        	$.mobile.loading("hide");
+//        	$.mobile.loading("hide");
         	//$("#confirm_submit_dialog").popup("close");
         	//$("#loadingDialog").popup("open");
         	$("#lnkLoadingDialog").click();
@@ -494,7 +522,7 @@ function showPasscode() {
 }
 
 function checkPasscode() {
-    $.mobile.loading("show");
+//    $.mobile.loading("show");
     var passcode = $("#vitals_passcode").val();
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
     var action = "action=verifyPasscode&passcode=" + passcode;
@@ -508,7 +536,7 @@ function checkPasscode() {
         "error": handlePasscodeAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
             parsePasscodeResult(xml);
-            $.mobile.loading("hide");
+//            $.mobile.loading("hide");
         }
     });
 }
@@ -538,7 +566,7 @@ function parsePasscodeResult(responseXML) {
 }
 
 function handlePasscodeAjaxError(xhr, textStatus, error) {
-    $.mobile.loading("hide");
+//    $.mobile.loading("hide");
     var error = "An error occurred on the server.";
     if (textStatus === "timeout") {
         error = "The server took too long to verify the passcode.";
@@ -564,7 +592,7 @@ function parsePasscodeLoginResult(responseXML) {
 }
 
 function handlePasscodeAuthenticationAjaxError(xhr, textStatus, error) {
-    $.mobile.loading("hide");
+//    $.mobile.loading("hide");
     $("#passcodeErrorResultDiv").html("<p>An error occurred checking the passcode: " + error + ".  Please log in.</p>");
     $("#lnkPasscodeError").click();
 }

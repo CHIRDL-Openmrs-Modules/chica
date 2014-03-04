@@ -28,6 +28,7 @@
 				<prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobile.form">psfMobile</prop>
+                <prop key="/module/@MODULE_ID@/psfMobileTabs.form">psfMobileTabs</prop>
                 <prop key="/module/@MODULE_ID@/loginMobile.form">loginMobile</prop>
             </props>
         </property>
@@ -130,6 +131,11 @@
     <bean id="psfMobile" class="@MODULE_PACKAGE@.web.MobileFormQueueController">
         <property name="commandName"><value>psfMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/psfMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="psfMobileTabs" class="@MODULE_PACKAGE@.web.MobileFormQueueController">
+        <property name="commandName"><value>psfMobileTabsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/psfMobileTabs</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
     <bean id="loginMobile" class="@MODULE_PACKAGE@.web.LoginMobileController">

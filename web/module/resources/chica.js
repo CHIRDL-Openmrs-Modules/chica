@@ -69,12 +69,12 @@ function parseAndPlay(text, index, audioElement, lang) {
 }
 
 function login(successFunction, errorFunction) {
-	$.mobile.loading("show");
+//	$.mobile.loading("show");
 	var username = "";
 	var password = "";
 	var encryptKey = window.localStorage.getItem("keyDate");
 	if (encryptKey == null || encryptKey.trim().length == 0) {
-		$.mobile.loading("hide");
+//		$.mobile.loading("hide");
 		return;
 	}
 	
