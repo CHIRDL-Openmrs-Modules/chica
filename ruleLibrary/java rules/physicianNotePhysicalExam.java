@@ -105,7 +105,7 @@ public class physicianNotePhysicalExam implements Rule {
     	// Removed sick visit check.  This was a clinic request.
 //    	String conceptName = "VisitType";
 //    	Result result = context.read(patientId, obsDataSource, 
-//			new LogicCriteriaImpl(conceptName).within(Duration.days(-2)).last());
+//			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
 //    	if (result != null && "SickVisit".equalsIgnoreCase(result.toString())) {
 //			noteBuffer.append("This is a sick visit\n");
 //    	}
@@ -118,7 +118,7 @@ public class physicianNotePhysicalExam implements Rule {
     	Integer encounterId = encounter.getEncounterId();
     	String conceptName = "HEIGHT";
     	Result heightResult = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl(conceptName).within(Duration.days(-2)).last());
+			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
     	if (heightResult != null && !heightResult.isEmpty() && equalEncounters(encounterId, heightResult)) {
     		noteBuffer.append("Height: ");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -137,7 +137,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	conceptName = "WEIGHT";
     	Result weightResult = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl(conceptName).within(Duration.days(-2)).last());
+			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
     	if (weightResult != null && !weightResult.isEmpty() && equalEncounters(encounterId, weightResult)) {
     		noteBuffer.append("Weight: ");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -185,7 +185,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	conceptName = "HC";
     	Result result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl(conceptName).within(Duration.days(-2)).last());
+			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Head Circumference: ");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -203,7 +203,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("bp").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("bp").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Blood Pressure: ");
     		noteBuffer.append(result.toString());
@@ -222,7 +222,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("TEMPERATURE CHICA").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("TEMPERATURE CHICA").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Temperature: ");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -235,7 +235,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("PULSE CHICA").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("PULSE CHICA").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Pulse: ");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -248,7 +248,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("PULSEOX").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("PULSEOX").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Pulse Ox: ");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -261,7 +261,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("VISIONL").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("VISIONL").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Vision Left: 20/");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -274,7 +274,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("VISIONR").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("VISIONR").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Vision Right: 20/");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -287,7 +287,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("RR CHICA").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("RR CHICA").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("RR: ");
     		Map<String,Object> map = new HashMap<String,Object>();
@@ -300,21 +300,21 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("NoVision").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("NoVision").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Uncooperative/Unable to Screen Vision");
     		noteBuffer.append("\n");
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("NoHearing").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("NoHearing").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Uncooperative/Unable to Screen Hearing");
     		noteBuffer.append("\n");
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("NoBP").within(Duration.days(-2)).last());
+			new LogicCriteriaImpl("NoBP").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		noteBuffer.append("Uncooperative/Unable to Screen Blood Pressure");
     		noteBuffer.append("\n");
@@ -349,7 +349,7 @@ public class physicianNotePhysicalExam implements Rule {
     private static void appendPhysicalExam(LogicContext context, LogicDataSource obsDataSource, Integer patientId, 
                                     StringBuffer noteBuffer, String concept, String heading, Integer encounterId) {
     	Result result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl(concept).within(Duration.days(-2)).last());
+			new LogicCriteriaImpl(concept).within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
     		String value = result.toString();
     		if (ABNORMAL_EXAM.equalsIgnoreCase(value)) {
@@ -370,7 +370,7 @@ public class physicianNotePhysicalExam implements Rule {
     private static Encounter getLastEncounter(Patient patient) {
     	// Get last encounter with last day
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 2);
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
