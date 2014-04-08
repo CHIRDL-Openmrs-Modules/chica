@@ -2,7 +2,6 @@ package org.openmrs.module.chica.rule;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,11 +13,11 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
-import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chirdlutil.util.IdentifierDateComparator;
 
 public class SIIDIdentifier implements Rule
 {
@@ -89,8 +88,10 @@ public class SIIDIdentifier implements Rule
 		if (identifiers == null || identifiers.size()== 0){
 			return Result.emptyResult();
 		}
-		
-		Collections.sort(identifiers);
+			//we want dates descending order to get the most recent date first
+			Collections.sort(identifiers, new IdentifierDateComparator() );
+				
+		//Collections.sort(identifiers);
 		PatientIdentifier first = identifiers.get(0);
 		if (first != null){
 			return new Result(first.getIdentifier());

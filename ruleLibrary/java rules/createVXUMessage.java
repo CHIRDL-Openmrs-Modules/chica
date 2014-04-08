@@ -375,7 +375,7 @@ public class createVXUMessage implements Rule
 		map.put("influenza", "influenza, unspecified formulation");
 		map.put("Influenza", "influenza, unspecified formulation");
 		map.put("MMR", "MMR");
-		map.put("PCV", "pneumococcal, unspecified formulation");
+		map.put("PCV", "Pneumococcal Conjugate, unspecified formulation");
 		map.put("IPV", "polio, unspecified formulation");
 		map.put("Rotavirus", "rotavirus, unspecified formulation");
 		map.put("varicella", "varicella");

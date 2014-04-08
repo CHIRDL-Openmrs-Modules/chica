@@ -1,45 +1,36 @@
-/********************************************************************
- Translated from - mcad.mlm on Fri Dec 28 15:10:34 EST 2007
 
- Title : MCAD Reminder
- Filename:  mcad
- Version : 0 . 2
- Institution : Indiana University School of Medicine
- Author : Steve Downs
- Specialist : Pediatrics
- Date : 05 - 22 - 2007
- Validation :
- Purpose : Provides a specific reminder, tailored to the patient who identified one or more fatty acid disorders
- Explanation : Based on AAP screening recommendations
- Keywords : fatty, acid, fatty acid disorder
- Citations : Screening for fatty acid disorder AAP
- Links :
-
- ********************************************************************/
 package org.openmrs.module.chica.rule;
 
-import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.openmrs.Patient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.ConceptName;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
+import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.LogicException;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
+import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.ImmunizationForecast;
-import org.openmrs.module.chica.ImmunizationPrevious;
+import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.ImmunizationQueryOutput;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 
 public class vaccineStarRule implements Rule
 {
 
+	private Log log = LogFactory.getLog(this.getClass());
 	/**
 	 * *
 	 * 
@@ -58,7 +49,7 @@ public class vaccineStarRule implements Rule
 	public String[] getDependencies()
 	{
 		return new String[]
-		{};
+		                  {};
 	}
 
 	/**
@@ -82,28 +73,102 @@ public class vaccineStarRule implements Rule
 	}
 
 	public Result eval(LogicContext context, Integer patientId,
-	       			Map<String, Object> parameters) throws LogicException
-	{ 
-				String vaccineName = (String) parameters.get("concept");
-				ImmunizationQueryOutput immunizations = 
-					ImmunizationForecastLookup.getImmunizationList(patientId);
-				 
-				if(immunizations != null){
-					HashMap<String,ImmunizationForecast> forecastedImmunizations = 
-						immunizations.getImmunizationForecast();
-				
-					if(forecastedImmunizations != null){
-				
-						ImmunizationForecast immunForecast = forecastedImmunizations.get(vaccineName);
-						java.util.Date todaysDate = new java.util.Date();
-						
-						if(immunForecast != null&&immunForecast.getDateDue().compareTo(todaysDate)<=0){
-							return new Result("*");
-						}else{
-							return new Result(" ");
-						}	
+			Map<String, Object> parameters) throws LogicException
+			{ 
+		
+		String vaccineName = (String) parameters.get("concept");
+		HashMap<String, String> map = this.setupVISNameLookup();
+		String shortName = map.get(vaccineName);
+		
+		Integer locationId = (Integer) parameters.get("locationId");
+		ImmunizationQueryOutput immunizations = 
+			ImmunizationForecastLookup.getImmunizationList(patientId);
+
+		if(immunizations != null){
+			HashMap<String,ImmunizationForecast> forecastedImmunizations = 
+				immunizations.getImmunizationForecast();
+
+			if(forecastedImmunizations != null){
+
+				ImmunizationForecast immunForecast = forecastedImmunizations.get(vaccineName);
+				java.util.Date todaysDate = new java.util.Date();
+
+				if(immunForecast != null&&immunForecast.getDateDue().compareTo(todaysDate)<=0){
+					// Create the JIT
+					
+					
+					// Find out if patient is Spanish speaking
+					LogicCriteria conceptCriteria = new LogicCriteriaImpl("preferred_language");
+					Result languageResult = context.read(patientId, context.getLogicDataSource("obs"), conceptCriteria.last());
+					String language = null;
+					if (languageResult != null && languageResult.toString().length() > 0) {
+						language = languageResult.toString();
 					}
-			}	
+					LogicService logicService = Context.getLogicService();
+					parameters.put("mode", "PRODUCE");
+					
+					if (shortName != null && !shortName.equalsIgnoreCase("") ){
+						String jitLanguage = "";
+						if (language != null && language.equalsIgnoreCase("Spanish")){
+							jitLanguage = "_SP";
+						}
+						if (shortName.equalsIgnoreCase("HPV")){
+							//clinic requests only Gardasil HPV  
+							shortName = "Hpv-Gardasil";
+						}
+						parameters.put("param1","VIS_" + shortName + "_JIT" + jitLanguage);
+						log.info("VIS_" + shortName+ "_JIT" + jitLanguage);
+						FormInstance formInstance = new FormInstance();
+						formInstance.setLocationId(locationId);
+						parameters.put("formInstance", formInstance);
+						logicService.eval(patientId, "CREATE_JIT", parameters);
+					}
+
+					return new Result("*");
+				}else{
+					return new Result(" ");
+				}   
+			}
+		}   
 		return new Result(" ");
+			}
+
+	private String getName(String vaccineName){
+		String shortName = null;
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConceptByName(vaccineName);
+		if (concept == null || concept.getConceptId() == null){
+			return "";
+		}
+
+
+		return shortName;
+	}
+	
+	private HashMap<String, String> setupVISNameLookup() {
+
+		HashMap<String, String> map = new HashMap<String, String>();
+
+		map.put("DTaP, unspecified formulation", "DTaP");
+		map.put("Hep A, unspecified formulation", "HepA");
+		map.put("Hep B, unspecified formulation", "HepB");
+		map.put("Hib, unspecified formulation","Hib");
+		map.put("influenza, unspecified formulation", "Influenza");
+		map.put("MMR", "MMR");
+		map.put("pneumococcal, unspecified formulation", "PPV");
+		map.put("pneumococcal polysaccharide PPV23", "PPV");
+		map.put("Pneumococcal Conjugate, unspecified formulation", "PCV13");
+		map.put("rotavirus, unspecified formulation", "Rotavirus");
+		map.put("varicella", "Varicella");
+		map.put("Varicella", "Varicella");
+		map.put("HPV, unspecified formulation", "HPV");
+		map.put("influenza, live, intranasal", "flulive");
+		map.put("polio, unspecified formulation", "IPV");
+		map.put("meningococcal MCV4, unspecified formulation", "MCV");
+		map.put("TST-PPD intradermal", "PPD");
+		map.put("Td(adult) unspecified formulation", "Tdap");
+		
+		
+		return map;
 	}
 }
