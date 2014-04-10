@@ -1,7 +1,9 @@
 
 package org.openmrs.module.chica.rule;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -115,6 +117,16 @@ public class vaccineStarRule implements Rule
 						if (shortName.equalsIgnoreCase("HPV")){
 							//clinic requests only Gardasil HPV  
 							shortName = "Hpv-Gardasil";
+						}
+						
+						if (shortName.equalsIgnoreCase("Influenza")){
+							//clinic requests window for flu shot
+							Calendar calendar = Calendar.getInstance();	 
+							if (calendar.get(Calendar.MONTH)>= Calendar.APRIL
+									&& calendar.get(Calendar.MONTH) <= Calendar.AUGUST){
+								return new Result(" ");
+							}
+							
 						}
 						parameters.put("param1","VIS_" + shortName + "_JIT" + jitLanguage);
 						log.info("VIS_" + shortName+ "_JIT" + jitLanguage);
