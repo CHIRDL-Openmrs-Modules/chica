@@ -34,7 +34,7 @@ StatusExists := read exist {CHICA_DevScreen_Status from CHICA} Where it Occurred
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 endif
 ;;
-Priority:		178       ;;
+Priority:		176       ;;
 	Evoke:		;;
 
 Logic:
