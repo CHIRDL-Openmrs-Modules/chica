@@ -63,8 +63,8 @@ If (CurrentStatus = Survey_Pos) OR (CurrentStatus = Suspect_delay) OR (CurrentRe
 If ('ArmsLegs_Concern' is in RecentlyAsked) OR ('no_ArmsLegs_Concern' is in RecentlyAsked) then conclude False;
 
 /** Suppress this rule if the child is in the age range for the routine ASQ **/
-If (AgeInMonths = 9) then conclude False;
-If (AgeInMonths >= 17) and (AgeInMonths < 19) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) then conclude False;
 /** Suppress the surveillance if no evidence of 24 to 36 month ASQ for routine "30" month **/
 
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone24 = True) then conclude True;

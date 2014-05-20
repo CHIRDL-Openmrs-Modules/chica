@@ -30,8 +30,11 @@ If (mode = PRODUCE) then
 VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;      
 devStatus := read {CHICA_DevScreen_Status from CHICA} ;  
 
+ASQDone8:= read exist {ASQ8MonthAssessment from CHICA}; 
 ASQDone9:= read exist {ASQ9MonthAssessment from CHICA}; 
+ASQDone10:= read exist {ASQ10MonthAssessment from CHICA}; 
 ASQDone18:= read exist {ASQ18MonthAssessment from CHICA};   
+ASQDone20:= read exist {ASQ20MonthAssessment from CHICA}; 
 ASQDone24:= read exist {ASQ24MonthAssessment from CHICA}; 
 ASQDone27:= read exist {ASQ27MonthAssessment from CHICA};    
 ASQDone30:= read exist {ASQ30MonthAssessment from CHICA}; 
@@ -49,8 +52,8 @@ Logic:
 AgeInMonths := call ChicaAgeRule with "months";
 AgeInDays := call ChicaAgeRule with "days";
 If (mode = PRODUCE) OR (mode = CONSUME) then
-If (AgeInMonths = 9) then || age || = "9";
-If (AgeInMonths >= 17) and (AgeInMonths < 19) then || age || = "18";
+If (AgeInMonths >= 8) and (AgeInMonths < 11) then || age || = "9";
+If (AgeInMonths >= 17) and (AgeInMonths < 20) then || age || = "18";
 If (AgeInMonths >= 23) and (AgeInMonths < 39) then || age || = "24-36";
 endif
 
@@ -70,15 +73,21 @@ If ('Delayed' is in devStatus) then conclude False;
 If (CurrentStatus = Suspect_delay) OR (CurrentStatus = Survey_Pos) OR (CurrentReferral = FirstSteps) OR (CurrentReferral = SchoolSystem) then conclude False;
 
 /** ASQ was already completed for this age range **/
-If (AgeInMonths = 9) AND ('ASQ_9m_Done' is in devStatus) then conclude False;
-If (AgeInMonths >= 17) and (AgeInMonths < 19) AND ('ASQ_18m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND ('ASQ_9m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND ('ASQ_8m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND ('ASQ_10m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND ('ASQ_18m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND ('ASQ_20m_Done' is in devStatus) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_24m_Done' is in devStatus) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_27m_Done' is in devStatus) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_30m_Done' is in devStatus) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_33m_Done' is in devStatus) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_36m_Done' is in devStatus) then conclude False;
-If (AgeInMonths = 9) AND (ASQDone9 = True) then conclude False;
-If (AgeInMonths >= 17) and (AgeInMonths < 19) AND (ASQDone18 = True) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND (ASQDone9 = True) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND (ASQDone8 = True) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND (ASQDone10 = True) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND (ASQDone18 = True) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND (ASQDone20 = True) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone24 = True) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone27 = True) then conclude False;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone30 = True) then conclude False;
@@ -86,8 +95,8 @@ If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone33 = True) then conclu
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone36 = True) then conclude False;
 
 /** Make sure the child is in the age range for a routine ASQ **/
-If (AgeInMonths = 9) then conclude True;
-If (AgeInMonths >= 17) and (AgeInMonths < 19) then conclude True;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) then conclude True;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) then conclude True;
 If (AgeInMonths >= 23) and (AgeInMonths < 39) then conclude True;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 conclude False;
