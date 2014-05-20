@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research DevScreen Routine mos Old PWS                                                                         ;;
- Filename: R_DevScreenRoutineMonthsMonitorPWS_ver2_older                                  ;;
+ Filename: R_DevScreenRoutineMonthsMonitorPWS_ver2                                  ;;
  Version: 1.0       ;;
  Institution: Indiana University School of Medicine             ;;
  Author: Aaron Carroll                                       ;;
@@ -33,8 +33,7 @@ Results27:= read {ASQ27MonthAssessment from CHICA} Where it Occurred Within Past
 Results30:= read {ASQ30MonthAssessment from CHICA} Where it Occurred Within Past 2 days;  
 Results33:= read {ASQ33MonthAssessment from CHICA} Where it Occurred Within Past 2 days;  
 Results36:= read {ASQ36MonthAssessment from CHICA} Where it Occurred Within Past 2 days; 
-endif
-
+endif;
 
 If (mode = PRODUCE) then
 VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;      
@@ -44,11 +43,11 @@ CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;
 CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority: 405       ;;
+Priority: 1000       ;;
  Evoke: ;;
 
 Logic:
-	
+
 AgeInMonths := call ChicaAgeRule with "months";
 AgeInDays := call ChicaAgeRule with "days";
 If (mode = PRODUCE) OR (mode = CONSUME) then
@@ -94,7 +93,7 @@ If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Monitor' is i
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Monitor' is in Results33) then || prompttext5 || = "problem solving, ";
 If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('Problemsolving_Monitor' is in Results36) then || prompttext5 || = "problem solving, ";
 endif
-
+	
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
 
@@ -238,12 +237,12 @@ If  (Box3=true) then
  CALL storeNote With "I had concerns about developmental delay.","DEVELOPMENT";
 endif;
 If  (Box4=true) then
- CALL storeObs With "CHICA_DevScreen_DevRefer","SchoolSystem";
- CALL storeNote With "I referred them to the school system for further testing.","DEVELOPMENT";
+ CALL storeObs With "CHICA_DevScreen_DevRefer","FirstSteps";
+ CALL storeNote With "I referred them to First Steps for further testing.","DEVELOPMENT";
 endif;
 If  (Box5=true) then
 /** obs saved above in multi-box check **/
-CALL storeNote With "The ASQ was done, scored, and discussed with the family.","DEVELOPMENT";
+ CALL storeNote With "The ASQ was done, scored, and discussed with the family.","DEVELOPMENT";
 endif;
 If  (Box6=true) then
  /** obs saved above in multi-box check **/
@@ -260,12 +259,12 @@ write ("|| firstname ||'s ASQ shows a score in the 'monitoring zone' for || prom
 write ("Rescheduled in 2-6 weeks                      ");
 write ("Activities for Children form");
 write ("I have developmental concerns ->                       ");
-write ("Refer to School System                      ");
+write ("First Steps referral                      ");
 write ("ASQ done, scored, discussed");
 write ("There are no devel. concerns");
 
 ;;
-Age_Min: 1050         days     ;;
-Age_Max: 39         months     ;;
+Age_Min: 9          months     ;;
+Age_Max: 1050 days     ;;
 end:
 }

@@ -35,7 +35,7 @@ DeprElement2 := read [2] {Maternal_Depression_Concern from CHICA} Where it Occur
 DeprElement := read Last 2 {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 365 Days;
 endif
 ;;
-Priority:		198       ;;
+Priority:		1000       ;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

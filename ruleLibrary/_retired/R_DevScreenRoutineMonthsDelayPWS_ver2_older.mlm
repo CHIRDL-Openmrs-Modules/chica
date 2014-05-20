@@ -43,7 +43,7 @@ CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;
 CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 endif
 ;;
-Priority: 402       ;;
+Priority: 1000       ;;
  Evoke: ;;
 
 Logic:
