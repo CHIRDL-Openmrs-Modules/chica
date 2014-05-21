@@ -274,11 +274,17 @@ public class Util {
 				boolean containsStartState = formPatientStateCreateMap.containsKey(formId);
 				boolean containsEndState = formPatientStateProcessMap.containsKey(formId);
 				if (containsStartState && !containsEndState) {
-					addedForm = true;
 					List<PatientState> patientStates = formPatientStateCreateMap.get(formId);
-					PatientState patientState = patientStates.get(0);
-					FormInstance formInstance = patientState.getFormInstance();
-					row.addFormInstance(formInstance);
+					if (patientStates != null) {
+						for (PatientState patientState : patientStates) {
+							FormInstance formInstance = patientState.getFormInstance();
+							if (formInstance != null) {
+								row.addFormInstance(formInstance);
+								addedForm = true;
+								break;
+							}
+						}
+					}
 				}
 			}
 			
