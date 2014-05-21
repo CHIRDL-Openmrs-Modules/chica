@@ -25,7 +25,7 @@
 
 <div data-role="page" id="patient_list_page" data-theme="b" type="patient_page">
     <div data-role="header" data-theme="a" data-position="fixed">
-        <h1>Patients</h1>
+        <h1>Patients (${currentUser})</h1>
         <a href="#" data-icon="refresh" class="ui-btn-right" onclick="populateList()">Refresh</a>
     </div>
     <div id="listError" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">

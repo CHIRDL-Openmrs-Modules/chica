@@ -292,6 +292,7 @@ public class GreaseBoardController extends SimpleFormController
 			Date now = todaysDate.getTime();
 			String today =  new SimpleDateFormat("MMM dd, yyyy").format(now);
 			map.put("today", today);
+			map.put("currentUser", user.getUsername());
 		
 			todaysDate.set(Calendar.HOUR_OF_DAY, 0);
 			todaysDate.set(Calendar.MINUTE, 0);

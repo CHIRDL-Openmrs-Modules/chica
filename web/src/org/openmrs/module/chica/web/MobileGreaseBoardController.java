@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jibx.runtime.JiBXException;
 import org.openmrs.Form;
+import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.util.PatientRow;
@@ -108,7 +109,8 @@ public class MobileGreaseBoardController extends SimpleFormController {
 	
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception {
-		if (Context.getUserContext().getAuthenticatedUser() == null) {
+		User user = Context.getUserContext().getAuthenticatedUser();
+		if (user == null) {
 			return null;
 		}
 		
@@ -122,6 +124,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 			}
 			
 			map.put("patientRows", rows);
+			map.put("currentUser", user.getUsername());
 		}
 		catch (UnexpectedRollbackException ex) {
 			//ignore this exception since it happens with an APIAuthenticationException

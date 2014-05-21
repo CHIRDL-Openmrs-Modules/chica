@@ -108,7 +108,7 @@
 <div  class="greaseBoardPageBorder headerarea" style="overflow:hidden;">
 <table width="100%"  style="height:100%;border:0;frame:void; cellspacing:0px;border-width:1px;border-bottom-width:3px;border-style:solid;border-color: black">
     <tr  class="chicaBackground" style=>
-    <td  width = "100%" class="formTitleStyle" ><b>Arrivals&nbsp;&nbsp;&nbsp;&nbsp;${today}</b></td>
+    <td  width = "100%" class="formTitleStyle" ><b>Patients (${currentUser})</b></td>
     
     </tr>
 </table>
