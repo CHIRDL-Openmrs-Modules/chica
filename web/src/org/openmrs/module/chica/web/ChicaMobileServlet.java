@@ -17,6 +17,11 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 
+/**
+ * Servlet to handle mobile ajax communications
+ *
+ * @author Steve McKee
+ */
 public class ChicaMobileServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 	private Log log = LogFactory.getLog(this.getClass());
