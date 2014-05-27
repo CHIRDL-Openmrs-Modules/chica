@@ -80,6 +80,9 @@ public class vaccineDoseFive implements Rule
 		return Datatype.CODED;
 	}
 
+	/**
+	 * Get the date of the 5th dose of a vaccine
+	 */
 	public Result eval(LogicContext context, Integer patientId,
 	       			Map<String, Object> parameters) throws LogicException
 	{
