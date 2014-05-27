@@ -1,0 +1,85 @@
+Maintenance:
+	Title:		Injury  Bicycle 8y11y PWS;;
+	Filename:		Injury_Bicycle_8y_to_12yPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T12:29:33-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF gives age appropriate recommendations to the clinician to discuss with parents about bicycle safety.                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	The AAP rhas a number of recommendations on bicycle safety for children.                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	injury, bicycle, back seat, PWS;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/bicycle.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+helmet := read Last {wears_bike_helmet from CHICA} Where it Occurred Within Past 1 Years;
+street := read Last {rides_bike_in_street from CHICA} Where it Occurred Within Past 1 Years;
+dark := read Last {rides_after_dark from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority:		796;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (helmet = yes) AND (street = no)  AND (dark = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box6=true) then || note6 || = "I did not counsel parent about bicycle safety because || firstname || does not use a bike.";
+/* */
+
+If  (Box1=true) OR (Box3=true) OR (Box5=true) then
+ CALL storeNote With "I counseled parent about bicycle safety.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I reminded parent and child that a child should ALWAYS wear a helmet when riding a bicycle.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "I advised parent should confirm child is capable of safely riding a bike on the street.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I advised that a child ages 8 to 12 years SHOULD NOT ride after dusk or dark.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box6=true) then
+ CALL storeNote With "note6","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+
+;;
+Action:
+call CREATE_JIT with "BICYCLE_SAFETY_JIT";
+write ("The AAP has age-specific recommendations for bicycle safety.  Please review the following, and check those you review:");                                                                                                                                                                           
+write ("ALWAYS wear bike helmet");
+write ("");
+write ("Confirm child street capable");
+write ("");
+write ("NO riding after dusk or dark");
+write ("N/A, never rides a bike");
+;;
+Age_Min: 8 years;;
+Age_Max: 12 years;;
+end:

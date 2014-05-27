@@ -1,0 +1,88 @@
+Maintenance:
+	Title:		Return to work;;
+	Filename:		ReturnToWork;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-12-17T12:02:56-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Discuss issues about returning to work                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	Fills space on early PWS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	work noevidence PWS;;
+	Citations:		Bright Futures;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		978;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box2=true) then || note2 || = "I discussed how || firstname ||'s parent felt about leaving the baby.";
+If  (Box3=true) then || note3 || = "I encouraged || firstname ||'s parents to take time for themselves.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "There are many challenges when a parent is returning to work.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I discussed how breastfeeding would continue.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "note2","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "note3","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I encouraged partner participation.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I discussed attention to other kids.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box6=true) then
+ CALL storeNote With "I discussed the importance of time alone with partners.","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+
+;;
+Action:
+write ("There are many challenges to discuss when || firstname ||'s parent is returning to work:");                                                                                                                                                                                                         
+write ("Continuing breastfeeding");
+write ("Feelings about leaving baby");
+write ("Taking time for self");
+write ("Encourage partner participation");
+write ("Attention to other kids");
+write ("Time alone w/ partner");
+;;
+Age_Min: 14 days;;
+Age_Max: 12 months;;
+end:

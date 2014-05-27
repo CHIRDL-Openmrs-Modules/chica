@@ -1,0 +1,33 @@
+Maintenance: 
+	Title:			Work Excuse Patient Text;;
+	Filename:		WorkExcusePatientText;;
+	Version:		1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:			Ashley Street;;
+	Specialist:		Pediatrics;;
+	Date:			2013-06-19T12:56:43-0400;;
+	Validation:		;;
+Library:
+	Purpose:		;;
+	Explanation:	;;
+	Keywords:		;;
+	Citations:		;;
+	Links:			;;
+Knowledge:
+	Type:			data_driven;;
+	Data:
+	;;
+	Priority:		;;
+	Evoke:			;;
+	Logic:
+		If (Gender = M) then || heshe || = "He";
+		If (Gender = F) then || heshe || = "She";
+		conclude True;
+	;;
+	Action:
+		clinicname := call LocationAttributeLookup With "clinicDisplayName";
+		write ("|| firstname || || lastName || was seen at || clinicname || on || clinicname_date ||. || heshe || should be excused from school/work. || heshe || can return on ________.") At Text;
+	;;
+	Age_Min:	14 years;;
+	Age_Max:	21 years;;
+end:

@@ -1,0 +1,73 @@
+Maintenance:
+	Title:		Lead Toxicity  Blood Lead Deferral Followup PWS Reminder;;
+	Filename:		leadbloodfudpws;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29T03:29:36-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Provides a reminder, intended to remind clinicians when a blood lead level was deferred.;;
+	Explanation:	Based on AAP screening recommendations;;
+	Keywords:	PWS, lead, pb, exposure, followup;;
+	Citations:		Screening for Elevated Blood Levels - AAP;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Deferred := read Last {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Deferred = DEFERRED) then conclude True;conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box2=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","NOT INDICATED";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","PENDING";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","POSITIVE";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","LESS THAN 10 MG/DL";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","DEFERRED";
+endif;
+
+
+endif
+;;
+Action:
+write ("**According to electronic records, || firstname || had a positive risk factor for lead toxicity but no blood drawn on || Deferred_date ||**:  Follow this up today!");
+write ("test result ->");
+write ("test no longer indicated");
+write ("blood drawn");
+write ("Positive");
+write ("< 10 mg/dl (Negative)");
+write ("test deferred/refused");
+;;
+Age_Min: 9 months;;
+Age_Max: 7 years;;
+end:
