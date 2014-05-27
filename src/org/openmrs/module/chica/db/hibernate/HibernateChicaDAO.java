@@ -15,6 +15,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
@@ -35,6 +36,7 @@ import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
 import org.openmrs.module.chica.hibernateBeans.DDST_Milestone;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
@@ -1095,5 +1097,17 @@ public class HibernateChicaDAO implements ChicaDAO
 		criteria.add(Expression.eq("concept", concept));
 		List<ConceptMap> conceptMaps = (List<ConceptMap>) criteria.list();
 		return conceptMaps;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Encounter> getEncountersForEnrolledPatients(Concept concept,
+			Date startDateTime, Date endDateTime){
+	
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class);
+		criteria.createAlias("obs", "obsv")
+			.add(Restrictions.eq("obsv.concept", concept));
+		criteria.add(Restrictions.between("encounterDatetime", startDateTime, endDateTime ));
+
+		return criteria.list();
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
+import org.openmrs.Encounter;
 import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -176,6 +177,9 @@ public interface ChicaService
 	public Integer getMergeFieldCount(String form_name, String vaccine_name);
 	
 	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
+	
+	public List<org.openmrs.module.chica.hibernateBeans.Encounter> getEncountersForEnrolledPatients(Concept concept,
+			Date startDateTime, Date endDateTime);
 	/**
 	 * Query the mrf dump to find the list of immunizations for the patient
      * @see org.openmrs.module.chica.service.ChicaService#immunizationQuery(java.io.OutputS
