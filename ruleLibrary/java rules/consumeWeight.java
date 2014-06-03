@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
+import org.openmrs.Concept;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -163,7 +164,9 @@ public class consumeWeight implements Rule
 
 		if(fullResult != null&&fullResult.length()>0)
 		{
-			org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, conceptService.getConceptByName(conceptName),
+			Concept concept = conceptService.getConceptByName(conceptName);
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+			org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept,
 					encounterId, fullResult,formInstance,
 					ruleId,locationTagId);
 		}

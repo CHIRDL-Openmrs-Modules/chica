@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
+import org.openmrs.Concept;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -112,7 +113,9 @@ public class consumeOnePart implements Rule
 		if(ruleResult != null&&ruleResult.toString()!=null&&
 				ruleResult.toString().length()>0)
 		{
-			org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, conceptService.getConceptByName(conceptName),
+			Concept concept = conceptService.getConceptByName(conceptName);
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+			org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept,
 					encounterId, ruleResult.toString(),formInstance,
 					ruleId,locationTagId);
 		}
