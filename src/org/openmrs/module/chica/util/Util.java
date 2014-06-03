@@ -31,6 +31,7 @@ import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.service.ATDService;
@@ -88,6 +89,23 @@ public class Util {
 		}
 		return org.openmrs.module.atd.util.Util.saveObsWithStatistics(patient, currConcept, encounterId, value,
 		    formInstance, ruleId, locationTagId, usePrintedTimestamp);
+	}
+	
+	public static void voidObsForConcept(Concept concept,Integer encounterId){
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		ObsService obsService = Context.getObsService();
+		List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+		encounters.add(encounter);
+		List<Concept> questions = new ArrayList<Concept>();
+		
+		questions.add(concept);
+		List<Obs> obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
+				null, null, null, null, false);
+		
+		for(Obs currObs:obs){
+			obsService.voidObs(currObs, "voided due to rescan");
+		}
 	}
 	
 	public static String sendPage(String message, String pagerNumber) {

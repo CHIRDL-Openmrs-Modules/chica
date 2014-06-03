@@ -424,7 +424,6 @@ public class ViewEncounterController extends SimpleFormController {
 							
 					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
 					if (patientStates != null && !patientStates.isEmpty()) {
-						ArrayList<String> rowFormNames = new ArrayList<String>();
 						for (PatientState currState : patientStates) {
 							if (currState.getEndTime() != null) {
 								Integer formId = currState.getFormId();
@@ -447,12 +446,8 @@ public class ViewEncounterController extends SimpleFormController {
 								}
 							}
 						
-							if (formsToProcess.contains(formName)) {
-								//only add form instance if form not in list yet
-								if (!rowFormNames.contains(formName)) {
+							if (formsToProcess.contains(formName)) {							
 									row.addFormInstance(currState.getFormInstance());
-									rowFormNames.add(formName);
-								}
 								}
 							}
 						}

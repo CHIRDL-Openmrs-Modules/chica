@@ -167,6 +167,8 @@ public class ConsumeFormInstance implements ProcessStateAction
 				        .getBirthdate(), "bmi", null);
 				if (percentile != null) {
 					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);					
 					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
 				}
 			}
@@ -185,6 +187,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 				        .getBirthdate(), "hc", null);
 				if (percentile != null) {
 					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
 					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
 				}
 			}
@@ -203,6 +206,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 				        .getBirthdate(), "length", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
 				if (percentile != null) {
 					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
 					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
 				}
 			}
@@ -221,6 +225,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 				        .getBirthdate(), "weight", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
 				if (percentile != null) {
 					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
 					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
 				}
 			}
@@ -235,6 +240,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 		if (obs == null || obs.size() == 0) {
 			Result result = atdService.evaluateRule("bp", patient, parameters);
 			if (!(result instanceof EmptyResult)) {
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
 				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(),new Date());
 			}
 		}
@@ -248,6 +254,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 		if (obs == null || obs.size() == 0) {
 			Result result = atdService.evaluateRule("bmi", patient, parameters);
 			if (!(result instanceof EmptyResult)) {
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
 				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(),new Date());
 			}
 		}

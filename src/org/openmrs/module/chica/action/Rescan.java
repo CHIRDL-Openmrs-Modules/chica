@@ -46,26 +46,6 @@ public class Rescan extends org.openmrs.module.atd.action.Rescan
 		//only void non-question related obs for PSF
 		if (formName != null && formName.equals("PSF"))
 		{
-			// void non question related obs for PSF
-			List<Statistics> stats = atdService.getStatsByEncounterFormNotPrioritized(
-					encounterId, formName);
-			
-			// void obs from previous scan
-			ObsService obsService = Context.getObsService();
-			for (Statistics currStat : stats)
-			{
-				Integer obsId = currStat.getObsvId();
-				Obs obs = obsService.getObs(obsId);
-				obsService.voidObs(obs, "voided due to rescan");
-			}
-			
-			//void BMICentile, HCCentile, HtCentile, WtCentile, and	BP
-			voidObsForConcept("BMICentile",encounterId);
-			voidObsForConcept("HCCentile",encounterId);
-			voidObsForConcept("HtCentile",encounterId);
-			voidObsForConcept("WtCentile",encounterId);
-			voidObsForConcept("BP",encounterId);
-			
 			//make sure the processAction from the super
 			//class does not void any Obs since we already
 			//voided them

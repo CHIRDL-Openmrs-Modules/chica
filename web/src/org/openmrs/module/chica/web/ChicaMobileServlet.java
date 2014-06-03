@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -77,7 +78,7 @@ public class ChicaMobileServlet extends HttpServlet {
 					writeTag("status", escapeXML(row.getStatus()), printWriter);
 					writeTag("sessionId", row.getSessionId(), printWriter);
 					printWriter.write("<formInstances>");
-					List<FormInstance> formInstances = row.getFormInstances();
+					HashSet<FormInstance> formInstances = row.getFormInstances();
 					if (formInstances != null) {
 						for (FormInstance formInstance : formInstances) {
 							printWriter.write("<formInstance>");

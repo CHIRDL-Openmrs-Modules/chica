@@ -5,6 +5,7 @@ package org.openmrs.module.chica.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -38,7 +39,7 @@ public class PatientRow implements Serializable
 	private Encounter encounter = null;
 	private boolean reprintStatus = false;
 	private ArrayList<String> printableJits;
-	private ArrayList<FormInstance> formInstances;
+	private HashSet<FormInstance> formInstances;
 	private boolean pwsScanned = false;
 	
 	
@@ -251,12 +252,12 @@ public class PatientRow implements Serializable
     
     public void addFormInstance(FormInstance formInstance){
     	if(this.formInstances == null){
-    		this.formInstances = new ArrayList<FormInstance>();
+    		this.formInstances = new HashSet<FormInstance>();
     	}
     	this.formInstances.add(formInstance);
     }
     
-    public ArrayList<FormInstance> getFormInstances(){
+    public HashSet<FormInstance> getFormInstances(){
     	return this.formInstances;
     }
     
