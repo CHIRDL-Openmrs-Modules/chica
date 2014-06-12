@@ -1,0 +1,114 @@
+Maintenance:
+	Title:		Tuberculosis  PPD Followup PWS Reminder;;
+	Filename:		tbppdfupws;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 15:45:19;;
+	Validation:	;;
+Library:
+	Purpose:		Provides a reminder, intended to remind clinicians when a PPD was either deferred or pending for a followup interpretation.;;
+	Explanation:	Based on AAP screening recommendations;;
+	Keywords:	PWS, TB, tuberculosis, exposure, specific;;
+	Citations:		2004 Pediatric Tuberculosis Collaborative Group Report - AAP;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+ppdq := read {PPD - QUALITATIVE from CHICA} Where it Occurred Within Past 1 Year;
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+endif
+;;
+Priority:		258;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+/***********
+Deferred := read Exist (DEFERRED)
+If (Deferred = True) then || dynamic || = "positive TB screen with a PPD test deferred on || Deferred_date ||";
+*************/
+If 'DEFERRED' is in ppdq then || dynamic || = "positive TB screen with a PPD test deferred on || ppdq_date ||";
+
+/*************
+Pending := read Exist (PENDING) 
+If (Pending = True) then || dynamic || = "PPD placed on || Pending_date ||";
+**************/
+If 'PENDING' is in ppdq then || dynamic || = "PPD placed on || ppdq_date ||";	
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+/*******
+Resolved := read Exist (POSITIVE, NEGATIVE, NOT INDICATED)
+If (Resolved = True) then conclude False;
+*******/
+If 'POSITIVE' is in ppdq then conclude False;
+If 'NEGATIVE' is in ppdq then conclude False;
+If 'NOT INDICATED' is in ppdq then conclude False;
+
+If (dynamic = True) then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "Records show that || firstname || had a || dynamic ||.";
+If  (Box5=true) then || note5 || = "I ordered an interdermal PPD test for || firstname ||.";
+/* */
+
+If  (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","SCREENING";
+endif;
+
+If  (Box3=true) then
+ CALL storeObs With "PPD - QUALITATIVE","NOT INDICATED";
+ CALL storeNote With "I confirmed a PPD was no longer indicated.","SCREENING";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "PPD - QUALITATIVE","PENDING";
+ CALL storeNote With "note5","SCREENING";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "PPD - QUALITATIVE","POSITIVE";
+ CALL storeNote With "I confirmed that a recent PPD was positive.","SCREENING";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "PPD - QUALITATIVE","NEGATIVE";
+ CALL storeNote With "I confirmed that a recent PPD was negative.","SCREENING";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "PPD - QUALITATIVE","DEFERRED";
+ CALL storeNote With "The interdermal PPD test was not placed at this time.","SCREENING";
+endif;
+
+
+endif
+;;
+Action:
+write ("**|| firstname || had a || dynamic || **:  Follow this up today!");
+write ("PPD result ->");
+write ("Positive");
+write ("PPD no longer indicated");
+write ("Negative");
+write ("PPD placed");
+write ("PPD deferred/refused");
+;;
+Age_Min: 11 months;;
+Age_Max: 13 years;;
+end:

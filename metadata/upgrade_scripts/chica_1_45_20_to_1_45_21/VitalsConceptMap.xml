@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map category="Vitals">
+	<concepts><CHICA>HEIGHT</CHICA><RMRS>HEIGHT PEDS</RMRS></concepts>
+	<concepts><CHICA>WEIGHT</CHICA><RMRS>WEIGHT PEDS</RMRS></concepts>
+	<concepts><CHICA>BMI CHICA</CHICA><RMRS>BMI</RMRS></concepts>
+	<concepts><CHICA>HTCENTILE</CHICA><RMRS>HEIGHT %ILE</RMRS></concepts>
+	<concepts><CHICA>WTCENTILE</CHICA><RMRS>WT %ILE</RMRS></concepts>
+	<concepts><CHICA>TEMPERATURE CHICA</CHICA><RMRS>TEMP</RMRS></concepts>
+	<concepts><CHICA>HC</CHICA><RMRS>HEAD CIRCUMF</RMRS></concepts>
+	<concepts><CHICA>SYSTOLIC_BP</CHICA><RMRS>SYS BP SITTING</RMRS></concepts>
+	<concepts><CHICA>DIASTOLIC_BP</CHICA><RMRS>DIAS BP SITTING</RMRS></concepts>
+	<concepts><CHICA>PULSE CHICA</CHICA><RMRS>PULSE</RMRS></concepts>
+	<concepts><CHICA>PULSE CHICA</CHICA><RMRS>PULSE</RMRS></concepts>
+	<concepts><CHICA>HCCENTILE</CHICA><RMRS>HEAD CIRC %ILE</RMRS></concepts>
+	<concepts><CHICA>RR CHICA</CHICA><RMRS>RR</RMRS></concepts>
+	<concepts><CHICA>VISIONL</CHICA><RMRS>ACUITY L FAR 20/</RMRS></concepts>
+	<concepts><CHICA>VISIONR</CHICA><RMRS>ACUITY R FAR 20/</RMRS></concepts>
+	<concepts><CHICA>PAIN QUALITATIVE CAREWEB</CHICA><RMRS>Pain Scale (0-10)</RMRS></concepts>
+    <concepts><CHICA>MEDICATION ALLERGIES CAREWEB</CHICA><RMRS>ALLERGY HX</RMRS></concepts>
+</map>	
+	

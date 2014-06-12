@@ -1,0 +1,104 @@
+Maintenance:
+ Title: Research DevScreen Routine month ASQ;;
+ Filename: R_DevScreenRoutinemosASQPSF;;
+ Version: 1.0;;
+ Institution: Indiana University School of Medicine;;
+ Author: Aaron Carroll;;
+ Specialist: Pediatrics;;
+ Date: 2010-06-10T01:30:00-0400;;
+ Validation: ;;
+Library:
+ Purpose: Patients at 9, 18, and 30 months should all get an ASQ;;
+ Explanation:        AAP guidelines                                                                                                                                                                                                                                                                                                                                                                            ;;
+ Keywords: Development Screening ASQ;;
+ Citations: ;;
+ Links: ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+devStatus := read {CHICA_DevScreen_Status from CHICA} ;  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+ASQDone8:= read exist {ASQ8MonthAssessment from CHICA}; 
+ASQDone9:= read exist {ASQ9MonthAssessment from CHICA}; 
+ASQDone10:= read exist {ASQ10MonthAssessment from CHICA}; 
+ASQDone18:= read exist {ASQ18MonthAssessment from CHICA};   
+ASQDone20:= read exist {ASQ20MonthAssessment from CHICA}; 
+ASQDone24:= read exist {ASQ24MonthAssessment from CHICA}; 
+ASQDone27:= read exist {ASQ27MonthAssessment from CHICA};    
+ASQDone30:= read exist {ASQ30MonthAssessment from CHICA}; 
+ASQDone33:= read exist {ASQ33MonthAssessment from CHICA}; 
+ASQDone36:= read exist {ASQ36MonthAssessment from CHICA};    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority: 1;;
+ Evoke: ;;
+
+Logic:
+
+If (mode = PRODUCE) then
+
+asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
+
+If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
+If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+/** Confirmed developmental delay **/
+If ('Delayed' is in devStatus) then conclude False;
+
+/** ASQ was already completed for this age range **/
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND ('ASQ_9m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND ('ASQ_8m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND ('ASQ_10m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND ('ASQ_18m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND ('ASQ_20m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_24m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_27m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_30m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_33m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_36m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND (ASQDone9 = True) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND (ASQDone8 = True) then conclude False;
+If (AgeInMonths >= 8) and (AgeInMonths < 11) AND (ASQDone10 = True) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND (ASQDone18 = True) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) AND (ASQDone20 = True) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone24 = True) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone27 = True) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone30 = True) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone33 = True) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone36 = True) then conclude False;
+
+
+/** Make sure the child is in the age range for a routine ASQ **/
+If (AgeInMonths >= 8) and (AgeInMonths < 11) then conclude True;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) then conclude True;
+
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+;;
+Action:
+call CHOOSE_ASQ_JIT;
+write ("Please fill out the attached form about || firstname ||'s development.");
+write ("Por favor llene el formulario adherido acerca del desarrollo de || firstname ||.") At Spanish;                                                                                                                                                                                                                                                                            
+;;
+Age_Min: 9          months     ;;
+Age_Max: 39         months     ;;
+end:
+}
+ 

@@ -1,0 +1,37 @@
+* export the patient table from chica1.0 to a comma delimited file called chica1_patient.csv. Similarly, export the chica1.0 patient_obsv table to chica1_patient_obsv.csv, the chica1.0 appointments table to chica1_appointments.csv, the chica1.0 obsv_dictionary table to chica1_obsv_dictionary.csv, and the chica1.0 vitals_obsv_dictionary table to vitals_obsv_dictionary.csv. Make sure to export WITHOUT column names.
+
+* edit the file paths in loader.sql to point to the correct file paths for the csv files.
+
+* run the following to import the csv files into the openmrs tables that contain the chica1.0 data (chica1_appointments, chica1_patient, chica1_patient_obsv, chica1_obsv_dictionary):
+
+open a mysql prompt
+enter the root password
+type "use openmrs;"
+type "source loader.sql;"
+
+You might receive warnings about duplicates. Just ignore these.
+
+* to load the chica1.0 information into chica2.0, do the following:
+
+- login to openmrs
+- Go to the Administration tab
+- Click on Load old obs
+- Enter an optional start and end date for the load. If the dates are empty, all obs will be loaded.
+- Click on Load Obs
+- It will take quite awhile for this to run (3+ hours). There are flags in the chica1_* tables that mark which patients, obs, appointments have already been loaded so they will not be loaded again.
+- After the load is finished, you can check each chica_* table to see which obs were loaded. There is an id called openmrs_obs_id, etc that will have the id of the actual openmrs table row that was created.
+- Run the following query to monitor the encounters created by load obs:
+
+select * from encounter 
+where  provider_id=(select user_id from users where username='.Other')
+order by date_created desc
+
+- Run the following queries to monitor the chica1_* tables. These queries will show you the rows from the tables that haven't been loaded:
+
+select * from chica1_appointments where openmrs_encounter_id is null and skip_load_reason is null
+
+select * from chica1_patient where openmrs_patient_id is null and skip_load_reason is null
+
+select * from chica1_patient_obsv where openmrs_obs_id is null and skip_load_reason is null
+and obsv_source not in ('PWS ID: 24382') and obsv_source not in ('Corrected-Asthma-Study')
+order by date_stamp

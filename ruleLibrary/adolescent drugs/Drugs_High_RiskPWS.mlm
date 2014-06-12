@@ -1,0 +1,98 @@
+Maintenance:
+	Title:		Drug Abuse  Drugs High Risk PWS;;
+	Filename:		Drugs_High_RiskPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-06-17T04:03:08-0400;;
+	Validation:	;;
+Library:
+	Purpose:		High risk PWS for drug use.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	Most adolescents will use alcohol or other drugs before age 21.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	GAPS, adolescent, drugs, alcohol, PWS;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+drugs := read Last {uses_drugs from CHICA} Where it Occurred Within Past 330 Days;
+OTC := read Last {abuse_OTC from CHICA} Where it Occurred Within Past 330 Days;
+friends := read Last {friends_use_drugs from CHICA} Where it Occurred Within Past 330 Days;
+endif
+
+If (mode = PRODUCE) then                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+location:= read {location from Parameters}; 
+endif
+;;
+Priority:		213;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If (drugs = yes) then || RF1 || = " has admitted to using drugs, ";
+If (OTC = yes) then || RF2 || = " has abused OTC drugs, ";
+If (friends= yes) then || RF3 || = " has friends with a substance abuse problem, ";
+endif
+
+If (mode = PRODUCE) then
+
+If (drugs = yes) OR (OTC = yes) then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then || description || = "Because || firstname || indicated the following risks for drug abuse: || RF1 |||| RF2 |||| RF3 || by report. I assessed for drug abuse.";
+If  (Box2=true) then || note2 || = "I counseled || firstname || about alcohol abuse.";
+If  (Box4=true) then || note4 || = "I gave || firstname || the alcohol abuse crisis line number: 630-7791.";
+If  (Box5=true) then || note5 || = "I am not concerned that || firstname || is abusing alcohol.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then
+ CALL storeNote With "description","PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "My level of concern for alcohol abuse was low.","PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "note2","PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "My level of concern for alcohol abuse was moderate to high.","PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "note4","PSYCHOSOCIAL";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "note5","PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname || is at high risk for drug abuse, due to the following risk factors:  || firstname |||| RF1 |||| RF2 |||| RF3 || Counsel them appropriately, and please address the following:");                                                                                                     
+write ("Mild concern ->");
+write ("Appropriate counseling");
+write ("Moderate concern ->");
+write ("Crisis line 630-7791");
+write ("No concern for now");
+write ("");
+;;
+Age_Min: 11 years;;
+Age_Max: 21 years;;
+end:
+

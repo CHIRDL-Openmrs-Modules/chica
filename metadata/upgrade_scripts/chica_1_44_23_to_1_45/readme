@@ -1,0 +1,10 @@
+* run mkdir.bat
+
+* load new PSF and PWS form design
+  - load new xml
+  - run form update scripts
+  - fill in new metadata
+
+* run chica_1_44_23_to_1_45.sql
+
+* run form_attribute_value_update.sql
