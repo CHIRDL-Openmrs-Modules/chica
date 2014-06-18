@@ -837,7 +837,7 @@
                 </div>
             </div>
         </div>
-        <div class="ui-grid-a" style="padding-bottom: 20px;">
+        <div class="ui-grid-a" style="padding-bottom: 0px;">
             <div class="ui-block-a" style="width: 42%">
               <div class="ui-grid-c">
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
@@ -954,7 +954,7 @@
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
                       <strong><span style="line-height: 50px;">Pulse Ox:</span></strong>
                   </div>
-                  <div class="ui-block-b" style="height: 50px;margin-bottom: 10px;">
+                  <div class="ui-block-b" style="height: 50px;margin-bottom: 8px;">
                       <span style="line-height: 50px;"><input type="number" id="PulseOx" name="PulseOx"/></span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;padding-left:10px;">
@@ -976,10 +976,10 @@
                   <div class="ui-block-c" style="height: 50px;margin-bottom: 20px;">
                       <span><input type="checkbox" id="NoBP" name="NoBP" value="Y" style="vertical-align: top; margin: 0px;"/><label for="NoBP">BP</label></span>
                   </div>
-                  <div class="ui-block-a" style="text-align: center;width: 15%"></div>
-                  <div class="ui-block-b" style="height: 50px;text-align: center;width: 70%;">
+                  <div class="ui-block-a" style="text-align: center;width: 5%"></div>
+                  <div class="ui-block-b" style="height: 50px;text-align: center;width: 85%;">
                       <div class="ui-grid-a" style="text-align: center;">
-                        <div class="ui-block-a" style="height: 50px;text-align: right;width: 40%;">
+                        <div class="ui-block-a" style="height: 50px;text-align: right;width: 50%;">
                             <c:choose>
                               <c:when test="${VisionL_HL != null }">
                                 <strong><span style="line-height: 50px;"><c:out value="${VisionL_HL}"/>&nbsp;Vision Left: 20/</span></strong>
@@ -989,16 +989,16 @@
                               </c:otherwise>
                             </c:choose>
                         </div>
-                        <div class="ui-block-b" style="height: 50px;width: 60%;padding-left: 10px;margin-bottom: 10px;">
+                        <div class="ui-block-b" style="height: 50px;width: 50%;padding-left: 10px;margin-bottom: 10px;">
                             <span><input type="number" id="VisionL" name="VisionL"/></span>
                         </div>
                       </div>
                   </div>
-                  <div class="ui-block-c" style="text-align: center;height: 50px;width: 15%"></div>
-                  <div class="ui-block-a" style="text-align: center;width: 15%"></div>
-                  <div class="ui-block-b" style="height: 50px;text-align: center;width: 70%;">
+                  <div class="ui-block-c" style="text-align: center;height: 50px;width: 5%"></div>
+                  <div class="ui-block-a" style="text-align: center;width: 5%"></div>
+                  <div class="ui-block-b" style="height: 50px;text-align: center;width: 85%;">
                       <div class="ui-grid-a" style="text-align: center;">
-                        <div class="ui-block-a" style="height: 50px;text-align: right;width: 40%;">
+                        <div class="ui-block-a" style="height: 50px;text-align: right;width: 50%;">
                             <c:choose>
                               <c:when test="${VisionR_HL != null }">
                                 <strong><span style="line-height: 50px;"><c:out value="${VisionR_HL}"/>&nbsp;Vision Right: 20/</span></strong>
@@ -1008,12 +1008,12 @@
                               </c:otherwise>
                             </c:choose>
                         </div>
-                        <div class="ui-block-b" style="height: 50px;width: 60%;padding-left: 10px;margin-bottom: 10px;">
+                        <div class="ui-block-b" style="height: 50px;width: 50%;padding-left: 10px;margin-bottom: 10px;">
                             <span><input type="number" id="VisionR" name="VisionR"/></span>
                         </div>
                       </div>
                   </div>
-                  <div class="ui-block-c" style="text-align: center;height: 50px;width: 15%"></div>
+                  <div class="ui-block-c" style="text-align: center;height: 50px;width: 10%"></div>
                   <div class="ui-block-a" style="text-align: center;height: 50px;margin-bottom: 20px;width: 20%"></div>
                   <div class="ui-block-b" style="text-align: center;height: 50px;margin-bottom: 20px;width: 60%">
                       <span><input type="checkbox" id="Vision_Corrected" name="Vision_Corrected" value="Y" style="vertical-align: top; margin: 0px;"/><label for="Vision_Corrected">Vision Corrected?</label></span>
@@ -1067,11 +1067,17 @@
                           </div>
                       </div>
                   </div>
+				  <div class="ui-block-a" style="text-align: center;height: 25px;margin-bottom: 0px;width: 14%"></div>
+				  <div class="ui-block-b" style="text-align: center;height: 25px;margin-bottom: 0px;width: 86%"></div>
+				  <div class="ui-block-a" style="text-align: center;height: 90px;margin-bottom: 0px;width: 14%"></div>
+				  <div class="ui-block-b" style="text-align: center;height: 90px;margin-bottom: 0px;width: 86%;">
+                      <span><input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" style="vertical-align: top; margin: 0px;"/><label for="Handout_Reviewed_by_MA">Reviewed &#34;Diet and Exercise&#34; handout with family<label></span>
+                  </div>
                </div>
             </div>
         </div>
         <div class="ui-grid-a">
-            <div class="ui-block-a">
+			<div class="ui-block-a">
                 <input type="checkbox" id="SickVisit" name="SickVisit" value="Y"/><label for="SickVisit">Sick Visit</label>
             </div>
             <div class="ui-block-b">
@@ -1142,7 +1148,7 @@
         </div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a data-theme="b" data-rol="button" onclick="finishVitals()" rel="external" data-ajax="false" style="width: 150px;">Submit</a>
+        <a data-theme="b" data-role="button" onclick="finishVitals()" rel="external" data-ajax="false" style="width: 150px;">Submit</a>
     </div>
 </div>
 <input id="formInstances" name="formInstances" type="hidden" value="${formInstances }"/>

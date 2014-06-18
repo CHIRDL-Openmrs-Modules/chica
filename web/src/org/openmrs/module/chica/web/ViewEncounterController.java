@@ -139,7 +139,8 @@ public class ViewEncounterController extends SimpleFormController {
 				
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
 						formName.equals("MCHAT")|| formName.equals("ADHD PFU")|| formName.equals("ADHD PSFU") || 
-						formName.equals("ParentSummaryReport")) {
+						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule_7_or_older") ||
+								formName.equals("ImmunizationSchedule")) {
 					leftImageLocationId = locationId;
 					leftImageFormId = formId;
 					leftImageFormInstanceId = formInstanceId;
@@ -170,6 +171,18 @@ public class ViewEncounterController extends SimpleFormController {
 					if (formName.equals("TeacherSummaryReport")) {
 						leftNames.add("ParentSummaryReport");
 						leftImageStylesheet = "parentSummaryReport.xsl";
+						displayMergeForms = true;
+					}
+					
+					if (formName.equals("ImmunizationSchedule")) {
+						leftNames.add("ImmunizationSchedule");
+						leftImageStylesheet = "ImmunizationSchedule.xsl";
+						displayMergeForms = true;
+					}
+					
+					if (formName.equals("ImmunizationSchedule_7_or_older")) {
+						leftNames.add("ImmunizationSchedule_7_or_older");
+						leftImageStylesheet = "ImmunizationSchedule_7_or_older.xsl";
 						displayMergeForms = true;
 					}
 					
@@ -211,7 +224,8 @@ public class ViewEncounterController extends SimpleFormController {
 				Integer rightImageFormInstanceId = null;
 				
 				//don't set a right image for MCHAT
-				if (!formName.equals("MCHAT")) {
+				if (!formName.equals("MCHAT") && !formName.equals("ImmunizationSchedule_7_or_older")
+						&& !formName.equals("ImmunizationSchedule")) {
 					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || 
 							formName.equals("TeacherSummaryReport")) {
 						rightImageLocationId = locationId;
@@ -357,6 +371,8 @@ public class ViewEncounterController extends SimpleFormController {
 			formsToProcess.add("ADHD PSFU");
 			formsToProcess.add("ParentSummaryReport");
 			formsToProcess.add("TeacherSummaryReport");
+			formsToProcess.add("ImmunizationSchedule");
+			formsToProcess.add("ImmunizationSchedule_7_or_older");
 			
 			String firstName = null;
 			String lastName = null;

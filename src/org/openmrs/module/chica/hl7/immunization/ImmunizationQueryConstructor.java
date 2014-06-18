@@ -775,6 +775,9 @@ public class ImmunizationQueryConstructor extends
 		String checkDigitScheme = props.getProperty("check_digit_algorithm");
 		String assignAuthority = props.getProperty("assigning_authority");
 		String identifierTypeCode = props.getProperty("identifier_type");
+		String identifierTypeCodeRegistry = "SR";
+		String assignAuthorityRegistry = "";
+		String identifierStringRegistry = "";
 		
 		Patient patient = patientService.getPatient(patientId);
 
@@ -797,29 +800,24 @@ public class ImmunizationQueryConstructor extends
 			pid.getPatientName(0).getGivenName().setValue(patient.getGivenName());
 
 			// Identifiers
-			PatientIdentifier pi = patient
+			PatientIdentifier piRegistry = patient
 					.getPatientIdentifier("Immunization Registry");
-			if (pi != null && pi.getIdentifier() != null) {
-				assignAuthority = "";
-				identifierTypeCode = "SR";
-			} else {
-				pi = patient.getPatientIdentifier("MRN_OTHER");
-			}
-
-			if (pi != null) {
+			PatientIdentifier piMRN = patient.getPatientIdentifier("MRN_OTHER");
+		
+			if (piMRN != null) {
 				// Identifier PID-2 not required
 				if (pid2Required != null && Boolean.valueOf(pid2Required)) {
-					String assignAuthFromIdentifierType = getAssigningAuthorityFromPatientIDType(pi);
+					String assignAuthFromIdentifierType = getAssigningAuthorityFromPatientIDType(piMRN);
 					String addon = "-" + assignAuthFromIdentifierType;
 					pid.getPatientID().getID().setValue(
-							pi.getIdentifier() + addon);
+							piMRN.getIdentifier() + addon);
 				}
 			}
 
 			// Identifier PID-3
 			// MRN
-			if (pi != null) {
-				String identString = pi.getIdentifier();
+			if (piMRN != null) {
+				String identString = piMRN.getIdentifier();
 				if (identString != null) {
 					Integer dash = identString.indexOf("-");
 					if (dash >= 0) {
@@ -827,16 +825,27 @@ public class ImmunizationQueryConstructor extends
 								+ identString.substring(dash + 1);
 					}
 				}
+				
 				pid.getPatientIdentifierList(0).getID().setValue(identString);
 				pid.getPatientIdentifierList(0)
 						.getCodeIdentifyingTheCheckDigitSchemeEmployed()
 						.setValue(checkDigitScheme);
 			}
-
+			
+	
 			pid.getPatientIdentifierList(0).getAssigningAuthority()
 					.getNamespaceID().setValue(assignAuthority);
 			pid.getPatientIdentifierList(0).getIdentifierTypeCode().setValue(
 					identifierTypeCode);
+			
+			if (piRegistry != null ){
+				identifierStringRegistry = piRegistry.getIdentifier();
+				pid.getPatientIdentifierList(1).getID().setValue(identifierStringRegistry);
+				pid.getPatientIdentifierList(1).getIdentifierTypeCode().setValue(
+						identifierTypeCodeRegistry);
+				pid.getPatientIdentifierList(1).getAssigningAuthority()
+				.getNamespaceID().setValue(assignAuthorityRegistry);
+			}
 
 			// Address
 			pid.getPatientAddress(0).getStreetAddress().setValue(
