@@ -1,0 +1,60 @@
+Maintenance:
+    Title:      Speaking Language PWS;;
+    Filename:       Speaking_Language_PWS;;
+    Version:    1.0;;
+    Institution:    Indiana University School of Medicine;;
+    Author:     Steve McKee;;
+    Specialist: Pediatrics;;
+    Date:       2011-12-07T09:31:23-0500;;
+    Validation: ;;
+Library:
+    Purpose:        Assess patient speaking language;;
+    Explanation:    ;;
+    Keywords:   PWS, language;;
+    Citations:      ;;
+    Links:      ;;
+Knowledge:
+    Type:       data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+PreferredLanguage := read last {preferred_language};
+endif
+;;
+Priority:   ;;
+    Evoke:      ;;
+Logic:
+If (mode = PRODUCE) then
+
+If (PreferredLanguage = "Spanish") then 
+  || Language_Text || = "**Spanish Speaking**";
+Else 
+  || Language_Text || = "";
+endif;
+
+Conclude True;
+
+endif
+
+;;
+Action:
+write ("|| Language_Text ||")  At Language;
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 21 years;;
+end:

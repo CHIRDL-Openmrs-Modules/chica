@@ -1,0 +1,72 @@
+Maintenance:
+	Title:		Injury  Drowning 6m18m PWS;;
+	Filename:		Injury_Drowning_6m_to_18mPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-18T01:32:46-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advises clinicians on how to administer age-appropriate advice on drowning prevention to parents.                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Explanation:	The AAP has a number of recommendations to prevent drowning in children.                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	injury, drowning, PWS;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=12897306&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+empty := read Last {empty_container_after_use from CHICA} Where it Occurred Within Past 6 Months;alone := read Last {left_alone_in_water from CHICA} Where it Occurred Within Past 6 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority:		754;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (empty = yes) AND (alone = no) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box3=true) then
+ CALL storeNote With "I reviewed with the parent how to prevent drowning in children.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I advised the parent to empty tubs, buckets or other large containers of liquid after use.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "I advised the parent to NEVER leave a child unattended in or near water.","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+
+;;
+Action:
+call CREATE_JIT with "WATER_SAFETY_JIT";
+write ("The AAP has age-specific recommendations for the prevention of drowning in children.  Please review the following, and check those you review:");                                                                                                                                                   
+write ("Empty tubs/container after use");
+write ("");
+write ("NEVER leave kid in/near water");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 6 months;;
+Age_Max: 18 months;;
+end:

@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Injury  Burns Smoke Detector Rings PSF;;
+	Filename:		Injury_Burns_Smoke_Detector_RingsPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-12T04:31:01-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the child knows what to do if the smoke alarm rings.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	The AAP states that preschool-aged children (3 years and older) can begin to learn what to do in case of a fire. Parents should teach children that the sound of a smoke alarm means go outside immediately, meet at a designated place and do not hide from firefighters.                                                                                                                                                                                                                                          ;;
+	Keywords:	injury, burns, alarm, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=10835082&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+alarm := read Last {smoke_alarm_knows_what_to_do from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority:		502;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (alarm = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "smoke_alarm_knows_what_to_do","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "smoke_alarm_knows_what_to_do","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || know what to do if the smoke alarm rings?");
+write("¿Sabe || firstname || que hacer si suena la alarma de fuego?") At Spanish;                                                                                                                                                
+;;
+Age_Min: 3 years;;
+Age_Max: 12 years;;
+end:

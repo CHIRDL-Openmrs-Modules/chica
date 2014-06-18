@@ -1,0 +1,53 @@
+Maintenance:
+	Title:		Vision  Left Monocular Abnormality PWS Vitals Flag (521 yo);;
+	Filename:		VISPWSVFLMONO6TO21;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T09:53:25-0500;;
+	Validation:	;;
+Library:
+	Purpose:		The following rule will flag the corresponding vision screen as being abnormal.                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	According to the AAP visual screening policy statement, referrals are recommended for all children 5-21 who show a greater than 20/30 deficit monocularly.                                                                                                                                                                                                                                                                                                                                                          ;;
+	Keywords:	PWS, vision, vitalflag;;
+	Citations:		Eye examination in infants, children, and young ad;;
+	Links:		http://www.aap.org/policy/s0208.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+visionl := read Last {VisionL from CHICA} Where it Occurred Within Past 7 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (visionl > 30) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+;;
+Action:
+write ("*") At VisionLA;                                                                                                                                                                                                                                                                                    
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 5 years;;
+Age_Max: 21 years;;
+end:

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+ <hibernate-mapping auto-import="false">
+    <subclass name="org.openmrs.module.chica.hibernateBeans.Encounter" 
+    extends="org.openmrs.Encounter" discriminator-value="not null">
+          <property name="scheduledTime" type="java.util.Date"
+           		column="scheduled_datetime"/>
+           <property name="insuranceSmsCode" type="java.lang.String"
+           		column="insurance_sms_code"/>
+           <property name="printerLocation" type="java.lang.String"
+          		 column="printer_location"/>
+           <property name="insuranceCarrierCode" type="java.lang.String"
+           		column="insurance_carrier_code"/>
+           <property name="insurancePlanCode" type="java.lang.String"
+           		column="insurance_plan_code"/>
+     </subclass>
+ </hibernate-mapping>

@@ -1,0 +1,112 @@
+Maintenance:
+	Title:		ScoreASQ12month;;
+	Filename:		ScoreASQ12month;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ASQ;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+If (mode = CONSUME) then
+
+checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
+scoreJit := CALL ScoreJit;
+
+ASQ12CommunicationSubscore := read Last {ASQ12CommunicationSubscore} Where it Occurred Within Past 1 Day;
+ASQ12GrossmotorSubscore := read Last {ASQ12GrossmotorSubscore} Where it Occurred Within Past 1 Day;
+ASQ12FinemotorSubscore := read Last {ASQ12FinemotorSubscore} Where it Occurred Within Past 1 Day;
+ASQ12ProblemsolvingSubscore := read Last {ASQ12ProblemsolvingSubscore} Where it Occurred Within Past 1 Day;
+ASQ12PersonalsocialSubscore := read Last {ASQ12PersonalsocialSubscore} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+
+If (mode = CONSUME) then
+
+/* don't do anything if all the scores don't exist */
+If (ASQ12CommunicationSubscore = NULL) then 
+call CREATE_JIT with "FormIncompleteASQ";
+conclude false;
+endif;
+
+If  (ASQ12CommunicationSubscore <= 15.64) then
+ CALL storeObs With "ASQ12MonthAssessment","Communication_Delay";
+endif;
+If (ASQ12CommunicationSubscore>15.64) AND (ASQ12CommunicationSubscore<=30.00) then
+ CALL storeObs With "ASQ12MonthAssessment","Communication_Monitor";
+endif;
+If  (ASQ12CommunicationSubscore>30.00) then
+ CALL storeObs With "ASQ12MonthAssessment","Communication_Normal";
+endif;
+
+If  (ASQ12GrossmotorSubscore <= 21.49) then
+ CALL storeObs With "ASQ12MonthAssessment","Grossmotor_Delay";
+endif;
+If (ASQ12GrossmotorSubscore>21.49) AND (ASQ12GrossmotorSubscore<=35.71) then
+ CALL storeObs With "ASQ12MonthAssessment","Grossmotor_Monitor";
+endif;
+If  (ASQ12GrossmotorSubscore > 35.71) then
+ CALL storeObs With "ASQ12MonthAssessment","Grossmotor_Normal";
+endif;
+
+If  (ASQ12FinemotorSubscore <= 34.50) then
+ CALL storeObs With "ASQ12MonthAssessment","Finemotor_Delay";
+endif;
+If (ASQ12FinemotorSubscore>34.50) AND (ASQ12FinemotorSubscore<=43.36) then
+ CALL storeObs With "ASQ12MonthAssessment","Finemotor_Monitor"; 
+endif;
+If  (ASQ12FinemotorSubscore > 43.36) then
+ CALL storeObs With "ASQ12MonthAssessment","Finemotor_Normal";
+endif;
+
+If  (ASQ12ProblemsolvingSubscore <= 27.32) then
+ CALL storeObs With "ASQ12MonthAssessment","Problemsolving_Delay";
+endif;
+If (ASQ12ProblemsolvingSubscore>27.32) AND (ASQ12ProblemsolvingSubscore<=38.16) then
+ CALL storeObs With "ASQ12MonthAssessment","Problemsolving_Monitor"; 
+endif;
+If  (ASQ12ProblemsolvingSubscore > 38.16) then
+ CALL storeObs With "ASQ12MonthAssessment","Problemsolving_Normal";
+endif;
+
+If  (ASQ12PersonalsocialSubscore <= 21.73) then
+ CALL storeObs With "ASQ12MonthAssessment","Personalsocial_Delay";
+endif;
+If (ASQ12PersonalsocialSubscore>21.73) AND (ASQ12PersonalsocialSubscore<=33.73) then
+ CALL storeObs With "ASQ12MonthAssessment","Personalsocial_Monitor";
+endif;
+If  (ASQ12PersonalsocialSubscore > 33.73) then
+ CALL storeObs With "ASQ12MonthAssessment","Personalsocial_Normal";
+endif;
+
+call CREATE_JIT with "SummaryReportASQ";
+
+endif
+
+;;
+Action:
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

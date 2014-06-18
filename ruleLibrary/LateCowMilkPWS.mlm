@@ -1,0 +1,78 @@
+Maintenance:
+	Title:		Late Cow Milk PWS;;
+	Filename:		LateCowMilkPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-23T10:23:00-0400;;
+	Validation:	;;
+Library:
+	Purpose:		PWS question to advise on the proper introduction of cow's milk to an infant's diet.                                                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Explanation:	Early cow milk introduction has been found in studies to be a sensitive indicator of increased nutritional iron deficiency.  See references for more details.                                                                                                                                                                                                                                                                                                                                                       ;;
+	Keywords:	cow milk, nutrition, infant, PWS;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/earlycowmilk.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+ecm := read Last {EarlyCowMilkIntro from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		934;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (ecm = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box3=true) OR (Box5=true) then
+ CALL storeNote With "After a child is 1 year old, they should be fed whole cow's milk or breast milk.  Formula is no longer recommended.","DIET AND NUTRITION";
+endif;
+If  (Box1=true) then || note1 || = "|| firstname ||'s parent stopped giving formula.";
+If  (Box3=true) then || note3 || = "|| firstname ||'s parent is breastfeeding.";
+If  (Box5=true) then || note5 || = "|| firstname ||'s parent is giving whole cow's milk.";
+
+If  (Box3=true) then
+ CALL storeObs With "BREASTFED 0-1","1";
+ CALL storeNote With "note3","DIET AND NUTRITION";
+endif;
+If  (Box1=true) then
+ CALL storeObs With "EarlyCowMilkIntro","yes";
+ CALL storeNote With "note1","DIET AND NUTRITION";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "note5","DIET AND NUTRITION";
+endif;
+
+
+endif
+;;
+Action:
+write ("After a child is 1 year old, they should be fed whole cow's milk or breast milk.  Formula is no longer recommended.  Please assess:");                                                                                                                                                              
+write ("Stopped giving formula");
+write ("");
+write ("Breastfeeding");
+write ("");
+write ("Whole cow's milk");
+write ("");
+;;
+Age_Min: 12 months;;
+Age_Max: 2 years;;
+end:
