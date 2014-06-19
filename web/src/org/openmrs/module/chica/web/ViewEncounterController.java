@@ -139,7 +139,7 @@ public class ViewEncounterController extends SimpleFormController {
 				
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
 						formName.equals("MCHAT")|| formName.equals("ADHD PFU")|| formName.equals("ADHD PSFU") || 
-						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule_7_or_older") ||
+						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule7yrOrOlder") ||
 								formName.equals("ImmunizationSchedule")) {
 					leftImageLocationId = locationId;
 					leftImageFormId = formId;
@@ -180,9 +180,9 @@ public class ViewEncounterController extends SimpleFormController {
 						displayMergeForms = true;
 					}
 					
-					if (formName.equals("ImmunizationSchedule_7_or_older")) {
-						leftNames.add("ImmunizationSchedule_7_or_older");
-						leftImageStylesheet = "ImmunizationSchedule_7_or_older.xsl";
+					if (formName.equals("ImmunizationSchedule7yrOrOlder")) {
+						leftNames.add("ImmunizationSchedule7yrOrOlder");
+						leftImageStylesheet = "ImmunizationSchedule7yrOrOlder.xsl";
 						displayMergeForms = true;
 					}
 					
@@ -224,7 +224,7 @@ public class ViewEncounterController extends SimpleFormController {
 				Integer rightImageFormInstanceId = null;
 				
 				//don't set a right image for MCHAT
-				if (!formName.equals("MCHAT") && !formName.equals("ImmunizationSchedule_7_or_older")
+				if (!formName.equals("MCHAT") && !formName.equals("ImmunizationSchedule7yrOrOlder")
 						&& !formName.equals("ImmunizationSchedule")) {
 					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || 
 							formName.equals("TeacherSummaryReport")) {
@@ -372,7 +372,7 @@ public class ViewEncounterController extends SimpleFormController {
 			formsToProcess.add("ParentSummaryReport");
 			formsToProcess.add("TeacherSummaryReport");
 			formsToProcess.add("ImmunizationSchedule");
-			formsToProcess.add("ImmunizationSchedule_7_or_older");
+			formsToProcess.add("ImmunizationSchedule7yrOrOlder");
 			
 			String firstName = null;
 			String lastName = null;
