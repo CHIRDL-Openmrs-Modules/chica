@@ -1,0 +1,107 @@
+Maintenance:
+	Title:		Drug Abuse  Alcohol Low Risk PWS;;
+	Filename:		Alcohol_Low_RiskPWS_highlight;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-26T09:03:09-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Low risk PWS for alcohol use.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	Most adolescents will use alcohol or other drugs before age 21.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	GAPS, adolescent, drugs, alcohol, PWS;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+family := read Last {family_substance_abuse from CHICA} Where it Occurred Within Past 365 Days; 
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+location:= read {location from Parameters}; 
+drunk := read Last {drunk_last_month from CHICA} Where it Occurred Within Past 365 Days;
+activity := read Last {drunk_and_activity from CHICA} Where it Occurred Within Past 365 Days;
+driven := read Last {driven_with_drunk from CHICA} Where it Occurred Within Past 365 Days;
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If (family = yes) then || RF1 || = "They are at risk because a family member has substance abuse problem. ";
+endif
+
+If (mode = PRODUCE) then
+
+If NOT(location = "PCPS") AND NOT(location="BBPS") then conclude false;
+
+If  (VisitType = SickVisit) then conclude false;
+
+If (Gender = M) then || heshe || = "he";If (Gender = F) then || heshe || = "she";If (drunk = yes) OR (activity = yes) OR (driven = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then || description || = "|| firstname || indicated at least one risk factor alcohol abuse. || RF1 ||I screened for other risks for alcohol use.";
+If  (Box1=true) then || note1 || = "|| firstname || has been drunk in the last month.";
+If  (Box2=true) then || note2 || = "|| firstname || has engaged in risky activity (e.g. driving) while drunk. ";
+If  (Box3=true) then || note3 || = "|| firstname || has been in a car with a drunk driver.";
+If  (Box5=true) then || note5 || = "I am not concerned about || firstname || being at risk for alcohol abuse.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then
+ CALL storeNote With "description","PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true) then
+CALL storeObs With "drunk_last_month","yes";
+CALL storeNote With "note1","PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+CALL storeObs With "drunk_and_activity","yes";
+CALL storeNote With "note2","PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+CALL storeObs With "driven_with_drunk","yes";
+CALL storeNote With "note3","PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+CALL storeObs With "family_substance_abuse","yes";
+CALL storeNote With "Other family members have drinking problems.","PSYCHOSOCIAL";
+endif;
+If  (Box5=true) then
+CALL storeNote With "note5","PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+highlightResult:= call PWSHighlightRule;
+write ("Although || firstname || has given no indication that || heshe || is at high risk for alcohol abuse, it is worth asking about the use of alcohol.  || RF1 || Please ask about the following, and check the boxes if appropriate.");                                                                 
+write ("Has been drunk in last month");
+write ("Engaged in risky activity while drunk");
+write ("Been in car with drunk driver");
+write ("Family member has drinking problem");
+write ("No concerns at this time");
+write ("");
+write ("|| highlightResult ||");
+;;
+Age_Min: 11 years;;
+Age_Max: 21 years;;
+end:

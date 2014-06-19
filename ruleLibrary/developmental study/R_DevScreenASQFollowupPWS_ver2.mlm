@@ -1,0 +1,112 @@
+Maintenance:
+	Title:		R_DevScreenASQFollowupPWS                                                                         ;;
+	Filename:		R_DevScreenASQFollowupPWS_ver2                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Aaron Carroll                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2010-11-02 14:00:00;;
+	Validation:	;;
+Library:
+	Purpose:		PWS prompt to alert doc to follow-up positive ASQ.                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	Developmental Screening ASQ                                                  ;;
+	Citations:		                                                                                   ;;
+	Links:		                                            ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+
+If (mode = PRODUCE) then 
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;     
+CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;   
+devStatus:= read {CHICA_DevScreen_Status from CHICA} ;   
+CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority:		169       ;;
+	Evoke:		;;
+
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
+asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
+
+If (Gender = M) then || heshe || = "He";
+If (Gender = F) then || heshe || = "She";
+
+If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
+If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
+
+If ('Delayed' is in devStatus) OR ('Not_Delayed' is in devStatus) then conclude False;
+If (CurrentStatus = Suspect_delay) then conclude True;
+If (CurrentReferral = "FirstSteps") OR (CurrentReferral = "SchoolSystem") then conclude True;
+conclude False;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || had a concerning ASQ at a previous visit.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+CALL storeNote With "description","DEVELOPMENT";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_DevScreen_Status","Delayed";
+ CALL storeNote With "My evaluation confirms a developmental delay.","DEVELOPMENT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_DevScreen_Treatment","WrittenCarePlan";
+ CALL storeNote With "I gave them the written care plan that was printed.","DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "CHICA_DevScreen_Treatment","FamilySupportServices";
+ CALL storeNote With "I referred them to ASK 1-800-964-4746.","DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "CHICA_DevScreen_Status","Not_Delayed";
+ CALL storeNote With "My evaluation shows no developmental delay.","DEVELOPMENT";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "CHICA_DevScreen_Status","Not_Delayed";
+ CALL storeNote With "I discarded the written care plan that was printed.","DEVELOPMENT";
+endif;
+
+
+
+
+endif
+;;
+Action:
+call CREATE_JIT with "Developmental_Care_Plan";
+
+write ("|| firstname || had a concerning ASQ at a previous visit. || heshe || should have been referred for a developmental evaluation and developmental services.  Please confirm the following:");
+write ("Evaluation confirms delay-->");	
+write ("Attached care plan given");
+write("");	
+write ("Ref to ASK 1-800-964-4746");
+write ("Evaluation shows no delay-->");
+write("Discard attached care plan");
+
+;;
+Age_Min: 2          months     ;;
+Age_Max: 66         months     ;;
+end:
+

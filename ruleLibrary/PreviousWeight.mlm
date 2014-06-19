@@ -1,0 +1,44 @@
+Maintenance:
+	Title:		PreviousWeight;;
+	Filename:		PreviousWeight;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2014-02-18T08:14:00-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Pull the most recent weight prior to the one recorded at today's visit.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ADHD;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+previousWeight := call getPreviousWeight;
+previousWeightDate:= call formatDateMonthYear With "previousWeight_object";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+write ("|| previousWeight_value ||") At PrevWeight ;
+write ("|| previousWeightDate_value ||") At PrevWeightDate;
+
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

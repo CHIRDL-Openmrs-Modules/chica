@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Development  Dad/Mama NonSpecific PSF;;
+	Filename:		DEVDMNSPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-30T09:38:17-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child using the word mama or dada non-specifically.                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		14;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With  "LG_Passed","Dad/Mama Specific";
+endif;
+If  (Box2=true) then
+ CALL storeObs With  "LG_Failed","Dad/Mama Specific";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || make either 'mama' or 'dada' sounds?");
+write("¿Dice || firstname || mama o papa?") At Spanish;                                                                                                                                                                               
+;;
+Age_Min: 285 days;;
+Age_Max: 310 days;;
+end:

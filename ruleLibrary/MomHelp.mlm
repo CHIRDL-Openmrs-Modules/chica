@@ -1,0 +1,86 @@
+Maintenance:
+	Title:		Mom getting enough help;;
+	Filename:		MomHelp;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-12-17T11:50:11-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Trigger discussion of whether mom is getting enough help with a young babay                                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	Fills space on PWS for young children                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ;;
+	Keywords:	Help parent PWS noevidence;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		976;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+If (mode = CONSUME) then
+If  (Box1=true) then || note1 || = "I asked how || firstname ||'s parent was sleeping.";
+If  (Box3=true) then || note3 || = "I assessed whether || firstname ||'s parent was getting enough me time.";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "Early parenthood is stressful.  I asked if || firstname ||'s parent was getting enough help.";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+CALL storeNote With "note1","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box2=true) then
+CALL storeNote With "I asked if friends or family were pitching in.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+CALL storeNote With "note3","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box4=true) then
+CALL storeNote With "I asked if the help being received was what was expected.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+CALL storeNote With "I asked if the clinic could help.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box6=true) then
+CALL storeNote With "I arranged for a social work or home nurse referral.","ANTICIPATORY GUIDANCE";
+endif;
+
+endif
+
+
+
+;;
+Action:
+write ("Early parenthood is stressful.  Is || firstname ||'s parent getting enough help?");                                                                                                                                                                                                                 
+write ("How is parent sleeping?");
+write ("Friends or family pitching in");
+write ("Parent getting enough 'me' time?");
+write ("Is help what was expected?");
+write ("Can clinic help?  If yes----------->");
+write ("Social work/Home nurse referal");
+;;
+Age_Min: 0 days;;
+Age_Max: 4 months;;
+end:

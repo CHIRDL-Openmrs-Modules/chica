@@ -1,0 +1,47 @@
+Maintenance:
+	Title:		Hypertension  PSF Nursing Reminder Flag;;
+	Filename:		HTNPSFFLAG;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-18T01:10:25-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Reminds/notifies nurses to check blood pressure measurements.                                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	AAP recommends that blood pressures be checked annually.  However, USPTF suggests that the literature is inconclusive to suggest value in such a measurement.                                                                                                                                                                                                                                                                                                                                                       ;;
+	Keywords:	PSF, nursing;;
+	Citations:		;;
+	Links:		http://www.ahrq.gov/clinic/3rduspstf/highbloodsc/hibloodrr.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+BP := read Exist {BP from CHICA} Where it Occurred Within Past 300 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (BP = False) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+;;
+Action:
+write ("*") At BP_HL;                                                                                                                                                                                                                                                                                       
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

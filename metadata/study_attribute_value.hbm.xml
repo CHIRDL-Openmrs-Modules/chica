@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.StudyAttributeValue" table="chica_study_attribute_value">
+		
+		<id name="studyAttributeValueId" type="java.lang.Integer" column="study_attribute_value_id">
+			<generator class="native" />
+		</id>
+	
+		<property name="studyId" type="java.lang.Integer" column="study_id" />
+		<property name="studyAttributeId" type="java.lang.Integer" column="study_attribute_id" />
+		<property name="value" type="java.lang.String" column="value" />
+	</class>
+	
+</hibernate-mapping>
