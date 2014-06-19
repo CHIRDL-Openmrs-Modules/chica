@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.openmrs.module.chica;
 
 import java.util.Calendar;
