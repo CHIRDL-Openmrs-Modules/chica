@@ -1,5 +1,7 @@
 package org.openmrs.module.chica.web;
 
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
@@ -45,6 +48,7 @@ public class ForcePrintJITsController extends SimpleFormController {
 	@Override
 	protected Map referenceData(HttpServletRequest request) throws Exception {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		PatientService patientService = Context.getPatientService();
 		String patientIdString = request.getParameter("patientId");
 		String resultMessage = request.getParameter("resultMessage");
 		Integer patientId = null;
@@ -95,8 +99,11 @@ public class ForcePrintJITsController extends SimpleFormController {
 			}
 		}
 		
-		FormService formService = Context.getFormService();
 		
+		Patient patient = patientService.getPatient(patientId);
+		int age = Util.getAgeInUnits(patient.getBirthdate(), new Date(), "yo");
+		
+		FormService formService = Context.getFormService();
 		Set<FormDisplay> printableJits = new TreeSet<FormDisplay>();
 		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributesByName("forcePrintable");
 		
@@ -115,12 +122,17 @@ public class ForcePrintJITsController extends SimpleFormController {
 						formDisplay.setDisplayName(attributeValue.getValue());
 					}
 					
+					if ((form.getName().equalsIgnoreCase("ImmunizationSchedule") 
+							&&  age >= 7 )
+							|| (form.getName().equalsIgnoreCase("ImmunizationSchedule7yrOrOlder") 
+									&&  age < 7 )){
+						continue;
+					}
 					printableJits.add(formDisplay);
 				}
 			}
 		}
-		PatientService patientService = Context.getPatientService();
-		Patient patient = patientService.getPatient(patientId);
+		
 		String familyName = patient.getPersonName().getFamilyName();
 		String givenName = patient.getPersonName().getGivenName();
 		String patientName = givenName + " " + familyName;
