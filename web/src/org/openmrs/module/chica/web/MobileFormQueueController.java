@@ -307,8 +307,11 @@ public class MobileFormQueueController extends SimpleFormController {
 		
 		//rename the merge file to trigger state change
 		String newMergeFilename = defaultMergeDirectory + formInstance.toString() + ".20";
-		IOUtil.copyFile(mergeFilename, newMergeFilename);
-		IOUtil.deleteFile(mergeFilename);
+		File newFile = new File(newMergeFilename);
+		if (!newFile.exists()) {
+			IOUtil.copyFile(mergeFilename, newMergeFilename);
+			IOUtil.deleteFile(mergeFilename);
+		}
 	}
 	
 	private String getFormUrl(Integer formId) {
