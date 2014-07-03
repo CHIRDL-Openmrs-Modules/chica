@@ -1,0 +1,78 @@
+Maintenance:
+	Title:		Injury  Drowning 8y11y PWS;;
+	Filename:		Injury_Drowning_8y_to_12yPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-18T01:55:50-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advises clinicians on how to administer age-appropriate advice on drowning prevention to parents.                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Explanation:	The AAP has a number of recommendations to prevent drowning in children.                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	injury, drowning, PWS;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=12897306&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+jacket := read Last {wears_life_jacket from CHICA} Where it Occurred Within Past 2 Years;swim := read Last {knows_how_to_swim from CHICA} Where it Occurred Within Past 2 Years;unsupervised := read Last {unsupervised_near_water from CHICA} Where it Occurred Within Past 2 Years;fast := read Last {swims_fast_moving_water from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+endif
+;;
+Priority:		898;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (jacket = yes) AND (swim = yes) AND (unsupervised = no) AND (fast = no) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box5=true) then
+ CALL storeNote With "I reviewed with the parent how to prevent drowning in children.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I advised the parent to make sure that their child wears a life preserver when on a boat.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "I advised the parent to NEVER allow their child to enter fast moving water.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "I asked the parent to consider teaching their child how to swim.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I advised the parent to directly supervise their child while swimming.","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+
+;;
+Action:
+call CREATE_JIT with "WATER_SAFETY_JIT";
+write ("The AAP has age-specific recommendations for the prevention of drowning in children.  Please review the following, and check those you review:");                                                                                                                                                   
+write ("Child wears lifejacket on boat");
+write ("NEVER swim in fast moving water");
+write ("Consider teaching child to swim");
+write ("");
+write ("Supervise child while swimming");
+write ("");
+;;
+Age_Min: 8 years;;
+Age_Max: 12 years;;
+end:

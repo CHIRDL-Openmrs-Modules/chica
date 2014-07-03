@@ -1,0 +1,120 @@
+Maintenance:
+	Title:		Depression  Maternal Depression Tailored PWS_JIT                                                   ;;
+	Filename:		MDEPTLRPWS_JIT_new                                    ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Steve Downs                                     ;;
+	Specialist:	Pediatrics;;
+	Date:		2010-04-05T03:38:06-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Prompts MD to follow up positive PSF screen for maternal depression.  Recommends explaining that symptoms may suggest depression, and refer to mental health specialist.                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	This prompt is fired if parent has screened positive for anhedonia or depressive mood on PSF                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Keywords:	depression, PWS, study, maternal, mom                                                               ;;
+	Citations:		Brody DS, Hahn SR, Spitzer RL, et al, Arch Intern Med. 1998; 158:2469-75                            ;;
+	Links:		http://medicine.ucsf.edu/resources/guidelines/guide5html                                            ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+DeprElement := read Last 5 {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 365 Days;
+endif
+
+If (mode = PRODUCE) then
+Depr_Concern := read Last {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 365 Days;
+study := read Last {MatDepressionStudy_Repeat from CHICA} ;
+endif
+;;
+Priority:		203       ;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If 'Anhedonia' is in DeprElement then || prompttext || = "anhedonia";
+If 'Depressed_Mood' is in DeprElement then || prompttext || = "depressed mood";
+If 'SelfBlame' is in DeprElement then || prompttext || = "self blame";
+If 'Panicky' is in DeprElement then || prompttext || = "panic";
+If 'Anxious' is in DeprElement then || prompttext || = "anxiety";
+
+MatDepressAnhedonia:= call mostRecentResultWithAnswer With "Anhedonia","DeprElement_object";
+MatDepressMood:= call mostRecentResultWithAnswer With "Depressed_Mood","DeprElement_object";
+MatDepressSelfBlame:= call mostRecentResultWithAnswer With "SelfBlame","DeprElement_object";
+MatDepressPanicky:= call mostRecentResultWithAnswer With "Panicky","DeprElement_object";
+MatDepressAnxious:= call mostRecentResultWithAnswer With "Anxious","DeprElement_object";
+finalResult:= call mostRecentResult With "MatDepressAnhedonia_object","MatDepressMood_object",
+"MatDepressSelfBlame_object","MatDepressPanicky_object","MatDepressAnxious_object";
+endif
+
+If (mode = PRODUCE) then
+
+/*If (study = Control) or (study = PSF_Only) then conclude False; */
+If (Depr_Concern = Suspected) OR (Depr_Concern = Not_Confirmed) OR (Depr_Concern = Referred) OR (Depr_Concern = In_Treatment) then conclude False;  
+
+If 'Anhedonia' is in DeprElement or 'Depressed_Mood' is in DeprElement or 'SelfBlame' is in DeprElement or 'Panicky' is in DeprElement or 'Anxious' is in DeprElement then conclude True;
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname ||'s parent identified symptoms of || prompttext || on || finalResult_date ||.";
+If  (Box1=true) then || note1 || = "|| firstname ||'s parent may have depression.";
+If  (Box2=true) then || note2 || = "I referred || firstname ||'s parent for help.";
+If  (Box4=true) then || note4 || = "I counseled || firstname ||'s parent and gave them a handout.";
+If  (Box5=true) then || note5 || = "|| firstname ||'s parent was not depressed.";
+If  (Box6=true) then || note6 || = "|| firstname ||'s mother was not present at the visit, though.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true) OR (Box4=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Suspected";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Not_Confirmed";
+ CALL storeNote With "note5","PSYCHOSOCIAL";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "MatDepressionStudyExclusion","yes";
+ CALL storeNote With "note6","PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "Maternal_Depression_Concern","Referred";
+ CALL storeNote With "note2","PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "note4","PSYCHOSOCIAL";
+endif;
+If  (Box1=true) then
+CALL storeNote With "note1","PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+/* call MATDEPR_JIT with || prompttext ||; */
+call CREATE_JIT with "Edinburgh";  // The parameter was not being used in CHICA 1.0 Vibha 12-9-08*/
+
+write ("** ATTENTION ** || firstname ||'s parent identified symptoms of || prompttext || on || finalResult_date ||.  Symptoms of sadness, anhedonia, sleep disturbance or appetite disturbance may indicate depression.");                                                                                                                                                                                                                                                 
+write ("May have depression ---->                         ");
+write ("Referred                                          ");
+write ("                                                  ");
+write ("Counseled & gave handout                          ");
+write ("Not depressed                                     ");
+write ("Mom not present                                   ");
+;;
+Age_Min: 0          days      ;;
+Age_Max: 27         months    ;;
+end:

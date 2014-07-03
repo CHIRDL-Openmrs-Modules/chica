@@ -1,0 +1,89 @@
+Maintenance:
+	Title:		Blood Pressure Repeat Positive PWS;;
+	Filename:	BP_Repeat_Pos;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-09-02 09:28:58;;
+	Validation:	;;
+Library:
+	Purpose:	Alert MD if a second blood pressure is elevated.;;
+	Explanation:	Uses BP_Eval variable to track response to elevated BP.  If elevated BP not previously documented, asks for repeat;;
+	Keywords:	blood pressure BP hypertension;;
+	Citations:	;;
+	Links:	;;
+Knowledge:
+	Type:	data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+patientsys := read Last {Systolic_BP from CHICA} Where it Occurred Within Past 365 Days;
+patientdias := read Last {Diastolic_BP from CHICA} Where it Occurred Within Past 365 Days;
+patienthtcentile := read Last {HtCentile from CHICA} Where it Occurred Within Past 1 Days;
+BP_status := read Last {BP_Eval from CHICA} Where it Occurred Within Past 4 Years;
+endif
+;;
+Priority:		220;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+sys90bp := call LookupBPcentile with "Systolic", "90", "patienthtcentile";
+dias90bp := call LookupBPcentile with "Diastolic", "90", "patienthtcentile";
+
+If NOT (BP_status = elevated_once) then conclude False;
+If (patientsys >= sys90bp) OR (patientdias >= dias90bp) then conclude True;
+
+endif
+
+If (mode = CONSUME) then
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname ||'s BP is above the 90th %tile and was also elevated on previously.";
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description", "SCREENING";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "BP_Eval","hypertensive";
+ CALL storeNote With "I repeated the BP and it was elevated.", "SCREENING";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "I obtained a urinalysis.", "SCREENING";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I obtained electrolytes, BUN, and creatinine levels.", "SCREENING";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "BP_Eval","repeat_normal";
+ CALL storeNote With "A repeat blood pressure is normal.", "SCREENING";
+endif;
+If  (Box4=true) OR (Box2=true) then
+ CALL storeObs With "BP_Labs","pending";
+endif;
+If  (Box6=true) then
+ CALL storeNote With "I recommended a low salt diet.", "SCREENING";
+endif;
+
+endif
+;;
+Action:
+write ("|| firstname ||'s BP, || patientsys_value ||/|| patientdias_value || on || patientsys_date || is above the 90th %tile (|| sys90bp_value || / || dias90bp_value ||) and was also elevated on || BP_status_date ||.  Recheck it now.  If still high, consider:");
+write ("Recheck BP is elevated ---->");
+write ("Urinalysis");
+write ("");
+write ("Lytes, BUN, Cr");
+write ("Recheck BP is normal");
+write ("Low salt diet");
+;;
+Age_Min: 5 years;;
+Age_Max: 17 years;;
+end:

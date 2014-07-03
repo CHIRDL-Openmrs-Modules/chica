@@ -1,0 +1,74 @@
+Maintenance:
+	Title:		Lead Toxicity  Advice for Blood Leads >45;;
+	Filename:		leadabove45advice.mlm;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs, Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 15:29:06;;
+	Validation:	;;
+Library:
+	Purpose:		Advise provider how to respond when blood lead is >45 mg/dl;;
+	Explanation:	Checks LEAD LEVEL-PEDS from RMRS.  If >45, consider immediate chelation therapy, along with a repeat in 3 mos and a CBC, notify the health department and Dr. Merk / toxicology;;
+	Keywords:	lead screening PWS;;
+	Citations:		CDC guideline and IUMG-PC guidelines;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+RMRS_Lead_Level := read Last {LEAD LEVEL-PEDS from RMRS} Where it Occurred Within Past 365 Days;
+Addressed := read {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (RMRS_Lead_Level < 45) then conclude False;
+
+/******
+Addressed := read Exist (ADDRESSED)
+If (RMRS_Lead_Level >= 45) AND (Addressed = False) then conclude True;
+********/
+
+If (RMRS_Lead_Level >= 45) AND 'ADDRESSED' is in Addressed then conclude True;
+conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) AND  (Box2=true) AND  (Box3=true) AND  (Box4=true) AND  (Box5=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","ADDRESSED";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","LESS THAN 10 MG/DL";
+endif;
+
+
+endif
+;;
+Action:
+write ("** CRITICAL **:  || firstname || has a blood lead of || RMRS_Lead_Level_value ||.  For children with blood lead at this level, the following are recommended. Check what was done.");
+
+write (" Contact Dr. Merk");
+write (" Initiate chelation therapy");
+write (" Sched rpt Pb in 3 months");
+write (" Obtain a CBC");
+write (" Notify health department");
+write (" Bld Pb OK (<10 mg/dl)");
+;;
+Age_Min: 10 months;;
+Age_Max: 4 years;;
+end:

@@ -1,0 +1,241 @@
+/**
+ * 
+ */
+package org.openmrs.module.chica.hl7.mckesson;
+
+import java.util.Date;
+
+import org.openmrs.PersonName;
+import org.openmrs.module.chica.hl7.ZPV;
+import org.openmrs.module.chirdlutil.util.Util;
+
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v25.datatype.FN;
+import ca.uhn.hl7v2.model.v25.datatype.ST;
+import ca.uhn.hl7v2.model.v25.datatype.TS;
+import ca.uhn.hl7v2.model.v25.datatype.XCN;
+import ca.uhn.hl7v2.model.v25.message.ADT_A01;
+import ca.uhn.hl7v2.model.v25.message.ORU_R01;
+import ca.uhn.hl7v2.model.v25.segment.IN1;
+import ca.uhn.hl7v2.model.v25.segment.MSH;
+import ca.uhn.hl7v2.model.v25.segment.OBR;
+import ca.uhn.hl7v2.model.v25.segment.PV1;
+import ca.uhn.hl7v2.model.v25.segment.PV2;
+
+/**
+ * @author tmdugan
+ * 
+ */
+public class HL7EncounterHandler25 extends
+	org.openmrs.module.sockethl7listener.HL7EncounterHandler25
+{
+	//-----Set additional chica only encounter attributes
+	
+	public Date getAppointmentTime(Message message)
+	{
+		MSH msh = getMSH(message);
+		String sendingFacility = msh.getSendingFacility().getNamespaceID().getValue();
+		if ("ECW".equalsIgnoreCase(sendingFacility)) {
+			PV1 pv1 = getPV1(message);
+			return TranslateDate(pv1.getAdmitDateTime());
+		}
+		
+		PV2 pv2 = getPV2(message);
+		return TranslateDate(pv2.getExpectedAdmitDateTime());
+	}
+
+	public String getInsuranceCode(Message message)
+	{
+		IN1 in1 = getIN1(message);
+		return in1.getInsurancePlanID().getIdentifier().getValue();
+	}
+
+	public String getLocation(Message message)
+	{
+		PV1 pv1 = getPV1(message);
+		return pv1.getAssignedPatientLocation().getPointOfCare().getValue();
+	}
+
+	protected PV2 getPV2(Message message)
+	{
+		if (message instanceof ORU_R01)
+		{
+			return getPV2((ORU_R01) message);
+		}
+		if (message instanceof ADT_A01)
+		{
+			return getPV2((ADT_A01) message);
+		}
+		return null;
+	}
+
+	private PV2 getPV2(ORU_R01 oru)
+	{
+		return oru.getPATIENT_RESULT().getPATIENT().getVISIT().getPV2();
+	}
+
+	private PV2 getPV2(ADT_A01 adt)
+	{
+		return adt.getPV2();
+	}
+	
+	protected IN1 getIN1(Message message)
+	{
+		if (message instanceof ADT_A01)
+		{
+			return getIN1((ADT_A01) message);
+		}
+		return null;
+	}
+
+	private IN1 getIN1(ADT_A01 adt)
+	{
+		return adt.getINSURANCE().getIN1();
+	}
+	
+	//doctor name for mckesson messages separates first and last name
+	//with ^
+	@Override
+	protected PersonName getDoctorName(Message message)
+	{
+		PersonName name = new PersonName();
+		XCN doctor = null;
+		PV1 pv1 = getPV1(message);
+		try
+		{
+			doctor = pv1.getAttendingDoctor(0);
+		} catch (HL7Exception e)
+		{
+			logger.warn("Unable to parse doctor name from PV1. Message: "
+					+ e.getMessage());
+		}
+		if (doctor != null)
+		{
+			String lastName = null;
+			String firstName = null;
+
+			FN doctorFN = doctor.getFamilyName();
+
+			if (doctorFN != null)
+			{
+				ST doctorST = doctorFN.getSurname();
+
+				if (doctorST != null)
+				{
+					lastName = doctorST.getValue();
+					if (lastName != null)
+					{
+						if (lastName.startsWith("MC - "))
+						{
+							lastName = lastName.substring(5);
+						}
+					}
+				}
+			}
+
+			ST doctorGivenST = doctor.getGivenName();
+
+			if (doctorGivenST != null)
+			{
+				firstName = doctorGivenST.getValue();
+			}
+
+			name.setGivenName(firstName);
+			name.setFamilyName(lastName);
+		}
+		return name;
+	}
+	
+	//for mckesson messages, printerLocation prefixed by 'PEDS'
+	public String getPrinterLocation(Message message,String incomingMessageString)
+	{
+		ZPV zpv = new ZPV();
+		zpv.loadZPVSegment(incomingMessageString);
+		return zpv.getPrinterLocation();
+	}
+	
+	public String getInsurancePlan(Message message)
+	{
+		IN1 in1 = getIN1(message);
+		return in1.getInsurancePlanID().getIdentifier().getValue();
+	}
+	
+	public String getInsuranceName(Message message)
+	{
+		try
+		{
+			IN1 in1 = getIN1(message);
+			if(in1.getInsuranceCompanyName(0)!= null){
+				return in1.getInsuranceCompanyName(0).getOrganizationName().getValue();
+			}
+		} catch (HL7Exception e)
+		{
+			logger.error(e.getMessage());
+			logger.error(Util.getStackTrace(e));
+		}
+		return null;
+	}
+	
+	public String getInsuranceCarrier(Message message)
+	{
+		try
+		{
+			IN1 in1 = getIN1(message);
+			if(in1.getInsuranceCompanyID(0)!= null){
+				return in1.getInsuranceCompanyID(0).getIDNumber().getValue();
+			}
+		} catch (HL7Exception e)
+		{
+			logger.error(e.getMessage());
+			logger.error(Util.getStackTrace(e));
+		}
+		return null;
+	}
+	
+	public Date getEncounterDate(Message message) {
+		TS timeStamp = null;
+		Date datetime = null;
+
+		try {
+			MSH msh = getMSH(message);
+			OBR obr = getOBR(message, 0);
+			timeStamp = null;
+			String sendingFacility = msh.getSendingFacility().getNamespaceID().getValue();
+			if ("ECW".equalsIgnoreCase(sendingFacility)) {
+				if (message instanceof ORU_R01) {
+					if (obr != null)
+						timeStamp = obr.getObservationDateTime();
+				} else if ((message instanceof ADT_A01)) {
+					 if (msh != null){
+						 timeStamp = msh.getDateTimeOfMessage();
+				 	}
+				}
+			} else {
+				if (message instanceof ORU_R01) {
+					if (obr != null)
+						timeStamp = obr.getObservationDateTime();
+				} else if ((message instanceof ADT_A01)) {
+					 if (msh != null){
+						 PV1 pv1 = getPV1(message);
+						 timeStamp = pv1.getAdmitDateTime();
+				 	}
+				}
+			}
+			
+			if (timeStamp != null && timeStamp.getTime()!= null) { 
+				datetime = TranslateDate(timeStamp);
+			}else {
+				logger.error("A valid encounter date time stamp could not be " +
+						"determined from MSH segment (for ADT messages)" +
+						" or OBR segment (for ORU messages)");
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return datetime;
+
+	}
+}
