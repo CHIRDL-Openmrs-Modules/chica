@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 ww := read Exist {well_water from CHICA} Where it Occurred Within Past 2 Years;
 endif
 ;;
-Priority:		682;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
