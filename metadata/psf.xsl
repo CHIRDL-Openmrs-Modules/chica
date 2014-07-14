@@ -141,6 +141,24 @@
                                                           <td colspan="2" style="white-space: nowrap;">Two IDs
                                                               checked</td>
                                                       </tr>
+                                                      <tr>
+                                                          <td style="text-align: right;">
+                                                              <xsl:choose>
+                                                                  <xsl:when
+                                                                      test="Records/Record/Field[@id = 'Handout_Reviewed_by_MA']/Value = 'diet and exercise'">
+                                                                      <input name="Handout_Reviewed_by_MA" type="checkbox"
+                                                                          value="diet and exercise" checked="checked"
+                                                                          onclick="return false" onkeydown="return false"/>
+                                                                  </xsl:when>
+                                                                  <xsl:otherwise>
+                                                                      <input name="Handout_Reviewed_by_MA" type="checkbox"
+                                                                          value="diet and exercise" onclick="return false"
+                                                                          onkeydown="return false"/>
+                                                                  </xsl:otherwise>
+                                                              </xsl:choose>
+                                                          </td>
+                                                          <td colspan="2" style="white-space: nowrap;">Diet and Exercise Handout Given</td>
+                                                      </tr>
                                                   </tbody>
                                                   </table>
                                                       <br/>
