@@ -191,7 +191,7 @@ public class getGrowthChartFilename implements Rule {
 			for (GrowthChart growthChart : growthChartList) {
 				if (typeOfChart.equals(growthChart.getChartType())) {
 					if (gender.equals(growthChart.getGender())) {
-						if (ageInMonths >= growthChart.getAgeInMonthsMin() && ageInMonths <= growthChart.getAgeInMonthsMax()) {
+						if (ageInMonths >= growthChart.getAgeInMonthsMin() && ageInMonths < growthChart.getAgeInMonthsMax()) {
 							try {
 								PdfReader pdfReader = new PdfReader(growthChart.getFileLocation());
 								pdfFilename = IOUtil.getFilenameWithoutExtension(growthChart.getFileLocation()) + "_" + suffix + 
@@ -275,7 +275,7 @@ public class getGrowthChartFilename implements Rule {
 			Float ageInMonths = Float.parseFloat(Integer.toString(org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate,
 			    currObs.getObsDatetime(), Util.MONTH_ABBR)));
 			// Need to sort out any obs that don't fall into the age range.
-			if (growthChart.getAgeInMonthsMin() > ageInMonths || growthChart.getAgeInMonthsMax() < ageInMonths) {
+			if (growthChart.getAgeInMonthsMin() > ageInMonths || growthChart.getAgeInMonthsMax() <= ageInMonths) {
 				continue;
 			}
 			
