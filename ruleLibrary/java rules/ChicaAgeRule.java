@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openmrs.Form;
-import org.openmrs.Patient;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -28,10 +27,9 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.chirdlutil.util.Util;
 
 /**
  * 
@@ -85,10 +83,8 @@ public class ChicaAgeRule implements Rule {
 			
 			if (formName != null && formName.equalsIgnoreCase("PWS")){
 				
-				ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-				String action = "PRODUCE FORM INSTANCE";
-				PatientState patientState = chirdlUtilBackportsService.getPatientStateByFormInstanceAction(formInstance,
-				    action);
+				PatientState patientState = 
+					org.openmrs.module.atd.util.Util.getProducePatientStateByFormInstanceAction(formInstance);
 				
 				if (patientState != null) {
 					Date formPrintedTime = patientState.getStartTime();

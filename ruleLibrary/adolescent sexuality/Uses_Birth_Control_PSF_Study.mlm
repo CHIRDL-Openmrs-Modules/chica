@@ -31,7 +31,7 @@ BC := read Exist {uses_birth_control from CHICA} Where it Occurred Within Past 3
 study := read Last {SexualityStudy from CHICA} ;
 endif
 ;;
-Priority:		392;;
+Priority: 632;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

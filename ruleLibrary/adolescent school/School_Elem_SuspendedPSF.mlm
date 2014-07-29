@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 suspend := read Exist {school_suspension_this_year from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 endif
 ;;
-Priority:		317;;
+Priority: 592;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

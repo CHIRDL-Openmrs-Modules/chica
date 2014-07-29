@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 wicstatus := read Exist {WICMember from CHICA} Where it Occurred Within Past 120 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 endif
 ;;
-Priority:		231;;
+Priority: 536;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -30,7 +30,7 @@ breastfed := read Exist {BREASTFED from CHICA} Where it Occurred Within Past 30 
 breastfeeding := read Last {BREASTFED from CHICA};
 endif
 ;;
-Priority:		225;;
+Priority: 520;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

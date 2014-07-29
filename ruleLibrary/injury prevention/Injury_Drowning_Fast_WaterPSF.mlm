@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 fast := read Last {swims_fast_moving_water from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 endif
 ;;
-Priority:		952;;
+Priority: 836;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

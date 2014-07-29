@@ -29,12 +29,13 @@ If (mode = PRODUCE) then
 smoker := read Exist {any_household_members_smoke from CHICA} where it Occurred within past 18 months;
 endif
 ;;
-Priority:		130;;
+Priority: 452;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (smoker = False) then conclude True;Conclude False;
+If (smoker = False) then conclude True;
+Conclude False;
 
 endif
 

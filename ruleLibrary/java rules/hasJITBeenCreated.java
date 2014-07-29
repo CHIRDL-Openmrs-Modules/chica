@@ -14,7 +14,6 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 public class hasJITBeenCreated implements Rule {
 	
@@ -76,9 +75,8 @@ public class hasJITBeenCreated implements Rule {
 			return Result.emptyResult();
 		}
 		
-		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
-		PatientState patientState = 
-			service.getPatientStateByEncounterFormAction(encounterId, form.getFormId(), "PRODUCE FORM INSTANCE");
+		PatientState patientState = org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(
+			encounterId, form.getFormId());
 		
 		if (patientState != null) {
 			return new Result("yes");

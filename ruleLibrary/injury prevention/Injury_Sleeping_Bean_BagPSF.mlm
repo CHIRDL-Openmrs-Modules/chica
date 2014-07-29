@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 beanbag := read Last {sleeps_unsafe_soft_surface from CHICA} Where it Occurred Within Past 3 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 endif
 ;;
-Priority:		532;;
+Priority: 704;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

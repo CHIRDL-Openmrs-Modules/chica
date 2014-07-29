@@ -41,7 +41,7 @@ ASQDone36:= read exist {ASQ36MonthAssessment from CHICA};
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 endif
 ;;
-Priority: 1;;
+Priority: 16;;
  Evoke: ;;
 
 Logic:

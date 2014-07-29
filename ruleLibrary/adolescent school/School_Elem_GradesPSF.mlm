@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 grades := read Exist {grades_dropped_lately from CHICA} Where it Occurred Within Past 180 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
-Priority:		311;;
+Priority: 584;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

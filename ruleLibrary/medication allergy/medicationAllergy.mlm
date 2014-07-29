@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 allergies := read Last {MEDICATION ALLERGIES from CHICA} ;
 endif
 ;;
-Priority:		0;;
+Priority: 0;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -30,7 +30,7 @@ csp := read Exist {Car_Seat_Position_0-1 from CHICA} Where it Occurred Within Pa
 cspresult := read Last {Car_Seat_Position_0-1 from CHICA} Where it Occurred Within Past 90 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
 ;;
-Priority:		100;;
+Priority: 416;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

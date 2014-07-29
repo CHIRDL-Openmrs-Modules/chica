@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 smokerL := read Last {any_household_members_smoke from CHICA};
 endif
 ;;
-Priority:		131;;
+Priority: 456;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

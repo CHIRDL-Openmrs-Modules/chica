@@ -38,7 +38,7 @@ ASQDone36:= read exist {ASQ36MonthAssessment from CHICA};
 asqStatus:= read {CHICA_DevScreen_ASQ from CHICA} Where it Occurred Within Past 3 Months;
 endif
 ;;
-Priority:		5;;
+Priority: 52;;
 	Evoke:		;;
 Logic:
 asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";

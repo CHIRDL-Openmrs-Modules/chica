@@ -30,7 +30,7 @@ proph := read exist {sickle_cell_prophylaxis from CHICA} Where it Occurred Withi
 pws := read Last {PWSSickleCell from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 endif
 ;;
-Priority:		45;;
+Priority: 244;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -1,46 +1,29 @@
 package org.openmrs.module.chica.rule;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
-import org.openmrs.Encounter;
-import org.openmrs.Form;
-import org.openmrs.Location;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.FormService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
-import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.LogicException;
-import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
-import org.openmrs.logic.op.Operator;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.util.Util;
-import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-
-import java.util.Date;
 
 public class DDST implements Rule
 {
 	private Log log = LogFactory.getLog(this.getClass());
-	private LogicService logicService = Context.getLogicService();
 
 	/**
 	 * *
@@ -96,11 +79,8 @@ public class DDST implements Rule
 		{
 			formInstance = (FormInstance) parameters.get("formInstance");
 			String category = (String) parameters.get("param1");
-			Integer formId = formInstance.getFormId();
-			ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-			String action = "PRODUCE FORM INSTANCE";
-			PatientState patientState = chirdlUtilBackportsService
-					.getPatientStateByFormInstanceAction(formInstance, action);
+			PatientState patientState = org.openmrs.module.atd.util.Util.getProducePatientStateByFormInstanceAction(
+				formInstance);
 
 			if (patientState != null)
 			{

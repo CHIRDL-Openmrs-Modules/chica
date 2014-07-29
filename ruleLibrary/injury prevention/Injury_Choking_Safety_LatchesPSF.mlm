@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 latches := read Last {safety_latches_installed from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 endif
 ;;
-Priority:		574;;
+Priority: 724;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

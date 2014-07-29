@@ -33,7 +33,7 @@ CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};
 asqStatus:= read {CHICA_DevScreen_ASQ from CHICA} Where it Occurred Within Past 3 Months;
 endif
 ;;
-Priority:       5;;
+Priority: 56;;
     Evoke:      ;;
 Logic:
 asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";

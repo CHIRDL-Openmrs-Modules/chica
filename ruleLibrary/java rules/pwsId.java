@@ -13,7 +13,6 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 public class pwsId implements Rule
 {
@@ -67,7 +66,6 @@ public class pwsId implements Rule
 	public Result eval(LogicContext context, Integer patientId,
 			Map<String, Object> parameters) throws LogicException
 	{
-		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		if (parameters != null)
 		{
 			Integer encounterId = (Integer) parameters.get("encounterId");
@@ -84,9 +82,8 @@ public class pwsId implements Rule
 				}
 				if (formId != null)
 				{
-					PatientState patientState = chirdlUtilBackportsService
-							.getPatientStateByEncounterFormAction(encounterId,
-									formId, "PRODUCE FORM INSTANCE");
+					PatientState patientState = org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(
+						encounterId, formId);
 					if (patientState != null)
 					{
 						return new Result(String.valueOf(patientState

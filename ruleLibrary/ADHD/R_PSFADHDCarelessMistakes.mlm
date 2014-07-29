@@ -37,7 +37,7 @@ location:= read {location from Parameters};
 
 endif
 ;;
-Priority:		47;;
+Priority: 252;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -29,12 +29,15 @@ If (mode = PRODUCE) then
 gunsfriends := read Last {firearms_friends from CHICA} Where it Occurred Within Past 2 Years;
 endif
 ;;
-Priority:		550;;
+Priority: 716;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (Gender = M) then || spanishgender || = "amigos";If (Gender = F) then || spanishgender || = "amigas";If (gunsfriends = no) then conclude False;conclude True;
+If (Gender = M) then || spanishgender || = "amigos";
+If (Gender = F) then || spanishgender || = "amigas";
+If (gunsfriends = no) then conclude False;
+conclude True;
 
 endif
 

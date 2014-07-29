@@ -30,7 +30,7 @@ quit := read Exist {ready_to_quit from CHICA} Where it Occurred Within Past 365 
 quitL := read Last {ready_to_quit from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 endif
 ;;
-Priority:		718;;
+Priority: 756;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

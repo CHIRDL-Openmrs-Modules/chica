@@ -34,7 +34,7 @@ Study := read LAST {K22STUDY1};
 insurance := read Last {Insurance from CHICA} ;
 endif
 ;;
-Priority:		226;;
+Priority: 524;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

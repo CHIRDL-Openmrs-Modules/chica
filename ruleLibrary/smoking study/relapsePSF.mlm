@@ -30,7 +30,7 @@ smokerL := read Last {any_household_members_smoke from CHICA} where it Occurred 
 arm:=read last {smoking_study_arm};
 endif
 ;;
-Priority:		132;;
+Priority: 460;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

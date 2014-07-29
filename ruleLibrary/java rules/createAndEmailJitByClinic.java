@@ -158,8 +158,8 @@ public class createAndEmailJitByClinic implements Rule {
 		
 		// Find the form instance ID
 		Integer formId = form.getFormId();
-		PatientState patientState = service.getPatientStateByEncounterFormAction(encounterId, formId, 
-			"PRODUCE FORM INSTANCE");
+		PatientState patientState = org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(
+			encounterId, formId);
 		if (patientState == null) {
 			log.error("No valid patient state could be found for patient: " + patientId + ", encounter ID: " + encounterId + 
 				", form ID: " + formId + " location " + locationId + ".  No one will be emailed.");

@@ -33,7 +33,7 @@ Study := read LAST {K22STUDY1};
 Pos := read {PPD - QUALITATIVE from CHICA};
 endif
 ;;
-Priority:		261;;
+Priority: 556;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

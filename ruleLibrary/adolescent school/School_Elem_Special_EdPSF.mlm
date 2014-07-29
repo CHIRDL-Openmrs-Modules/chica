@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 special := read Exist {special_education_classes from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 endif
 ;;
-Priority:		329;;
+Priority: 600;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

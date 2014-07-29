@@ -31,7 +31,7 @@ Study := read Last {K22STUDY1};
 screen := read {IRON DEFICIENCY SCREEN - QUALITATIVE from CHICA} Where it Occurred Within Past 1 Year;
 endif
 ;;
-Priority:		742;;
+Priority: 768;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

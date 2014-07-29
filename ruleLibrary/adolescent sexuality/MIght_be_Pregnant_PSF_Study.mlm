@@ -31,7 +31,7 @@ pregnant := read Exist {might_be_pregnant from CHICA} Where it Occurred Within P
 study := read Last {SexualityStudy from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif
 ;;
-Priority:		390;;
+Priority: 624;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

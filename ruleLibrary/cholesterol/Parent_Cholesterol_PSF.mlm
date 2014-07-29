@@ -31,7 +31,7 @@ Cholesterol_Screen := read Exist {Cholesterol_Screen from CHICA} Where it Occurr
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 endif
 ;;
-Priority:		870;;
+Priority: 812;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

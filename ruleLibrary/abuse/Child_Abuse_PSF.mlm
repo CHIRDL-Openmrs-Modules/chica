@@ -31,7 +31,7 @@ Abuse_Concern_12mo := read Exist {Abuse_Concern from CHICA} Where it Occurred Wi
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 endif
 ;;
-Priority:		202       ;;
+Priority: 488;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 Depr_concern_3mo := read Exist {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 60 Days;
 endif
 ;;
-Priority:		70;;
+Priority: 360;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -112,7 +112,7 @@ public class consumeImmunizationGiven implements Rule
 		if (formInstance == null)
 		{
 			throw new LogicException(
-					"The xml datasource requires a formInstanceId");
+					"The form datasource requires a formInstanceId");
 		}
 
 
@@ -121,7 +121,7 @@ public class consumeImmunizationGiven implements Rule
 		LogicCriteria fieldNameCriteria = new LogicCriteriaImpl(fieldName);
 		formIdCriteria = formIdCriteria.and(fieldNameCriteria);
 		Result ruleResult = context.read(patientId, this.logicService
-				.getLogicDataSource("xml"), formIdCriteria);
+				.getLogicDataSource("form"), formIdCriteria);
 		
 		ConceptService conceptService = Context.getConceptService();
 		

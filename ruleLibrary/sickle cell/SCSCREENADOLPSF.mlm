@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 previous := read Exist {PSFSickleCell from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
-Priority:		40;;
+Priority: 232;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

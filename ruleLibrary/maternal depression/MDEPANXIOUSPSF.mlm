@@ -26,14 +26,16 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-Depr_concern_3mo := read Exist {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 60 Days;endif
+Depr_concern_3mo := read Exist {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 60 Days;
+endif
 ;;
-Priority:		70;;
+Priority: 368;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (Depr_concern_3mo = True) then conclude False;Else conclude True;
+If (Depr_concern_3mo = True) then conclude False;
+Else conclude True;
 
 endif
 

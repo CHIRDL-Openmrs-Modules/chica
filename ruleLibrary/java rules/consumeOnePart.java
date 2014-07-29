@@ -97,7 +97,7 @@ public class consumeOnePart implements Rule
 		if (formInstance == null)
 		{
 			throw new LogicException(
-					"The xml datasource requires a formInstanceId");
+					"The form datasource requires a formInstanceId");
 		}
 
 		LogicCriteria formIdCriteria = new LogicCriteriaImpl(Operator.EQUALS, new OperandObject(formInstance));
@@ -106,7 +106,7 @@ public class consumeOnePart implements Rule
 		formIdCriteria = formIdCriteria.and(fieldNameCriteria);
 
 		Result ruleResult = context.read(patientId, this.logicService
-				.getLogicDataSource("xml"), formIdCriteria);
+				.getLogicDataSource("form"), formIdCriteria);
 		
 		ConceptService conceptService = Context.getConceptService();
 		

@@ -32,7 +32,7 @@ NPMH := read {NEGATIVE PAST MEDICAL HISTORY from CHICA};
 Study := read Last {K22STUDY1};
 endif
 ;;
-Priority:		230;;
+Priority: 532;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
