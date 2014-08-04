@@ -1,26 +1,20 @@
 <%@ page import="org.openmrs.web.WebConstants"%>
 <%
     pageContext.setAttribute("redirect", session.getAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR));
-    session.removeAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR);
 %>
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/loginMobile.js"></script>
-<style>
-.ui-popup-screen {
-    right:0;
-    position:fixed;
-}
-</style>
 </head>
-<body>
+<body style="font-size: 20px">
 
     <div id="login_mobile" data-url="login_mobile" data-role="page" data-theme="b">
         <div data-role="header">
@@ -38,7 +32,7 @@
                     <label for="password_field">Password</label> 
                     <input type="password" name="password_field" id="password_field" value="" placeholder="Password"/>
                 </div>
-                <div id="invalidLogin" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+                <div id="invalidLogin" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
 			        <div data-role="header" data-theme="b">
 			            <h1>Login Error</h1>
 			        </div>

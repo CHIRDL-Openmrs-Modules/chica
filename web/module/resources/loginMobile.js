@@ -2,7 +2,7 @@ $(document).on("pageshow", function(){
 	loadCredentials();
 	$("#username_field").focus();
 	$("#login_button").on("click", null, function() {
-		$("#loadingDialog").popup("open");
+		$("#loadingDialog").popup("open", { transition: "pop"});
 		storeCredentials();
 	    document.getElementById("loginForm").submit();
 	});
@@ -23,7 +23,7 @@ $(document).on("pageshow", function(){
 	
 	var error = document.getElementById("loginResultDiv").innerHTML;
 	if (error != null && error.trim().length > 0) {
-		$("#invalidLogin").popup("open");
+		$("#invalidLogin").popup("open", { transition: "pop"});
 	}
 });
 

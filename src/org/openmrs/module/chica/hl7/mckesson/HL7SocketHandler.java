@@ -657,7 +657,7 @@ public class HL7SocketHandler extends
 		PatientState patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
 						.getSessionId(), getLocationTagId(chicaEncounter),
-						getLocationId(chicaEncounter));
+						getLocationId(chicaEncounter), null);
 		patientState.setStartTime(chicaEncounter.getEncounterDatetime());
 		patientState.setEndTime(chicaEncounter.getEncounterDatetime());
 		chirdlutilbackportsService.updatePatientState(patientState);
@@ -667,7 +667,7 @@ public class HL7SocketHandler extends
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
 						.getSessionId(), getLocationTagId(chicaEncounter),
-						getLocationId(chicaEncounter));
+						getLocationId(chicaEncounter), null);
 		Date processCheckinHL7Start = (Date) parameters
 				.get("processCheckinHL7Start");
 		Date processCheckinHL7End = (Date) parameters
@@ -680,7 +680,7 @@ public class HL7SocketHandler extends
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
 						.getSessionId(), getLocationTagId(chicaEncounter),
-						getLocationId(chicaEncounter));
+						getLocationId(chicaEncounter), null);
 		Date queryKiteAliasStart = (Date) parameters.get("queryKiteAliasStart");
 		Date queryKiteAliasEnd = (Date) parameters.get("queryKiteAliasEnd");
 		patientState.setStartTime(queryKiteAliasStart);

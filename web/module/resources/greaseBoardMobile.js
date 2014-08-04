@@ -52,13 +52,15 @@ function startTimer() {
     
 //    populateList();
     // This delay allows the wait cursor to display when loading the patient list.
-    setTimeout("populateList()", 250);
+    setTimeout("populateList()", 1);
 }
 
-function finishForm(id) {
-	$("#loadingDialog").popup("open");
+function finishForm(patientId, encounterId, sessionId) {
+	$("#loadingDialog").popup("open", { transition: "pop"});
 	//$.mobile.loading("show");
-    $("#patientId").val(id);
+    $("#patientId").val(patientId);
+    $("#encounterId").val(encounterId);
+    $("#sessionId").val(sessionId);
     login(parsePatientSelectionResult, handleListAuthenticationAjaxError);
 }
 
@@ -67,13 +69,17 @@ function checkPasscode() {
     var passcode = $("#passcode").val();
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
     var action = "action=verifyPasscode&passcode=" + passcode;
+    var token = getAuthenticationToken();
     $.ajax({
+    	beforeSend: function (xhr) {
+		    xhr.setRequestHeader ("Authorization", token );
+	    },
         "cache": false,
-            "dataType": "xml",
-            "data": action,
-            "type": "POST",
-            "url": url,
-            "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "dataType": "xml",
+        "data": action,
+        "type": "POST",
+        "url": url,
+        "timeout": 30000, // optional if you want to handle timeouts (which you should)
         "error": handlePasscodeAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
 //        	$.mobile.loading("show");
@@ -86,13 +92,17 @@ function checkPasscode() {
 function populateList() {
 //    $.mobile.loading("show");
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
+    var token = getAuthenticationToken();
     $.ajax({
+    	beforeSend: function (xhr) {
+		    xhr.setRequestHeader ("Authorization", token );
+	    },
         "cache": false,
-            "dataType": "xml",
-            "data": "action=patientsWithForms",
-            "type": "POST",
-            "url": url,
-            "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "dataType": "xml",
+        "data": "action=patientsWithPrimaryForm",
+        "type": "POST",
+        "url": url,
+        "timeout": 30000, // optional if you want to handle timeouts (which you should)
         "error": handlePatientListAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
             parsePatientList(xml);
@@ -109,7 +119,7 @@ function handlePatientListAjaxError(xhr, textStatus, error) {
     }
     
     $("#listErrorResultDiv").html("<p>" + error + "</p>");
-    $("#listError").popup("open");
+    $("#listError").popup("open", { transition: "pop"});
 }
 
 function handlePasscodeAjaxError(xhr, textStatus, error) {
@@ -120,7 +130,7 @@ function handlePasscodeAjaxError(xhr, textStatus, error) {
     }
     
     $("#passcodeErrorResultDiv").html("<p>" + error + "</p>");
-    $("#passcodeError").popup("open");
+    $("#passcodeError").popup("open", { transition: "pop"});
 }
 
 function parsePatientList(responseXML) {
@@ -132,14 +142,8 @@ function parsePatientList(responseXML) {
         var content = "";
         var error = $(responseXML).find("error").text();
         if (error != null && error.trim().length > 0) {
-        	if (error == "Please log in.") {
-        		//$("#listLoginResultDiv").html("<p>Your session has timed out.  Please log in.</p>");
-	            //$("#listLogIn").popup("open");
-        		login(parseLoginResult, handleListAuthenticationAjaxError);
-        	} else {
-        		$("#listErrorResultDiv").html("<p>" + error + "</p>");
-	            $("#listError").popup("open");
-        	}
+    		$("#listErrorResultDiv").html("<p>" + error + "</p>");
+            $("#listError").popup("open", { transition: "pop"});
         }
         
         var count = 2;
@@ -147,50 +151,43 @@ function parsePatientList(responseXML) {
             var firstName = $(this).find("firstName").text();
             var lastName = $(this).find("lastName").text();
             var patientId = $(this).find("id").text();
+            var encounterId = $(this).find("encounterId").text();
+            var sessionId = $(this).find("sessionId").text();
+            var reprintStatus = $(this).find("reprintStatus").text();
+            var flagStatus = "";
+            if (reprintStatus === "true") {
+            	flagStatus = "* ";
+            }
+            
             var theme = "b";
             if ((count%2) == 1) {
             	theme = "b";
             }
             
-            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ')" id="' + patientId + '" data-role="list-divider"><h1>' + firstName + ' ' + lastName + '</h1></li>';
+            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ')" id="' + patientId + '" data-role="list-divider"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
             count++;
         });
 
         content = content + "</ul>";
-        content = content + '<form id="submitForm" method="POST" data-ajax="false"><input type="hidden" name="patientId" id="patientId" value="" />';
+        content = content + '<form id="submitForm" method="POST" data-ajax="false"><input type="hidden" name="patientId" id="patientId" value="" /><input type="hidden" name="encounterId" id="encounterId" value="" /><input type="hidden" name="sessionId" id="sessionId" value="" />';
         $(responseXML).find("patient").each(function () {
             var patientId = $(this).find("id").text();
             var formLoop = 0;
-            $(this).find("formInstances").each(function () {
-                var formId = $(this).find("formId").text();
-                var formInstanceId = $(this).find("formInstanceId").text();
-                var locationId = $(this).find("locationId").text();
-                content = content + '<input type="hidden" name="' + patientId + '_formId_' + formLoop + '" value="' + formId + '" />';
-                content = content + '<input type="hidden" name="' + patientId + '_formInstanceId_' + formLoop + '" value="' + formInstanceId + '" />';
-                content = content + '<input type="hidden" name="' + patientId + '_locationId_' + formLoop + '" value="' + locationId + '" />';
-                formLoop = formLoop + 1;
-            });
+            var formInstanceNode = $(this).find("formInstance");
+            if (formInstanceNode !== null) {
+                var formId = $(formInstanceNode).find("formId").text();
+                var formInstanceId = $(formInstanceNode).find("formInstanceId").text();
+                var locationId = $(formInstanceNode).find("locationId").text();
+                content = content + '<input type="hidden" name="' + patientId + '_formId" value="' + formId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_formInstanceId" value="' + formInstanceId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_locationId" value="' + locationId + '" />';
+            }
         });
 
         content = content + "</form>";
         $("#patientList").html(content);
         $("div[type='patient_page']").page();
         $("#patientList").listview("refresh");
-    }
-}
-
-function parseLoginResult(responseXML) {
-    // no matches returned
-    if (responseXML === null) {
-        return false;
-    } else {
-        var result = $(responseXML).find("result").text();
-        if (result == "true") {
-        	populateList();
-        } else {
-        	$("#listLoginResultDiv").html("<p>Your session has timed out.  Please log in.</p>");
-            $("#listLogIn").popup("open");
-        }
     }
 }
 
@@ -204,7 +201,7 @@ function parsePasscodeLoginResult(responseXML) {
         	checkPasscode();
         } else {
         	$("#listLoginResultDiv").html("<p>Your session has timed out.  Please log in.</p>");
-            $("#listLogIn").popup("open");
+            $("#listLogIn").popup("open", { transition: "pop"});
         }
     }
 }
@@ -219,7 +216,7 @@ function parsePatientSelectionResult(responseXML) {
         	$("#submitForm").submit();
         } else {
         	$("#listLoginResultDiv").html("<p>Your session has timed out.  Please log in.</p>");
-            $("#listLogIn").popup("open");
+            $("#listLogIn").popup("open", { transition: "pop"});
         }
     }
 }
@@ -227,13 +224,13 @@ function parsePatientSelectionResult(responseXML) {
 function handleListAuthenticationAjaxError(xhr, textStatus, error) {
 //    $.mobile.loading("hide");
     $("#listLoginResultDiv").html("<p>An error occurred on the patient list: " + error + ".  Please log in.</p>");
-    $("#listLogIn").popup("open");
+    $("#listLogIn").popup("open", { transition: "pop"});
 }
 
 function handlePasscodeAuthenticationAjaxError(xhr, textStatus, error) {
 //    $.mobile.loading("hide");
     $("#passcodeLoginDiv").html("<p>An error occurred checking the passcode: " + error + ".  Please log in.</p>");
-    $("#logInPasscode").popup("open");
+    $("#logInPasscode").popup("open", { transition: "pop"});
 }
 
 function parsePasscodeResult(responseXML) {
@@ -248,12 +245,10 @@ function parsePasscodeResult(responseXML) {
             startTimer();
         } else {
         	if (result == "Please log in.") {
-	            //$("#passcodeLoginDiv").html("<p>Your session has timed out.  Please log in.</p>");
-	            //$("#logInPasscode").popup("open");
         		login(parsePasscodeLoginResult, handlePasscodeAuthenticationAjaxError);
             } else {
 	            $("#passcodeResultDiv").html("<p>" + result + "</p>");
-	            $("#invalidPasscode").popup("open");
+	            $("#invalidPasscode").popup("open", { transition: "pop"});
             }
         }
     }

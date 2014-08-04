@@ -27,7 +27,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.TeleformTranslator;
-import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
+import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
@@ -255,15 +255,15 @@ public class FillOutFormController extends SimpleFormController
 			TeleformTranslator translator,InputStream inputMergeFile) throws Exception{
 		FormService formService = Context.getFormService();
 		LogicService logicService = Context.getLogicService();
-		TeleformExportXMLDatasource xmlDatasource = (TeleformExportXMLDatasource) logicService
-				.getLogicDataSource("xml");
-		HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = xmlDatasource
-				.getParsedFile(new FormInstance(locationId,formId,formInstanceId));
+		FormDatasource formDatasource = (FormDatasource) logicService
+				.getLogicDataSource("form");
+		HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = formDatasource
+				.getFormFields(new FormInstance(locationId,formId,formInstanceId));
 		
 		//Parse the merge file to get the field values to display
-		FormInstance formInstance = xmlDatasource.parse(inputMergeFile,null,null);
+		FormInstance formInstance = formDatasource.parseTeleformXmlFormat(inputMergeFile,null,null);
 		inputMergeFile.close();
-		fieldMap = xmlDatasource.getParsedFile(formInstance);
+		fieldMap = formDatasource.getFormFields(formInstance);
 
 		Form form = formService.getForm(formId);
 		Set<FormField> formFields = form.getFormFields();

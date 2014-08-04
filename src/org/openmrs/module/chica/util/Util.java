@@ -29,19 +29,21 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
+import org.openmrs.logic.result.EmptyResult;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClient;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClients;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
-import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForms;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -54,6 +56,10 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  * @author Tammy Dugan
  */
 public class Util {
+	
+	private static final int PRIMARY_FORM = 0;
+	
+	private static final int SECONDARY_FORMS = 1;
 	
 	public static final String YEAR_ABBR = "yo";
 	
@@ -158,15 +164,42 @@ public class Util {
 	}
 	
 	/**
-	 * Returns patients that have forms available for the current authenticated user specifed in the server configuration 
-	 * file.
+	 * Returns patients that have primary forms available for the current authenticated user specified in the server  
+	 * configuration file.
 	 * 
 	 * @param rows List that will be populated with any PatientRow objects found.
-	 * @param patientIdMatch If not null, only patient rows will be returned pertaining to the specified patient ID.
+	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
 	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
 	 * @throws Exception
 	 */
-	public static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer patientIdMatch) throws Exception {
+	public static String getPatientsWithPrimaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch) throws Exception {
+		return getPatientsWithForms(rows, sessionIdMatch, PRIMARY_FORM);
+	}
+	
+	/**
+	 * Returns patients that have secondary forms available for the current authenticated user specified in the server  
+	 * configuration file.
+	 * 
+	 * @param rows List that will be populated with any PatientRow objects found.
+	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
+	 * @throws Exception
+	 */
+	public static String getPatientSecondaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch) throws Exception {
+		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS);
+	}
+	
+	/**
+	 * Returns patients that have forms available for the current authenticated user specified in the server configuration 
+	 * file.
+	 * 
+	 * @param rows List that will be populated with any PatientRow objects found.
+	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
+	 * @throws Exception
+	 */
+	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType) 
+	throws Exception {
 		User user = Context.getUserContext().getAuthenticatedUser();
 		ServerConfig config = org.openmrs.module.chirdlutil.util.Util.getServerConfig();
 		if (config == null) {
@@ -187,15 +220,8 @@ public class Util {
 			return null;
 		}
 		
-		MobileClient userClient = null;
 		String username = user.getUsername();
-		for (MobileClient mobileClient : mobileClients) {
-			if (username.equals(mobileClient.getUser())) {
-				userClient = mobileClient;
-				break;
-			}
-		}
-		
+		MobileClient userClient = config.getMobileClient(username);
 		if (userClient == null) {
 			log.error("Server config contains no mobile clients for username: " + username + ".");
 			return null;
@@ -243,22 +269,29 @@ public class Util {
 		List<PatientState> unfinishedStates = new ArrayList<PatientState>();
 		for (Integer locationTagId : locationTagIds) {
 			Program program = chirdlUtilBackportsService.getProgram(locationTagId, locationId);
-			List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
-			    todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
-			if (currUnfinishedStates != null) {
-				unfinishedStates.addAll(currUnfinishedStates);
+			if (sessionIdMatch != null) {
+				PatientState patientState = chirdlUtilBackportsService.getLastPatientState(sessionIdMatch);
+				if (patientState != null) {
+					unfinishedStates.add(patientState);
+				}
+			} else {
+				List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
+				    todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
+				if (currUnfinishedStates != null) {
+					unfinishedStates.addAll(currUnfinishedStates);
+				}
 			}
 		}
 		
 		Map<String, PatientRow> patientEncounterRowMap = new HashMap<String, PatientRow>();
 		for (PatientState currState : unfinishedStates) {
 			boolean addedForm = false;
-			Integer patientId = currState.getPatientId();
-			if ((patientIdMatch != null && patientIdMatch != patientId)) {
+			Integer sessionId = currState.getSessionId();
+			if ((sessionIdMatch != null && !sessionIdMatch.equals(sessionId))) {
 				continue;
 			}
 			
-			Integer sessionId = currState.getSessionId();
+			Integer patientId = currState.getPatientId();
 			Session session = chirdlUtilBackportsService.getSession(sessionId);
 			Integer encounterId = session.getEncounterId();
 			Map<Integer, List<PatientState>> formPatientStateCreateMap = new HashMap<Integer, List<PatientState>>();
@@ -269,19 +302,36 @@ public class Util {
 				patientEncounterRowMap.put(patientId + "_" + encounterId, row);
 			}
 			
-			MobileForms mobileForms = userClient.getMobileForms();
-			if (mobileForms == null) {
-				continue;
+			List<MobileForm> mobileFormsList = new ArrayList<MobileForm>();
+			switch(formType) {
+				case PRIMARY_FORM:
+					MobileForm primaryForm = config.getPrimaryForm(username);
+					if (primaryForm == null) {
+						continue;
+					} else {
+						mobileFormsList.add(primaryForm);
+					}
+					
+					break;
+				case SECONDARY_FORMS:
+					List<MobileForm> mobileForms = config.getSecondaryForms(username);
+					if (mobileForms == null) {
+						continue;
+					} else {
+						mobileFormsList.addAll(mobileForms);
+					}
+					
+					break;
 			}
 			
-			for (MobileForm mobileForm : mobileForms.getMobileForms()) {
+			for (MobileForm mobileForm : mobileFormsList) {
 				State startState = chirdlUtilBackportsService.getStateByName(mobileForm.getStartState());
 				State endState = chirdlUtilBackportsService.getStateByName(mobileForm.getEndState());
 				
 				getPatientStatesByEncounterId(chirdlUtilBackportsService, formPatientStateCreateMap, encounterId,
-				    startState.getStateId());
+				    startState.getStateId(), true);
 				getPatientStatesByEncounterId(chirdlUtilBackportsService, formPatientStateProcessMap, encounterId,
-				    endState.getStateId());
+				    endState.getStateId(), false);
 				
 				Form form = Context.getFormService().getForm(mobileForm.getName());
 				if (form == null) {
@@ -291,15 +341,32 @@ public class Util {
 				Integer formId = form.getFormId();
 				boolean containsStartState = formPatientStateCreateMap.containsKey(formId);
 				boolean containsEndState = formPatientStateProcessMap.containsKey(formId);
-				if (containsStartState && !containsEndState) {
-					List<PatientState> patientStates = formPatientStateCreateMap.get(formId);
-					if (patientStates != null) {
-						for (PatientState patientState : patientStates) {
-							FormInstance formInstance = patientState.getFormInstance();
-							if (formInstance != null) {
-								row.addFormInstance(formInstance);
-								addedForm = true;
-								break;
+				if (containsStartState) {
+					List<PatientState> patientStates = null;
+					if (!containsEndState) {
+						patientStates = formPatientStateCreateMap.get(formId);
+						if (patientStates != null) {
+							for (PatientState patientState : patientStates) {
+								FormInstance formInstance = patientState.getFormInstance();
+								if (formInstance != null) {
+									row.addFormInstance(formInstance);
+									addedForm = true;
+									break;
+								}
+							}
+						}
+					} else {
+						patientStates = formPatientStateProcessMap.get(formId);
+						if (patientStates != null) {
+							for (PatientState patientState : patientStates) {
+								if (patientState.getEndTime() == null) {
+									FormInstance formInstance = patientState.getFormInstance();
+									if (formInstance != null) {
+										row.addFormInstance(formInstance);
+										addedForm = true;
+										break;
+									}
+								}
 							}
 						}
 					}
@@ -308,7 +375,7 @@ public class Util {
 			
 			formPatientStateCreateMap.clear();
 			formPatientStateProcessMap.clear();
-			if (!addedForm || row.getFormInstances() == null || row.getFormInstances().size() > 1) {
+			if (!addedForm || row.getFormInstances() == null || row.getFormInstances().size() == 0) {
 				continue;
 			}
 			
@@ -372,19 +439,15 @@ public class Util {
 				row.setMdName(mdName);
 			}
 			
-			List<PatientState> reprintRescanStates = new ArrayList<PatientState>();
-			
+			boolean reprint = false;
 			for (Integer locationTagId : locationTagIds) {
 				List<PatientState> currReprintRescanStates = chicaService.getReprintRescanStatesByEncounter(encounterId,
 				    todaysDate.getTime(), locationTagId, locationId);
-				if (currReprintRescanStates != null) {
-					reprintRescanStates.addAll(currReprintRescanStates);
+				if (currReprintRescanStates != null && currReprintRescanStates.size() > 0) {
+					reprint = true;;
 				}
 			}
-			boolean reprint = false;
-			if (reprintRescanStates.size() > 0) {
-				reprint = true;
-			}
+			
 			row.setReprintStatus(reprint);
 			row.setAppointment(appointment);
 			row.setDob(dob);
@@ -415,9 +478,14 @@ public class Util {
 	 */
 	private static void getPatientStatesByEncounterId(ChirdlUtilBackportsService chirdlUtilBackportsService,
 	                                           Map<Integer, List<PatientState>> formIdToPatientStateMap,
-	                                           Integer encounterId, Integer stateId) {
+	                                           Integer encounterId, Integer stateId, boolean requireFinishedEndState) {
 		List<PatientState> patientStates = chirdlUtilBackportsService.getPatientStateByEncounterState(encounterId, stateId);
 		for (PatientState patientState : patientStates) {
+			// Only add if the state has been ended
+			if (requireFinishedEndState && patientState.getEndTime() == null) {
+				continue;
+			}
+			
 			Integer formId = patientState.getFormId();
 			List<PatientState> foundStates = formIdToPatientStateMap.get(formId);
 			if (foundStates == null) {
@@ -426,6 +494,124 @@ public class Util {
 			
 			foundStates.add(patientState);
 			formIdToPatientStateMap.put(formId, foundStates);
+		}
+	}
+	
+	public static void calculatePercentiles(Integer encounterId, Patient patient, Integer locationTagId) {
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		ObsService obsService = Context.getObsService();
+		ATDService atdService = Context.getService(ATDService.class);
+		List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+		encounters.add(encounter);
+		List<Concept> questions = new ArrayList<Concept>();
+		HashMap<String, Object> parameters = new HashMap<String, Object>();
+		Calculator calculator = new Calculator();
+		parameters.put("encounterId", encounterId);
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConcept("BMICentile");
+		questions.add(concept);
+		List<Obs> obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null,
+		    null, false);
+		
+		if (obs == null || obs.size() == 0) {
+			Result result = atdService.evaluateRule("bmi", patient, parameters);
+			
+			if (!(result instanceof EmptyResult)) {
+				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
+				        .getBirthdate(), "bmi", null);
+				if (percentile != null) {
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+					
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
+				}
+			}
+		}
+		
+		questions = new ArrayList<Concept>();
+		concept = conceptService.getConcept("HCCentile");
+		questions.add(concept);
+		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
+		
+		if (obs == null || obs.size() == 0) {
+			parameters.put("concept", "HC");
+			Result result = atdService.evaluateRule("conceptRule", patient, parameters);
+			if (!(result instanceof EmptyResult)) {
+				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
+				        .getBirthdate(), "hc", null);
+				if (percentile != null) {
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
+				}
+			}
+		}
+		
+		questions = new ArrayList<Concept>();
+		concept = conceptService.getConcept("HtCentile");
+		questions.add(concept);
+		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
+		
+		if (obs == null || obs.size() == 0) {
+			parameters.put("concept", "HEIGHT");
+			Result result = atdService.evaluateRule("conceptRule", patient, parameters);
+			if (!(result instanceof EmptyResult)) {
+				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
+				        .getBirthdate(), "length", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
+				if (percentile != null) {
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
+				}
+			}
+		}
+		
+		questions = new ArrayList<Concept>();
+		concept = conceptService.getConcept("WtCentile");
+		questions.add(concept);
+		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
+		
+		if (obs == null || obs.size() == 0) {
+			parameters.put("concept", "WEIGHT");
+			Result result = atdService.evaluateRule("conceptRule", patient, parameters);
+			if (!(result instanceof EmptyResult)) {
+				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
+				        .getBirthdate(), "weight", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
+				if (percentile != null) {
+					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
+				}
+			}
+		}
+		
+		//save BP
+		questions = new ArrayList<Concept>();
+		concept = conceptService.getConcept("BP");
+		questions.add(concept);
+		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
+		
+		if (obs == null || obs.size() == 0) {
+			Result result = atdService.evaluateRule("bp", patient, parameters);
+			if (!(result instanceof EmptyResult)) {
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(),new Date());
+			}
+		}
+		
+		//save BMI
+		questions = new ArrayList<Concept>();
+		concept = conceptService.getConcept("BMI CHICA");
+		questions.add(concept);
+		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
+		
+		if (obs == null || obs.size() == 0) {
+			Result result = atdService.evaluateRule("bmi", patient, parameters);
+			if (!(result instanceof EmptyResult)) {
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(),new Date());
+			}
 		}
 	}
 }

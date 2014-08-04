@@ -1,0 +1,44 @@
+
+input[masktype=password] {
+    -webkit-text-security: disc;
+}
+
+.ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
+    font-size: 20px;
+}
+
+.custom-button {
+    height: 40px !important;
+    width: 40px !important;
+}
+
+.custom-button .ui-btn-inner {
+    padding: 0 !important;    
+}
+
+.custom-button .ui-btn-inner .ui-btn-text {
+    display: block !important;
+    height: 40px !important;
+    width: 100% !important;
+    background-image: url('/openmrs/moduleResources/chica/images/speaker.png') !important;
+    background-repeat: no-repeat  !important;
+    background-position: center  !important; 
+}
+
+.ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
+    font-size: 20px;
+}
+
+.ui-popup-screen {
+    right:0;
+    position:fixed;
+}
+
+.error-field {
+  background: red !important;
+  color: white !important;
+}
+
+.extended-header .ui-header a {
+    display: none;
+}

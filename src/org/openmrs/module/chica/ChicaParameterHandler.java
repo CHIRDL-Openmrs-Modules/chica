@@ -10,7 +10,7 @@ import java.util.Map;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
-import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
+import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -41,9 +41,9 @@ public class ChicaParameterHandler implements ParameterHandler
 		}
 		LogicService logicService = Context.getLogicService();
 
-		TeleformExportXMLDatasource xmlDatasource = (TeleformExportXMLDatasource) logicService
-				.getLogicDataSource("xml");
-		HashMap<String,Field> fieldMap = xmlDatasource.getParsedFile(formInstance);
+		FormDatasource formDatasource = (FormDatasource) logicService
+				.getLogicDataSource("form");
+		HashMap<String,Field> fieldMap = formDatasource.getFormFields(formInstance);
 
 		if (ruleType.equalsIgnoreCase("PSF"))
 		{
@@ -55,9 +55,33 @@ public class ChicaParameterHandler implements ParameterHandler
 			processPWSParameters(parameters,fieldMap);
 		}
 	}
+	
+	/**
+	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map, org.openmrs.module.dss.hibernateBeans.Rule, java.util.HashMap)
+	 */
+    public void addParameters(Map<String, Object> parameters, Rule rule, Map<String, Field> fieldMap) 
+    {
+    	FormInstance formInstance = (FormInstance) parameters.get("formInstance");
+		String ruleType = rule.getRuleType();
 
-	private void processPSFParameters(Map<String, Object> parameters,
-			HashMap<String,Field> fieldMap)
+		if (ruleType == null||formInstance==null)
+		{
+			return;
+		}
+
+		if (ruleType.equalsIgnoreCase("PSF"))
+		{
+			processPSFParameters(parameters,fieldMap);
+		}
+
+		if (ruleType.equalsIgnoreCase("PWS"))
+		{
+			processPWSParameters(parameters,fieldMap);
+		}
+    }
+
+	protected void processPSFParameters(Map<String, Object> parameters,
+			Map<String,Field> fieldMap)
 	{
 		
 		if(fieldMap == null){
@@ -112,8 +136,8 @@ public class ChicaParameterHandler implements ParameterHandler
 		}
 	}
 
-	private void processPWSParameters(Map<String, Object> parameters,
-			HashMap<String,Field> fieldMap)
+	protected void processPWSParameters(Map<String, Object> parameters,
+			Map<String,Field> fieldMap)
 	{
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);

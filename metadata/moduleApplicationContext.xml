@@ -30,6 +30,10 @@
                 <prop key="/module/@MODULE_ID@/psfMobile.form">psfMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobileTabs.form">psfMobileTabs</prop>
                 <prop key="/module/@MODULE_ID@/loginMobile.form">loginMobile</prop>
+                <prop key="/module/@MODULE_ID@/psfMobileDynamic.form">psfMobileDynamic</prop>
+                <prop key="/module/@MODULE_ID@/phq9Mobile.form">phq9Mobile</prop>
+                <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
+                <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
             </props>
         </property>
     </bean>
@@ -128,12 +132,12 @@
         <property name="formView"><value>/module/@MODULE_ID@/greaseBoardMobile</value></property>
         <property name="successView"><value>greaseBoardMobile.form</value></property>
     </bean>
-    <bean id="psfMobile" class="@MODULE_PACKAGE@.web.MobileFormQueueController">
+    <bean id="psfMobile" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>psfMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/psfMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
-    <bean id="psfMobileTabs" class="@MODULE_PACKAGE@.web.MobileFormQueueController">
+    <bean id="psfMobileTabs" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>psfMobileTabsObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/psfMobileTabs</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
@@ -142,6 +146,26 @@
         <property name="commandName"><value>loginMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/loginMobile</value></property>
         <property name="successView"><value>loginMobile.form</value></property>
+    </bean>
+    <bean id="psfMobileDynamic" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>psfMobileDynamicObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/psfMobileDynamic</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="phq9Mobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>phq9MobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/phq9Mobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="CRAFFTMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>CRAFFTMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/CRAFFTMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="sexRiskMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>sexRiskMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/sexRiskMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">

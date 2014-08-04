@@ -11,9 +11,9 @@ $(document).ready(function () {
 	
     $("#denyButton").click(function () {
     	if (english) {
-    	    $( "#deny_dialog" ).popup( "open" );
+    	    $( "#deny_dialog" ).popup( "open", { transition: "pop"} );
     	} else {
-    		$( "#deny_dialog_sp" ).popup( "open" );
+    		$( "#deny_dialog_sp" ).popup( "open", { transition: "pop"} );
     	}
     });
     $("#backPsfButton").click(function () {
@@ -296,7 +296,7 @@ function finishVitals() {
         return;
     }
     
-	$( "#confirm_submit_dialog" ).popup( "open" );
+	$( "#confirm_submit_dialog" ).popup( "open", { transition: "pop"} );
 }
 
 function checkAuthentication() {
@@ -347,7 +347,7 @@ function parseLoginResult(responseXML) {
         } else {
     		var resultDiv = document.getElementById("loginResultDiv");
             resultDiv.innerHTML = "<p>Invalid username/password.</p>";
-            $("#invalidLogin").popup("open");
+            $("#invalidLogin").popup("open", { transition: "pop"});
         }
     }
 }
@@ -483,7 +483,7 @@ function displayValidationError(fieldName, expectedFormats, fieldId) {
     message += "."; 
     $("#validationOkButton").attr("onClick", "finishedValidation('" + fieldId + "')");
     $("#validationError").html(message);
-    $("#validation_error_dialog").popup( "open" );
+    $("#validation_error_dialog").popup( "open", { transition: "pop"} );
 }
 
 function populateValues() {
@@ -526,13 +526,17 @@ function checkPasscode() {
     var passcode = $("#vitals_passcode").val();
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
     var action = "action=verifyPasscode&passcode=" + passcode;
+    var token = getAuthenticationToken();
     $.ajax({
+    	beforeSend: function (xhr) {
+		    xhr.setRequestHeader ("Authorization", token );
+	    },
         "cache": false,
-            "dataType": "xml",
-            "data": action,
-            "type": "POST",
-            "url": url,
-            "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "dataType": "xml",
+        "data": action,
+        "type": "POST",
+        "url": url,
+        "timeout": 30000, // optional if you want to handle timeouts (which you should)
         "error": handlePasscodeAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
             parsePasscodeResult(xml);

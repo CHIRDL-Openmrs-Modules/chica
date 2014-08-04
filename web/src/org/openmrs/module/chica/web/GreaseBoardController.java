@@ -207,11 +207,9 @@ public class GreaseBoardController extends SimpleFormController
 				{
 					formId = form.getFormId();
 				}
-				String action = "PRODUCE FORM INSTANCE";
 				
-				PatientState patientStateProduce = chirdlutilbackportsService
-						.getPatientStateByEncounterFormAction(encounterId, formId,
-								action);
+				PatientState patientStateProduce = 
+					org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(encounterId, formId);
 
 				State currState = null;
 
@@ -474,7 +472,8 @@ public class GreaseBoardController extends SimpleFormController
 				row.setPatientId(patient.getPatientId());
 				row.setSessionId(sessionId);
 				String stateName = state.getName();
-				if(stateName.equalsIgnoreCase("PSF_wait_to_scan")){
+				if(stateName.equalsIgnoreCase("PSF_wait_to_scan") || 
+						stateName.equalsIgnoreCase("PSF WAIT FOR ELECTRONIC SUBMISSION")){
 					needVitals++;
 				}
 				if(stateName.equalsIgnoreCase("PWS_wait_to_scan")){
@@ -571,6 +570,12 @@ public class GreaseBoardController extends SimpleFormController
 		{
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PSF Ready");
+			return;
+		}
+		if (stateName.equals("PSF WAIT FOR ELECTRONIC SUBMISSION"))
+		{
+			row.setStatusColor(READY_COLOR);
+			row.setStatus("PSF Tablet Ready");
 			return;
 		}
 		if (stateName.equals("PSF_process"))

@@ -6,64 +6,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/psfMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
-
-<style>
-#quit_dialog .ui-header a {
-    display: none;
-}
-
-#quit_dialog_sp .ui-header a {
-    display: none;
-}
-
-#quit_confirm_dialog .ui-header a {
-    display: none;
-}
-
-#quit_confirm_dialog_sp .ui-header a {
-    display: none;
-}
-
-.ui-popup-screen {
-    right:0;
-    position:fixed;
-}
-
-.custom-button {
-    height: 40px !important;
-    width: 40px !important;
-}
-
-.custom-button .ui-btn-inner {
-    padding: 0 !important;    
-}
-
-.custom-button .ui-btn-inner .ui-btn-text {
-    display: block !important;
-    height: 40px !important;
-    width: 100% !important;
-    background-image: url('${pageContext.request.contextPath}/moduleResources/chica/images/speaker.png') !important;
-    background-repeat: no-repeat  !important;
-    background-position: center  !important; 
-}
-
-.error-field {
-  background: red !important;
-  color: white !important;
-}
-</style>
 </head>
-<body onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}')">
+<body style="font-size: 20px" onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}')">
 <form id="psfForm" method="POST" data-ajax="false">
 <c:if test="${errorMessage != null}">
-	<div id="error_dialog" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+	<div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
 	    <div data-role="header" data-theme="b">
 	        <h1>Error</h1>
 	    </div>
@@ -75,10 +30,10 @@
 	    </div>
 	</div>
 </c:if>
-<div data-role="page" id="confirm_page" data-theme="b">
-    <div data-role="header" data-position="fixed">
+<div data-role="page" id="confirm_page" data-theme="b" style="font-size:20px;">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-right" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="confirmLangButton" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
     </div>
 
     <div data-role="content" >
@@ -86,7 +41,7 @@
         <div><br/></div>
         <hr/>
         <strong><span id="instructions"><p>1) Please return the device back to the front desk if the patient information listed is incorrect.</p><p>2) Please confirm this form is for:<br/>Name: ${patient.givenName}&nbsp;${patient.familyName}<br/>Date of Birth: ${patient.birthdate}</p></span></strong>
-        <div id="deny_dialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+        <div id="deny_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
 		        <h1>Confirm</h1>
 		    </div>
@@ -99,7 +54,7 @@
 		    </div>
 		</div>
 		
-		<div id="deny_dialog_sp" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+		<div id="deny_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
 		    <div data-role="header" data-theme="b">
                 <h1>Confirmar</h1>
             </div>
@@ -121,7 +76,7 @@
 </div><!-- /page one -->
 
 <div data-role="page" id="form_completed_page" data-theme="b">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>Pre-screening Form Completed</h1>
     </div>
     <div data-role="content" style="margin: 0 auto;text-align: center;" >
@@ -132,7 +87,7 @@
     </div>
 </div>
 
-<div id="quit_confirm_dialog" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+<div id="quit_confirm_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Confirm Quit</h1>
     </div>
@@ -145,7 +100,7 @@
     </div>
 </div>
 
-<div id="quit_confirm_dialog_sp" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+<div id="quit_confirm_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Confirmar Salir</h1>
     </div>
@@ -158,7 +113,7 @@
     </div>
 </div>
 
-<div id="quit_dialog" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+<div id="quit_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Finished</h1>
     </div>
@@ -170,7 +125,7 @@
     </div>
 </div>
 
-<div id="quit_dialog_sp" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+<div id="quit_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Acabado</h1>
     </div>
@@ -183,9 +138,9 @@
 </div>
 
 <div id="question_page_1" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage1Button" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
     </div>
     <div id="content_1" data-role="content">
         <c:if test="${Question1 != null}">
@@ -262,9 +217,9 @@
 </div>
 
 <div id="question_page_2" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage2Button" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
     </div>
     <div id="content_2" data-role="content">
         <c:if test="${Question6 != null}">
@@ -342,9 +297,9 @@
 </div>
 
 <div id="question_page_3" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage3Button" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage3Button" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
     </div>
     <div id="content_3" data-role="content">
         <c:if test="${Question11 != null}">
@@ -422,9 +377,9 @@
 </div>
 
 <div id="question_page_4" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage4Button" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage4Button" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
     </div>
     <div id="content_4" data-role="content">
         <c:if test="${Question16 != null}">
@@ -493,9 +448,9 @@
     </div>
 </div>
 <div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage1SPButton" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
     </div>
     <div id="content_1_sp" data-role="content">
         <c:if test="${Question1_SP != null}">
@@ -572,9 +527,9 @@
 </div>
 
 <div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage2SPButton" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
     </div>
     <div id="content_2_sp" data-role="content">
         <c:if test="${Question6_SP != null}">
@@ -652,9 +607,9 @@
 </div>
 
 <div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage3SPButton" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage3SPButton" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
     </div>
     <div id="content_3_sp" data-role="content">
         <c:if test="${Question11_SP != null}">
@@ -732,9 +687,9 @@
 </div>
 
 <div id="question_page_4_sp" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" data-position="fixed">
+    <div data-role="header" >
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage4SPButton" data-role="button" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage4SPButton" data-role="button" data-theme="b" href="#" class="ui-btn-right" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
     </div>
     <div id="content_4_sp" data-role="content">
         <c:if test="${Question16_SP != null}">
@@ -804,7 +759,7 @@
 </div>
 
 <div id="vitals_page" data-role="page" data-theme="b">
-    <div id="vitals_header" data-role="header" data-position="fixed">
+    <div id="vitals_header" data-role="header" >
         <a id="backPsfButton" data-role="button" data-icon="back">Questions</a>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <h1>(***Medical Staff Only***)</h1>
@@ -812,7 +767,7 @@
     <div id="content_vitals" data-role="content">
         <a id='lnkVitalsPasscode' href="#vitals_passcode_dialog" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
         <a id='lnkPasscodeError' href="#passcodeError" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
-        <div id="vitals_passcode_dialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+        <div id="vitals_passcode_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="c">
 		    <div data-role="header" data-theme="b">
 		        <h1>Passcode</h1>
 		    </div>
@@ -824,7 +779,7 @@
 		        </div>
 		    </div>
 		</div>
-		<div id="passcodeError" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+		<div id="passcodeError" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="c">
             <div data-role="header" data-theme="b">
                 <div>
                     <h3 style="text-align: center;">Passcode Error</h3>
@@ -1090,7 +1045,7 @@
                 <input type="checkbox" id="LeftWithoutTreatment" name="LeftWithoutTreatment" value="Y"/><label for="LeftWithoutTreatment">Patient left without treatment</label>
             </div>
         </div>
-        <div id="validation_error_dialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+        <div id="validation_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <div>
                     <h3 style="text-align: center;">Validation Error</h3>
@@ -1103,7 +1058,7 @@
 		        </div>
 		    </div>
 		</div>
-        <div id="invalidLogin" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+        <div id="invalidLogin" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Invalid Login</h1>
             </div>
@@ -1115,7 +1070,7 @@
             </div>
         </div>
         <a id='lnkSubmitError' href="#submitErrorDialog" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
-        <div id="submitErrorDialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+        <div id="submitErrorDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Error</h1>
             </div>
@@ -1126,7 +1081,7 @@
                 </div>
             </div>
         </div>
-        <div id="confirm_submit_dialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+        <div id="confirm_submit_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Confirm</h1>
             </div>
@@ -1139,7 +1094,7 @@
             </div>
         </div>
         <a id='lnkLoadingDialog' href="#loadingDialog" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
-        <div id="loadingDialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+        <div id="loadingDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
 	        <div data-role="content">
 	            <div style="margin: 0 auto;text-align: center;">
 	                Loading...
@@ -1151,7 +1106,6 @@
         <a data-theme="b" data-role="button" onclick="finishVitals()" rel="external" data-ajax="false" style="width: 150px;">Submit</a>
     </div>
 </div>
-<input id="formInstances" name="formInstances" type="hidden" value="${formInstances }"/>
 <input id="HeightP" name="HeightP" type="hidden"/>
 <input id="HeightS" name="HeightS" type="hidden"/>
 <input id="WeightP" name="WeightP" type="hidden"/>
@@ -1161,6 +1115,12 @@
 <input id="HCP" name="HCP" type="hidden"/>
 <input id="HCS" name="HCS" type="hidden"/>
 <input id="patientId" name="patientId" type="hidden" value="${patient.patientId}"/>
+<input id="encounterId" name="encounterId" type="hidden" value="${encounterId}"/>
+<input id="formId" name="formId" type="hidden" value="${formId}"/>
+<input id="formInstanceId" name="formInstanceId" type="hidden" value="${formInstanceId}"/>
+<input id="locationId" name="locationId" type="hidden" value="${locationId}"/>
+<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
+<input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
 </form>
 </body>
 </html>

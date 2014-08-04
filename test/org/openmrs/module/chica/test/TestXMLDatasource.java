@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
+import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
@@ -47,15 +47,15 @@ public class TestXMLDatasource extends BaseModuleContextSensitiveTest
 	{
 		DssService dssService = Context.getService(DssService.class);
 		LogicService logicService = Context.getLogicService();
-		TeleformExportXMLDatasource datasource = null;
+		FormDatasource datasource = null;
 		String filename = "test\\testFiles\\export_PSF.xml";
 		Patient patient = Context.getPatientService().getPatient(30520);
 		FileInputStream input = new FileInputStream(filename);
 
-		datasource = (TeleformExportXMLDatasource) logicService
-				.getLogicDataSource("xml");
+		datasource = (FormDatasource) logicService
+				.getLogicDataSource("form");
 
-		FormInstance formInstance = datasource.parse(input,
+		FormInstance formInstance = datasource.parseTeleformXmlFormat(input,
 				null,null);
 		ArrayList<Rule> ruleList = new ArrayList<Rule>();
 		Rule rule = new Rule();

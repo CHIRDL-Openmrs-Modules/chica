@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -30,7 +31,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.TeleformTranslator;
-import org.openmrs.module.atd.datasource.TeleformExportXMLDatasource;
+import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.hibernateBeans.PatientATD;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
@@ -116,10 +117,10 @@ public class ChicaServiceImpl implements ChicaService
 
 			LogicService logicService = Context.getLogicService();
 
-			TeleformExportXMLDatasource xmlDatasource = (TeleformExportXMLDatasource) logicService
-					.getLogicDataSource("xml");
-			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = xmlDatasource
-					.getParsedFile(formInstance);
+			FormDatasource formDatasource = (FormDatasource) logicService
+					.getLogicDataSource("form");
+			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = formDatasource
+					.getFormFields(formInstance);
 
 			Integer formInstanceId = formInstance.getFormInstanceId();
 
@@ -127,9 +128,9 @@ public class ChicaServiceImpl implements ChicaService
 			{
 				try
 				{
-					formInstance = xmlDatasource.parse(input,
+					formInstance = formDatasource.parseTeleformXmlFormat(input,
 							formInstance,locationTagId);
-					fieldMap = xmlDatasource.getParsedFile(formInstance);
+					fieldMap = formDatasource.getFormFields(formInstance);
 
 				} catch (Exception e1)
 				{
@@ -147,7 +148,7 @@ public class ChicaServiceImpl implements ChicaService
 			
 			startTime = System.currentTimeMillis();
 			//only consume the question fields for one side of the PSF
-			HashMap<String,Field> languageFieldsToConsume = 
+			Map<String,Field> languageFieldsToConsume = 
 				saveAnswers(fieldMap, formInstance,encounterId,patient);
 			FormService formService = Context.getFormService();
 			Form databaseForm = formService.getForm(formId);
@@ -288,23 +289,43 @@ public class ChicaServiceImpl implements ChicaService
 		LanguageAnswers languageAnswers = statsConfig.getLanguageAnswers();
 		org.openmrs.module.atd.util.Util.populateFieldNameArrays(languages, languageAnswers);
 	}
-
-	private HashMap<String, Field> saveAnswers(
-			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap,
-			FormInstance formInstance, int encounterId, Patient patient)
+	
+	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
+		FormInstance formInstance, int encounterId, Patient patient)
 	{
-		ATDService atdService = Context
-				.getService(ATDService.class);
-		TeleformTranslator translator = new TeleformTranslator();
-		FormService formService = Context.getFormService();
 		Integer formId = formInstance.getFormId();
-		Form databaseForm = formService.getForm(formId);
+		Form databaseForm = Context.getFormService().getForm(formId);
 		if (databaseForm == null)
 		{
 			log.error("Could not consume teleform export xml because form "
 					+ formId + " does not exist in the database");
 			return null;
 		}
+		
+		return saveAnswers(fieldMap, formInstance, encounterId, patient, databaseForm, databaseForm.getFormFields());
+	}
+	
+	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
+		FormInstance formInstance, int encounterId, Patient patient, Set<FormField> formFieldsToSave)
+	{
+		Integer formId = formInstance.getFormId();
+		Form databaseForm = Context.getFormService().getForm(formId);
+		if (databaseForm == null)
+		{
+			log.error("Could not consume teleform export xml because form "
+					+ formId + " does not exist in the database");
+			return null;
+		}
+		
+		return saveAnswers(fieldMap, formInstance, encounterId, patient, databaseForm, formFieldsToSave);
+	}
+
+	private Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
+		FormInstance formInstance, int encounterId, Patient patient, Form databaseForm, Set<FormField> formFieldsToSave)
+	{
+		ATDService atdService = Context
+				.getService(ATDService.class);
+		TeleformTranslator translator = new TeleformTranslator();
 
 		ArrayList<String> pwsAnswerChoices = new ArrayList<String>();
 		ArrayList<String> pwsAnswerChoiceErr = new ArrayList<String>();
@@ -323,7 +344,8 @@ public class ChicaServiceImpl implements ChicaService
 		parameters.put("encounterId", encounterId);
 		providerNameRule.setParameters(parameters);
 
-		for (FormField currField : databaseForm.getFormFields())
+		Map<Integer, PatientATD> fieldIdToPatientATDMap = new HashMap<Integer, PatientATD>();
+		for (FormField currField : formFieldsToSave)
 		{
 			FieldType currFieldType = currField.getField().getFieldType();
 			// only process export fields
@@ -343,9 +365,12 @@ public class ChicaServiceImpl implements ChicaService
 				// field for rule to execute
 				if (parentField != null)
 				{
-					PatientATD patientATD = atdService.getPatientATD(
-							formInstance,
-							parentField.getField().getFieldId());
+					Integer parentFieldId = parentField.getField().getFieldId();
+					PatientATD patientATD = fieldIdToPatientATDMap.get(parentFieldId);
+					if (patientATD == null) {
+						patientATD = atdService.getPatientATD(formInstance, parentFieldId);
+						fieldIdToPatientATDMap.put(parentFieldId, patientATD);
+					}
 
 					if (patientATD != null)
 					{
@@ -380,15 +405,15 @@ public class ChicaServiceImpl implements ChicaService
 										.getField().getName())!= null)
 								{
 									answers.put(ruleId, answer);
+									if (languageToNumAnswers
+											.get(currLanguage) == null)
+									{
+										languageToNumAnswers.put(
+												currLanguage, 0);
+									}
+									
 									if (!answer.equalsIgnoreCase("NoAnswer"))
 									{
-										if (languageToNumAnswers
-												.get(currLanguage) == null)
-										{
-											languageToNumAnswers.put(
-													currLanguage, 0);
-										}
-
 										languageToNumAnswers.put(currLanguage,
 												languageToNumAnswers
 														.get(currLanguage) + 1);
@@ -434,6 +459,7 @@ public class ChicaServiceImpl implements ChicaService
 			}
 		}
 
+		fieldIdToPatientATDMap.clear();
 		int maxNumAnswers = -1;
 		String maxLanguage = null;
 		HashMap<Integer, String> maxAnswers = null;
@@ -454,8 +480,10 @@ public class ChicaServiceImpl implements ChicaService
 		if (maxNumAnswers > 0)
 		{
 			languageResponse = maxLanguage;
-			HashMap<Integer, String> answers = maxAnswers;
-
+		}
+		
+		HashMap<Integer, String> answers = maxAnswers;
+		if (answers != null) {
 			for (Integer currRuleId : answers.keySet())
 			{
 				String answer = answers.get(currRuleId);
@@ -469,14 +497,14 @@ public class ChicaServiceImpl implements ChicaService
 					{
 						stat.setAnswer(answer);
 						stat.setLanguageResponse(languageResponse);
-
+	
 						atdService.updateStatistics(stat);
 					}
 				}
 			}
 		}
 		
-		String formName = formService.getForm(formId).getName();
+		String formName = databaseForm.getName();
 		//save language response to preferred language
 		//language is determined by maximum number of answers
 		//selected for a language on the PSF

@@ -43,6 +43,25 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
 	{
+		processProduceAction(stateAction, patient, patientState, parameters);
+		super.processAction(stateAction, patient, patientState, parameters);
+		//DON't clean out the medication list cache for the patient here
+		//It causes problems if other forms like the medication reconciliation
+		//form need the list. The cache will get purged once a day.
+		//If we run into memory issues we can add a TTL to the medication
+		//list data and purge it after a certain time period
+	}
+	
+	/**
+	 * Processes the Produce Action.
+	 * 
+	 * @param stateAction StateAction object.
+	 * @param patient Patient owning the action.
+	 * @param patientState The patient state.
+	 * @param parameters parameters map.
+	 */
+	protected static void processProduceAction(StateAction stateAction, Patient patient,
+	                               			PatientState patientState, HashMap<String, Object> parameters) {
 		//lookup the patient again to avoid lazy initialization errors
 		PatientService patientService = Context.getPatientService();
 		Integer patientId = patient.getPatientId();
@@ -85,7 +104,7 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 			//open an error state
 			currState = chirdlutilbackportsService.getStateByName("ErrorState");
 			chirdlutilbackportsService.addPatientState(patient,
-					currState, sessionId,locationTagId,locationId);
+					currState, sessionId,locationTagId,locationId, null);
 			log.error(formName+
 					" locationTagAttribute does not exist for locationTagId: "+
 					locationTagId+" locationId: "+locationId);
@@ -104,7 +123,7 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 			if(drugs == null){
 				State queryMedListState = chirdlutilbackportsService.getStateByName("Query medication list");
 				PatientState state = chirdlutilbackportsService.addPatientState(patient, queryMedListState, 
-					sessionId, locationTagId,locationId);
+					sessionId, locationTagId, locationId, null);
 				try {
 	                MedicationListLookup.queryMedicationList(encounter,true);
                 }
@@ -117,12 +136,5 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 			}
 			System.out.println("Produce: query medication list: "+(System.currentTimeMillis()-startTime));
 		}
-				
-		super.processAction(stateAction, patient, patientState, parameters);
-		//DON't clean out the medication list cache for the patient here
-		//It causes problems if other forms like the medication reconciliation
-		//form need the list. The cache will get purged once a day.
-		//If we run into memory issues we can add a TTL to the medication
-		//list data and purge it after a certain time period
 	}
 }

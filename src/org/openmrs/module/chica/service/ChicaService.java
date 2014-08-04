@@ -1,19 +1,18 @@
 package org.openmrs.module.chica.service;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
-import org.openmrs.Encounter;
 import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
+import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -177,6 +176,12 @@ public interface ChicaService
 	public Integer getMergeFieldCount(String form_name, String vaccine_name);
 	
 	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
+	
+	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
+		FormInstance formInstance, int encounterId, Patient patient);
+	
+	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
+		FormInstance formInstance, int encounterId, Patient patient, Set<FormField> formFieldsToSave);
 	
 	public List<org.openmrs.module.chica.hibernateBeans.Encounter> getEncountersForEnrolledPatients(Concept concept,
 			Date startDateTime, Date endDateTime);

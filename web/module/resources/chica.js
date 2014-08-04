@@ -1,3 +1,5 @@
+var audioElement = document.createElement('audio');
+
 function readText(text) {
     var lang = "en";
     readIt(text, lang);
@@ -21,8 +23,8 @@ function readTextSpanish(text) {
 
 function readIt(text, lang) {
 	var remainingText = "";
-	var audioElement = document.createElement('audio'); 
-    audioElement.addEventListener('ended', function(){
+	audioElement.pause();
+	audioElement.addEventListener('ended', function(){
     	if (remainingText != "") {
     		remainingText = queueText(remainingText, lang, this);
     	}
@@ -91,8 +93,12 @@ function login(successFunction, errorFunction) {
 	}
 	
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
-    var action = "action=authenticateUser&username=" + username + "&password=" + password;
+    var action = "action=authenticateUser";
+    var token = getAuthenticationToken();
     $.ajax({
+    	beforeSend: function (xhr) {
+		    xhr.setRequestHeader ("Authorization", token );
+	    },
         "cache": false,
         "async": true,
         "dataType": "xml",
@@ -106,4 +112,33 @@ function login(successFunction, errorFunction) {
         	$.mobile.loading('hide');
         }
     });
+}
+
+function getAuthenticationToken() {
+	var username = "";
+	var password = "";
+	var encryptKey = window.localStorage.getItem("keyDate");
+	if (encryptKey == null || encryptKey.trim().length == 0) {
+		return makeBaseAuth(username, password);
+	}
+	
+	var encryptedUsername = window.localStorage.getItem("username");
+	if (encryptedUsername != null) {
+		var decrypted = CryptoJS.AES.decrypt(encryptedUsername, encryptKey);
+	    username = decrypted.toString(CryptoJS.enc.Utf8);
+	}
+	
+	var encryptedPassword = window.localStorage.getItem("password");
+	if (encryptedPassword != null) {
+		var decrypted = CryptoJS.AES.decrypt(encryptedPassword, encryptKey);
+	    password = decrypted.toString(CryptoJS.enc.Utf8);
+	}
+	
+	return makeBaseAuth(username, password);
+}
+
+function makeBaseAuth(username, password) {
+  var tok = username + ':' + password;
+  var hash = btoa(tok);
+  return "Basic " + hash;
 }

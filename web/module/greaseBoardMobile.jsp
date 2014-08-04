@@ -6,7 +6,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.timer.js"></script>
@@ -14,21 +14,15 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/greaseBoardMobile.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
-<style>
-.ui-popup-screen {
-    right:0;
-    position:fixed;
-}
-</style>
 </head>
-<body>
+<body style="font-size: 20px">
 
 <div data-role="page" id="patient_list_page" data-theme="b" type="patient_page">
-    <div data-role="header" data-theme="a" data-position="fixed">
+    <div data-role="header" class="single-line-header" data-theme="a" data-position="fixed">
         <h1>Patients (${currentUser})</h1>
-        <a href="#" data-icon="refresh" class="ui-btn-right" onclick="populateList()">Refresh</a>
+        <a href="#" data-icon="refresh" data-theme="b" class="ui-btn-right" onclick="populateList()">Refresh</a>
     </div>
-    <div id="listError" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+    <div id="listError" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
         <div data-role="header" data-theme="b">
             <h1>Patient List Error</h1>
         </div>
@@ -39,7 +33,7 @@
             </div>
         </div>
     </div>
-    <div id="listLogIn" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+    <div id="listLogIn" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
         <div data-role="header" data-theme="b">
             <h1>Login</h1>
         </div>
@@ -55,12 +49,19 @@
             <ul data-role="listview" id="patientList"></ul>
         </div>
     </div>
-    <div id="loadingDialog" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+    <div id="loadingDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
         <div data-role="content">
             <div style="margin: 0 auto;text-align: center;">
                 Loading...
             </div>
         </div>
+    </div>
+    <div data-role="footer" data-theme="a" data-position="fixed" style="text-align: left;font-size: 10px;">
+        <h4 style="font-size:15px">
+        <div class="ui-grid-b">
+            <div class="ui-block-a" style="text-align: left;"><span style="color:red">*</span> = Pre-screener reprinted</div>               
+        </div>
+        </h4>
     </div>
 </div>
 
@@ -82,7 +83,7 @@
         <div style="margin: 0 auto;text-align: center;">
             <a href="#" id="goButton" onClick="checkPasscode()" data-role="button" data-theme="b" data-inline="true" style="width: 150px;">Go</a>
         </div> 
-        <div id="invalidPasscode" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+        <div id="invalidPasscode" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
             <div data-role="header" data-theme="b">
                 <div>
                     <h3 style="text-align: center;">Invalid Passcode</h3>
@@ -95,7 +96,7 @@
                 </div>
             </div>
         </div>
-        <div id="logInPasscode" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+        <div id="logInPasscode" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
             <div data-role="header" data-theme="b">
                 <h1>Login</h1>
             </div>
@@ -106,7 +107,7 @@
                 </div>
             </div>
         </div>
-        <div id="passcodeError" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+        <div id="passcodeError" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
             <div data-role="header" data-theme="b">
                 <div>
                     <h3 style="text-align: center;">Passcode Error</h3>

@@ -87,7 +87,7 @@ public class QueryImmunizationForecast implements ChirdlRunnable {
 			//patient state
 			State queryImmunizationListState = chirdlutilbackportsService.getStateByName("Query Immunization Forecast");
 			PatientState state = chirdlutilbackportsService.addPatientState(encounter.getPatient(), queryImmunizationListState, 
-				sessionId, locationTagId,locationId);
+				sessionId, locationTagId, locationId, null);
 		
 			//send POST and create immunization list
 			ImmunizationRegistryQuery.queryCHIRP(encounter);
