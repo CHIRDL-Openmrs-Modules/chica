@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptSource;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -27,6 +30,7 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.User;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
@@ -532,11 +536,36 @@ public class ManualCheckinController extends SimpleFormController
 		format = new SimpleDateFormat("yyyy");
 		map.put("dob3", format.format(dob));
 		PersonAttribute attribute = patient.getAttribute("Race");
-		if (attribute != null)
-		{
-			map.put("race", attribute.getValue());
+		
+		ConceptService conceptService = Context.getConceptService();
+		ConceptSource conceptSource = conceptService.getConceptSourceByName("Wishard Race Codes");
+		List<ConceptMap> conceptMaps = conceptService.getConceptsByConceptSource(conceptSource);
+		
+		TreeMap<String,String> raceCodes = new TreeMap<String,String>();
+		
+		String generalPatientRaceCategory = null;
+		
+		if(attribute != null){
+			Concept patientRaceConcept = conceptService.getConceptByMapping(attribute.getValue(), conceptSource.getName());
+			if(patientRaceConcept!=null){
+				generalPatientRaceCategory = patientRaceConcept.getName().getName();
+			}
 		}
-
+		
+		for(ConceptMap conceptMap:conceptMaps){
+			String generalRaceCategory = conceptMap.getConcept().getName().getName();
+			String raceCode = conceptMap.getSourceCode();
+			
+			if(generalPatientRaceCategory!=null&&generalRaceCategory.equalsIgnoreCase(generalPatientRaceCategory)){
+				raceCodes.put(generalRaceCategory, attribute.getValue());
+				map.put("race", generalRaceCategory);
+			}else{
+				raceCodes.put(generalRaceCategory, raceCode);
+			}
+		}
+		
+		map.put("raceCodes", raceCodes);
+		
 		attribute = patient.getAttribute("Religion");
 		if (attribute != null)
 		{

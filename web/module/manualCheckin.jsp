@@ -363,13 +363,9 @@ if (err != 0)
 <tr><td style="text-align:right"><b>Race</b></td><td style="text-align:left">
 <SELECT NAME="race" tabindex="21">
 <OPTION></OPTION>
-<OPTION <c:if test="${race == 'B' || race == '1'}">selected</c:if> value="B">B - Black</OPTION>
-<OPTION <c:if test="${race == 'H' || race == '4' || race == '8'}">selected</c:if> value="H">H - Hispanic / Latino</OPTION>
-<OPTION <c:if test="${race == 'W' || race == '6'}">selected</c:if> value="W">W - White</OPTION>
-<OPTION <c:if test="${race == 'X' || race == '7'}">selected</c:if> value="X">X - Asian Pacific/ Islander</OPTION>
-<OPTION <c:if test="${race == 'I' || race == '2'}">selected</c:if> value="I">I - American Indian / Eskimo</OPTION>
-<OPTION <c:if test="${race == 'O' || race == '3'}">selected</c:if> value="O">O - Other</OPTION>
-<OPTION <c:if test="${race == 'U' || race == '5'}">selected</c:if> value="U">U - Unknown</OPTION>
+<c:forEach items="${raceCodes}" var="raceCode">
+<OPTION <c:if test="${race == raceCode.key}">selected</c:if> value="${raceCode.value}">${raceCode.key}</OPTION>
+</c:forEach>
 </SELECT>
 </td></tr>
 <tr><td style="text-align:right"><b>Insurance Category</b></td>
