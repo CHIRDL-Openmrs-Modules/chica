@@ -64,7 +64,6 @@ import org.openmrs.scheduler.tasks.AbstractTask;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import ca.uhn.hl7v2.model.v25.segment.OBX;
 
@@ -455,13 +454,19 @@ public class HL7Exporter extends AbstractTask {
 		return rmrsCode;
 	}
 
-	private String getUnits(Concept concept) {
+	private String getUnits(Concept concept) throws Exception {
 		String units = "";
 		ConceptService cs = Context.getConceptService();
 		ConceptDatatype datatype = concept.getDatatype();
 		Integer conceptId = concept.getConceptId();
 		if (datatype != null && datatype.isNumeric()) {
-			ConceptNumeric rmrsNumericConcept = (ConceptNumeric) cs.getConcept(conceptId);
+			ConceptNumeric rmrsNumericConcept = cs.getConceptNumeric(conceptId);
+			// If the concept comes back null, throw an error because the datatype said it was numeric.
+			if (rmrsNumericConcept == null) {
+				String message = "Concept defined as numeric, but was not found.  Concept ID: " + conceptId;
+				log.error(message);
+				throw new Exception(message);
+			}
 			units = rmrsNumericConcept.getUnits();
 		}
 		return units;
@@ -618,7 +623,15 @@ public class HL7Exporter extends AbstractTask {
 
 				}
 				hl7Abbreviation = conceptDatatype.getHl7Abbreviation();
-				units = getUnits(rmrsConcept);
+				
+				try {
+	                units = getUnits(rmrsConcept);
+                }
+                catch (Exception e) {
+	                log.error("Error trying to extract units from Numeric Concept.  Concept ID: " + rmrsConcept.getConceptId(), e);
+	                continue;
+                }
+				
 				Date datetime = obs.getObsDatetime();
 				constructor.AddSegmentOBX(rmrsName, rmrsCode, null, sourceCode, value, units,
 						datetime, hl7Abbreviation, orderRep, obsRep);
