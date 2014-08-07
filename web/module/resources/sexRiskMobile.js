@@ -30,9 +30,9 @@ function init(patientName, birthdate, formInst, language, age, gender) {
 	formInstance = formInst;
 	
 	this.age = age;
-	if (age < 15) {
+	if (age < 14) {
 		ageRange = "early";
-	} else if (age >= 15 && age < 18) {
+	} else if (age >= 14 && age < 18) {
 		ageRange = "middle";
 	} else if (age >= 18) {
 		ageRange = "late";
@@ -181,10 +181,10 @@ function calculateScore() {
 	var score = 0;
 	var maxQuestions = 0;
 	if (gender.toUpperCase() === "M") {
-		if (age < 15) {
+		if (age < 14) {
 			ageRange = "early";
 			maxQuestions = 3;
-		} else if (age >= 15 && age < 18) {
+		} else if (age >= 14 && age < 18) {
 			ageRange = "middle";
 			maxQuestions = 4;
 		} else if (age >= 18) {
@@ -192,10 +192,10 @@ function calculateScore() {
 			maxQuestions = 5;
 		}
 	} else if (gender.toUpperCase() === "F") {
-		if (age < 15) {
+		if (age < 14) {
 			ageRange = "early";
 			maxQuestions = 4;
-		} else if (age >= 15 && age < 18) {
+		} else if (age >= 14 && age < 18) {
 			ageRange = "middle";
 			maxQuestions = 4;
 		} else if (age >= 18) {
