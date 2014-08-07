@@ -50,7 +50,7 @@ function setLanguage(patientName, birthdate) {
     var vitalsButtonText = "Vitals";
     if (!english) {
         langButtonText = "English";
-        additionalQuestions = "Las siguientes son algunas preguntas adicionales sobre la depresión.";
+        additionalQuestions = "Las preguntas siguientes son adicionales acerca de la depresión.";
         instructions = '<p>Durante las últimas 2 semanas, ¿qué tan seguido le han afectado cualquiera de los siguientes problemas?</p>';
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";

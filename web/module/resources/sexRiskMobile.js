@@ -49,7 +49,7 @@ function setLanguage(patientName, birthdate) {
     var vitalsButtonText = "Vitals"
     if (!english) {
         langButtonText = "English";
-        additionalQuestions = "Sobre la base de la forma en que respondió a las preguntas anteriores, nos gustaría que respondas algunas más.";
+        additionalQuestions = "Las preguntas siguientes son adicionales acerca del comportamiento sexual.";
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
     }
