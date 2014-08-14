@@ -12,6 +12,7 @@ import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
@@ -150,6 +151,15 @@ public interface ChicaService
 	 * @return List of form attributes
 	 */
 	public List<String> getPrinterStations(Location location);
+	
+	/**
+	 * Gets a list of printer stations for a particular user.  This uses the "location" user property as well as the 
+	 * "locationTags" property to determine the printer stations.
+	 * 
+	 * @param user The User used to determine the printer stations.
+	 * @return List of printer station names.
+	 */
+	public List<String> getPrinterStations(User user);
 	
 	public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId);
 	

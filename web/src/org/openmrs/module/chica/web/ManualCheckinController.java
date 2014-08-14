@@ -21,7 +21,6 @@ import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
@@ -86,7 +85,7 @@ public class ManualCheckinController extends SimpleFormController
 
 		Location location = locationService
 			.getLocation(locationString);
-		List<String> stationNames =  chicaService.getPrinterStations(location);
+		List<String> stationNames =  chicaService.getPrinterStations(user);
 		map.put("stations", stationNames);
 		
 		String checkin = request.getParameter("checkin");
@@ -375,7 +374,6 @@ public class ManualCheckinController extends SimpleFormController
 			checkinPatient.addAttribute(attribute);
 		}
 		LocationService locationService = Context.getLocationService();
-		Integer locationId = null;
 		User user = Context.getAuthenticatedUser();
 
 		if (encounterLocation == null){

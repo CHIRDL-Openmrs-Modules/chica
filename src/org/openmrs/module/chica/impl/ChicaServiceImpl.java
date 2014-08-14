@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,9 +24,11 @@ import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
@@ -60,6 +63,7 @@ import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswers;
 import org.openmrs.module.chica.xmlBeans.StatsConfig;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -933,7 +937,7 @@ public class ChicaServiceImpl implements ChicaService
 		}
 		
 		public List<String> getPrinterStations(Location location){
-			String locationTagAttributeName = "ActivePrinterStation";
+			String locationTagAttributeName = ChirdlUtilConstants.LOC_TAG_ATTR_ACTIVE_PRINTER_STATION;
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 			Set<LocationTag> tags = location.getTags();
@@ -958,6 +962,52 @@ public class ChicaServiceImpl implements ChicaService
 			
 			return stationNames;
 		}
+		
+		/**
+		 * @see org.openmrs.module.chica.service.ChicaService#getPrinterStations(org.openmrs.User)
+		 */
+        public List<String> getPrinterStations(User user) {
+        	List<String> stationNames = new ArrayList<String>();
+        	String locationProp = user.getUserProperty(ChirdlUtilConstants.USER_PROPERTY_LOCATION);
+	        String locationTags = user.getUserProperty(ChirdlUtilConstants.USER_PROPERTY_LOCATION_TAGS);
+	        if (locationProp == null || locationProp.trim().length() == 0 || locationTags == null || 
+	        		locationTags.trim().length() == 0) {
+	        	return stationNames;
+	        }
+	        
+	        LocationService locationService =  Context.getLocationService();
+	        Location location = locationService.getLocation(locationProp);
+	        if (location == null) {
+	        	return stationNames;
+	        }
+	        
+	        ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+	        String locationTagAttributeName = ChirdlUtilConstants.LOC_TAG_ATTR_ACTIVE_PRINTER_STATION;
+			StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+			while (tokenizer.hasMoreTokens()) {
+				String locationTagName = tokenizer.nextToken();
+				locationTagName = locationTagName.trim();
+				LocationTag tag = locationService.getLocationTagByName(locationTagName);
+				if (tag == null) {
+					continue;
+				}
+				
+				LocationTagAttributeValue locationTagAttributeValue = 
+						chirdlutilbackportsService.getLocationTagAttributeValue(tag.getLocationTagId(), 
+						locationTagAttributeName, location.getLocationId());
+				if (locationTagAttributeValue == null || locationTagAttributeValue.getValue() == null) {
+					continue;
+				}
+				
+				String activePrinterLocationString = locationTagAttributeValue.getValue();
+				//only display active printer locations
+				if (activePrinterLocationString.equalsIgnoreCase("true")) {
+					stationNames.add(tag.getName());
+				}
+			}
+	        
+	        return stationNames;
+        }
 		
 		public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId){
 			Chica1Appointment appt= getChicaDAO().getChica1AppointmentByEncounterId(encId);
@@ -1018,4 +1068,5 @@ public class ChicaServiceImpl implements ChicaService
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
     	}
+
 }
