@@ -15,6 +15,7 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.SSNValidator;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.patient.UnallowedIdentifierException;
 
@@ -24,10 +25,6 @@ import ca.uhn.hl7v2.model.Message;
 public class PatientHandler extends org.openmrs.module.sockethl7listener.PatientHandler
 {
 	protected final Log log = LogFactory.getLog(getClass());
-	
-	private static final String ATTRIBUTE_RELIGION = "Religion";
-	private static final String ATTRIBUTE_MARITAL = "Civil Status";
-	private static final String ATTRIBUTE_MAIDEN = "Mother's maiden name";
 
 	public PatientHandler()
 	{
@@ -45,7 +42,7 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 			Date encounterDate, HL7PatientHandler hl7PatientHandler)
 	{
 		String race = hl7PatientHandler.getRace(message);
-		addAttribute(hl7Patient, ATTRIBUTE_RACE, race, encounterDate);
+		addAttribute(hl7Patient,  ChirdlUtilConstants.PERSON_ATTRIBUTE_RACE, race, encounterDate);
 	}
 
 	//set additional patient attributes
@@ -53,8 +50,7 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 	public Patient setPatientFromHL7(Message message, Date encounterDate,
 			Location sendingFacility, HL7PatientHandler hl7PatientHandler)
 	{
-		
-		org.openmrs.module.sockethl7listener.PatientHandler.ATTRIBUTE_NEXT_OF_KIN = "Next of Kin";
+
 		
 		Patient hl7Patient = super.setPatientFromHL7(message, encounterDate,
 				sendingFacility, hl7PatientHandler);
@@ -75,7 +71,7 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 			
 			if (isValidSSN)
 			{
-				PatientIdentifierType type = this.patientService.getPatientIdentifierTypeByName("SSN");
+				PatientIdentifierType type = this.patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.SSN_IDENTIFIER_TYPE);
 				PatientIdentifier pi = new PatientIdentifier(ssn,type,sendingFacility);
 				pi.setDateCreated(encounterDate);
 				pi.setCreator(Context.getAuthenticatedUser());
@@ -85,7 +81,7 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 				//Only create the person's attribute ssn if it was an invalid string
 				//if it was invalid because it was null, don't create the attr.
 				if (ssn!=null){
-					PersonAttributeType ssnType = this.personService.getPersonAttributeTypeByName("SSN");
+					PersonAttributeType ssnType = this.personService.getPersonAttributeTypeByName(ChirdlUtilConstants.PERSON_ATTRIBUTE_SSN);
 					PersonAttribute pa = new PersonAttribute(ssnType,ssn);
 					pa.setCreator(Context.getAuthenticatedUser());
 					pa.setDateCreated(encounterDate);
@@ -98,21 +94,21 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 					.getReligion(message);
 			if (religion != null)
 			{
-				addAttribute(hl7Patient, ATTRIBUTE_RELIGION, religion,
+				addAttribute(hl7Patient, ChirdlUtilConstants.PERSON_ATTRIBUTE_RELIGION, religion,
 						encounterDate);
 			}
 			String marital = ((org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25) hl7PatientHandler)
 					.getMaritalStatus(message);
 			if (marital != null)
 			{
-				addAttribute(hl7Patient, ATTRIBUTE_MARITAL, marital,
+				addAttribute(hl7Patient, ChirdlUtilConstants.PERSON_ATTRIBUTE_MARITAL_STATUS, marital,
 						encounterDate);
 			}
 			String maiden = ((org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25) hl7PatientHandler)
 					.getMothersMaidenName(message);
 			if (maiden != null)
 			{
-				addAttribute(hl7Patient, ATTRIBUTE_MAIDEN, maiden,
+				addAttribute(hl7Patient, ChirdlUtilConstants.PERSON_ATTRIBUTE_MAIDEN_NAME, maiden,
 						encounterDate);
 			}
 		}
