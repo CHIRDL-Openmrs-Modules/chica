@@ -153,7 +153,7 @@ public class HL7SocketHandler extends
 		}
 
 		// Search by SSN
-		PatientIdentifier ssnIdent = hl7Patient.getPatientIdentifier(ChirdlUtilConstants.SSN_IDENTIFIER_TYPE);
+		PatientIdentifier ssnIdent = hl7Patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 		if (ssnIdent != null) {
 			String ssn = ssnIdent.getIdentifier();
 			lookupPatients = patientService.getPatients(null, ssn, null, true);
@@ -646,7 +646,14 @@ public class HL7SocketHandler extends
 						.getSessionId(), getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date queryKiteAliasStart = (Date) parameters.get("queryKiteAliasStart");
+		if (queryKiteAliasStart == null){
+			queryKiteAliasStart = new java.util.Date();
+		}
 		Date queryKiteAliasEnd = (Date) parameters.get("queryKiteAliasEnd");
+		if (queryKiteAliasEnd == null){
+			queryKiteAliasEnd = new java.util.Date();
+		}
+		
 		patientState.setStartTime(queryKiteAliasStart);
 		patientState.setEndTime(queryKiteAliasEnd);
 		chirdlutilbackportsService.updatePatientState(patientState);
@@ -860,9 +867,9 @@ public class HL7SocketHandler extends
 
 		PatientService patientService = Context.getPatientService();
 
-		PatientIdentifier newSSN = hl7Patient.getPatientIdentifier(ChirdlUtilConstants.SSN_IDENTIFIER_TYPE);
+		PatientIdentifier newSSN = hl7Patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 		PatientIdentifier currentSSN = currentPatient
-				.getPatientIdentifier(ChirdlUtilConstants.SSN_IDENTIFIER_TYPE);
+				.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 
 		//hl7 has no SSN. Or hl7 SSN is the same as existing SSN
 		if (newSSN == null
@@ -894,7 +901,7 @@ public class HL7SocketHandler extends
 			currentPatient.addIdentifier(newSSN);
 		} else {
 			// if patient has a different SSN
-				currentPatient.getPatientIdentifier(ChirdlUtilConstants.SSN_IDENTIFIER_TYPE).setVoided(true);
+				currentPatient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN).setVoided(true);
 				currentPatient.addIdentifier(newSSN);
 		}
 
@@ -1057,8 +1064,8 @@ public class HL7SocketHandler extends
 	 */
 	private void AddCitizenship(Patient currentPatient, Patient hl7Patient,Date encounterDate){
 
-		PersonAttribute currentCitizenshipAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_CITIZENSHIP);
-		PersonAttribute hl7CitizenshipAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_CITIZENSHIP);
+		PersonAttribute currentCitizenshipAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_CITIZENSHIP);
+		PersonAttribute hl7CitizenshipAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_CITIZENSHIP);
 
 		if (hl7CitizenshipAttr == null || hl7CitizenshipAttr.getValue() == null 
 				|| hl7CitizenshipAttr.getValue().trim().equals("")){
@@ -1165,7 +1172,7 @@ public class HL7SocketHandler extends
 			//Create the new identifier object and add to existing patient
 			PatientIdentifier newIdentifier = new PatientIdentifier();
 			newIdentifier.setIdentifier(newMRN);
-			newIdentifier.setIdentifierType( patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.MRN_IDENTIFIER_TYPE));
+			newIdentifier.setIdentifierType( patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN));
 			newIdentifier.setLocation(newPatientIdentifier.getLocation());
 			newIdentifier.setPatient(existingPatient);
 			newIdentifier.setPreferred(true);

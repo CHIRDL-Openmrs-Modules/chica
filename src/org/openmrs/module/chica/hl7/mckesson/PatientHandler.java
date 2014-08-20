@@ -71,7 +71,7 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 			
 			if (isValidSSN)
 			{
-				PatientIdentifierType type = this.patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.SSN_IDENTIFIER_TYPE);
+				PatientIdentifierType type = this.patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 				PatientIdentifier pi = new PatientIdentifier(ssn,type,sendingFacility);
 				pi.setDateCreated(encounterDate);
 				pi.setCreator(Context.getAuthenticatedUser());
