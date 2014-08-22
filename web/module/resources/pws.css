@@ -105,3 +105,45 @@ body {
 	float:left;
 	margin-top:16px;
 }
+
+#physicalExam {
+	float:left;
+	width:175px;
+	height:400px;
+}
+
+#examTitle {
+	float:left;
+	text-align:left;
+	width:175px;
+	height:15px;
+}
+
+.examNames {
+	float:left;
+	width:100px;
+	height:19px;
+	text-align:left;
+}
+
+.examHeader {
+	float:left;
+	width:30px;
+	height:19px;
+	text-align:center;
+}
+
+.examFlag {
+	float:left;
+	width:15px;
+	height:19px;
+	text-align:center;
+}
+
+#examLegend {
+	float:left;
+	text-align:center;
+	width:175px;
+	height:15px;
+	font-size:0.8em;
+}
