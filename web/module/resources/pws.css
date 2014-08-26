@@ -93,14 +93,14 @@ body {
 	border-bottom: 1px solid black;
 	float:left;
 	width:548px;
-	height:400px;
+	height:350px;
 	margin-top:-205px;
 	padding:2px;
 }
 
 #pain {
 	width:248px;
-	height:179px;
+	height:129px;
 	border-bottom: 1px solid black;
 	float:left;
 	margin-top:20px;
@@ -109,7 +109,7 @@ body {
 #physicalExam {
 	float:left;
 	width:175px;
-	height:400px;
+	height:350px;
 }
 
 #examTitle {
@@ -150,11 +150,22 @@ body {
 
 #examExtras {
 	float:left;
-	width:244px;
-	height:400px;
-	margin-left:127px;
+	width:260px;
+	height:350px;
+	margin-left:113px;
 }
 
 .examExtraCheckbox {
-	width:240px;
+	width:260px;
+}
+
+.examExtraData {
+	width:260px;
+	padding-left:2px;
+}
+
+.examExtraDataHighlight {
+	width:260px;
+	padding-left:2px;
+	background-color:yellow;
 }
