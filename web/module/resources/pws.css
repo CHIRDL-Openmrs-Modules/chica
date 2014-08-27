@@ -1,13 +1,15 @@
 body {
 	font-family:Verdana, Geneva, sans-serif;
 	font-size:13px;
+	background-color:#75A3A3;
 }
 
 #formContainer {
 	width:800px;
-	height:600px;
+	height:960px;
 	margin:0 auto;
 	border: 1px solid black;
+	background-color:#FFFFFF;
 }
 
 #titleContainer {
@@ -93,14 +95,14 @@ body {
 	border-bottom: 1px solid black;
 	float:left;
 	width:548px;
-	height:350px;
+	height:330px;
 	margin-top:-205px;
 	padding:2px;
 }
 
 #pain {
 	width:248px;
-	height:129px;
+	height:109px;
 	border-bottom: 1px solid black;
 	float:left;
 	margin-top:20px;
@@ -168,4 +170,32 @@ body {
 	width:260px;
 	padding-left:2px;
 	background-color:yellow;
+}
+
+.questionContainer {
+	float:left;
+	width:400px;
+	height:160px;
+	font-size:0.88em;
+	padding-top:10px;
+	border-bottom: 1px solid black;
+	border-left: 1px solid black;
+	margin-left:-1px;
+}
+
+.questionStem {
+	padding:2px;
+	width:396px;
+	height:65px;
+}
+
+.answerContainer {
+	float:left;
+	padding:2px;
+	width:195px;
+	height:88px;
+}
+
+.answerCheckbox {
+	width:200px;
 }

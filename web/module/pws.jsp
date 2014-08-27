@@ -38,139 +38,139 @@
                         &nbsp;&nbsp;
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${HeightA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Height:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 in. (99%)
+                        ${Height}&nbsp;${HeightSUnits}&nbsp;(${HeightP}%)
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${WeightA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Weight:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 kg. (99%)
+                        ${WeightKG}&nbsp;kg.&nbsp;(${WeightP}%)
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${BMIA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         BMI:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 (99%)
+                        ${BMI}&nbsp;(${BMIP}%)
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${HCA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Head Circ:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 cm. (99%)
+                        ${HC} cm.(${HCP}%)
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${TempA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Temp:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 F ()
+                        ${Temperature} F (${Temperature_Method})
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${PulseA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Pulse:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99
+                        ${Pulse}
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${RRA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         RR:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99
+                        ${RR}
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${BPA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         BP:<br/>
                     </div>
                     <div class="vitalsValues">
-                        120/100 (99%/99%)
+                        ${BP} (${BPP})
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${PulseOxA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Pulse Ox:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99%
+                        ${PulseOx}%
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${HearA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Hear (L):<br/>
                     </div>
                     <div class="vitalsValues">
-                        99
+                        ${HearL}
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${HearA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Hear (R):<br/>
                     </div>
                     <div class="vitalsValues">
-                        99
+                        ${HearR}
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${VisionLA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Vision (L):<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 U
+                        ${VisionL}&nbsp;${VisionL_Corrected}
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b>${VisionRA}</b><br/>
                     </div>
                     <div class="vitalsNames">
                         Vision (R):<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 U
+                        ${VisionL}&nbsp;${VisionL_Corrected}
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Weight:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 kg
+                        ${Weight}
                     </div>
                     <div class="flagCell">
-                        <b>*</b><br/>
+                        <b></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Prev WT:<br/>
                     </div>
                     <div class="vitalsValues">
-                        99 lb. (07/14)
+                        ${PrevWeight}&nbsp;(${PrevWeightDate})
                     </div>
                     <div id="vitalsLegend">
                     <b>*=Abnormal, U=Uncooperative</b></div>
@@ -199,10 +199,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_General" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_General" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Head:<br/>
@@ -211,10 +211,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Head" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Head" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Skin:<br/>
@@ -223,10 +223,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Skin" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Skin" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Eyes:<br/>
@@ -235,10 +235,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Eyes" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Eyes" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Ears:<br/>
@@ -247,10 +247,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Ears" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Ears" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Nose/Throat:<br/>
@@ -259,10 +259,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Nose" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Nose" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Teeth/Gums:<br/>
@@ -271,10 +271,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Teeth" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Teeth" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Nodes:<br/>
@@ -283,10 +283,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Nodes" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Nodes" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Chest/Lungs:<br/>
@@ -295,10 +295,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Chest" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Chest" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Heart/Pulses:<br/>
@@ -307,10 +307,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Heart" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Heart" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Abdomen:<br/>
@@ -319,10 +319,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Abdomen" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Abdomen" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Ext Genitalia:<br/>
@@ -331,10 +331,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_ExtGenitalia" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_ExtGenitalia" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Back:<br/>
@@ -343,10 +343,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Back" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Back" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Neuro:<br/>
@@ -355,10 +355,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Neuro" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Neuro" value="A"/><br/>
                         </div>
                         <div class="examNames">
                             Extremities:<br/>
@@ -367,10 +367,10 @@
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Extremities" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                        	<input type="checkbox"/><br/>
+                        	<input type="radio" name="Entry_Extremities" value="A"/><br/>
                         </div>
                         <div id="examLegend">
                         	<b>* = Previously Abnormal</b>
@@ -402,7 +402,7 @@
                         	&nbsp;
                         </div>
                         <div class="examExtraData">
-                        	Language: ${Language}
+                        	Language: Spanish
                         </div>
                         <div>
                         	&nbsp;
@@ -429,6 +429,168 @@
                 </div>
                 <div id="pain">
                 	
+                </div>
+                <div id="questionOneContainer" class="questionContainer">
+                	<div id="questionOneStem" class="questionStem">
+                    	* ATTENTION * According to information collected today on screening, Jenny seems to be in pain.  Please rate pain on a scale of 1-10 to below and counsel appropriately.
+                    </div>
+                    <div id="questionOneAnswerLeftContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Score: 1 - 2</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Score: 5 - 6</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Score: 9 - 10</input><br/>
+                        </div>
+                    </div>
+                    <div id="questionOneAnswerRightContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Score: 3 - 4</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Score: 7 - 8</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Not in pain</input><br/>
+                        </div>
+                    </div>
+                </div>
+                <div id="questionTwoContainer" class="questionContainer">
+                	<div id="questionTwoStem" class="questionStem">
+                    	Jenny has acknowledged having had sexual intercourse. Jenny has also reported the following risk factors for pregnancy and/or STD's: patient does not always use condoms / patient does not use birth control. Please discuss the following:
+                    </div>
+                    <div id="questionTwoAnswerLeftContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Recommend condoms</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Recommend birth control</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">May be pregnant -> test -></input><br/>
+                        </div>
+                    </div>
+                    <div id="questionTwoAnswerRightContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Gave out condoms</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Prescribed birth control</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Never had intercourse</input><br/>
+                        </div>
+                    </div>
+                </div>
+                <div id="questionThreeContainer" class="questionContainer">
+                	<div id="questionThreeStem" class="questionStem">
+                    	Jenny's type 2 diabetes screening labs cannot be found. Were they done? Please consider the following:
+                    </div>
+                    <div id="questionThreeAnswerLeftContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Labs normal -></input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Labs not done -></input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Schedule f/u visit for 3 months</input><br/>
+                        </div>
+                    </div>
+                    <div id="questionThreeAnswerRightContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Recommend lifestyle changes</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Page and send to test clinic</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox"></input><br/>
+                        </div>
+                    </div>
+                </div>
+                <div id="questionFourContainer" class="questionContainer">
+                	<div id="questionFourStem" class="questionStem">
+                    	According to AAP guidelines, Jenny should have vision screening today, but we have no record. Please screen vision now.
+                    </div>
+                    <div id="questionFourAnswerLeftContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Screen done ----></input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox"></input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Unable to screen</input><br/>
+                        </div>
+                    </div>
+                    <div id="questionFourAnswerRightContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Passed</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Failed</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Not indicated</input><br/>
+                        </div>
+                    </div>
+                </div>
+                <div id="questionFiveContainer" class="questionContainer">
+                	<div id="questionFiveStem" class="questionStem">
+                    	Although Jenny has given no indication that he is at high risk for alcohol abuse, it is worth asking about the use of alcohol.  They are at risk because a family member has substance abuse problem. . Please ask about the following, and check the boxes if appropriate.
+                    </div>
+                    <div id="questionFiveAnswerLeftContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Has been drunk in last month</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Been in car with drunk driver</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">No concerns at this time</input><br/>
+                        </div>
+                    </div>
+                    <div id="questionFiveAnswerRightContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Risk taking while drunk</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Family drinking prob.</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox"></input><br/>
+                        </div>
+                    </div>
+                </div>
+                <div id="questionSixContainer" class="questionContainer">
+                	<div id="questionSixStem" class="questionStem">
+                    	Although Jenny has given no indications of high risk for drug abuse, it is worth asking about the use of drugs. Please ask about the following, and check the boxes if appropriate.
+                    </div>
+                    <div id="questionSixAnswerLeftContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Has used drugs in last month</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">Friend(s) abuse(s) drugs</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox">No concerns at this time</input><br/>
+                        </div>
+                    </div>
+                    <div id="questionSixAnswerRightContainer" class="answerContainer">
+                    	<div class="answerCheckbox">
+                        	<input type="checkbox">Abuses OTC drugs</input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox"></input><br/>
+                        </div>
+                        <div class="answerCheckbox">
+                        	<input type="checkbox"></input><br/>
+                        </div>
+                    </div>
                 </div>
             </form>
     	</div>
