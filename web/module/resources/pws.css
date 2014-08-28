@@ -38,21 +38,21 @@ body {
 }
 
 #infoLeft {
-	width:300px;
+	width:340px;
 	float:left;
 	padding:2px;
 	border-bottom: 1px solid black;
 }
 
 #infoRight {
-	width:244px;
+	width:184px;
 	float:left;
 	padding:2px;
 	border-bottom: 1px solid black;
 }
 
 #vitals {
-	width:245px;
+	width:265px;
 	height:257px;
 	float:left;
 	border-left: 1px solid black;
@@ -73,13 +73,13 @@ body {
 
 .vitalsValues {
 	float:left;
-	width:139px;
+	width:155px;
 	margin-left:5px;
 	text-align:left;
 }
 
 #vitalsLegend {
-	width:247px;
+	width:267px;
 	border-left: 1px solid black;
 	border-bottom: 1px solid black;
 	border-top: 1px solid black;
@@ -154,7 +154,7 @@ body {
 	float:left;
 	width:260px;
 	height:350px;
-	margin-left:113px;
+	margin-left:75px;
 }
 
 .examExtraCheckbox {

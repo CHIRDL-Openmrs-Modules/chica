@@ -34,6 +34,7 @@
                 <prop key="/module/@MODULE_ID@/phq9Mobile.form">phq9Mobile</prop>
                 <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
+                <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
             </props>
         </property>
     </bean>
@@ -135,6 +136,11 @@
     <bean id="psfMobile" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>psfMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/psfMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="pws" class="@MODULE_PACKAGE@.web.MobileFormController">
+        <property name="commandName"><value>pwsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/pws</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
     <bean id="psfMobileTabs" class="@MODULE_PACKAGE@.web.MobileFormController">
