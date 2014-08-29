@@ -34,7 +34,7 @@ VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 count_cholesterol := read Count {CHOLESTEROL from RMRS} Where it Occurred Within Past 5 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 endif
 ;;
-Priority:		248;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

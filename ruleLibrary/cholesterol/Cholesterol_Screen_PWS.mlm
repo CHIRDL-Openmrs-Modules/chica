@@ -34,7 +34,7 @@ VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 Exists_Lab_Cholesterol := read Exist {CHOLESTEROL from RMRS} Where it Occurred Within Past 5 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif
 ;;
-Priority:		750;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
