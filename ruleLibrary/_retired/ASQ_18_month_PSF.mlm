@@ -1,0 +1,49 @@
+Maintenance:
+	Title:		ASQ_18_month_PSF                                                                                    ;;
+	Filename:		ASQ_18_month_PSF                                  ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Steve Downs                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2007-11-19 15:29:15;;
+	Validation:	;;
+Library:
+	Purpose:		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ASQ, Developmental                                                                                  ;;
+	Citations:		                                                                                                    ;;
+	Links:		                                                                                                    ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {Box1 from Parameters};
+Box2:=read {Box2 from Parameters};
+Box3:=read {Box3 from Parameters};
+Box4:=read {Box4 from Parameters};
+Box5:=read {Box5 from Parameters};
+Box6:=read {Box6 from Parameters};
+
+If (mode = PRODUCE) then
+asq := read Last {ASQ_18_month from CHICA} ;
+devref := read Last {Developmental_Referral from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority:		1000         ;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (asq = passed) OR (asq = failed) OR (devref = First_steps) then conclude False;
+Else conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+;;
+Action:
+call CREATE_JIT with  "ASQ_JIT","firstname";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+;;
+Age_Min: 17         months    ;;
+Age_Max: 20         months    ;;
+end:

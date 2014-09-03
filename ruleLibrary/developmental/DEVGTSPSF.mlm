@@ -1,0 +1,61 @@
+Maintenance:
+	Title:		Development  Get to Sitting PSF;;
+	Filename:		DEVGTSPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-30T09:44:02-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child moving to a sitting position.                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 176;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "acostado";
+If (Gender = F) then || spanishgender || = "acostada";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "GM_Passed","Get to Sitting";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "GM_Failed","Get to Sitting";
+endif;
+
+
+endif
+;;
+Action:
+write ("When lying down, does || firstname || get into a sitting position without help?");
+write ("¿Cuando || firstname || está || spanishgender ||, se puede sentar sin ayuda?") At Spanish;                                                                                                                                                                                                                                                                                                                      
+;;
+Age_Min: 308 days;;
+Age_Max: 360 days;;
+end:

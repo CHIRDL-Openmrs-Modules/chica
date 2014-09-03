@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Firearms Friends PSF;;
+	Filename:		Injury_Firearms_FriendsPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:32:12-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if any of the child's friends have guns;;
+	Explanation:	The AAP recommends discussing with children and adolescents the risks of firearms. Studies have shown that children carry guns to school because of fear, risk of violence, peer pressure and the use of alcohol and illicit drugs.;;
+	Keywords:	injury, firearms, friends, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=10742344&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+gunsfriends := read Last {firearms_friends from CHICA} Where it Occurred Within Past 2 Years;
+endif
+;;
+Priority: 716;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "amigos";
+If (Gender = F) then || spanishgender || = "amigas";
+If (gunsfriends = no) then conclude False;
+conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "firearms_friends","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "firearms_friends","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do any of || firstname ||'s friends have guns?");
+write ("¿Algunas de las amigas de || firstname || guardan armas?") At Spanish;
+;;
+Age_Min: 6 years;;
+Age_Max: 12 years;;
+end:

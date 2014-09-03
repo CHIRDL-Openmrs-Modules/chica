@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Sickle Cell Screening PSF;;
+	Filename:		SCSCREENPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2004-01-16T12:30:34-0500;;
+	Validation:	;;
+Library:
+	Purpose:		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	sickle cell;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+previous := read Exist {PSFSickleCell from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+endif
+;;
+Priority: 228;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (previous = True) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "PSFSickleCell","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "PSFSickleCell","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || have sickle cell disease?");
+write ("¿Tiene || firstname ||, la enfermedad de celula de hoz?") At Spanish;                                                                                                                                                                     
+;;
+Age_Min: 0 years;;
+Age_Max: 12 years;;
+end:

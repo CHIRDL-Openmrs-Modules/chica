@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Injury  Falls Window Guards PSF;;
+	Filename:		Injury_Falls_WindowsPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-12T11:50:22-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF screens whether all windows in the house have guards.                                                                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Explanation:	The installation of window guards is a proven preventive strategy. In 1976, the New York City Board of Health noted that window falls accounted for 12% of deaths from unintentional injury of children younger than 15 years.                                                                                                                                                                                                                                                                                      ;;
+	Keywords:	injury, falls, infant, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=596496&dopt=Abstract;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+guards := read Last {has_window_guards from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+endif
+;;
+Priority: 804;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (guards = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "has_window_guards","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "has_window_guards","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do the windows in your house have guards to prevent || firstname || from opening them?");
+write ("¿Las ventanas de la casa de || firstname ||, tienen protectores que previene que || firstname || las abra?") At Spanish;                                                                         
+;;
+Age_Min: 6 months;;
+Age_Max: 4 years;;
+end:

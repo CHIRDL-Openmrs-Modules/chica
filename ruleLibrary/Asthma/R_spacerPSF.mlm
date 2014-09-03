@@ -1,0 +1,63 @@
+Maintenance:
+	Title:		Research PSF Asthma Spacer Use;;
+	Filename:		R_spacerPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2005-07-22T03:30:47-0400;;
+	Validation:	;;
+Library:
+	Purpose:		PSF to check whether asthma patient is using a spacer with his/her inhaler.                                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	If patient's asthma status is intermittent or persistent, asks if they use a spacer.  It is only used with intervention study patients.                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Keywords:	asthma spacer psf;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+SpacerStatus := read Last {UsesMDISpacer from CHICA} ;
+Status := read Last {AsthmaStatus from CHICA} ;
+Spacer := read Exist {UsesMDISpacer from CHICA} Where it Occurred Within Past 3 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+endif
+;;
+Priority: 372;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (SpacerStatus = not-applicable) OR (SpacerStatus = not-recommended) then conclude False;
+If (Spacer = True) then conclude False;
+If (Status = Intermittent) OR (Status = Persistent-controller) OR (Status = Persistent-no-controller) OR (Status = Persistent-non-adherent) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "UsesMDISpacer","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "UsesMDISpacer","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || always use a spacer when using || hisher || inhaler (puffer)?");
+write ("¿|| firstname || siempre usa el espaciador cuando usa su inhalador?") At Spanish;                                                                                                                                                                                                                                                                                                                             
+;;
+Age_Min: 3 years;;
+Age_Max: 12 years;;
+end:

@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		School and Learning Problems  Suspended PSF;;
+	Filename:		School_SuspendedPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-22T10:59:29-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This is the third screening question about school performance from the GAPS handbook.                                                                                                                                                                                                                                                                                                                                                                                                                               ;;
+	Explanation:	School performance is one of the most sensitive markers of psychosocial adjustment to adolescence.  Assessing this is not easy or simple.  This PSF asks a simple screening question from the GAPS handbook.                                                                                                                                                                                                                                                                                                        ;;
+	Keywords:	adolescent, GAPS, school, PSF;;
+	Citations:		;;
+	Links:		http://www.ama-assn.org/ama/pub/category/2280.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+suspend := read Exist {school_suspension_this_year from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority: 588;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (suspend = True) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "school_suspension_this_year","True";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "school_suspension_this_year","False";
+endif;
+
+
+endif
+;;
+Action:
+write ("Have you been suspended from school this year?");
+write("¿Le han suspendido de la escuela este año?") At Spanish;                                                                                                                                                                                  
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

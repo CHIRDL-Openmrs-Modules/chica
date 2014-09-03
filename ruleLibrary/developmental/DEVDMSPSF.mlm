@@ -1,0 +1,63 @@
+Maintenance:
+	Title:		Development  Dad/Mama Specific PSF;;
+	Filename:		DEVDMSPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-30T09:39:39-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child using the word mama or dada specifically.                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 124;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "él";
+If (Gender = F) then || spanishgender || = "ella";
+If (Gender = M) then || text || = "he";
+If (Gender = F) then || text || = "she";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "LG_Passed","Dad/Mama Specific";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "LG_Failed","Dad/Mama Specific";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || say 'Dada' when || text || wants or sees || hisher || father?  Does || text || say 'Mama' when || text || wants or sees || hisher || mother?  Fill in YES if || text || says either one.");
+write ("¿Dice || firstname || 'papá' cuando quiere ver a su padre y 'mama' cuando quiere ver a su madre? Marque si, si || spanishgender || dice cualquiera de los dos") At Spanish;                                                                                                     
+;;
+Age_Min: 405 days;;
+Age_Max: 460 days;;
+end:

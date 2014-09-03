@@ -1,0 +1,71 @@
+Maintenance:
+	Title:		Low Birth Weight PSF Question;;
+	Filename:		lbw.mlm;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2007-01-29 15:00:44;;
+	Validation:	;;
+Library:
+	Purpose:		Identify those children with the classic definition of low birth weight (<2500 gms or 5# 8oz) on the PSF.;;
+	Explanation:	Iron Deficiency Anemia:  If child is LBW and breastfeeding, child needs additional iron supplements and early screening.;;
+	Keywords:	PSF, iron deficiency, anemia;;
+	Citations:		CDC, WHO definitions;;
+	Links:		http://www.who.int/reproductive-health/publications/MSM_98_1/MSM_98_1_glossary.en.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+RMRS2BW := read Exist {WEIGHT NEWBORN BABY A from RMRS};
+PMH := read {PAST MEDICAL HISTORY CHICA from CHICA};
+NPMH := read {NEGATIVE PAST MEDICAL HISTORY from CHICA};
+Study := read Last {K22STUDY1};
+endif
+;;
+Priority: 532;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Study = Control) then conclude False;
+If (RMRS2BW = True) then conclude False;
+/*****
+PMH := read Exist (LOW BIRTH WEIGHT)
+NPMH := read Exist (LOW BIRTH WEIGHT)
+If (PMH = True) or (NPMH = True) then conclude False;
+*****/
+If 'LOW BIRTH WEIGHT' is in PMH or 'LOW BIRTH WEIGHT' is in NPMH then conclude False;
+
+conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "PAST MEDICAL HISTORY CHICA","LOW BIRTH WEIGHT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "NEGATIVE PAST MEDICAL HISTORY","LOW BIRTH WEIGHT";
+endif;
+
+
+endif
+;;
+Action:
+write ("Was || firstname ||'s birth weight less than five pounds and eight ounces (2500 grams)?");
+write("¿Cuándo nació || firstname ||, peso menos de cinco libras ocho onzas (2.5 kilos)?") At Spanish;
+;;
+Age_Min: 0 days;;
+Age_Max: 2 years;;
+end:

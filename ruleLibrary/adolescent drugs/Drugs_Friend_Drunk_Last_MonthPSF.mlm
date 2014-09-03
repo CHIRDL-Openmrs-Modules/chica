@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Drug Abuse  Friend Drunk Month PSF;;
+	Filename:		Drugs_Friend_Drunk_Last_MonthPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-06T02:13:23-0400;;
+	Validation:	;;
+Library:
+	Purpose:		GAPS screening question for friends' drug or alcohol use.                                                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Explanation:	Most adolescents will use alcohol or other drugs before age 21.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	GAPS, adolescent, drugs, alcohol, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+friend := read Exist {friend_drunk_last_month from CHICA} Where it Occurred Within Past 330 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority: 788;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (friend= True) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "friend_drunk_last_month","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "friend_drunk_last_month","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("In the past month, did any of your close friends get drunk or very high on beer, wine, wine coolers, or other alcohol?");
+write ("¿En el último mes algún amigo se ha embriagado con cerveza, vino, o algún otro tipo de bebida alcoholica?") At Spanish;                                                                                                                                                                                                                                                  
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

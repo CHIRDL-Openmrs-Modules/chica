@@ -1,0 +1,61 @@
+Maintenance:
+	Title:		Development  Put on Clothing PSF;;
+	Filename:		DEVPOCPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-18T03:15:51-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their putting on his or her own clothes.                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 100;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || text || = "his";
+If (Gender = F) then || text || = "her";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "PS_Passed","Put on Clothing";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "PS_Failed","Put on Clothing";
+endif;
+
+
+endif
+;;
+Action:
+write ("Can || firstname || put on any of || text || clothing such as shoes, pants, or T-shirt?");
+write("¿|| firstname || puede ponerse la ropa como sus zapatos, camiseta o sus pantalones?") At Spanish;                                                                                                                                                                                                                                                                                                        
+;;
+Age_Min: 913 days;;
+Age_Max: 973 days;;
+end:

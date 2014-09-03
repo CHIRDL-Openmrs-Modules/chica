@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Injury  Bicycle Back Seat PSF;;
+	Filename:		Injury_Bicycle_Back_SeatPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:32:58-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the child ever rides on the back of an adult bicycle.                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	The AAP recommends that young children who ride as passengers should be at least 1 year old, wear an appropriately sized helmet and be placed securely in a bicycle-mounted child seat or, preferably, a bicycle-towed child trailer.                                                                                                                                                                                                                                                                               ;;
+	Keywords:	injury, bicycle, back seat, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=11581464&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+backseat := read Last {back_seat_of_bicycle from CHICA} Where it Occurred Within Past 1 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+endif
+;;
+Priority: 764;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (backseat = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "back_seat_of_bicycle","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "back_seat_of_bicycle","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || ever ride on the back of an adult bicycle?");
+write("¿Alguna vez || firstname || se a montando en la parte de atras de la bicicleta de adultos?") At Spanish;                                                                                                                                                                                                                                                                                                                         
+;;
+Age_Min: 6 months;;
+Age_Max: 3 years;;
+end:

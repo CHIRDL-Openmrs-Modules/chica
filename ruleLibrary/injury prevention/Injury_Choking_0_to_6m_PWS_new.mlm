@@ -1,0 +1,74 @@
+Maintenance:
+	Title:		Injury  Choking 06m PWS;;
+	Filename:		Injury_Choking_0_to_6m_PWS_new;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-18T11:47:11-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PWS advises clinicians on how to administer age-appropriate advice on choking prevention to parents.;;
+	Explanation:	The AAP has a number of recommendations to prevent choking in children.;;
+	Keywords:	injury, choking, PWS;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=10224203&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+save := read Last {know_how_to_save_choking_child from CHICA} Where it Occurred Within Past 1 Years;plastic := read Last {plastic_wrappers_secured from CHICA} Where it Occurred Within Past 1 Years;
+endif
+;;
+Priority:		904;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (save = yes) AND (plastic = yes) then conclude False;conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box5=true) then
+ CALL storeNote With "I reviewed with the parent how to prevent choking in children.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I recommended that the parent learn Basic Life Support skills or take a CPR class.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "I gave the phone number for CPR classes at the YMCA: 317-685-9705.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I advised the parent to store plastic bags or wrappers away from children.","ANTICIPATORY GUIDANCE";
+endif;
+
+
+endif
+
+;;
+Action:
+write ("The AAP has age-specific recommendations for the prevention of choking in children.  Please review the following, and check those you review");
+write ("Rec learning peds BLS/CPR->");
+write ("YMCA: 317-685-9705");
+write ("");
+write ("");
+write ("Store bags/wrappers safely");
+write ("");
+;;
+Age_Min: 0 months;;
+Age_Max: 6 months;;
+end:

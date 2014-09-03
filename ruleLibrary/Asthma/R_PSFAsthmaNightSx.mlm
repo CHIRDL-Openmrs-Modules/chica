@@ -1,0 +1,57 @@
+Maintenance:
+	Title:		Research PSF Asthma Night Symptoms;;
+	Filename:		R_PSFAsthmaNightSx;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2005-05-12T04:01:19-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Assess for frequency of nighttime symptoms in patients with known asthma.                                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Explanation:	If a patient is known to the system to have asthma, this PSF asks if symptoms occur >=3x per month                                                                                                                                                                                                                                                                                                                                                                                                                  ;;
+	Keywords:	asthma PSF symptoms grade night;;
+	Citations:		NHLBI asthma guidelines;;
+	Links:		http://www.nhlbi.nih.gov/guidelines/asthma/asthgdln.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+CurrentStatus := read Last {AsthmaStatus from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority: 356;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (CurrentStatus = Intermittent) OR (CurrentStatus = Persistent-controller) OR (CurrentStatus = Persistent-no-controller) OR (CurrentStatus = Persistent-non-adherent) then conclude True;
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "AsthmaSymptoms","Nighttime 3 or More Per Mo";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || have coughing, wheezing, breathing problems or a tight chest at night 3 or more nights a month?");
+write ("¿Tiene || firstname || tos, le silba el pecho, tiene problemas al respirar o pecho congestionado durante la noche 3 o mas veces al mes?") At Spanish;                                                                                                                                                                                                                      
+;;
+Age_Min: 3 years;;
+Age_Max: 12 years;;
+end:

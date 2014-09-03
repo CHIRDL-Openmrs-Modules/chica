@@ -1,0 +1,75 @@
+Maintenance:
+	Title:		Followup Pending Pb PWS;;
+	Filename:		F_U_Pending_PB_PWS_K22;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2008-02-01T05:19:15-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Remind MD to check on pending lead level;;
+	Explanation:	If there is a lead level pending and nothing in the lab results, asks MD to respond;;
+	Keywords:	lead screen PWS;;
+	Citations:		CDC guidelines on lead screening;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Lead_pending := read Last {VENOUS BLOOD LEAD - QUALITATIVE from CHICA} Where it Occurred Within Past 365 Days;
+RMRS_Lead_Level := read Exist {LEAD LEVEL-PEDS from RMRS} Where it Occurred Within Past 365 Days;
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Lead_pending = PENDING) AND (RMRS_Lead_Level = False) then conclude True;
+Else conclude False;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","LESS THAN 10 MG/DL";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","10 - 14 MG/DL";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","15 - 19 MG/DL";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","GREATER THAN 19 MG/DL";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "VENOUS BLOOD LEAD - QUALITATIVE","PENDING";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname || had a blood lead drawn on || Lead_pending_date ||, and the results are not known.  Please indicate the results:");
+write ("Blood lead <10 (OK)");
+write ("10-14 mg/dl: CBC+repeat 3mo");
+write ("15-19mg/dl: above+call hlth dept");
+write (">19:above+call Merk / toxicol");
+write ("Blood lead was not done -->");
+write ("Blood lead drawn today");
+;;
+Age_Min: 10 months;;
+Age_Max: 4 years;;
+end:

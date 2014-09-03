@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Injury  Drowning Swim PSF;;
+	Filename:		Injury_Drowning_SwimPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:30:41-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if the child knows how to swim.                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	The AAP recommends children be taught to swim when he/she is ready (usually around age 5); however the USPSTF have shown that infant and toddler swimming lessons do no improve survival in submersion injuries.                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	injury, drowning, swim, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/tipwater.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+swim := read Last {knows_how_to_swim from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority: 568;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (swim = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "knows_how_to_swim","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "knows_how_to_swim","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || know how to swim?");
+write("¿|| firstname || sabe nadar?") At Spanish;                                                                                                                                                                                                        
+;;
+Age_Min: 5 years;;
+Age_Max: 12 years;;
+end:

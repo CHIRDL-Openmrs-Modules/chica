@@ -1,0 +1,64 @@
+Maintenance:
+	Title:		Smoking  Ready to Quit PSF;;
+	Filename:		Smoking_QuitPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-22T03:32:00-0400;;
+	Validation:	;;
+Library:
+	Purpose:		GAPS screening question to assess willingness to quit.                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	More than 4.5 million adolescents use tobacco regularly.  Adolescence is a key time to prevent tobacco use and try and change behavior.                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Keywords:	GAPS, adolescent, tobacco, smoking, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+quit := read Exist {ready_to_quit from CHICA} Where it Occurred Within Past 365 Days;
+quitL := read Last {ready_to_quit from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority: 756;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "dispuesto";
+If (Gender = F) then || spanishgender || = "dispuesta";
+if (quitL = "False") then conclude True;
+If (quit = True) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "ready_to_quit","True";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "ready_to_quit","False";
+endif;
+
+
+endif
+;;
+Action:
+write ("If you smoke cigarettes, use snuff, or chew tobacco, are you willing to quit?");
+write ("¿ Si usted fuma, inhalan o mastica tabaco, esta usted pensando en || spanishgender || dejarlo?") At Spanish;                                                                                                                                                                                                                                                                                                      
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Drug Abuse  Use OTC Drugs PSF;;
+	Filename:		Drugs_Use_OTCPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-07T11:24:05-0400;;
+	Validation:	;;
+Library:
+	Purpose:		GAPS screening question asks if patient abuses OTC drugs.                                                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Explanation:	Most adolescents will use alcohol or other drugs before age 21.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	GAPS, adolescent, drugs, alcohol, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+otc := read Exist {abuse_OTC from CHICA} Where it Occurred Within Past 330 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 772;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (otc = True) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "abuse_OTC","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "abuse_OTC","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Some drugs can be bought at a store without a doctor's prescription.  Do you ever use nonprescription drugs to get to sleep, stay awake, calm down, or get high?");
+write ("¿Hay algunas drogas que se pueden comprar en la farmacia sin receta médica. Has tomado de éstas medicinas para dormir, mantenerte despierto, para calmarte, o para estar animado?") At Spanish;                                                                                                                                
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Injury  Bicycle Knows Rules PSF;;
+	Filename:		Injury_Bicycle_Knows_RulesPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-17T12:32:54-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the child knows the "rules of the road."                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	The APP states the most important "Rules of the Road" for children to learn are: a. Ride with traffic, b. Stop and look both ways before entering the street, c. Stop at all intersections, marked and unmarked, and d. Before turning, use hand signals and look all ways.                                                                                                                                                                                                                                         ;;
+	Keywords:	injury, bicycle, rules, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/bicycle.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+rules := read Last {knows_rules_of_road from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority: 820;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (rules = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "knows_rules_of_road","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "knows_rules_of_road","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || know the rules of the road?");
+write("¿Sabe || firstname || las leyes de transito?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                      
+;;
+Age_Min: 8 years;;
+Age_Max: 12 years;;
+end:

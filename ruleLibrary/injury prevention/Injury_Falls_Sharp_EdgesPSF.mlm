@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Injury  Falls Sharp Edge Furniture PSF;;
+	Filename:		Injury_Falls_Sharp_EdgesPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-12T11:50:54-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF screens whether sharp edged furniture exists in the house.                                                                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	Sharp edges should be covered to protect toddlers.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ;;
+	Keywords:	injury, falls, infant, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=596496&dopt=Abstract;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+sharp := read Last {sharp_edged_furniture from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority: 796;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (sharp = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "sharp_edged_furniture","yes";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "sharp_edged_furniture","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Is there sharp edged furniture in rooms where || firstname || often plays?");
+write("¿Hay muebles con bordes afilados en el cuarto en donde juega || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                                                                           
+;;
+Age_Min: 1 years;;
+Age_Max: 5 years;;
+end:
