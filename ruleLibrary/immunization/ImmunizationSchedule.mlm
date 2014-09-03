@@ -19,13 +19,7 @@ Knowledge:
 
         mode:=read {mode from Parameters};
 
-        If (mode = PRODUCE) then
-            chirpStatus := read last {CHIRP_Status} Where it Occurred Within Past 2 Day;
-            force_print :=read {forcePrint from Parameters};
-        endif
-
-        If (mode = CONSUME) then
-        endif
+ 
     ;;
     Priority:		0;;
 	Evoke:		;;
@@ -40,10 +34,10 @@ Knowledge:
         endif
 
         If (mode = PRODUCE) then
-            CALL queryCHIRP; /* Checks if it is a force print before querying CHIRP */
-            If (chirpStatus = not_in_chirp_registry) then 
+           chirpStatus = CALL queryCHIRP;  /* Re-queries CHIRP if this is a force print and if previous query was unsuccessful*/
+            If (chirpStatus = not_in_chirp_registry ) then 
                  || Text || = "This child does not exist in CHIRP.  Please fill out any immunization information you have. A new CHIRP record can be created when scanned.";
-			If (chirpStatus = CHIRP_match_not_found) then
+			If (chirpStatus = CHIRP_match_not_found ) then
 				|| Text || = "This patient is not an exact match to a patient in CHIRP so immunization records are not available. Any updates to this form will not be updated in CHIRP.";
 			If (chirpStatus = CHIRP_not_available) then
 				|| Text || = "We are unable to contact CHIRP at this time. Please update the patient's records at www.chirp.in.gov";
