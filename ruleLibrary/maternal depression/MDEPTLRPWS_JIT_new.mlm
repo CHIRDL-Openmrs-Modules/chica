@@ -34,7 +34,7 @@ Depr_Concern := read Last {Maternal_Depression_Concern from CHICA} Where it Occu
 study := read Last {MatDepressionStudy_Repeat from CHICA} ;
 endif
 ;;
-Priority:		203       ;;
+Priority: 207;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then

@@ -32,7 +32,7 @@ SxLast3Mos := read Exist {AsthmaSymptoms from CHICA} Where it Occurred Within Pa
 Insurance := read Last {Insurance from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority:		199       ;;
+Priority: 203;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

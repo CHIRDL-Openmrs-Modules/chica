@@ -39,6 +39,8 @@ Priority:		213;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
 If (drugs = yes) then || RF1 || = " has admitted to using drugs, ";
 If (OTC = yes) then || RF2 || = " has abused OTC drugs, ";
 If (friends= yes) then || RF3 || = " has friends with a substance abuse problem, ";

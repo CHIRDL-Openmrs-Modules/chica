@@ -82,7 +82,7 @@ endif;
 endif
 ;;
 Action:
-write ("Different adolescents begin engaging in sexuality activity at different ages.  Anticipatory guidance is a good idea.  Review the following:");                                                                                                                                                      
+write ("Different adolescents begin engaging in sexual activity at different ages.  Anticipatory guidance is a good idea.  Review the following:");                                                                                                                                                      
 write ("Sexually active ->");
 write ("Gave out condoms");
 write ("May be pregnant -> test ->");

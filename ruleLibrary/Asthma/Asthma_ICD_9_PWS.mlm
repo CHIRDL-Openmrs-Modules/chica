@@ -38,7 +38,7 @@ Insurance := read Last {Insurance from CHICA};
 
 endif
 ;;
-Priority:		201       ;;
+Priority: 205;;
 	Evoke:		;;
 
 Logic:

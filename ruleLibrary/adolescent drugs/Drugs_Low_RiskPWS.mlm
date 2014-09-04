@@ -36,10 +36,12 @@ OTC := read Last {abuse_OTC from CHICA} Where it Occurred Within Past 330 Days;
 location:= read {location from Parameters}; 
 endif
 ;;
-Priority:		443;;
+Priority: 444;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
 If (friend = yes) then || RF1 || = "They are at risk because a friend has substance abuse problem. ";
 endif
 

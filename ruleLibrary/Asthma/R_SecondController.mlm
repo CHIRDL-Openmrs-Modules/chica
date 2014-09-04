@@ -36,7 +36,7 @@ AnySymptoms := read Exist {AsthmaSymptoms from CHICA} Where it Occurred Within P
 Insurance := read Last {Insurance from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 endif
 ;;
-Priority:		196       ;;
+Priority: 200;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then

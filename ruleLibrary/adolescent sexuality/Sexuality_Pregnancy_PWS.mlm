@@ -34,10 +34,12 @@ If (mode = PRODUCE) then
 intercourse := read Last {has_had_intercourse from CHICA} ;pregnant := read Last {might_be_pregnant from CHICA} Where it Occurred Within Past 14 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 endif
 ;;
-Priority:		204;;
+Priority: 208;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
 If (condom = no) then || condomT || = "patient does not always use condoms / ";
 If (BC = no) then || BCT || = "patient does not use birth control.";
 endif
