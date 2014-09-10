@@ -8,39 +8,13 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.css"/>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.js"></script>
-        <script>
-            $(function() {
-            $("#problemDialog").dialog({
-              autoOpen: false,
-              modal: true,
-              show: {
-                effect: "clip",
-                duration: 1000
-              },
-              hide: {
-                effect: "clip",
-                duration: 1000
-              }
-            });
-
-            $("#problemButton").click(function() {
-              $("#problemDialog").dialog("open");
-            });
-          });
-        </script>
-        <style>
-            .ui-dialog-titlebar {
-                background-color: #75A3A3;
-                background-image: none;
-                color: #FFF;
-            }
-        </style>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <title>CHICA Physician Encounter Form</title>
     </head>
 
     <body>
     	<div id="formContainer">
-            <form name="input" action="pws.form" method="post">
+            <form name="pwsForm" action="pws.form" method="post">
                 <div id="titleContainer">
                     <div id="title">
                         <h3>CHICA Physician Encounter Form</h3>
@@ -183,7 +157,7 @@
                         Vision (R):<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${VisionL}&nbsp;${VisionL_Corrected}
+                        ${VisionR}&nbsp;${VisionR_Corrected}
                     </div>
                     <div class="flagCell">
                         <b></b><br/>
@@ -204,7 +178,10 @@
                         ${PrevWeight}&nbsp;(${PrevWeightDate})
                     </div>
                     <div id="vitalsLegend">
-                    <b>*=Abnormal, U=Uncooperative</b></div>
+                    <b>*=Abnormal, U=Uncooperative,<br/>
+                    C=Corrected, A=Axillary,
+                    R=Rectal, O=Oral<br/>
+                    F=Failed, P=Passed</b></div>
                 </div>
                 <div id="exam">
                 	<div id="physicalExam">
@@ -409,7 +386,7 @@
                     </div>
                   <div id="examExtras">
                    	<div class="examExtraCheckbox">
-                        	<input type="checkbox">Special Need Child</input><br/>
+                        	<input type="checkbox" name="Special_Need" value="Y">Special Need Child</input><br/>
                         </div>
                         <div>
                         	&nbsp;
@@ -418,22 +395,19 @@
                         	<input type="checkbox">Two ID's Checked</input><br/>
                         </div>
                         <div class="examExtraCheckbox">
-                        	<input type="checkbox">Screened for abuse</input><br/>
+                        	<input type="checkbox" name="screenedForAbuse" value="screened">Screened for abuse</input><br/>
                         </div>
                         <div class="examExtraCheckbox">
-                        	<input type="checkbox">Discussed physical activity</input><br/>
+                        	<input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity">Discussed physical activity</input><br/>
                         </div>
                     	<div class="examExtraCheckbox">
-                        	<input type="checkbox">Discussed healthy diet</input><br/>
-                      	</div>
-                        <div class="examExtraCheckbox">
-                        	<input type="checkbox">Updated Med List given to patient</input><br/>
+                        	<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet">Discussed healthy diet</input><br/>
                       	</div>
                         <div>
                         	&nbsp;
                         </div>
                         <div class="examExtraData">
-                        	Language: ${Language}
+                        	${Language}
                         </div>
                         <div>
                         	&nbsp;
@@ -450,22 +424,44 @@
                         <div>
                         	&nbsp;
                         </div>
-                        <div class="examExtraDataHighlight">
+                        <c:choose>
+                            <c:when test="${Pain == '0'}"> 
+                                <div class="examExtraData">
+                            </c:when>
+                            <c:otherwise>
+                                <div class="examExtraDataHighlight">
+                            </c:otherwise>
+                        </c:choose>
                         	Pain (0-10):${Pain}
                         </div>
-                        <div class="examExtraData">
+                        <c:choose>
+                            <c:when test="${Allergy == ' NONE'}"> 
+                                <div class="examExtraData">
+                            </c:when>
+                            <c:otherwise>
+                                <div class="examExtraDataHighlight">
+                            </c:otherwise>
+                        </c:choose>
                         	Allergies:${Allergy}
                         </div>
-                        <div>
-                            &nbsp;
-                        </div>
                         <div class="examExtraData">
-                            <input id="problemButton" type="button" value="Problem List"/>
+                            ${MedicationLabel}
                         </div>
                   </div>
                 </div>
-                <div id="pain">
-                	
+                <div id="buttons">
+                    <c:if test="${not empty diag1}">
+	                	<div class="buttonsData">
+	                        <input id="problemButton" type="button" value="Problem List"/>
+	                    </div>
+                    </c:if>
+                    <c:if test="${not empty Med1_A || not empty Med1_B || not empty Med2_A || not empty Med2_B || 
+                                  not empty Med3_A || not empty Med3_B || not empty Med4_A || not empty Med4_B || 
+                                  not empty Med5_A || not empty Med5_B || not empty Med6_A || not empty Med6_B}">
+	                    <div class="buttonsData">
+	                        <input id="medButton" type="button" value="Medications"/>
+	                    </div>
+                    </c:if>
                 </div>
                 <div id="questionOneContainer" class="questionContainer">
                 	<div id="questionOneStem" class="questionStem">
@@ -473,24 +469,24 @@
                     </div>
                     <div id="questionOneAnswerLeftContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer1_1}</input><br/>
+                        	<input type="checkbox" name="sub_Choice1" value="1">${Answer1_1}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer1_3}</input><br/>
+                        	<input type="checkbox" name="sub_Choice1" value="3">${Answer1_3}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer1_5}</input><br/>
+                        	<input type="checkbox" name="sub_Choice1" value="5">${Answer1_5}</input><br/>
                         </div>
                     </div>
                     <div id="questionOneAnswerRightContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer1_2}</input><br/>
+                        	<input type="checkbox" name="sub_Choice1" value="2">${Answer1_2}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer1_4}</input><br/>
+                        	<input type="checkbox" name="sub_Choice1" value="4">${Answer1_4}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer1_6}</input><br/>
+                        	<input type="checkbox" name="sub_Choice1" value="6">${Answer1_6}</input><br/>
                         </div>
                     </div>
                 </div>
@@ -500,24 +496,24 @@
                     </div>
                     <div id="questionTwoAnswerLeftContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer2_1}</input><br/>
+                        	<input type="checkbox" name="sub_Choice2" value="1">${Answer2_1}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer2_3}</input><br/>
+                        	<input type="checkbox" name="sub_Choice2" value="3">${Answer2_3}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer2_5}</input><br/>
+                        	<input type="checkbox" name="sub_Choice2" value="5">${Answer2_5}</input><br/>
                         </div>
                     </div>
                     <div id="questionTwoAnswerRightContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer2_2}</input><br/>
+                        	<input type="checkbox" name="sub_Choice2" value="2">${Answer2_2}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer2_4}</input><br/>
+                        	<input type="checkbox" name="sub_Choice2" value="4">${Answer2_4}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer2_6}</input><br/>
+                        	<input type="checkbox" name="sub_Choice2" value="6">${Answer2_6}</input><br/>
                         </div>
                     </div>
                 </div>
@@ -527,24 +523,24 @@
                     </div>
                     <div id="questionThreeAnswerLeftContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer3_1}</input><br/>
+                        	<input type="checkbox" name="sub_Choice3" value="1">${Answer3_1}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer3_3}</input><br/>
+                        	<input type="checkbox" name="sub_Choice3" value="3">${Answer3_3}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer3_5}</input><br/>
+                        	<input type="checkbox" name="sub_Choice3" value="5">${Answer3_5}</input><br/>
                         </div>
                     </div>
                     <div id="questionThreeAnswerRightContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer3_2}</input><br/>
+                        	<input type="checkbox" name="sub_Choice3" value="2">${Answer3_2}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer3_4}</input><br/>
+                        	<input type="checkbox" name="sub_Choice3" value="4">${Answer3_4}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer3_6}</input><br/>
+                        	<input type="checkbox" name="sub_Choice3" value="6">${Answer3_6}</input><br/>
                         </div>
                     </div>
                 </div>
@@ -554,24 +550,24 @@
                     </div>
                     <div id="questionFourAnswerLeftContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer4_1}</input><br/>
+                        	<input type="checkbox" name="sub_Choice4" value="1">${Answer4_1}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer4_3}</input><br/>
+                        	<input type="checkbox" name="sub_Choice4" value="3">${Answer4_3}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer4_5}</input><br/>
+                        	<input type="checkbox" name="sub_Choice4" value="5">${Answer4_5}</input><br/>
                         </div>
                     </div>
                     <div id="questionFourAnswerRightContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer4_2}</input><br/>
+                        	<input type="checkbox" name="sub_Choice4" value="2">${Answer4_2}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer4_4}</input><br/>
+                        	<input type="checkbox" name="sub_Choice4" value="4">${Answer4_4}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer4_6}</input><br/>
+                        	<input type="checkbox" name="sub_Choice4" value="6">${Answer4_6}</input><br/>
                         </div>
                     </div>
                 </div>
@@ -581,24 +577,24 @@
                     </div>
                     <div id="questionFiveAnswerLeftContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer5_1}</input><br/>
+                        	<input type="checkbox" name="sub_Choice5" value="1">${Answer5_1}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer5_3}</input><br/>
+                        	<input type="checkbox" name="sub_Choice5" value="3">${Answer5_3}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer5_5}</input><br/>
+                        	<input type="checkbox" name="sub_Choice5" value="5">${Answer5_5}</input><br/>
                         </div>
                     </div>
                     <div id="questionFiveAnswerRightContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer5_2}</input><br/>
+                        	<input type="checkbox" name="sub_Choice5" value="2">${Answer5_2}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer5_4}</input><br/>
+                        	<input type="checkbox" name="sub_Choice5" value="4">${Answer5_4}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer5_6}</input><br/>
+                        	<input type="checkbox" name="sub_Choice5" value="6">${Answer5_6}</input><br/>
                         </div>
                     </div>
                 </div>
@@ -608,29 +604,29 @@
                     </div>
                     <div id="questionSixAnswerLeftContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer6_1}</input><br/>
+                        	<input type="checkbox" name="sub_Choice6" value="1">${Answer6_1}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer6_3}</input><br/>
+                        	<input type="checkbox" name="sub_Choice6" value="3">${Answer6_3}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer6_5}</input><br/>
+                        	<input type="checkbox" name="sub_Choice6" value="5">${Answer6_5}</input><br/>
                         </div>
                     </div>
                     <div id="questionSixAnswerRightContainer" class="answerContainer">
                     	<div class="answerCheckbox">
-                        	<input type="checkbox">${Answer6_2}</input><br/>
+                        	<input type="checkbox" name="sub_Choice6" value="2">${Answer6_2}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer6_4}</input><br/>
+                        	<input type="checkbox" name="sub_Choice6" value="4">${Answer6_4}</input><br/>
                         </div>
                         <div class="answerCheckbox">
-                        	<input type="checkbox">${Answer6_6}</input><br/>
+                        	<input type="checkbox" name="sub_Choice6" value="6">${Answer6_6}</input><br/>
                         </div>
                     </div>
                 </div>
                 <div id="problemDialog" title="Problem List" class="ui-dialog-titlebar ui-widget-header">
-                    <table style="color: #000;">
+                    <table id="problemTable"">
                         <tr>
                             <td style="padding:5px;">${diag1}</td>
                         </tr>
@@ -663,6 +659,64 @@
                         </tr>
                     </table>
                 </div>
+                <div id="medDialog" title="Medication List" class="ui-dialog-titlebar ui-widget-header">
+                    <table id="medTable">
+                        <c:if test="${not empty Med1_A || not empty Med1_B }">
+	                        <tr class="trAlignLeft">
+	                            <td class="tdBorderTop">${Med1_A}</td>
+	                        </tr>
+	                        <tr class="trAlignLeft">
+	                            <td>${Med1_B}</td>
+	                        </tr>
+                        </c:if>
+                        <c:if test="${not empty Med2_A || not empty Med2_B }">
+	                        <tr class="trAlignLeft">
+	                            <td class="tdBorderTop">${Med2_A}</td>
+	                        </tr>
+	                        <tr class="trAlignLeft">
+	                            <td>${Med2_B}</td>
+	                        </tr>
+                        </c:if>
+                        <c:if test="${not empty Med3_A || not empty Med3_B }">
+	                        <tr class="trAlignLeft">
+	                            <td class="tdBorderTop">${Med3_A}</td>
+	                        </tr>
+	                        <tr class="trAlignLeft">
+	                            <td>${Med3_B}</td>
+	                        </tr>
+                        </c:if>
+                        <c:if test="${not empty Med4_A || not empty Med4_B }">
+	                        <tr class="trAlignLeft">
+	                            <td class="tdBorderTop">${Med4_A}</td>
+	                        </tr>
+	                        <tr class="trAlignLeft">
+	                            <td>${Med4_B}</td>
+	                        </tr>
+                        </c:if>
+                        <c:if test="${not empty Med5_A || not empty Med5_B }">
+	                        <tr class="trAlignLeft">
+	                            <td class="tdBorderTop">${Med5_A}</td>
+	                        </tr>
+	                        <tr class="trAlignLeft">
+	                            <td>${Med5_B}</td>
+	                        </tr>
+                        </c:if>
+                        <c:if test="${not empty Med6_A || not empty Med6_B }">
+	                        <tr class="trAlignLeft">
+	                            <td class="tdBorderTop">${Med6_A}</td>
+	                        </tr>
+	                        <tr class="trAlignLeft">
+	                            <td>${Med6_B}</td>
+	                        </tr>
+                        </c:if>
+                    </table>
+                </div>
+                <input type=hidden name="Choice1"/>
+			    <input type=hidden name="Choice2"/>
+			    <input type=hidden name="Choice3"/>
+			    <input type=hidden name="Choice4"/>
+			    <input type=hidden name="Choice5"/>
+			    <input type=hidden name="Choice6"/>
             </form>
     	</div>
     </body>
