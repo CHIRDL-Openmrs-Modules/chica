@@ -33,7 +33,8 @@ Priority: 772;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
-
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
 If (otc = True) then conclude False;
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 

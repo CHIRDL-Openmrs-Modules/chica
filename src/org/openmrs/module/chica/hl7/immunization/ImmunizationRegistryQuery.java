@@ -590,6 +590,7 @@ public class ImmunizationRegistryQuery
 			queryResponse = removeIllegalCharacter(queryResponse);
 			Message queryResponseMessage;
 			try {
+				parser.setValidationContext(new NoValidation());
 				queryResponseMessage = parser.parse(queryResponse);
 				Terser terser = new Terser(queryResponseMessage);
 				msaControlId = terser.get("/MSA-1-1");
@@ -667,6 +668,7 @@ public class ImmunizationRegistryQuery
 				try {
 					queryResponse = removeIllegalCharacter(queryResponse);
 					PipeParser pipeParser = new PipeParser();
+					pipeParser.setValidationContext(new NoValidation());
 					queryResponseMessage = pipeParser.parse(queryResponse);
 				} catch (HL7Exception e) {
 					logError( CHIRP_PARSING_ERROR, 

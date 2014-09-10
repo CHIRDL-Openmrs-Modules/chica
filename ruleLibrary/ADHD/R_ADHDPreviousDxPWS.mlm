@@ -43,7 +43,7 @@ currRxStatus := read last {CHICA_ADHD_RX from CHICA} ;
                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 endif
 ;;
-Priority: 195       ;;
+Priority: 199;;
  Evoke: ;;
 
 Logic:
