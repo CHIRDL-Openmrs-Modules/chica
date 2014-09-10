@@ -52,7 +52,6 @@ gisInterventionSite := call LocationAttributeLookup With "isGISInterventionLocat
 If(gisInterventionSite = "true") then conclude False;
 If (Gender = M) then || heshe || = "he";
 If (Gender = F) then || heshe || = "she";
-finalResult:= call mostRecentResult With "grades_object","special_object","suspend_object";
 If (grades = "True") AND (GradesPastProblems = null) then conclude True;
 If (special = "True") AND (OtherPastProblems = null) then conclude True;
 If (suspend = "True") AND (OtherPastProblems = null) then conclude True;
@@ -105,7 +104,7 @@ endif;
 endif
 ;;
 Action:
-write ("|| firstname || had risk factors for school/learning problems on || finalResult_date ||. If problems remain, re-assess risk factors, explore causes (family problems, substance abuse, health issues), and develop a plan:");
+write ("|| firstname || had risk factors for school/learning problems in the past year. If problems remain, re-assess risk factors, explore causes (family problems, substance abuse, health issues), and develop a plan:");
 write ("Recommend family find tutor");
 write ("Discussed homework strategies");
 write ("Recmd parent/teacher mtg");
