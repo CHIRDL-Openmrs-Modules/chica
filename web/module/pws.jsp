@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/pws.form" />
-<html style="height:100%;" xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="${pageContext.request.contextPath}/moduleResources/chica/pws.css" type="text/css" rel="stylesheet" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.css"/>
@@ -14,8 +14,11 @@
 
     <body>
     	<div id="formContainer">
-            <form name="pwsForm" action="pws.form" method="post">
+            <form id="pwsForm" name="pwsForm" action="pws.form" method="post">
                 <div id="titleContainer">
+                    <div id="submitFormTop">
+                        <input id="submitButtonTop" type="button" value="Submit"/>
+                    </div>
                     <div id="title">
                         <h3>CHICA Physician Encounter Form</h3>
                     </div>
@@ -463,11 +466,11 @@
 	                    </div>
                     </c:if>
                 </div>
-                <div id="questionOneContainer" class="questionContainer">
-                	<div id="questionOneStem" class="questionStem">
+                <div class="questionContainer">
+                	<div class="questionStem">
                     	${Prompt1_Text}
                     </div>
-                    <div id="questionOneAnswerLeftContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice1" value="1">${Answer1_1}</input><br/>
                         </div>
@@ -478,7 +481,7 @@
                         	<input type="checkbox" name="sub_Choice1" value="5">${Answer1_5}</input><br/>
                         </div>
                     </div>
-                    <div id="questionOneAnswerRightContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice1" value="2">${Answer1_2}</input><br/>
                         </div>
@@ -490,11 +493,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="questionTwoContainer" class="questionContainer">
-                	<div id="questionTwoStem" class="questionStem">
+                <div class="questionContainer">
+                	<div class="questionStem">
                     	${Prompt2_Text}
                     </div>
-                    <div id="questionTwoAnswerLeftContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice2" value="1">${Answer2_1}</input><br/>
                         </div>
@@ -505,7 +508,7 @@
                         	<input type="checkbox" name="sub_Choice2" value="5">${Answer2_5}</input><br/>
                         </div>
                     </div>
-                    <div id="questionTwoAnswerRightContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice2" value="2">${Answer2_2}</input><br/>
                         </div>
@@ -517,11 +520,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="questionThreeContainer" class="questionContainer">
-                	<div id="questionThreeStem" class="questionStem">
+                <div class="questionContainer">
+                	<div class="questionStem">
                     	${Prompt3_Text}
                     </div>
-                    <div id="questionThreeAnswerLeftContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice3" value="1">${Answer3_1}</input><br/>
                         </div>
@@ -532,7 +535,7 @@
                         	<input type="checkbox" name="sub_Choice3" value="5">${Answer3_5}</input><br/>
                         </div>
                     </div>
-                    <div id="questionThreeAnswerRightContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice3" value="2">${Answer3_2}</input><br/>
                         </div>
@@ -544,11 +547,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="questionFourContainer" class="questionContainer">
-                	<div id="questionFourStem" class="questionStem">
+                <div class="questionContainer">
+                	<div class="questionStem">
                     	${Prompt4_Text}
                     </div>
-                    <div id="questionFourAnswerLeftContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice4" value="1">${Answer4_1}</input><br/>
                         </div>
@@ -559,7 +562,7 @@
                         	<input type="checkbox" name="sub_Choice4" value="5">${Answer4_5}</input><br/>
                         </div>
                     </div>
-                    <div id="questionFourAnswerRightContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice4" value="2">${Answer4_2}</input><br/>
                         </div>
@@ -571,11 +574,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="questionFiveContainer" class="questionContainer">
-                	<div id="questionFiveStem" class="questionStem">
+                <div class="questionContainer">
+                	<div class="questionStem">
                     	${Prompt5_Text}
                     </div>
-                    <div id="questionFiveAnswerLeftContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice5" value="1">${Answer5_1}</input><br/>
                         </div>
@@ -586,7 +589,7 @@
                         	<input type="checkbox" name="sub_Choice5" value="5">${Answer5_5}</input><br/>
                         </div>
                     </div>
-                    <div id="questionFiveAnswerRightContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice5" value="2">${Answer5_2}</input><br/>
                         </div>
@@ -598,11 +601,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="questionSixContainer" class="questionContainer">
-                	<div id="questionSixStem" class="questionStem">
+                <div class="questionContainer">
+                	<div class="questionStem">
                     	${Prompt6_Text}
                     </div>
-                    <div id="questionSixAnswerLeftContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice6" value="1">${Answer6_1}</input><br/>
                         </div>
@@ -613,7 +616,7 @@
                         	<input type="checkbox" name="sub_Choice6" value="5">${Answer6_5}</input><br/>
                         </div>
                     </div>
-                    <div id="questionSixAnswerRightContainer" class="answerContainer">
+                    <div class="answerContainer">
                     	<div class="answerCheckbox">
                         	<input type="checkbox" name="sub_Choice6" value="2">${Answer6_2}</input><br/>
                         </div>
@@ -625,37 +628,40 @@
                         </div>
                     </div>
                 </div>
+                <div id="submitContainer">
+                    <input id="submitButtonBottom" type="button" value="Submit"/>
+                </div>
                 <div id="problemDialog" title="Problem List" class="ui-dialog-titlebar ui-widget-header">
                     <table id="problemTable"">
                         <tr>
-                            <td style="padding:5px;">${diag1}</td>
+                            <td class="padding5">${diag1}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag2}</td>
+                            <td class="padding5">${diag2}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag3}</td>
+                            <td class="padding5">${diag3}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag4}</td>
+                            <td class="padding5">${diag4}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag5}</td>
+                            <td class="padding5">${diag5}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag6}</td>
+                            <td class="padding5">${diag6}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag7}</td>
+                            <td class="padding5">${diag7}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag8}</td>
+                            <td class="padding5">${diag8}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag9}</td>
+                            <td class="padding5">${diag9}</td>
                         </tr>
                         <tr>
-                            <td style="padding:5px;">${diag10}</td>
+                            <td class="padding5">${diag10}</td>
                         </tr>
                     </table>
                 </div>
@@ -710,6 +716,20 @@
 	                        </tr>
                         </c:if>
                     </table>
+                </div>
+                <div id="confirmSubmitDialog" title="Confirm" class="ui-dialog-titlebar ui-widget-header">
+                    <div id="confirmText">
+                        <span>Click OK to permanently submit the form.</span>
+                    </div>
+                    <div id="confirmButtons">
+	                    <input id="okSubmitButton" type="button" value="OK"/>
+	                    <input id="cancelSubmitButton" type="button" value="Cancel"/>
+                    </div>
+                </div>
+                <div id="submitWaitDialog" class="noTitle">
+                    <div id="submitWaitText">
+                        <span>Submitting...</span>
+                    </div>
                 </div>
                 <input type=hidden name="Choice1"/>
 			    <input type=hidden name="Choice2"/>

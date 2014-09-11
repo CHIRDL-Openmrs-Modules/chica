@@ -6,7 +6,7 @@ body {
 
 #formContainer {
 	width:800px;
-	height:960px;
+	height:1000px;
 	margin:0 auto;
 	border: 1px solid black;
 	background-color:#FFFFFF;
@@ -22,7 +22,8 @@ body {
 }
 
 #title, 
-#mrn {
+#mrn,
+#submitFormTop {
     width: 800px;
     height: 100%;
 	text-align:center;
@@ -35,6 +36,12 @@ body {
 #mrn {
     z-index: 10;
 	text-align:right;
+	margin-left:-5px;
+}
+
+#submitFormTop {
+    z-index: 20;
+    text-align:left;
 }
 
 #infoLeft {
@@ -158,7 +165,7 @@ body {
 	margin-left:75px;
 }
 
-#problemButton, #medButton {
+#problemButton, #medButton, #okSubmitButton, #cancelSubmitButton {
     width:100px;
 }
 
@@ -171,6 +178,40 @@ body {
 #problemTable {
     color: #000;
     width:100%;
+}
+
+#submitContainer {
+	width:800px;
+	height:40px;
+	text-align:center;
+}
+
+#confirmButtons {
+    text-align:center;
+}
+
+#submitButtonBottom {
+    margin-top:8px;
+}
+
+#submitButtonTop {
+    margin-top:10px;
+    margin-left:5px;
+}
+
+#confirmText {
+    text-align:center;
+    color:#000;
+    padding-bottom:20px;
+}
+
+#submitWaitText {
+    text-align:center;
+    color:#000;
+}
+
+#submitWaitDialog {
+	border: 4px solid #FA8258;
 }
 
 .examExtraCheckbox {
@@ -223,9 +264,9 @@ body {
 }
 
 .buttonsData {
-    width:260px;
-    padding-left:2px;
+    width:265px;
     padding-top:5px;
+    margin-left:2px;
 }
 
 .tdBorderTop {
@@ -239,4 +280,12 @@ body {
 
 .trAlignLeft {
     text-align:left;
+}
+
+.padding5 {
+	padding:5px;
+}
+
+.noTitle .ui-header a {
+    display: none;
 }
