@@ -133,6 +133,7 @@ public class ViewEncounterController extends SimpleFormController {
 				String leftImageStylesheet = null;
 				String rightImageStylesheet = null;
 				boolean displayMergeForms = false;
+				boolean displayScanForms = false;
 				org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
 				org.openmrs.Encounter encounter = encounterService.getEncounter(encounterId);
 				ChicaService chicaService = Context.getService(ChicaService.class);
@@ -140,7 +141,7 @@ public class ViewEncounterController extends SimpleFormController {
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
 						formName.equals("MCHAT")|| formName.equals("ADHD PFU")|| formName.equals("ADHD PSFU") || 
 						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule7yrOrOlder") ||
-								formName.equals("ImmunizationSchedule")) {
+						formName.equals("ImmunizationSchedule") || formName.equals("PHQ9_JIT_MOBILE")) {
 					leftImageLocationId = locationId;
 					leftImageFormId = formId;
 					leftImageFormInstanceId = formInstanceId;
@@ -149,6 +150,9 @@ public class ViewEncounterController extends SimpleFormController {
 						displayMergeForms = true;
 					} else if (formName.equals("PSF")) {
 						leftImageStylesheet = "psf.xsl";
+					} else if (formName.equals("PHQ9_JIT_MOBILE")) {
+						leftImageStylesheet = "PHQ9_JIT_MOBILE.xsl";
+						displayScanForms = true;
 					}
 				} else {
 					ArrayList<String> leftNames = new ArrayList<String>();
@@ -225,7 +229,7 @@ public class ViewEncounterController extends SimpleFormController {
 				
 				//don't set a right image for MCHAT
 				if (!formName.equals("MCHAT") && !formName.equals("ImmunizationSchedule7yrOrOlder")
-						&& !formName.equals("ImmunizationSchedule")) {
+						&& !formName.equals("ImmunizationSchedule") && !formName.endsWith("PHQ9_JIT_MOBILE")) {
 					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || 
 							formName.equals("TeacherSummaryReport")) {
 						rightImageLocationId = locationId;
@@ -308,6 +312,8 @@ public class ViewEncounterController extends SimpleFormController {
 					
 					if (displayMergeForms) {
 						return new ModelAndView(new RedirectView("displayMergeForm.form"), map);
+					} else if (displayScanForms) {
+						return new ModelAndView(new RedirectView("displayScanForm.form"), map);
 					}
 
 					return new ModelAndView(new RedirectView("displayTiff.form"), map);
@@ -373,6 +379,7 @@ public class ViewEncounterController extends SimpleFormController {
 			formsToProcess.add("TeacherSummaryReport");
 			formsToProcess.add("ImmunizationSchedule");
 			formsToProcess.add("ImmunizationSchedule7yrOrOlder");
+			formsToProcess.add("PHQ9_JIT_MOBILE");
 			
 			String firstName = null;
 			String lastName = null;
