@@ -1,0 +1,15 @@
+body {
+    font-family:Verdana, Geneva, sans-serif;
+    font-size:13px;
+    background-color:#75A3A3;
+}
+
+#content {
+	background-color: #FFF;
+	width: 80%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	padding: 20px;
+}

@@ -35,6 +35,8 @@
                 <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
                 <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
+                <prop key="/module/@MODULE_ID@/finishFormsWeb.form">finishFormsWeb</prop>
+                <prop key="/module/@MODULE_ID@/formAuthentication.form">formAuthentication</prop>
             </props>
         </property>
     </bean>
@@ -141,7 +143,7 @@
     <bean id="pws" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>pwsObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/pws</value></property>
-        <property name="successView"><value>finishFormsMobile.form</value></property>
+        <property name="successView"><value>finishFormsWeb.form</value></property>
     </bean>
     <bean id="psfMobileTabs" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>psfMobileTabsObject</value></property>
@@ -172,6 +174,16 @@
         <property name="commandName"><value>sexRiskMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/sexRiskMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="finishFormsWeb" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
+        <property name="commandName"><value>finishFormsWebObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/finishFormsWeb</value></property>
+        <property name="successView"><value>finishFormsWeb.form</value></property>
+    </bean>
+    <bean id="formAuthentication" class="@MODULE_PACKAGE@.web.ExternalFormController">
+        <property name="commandName"><value>formAuthenticationObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/formAuthentication</value></property>
+        <property name="successView"><value>formAuthentication.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">
