@@ -14,6 +14,9 @@
 package org.openmrs.module.chica.web;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +24,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Hibernate;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.atd.hibernateBeans.Statistics;
+import org.openmrs.module.atd.service.ATDService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -54,19 +59,22 @@ public class ExternalFormController extends SimpleFormController {
 	@Override
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("formName", request.getParameter("formName"));
+		map.put("formPage", request.getParameter("formPage"));
+		map.put("mrn", request.getParameter("mrn"));
 		if (Context.getAuthenticatedUser() != null) {
 			return map;
 		}
 		
 		String username = request.getParameter("username");
 		if (username == null) {
-			map.put("invalidUser", "true");
+			map.put("missingUser", "true");
 			return map;
 		}
 		
 		String password = request.getParameter("password");
 		if (password == null) {
-			map.put("invalidPassword", "true");
+			map.put("missingPassword", "true");
 			return map;
 		}
 		
@@ -74,41 +82,9 @@ public class ExternalFormController extends SimpleFormController {
 			Context.authenticate(username, password);
 		} catch (ContextAuthenticationException e) {
 			// username/password not valid
-			map.put("invalidPassword", "true");
+			map.put("failedAuthentication", "true");
 			return map;
 		}
-		
-		String formName = request.getParameter("formName");
-		if (formName == null) {
-			map.put("missingForm", "true");
-			return map;
-		}
-		
-		Form form = Context.getFormService().getForm(formName);
-		if (form == null) {
-			map.put("invalidForm", "true");
-			return map;
-		}
-		
-		String formPage = request.getParameter("formPage");
-		if (formPage == null) {
-			map.put("missingFormPage", "true");
-			return map;
-		}
-		
-		String mrn = request.getParameter("mrn");
-		if (mrn == null) {
-			map.put("missingMRN", "true");
-			return map;
-		}
-		
-		Patient patient = getPatientByMRN(mrn);
-		if (patient == null) {
-			map.put("invalidPatient", "true");
-		}
-		
-		map.put("formName", formName);
-		map.put("formPage", formPage);
 		
 		return map;
 	}
@@ -119,6 +95,50 @@ public class ExternalFormController extends SimpleFormController {
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
                                     BindException errors) throws Exception {
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	String view = getFormView();
+    	String formName = request.getParameter("formName");
+    	String formPage = request.getParameter("formPage");
+    	String mrn = request.getParameter("mrn");
+    	map.put("formName", formName);
+		map.put("formPage", formPage);
+		map.put("mrn", mrn);
+		
+		if (formName == null) {
+			map.put("missingForm", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		Form form = Context.getFormService().getForm(formName);
+		if (form == null) {
+			map.put("invalidForm", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		if (formPage == null) {
+			map.put("missingFormPage", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		if (mrn == null) {
+			map.put("missingMRN", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		Patient patient = getPatientByMRN(mrn);
+		if (patient == null) {
+			map.put("invalidPatient", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		Encounter encounter = getRecentEncounter(patient);
+		if (encounter == null) {
+			map.put("missingEncounter", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		
+    	
 	    return super.onSubmit(request, response, command, errors);
     }
     
@@ -151,5 +171,38 @@ public class ExternalFormController extends SimpleFormController {
 	    }
 	    
 	    return null;
+    }
+    
+    private Encounter getRecentEncounter(Patient patient) {
+    	// Get last encounter with last day
+		Calendar startCal = Calendar.getInstance();
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
+		Date startDate = startCal.getTime();
+		Date endDate = Calendar.getInstance().getTime();
+		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
+			null, null, false);
+		if (encounters == null || encounters.size() == 0) {
+			return null;
+		} else if (encounters.size() == 1) {
+			return encounters.get(0);
+		}
+		
+		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
+		ATDService atdService = Context.getService(ATDService.class);
+		for (int i = encounters.size() - 1; i >= 0; i--) {
+			Encounter encounter = encounters.get(i);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			if (stats == null || stats.size() == 0) {
+				continue;
+			}
+			
+			for (Statistics stat : stats) {
+				if (stat.getScannedTimestamp() != null) {
+					return encounter;
+				}
+			}
+		}
+		
+		return null;
     }
 }
