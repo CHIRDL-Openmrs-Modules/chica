@@ -36,7 +36,7 @@
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
                 <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsWeb.form">finishFormsWeb</prop>
-                <prop key="/module/@MODULE_ID@/formAuthentication.form">formAuthentication</prop>
+                <prop key="/module/@MODULE_ID@/externalFormLoader.form">externalFormLoader</prop>
             </props>
         </property>
     </bean>
@@ -180,10 +180,10 @@
         <property name="formView"><value>/module/@MODULE_ID@/finishFormsWeb</value></property>
         <property name="successView"><value>finishFormsWeb.form</value></property>
     </bean>
-    <bean id="formAuthentication" class="@MODULE_PACKAGE@.web.ExternalFormController">
-        <property name="commandName"><value>formAuthenticationObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/formAuthentication</value></property>
-        <property name="successView"><value>formAuthentication.form</value></property>
+    <bean id="externalFormLoader" class="@MODULE_PACKAGE@.web.ExternalFormController">
+        <property name="commandName"><value>externalFormLoaderObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/externalFormLoader</value></property>
+        <property name="successView"><value>externalFormLoader.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">

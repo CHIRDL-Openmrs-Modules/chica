@@ -33,9 +33,16 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.web.servlet.view.RedirectView;
 
 
 /**
@@ -59,21 +66,45 @@ public class ExternalFormController extends SimpleFormController {
 	@Override
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("formName", request.getParameter("formName"));
-		map.put("formPage", request.getParameter("formPage"));
-		map.put("mrn", request.getParameter("mrn"));
+		String formName = request.getParameter("formName");
+		String formPage = request.getParameter("formPage");
+		String mrn = request.getParameter("mrn");
+		map.put("formName", formName);
+		map.put("formPage", formPage);
+		map.put("mrn", mrn);
+		
+		if (formName == null) {
+			map.put("hasErrors", "true");
+			map.put("missingForm", "true");
+			return map;
+		}
+		
+		if (formPage == null) {
+			map.put("hasErrors", "true");
+			map.put("missingFormPage", "true");
+			return map;
+		}
+		
+		if (mrn == null) {
+			map.put("hasErrors", "true");
+			map.put("missingMRN", "true");
+			return map;
+		}
+		
 		if (Context.getAuthenticatedUser() != null) {
 			return map;
 		}
 		
 		String username = request.getParameter("username");
 		if (username == null) {
+			map.put("hasErrors", "true");
 			map.put("missingUser", "true");
 			return map;
 		}
 		
 		String password = request.getParameter("password");
 		if (password == null) {
+			map.put("hasErrors", "true");
 			map.put("missingPassword", "true");
 			return map;
 		}
@@ -82,6 +113,7 @@ public class ExternalFormController extends SimpleFormController {
 			Context.authenticate(username, password);
 		} catch (ContextAuthenticationException e) {
 			// username/password not valid
+			map.put("hasErrors", "true");
 			map.put("failedAuthentication", "true");
 			return map;
 		}
@@ -100,46 +132,75 @@ public class ExternalFormController extends SimpleFormController {
     	String formName = request.getParameter("formName");
     	String formPage = request.getParameter("formPage");
     	String mrn = request.getParameter("mrn");
+    	String startStateStr = request.getParameter("startState");
+    	String endStateStr = request.getParameter("endState");
     	map.put("formName", formName);
 		map.put("formPage", formPage);
 		map.put("mrn", mrn);
-		
-		if (formName == null) {
-			map.put("missingForm", "true");
-			return new ModelAndView(view, map);
-		}
+		map.put("startState", startStateStr);
+		map.put("endState", endStateStr);
 		
 		Form form = Context.getFormService().getForm(formName);
 		if (form == null) {
+			map.put("hasErrors", "true");
 			map.put("invalidForm", "true");
-			return new ModelAndView(view, map);
-		}
-		
-		if (formPage == null) {
-			map.put("missingFormPage", "true");
-			return new ModelAndView(view, map);
-		}
-		
-		if (mrn == null) {
-			map.put("missingMRN", "true");
 			return new ModelAndView(view, map);
 		}
 		
 		Patient patient = getPatientByMRN(mrn);
 		if (patient == null) {
+			map.put("hasErrors", "true");
 			map.put("invalidPatient", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		if (startStateStr == null) {
+			map.put("hasErrors", "true");
+			map.put("missingStartState", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		if (endStateStr == null) {
+			map.put("hasErrors", "true");
+			map.put("missingEndState", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
+		State startState = backportsService.getStateByName(startStateStr);
+		if (startState == null) {
+			map.put("hasErrors", "true");
+			map.put("invalidStartState", "true");
+			return new ModelAndView(view, map);
+		}
+		
+		State endState = backportsService.getStateByName(endStateStr);
+		if (endState == null) {
+			map.put("hasErrors", "true");
+			map.put("invalidEndState", "true");
 			return new ModelAndView(view, map);
 		}
 		
 		Encounter encounter = getRecentEncounter(patient);
 		if (encounter == null) {
+			map.put("hasErrors", "true");
 			map.put("missingEncounter", "true");
 			return new ModelAndView(view, map);
 		}
 		
+		FormInstanceTag tag = getFormInstanceInfo(encounter.getEncounterId(), form.getFormId(), startState.getStateId(), 
+			endState.getStateId(), backportsService);
+		if (tag == null) {
+			map.put("hasErrors", "true");
+			map.put("missingFormInstance", "true");
+			return new ModelAndView(view, map);
+		}
 		
+		map.put("encounterId", encounter.getEncounterId());
+		map.put("patientId", patient.getPatientId());
+		map.put("formInstance", tag.toString());
     	
-	    return super.onSubmit(request, response, command, errors);
+	    return new ModelAndView(new RedirectView(formPage), map);
     }
     
     private Patient getPatientByMRN(String mrn) {
@@ -204,5 +265,52 @@ public class ExternalFormController extends SimpleFormController {
 		}
 		
 		return null;
+    }
+    
+    private FormInstanceTag getFormInstanceInfo(Integer encounterId, Integer formId, Integer startStateId, 
+                                                Integer endStateId, ChirdlUtilBackportsService backportsService) {
+    	Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<Integer, List<PatientState>>();
+    	Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<Integer, List<PatientState>>();
+    	
+    	Util.getPatientStatesByEncounterId(
+    		backportsService, formIdToPatientStateMapStart, encounterId, startStateId, true);
+    	Util.getPatientStatesByEncounterId(
+    		backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, true);
+    	
+    	boolean containsStartState = formIdToPatientStateMapStart.containsKey(formId);
+		boolean containsEndState = formIdToPatientStateMapEnd.containsKey(formId);
+		
+		if (containsStartState) {
+			List<PatientState> patientStates = null;
+			if (!containsEndState) {
+				patientStates = formIdToPatientStateMapStart.get(formId);
+				if (patientStates != null) {
+					for (PatientState patientState : patientStates) {
+						FormInstance formInstance = patientState.getFormInstance();
+						if (formInstance != null) {
+							FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId, 
+								patientState.getFormInstanceId(), patientState.getLocationTagId());
+							return tag;
+						}
+					}
+				}
+			} else {
+				patientStates = formIdToPatientStateMapEnd.get(formId);
+				if (patientStates != null) {
+					for (PatientState patientState : patientStates) {
+						if (patientState.getEndTime() == null) {
+							FormInstance formInstance = patientState.getFormInstance();
+							if (formInstance != null) {
+								FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId, 
+									patientState.getFormInstanceId(), patientState.getLocationTagId());
+								return tag;
+							}
+						}
+					}
+				}
+			}
+		}
+    	
+    	return null;
     }
 }
