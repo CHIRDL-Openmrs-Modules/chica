@@ -14,11 +14,9 @@
     </div>
 
     <div>
-	    <div><p>Submission successful!  There are no more forms to complete for ${patient.givenName}&nbsp;${patient.familyName}.  Please click "Close" to close the window.</p></div>
+	    <div><p>Submission successful!  There are no more forms to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
 	    <br/>
-	    <div>
-	        <input type="button" onclick="window.close()" value="Close" style="width: 100px;"/>
-	    </div>
+	    <div>Please close this window at your convenience.</div>
     </div>
 </div>
 

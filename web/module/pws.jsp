@@ -52,7 +52,14 @@
                         Height:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${Height}&nbsp;${HeightSUnits}&nbsp;(${HeightP}%)
+                        <c:choose>
+                            <c:when test="${empty Height}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${Height}&nbsp;${HeightSUnits}&nbsp;(${HeightP}%)
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${WeightA}</b><br/>
@@ -61,7 +68,14 @@
                         Weight:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${WeightKG}&nbsp;kg.&nbsp;(${WeightP}%)
+                        <c:choose>
+                            <c:when test="${empty WeightKG}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${WeightKG}&nbsp;kg.&nbsp;(${WeightP}%)
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${BMIA}</b><br/>
@@ -70,7 +84,14 @@
                         BMI:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${BMI}&nbsp;(${BMIP}%)
+                        <c:choose>
+                            <c:when test="${empty BMI}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${BMI}&nbsp;(${BMIP}%)
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${HCA}</b><br/>
@@ -79,7 +100,14 @@
                         Head Circ:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${HC} cm. (${HCP}%)
+                        <c:choose>
+                            <c:when test="${empty HC}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${HC} cm. (${HCP}%)
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${TempA}</b><br/>
@@ -88,7 +116,14 @@
                         Temp:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${Temperature} F (${Temperature_Method})
+                        <c:choose>
+                            <c:when test="${empty Temperature}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${Temperature} F (${Temperature_Method})
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${PulseA}</b><br/>
@@ -97,7 +132,14 @@
                         Pulse:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${Pulse}
+                        <c:choose>
+                            <c:when test="${empty Pulse}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${Pulse}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${RRA}</b><br/>
@@ -106,7 +148,14 @@
                         RR:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${RR}
+                        <c:choose>
+                            <c:when test="${empty RR}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${RR}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${BPA}</b><br/>
@@ -115,7 +164,14 @@
                         BP:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${BP} (${BPP})
+                        <c:choose>
+                            <c:when test="${empty BP}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${BP} (${BPP})
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${PulseOxA}</b><br/>
@@ -124,7 +180,14 @@
                         Pulse Ox:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${PulseOx}%
+                        <c:choose>
+                            <c:when test="${empty PulseOx}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${PulseOx}%
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${HearA}</b><br/>
@@ -133,7 +196,14 @@
                         Hear (L):<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${HearL}
+                        <c:choose>
+                            <c:when test="${empty HearL}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${HearL}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${HearA}</b><br/>
@@ -142,7 +212,14 @@
                         Hear (R):<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${HearR}
+                        <c:choose>
+                            <c:when test="${empty HearR}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${HearR}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${VisionLA}</b><br/>
@@ -151,7 +228,14 @@
                         Vision (L):<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${VisionL}&nbsp;${VisionL_Corrected}
+                        <c:choose>
+                            <c:when test="${empty VisionL}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${VisionL}&nbsp;${VisionL_Corrected}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b>${VisionRA}</b><br/>
@@ -160,7 +244,14 @@
                         Vision (R):<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${VisionR}&nbsp;${VisionR_Corrected}
+                        <c:choose>
+                            <c:when test="${empty VisionR}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${VisionR}&nbsp;${VisionR_Corrected}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b></b><br/>
@@ -169,7 +260,14 @@
                         Weight:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${Weight}
+                        <c:choose>
+                            <c:when test="${empty Weight}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${Weight}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flagCell">
                         <b></b><br/>
@@ -178,10 +276,17 @@
                         Prev WT:<br/>
                     </div>
                     <div class="vitalsValues">
-                        ${PrevWeight}&nbsp;(${PrevWeightDate})
+                        <c:choose>
+                            <c:when test="${empty PrevWeight}">
+                                &nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                ${PrevWeight}&nbsp;(${PrevWeightDate})
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div id="vitalsLegend">
-                    <b>*=Abnormal, U=Uncooperative,<br/>
+                    <b>*=Abnormal, U=Uncorrected,<br/>
                     C=Corrected, A=Axillary,
                     R=Rectal, O=Oral<br/>
                     F=Failed, P=Passed</b></div>
@@ -467,166 +572,208 @@
                     </c:if>
                 </div>
                 <div class="questionContainer">
-                	<div class="questionStem">
-                    	${Prompt1_Text}
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice1" value="1">${Answer1_1}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice1" value="3">${Answer1_3}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice1" value="5">${Answer1_5}</input><br/>
-                        </div>
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice1" value="2">${Answer1_2}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice1" value="4">${Answer1_4}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice1" value="6">${Answer1_6}</input><br/>
-                        </div>
-                    </div>
+                    <c:choose>
+	                    <c:when test="${empty Prompt1_Text}">
+	                        &nbsp;
+	                    </c:when>
+	                    <c:otherwise>
+	                       <div class="questionStem">
+			                   ${Prompt1_Text}
+			               </div>
+			               <div class="answerContainer">
+			                   <div class="answerCheckbox">
+			                       <input type="checkbox" name="sub_Choice1" value="1">${Answer1_1}</input><br/>
+			                   </div>
+			                   <div class="answerCheckbox">
+			                       <input type="checkbox" name="sub_Choice1" value="3">${Answer1_3}</input><br/>
+			                   </div>
+			                   <div class="answerCheckbox">
+			                       <input type="checkbox" name="sub_Choice1" value="5">${Answer1_5}</input><br/>
+			                   </div>
+			               </div>
+			               <div class="answerContainer">
+			                   <div class="answerCheckbox">
+			                       <input type="checkbox" name="sub_Choice1" value="2">${Answer1_2}</input><br/>
+			                   </div>
+			                   <div class="answerCheckbox">
+			                       <input type="checkbox" name="sub_Choice1" value="4">${Answer1_4}</input><br/>
+			                   </div>
+			                   <div class="answerCheckbox">
+			                       <input type="checkbox" name="sub_Choice1" value="6">${Answer1_6}</input><br/>
+			                   </div>
+			               </div>
+	                    </c:otherwise>
+                    </c:choose>
                 </div>
                 <div class="questionContainer">
-                	<div class="questionStem">
-                    	${Prompt2_Text}
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice2" value="1">${Answer2_1}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice2" value="3">${Answer2_3}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice2" value="5">${Answer2_5}</input><br/>
-                        </div>
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice2" value="2">${Answer2_2}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice2" value="4">${Answer2_4}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice2" value="6">${Answer2_6}</input><br/>
-                        </div>
-                    </div>
+                    <c:choose>
+                        <c:when test="${empty Prompt2_Text}">
+                            &nbsp;
+                        </c:when>
+                        <c:otherwise>
+                            <div class="questionStem">
+		                        ${Prompt2_Text}
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice2" value="1">${Answer2_1}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice2" value="3">${Answer2_3}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice2" value="5">${Answer2_5}</input><br/>
+		                        </div>
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice2" value="2">${Answer2_2}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice2" value="4">${Answer2_4}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice2" value="6">${Answer2_6}</input><br/>
+		                        </div>
+		                    </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div class="questionContainer">
-                	<div class="questionStem">
-                    	${Prompt3_Text}
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice3" value="1">${Answer3_1}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice3" value="3">${Answer3_3}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice3" value="5">${Answer3_5}</input><br/>
-                        </div>
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice3" value="2">${Answer3_2}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice3" value="4">${Answer3_4}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice3" value="6">${Answer3_6}</input><br/>
-                        </div>
-                    </div>
+                    <c:choose>
+                        <c:when test="${empty Prompt3_Text}">
+                            &nbsp;
+                        </c:when>
+                        <c:otherwise>
+                            <div class="questionStem">
+		                        ${Prompt3_Text}
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice3" value="1">${Answer3_1}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice3" value="3">${Answer3_3}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice3" value="5">${Answer3_5}</input><br/>
+		                        </div>
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice3" value="2">${Answer3_2}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice3" value="4">${Answer3_4}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice3" value="6">${Answer3_6}</input><br/>
+		                        </div>
+		                    </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div class="questionContainer">
-                	<div class="questionStem">
-                    	${Prompt4_Text}
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice4" value="1">${Answer4_1}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice4" value="3">${Answer4_3}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice4" value="5">${Answer4_5}</input><br/>
-                        </div>
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice4" value="2">${Answer4_2}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice4" value="4">${Answer4_4}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice4" value="6">${Answer4_6}</input><br/>
-                        </div>
-                    </div>
+                    <c:choose>
+                        <c:when test="${empty Prompt4_Text}">
+                            &nbsp;
+                        </c:when>
+                        <c:otherwise>
+                            <div class="questionStem">
+		                        ${Prompt4_Text}
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice4" value="1">${Answer4_1}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice4" value="3">${Answer4_3}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice4" value="5">${Answer4_5}</input><br/>
+		                        </div>
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice4" value="2">${Answer4_2}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice4" value="4">${Answer4_4}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice4" value="6">${Answer4_6}</input><br/>
+		                        </div>
+		                    </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div class="questionContainer">
-                	<div class="questionStem">
-                    	${Prompt5_Text}
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice5" value="1">${Answer5_1}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice5" value="3">${Answer5_3}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice5" value="5">${Answer5_5}</input><br/>
-                        </div>
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice5" value="2">${Answer5_2}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice5" value="4">${Answer5_4}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice5" value="6">${Answer5_6}</input><br/>
-                        </div>
-                    </div>
+                    <c:choose>
+                        <c:when test="${empty Prompt5_Text}">
+                            &nbsp;
+                        </c:when>
+                        <c:otherwise>
+                            <div class="questionStem">
+		                        ${Prompt5_Text}
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice5" value="1">${Answer5_1}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice5" value="3">${Answer5_3}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice5" value="5">${Answer5_5}</input><br/>
+		                        </div>
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice5" value="2">${Answer5_2}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice5" value="4">${Answer5_4}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice5" value="6">${Answer5_6}</input><br/>
+		                        </div>
+		                    </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div class="questionContainer">
-                	<div class="questionStem">
-                    	${Prompt6_Text}
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice6" value="1">${Answer6_1}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice6" value="3">${Answer6_3}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice6" value="5">${Answer6_5}</input><br/>
-                        </div>
-                    </div>
-                    <div class="answerContainer">
-                    	<div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice6" value="2">${Answer6_2}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice6" value="4">${Answer6_4}</input><br/>
-                        </div>
-                        <div class="answerCheckbox">
-                        	<input type="checkbox" name="sub_Choice6" value="6">${Answer6_6}</input><br/>
-                        </div>
-                    </div>
+                    <c:choose>
+                        <c:when test="${empty Prompt6_Text}">
+                            &nbsp;
+                        </c:when>
+                        <c:otherwise>
+                            <div class="questionStem">
+		                        ${Prompt6_Text}
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice6" value="1">${Answer6_1}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice6" value="3">${Answer6_3}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice6" value="5">${Answer6_5}</input><br/>
+		                        </div>
+		                    </div>
+		                    <div class="answerContainer">
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice6" value="2">${Answer6_2}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice6" value="4">${Answer6_4}</input><br/>
+		                        </div>
+		                        <div class="answerCheckbox">
+		                            <input type="checkbox" name="sub_Choice6" value="6">${Answer6_6}</input><br/>
+		                        </div>
+		                    </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div id="submitContainer">
                     <input id="submitButtonBottom" type="button" value="Submit"/>

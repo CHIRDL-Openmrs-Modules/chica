@@ -73,37 +73,33 @@ public class ExternalFormController extends SimpleFormController {
 		map.put("formPage", formPage);
 		map.put("mrn", mrn);
 		
-		if (formName == null) {
+		if (formName == null || formName.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingForm", "true");
 			return map;
 		}
 		
-		if (formPage == null) {
+		if (formPage == null || formPage.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingFormPage", "true");
 			return map;
 		}
 		
-		if (mrn == null) {
+		if (mrn == null || mrn.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingMRN", "true");
 			return map;
 		}
 		
-		if (Context.getAuthenticatedUser() != null) {
-			return map;
-		}
-		
 		String username = request.getParameter("username");
-		if (username == null) {
+		if (username == null || username.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingUser", "true");
 			return map;
 		}
 		
 		String password = request.getParameter("password");
-		if (password == null) {
+		if (password == null || password.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingPassword", "true");
 			return map;
@@ -154,13 +150,13 @@ public class ExternalFormController extends SimpleFormController {
 			return new ModelAndView(view, map);
 		}
 		
-		if (startStateStr == null) {
+		if (startStateStr == null || startStateStr.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingStartState", "true");
 			return new ModelAndView(view, map);
 		}
 		
-		if (endStateStr == null) {
+		if (endStateStr == null || endStateStr.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingEndState", "true");
 			return new ModelAndView(view, map);
@@ -181,7 +177,8 @@ public class ExternalFormController extends SimpleFormController {
 			return new ModelAndView(view, map);
 		}
 		
-		Encounter encounter = getRecentEncounter(patient);
+		Encounter encounter = getRecentEncounter(
+			patient, backportsService, startState.getStateId(), endState.getStateId(), form.getFormId());
 		if (encounter == null) {
 			map.put("hasErrors", "true");
 			map.put("missingEncounter", "true");
@@ -234,10 +231,11 @@ public class ExternalFormController extends SimpleFormController {
 	    return null;
     }
     
-    private Encounter getRecentEncounter(Patient patient) {
+    private Encounter getRecentEncounter(Patient patient, ChirdlUtilBackportsService backportsService, Integer startStateId, 
+                                         Integer endStateId, Integer formId) {
     	// Get last encounter with last day
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 2);
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
@@ -248,19 +246,24 @@ public class ExternalFormController extends SimpleFormController {
 			return encounters.get(0);
 		}
 		
-		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
+		// Do a check to find the latest encounters with observations without a scanned timestamp for the PWS.
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0; i--) {
 			Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
-			if (stats == null || stats.size() == 0) {
-				continue;
-			}
+			Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<Integer, List<PatientState>>();
+	    	Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<Integer, List<PatientState>>();
+	    	Integer encounterId = encounter.getEncounterId();
+	    	
+	    	Util.getPatientStatesByEncounterId(
+	    		backportsService, formIdToPatientStateMapStart, encounterId, startStateId, true);
+	    	Util.getPatientStatesByEncounterId(
+	    		backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, true);
+	    	
+	    	boolean containsStartState = formIdToPatientStateMapStart.containsKey(formId);
+			boolean containsEndState = formIdToPatientStateMapEnd.containsKey(formId);
 			
-			for (Statistics stat : stats) {
-				if (stat.getScannedTimestamp() != null) {
-					return encounter;
-				}
+			if (containsStartState && !containsEndState) {
+				return encounter;
 			}
 		}
 		

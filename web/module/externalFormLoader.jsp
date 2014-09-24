@@ -72,9 +72,7 @@
         </c:choose>
         <br/>
         <c:if test="${hasErrors eq 'true'}">
-	        <div>
-	            <input type="button" onclick="window.close()" value="Close" style="width: 100px;"/>
-	        </div>
+	        <div>Please close this window at your convenience.</div>
         </c:if>
     </div>
     <form id="loadForm" method="POST">
