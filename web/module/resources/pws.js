@@ -36,6 +36,7 @@ function processCheckboxes(form1) {
 
 $(function() {
     $("#problemDialog").dialog({
+      open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
       autoOpen: false,
       modal: true,
       show: {
@@ -53,6 +54,7 @@ $(function() {
     });
     
     $("#medDialog").dialog({
+    	open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
         show: {
@@ -70,6 +72,7 @@ $(function() {
 	});
 	
 	$("#confirmSubmitDialog").dialog({
+	  open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
       autoOpen: false,
       modal: true
     }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
@@ -93,6 +96,7 @@ $(function() {
 	});
 	
 	$("#submitWaitDialog").dialog({
+		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
         maxWidth: 100,

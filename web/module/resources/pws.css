@@ -4,12 +4,41 @@ body {
 	background-color:#75A3A3;
 }
 
+input[type="button"], input[type="submit"] {
+	width:100px;
+	right:20px;
+	bottom:20px;
+	background:#75A3A3;
+	color:#fff;
+	height:30px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border: 1p solid #999;
+}
+
+input[type="radio"] {
+	background:#FFF;
+}
+
+#problemButton:hover, #medButton:hover, #okSubmitButton:hover, #cancelSubmitButton:hover, #submitButtonTop:hover, #submitButtonBottom:hover {
+    background:#848484;
+    color:#fff;
+}
+
 #formContainer {
 	width:800px;
-	height:1000px;
+	height:1010px;
 	margin:0 auto;
 	border: 1px solid black;
-	background-color:#FFFFFF;
+	background-color:#F2F2F2;
+	box-shadow: 10px 10px 5px #2E2E2E;
+	-webkit-box-shadow: 10px 10px 5px #2E2E2E;
+    -moz-box-shadow: 10px 10px 5px #2E2E2E;
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+	margin-bottom:40px;
 }
 
 #titleContainer {
@@ -60,7 +89,7 @@ body {
 
 #vitals {
 	width:265px;
-	height:257px;
+	height:272px;
 	float:left;
 	border-left: 1px solid black;
 }
@@ -70,6 +99,7 @@ body {
 	border-right:1px solid black;
 	text-align:center;
 	float:left;
+	color:red;
 }
 
 .vitalsNames {
@@ -103,7 +133,7 @@ body {
 	float:left;
 	width:548px;
 	height:330px;
-	margin-top:-205px;
+	margin-top:-220px;
 	padding:2px;
 }
 
@@ -112,7 +142,7 @@ body {
 	height:89px;
 	border-bottom: 1px solid black;
 	float:left;
-	margin-top:40px;
+	margin-top:25px;
 	margin-left:-22px;
 }
 
@@ -148,6 +178,7 @@ body {
 	width:15px;
 	height:19px;
 	text-align:center;
+	color:red;
 }
 
 #examLegend {
@@ -165,10 +196,6 @@ body {
 	margin-left:75px;
 }
 
-#problemButton, #medButton, #okSubmitButton, #cancelSubmitButton {
-    width:100px;
-}
-
 #medTable {
     border-bottom: 1px solid black;
     color: #000;
@@ -182,7 +209,7 @@ body {
 
 #submitContainer {
 	width:800px;
-	height:40px;
+	height:50px;
 	text-align:center;
 }
 
@@ -288,4 +315,8 @@ body {
 
 .noTitle .ui-header a {
     display: none;
+}
+
+.ui-dialog-shadow { 
+	box-shadow: 10px 10px 5px #2E2E2E;
 }

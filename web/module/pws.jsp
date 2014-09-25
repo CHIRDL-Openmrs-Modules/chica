@@ -37,7 +37,7 @@
                 <b>Time:</b> ${VisitTime}</div>
                 <div id="vitals">
                     <div class="flagCell">
-                        <b>A</b>
+                        <b><font style="color:black;">A</font></b>
                     </div>
                     <div class="vitalsNames">
                         <b>Vital Signs:</b>
@@ -286,7 +286,7 @@
                         </c:choose>
                     </div>
                     <div id="vitalsLegend">
-                    <b>*=Abnormal, U=Uncorrected,<br/>
+                    <b><font style="color:red;">*</font>=Abnormal, U=Uncorrected,<br/>
                     C=Corrected, A=Axillary,
                     R=Rectal, O=Oral<br/>
                     F=Failed, P=Passed</b></div>
@@ -489,7 +489,7 @@
                         	<input type="radio" name="Entry_Extremities" value="A"/><br/>
                         </div>
                         <div id="examLegend">
-                        	<b>* = Previously Abnormal</b>
+                        	<b><font style="color:red;">*</font> = Previously Abnormal</b>
                         </div>
                     </div>
                   <div id="examExtras">
