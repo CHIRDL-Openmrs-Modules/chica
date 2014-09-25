@@ -511,78 +511,69 @@ public class Util {
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConcept("BMICentile");
 		questions.add(concept);
-		List<Obs> obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null,
-		    null, false);
 		
-		if (obs == null || obs.size() == 0) {
-			Result result = atdService.evaluateRule("bmi", patient, parameters);
-			
-			if (!(result instanceof EmptyResult)) {
-				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
-				        .getBirthdate(), "bmi", null);
-				if (percentile != null) {
-					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
-					
-					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
-					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
-				}
+		Result result = atdService.evaluateRule("bmi", patient, parameters);
+		
+		if (!(result instanceof EmptyResult)) {
+			Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(),
+			    patient.getBirthdate(), "bmi", null);
+			if (percentile != null) {
+				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+				
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
+				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
+				    new Date());
 			}
 		}
 		
 		questions = new ArrayList<Concept>();
 		concept = conceptService.getConcept("HCCentile");
 		questions.add(concept);
-		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
 		
-		if (obs == null || obs.size() == 0) {
-			parameters.put("concept", "HC");
-			Result result = atdService.evaluateRule("conceptRule", patient, parameters);
-			if (!(result instanceof EmptyResult)) {
-				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
-				        .getBirthdate(), "hc", null);
-				if (percentile != null) {
-					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
-					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
-					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
-				}
+		parameters.put("concept", "HC");
+		result = atdService.evaluateRule("conceptRule", patient, parameters);
+		if (!(result instanceof EmptyResult)) {
+			Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(),
+			    patient.getBirthdate(), "hc", null);
+			if (percentile != null) {
+				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
+				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
+				    new Date());
 			}
 		}
 		
 		questions = new ArrayList<Concept>();
 		concept = conceptService.getConcept("HtCentile");
 		questions.add(concept);
-		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
 		
-		if (obs == null || obs.size() == 0) {
-			parameters.put("concept", "HEIGHT");
-			Result result = atdService.evaluateRule("conceptRule", patient, parameters);
-			if (!(result instanceof EmptyResult)) {
-				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
-				        .getBirthdate(), "length", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
-				if (percentile != null) {
-					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
-					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
-					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
-				}
+		parameters.put("concept", "HEIGHT");
+		result = atdService.evaluateRule("conceptRule", patient, parameters);
+		if (!(result instanceof EmptyResult)) {
+			Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(),
+			    patient.getBirthdate(), "length", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
+			if (percentile != null) {
+				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
+				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
+				    new Date());
 			}
 		}
 		
 		questions = new ArrayList<Concept>();
 		concept = conceptService.getConcept("WtCentile");
 		questions.add(concept);
-		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
 		
-		if (obs == null || obs.size() == 0) {
-			parameters.put("concept", "WEIGHT");
-			Result result = atdService.evaluateRule("conceptRule", patient, parameters);
-			if (!(result instanceof EmptyResult)) {
-				Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(), patient
-				        .getBirthdate(), "weight", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
-				if (percentile != null) {
-					percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
-					org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
-					org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),new Date());
-				}
+		parameters.put("concept", "WEIGHT");
+		result = atdService.evaluateRule("conceptRule", patient, parameters);
+		if (!(result instanceof EmptyResult)) {
+			Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(),
+			    patient.getBirthdate(), "weight", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
+			if (percentile != null) {
+				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
+				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
+				    new Date());
 			}
 		}
 		
@@ -590,28 +581,23 @@ public class Util {
 		questions = new ArrayList<Concept>();
 		concept = conceptService.getConcept("BP");
 		questions.add(concept);
-		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
 		
-		if (obs == null || obs.size() == 0) {
-			Result result = atdService.evaluateRule("bp", patient, parameters);
-			if (!(result instanceof EmptyResult)) {
-				org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
-				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(),new Date());
-			}
+		result = atdService.evaluateRule("bp", patient, parameters);
+		if (!(result instanceof EmptyResult)) {
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
+			org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(), new Date());
 		}
 		
 		//save BMI
 		questions = new ArrayList<Concept>();
 		concept = conceptService.getConcept("BMI CHICA");
 		questions.add(concept);
-		obs = obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null, false);
 		
-		if (obs == null || obs.size() == 0) {
-			Result result = atdService.evaluateRule("bmi", patient, parameters);
-			if (!(result instanceof EmptyResult)) {
-				org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
-				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(),new Date());
-			}
+		result = atdService.evaluateRule("bmi", patient, parameters);
+		if (!(result instanceof EmptyResult)) {
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
+			org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(), new Date());
 		}
+		
 	}
 }
