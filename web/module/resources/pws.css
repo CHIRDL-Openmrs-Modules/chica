@@ -41,6 +41,12 @@ input[type="radio"] {
 	margin-bottom:40px;
 }
 
+@-moz-document url-prefix() {
+    #formContainer {
+        height:1025px;
+    }
+}
+
 #titleContainer {
 	width:790px;
 	height:50px;
@@ -137,6 +143,12 @@ input[type="radio"] {
 	padding:2px;
 }
 
+@-moz-document url-prefix() {
+    #exam {
+	    margin-top:-205px;
+	}
+}
+
 #buttons {
 	width:270px;
 	height:89px;
@@ -144,6 +156,12 @@ input[type="radio"] {
 	float:left;
 	margin-top:25px;
 	margin-left:-22px;
+}
+
+@-moz-document url-prefix() {
+    #buttons {
+	    margin-top:40px;
+	}
 }
 
 #physicalExam {
