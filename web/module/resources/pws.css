@@ -17,10 +17,6 @@ input[type="button"], input[type="submit"] {
 	border: 1p solid #999;
 }
 
-input[type="radio"] {
-	background:#FFF;
-}
-
 #problemButton:hover, #medButton:hover, #okSubmitButton:hover, #cancelSubmitButton:hover, #submitButtonTop:hover, #submitButtonBottom:hover {
     background:#848484;
     color:#fff;
@@ -259,6 +255,38 @@ input[type="radio"] {
 	border: 4px solid #FA8258;
 }
 
+#formSelector .ui-selecting { 
+	background: #FECA40; 
+}
+ 
+#formSelector .ui-selected { 
+	background: #F39814; color: white; 
+}
+
+#formSelector { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 60%; 
+}
+  
+#formSelector li { 
+	margin: 3px; 
+	padding: 0.4em; 
+	font-size: 1.4em; 
+	height: 18px; 
+}
+
+#printButtonPanel { 
+	margin:0 auto;
+	margin-top: 15px;
+    text-align: center;
+}
+
+#printButton {
+	width: 125px;
+}
+
 .examExtraCheckbox {
 	width:260px;
 }
@@ -309,9 +337,10 @@ input[type="radio"] {
 }
 
 .buttonsData {
-    width:265px;
+    width:130px;
     padding-top:5px;
     margin-left:2px;
+    float: left;
 }
 
 .tdBorderTop {

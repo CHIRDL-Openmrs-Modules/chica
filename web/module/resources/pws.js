@@ -71,6 +71,25 @@ $(function() {
 	  $("#medDialog").dialog("open");
 	});
 	
+	$("#formPrintDialog").dialog({
+    	open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+        autoOpen: false,
+        modal: true,
+        maxHeight: 400,
+        show: {
+          effect: "clip",
+          duration: 750
+        },
+        hide: {
+          effect: "clip",
+          duration: 750
+        }
+    }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
+	
+	$("#formPrintButton").click(function() {
+		  $("#formPrintDialog").dialog("open");
+		});
+	
 	$("#confirmSubmitDialog").dialog({
 	  open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
       autoOpen: false,
@@ -104,4 +123,6 @@ $(function() {
         width: 100,
         height: 50
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
+	
+	$( "#formSelector" ).selectable();
   });

@@ -558,6 +558,9 @@
                   </div>
                 </div>
                 <div id="buttons">
+                    <div class="buttonsData">
+                        <input id="formPrintButton" type="button" value="Handouts"/>
+                    </div>
                     <c:if test="${not empty diag1}">
 	                	<div class="buttonsData">
 	                        <input id="problemButton" type="button" value="Problem List"/>
@@ -863,6 +866,23 @@
 	                        </tr>
                         </c:if>
                     </table>
+                </div>
+                <div id="formPrintDialog" title="Printable Handouts" class="ui-dialog-titlebar ui-widget-header">
+                    <ol id="formSelector">
+					  <li class="ui-widget-content">Item 1</li>
+					  <li class="ui-widget-content">Item 2</li>
+					  <li class="ui-widget-content">Item 3</li>
+					  <li class="ui-widget-content">Item 4</li>
+					  <li class="ui-widget-content">Item 5</li>
+					  <li class="ui-widget-content">Item 6</li>
+					  <li class="ui-widget-content">Item 7</li>
+					  <li class="ui-widget-content">Item 8</li>
+					  <li class="ui-widget-content">Item 9</li>
+					  <li class="ui-widget-content">Item 10</li>
+					</ol>
+					<div id="printButtonPanel">
+					   <input id="printButton" type="button" value="Print Selected"/>
+					</
                 </div>
                 <div id="confirmSubmitDialog" title="Confirm" class="ui-dialog-titlebar ui-widget-header">
                     <div id="confirmText">
