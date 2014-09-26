@@ -332,23 +332,12 @@
                 </div>
             </div>
         </div>
-        <div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Not Completed</h1>
-            </div>
-            <div data-role="content">
-                <span>The questions are not complete.  Please complete before continuing.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Close</a>
-                </div>
-            </div>
-        </div>
         <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Not Completed</h1>
             </div>
             <div data-role="content">
-                <span>The questions are still not complete.  Are you sure you want to continue?</span>
+                <span>There are unanswered questions on this page.  Are you sure you want to continue to the next page?</span>
                 <div style="margin: 0 auto;text-align: center;">
                     <a href=""  onclick="saveDynamicQuestions(true);" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Yes</a>
                     <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
@@ -393,23 +382,12 @@
                 </div>
             </div>
         </div>
-        <div id="not_finished_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>No Completado</h1>
-            </div>
-            <div data-role="content">
-                <span>Las preguntas no se han completado. Por favor complete antes de continuar.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cerca</a>
-                </div>
-            </div>
-        </div>
         <div id="not_finished_final_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>No Completado</h1>
             </div>
             <div data-role="content">
-                <span>Esta pregunta a&#250;n no se han completado. &#191;Est&#225; seguro que desea continuar?</span>
+                <span>Hay preguntas sin respuesta en esta p&#225;gina. &#191;Est&#225; seguro de que desea continuar a la siguiente p&#225;gina?</span>
                 <div style="margin: 0 auto;text-align: center;">
                     <a href="" onclick="saveDynamicQuestions(true)" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Si</a>
                     <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>

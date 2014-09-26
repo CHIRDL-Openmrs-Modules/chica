@@ -2,7 +2,6 @@ var formId;
 var formInstanceId;
 var encounterId;
 var english = false;
-var finishAttempts = 0;
 var loadedForms = [];
 
 $(document).on("pagebeforeshow", "#confirm_page", function() {
@@ -292,7 +291,6 @@ function loadQuestions() {
 }
 
 function loadDynamicQuestions() {
-  finishAttempts = 0;
   var url = "/openmrs/moduleServlet/chica/chicaMobile";
   var action = "action=getPrioritizedElements&formId=" + formId + "&formInstanceId=" + formInstanceId + "&encounterId=" + 
   	encounterId + "&maxElements=5";
@@ -1076,16 +1074,9 @@ function saveSendToVitals() {
 }
 
 function attemptSaveQuestions() {
-	finishAttempts++;
 	if (areAllQuestionsAnswered()) {
 		saveDynamicQuestions(true);
-	} else if (finishAttempts == 1) {
-    	if (english) {
-    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
-    	}
-	} else if (finishAttempts >= 2) {
+	} else {
 		if (english) {
     	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
     	} else {
