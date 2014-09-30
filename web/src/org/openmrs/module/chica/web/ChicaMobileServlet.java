@@ -1,5 +1,7 @@
 package org.openmrs.module.chica.web;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,13 +26,29 @@ import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.BadPdfFormatException;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfReader;
 
 public class ChicaMobileServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private static final int PRIMARY_FORM = 0;
 	private static final int SECONDARY_FORMS = 1;
+	private static final String CREATE_STATE = "JIT_create";
+	private static final String FORM_TYPE = "formType";
+	private static final String PDF_FORM_TYPE = "PDF";
+	private static final String TRIGGER = "trigger";
+	private static final String FORCE_PRINT = "forcePrint";
+	private static final String MERGE_DIRECTORY = "defaultMergeDirectory";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
@@ -56,6 +74,10 @@ public class ChicaMobileServlet extends HttpServlet {
 			getPrioritizedElements(request, response);
 		} else if ("saveExportElements".equals(action)) {
 			saveExportElements(request, response);
+		} else if ("getPatientJITs".equals(action)) {
+			getPatientJITs(request, response);
+		} else if ("getAvailablePatientJITs".equals(action)) {
+			getAvailablePatientJITs(request, response);
 		}
 	}
 	
@@ -312,5 +334,196 @@ public class ChicaMobileServlet extends HttpServlet {
         }
         
         return true;
+	}
+	
+	private void getAvailablePatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.write("<availableJITs>");
+		
+		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
+		
+		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
+		
+		State createState = backportsService.getStateByName(CREATE_STATE);
+		if (createState == null) {
+			log.error("The state " + CREATE_STATE + " does not exist.  No patient JITs will be retrieved.");
+			pw.write("</availableJITs>");
+			return;
+		}
+		
+		List<PatientState> patientStates = 
+				backportsService.getPatientStateByEncounterState(encounterId, createState.getStateId());
+		for (PatientState patientState : patientStates) {
+			FormInstance formInstance = patientState.getFormInstance();
+			if (formInstance == null) {
+				continue;
+			}
+			
+			Integer locationId = formInstance.getLocationId();
+			Integer formId = formInstance.getFormId();
+			Integer formInstanceId = formInstance.getFormInstanceId();
+			Integer locationTagId = patientState.getLocationTagId();
+			
+			// Check to make sure the form is type PDF.
+			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, FORM_TYPE, locationTagId, locationId);
+			if (fav == null || !PDF_FORM_TYPE.equals(fav.getValue())) {
+				continue;
+			}
+			
+			// Make sure the form wasn't force printed.
+			fav = backportsService.getFormAttributeValue(formId, TRIGGER, locationTagId, locationId);
+			if (fav != null && FORCE_PRINT.equals(fav.getValue())) {
+				continue;
+			}
+			
+			// Get the merge directory for the form.
+			fav = backportsService.getFormAttributeValue(formId, MERGE_DIRECTORY, locationTagId, locationId);
+			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
+				continue;
+			}
+			
+			// Find the merge PDF file.
+			String mergeDirectory = fav.getValue();
+			File mergeFile = new File(mergeDirectory, locationId + "_" + formId + "_" + formInstanceId + ".pdf");
+			if (!mergeFile.exists()) {
+				mergeFile = new File(mergeDirectory, "_" + locationId + "_" + formId + "_" + formInstanceId + "_.pdf");
+				if (!mergeFile.exists()) {
+					continue;
+				}
+			}
+			
+			pw.write("<availableJIT>");
+			pw.write("<formId>" + formId + "</formId>");
+			pw.write("<formInstanceId>" + formInstanceId + "</formInstanceId>");
+			pw.write("<locationId>" + locationId + "</locationId>");
+			pw.write("<locationTagId>" + locationTagId + "</locationTagId>");
+			pw.write("</availableJIT>");
+			
+		}
+		
+		pw.write("</availableJITs>");
+	}
+	
+	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
+		
+		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
+		
+		State createState = backportsService.getStateByName(CREATE_STATE);
+		if (createState == null) {
+			log.error("The state " + CREATE_STATE + " does not exist.  No patient JITs will be retrieved.");
+			return;
+		}
+		
+		List<String> filesToCombine = new ArrayList<String>();
+		List<PatientState> patientStates = 
+				backportsService.getPatientStateByEncounterState(encounterId, createState.getStateId());
+		for (PatientState patientState : patientStates) {
+			FormInstance formInstance = patientState.getFormInstance();
+			if (formInstance == null) {
+				continue;
+			}
+			
+			Integer locationId = formInstance.getLocationId();
+			Integer formId = formInstance.getFormId();
+			Integer formInstanceId = formInstance.getFormInstanceId();
+			Integer locationTagId = patientState.getLocationTagId();
+			
+			// Check to make sure the form is type PDF.
+			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, FORM_TYPE, locationTagId, locationId);
+			if (fav == null || !PDF_FORM_TYPE.equals(fav.getValue())) {
+				continue;
+			}
+			
+			// Make sure the form wasn't force printed.
+			fav = backportsService.getFormAttributeValue(formId, TRIGGER, locationTagId, locationId);
+			if (fav != null && FORCE_PRINT.equals(fav.getValue())) {
+				continue;
+			}
+			
+			// Get the merge directory for the form.
+			fav = backportsService.getFormAttributeValue(formId, MERGE_DIRECTORY, locationTagId, locationId);
+			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
+				continue;
+			}
+			
+			// Find the merge PDF file.
+			String mergeDirectory = fav.getValue();
+			File mergeFile = new File(mergeDirectory, locationId + "_" + formId + "_" + formInstanceId + ".pdf");
+			if (!mergeFile.exists()) {
+				mergeFile = new File(mergeDirectory, "_" + locationId + "_" + formId + "_" + formInstanceId + "_.pdf");
+				if (!mergeFile.exists()) {
+					continue;
+				}
+			}
+			
+			filesToCombine.add(mergeFile.getAbsolutePath());
+		}
+		
+		if (filesToCombine.size() == 0) {
+			return;
+		} 
+		
+		response.setContentType("application/pdf");
+		response.addHeader("Content-Disposition", "attachment;filename=patientJITS.pdf");
+		
+		if (filesToCombine.size() == 1) {
+			String filePath = null;
+			try {
+				Document document = new Document();
+		        PdfCopy copy = new PdfCopy(document, response.getOutputStream());
+		        document.open();
+		        PdfReader reader;
+		        int n;
+	        	filePath = filesToCombine.get(0);
+	            reader = new PdfReader(filePath);
+	            // loop over the pages in that document
+	            n = reader.getNumberOfPages();
+	            for (int page = 0; page < n; ) {
+	                copy.addPage(copy.getImportedPage(reader, ++page));
+	            }
+	            
+	            copy.freeReader(reader);
+	            reader.close();
+	
+		        document.close();
+			} catch (BadPdfFormatException e) {
+				log.error("Bad PDF found: " + filePath, e);
+				throw new IOException(e);
+			} catch (DocumentException e) {
+				log.error("Error handling PDF document", e);
+				throw new IOException(e);
+			}
+		} else {
+			String filePath = null;
+			try {
+		        Document document = new Document();
+		        PdfCopy copy = new PdfCopy(document, response.getOutputStream());
+		        document.open();
+		        PdfReader reader;
+		        int n;
+		        for (int i = 0; i < filesToCombine.size(); i++) {
+		        	filePath = filesToCombine.get(i);
+		            reader = new PdfReader(filePath);
+		            // loop over the pages in that document
+		            n = reader.getNumberOfPages();
+		            for (int page = 0; page < n; ) {
+		                copy.addPage(copy.getImportedPage(reader, ++page));
+		            }
+		            copy.freeReader(reader);
+		            reader.close();
+		        }
+	
+		        document.close();
+			} catch (BadPdfFormatException e) {
+				log.error("Bad PDF found: " + filePath, e);
+				throw new IOException(e);
+			} catch (DocumentException e) {
+				log.error("Error handling PDF document", e);
+				throw new IOException(e);
+			}
+		}
 	}
 }

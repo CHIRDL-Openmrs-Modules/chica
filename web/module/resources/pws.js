@@ -72,7 +72,10 @@ $(function() {
 	});
 	
 	$("#formPrintDialog").dialog({
-    	open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+    	open: function() { 
+    		$(".ui-dialog").addClass("ui-dialog-shadow"); 
+    		$("#formPrintDialog").scrollTop(0);
+    	},
         autoOpen: false,
         modal: true,
         maxHeight: 400,
@@ -125,4 +128,14 @@ $(function() {
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	
 	$( "#formSelector" ).selectable();
+	
+	$('#selectAllButton').click(function() {
+	    $("li", "#formSelector").removeClass("ui-unselecting").addClass("ui-selected");
+	    selectableContainer.data("selectable")._mouseStop(null);
+	});
+	
+	$('#unselectAllButton').click(function() {
+	    $("li", "#formSelector").removeClass("ui-selected").addClass("ui-unselecting");
+	    selectableContainer.data("selectable")._mouseStop(null);
+	});
   });

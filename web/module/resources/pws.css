@@ -17,7 +17,7 @@ input[type="button"], input[type="submit"] {
 	border: 1p solid #999;
 }
 
-#problemButton:hover, #medButton:hover, #okSubmitButton:hover, #cancelSubmitButton:hover, #submitButtonTop:hover, #submitButtonBottom:hover {
+#problemButton:hover, #medButton:hover, #okSubmitButton:hover, #cancelSubmitButton:hover, #submitButtonTop:hover, #submitButtonBottom:hover, #formPrintButton:hover, #printButton:hover, #selectAllButton:hover, #unselectAllButton:hover {
     background:#848484;
     color:#fff;
 }
@@ -279,12 +279,28 @@ input[type="button"], input[type="submit"] {
 
 #printButtonPanel { 
 	margin:0 auto;
-	margin-top: 15px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+    text-align: center;
+}
+
+#selectionPanel { 
+    margin:0 auto;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#formList { 
+    margin:0 auto;
     text-align: center;
 }
 
 #printButton {
 	width: 125px;
+}
+
+#loadingPanel {
+	color: #000;
 }
 
 .examExtraCheckbox {
