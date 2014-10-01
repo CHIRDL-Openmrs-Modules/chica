@@ -1,7 +1,6 @@
 package org.openmrs.module.chica.web;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
@@ -44,11 +44,12 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final int PRIMARY_FORM = 0;
 	private static final int SECONDARY_FORMS = 1;
 	private static final String CREATE_STATE = "JIT_create";
-	private static final String FORM_TYPE = "formType";
-	private static final String PDF_FORM_TYPE = "PDF";
+	private static final String OUTPUT_TYPE = "outputType";
+	private static final String PDF_OUTPUT_TYPE = "pdf";
 	private static final String TRIGGER = "trigger";
 	private static final String FORCE_PRINT = "forcePrint";
 	private static final String MERGE_DIRECTORY = "defaultMergeDirectory";
+	private static final String DISPLAY_NAME = "displayName";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
@@ -337,6 +338,13 @@ public class ChicaMobileServlet extends HttpServlet {
 	}
 	
 	private void getAvailablePatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		try {
+	        Thread.sleep(10000);
+        }
+        catch (InterruptedException e) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e);
+        }
 		response.setContentType("text/xml");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -367,8 +375,8 @@ public class ChicaMobileServlet extends HttpServlet {
 			Integer locationTagId = patientState.getLocationTagId();
 			
 			// Check to make sure the form is type PDF.
-			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, FORM_TYPE, locationTagId, locationId);
-			if (fav == null || !PDF_FORM_TYPE.equals(fav.getValue())) {
+			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, OUTPUT_TYPE, locationTagId, locationId);
+			if (fav == null || !PDF_OUTPUT_TYPE.equals(fav.getValue())) {
 				continue;
 			}
 			
@@ -394,12 +402,28 @@ public class ChicaMobileServlet extends HttpServlet {
 				}
 			}
 			
-			pw.write("<availableJIT>");
-			pw.write("<formId>" + formId + "</formId>");
-			pw.write("<formInstanceId>" + formInstanceId + "</formInstanceId>");
-			pw.write("<locationId>" + locationId + "</locationId>");
-			pw.write("<locationTagId>" + locationTagId + "</locationTagId>");
-			pw.write("</availableJIT>");
+			Form form = Context.getFormService().getForm(formId);
+			String formName = null;
+			
+			// Try to get a display name if one exists.
+			fav = backportsService.getFormAttributeValue(formId, DISPLAY_NAME, locationTagId, locationId);
+			if (fav != null && fav.getValue() != null && fav.getValue().trim().length() > 0) {
+				formName = fav.getValue();
+			} else {
+				formName = form.getName();
+			}
+			
+			int i =0;
+			while (i < 2) {
+				i++;
+				pw.write("<availableJIT>");
+				pw.write("<formName>" + formName + "</formName>");
+				pw.write("<formId>" + formId + "</formId>");
+				pw.write("<formInstanceId>" + formInstanceId + "</formInstanceId>");
+				pw.write("<locationId>" + locationId + "</locationId>");
+				pw.write("<locationTagId>" + locationTagId + "</locationTagId>");
+				pw.write("</availableJIT>");
+			}
 			
 		}
 		
@@ -432,8 +456,8 @@ public class ChicaMobileServlet extends HttpServlet {
 			Integer locationTagId = patientState.getLocationTagId();
 			
 			// Check to make sure the form is type PDF.
-			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, FORM_TYPE, locationTagId, locationId);
-			if (fav == null || !PDF_FORM_TYPE.equals(fav.getValue())) {
+			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, OUTPUT_TYPE, locationTagId, locationId);
+			if (fav == null || !PDF_OUTPUT_TYPE.equals(fav.getValue())) {
 				continue;
 			}
 			

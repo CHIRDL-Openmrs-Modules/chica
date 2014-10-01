@@ -873,8 +873,8 @@
                        <input id="unselectAllButton" type="button" value="Unselect All"/>
                     </div>
                     <div id="formList">
-	                    <!-- <ol id="formSelector">
-						  <li class="ui-widget-content">Item 1</li>
+	                    <ol id="formSelector">
+						  <!--<li class="ui-widget-content">Item 1</li>
 						  <li class="ui-widget-content">Item 2</li>
 						  <li class="ui-widget-content">Item 3</li>
 						  <li class="ui-widget-content">Item 4</li>
@@ -883,9 +883,11 @@
 						  <li class="ui-widget-content">Item 7</li>
 						  <li class="ui-widget-content">Item 8</li>
 						  <li class="ui-widget-content">Item 9</li>
-						  <li class="ui-widget-content">Item 10</li>
-						</ol> -->
-						<span id="loadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
+						  <li class="ui-widget-content">Item 10</li> -->
+						</ol>
+					</div>
+					<div id="loading">
+					   <span id="loadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
 					</div>
 					<div id="printButtonPanel">
 					   <input id="printButton" type="button" value="Download"/>

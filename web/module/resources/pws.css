@@ -291,8 +291,12 @@ input[type="button"], input[type="submit"] {
 }
 
 #formList { 
-    margin:0 auto;
     text-align: center;
+}
+
+#formList ol {
+    text-align: center;
+    margin: 0 auto;
 }
 
 #printButton {
@@ -301,6 +305,11 @@ input[type="button"], input[type="submit"] {
 
 #loadingPanel {
 	color: #000;
+}
+
+#loading {
+	text-align: center;
+    margin: 0 auto;
 }
 
 .examExtraCheckbox {

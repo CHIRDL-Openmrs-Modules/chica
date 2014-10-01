@@ -1,3 +1,50 @@
+$( document ).ready(function() {
+	var encounterId = $("#encounterId").val();
+	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
+	var url = "/openmrs/moduleServlet/chica/chicaMobile";
+	$.ajax({
+	  "cache": false,
+	  "dataType": "xml",
+	  "data": action,
+	  "type": "POST",
+	  "url": url,
+	  "timeout": 30000, // optional if you want to handle timeouts (which you should)
+	  "error": handleGetAvailableJITsError, // this sets up jQuery to give me errors
+	  "success": function (xml) {
+          parseAvailableJITs(xml);
+      }
+	});
+});
+
+function handleGetAvailableJITsError() {
+	
+}
+
+function parseAvailableJITs(responseXML) {
+    // no matches returned
+    if (responseXML === null) {
+    	$("#loading").hide();
+        return false;
+    } else {
+    	var formList = $("#formSelector");
+        var content = "";
+        $(responseXML).find("availableJIT").each(function () {
+        	var formName = $(this).find("formName").text();
+            var formId = $(this).find("formId").text();
+            var formInstanceId = $(this).find("formInstanceId").text();
+            var locationId = $(this).find("locationId").text();
+            var locationTagId = $(this).find("locationTagId").text();
+            
+            content = content + '<li class="ui-widget-content">' + formName + '</li>';
+        });
+        
+        formList.html(content);
+        $("#loading").hide();
+        $("#formList").show();
+    }
+}
+
+
 $("#pwsForm").submit(function(event) {
 	processCheckboxes(this);
 });
@@ -35,6 +82,8 @@ function processCheckboxes(form1) {
 }
 
 $(function() {
+	$("#formList").hide();
+	
     $("#problemDialog").dialog({
       open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
       autoOpen: false,
@@ -90,8 +139,8 @@ $(function() {
     }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
 	
 	$("#formPrintButton").click(function() {
-		  $("#formPrintDialog").dialog("open");
-		});
+	  $("#formPrintDialog").dialog("open");
+	});
 	
 	$("#confirmSubmitDialog").dialog({
 	  open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
@@ -131,11 +180,17 @@ $(function() {
 	
 	$('#selectAllButton').click(function() {
 	    $("li", "#formSelector").removeClass("ui-unselecting").addClass("ui-selected");
-	    selectableContainer.data("selectable")._mouseStop(null);
 	});
 	
 	$('#unselectAllButton').click(function() {
 	    $("li", "#formSelector").removeClass("ui-selected").addClass("ui-unselecting");
-	    selectableContainer.data("selectable")._mouseStop(null);
 	});
+	
+	$("#printButton").click(function() {
+		var foo = [];
+		$('#formSelector :selected').each(function(i, selected){
+		  foo[i] = $(selected).text();
+		});
+	});
+	
   });
