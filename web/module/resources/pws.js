@@ -1,3 +1,5 @@
+var selectedForms = [];
+var downloadID = "";
 $( document ).ready(function() {
 	var encounterId = $("#encounterId").val();
 	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
@@ -16,7 +18,7 @@ $( document ).ready(function() {
 	});
 });
 
-function handleGetAvailableJITsError() {
+function handleGetAvailableJITsError(xhr, textStatus, error) {
 	
 }
 
@@ -35,7 +37,8 @@ function parseAvailableJITs(responseXML) {
             var locationId = $(this).find("locationId").text();
             var locationTagId = $(this).find("locationTagId").text();
             
-            content = content + '<li class="ui-widget-content">' + formName + '</li>';
+            content = content + '<li class="ui-widget-content" formId="' + formId + '" formInstanceId="' + formInstanceId + 
+            	'" locationId="' + locationId + '" locationTagId="' + locationTagId + '">' + formName + '</li>';
         });
         
         formList.html(content);
@@ -82,7 +85,61 @@ function processCheckboxes(form1) {
 }
 
 $(function() {
+	$( "#downloadLink" ).click(
+            function( event ) {
+ 
+                var target = event.target;
+ 
+                // When tracking the download, we're going to have
+                // the server echo back a cookie that will be set
+                // when the download Response has been received.
+                var downloadID = ( new Date() ).getTime();
+ 
+                // Update the URL that is *currently being requested*
+                // to contain the downloadID. This will then be response
+                // cookie header.
+                target.href += ( "&downloadID=" + downloadID );
+ 
+                // The local cookie cache is defined in the browser
+                // as one large string; we need to search for the
+                // name-value pattern with the above ID.
+                var cookiePattern = new RegExp( ( "downloadID=" + downloadID ), "i" );
+ 
+                // Now, we need to start watching the local Cookies to
+                // see when the download ID has been updated by the
+                // response headers.
+                var cookieTimer = setInterval( checkCookies, 500 );
+ 
+ 
+                // I check the local cookies for an update.
+                function checkCookies() {
+ 
+                    // If the local cookies have been updated, clear
+                    // the timer and say thanks!
+                    if ( document.cookie.search( cookiePattern ) >= 0 ) {
+ 
+                        clearInterval( cookieTimer );
+ 
+                        $("#downloading").hide();
+                		$("#formList").show();
+ 
+                        return(
+                            console.log( "Download complete!!" )
+                        );
+ 
+                    }
+ 
+                    console.log(
+                        "File still downloading...",
+                        new Date().getTime()
+                    );
+ 
+                }
+ 
+            }
+        );
 	$("#formList").hide();
+	$("#downloading").hide();
 	
     $("#problemDialog").dialog({
       open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
@@ -176,6 +233,16 @@ $(function() {
         height: 50
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	
+	$("#loadingDialog").dialog({
+		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+        autoOpen: false,
+        modal: true,
+        maxWidth: 150,
+        maxHeight: 100,
+        width: 150,
+        height: 100
+    }).dialog("widget").find(".ui-dialog-titlebar").hide();
+	
 	$( "#formSelector" ).selectable();
 	
 	$('#selectAllButton').click(function() {
@@ -187,10 +254,40 @@ $(function() {
 	});
 	
 	$("#printButton").click(function() {
-		var foo = [];
-		$('#formSelector :selected').each(function(i, selected){
-		  foo[i] = $(selected).text();
-		});
+		$("#formList").hide();
+		$("#downloading").show();
+		var i = 0;
+		var formInstances = "";
+		$(".ui-selected", "#formSelector").each(function() {
+			if (i != 0) {
+				formInstances = formInstances + ",";
+			}
+			
+            var index = $("#formSelector li").index( this );
+            var formId = $(this).attr("formId");
+            var formInstanceId = $(this).attr("formInstanceId");
+            var locationId = $(this).attr("locationId");
+            var locationTagId = $(this).attr("locationTagId");
+            var formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
+            formInstances = formInstances + formInstance;
+            i++;
+         });
+		getForms(formInstances);
 	});
 	
   });
+
+function getForms(formInstances) {
+	var action = "action=getPatientJITs&formInstances=" + formInstances;
+	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
+	$("#downloadLink").attr("href", url + action);
+	$("#downloadLink").get(0).click();
+}
+
+function handleGetJITsError(xhr, textStatus, error) {
+	alert(error);
+}
+
+function parseJITs(responseXML) {
+	
+}

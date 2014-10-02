@@ -307,7 +307,7 @@ input[type="button"], input[type="submit"] {
 	color: #000;
 }
 
-#loading {
+#loading, #downloading {
 	text-align: center;
     margin: 0 auto;
 }

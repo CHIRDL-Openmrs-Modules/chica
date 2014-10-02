@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +29,7 @@ import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -338,13 +340,6 @@ public class ChicaMobileServlet extends HttpServlet {
 	}
 	
 	private void getAvailablePatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		try {
-	        Thread.sleep(10000);
-        }
-        catch (InterruptedException e) {
-	        // TODO Auto-generated catch block
-	        log.error("Error generated", e);
-        }
 		response.setContentType("text/xml");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -413,25 +408,26 @@ public class ChicaMobileServlet extends HttpServlet {
 				formName = form.getName();
 			}
 			
-			int i =0;
-			while (i < 2) {
-				i++;
-				pw.write("<availableJIT>");
-				pw.write("<formName>" + formName + "</formName>");
-				pw.write("<formId>" + formId + "</formId>");
-				pw.write("<formInstanceId>" + formInstanceId + "</formInstanceId>");
-				pw.write("<locationId>" + locationId + "</locationId>");
-				pw.write("<locationTagId>" + locationTagId + "</locationTagId>");
-				pw.write("</availableJIT>");
-			}
-			
+			pw.write("<availableJIT>");
+			pw.write("<formName>" + formName + "</formName>");
+			pw.write("<formId>" + formId + "</formId>");
+			pw.write("<formInstanceId>" + formInstanceId + "</formInstanceId>");
+			pw.write("<locationId>" + locationId + "</locationId>");
+			pw.write("<locationTagId>" + locationTagId + "</locationTagId>");
+			pw.write("</availableJIT>");
 		}
 		
 		pw.write("</availableJITs>");
 	}
 	
 	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
+		String downloadId = request.getParameter("downloadID");
+		Cookie myCookie = new Cookie("downloadID", downloadId);
+		response.addCookie(myCookie);
+		String formInstances = request.getParameter("formInstances");
+		if (formInstances == null) {
+			return;
+		}
 		
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
@@ -442,33 +438,21 @@ public class ChicaMobileServlet extends HttpServlet {
 		}
 		
 		List<String> filesToCombine = new ArrayList<String>();
-		List<PatientState> patientStates = 
-				backportsService.getPatientStateByEncounterState(encounterId, createState.getStateId());
-		for (PatientState patientState : patientStates) {
-			FormInstance formInstance = patientState.getFormInstance();
-			if (formInstance == null) {
+		for (String formInstance : formInstances.split(",")) {
+			FormInstanceTag formInstanceTag = 
+					org.openmrs.module.chirdlutilbackports.util.Util.parseFormInstanceTag(formInstance);
+			if (formInstanceTag == null) {
 				continue;
 			}
 			
-			Integer locationId = formInstance.getLocationId();
-			Integer formId = formInstance.getFormId();
-			Integer formInstanceId = formInstance.getFormInstanceId();
-			Integer locationTagId = patientState.getLocationTagId();
-			
-			// Check to make sure the form is type PDF.
-			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, OUTPUT_TYPE, locationTagId, locationId);
-			if (fav == null || !PDF_OUTPUT_TYPE.equals(fav.getValue())) {
-				continue;
-			}
-			
-			// Make sure the form wasn't force printed.
-			fav = backportsService.getFormAttributeValue(formId, TRIGGER, locationTagId, locationId);
-			if (fav != null && FORCE_PRINT.equals(fav.getValue())) {
-				continue;
-			}
+			Integer locationId = formInstanceTag.getLocationId();
+			Integer formId = formInstanceTag.getFormId();
+			Integer formInstanceId = formInstanceTag.getFormInstanceId();
+			Integer locationTagId = formInstanceTag.getLocationTagId();
 			
 			// Get the merge directory for the form.
-			fav = backportsService.getFormAttributeValue(formId, MERGE_DIRECTORY, locationTagId, locationId);
+			FormAttributeValue fav = 
+					backportsService.getFormAttributeValue(formId, MERGE_DIRECTORY, locationTagId, locationId);
 			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
 				continue;
 			}
@@ -506,7 +490,11 @@ public class ChicaMobileServlet extends HttpServlet {
 	            // loop over the pages in that document
 	            n = reader.getNumberOfPages();
 	            for (int page = 0; page < n; ) {
+	            	try {
 	                copy.addPage(copy.getImportedPage(reader, ++page));
+	            	} catch (Exception e) {
+	            		log.error("Error adding page", e);
+	            	}
 	            }
 	            
 	            copy.freeReader(reader);

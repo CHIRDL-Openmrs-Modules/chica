@@ -874,24 +874,18 @@
                     </div>
                     <div id="formList">
 	                    <ol id="formSelector">
-						  <!--<li class="ui-widget-content">Item 1</li>
-						  <li class="ui-widget-content">Item 2</li>
-						  <li class="ui-widget-content">Item 3</li>
-						  <li class="ui-widget-content">Item 4</li>
-						  <li class="ui-widget-content">Item 5</li>
-						  <li class="ui-widget-content">Item 6</li>
-						  <li class="ui-widget-content">Item 7</li>
-						  <li class="ui-widget-content">Item 8</li>
-						  <li class="ui-widget-content">Item 9</li>
-						  <li class="ui-widget-content">Item 10</li> -->
 						</ol>
 					</div>
 					<div id="loading">
 					   <span id="loadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
 					</div>
+					<div id="downloading">
+                        <span id="loadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Downloading forms...</span>
+                    </div>
 					<div id="printButtonPanel">
 					   <input id="printButton" type="button" value="Download"/>
 					</div>
+					<a id="downloadLink" href=""></a>
                 </div>
                 <div id="confirmSubmitDialog" title="Confirm" class="ui-dialog-titlebar ui-widget-header">
                     <div id="confirmText">
