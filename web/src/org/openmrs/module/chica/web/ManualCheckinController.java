@@ -124,8 +124,11 @@ public class ManualCheckinController extends SimpleFormController
 			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 			identifierTypes.add(identifierType);
 			List<Patient> patients = patientService.getPatients(null, mrn,
-					identifierTypes,false);
-		
+					identifierTypes,true);
+			if (patients.size() == 0){
+				patients = patientService.getPatients(null, "0" + mrn,
+						identifierTypes,true);
+			}
 
 			if (patients.size() > 0)
 			{
@@ -407,6 +410,7 @@ public class ManualCheckinController extends SimpleFormController
 			PatientIdentifierType identifierType = patientService
 					.getPatientIdentifierTypeByName("MRN_OTHER");
 			PatientIdentifier pi = new PatientIdentifier();
+			mrn = Util.removeLeadingZeros(mrn);
 			pi.setIdentifier(mrn);
 			pi.setIdentifierType(identifierType);
 			pi.setLocation(encounterLocation);
@@ -616,7 +620,9 @@ public class ManualCheckinController extends SimpleFormController
 
 		if (patientIdentifier != null)
 		{
-			map.put("mrn", patientIdentifier.getIdentifier());
+			String mrn = patientIdentifier.getIdentifier();
+			mrn = Util.removeLeadingZeros(mrn);
+			map.put("mrn", mrn);
 		}
 
 		EncounterService encounterService = Context

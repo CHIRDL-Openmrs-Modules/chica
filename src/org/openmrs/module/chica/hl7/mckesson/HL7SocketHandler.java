@@ -145,8 +145,14 @@ public class HL7SocketHandler extends
 		PatientIdentifier patientIdentifier = hl7Patient.getPatientIdentifier();
 		String mrn = patientIdentifier.getIdentifier();
 		PatientService patientService = Context.getPatientService();
+		
 		List<Patient> lookupPatients = patientService.getPatients(null, mrn,
 				null, true);
+		
+		if (lookupPatients == null || lookupPatients.size() == 0){
+			lookupPatients = patientService.getPatients(null, "0" + mrn,
+					null, true);
+		}
 
 		if (lookupPatients != null && lookupPatients.size() > 0) {
 			return lookupPatients.iterator().next();
@@ -1155,18 +1161,33 @@ public class HL7SocketHandler extends
 			String newMRN = null;
 			
 			//If new MRN does not exist or matches the existing MRN, no need to update.
+			//If the only difference is a leading 0, do not return. MRN must be updated.
 			if (newPatientIdentifier == null
 					|| (newMRN = newPatientIdentifier.getIdentifier()) == null
-					|| Util.removeLeadingZeros(existingMRN.trim()).equals(
-					Util.removeLeadingZeros(newMRN.trim()))){
+					|| existingMRN.trim().equals(newMRN.trim()) ){
 				return;
 			}
 			
+			//New MRNs will not have a leading zero. 
+			if (Util.removeLeadingZeros(existingMRN.trim()).equals(newMRN.trim())){
+				existingPatientIdentifier.setVoidReason("MRN Leading Zero Correction");
+				Error error = new Error("Warning", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+						"Leading Zero Correction." 
+						+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
+						"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
+				chirdlutilbackportsService.saveError(error);
+			} else {
+				existingPatientIdentifier.setVoidReason("MRN Correction");
+				Error error = new Error("Error", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+						"MRN correction required! Contact Regenstrief about possible corrupted data." 
+						+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
+						"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
+				chirdlutilbackportsService.saveError(error);
+			}
 			//void the existing identifier
 			existingPatientIdentifier.setPreferred(false);
 			existingPatientIdentifier.setVoided(true);
 			existingPatientIdentifier.setVoidedBy(Context.getAuthenticatedUser());
-			existingPatientIdentifier.setVoidReason("MRN Correction");
 			existingPatientIdentifier.setDateVoided(new Date());
 			
 			//Create the new identifier object and add to existing patient
@@ -1181,12 +1202,7 @@ public class HL7SocketHandler extends
 			newIdentifier.setDateCreated(new Date());
 			existingPatient.addIdentifier(newIdentifier);
 			
-			
-			Error error = new Error("Error", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
-					"MRN correction required! Contact Regenstrief about possible corrupted data." 
-					+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
-					"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
-			chirdlutilbackportsService.saveError(error);
+
 			
 		} catch (Exception e) {
 			log.error("Exception adding new MRN to existing patient.", e);

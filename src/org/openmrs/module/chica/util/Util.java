@@ -90,7 +90,10 @@ public class Util {
 		
 		boolean usePrintedTimestamp = false;
 		
-		if (formName != null && formName.equalsIgnoreCase("PWS")) {
+		if (formName != null && 
+				(formName.equalsIgnoreCase("PWS") 
+				|| formName.equalsIgnoreCase("ImmunizationSchedule")
+				|| formName.equalsIgnoreCase("ImmunizationSchedule7yrOrOlder"))) {
 			usePrintedTimestamp = true;
 		}
 		return org.openmrs.module.atd.util.Util.saveObsWithStatistics(patient, currConcept, encounterId, value,
