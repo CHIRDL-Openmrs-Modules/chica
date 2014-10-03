@@ -284,6 +284,11 @@ input[type="button"], input[type="submit"] {
     text-align: center;
 }
 
+#selectionError { 
+    margin:0 auto;
+    color: red;
+}
+
 #selectionPanel { 
     margin:0 auto;
     margin-bottom: 10px;

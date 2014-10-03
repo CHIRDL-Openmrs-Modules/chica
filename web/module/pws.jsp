@@ -882,6 +882,9 @@
 					<div id="downloading">
                         <span id="loadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Downloading forms...</span>
                     </div>
+                    <div id="selectionError">
+                        <span>Please select at least one form.</span>
+                    </div>
 					<div id="printButtonPanel">
 					   <input id="printButton" type="button" value="Download"/>
 					</div>

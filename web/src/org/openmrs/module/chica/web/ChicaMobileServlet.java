@@ -14,6 +14,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -421,9 +422,6 @@ public class ChicaMobileServlet extends HttpServlet {
 	}
 	
 	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String downloadId = request.getParameter("downloadID");
-		Cookie myCookie = new Cookie("downloadID", downloadId);
-		response.addCookie(myCookie);
 		String formInstances = request.getParameter("formInstances");
 		if (formInstances == null) {
 			return;

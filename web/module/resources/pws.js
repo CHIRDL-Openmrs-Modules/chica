@@ -85,59 +85,6 @@ function processCheckboxes(form1) {
 }
 
 $(function() {
-	$( "#downloadLink" ).click(
-            function( event ) {
- 
-                var target = event.target;
- 
-                // When tracking the download, we're going to have
-                // the server echo back a cookie that will be set
-                // when the download Response has been received.
-                var downloadID = ( new Date() ).getTime();
- 
-                // Update the URL that is *currently being requested*
-                // to contain the downloadID. This will then be response
-                // cookie header.
-                target.href += ( "&downloadID=" + downloadID );
- 
-                // The local cookie cache is defined in the browser
-                // as one large string; we need to search for the
-                // name-value pattern with the above ID.
-                var cookiePattern = new RegExp( ( "downloadID=" + downloadID ), "i" );
- 
-                // Now, we need to start watching the local Cookies to
-                // see when the download ID has been updated by the
-                // response headers.
-                var cookieTimer = setInterval( checkCookies, 500 );
- 
- 
-                // I check the local cookies for an update.
-                function checkCookies() {
- 
-                    // If the local cookies have been updated, clear
-                    // the timer and say thanks!
-                    if ( document.cookie.search( cookiePattern ) >= 0 ) {
- 
-                        clearInterval( cookieTimer );
- 
-                        $("#downloading").hide();
-                		$("#formList").show();
- 
-                        return(
-                            console.log( "Download complete!!" )
-                        );
- 
-                    }
- 
-                    console.log(
-                        "File still downloading...",
-                        new Date().getTime()
-                    );
- 
-                }
- 
-            }
-        );
 	$("#formList").hide();
 	$("#downloading").hide();
 	
@@ -272,7 +219,13 @@ $(function() {
             formInstances = formInstances + formInstance;
             i++;
          });
-		getForms(formInstances);
+		
+		if (i == 0) {
+			$("#downloading").hide();
+		    $("#formList").show();
+		} else {
+			getForms(formInstances);
+		}
 	});
 	
   });
@@ -282,6 +235,8 @@ function getForms(formInstances) {
 	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
 	$("#downloadLink").attr("href", url + action);
 	$("#downloadLink").get(0).click();
+	$("#downloading").hide();
+    $("#formList").show();
 }
 
 function handleGetJITsError(xhr, textStatus, error) {
