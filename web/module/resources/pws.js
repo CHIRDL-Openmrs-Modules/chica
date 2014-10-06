@@ -86,6 +86,7 @@ function processCheckboxes(form1) {
 
 $(function() {
 	$("#formList").hide();
+	$("#selectionError").hide();
 	$("#downloading").hide();
 	
     $("#problemDialog").dialog({
@@ -201,6 +202,7 @@ $(function() {
 	});
 	
 	$("#printButton").click(function() {
+		$("#selectionError").hide();
 		$("#formList").hide();
 		$("#downloading").show();
 		var i = 0;
@@ -223,6 +225,7 @@ $(function() {
 		if (i == 0) {
 			$("#downloading").hide();
 		    $("#formList").show();
+		    $("#selectionError").show();
 		} else {
 			getForms(formInstances);
 		}

@@ -872,6 +872,9 @@
                        <input id="selectAllButton" type="button" value="Select All"/>
                        <input id="unselectAllButton" type="button" value="Unselect All"/>
                     </div>
+                    <div id="formInfoPanel">
+                        <span>Ctrl+click or click+drag to select multiple forms</span>
+                    </div>
                     <div id="formList">
 	                    <ol id="formSelector">
 						</ol>

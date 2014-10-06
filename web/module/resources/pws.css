@@ -286,7 +286,16 @@ input[type="button"], input[type="submit"] {
 
 #selectionError { 
     margin:0 auto;
+    text-align: center;
     color: red;
+}
+
+#formInfoPanel {
+	margin:0 auto;
+    text-align: center;
+    font-style: italic;
+    font-size: .8em; 
+    color: #000;
 }
 
 #selectionPanel { 
