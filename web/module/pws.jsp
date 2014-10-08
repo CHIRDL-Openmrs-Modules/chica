@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.css"/>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.fileDownload.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <title>CHICA Physician Encounter Form</title>
     </head>

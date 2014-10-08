@@ -1,10 +1,12 @@
 package org.openmrs.module.chica.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,9 +38,12 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BadPdfFormatException;
 import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfCopyFields;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 public class ChicaMobileServlet extends HttpServlet {
 	
@@ -372,7 +376,21 @@ public class ChicaMobileServlet extends HttpServlet {
 			
 			// Check to make sure the form is type PDF.
 			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, OUTPUT_TYPE, locationTagId, locationId);
-			if (fav == null || !PDF_OUTPUT_TYPE.equals(fav.getValue())) {
+			if (fav == null || fav.getValue() == null) {
+				continue;
+			}
+			
+			String value = fav.getValue();
+			String[] values = value.split(",");
+			boolean isPdfType = false;
+			for (String favValue : values) {
+				if (PDF_OUTPUT_TYPE.equals(favValue)) {
+					isPdfType = true;
+					break;
+				}
+			}
+			
+			if (!isPdfType) {
 				continue;
 			}
 			
@@ -390,9 +408,10 @@ public class ChicaMobileServlet extends HttpServlet {
 			
 			// Find the merge PDF file.
 			String mergeDirectory = fav.getValue();
-			File mergeFile = new File(mergeDirectory, locationId + "_" + formId + "_" + formInstanceId + ".pdf");
+			File pdfDir = new File(mergeDirectory, "pdf");
+			File mergeFile = new File(pdfDir, locationId + "_" + formId + "_" + formInstanceId + ".pdf");
 			if (!mergeFile.exists()) {
-				mergeFile = new File(mergeDirectory, "_" + locationId + "_" + formId + "_" + formInstanceId + "_.pdf");
+				mergeFile = new File(pdfDir, "_" + locationId + "_" + formId + "_" + formInstanceId + "_.pdf");
 				if (!mergeFile.exists()) {
 					continue;
 				}
@@ -422,6 +441,16 @@ public class ChicaMobileServlet extends HttpServlet {
 	}
 	
 	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		try {
+	        Thread.sleep(10000);
+        }
+        catch (InterruptedException e1) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e1);
+        }
+//		Cookie fileDownloadCookie = new Cookie("fileDownload", "true");
+//		fileDownloadCookie.setPath("/openmrs");
+//		response.addCookie(fileDownloadCookie);
 		String formInstances = request.getParameter("formInstances");
 		if (formInstances == null) {
 			return;
@@ -457,9 +486,10 @@ public class ChicaMobileServlet extends HttpServlet {
 			
 			// Find the merge PDF file.
 			String mergeDirectory = fav.getValue();
-			File mergeFile = new File(mergeDirectory, locationId + "_" + formId + "_" + formInstanceId + ".pdf");
+			File pdfDir = new File(mergeDirectory, "pdf");
+			File mergeFile = new File(pdfDir, locationId + "_" + formId + "_" + formInstanceId + ".pdf");
 			if (!mergeFile.exists()) {
-				mergeFile = new File(mergeDirectory, "_" + locationId + "_" + formId + "_" + formInstanceId + "_.pdf");
+				mergeFile = new File(pdfDir, "_" + locationId + "_" + formId + "_" + formInstanceId + "_.pdf");
 				if (!mergeFile.exists()) {
 					continue;
 				}
@@ -474,6 +504,7 @@ public class ChicaMobileServlet extends HttpServlet {
 		
 		response.setContentType("application/pdf");
 		response.addHeader("Content-Disposition", "attachment;filename=patientJITS.pdf");
+		response.addHeader("Set-Cookie", "fileDownload=true;path=/openmrs");
 		
 		if (filesToCombine.size() == 1) {
 			String filePath = null;
@@ -509,24 +540,15 @@ public class ChicaMobileServlet extends HttpServlet {
 		} else {
 			String filePath = null;
 			try {
-		        Document document = new Document();
-		        PdfCopy copy = new PdfCopy(document, response.getOutputStream());
-		        document.open();
-		        PdfReader reader;
-		        int n;
+				PdfCopyFields copy = new PdfCopyFields(response.getOutputStream());
 		        for (int i = 0; i < filesToCombine.size(); i++) {
 		        	filePath = filesToCombine.get(i);
-		            reader = new PdfReader(filePath);
-		            // loop over the pages in that document
-		            n = reader.getNumberOfPages();
-		            for (int page = 0; page < n; ) {
-		                copy.addPage(copy.getImportedPage(reader, ++page));
-		            }
-		            copy.freeReader(reader);
+		        	PdfReader reader = new PdfReader(renamePdfFields(filePath, i));
+		            copy.addDocument(reader);
 		            reader.close();
 		        }
-	
-		        document.close();
+		        
+		        copy.close();
 			} catch (BadPdfFormatException e) {
 				log.error("Bad PDF found: " + filePath, e);
 				throw new IOException(e);
@@ -535,5 +557,22 @@ public class ChicaMobileServlet extends HttpServlet {
 				throw new IOException(e);
 			}
 		}
+	}
+	
+	private static byte[] renamePdfFields(String datasheet, int i) throws IOException, DocumentException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// Create the stamper
+		PdfStamper stamper = new PdfStamper(new PdfReader(datasheet), baos);
+		// Get the fields
+		AcroFields form = stamper.getAcroFields();
+		// Loop over the fields
+		Set<String> keys = new HashSet<String>(form.getFields().keySet());
+		for (String key : keys) {
+			// rename the fields
+			form.renameField(key, String.format("%s_%d", key, i));
+		}
+		// close the stamper
+		stamper.close();
+		return baos.toByteArray();
 	}
 }

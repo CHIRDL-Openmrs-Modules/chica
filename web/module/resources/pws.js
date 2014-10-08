@@ -19,7 +19,7 @@ $( document ).ready(function() {
 });
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
-	
+	alert(error);
 }
 
 function parseAvailableJITs(responseXML) {
@@ -229,6 +229,8 @@ $(function() {
 		} else {
 			getForms(formInstances);
 		}
+		
+		return false;
 	});
 	
   });
@@ -236,16 +238,26 @@ $(function() {
 function getForms(formInstances) {
 	var action = "action=getPatientJITs&formInstances=" + formInstances;
 	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
-	$("#downloadLink").attr("href", url + action);
-	$("#downloadLink").get(0).click();
-	$("#downloading").hide();
-    $("#formList").show();
-}
-
-function handleGetJITsError(xhr, textStatus, error) {
-	alert(error);
-}
-
-function parseJITs(responseXML) {
+//	$("#downloadLink").attr("href", url + action);
+//	$("#downloadLink").get(0).click();
+//	$("#downloading").hide();
+//    $("#formList").show();
 	
+	$.fileDownload(url + action, {
+        successCallback: function(url) {
+        	$("#downloading").hide();
+        	$("#formList").show();
+        	deleteDownloadCookie();
+        },
+        failCallback: function(responseHtml, url) {
+        	$("#downloading").hide();
+        	$("#formList").show();
+        	$("#selectionError").show();
+        	deleteDownloadCookie();
+        }
+    });
+}
+
+function deleteDownloadCookie() {
+	document.cookie="fileDownload=;path=/openmrs;expires=Wed; 01 Jan 1970"
 }
