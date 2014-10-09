@@ -284,7 +284,7 @@ input[type="button"], input[type="submit"] {
     text-align: center;
 }
 
-#selectionError { 
+#selectionError, #serverError { 
     margin:0 auto;
     text-align: center;
     color: red;

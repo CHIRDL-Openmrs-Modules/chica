@@ -441,23 +441,12 @@ public class ChicaMobileServlet extends HttpServlet {
 	}
 	
 	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		try {
-	        Thread.sleep(10000);
-        }
-        catch (InterruptedException e1) {
-	        // TODO Auto-generated catch block
-	        log.error("Error generated", e1);
-        }
-//		Cookie fileDownloadCookie = new Cookie("fileDownload", "true");
-//		fileDownloadCookie.setPath("/openmrs");
-//		response.addCookie(fileDownloadCookie);
 		String formInstances = request.getParameter("formInstances");
 		if (formInstances == null) {
 			return;
 		}
 		
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-		
 		State createState = backportsService.getStateByName(CREATE_STATE);
 		if (createState == null) {
 			log.error("The state " + CREATE_STATE + " does not exist.  No patient JITs will be retrieved.");

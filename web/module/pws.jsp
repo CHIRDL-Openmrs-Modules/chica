@@ -889,6 +889,8 @@
                     <div id="selectionError">
                         <span>Please select at least one form.</span>
                     </div>
+                    <div id="serverError">
+                    </div>
 					<div id="printButtonPanel">
 					   <input id="printButton" type="button" value="Download"/>
 					</div>

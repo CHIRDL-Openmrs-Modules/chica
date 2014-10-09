@@ -19,7 +19,9 @@ $( document ).ready(function() {
 });
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
-	alert(error);
+	$("#loading").hide();
+	$("#serverError").html("<span>" + error + "</span>");
+	$("#serverError").show();
 }
 
 function parseAvailableJITs(responseXML) {
@@ -87,6 +89,7 @@ function processCheckboxes(form1) {
 $(function() {
 	$("#formList").hide();
 	$("#selectionError").hide();
+	$("#serverError").hide();
 	$("#downloading").hide();
 	
     $("#problemDialog").dialog({
@@ -203,6 +206,7 @@ $(function() {
 	
 	$("#printButton").click(function() {
 		$("#selectionError").hide();
+		$("#serverError").hide();
 		$("#formList").hide();
 		$("#downloading").show();
 		var i = 0;
@@ -238,10 +242,6 @@ $(function() {
 function getForms(formInstances) {
 	var action = "action=getPatientJITs&formInstances=" + formInstances;
 	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
-//	$("#downloadLink").attr("href", url + action);
-//	$("#downloadLink").get(0).click();
-//	$("#downloading").hide();
-//    $("#formList").show();
 	
 	$.fileDownload(url + action, {
         successCallback: function(url) {
@@ -252,8 +252,9 @@ function getForms(formInstances) {
         failCallback: function(responseHtml, url) {
         	$("#downloading").hide();
         	$("#formList").show();
-        	$("#selectionError").show();
         	deleteDownloadCookie();
+        	$("#serverError").html("<span>An error occurred downloading the file</span>");
+        	$("#serverError").show();
         }
     });
 }
