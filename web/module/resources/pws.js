@@ -38,9 +38,13 @@ function parseAvailableJITs(responseXML) {
             var formInstanceId = $(this).find("formInstanceId").text();
             var locationId = $(this).find("locationId").text();
             var locationTagId = $(this).find("locationTagId").text();
+            var description = $(this).find("description").text();
+            if (description == null) {
+            	description = "No description available for this form.";
+            }
             
             content = content + '<li class="ui-widget-content" formId="' + formId + '" formInstanceId="' + formInstanceId + 
-            	'" locationId="' + locationId + '" locationTagId="' + locationTagId + '">' + formName + '</li>';
+            	'" locationId="' + locationId + '" locationTagId="' + locationTagId + '" title="' + description + '">' + formName + '</li>';
         });
         
         formList.html(content);
@@ -237,6 +241,11 @@ $(function() {
 		return false;
 	});
 	
+	$(document).tooltip();
+	$("#formSelector li").tooltip({
+      show: null,
+      hide: null
+    });
   });
 
 function getForms(formInstances) {

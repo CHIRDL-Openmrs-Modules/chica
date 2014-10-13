@@ -434,6 +434,11 @@ public class ChicaMobileServlet extends HttpServlet {
 			pw.write("<formInstanceId>" + formInstanceId + "</formInstanceId>");
 			pw.write("<locationId>" + locationId + "</locationId>");
 			pw.write("<locationTagId>" + locationTagId + "</locationTagId>");
+			String desc = form.getDescription();
+			if (desc != null && desc.trim().length() > 0) {
+				pw.write("<description>" + desc + "</description>");
+			}
+			
 			pw.write("</availableJIT>");
 		}
 		
