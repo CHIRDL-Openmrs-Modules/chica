@@ -24,8 +24,6 @@ public class ViewPatientController extends SimpleFormController
 
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
-	private String mrn = "";
-	
 	
 
 	/*
