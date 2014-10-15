@@ -497,7 +497,7 @@ public class ChicaMobileServlet extends HttpServlet {
 		} 
 		
 		response.setContentType("application/pdf");
-		response.addHeader("Content-Disposition", "attachment;filename=patientJITS.pdf");
+		response.addHeader("Content-Disposition", "inline;filename=patientJITS.pdf");
 		response.addHeader("Set-Cookie", "fileDownload=true;path=/openmrs");
 		
 		if (filesToCombine.size() == 1) {

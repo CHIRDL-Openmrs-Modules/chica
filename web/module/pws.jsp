@@ -910,6 +910,18 @@
                         <span>Submitting...</span>
                     </div>
                 </div>
+                <div id="accordionDialog" title="Printable Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                <div id="accordion" style="width:100%;height:100%;overflow-x: hidden;">
+                    <h3>MCHAT</h3>
+                    <div style="width:100%;height:600px;overflow-y:auto">
+                        <iframe seamless style="width:97%;height:600px" src="/openmrs/moduleServlet/chica/chicaMobile?action=getPatientJITs&formInstances=7_26_95_22"></iframe>
+                    </div>
+                    <h3>Medication Reconciliation</h3>
+                    <div style="width:100%;height:600px;overflow-y:auto">
+                        <iframe seamless style="width:97%;height:600px" src="/openmrs/moduleServlet/chica/chicaMobile?action=getPatientJITs&formInstances=7_26_235_2"></iframe>
+                    </div>
+                </div>
+                </div>
                 <input type=hidden name="Choice1"/>
 			    <input type=hidden name="Choice2"/>
 			    <input type=hidden name="Choice3"/>

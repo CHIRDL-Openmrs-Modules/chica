@@ -1,5 +1,6 @@
 var selectedForms = [];
 var downloadID = "";
+var formDialogWidth = 500;
 $( document ).ready(function() {
 	var encounterId = $("#encounterId").val();
 	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
@@ -32,6 +33,7 @@ function parseAvailableJITs(responseXML) {
     } else {
     	var formList = $("#formSelector");
         var content = "";
+        var count = 0;
         $(responseXML).find("availableJIT").each(function () {
         	var formName = $(this).find("formName").text();
             var formId = $(this).find("formId").text();
@@ -43,13 +45,16 @@ function parseAvailableJITs(responseXML) {
             	description = "No description available for this form.";
             }
             
-            content = content + '<li class="ui-widget-content" formId="' + formId + '" formInstanceId="' + formInstanceId + 
-            	'" locationId="' + locationId + '" locationTagId="' + locationTagId + '" title="' + description + '">' + formName + '</li>';
+            content = content + '<li id="form_' + count + '" class="ui-widget-content" formId="' + formId + 
+            	'" formInstanceId="' + formInstanceId + '" locationId="' + locationId + '" locationTagId="' + locationTagId + 
+            	'" title="' + description + '"><span>' + formName + '</span></li>';
+            count++;
         });
         
         formList.html(content);
         $("#loading").hide();
         $("#formList").show();
+        resizeFormDialog();
     }
 }
 
@@ -57,6 +62,21 @@ function parseAvailableJITs(responseXML) {
 $("#pwsForm").submit(function(event) {
 	processCheckboxes(this);
 });
+
+function resizeFormDialog() {
+	var total = 0;
+	var i=0;
+
+	$('#formSelector > li').each(function(index) {
+		var tesi = $(this.firstChild).width();
+		total = parseInt(total) + parseInt(tesi);
+	});
+	
+	if (total > formDialogWidth) {
+		$('#formPrintDialog').dialog().animate({width: total}, 400);
+		$('#formPrintDialog').dialog().animate({position: ['center', 'middle']}, 400);
+	}
+}
 
 function getSelected(opt) {
 	var selected = new Array();
@@ -140,6 +160,9 @@ $(function() {
         autoOpen: false,
         modal: true,
         maxHeight: 400,
+        minWidth: 250,
+        width: formDialogWidth,
+        height: "auto",
         show: {
           effect: "clip",
           duration: 750
@@ -157,7 +180,15 @@ $(function() {
 	$("#confirmSubmitDialog").dialog({
 	  open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
       autoOpen: false,
-      modal: true
+      modal: true,
+      show: {
+          effect: "clip",
+          duration: 750
+        },
+        hide: {
+          effect: "clip",
+          duration: 750
+        }
     }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
 	
 	$("#okSubmitButton").click(function() {
@@ -187,6 +218,28 @@ $(function() {
         width: 100,
         height: 50
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
+	
+	$("#accordionDialog").dialog({
+    	open: function() { 
+    		$(".ui-dialog").addClass("ui-dialog-shadow"); 
+    		$("#accordionDialog").scrollTop(0);
+    	},
+        autoOpen: false,
+        modal: true,
+        maxHeight: 400,
+        minWidth: 250,
+        //width: formDialogWidth,
+        width: $(window).width() * 0.90,
+        height: $(window).height() * 0.90,
+        show: {
+          effect: "clip",
+          duration: 750
+        },
+        hide: {
+          effect: "clip",
+          duration: 750
+        }
+    }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
 	
 	$("#loadingDialog").dialog({
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
@@ -246,26 +299,37 @@ $(function() {
       show: null,
       hide: null
     });
+	
+	$( "#accordion" ).accordion({
+      heightStyle: "content",
+      collapsible: true,
+      active : 'none'
+    });
+
+//	$("#formPrintDialog").dialog("open");
+//	$( "#accordion" ).accordion( "resize" );
+	$("#accordionDialog").dialog("open");
   });
 
 function getForms(formInstances) {
 	var action = "action=getPatientJITs&formInstances=" + formInstances;
 	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
+	window.open(url + action);
 	
-	$.fileDownload(url + action, {
-        successCallback: function(url) {
+//	$.fileDownload(url + action, {
+//        successCallback: function(url) {
         	$("#downloading").hide();
         	$("#formList").show();
-        	deleteDownloadCookie();
-        },
-        failCallback: function(responseHtml, url) {
-        	$("#downloading").hide();
-        	$("#formList").show();
-        	deleteDownloadCookie();
-        	$("#serverError").html("<span>An error occurred downloading the file</span>");
-        	$("#serverError").show();
-        }
-    });
+//        	deleteDownloadCookie();
+//        },
+//        failCallback: function(responseHtml, url) {
+//        	$("#downloading").hide();
+//        	$("#formList").show();
+//        	deleteDownloadCookie();
+//        	$("#serverError").html("<span>An error occurred downloading the file</span>");
+//        	$("#serverError").show();
+//        }
+//    });
 }
 
 function deleteDownloadCookie() {
