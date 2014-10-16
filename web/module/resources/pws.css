@@ -4,6 +4,12 @@ body {
     background-color:#75A3A3;
 }
 
+iframe {
+	seamless;
+	width:97%;
+	height:600px;
+}
+
 input[type="button"], input[type="submit"] {
     width:100px;
     right:20px;
@@ -286,7 +292,7 @@ input[type="button"], input[type="submit"] {
     text-align: center;
 }
 
-#selectionError, #serverError { 
+#selectionError, #serverError, #formServerError { 
     margin:0 auto;
     text-align: center;
     color: red;
@@ -319,13 +325,30 @@ input[type="button"], input[type="submit"] {
     width: 125px;
 }
 
-#loadingPanel {
+#loadingPanel, #formLoadingPanel {
     color: #000;
+}
+
+#formLoadingPanel {
+    line-height: 400px;
 }
 
 #loading, #downloading {
     text-align: center;
     margin: 0 auto;
+}
+
+#formLoading {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+
+#formAccordion {
+	width:100%;
+	height:100%;
+	overflow-x: hidden;
 }
 
 .examExtraCheckbox {
@@ -407,4 +430,10 @@ input[type="button"], input[type="submit"] {
 
 .ui-dialog-shadow { 
     box-shadow: 10px 10px 5px #2E2E2E;
+}
+
+.accordionItem {
+	width:98%;
+	height:600px;
+	overflow-y:auto;
 }

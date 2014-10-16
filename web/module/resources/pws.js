@@ -20,9 +20,12 @@ $( document ).ready(function() {
 });
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
-	$("#loading").hide();
-	$("#serverError").html("<span>" + error + "</span>");
-	$("#serverError").show();
+//	$("#loading").hide();
+	$("#formLoading").hide();
+//	$("#serverError").html("<span>" + error + "</span>");
+	$("#formServerError").html("<span>" + error + "</span>");
+//	$("#serverError").show();
+	$("#formServerError").show();
 }
 
 function parseAvailableJITs(responseXML) {
@@ -31,7 +34,8 @@ function parseAvailableJITs(responseXML) {
     	$("#loading").hide();
         return false;
     } else {
-    	var formList = $("#formSelector");
+//    	var formList = $("#formSelector");
+    	var formList = $("#formAccordion");
         var content = "";
         var count = 0;
         $(responseXML).find("availableJIT").each(function () {
@@ -45,16 +49,38 @@ function parseAvailableJITs(responseXML) {
             	description = "No description available for this form.";
             }
             
-            content = content + '<li id="form_' + count + '" class="ui-widget-content" formId="' + formId + 
-            	'" formInstanceId="' + formInstanceId + '" locationId="' + locationId + '" locationTagId="' + locationTagId + 
-            	'" title="' + description + '"><span>' + formName + '</span></li>';
+//            content = content + '<li id="form_' + count + '" class="ui-widget-content" formId="' + formId + 
+//            	'" formInstanceId="' + formInstanceId + '" locationId="' + locationId + '" locationTagId="' + locationTagId + 
+//            	'" title="' + description + '"><span>' + formName + '</span></li>';
+            var formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
+        	var action = "action=getPatientJITs&formInstances=" + formInstance;
+        	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
+            content = content + '<h3>' + formName + '<span style="float:right;" class="ui-icon ui-icon-print" title="Print" frame="' + formInstance + '"></span></h3><div class="accordionItem"><iframe id="' + formInstance + '" src="' + url + action + '"></iframe></div>';
+            
             count++;
         });
         
         formList.html(content);
-        $("#loading").hide();
-        $("#formList").show();
-        resizeFormDialog();
+//        $("#loading").hide();
+        $("#formLoading").hide();
+        $("#formAccordion").accordion("refresh");
+//        $('#formAccordion').accordion("option", "active", "false");
+        $('#formAccordion').show();
+        
+        $("span.ui-icon-print").click(function(e) {
+        	var frame = $(this).attr("frame");
+        	var iframeish = $("#" + frame);
+            
+        	iframeish.focus();
+//        	var contentWin = iframeish.contentWindow;
+        	var contentWin=document.getElementById(frame).contentWindow;
+        	document.getElementById(frame).print();
+        	e.preventDefault();
+            e.stopPropagation();
+        });
+        $("#formAccordion h3 span").tooltip();
+//        $("#formList").show();
+//        resizeFormDialog();
     }
 }
 
@@ -111,9 +137,11 @@ function processCheckboxes(form1) {
 }
 
 $(function() {
+	$('#formAccordion').hide();
 	$("#formList").hide();
 	$("#selectionError").hide();
-	$("#serverError").hide();
+//	$("#serverError").hide();
+	$("#formServerError").hide();
 	$("#downloading").hide();
 	
     $("#problemDialog").dialog({
@@ -174,7 +202,8 @@ $(function() {
     }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
 	
 	$("#formPrintButton").click(function() {
-	  $("#formPrintDialog").dialog("open");
+//	  $("#formPrintDialog").dialog("open");
+		$("#formAccordionDialog").dialog("open");
 	});
 	
 	$("#confirmSubmitDialog").dialog({
@@ -219,18 +248,18 @@ $(function() {
         height: 50
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	
-	$("#accordionDialog").dialog({
+	$("#formAccordionDialog").dialog({
     	open: function() { 
     		$(".ui-dialog").addClass("ui-dialog-shadow"); 
-    		$("#accordionDialog").scrollTop(0);
+    		$("#formAccordionDialog").scrollTop(0);
     	},
         autoOpen: false,
         modal: true,
         maxHeight: 400,
         minWidth: 250,
         //width: formDialogWidth,
-        width: $(window).width() * 0.90,
-        height: $(window).height() * 0.90,
+        width: $(window).width() * 0.70,
+        height: $(window).height() * 0.70,
         show: {
           effect: "clip",
           duration: 750
@@ -300,7 +329,7 @@ $(function() {
       hide: null
     });
 	
-	$( "#accordion" ).accordion({
+	$("#formAccordion").accordion({
       heightStyle: "content",
       collapsible: true,
       active : 'none'
@@ -308,18 +337,18 @@ $(function() {
 
 //	$("#formPrintDialog").dialog("open");
 //	$( "#accordion" ).accordion( "resize" );
-	$("#accordionDialog").dialog("open");
+	$("#formAccordionDialog").dialog("open");
   });
 
 function getForms(formInstances) {
-	var action = "action=getPatientJITs&formInstances=" + formInstances;
-	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
-	window.open(url + action);
+//	var action = "action=getPatientJITs&formInstances=" + formInstances;
+//	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
+//	window.open(url + action);
 	
 //	$.fileDownload(url + action, {
 //        successCallback: function(url) {
-        	$("#downloading").hide();
-        	$("#formList").show();
+//        	$("#downloading").hide();
+//        	$("#formList").show();
 //        	deleteDownloadCookie();
 //        },
 //        failCallback: function(responseHtml, url) {
