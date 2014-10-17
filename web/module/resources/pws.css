@@ -348,7 +348,6 @@ input[type="button"], input[type="submit"] {
 #formAccordion {
 	width:100%;
 	height:100%;
-	overflow-x: hidden;
 }
 
 .examExtraCheckbox {
@@ -434,6 +433,5 @@ input[type="button"], input[type="submit"] {
 
 .accordionItem {
 	width:98%;
-	height:600px;
-	overflow-y:auto;
+	height:100%;
 }
