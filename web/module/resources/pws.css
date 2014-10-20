@@ -5,9 +5,9 @@ body {
 }
 
 iframe {
-	seamless;
-	width:97%;
-	height:600px;
+	width:100%;
+	margin: 0;
+	padding: 0;
 }
 
 input[type="button"], input[type="submit"] {
@@ -261,30 +261,6 @@ input[type="button"], input[type="submit"] {
     border: 4px solid #FA8258;
 }
 
-#formSelector .ui-selecting { 
-    background: #FECA40; 
-}
- 
-#formSelector .ui-selected { 
-    background: #F39814; color: white; 
-}
-
-#formSelector { 
-    list-style-type: none; 
-    margin: 0; 
-    padding: 0; 
-    width: 90%; 
-}
-  
-#formSelector li { 
-    margin: 3px; 
-    padding: 0.4em; 
-    font-size: 1.4em; 
-    height: auto; 
-    width: auto;
-    white-space: nowrap;
-}
-
 #printButtonPanel { 
     margin:0 auto;
     margin-top: 10px;
@@ -292,7 +268,7 @@ input[type="button"], input[type="submit"] {
     text-align: center;
 }
 
-#selectionError, #serverError, #formServerError { 
+#formServerError { 
     margin:0 auto;
     text-align: center;
     color: red;
@@ -306,36 +282,13 @@ input[type="button"], input[type="submit"] {
     color: #000;
 }
 
-#selectionPanel { 
-    margin:0 auto;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-#formList { 
-    text-align: center;
-}
-
-#formList ol {
-    text-align: center;
-    margin: 0 auto;
-}
-
 #printButton {
     width: 125px;
 }
 
-#loadingPanel, #formLoadingPanel {
-    color: #000;
-}
-
 #formLoadingPanel {
+    color: #000;
     line-height: 400px;
-}
-
-#loading, #downloading {
-    text-align: center;
-    margin: 0 auto;
 }
 
 #formLoading {
@@ -429,9 +382,4 @@ input[type="button"], input[type="submit"] {
 
 .ui-dialog-shadow { 
     box-shadow: 10px 10px 5px #2E2E2E;
-}
-
-.accordionItem {
-	width:98%;
-	height:100%;
 }

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
-<!DOCTYPE html">
+<!DOCTYPE html>
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/pws.form" />
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -7,7 +7,6 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.css"/>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.js"></script>
-        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.fileDownload.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <title>CHICA Physician Encounter Form</title>
     </head>
@@ -867,34 +866,6 @@
                         </c:if>
                     </table>
                 </div>
-                <div id="formPrintDialog" title="Printable Handouts" class="ui-dialog-titlebar ui-widget-header">
-                    <div id="selectionPanel">
-                       <input id="selectAllButton" type="button" value="Select All"/>
-                       <input id="unselectAllButton" type="button" value="Unselect All"/>
-                    </div>
-                    <div id="formInfoPanel">
-                        <span>Ctrl+click or click+drag to select multiple forms</span>
-                    </div>
-                    <div id="formList">
-	                    <ol id="formSelector">
-						</ol>
-					</div>
-					<div id="loading">
-					   <span id="loadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
-					</div>
-					<div id="downloading">
-                        <span id="loadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Downloading forms...</span>
-                    </div>
-                    <div id="selectionError">
-                        <span>Please select at least one form.</span>
-                    </div>
-                    <div id="serverError">
-                    </div>
-					<div id="printButtonPanel">
-					   <input id="printButton" type="button" value="Download"/>
-					</div>
-					<a id="downloadLink" href=""></a>
-                </div>
                 <div id="confirmSubmitDialog" title="Confirm" class="ui-dialog-titlebar ui-widget-header">
                     <div id="confirmText">
                         <span>Click OK to permanently submit the form.</span>
@@ -909,7 +880,7 @@
                         <span>Submitting...</span>
                     </div>
                 </div>
-                <div id="formAccordionDialog" title="Printable Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                <div id="formAccordionDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
                     <div id="formLoading">
                        <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
                     </div>
