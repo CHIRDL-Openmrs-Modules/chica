@@ -1,7 +1,8 @@
 body {
-    font-family:Verdana, Geneva, sans-serif;
-    font-size:13px;
-    background-color:#75A3A3;
+    /*font-family:Verdana, Geneva, sans-serif;*/
+    font-size:14px;
+    /*background-color:#61380B;*/
+    background: #b24926;
 }
 
 iframe {
@@ -10,7 +11,7 @@ iframe {
 	padding: 0;
 }
 
-input[type="button"], input[type="submit"] {
+/*input[type="button"], input[type="submit"] {
     width:100px;
     right:20px;
     bottom:20px;
@@ -21,19 +22,19 @@ input[type="button"], input[type="submit"] {
     -moz-border-radius: 10px;
     border-radius: 10px;
     border: 1p solid #999;
-}
+}*/
 
-#problemButton:hover, #medButton:hover, #okSubmitButton:hover, #cancelSubmitButton:hover, #submitButtonTop:hover, #submitButtonBottom:hover, #formPrintButton:hover, #printButton:hover, #selectAllButton:hover, #unselectAllButton:hover {
+/*#problemButton:hover, #medButton:hover, #okSubmitButton:hover, #cancelSubmitButton:hover, #submitButtonTop:hover, #submitButtonBottom:hover, #formPrintButton:hover, #printButton:hover, #selectAllButton:hover, #unselectAllButton:hover {
     background:#848484;
     color:#fff;
-}
+}*/
 
 #formContainer {
     width:800px;
     height:1010px;
     margin:0 auto;
     border: 1px solid black;
-    background-color:#F2F2F2;
+    background-color:#F5FBEF;
     box-shadow: 10px 10px 5px #2E2E2E;
     -webkit-box-shadow: 10px 10px 5px #2E2E2E;
     -moz-box-shadow: 10px 10px 5px #2E2E2E;
@@ -45,7 +46,7 @@ input[type="button"], input[type="submit"] {
 
 @-moz-document url-prefix() {
     #formContainer {
-        height:1025px;
+        height:1039px;
     }
 }
 
@@ -67,13 +68,17 @@ input[type="button"], input[type="submit"] {
     position: absolute;
     top: 0;
     left: 0;
-    margin-top:8px;
+}
+
+#title {
+	font-size:16px;
 }
 
 #mrn {
     z-index: 10;
     text-align:right;
     margin-left:-5px;
+    font-size:16px;
 }
 
 #submitFormTop {
@@ -82,9 +87,9 @@ input[type="button"], input[type="submit"] {
 }
 
 #infoLeft {
-    width:340px;
+    width:337px;
     float:left;
-    padding:2px;
+    padding:2px 2px 2px 5px;
     border-bottom: 1px solid black;
 }
 
@@ -100,6 +105,12 @@ input[type="button"], input[type="submit"] {
     height:272px;
     float:left;
     border-left: 1px solid black;
+}
+
+@-moz-document url-prefix() {
+    #vitals {
+        height: 290px;
+    }
 }
 
 .flagCell {
@@ -139,36 +150,38 @@ input[type="button"], input[type="submit"] {
 #exam {
     border-bottom: 1px solid black;
     float:left;
-    width:548px;
+    width:545px;
     height:330px;
     margin-top:-220px;
-    padding:2px;
+    padding:2px 2px 2px 5px;
 }
 
 @-moz-document url-prefix() {
     #exam {
-        margin-top:-205px;
+        margin-top:-225px;
+        height: 346px;
     }
 }
 
 #buttons {
     width:270px;
-    height:89px;
+    height:83px;
     border-bottom: 1px solid black;
     float:left;
-    margin-top:25px;
+    margin-top:31px;
     margin-left:-22px;
 }
 
 @-moz-document url-prefix() {
     #buttons {
-        margin-top:40px;
+        margin-top:43px;
+        height:82px;
     }
 }
 
 #physicalExam {
     float:left;
-    width:175px;
+    width:155px;
     height:350px;
 }
 
@@ -181,7 +194,7 @@ input[type="button"], input[type="submit"] {
 
 .examNames {
     float:left;
-    width:100px;
+    width:80px;
     height:19px;
     text-align:left;
 }
@@ -242,7 +255,7 @@ input[type="button"], input[type="submit"] {
 }
 
 #submitButtonTop {
-    margin-top:10px;
+    margin-top:15px;
     margin-left:5px;
 }
 
@@ -310,12 +323,7 @@ input[type="button"], input[type="submit"] {
 .examExtraData {
     width:260px;
     padding-left:2px;
-}
-
-.examExtraDataHighlight {
-    width:260px;
-    padding-left:2px;
-    background-color:yellow;
+    margin: 1px 0 1px 0;
 }
 
 .questionContainer {
@@ -330,8 +338,8 @@ input[type="button"], input[type="submit"] {
 }
 
 .questionStem {
-    padding:2px;
-    width:396px;
+    padding:2px 5px 2px 5px;
+    width:390px;
     height:65px;
 }
 
@@ -343,20 +351,15 @@ input[type="button"], input[type="submit"] {
 }
 
 .answerCheckbox {
-    width:200px;
-}
-
-.ui-dialog-titlebar {
-    background-color: #75A3A3;
-    background-image: none;
-    color: #FFF;
+    width:210px;
 }
 
 .buttonsData {
-    width:130px;
+    width:260px;
     padding-top:5px;
-    margin-left:2px;
-    float: left;
+    display:block;
+    text-align: center;
+    margin: 0 auto;
 }
 
 .tdBorderTop {
@@ -382,4 +385,18 @@ input[type="button"], input[type="submit"] {
 
 .ui-dialog-shadow { 
     box-shadow: 10px 10px 5px #2E2E2E;
+}
+
+a.icon-button {
+    padding: 0 0 .4em 5px;
+    text-decoration: none;
+    position: relative;
+    height: 25px;
+}
+a.icon-button span.ui-icon {
+    margin: 0 5px 0 0;
+    position: absolute;
+    left: .2em;
+    top: 50%;
+    margin-top: -9px;
 }

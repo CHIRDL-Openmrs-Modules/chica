@@ -84,6 +84,13 @@ function processCheckboxes(form1) {
 }
 
 $(function() {
+	$("button, input:submit, input:button").button();
+	$("#submitButtonTop").button();
+	$("#submitButtonBottom").button();
+	$("#formPrintButton").button();
+	$("#problemButton").button();
+	$("#forcePrintButton").button();
+	
 	$("#formAccordion").accordion({
 	      heightStyle: "content",
 	      collapsible: true,
@@ -120,7 +127,7 @@ $(function() {
         effect: "clip",
         duration: 750
       }
-    }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
+    })
 
     $("#problemButton").click(function() {
       $("#problemDialog").dialog("open");
@@ -138,7 +145,7 @@ $(function() {
           effect: "clip",
           duration: 750
         }
-    }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
+    })
 
 	$("#medButton").click(function() {
 	  $("#medDialog").dialog("open");
@@ -160,7 +167,7 @@ $(function() {
           effect: "clip",
           duration: 750
         }
-    }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
+    })
 	
 	$("#okSubmitButton").click(function() {
 		$("#confirmSubmitDialog").dialog("close");
@@ -219,7 +226,7 @@ $(function() {
             var newIframeHeight = (divHeight - (75*count));
             $("iframe").css({"height":newIframeHeight});
         }
-    }).prev(".ui-dialog-titlebar").css("background","#75A3A3");
+    });
 	
 	$("#formAccordionDialog").dialog("open");
   });

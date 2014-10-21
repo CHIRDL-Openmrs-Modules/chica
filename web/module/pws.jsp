@@ -4,9 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <link href="${pageContext.request.contextPath}/moduleResources/chica/pws.css" type="text/css" rel="stylesheet" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
-        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui.min.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <title>CHICA Physician Encounter Form</title>
     </head>
@@ -16,7 +18,7 @@
             <form id="pwsForm" name="pwsForm" action="pws.form" method="post">
                 <div id="titleContainer">
                     <div id="submitFormTop">
-                        <input id="submitButtonTop" type="button" value="Submit"/>
+                        <a href="#" id="submitButtonTop" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Submit</a>
                     </div>
                     <div id="title">
                         <h3>CHICA Physician Encounter Form</h3>
@@ -295,10 +297,10 @@
                     	<div id="examTitle">
                         	<b>Physical Exam:</b>
                         </div>
-                        <div class="examNames">
+                        <div class="examFlag">
                             &nbsp;<br/>
                         </div>
-                        <div class="examFlag">
+                        <div class="examNames">
                             &nbsp;<br/>
                         </div>
                         <div class="examHeader">
@@ -307,11 +309,11 @@
                         <div class="examHeader">
                         	Abnl<br/>
                         </div>
-                        <div class="examNames">
-                            General:<br/>
-                        </div>
                         <div class="examFlag">
                             ${GeneralExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            General:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_General" value="N"/><br/>
@@ -319,11 +321,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_General" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Head:<br/>
-                        </div>
                         <div class="examFlag">
                             ${HeadExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Head:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Head" value="N"/><br/>
@@ -331,11 +333,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Head" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Skin:<br/>
-                        </div>
                         <div class="examFlag">
                             ${SkinExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Skin:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Skin" value="N"/><br/>
@@ -343,11 +345,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Skin" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Eyes:<br/>
-                        </div>
                         <div class="examFlag">
                             ${EyesVisionExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Eyes:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Eyes" value="N"/><br/>
@@ -355,11 +357,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Eyes" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Ears:<br/>
-                        </div>
                         <div class="examFlag">
                             ${EarsHearingExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Ears:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Ears" value="N"/><br/>
@@ -367,11 +369,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Ears" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Nose/Throat:<br/>
-                        </div>
                         <div class="examFlag">
                             ${NoseThroatExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Nose/Throat:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Nose" value="N"/><br/>
@@ -379,11 +381,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Nose" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Teeth/Gums:<br/>
-                        </div>
                         <div class="examFlag">
                             ${TeethGumsExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Teeth/Gums:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Teeth" value="N"/><br/>
@@ -391,11 +393,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Teeth" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Nodes:<br/>
-                        </div>
                         <div class="examFlag">
                             ${NodesExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Nodes:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Nodes" value="N"/><br/>
@@ -403,11 +405,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Nodes" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Chest/Lungs:<br/>
-                        </div>
                         <div class="examFlag">
                             ${ChestLungsExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Chest/Lungs:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Chest" value="N"/><br/>
@@ -415,11 +417,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Chest" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Heart/Pulses:<br/>
-                        </div>
                         <div class="examFlag">
                             ${HeartPulsesExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Heart/Pulses:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Heart" value="N"/><br/>
@@ -427,11 +429,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Heart" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Abdomen:<br/>
-                        </div>
                         <div class="examFlag">
                             ${AbdomenExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Abdomen:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Abdomen" value="N"/><br/>
@@ -439,11 +441,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Abdomen" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Ext Genitalia:<br/>
-                        </div>
                         <div class="examFlag">
                             ${ExtGenitaliaExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Ext Genitalia:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_ExtGenitalia" value="N"/><br/>
@@ -451,11 +453,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_ExtGenitalia" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Back:<br/>
-                        </div>
                         <div class="examFlag">
                             ${BackExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Back:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Back" value="N"/><br/>
@@ -463,11 +465,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Back" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Neuro:<br/>
-                        </div>
                         <div class="examFlag">
                             ${NeuroExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Neuro:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Neuro" value="N"/><br/>
@@ -475,11 +477,11 @@
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Neuro" value="A"/><br/>
                         </div>
-                        <div class="examNames">
-                            Extremities:<br/>
-                        </div>
                         <div class="examFlag">
                             ${ExtremitiesExamA}<br/>
+                        </div>
+                        <div class="examNames">
+                            Extremities:<br/>
                         </div>
                         <div class="examHeader">
                         	<input type="radio" name="Entry_Extremities" value="N"/><br/>
@@ -536,7 +538,7 @@
                                 <div class="examExtraData">
                             </c:when>
                             <c:otherwise>
-                                <div class="examExtraDataHighlight">
+                                <div class="ui-state-highlight examExtraData">
                             </c:otherwise>
                         </c:choose>
                         	Pain (0-10):${Pain}
@@ -546,7 +548,7 @@
                                 <div class="examExtraData">
                             </c:when>
                             <c:otherwise>
-                                <div class="examExtraDataHighlight">
+                                <div class="ui-state-highlight examExtraData">
                             </c:otherwise>
                         </c:choose>
                         	Allergies:${Allergy}
@@ -558,11 +560,14 @@
                 </div>
                 <div id="buttons">
                     <div class="buttonsData">
-                        <input id="formPrintButton" type="button" value="Handouts"/>
+                        <a href="#" id="formPrintButton" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Recommended Handouts</a>
                     </div>
-                    <c:if test="${not empty diag1}">
+                    <div class="buttonsData">
+                        <a href="#" id="forcePrintButton" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Other Handouts</a>
+                    </div>
+                    <!-- <c:if test="${not empty diag1}">
 	                	<div class="buttonsData">
-	                        <input id="problemButton" type="button" value="Problem List"/>
+	                        <a href="#" id="problemButton" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Problem List</a>
 	                    </div>
                     </c:if>
                     <c:if test="${not empty Med1_A || not empty Med1_B || not empty Med2_A || not empty Med2_B || 
@@ -571,7 +576,7 @@
 	                    <div class="buttonsData">
 	                        <input id="medButton" type="button" value="Medications"/>
 	                    </div>
-                    </c:if>
+                    </c:if> -->
                 </div>
                 <div class="questionContainer">
                     <c:choose>
@@ -778,10 +783,10 @@
                     </c:choose>
                 </div>
                 <div id="submitContainer">
-                    <input id="submitButtonBottom" type="button" value="Submit"/>
+                    <a href="#" id="submitButtonBottom" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Submit</a>
                 </div>
                 <div id="problemDialog" title="Problem List" class="ui-dialog-titlebar ui-widget-header">
-                    <table id="problemTable"">
+                    <table id="problemTable">
                         <tr>
                             <td class="padding5">${diag1}</td>
                         </tr>
@@ -866,7 +871,7 @@
                         </c:if>
                     </table>
                 </div>
-                <div id="confirmSubmitDialog" title="Confirm" class="ui-dialog-titlebar ui-widget-header">
+                <div id="confirmSubmitDialog" title="Confirm" class="ui-overlay">
                     <div id="confirmText">
                         <span>Click OK to permanently submit the form.</span>
                     </div>

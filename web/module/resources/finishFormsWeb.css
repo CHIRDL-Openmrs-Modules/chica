@@ -1,11 +1,10 @@
 body {
-    font-family:Verdana, Geneva, sans-serif;
-    font-size:13px;
-    background-color:#75A3A3;
+    font-size:14px;
+    background: #b24926;
 }
 
 #content {
-	background-color: #F2F2F2;
+	background-color: #F5FBEF;
 	width: 80%;
 	display: block;
 	margin-left: auto;
