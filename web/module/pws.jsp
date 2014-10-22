@@ -495,22 +495,22 @@
                     </div>
                   <div id="examExtras">
                    	<div class="examExtraCheckbox">
-                        	<input type="checkbox" name="Special_Need" value="Y">Special Need Child</input><br/>
+                        	<input type="checkbox" name="Special_Need" value="Y"/>Special Need Child<br/>
                         </div>
                         <div>
                         	&nbsp;
                         </div>
                         <div class="examExtraCheckbox">
-                        	<input type="checkbox">Two ID's Checked</input><br/>
+                        	<input type="checkbox"/>Two ID's Checked<br/>
                         </div>
                         <div class="examExtraCheckbox">
-                        	<input type="checkbox" name="screenedForAbuse" value="screened">Screened for abuse</input><br/>
+                        	<input type="checkbox" name="screenedForAbuse" value="screened"/>Screened for abuse<br/>
                         </div>
                         <div class="examExtraCheckbox">
-                        	<input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity">Discussed physical activity</input><br/>
+                        	<input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity"/>Discussed physical activity<br/>
                         </div>
                     	<div class="examExtraCheckbox">
-                        	<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet">Discussed healthy diet</input><br/>
+                        	<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet"/>Discussed healthy diet<br/>
                       	</div>
                         <div>
                         	&nbsp;
@@ -560,10 +560,10 @@
                 </div>
                 <div id="buttons">
                     <div class="buttonsData">
-                        <a href="#" id="formPrintButton" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Recommended Handouts</a>
+                        <a href="#" id="formPrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Recommended Handouts</a>
                     </div>
                     <div class="buttonsData">
-                        <a href="#" id="forcePrintButton" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Other Handouts</a>
+                        <a href="#" id="forcePrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Other Handouts</a>
                     </div>
                     <!-- <c:if test="${not empty diag1}">
 	                	<div class="buttonsData">
@@ -589,24 +589,24 @@
 			               </div>
 			               <div class="answerContainer">
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="1">${Answer1_1}</input><br/>
+			                       <input type="checkbox" name="sub_Choice1" value="1"/>${Answer1_1}<br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="3">${Answer1_3}</input><br/>
+			                       <input type="checkbox" name="sub_Choice1" value="3"/>${Answer1_3}<br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="5">${Answer1_5}</input><br/>
+			                       <input type="checkbox" name="sub_Choice1" value="5"/>${Answer1_5}<br/>
 			                   </div>
 			               </div>
 			               <div class="answerContainer">
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="2">${Answer1_2}</input><br/>
+			                       <input type="checkbox" name="sub_Choice1" value="2"/>${Answer1_2}<br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="4">${Answer1_4}</input><br/>
+			                       <input type="checkbox" name="sub_Choice1" value="4"/>${Answer1_4}<br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="6">${Answer1_6}</input><br/>
+			                       <input type="checkbox" name="sub_Choice1" value="6"/>${Answer1_6}<br/>
 			                   </div>
 			               </div>
 	                    </c:otherwise>
@@ -623,24 +623,24 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="1">${Answer2_1}</input><br/>
+		                            <input type="checkbox" name="sub_Choice2" value="1"/>${Answer2_1}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="3">${Answer2_3}</input><br/>
+		                            <input type="checkbox" name="sub_Choice2" value="3"/>${Answer2_3}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="5">${Answer2_5}</input><br/>
+		                            <input type="checkbox" name="sub_Choice2" value="5"/>${Answer2_5}<br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="2">${Answer2_2}</input><br/>
+		                            <input type="checkbox" name="sub_Choice2" value="2"/>${Answer2_2}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="4">${Answer2_4}</input><br/>
+		                            <input type="checkbox" name="sub_Choice2" value="4"/>${Answer2_4}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="6">${Answer2_6}</input><br/>
+		                            <input type="checkbox" name="sub_Choice2" value="6"/>${Answer2_6}<br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -657,24 +657,24 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="1">${Answer3_1}</input><br/>
+		                            <input type="checkbox" name="sub_Choice3" value="1"/>${Answer3_1}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="3">${Answer3_3}</input><br/>
+		                            <input type="checkbox" name="sub_Choice3" value="3"/>${Answer3_3}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="5">${Answer3_5}</input><br/>
+		                            <input type="checkbox" name="sub_Choice3" value="5"/>${Answer3_5}<br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="2">${Answer3_2}</input><br/>
+		                            <input type="checkbox" name="sub_Choice3" value="2"/>${Answer3_2}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="4">${Answer3_4}</input><br/>
+		                            <input type="checkbox" name="sub_Choice3" value="4"/>${Answer3_4}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="6">${Answer3_6}</input><br/>
+		                            <input type="checkbox" name="sub_Choice3" value="6"/>${Answer3_6}<br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -691,24 +691,24 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="1">${Answer4_1}</input><br/>
+		                            <input type="checkbox" name="sub_Choice4" value="1"/>${Answer4_1}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="3">${Answer4_3}</input><br/>
+		                            <input type="checkbox" name="sub_Choice4" value="3"/>${Answer4_3}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="5">${Answer4_5}</input><br/>
+		                            <input type="checkbox" name="sub_Choice4" value="5"/>${Answer4_5}<br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="2">${Answer4_2}</input><br/>
+		                            <input type="checkbox" name="sub_Choice4" value="2"/>${Answer4_2}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="4">${Answer4_4}</input><br/>
+		                            <input type="checkbox" name="sub_Choice4" value="4"/>${Answer4_4}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="6">${Answer4_6}</input><br/>
+		                            <input type="checkbox" name="sub_Choice4" value="6"/>${Answer4_6}<br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -725,24 +725,24 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="1">${Answer5_1}</input><br/>
+		                            <input type="checkbox" name="sub_Choice5" value="1"/>${Answer5_1}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="3">${Answer5_3}</input><br/>
+		                            <input type="checkbox" name="sub_Choice5" value="3"/>${Answer5_3}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="5">${Answer5_5}</input><br/>
+		                            <input type="checkbox" name="sub_Choice5" value="5"/>${Answer5_5}<br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="2">${Answer5_2}</input><br/>
+		                            <input type="checkbox" name="sub_Choice5" value="2"/>${Answer5_2}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="4">${Answer5_4}</input><br/>
+		                            <input type="checkbox" name="sub_Choice5" value="4"/>${Answer5_4}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="6">${Answer5_6}</input><br/>
+		                            <input type="checkbox" name="sub_Choice5" value="6"/>${Answer5_6}<br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -759,24 +759,24 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="1">${Answer6_1}</input><br/>
+		                            <input type="checkbox" name="sub_Choice6" value="1"/>${Answer6_1}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="3">${Answer6_3}</input><br/>
+		                            <input type="checkbox" name="sub_Choice6" value="3"/>${Answer6_3}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="5">${Answer6_5}</input><br/>
+		                            <input type="checkbox" name="sub_Choice6" value="5"/>${Answer6_5}<br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="2">${Answer6_2}</input><br/>
+		                            <input type="checkbox" name="sub_Choice6" value="2"/>${Answer6_2}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="4">${Answer6_4}</input><br/>
+		                            <input type="checkbox" name="sub_Choice6" value="4"/>${Answer6_4}<br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="6">${Answer6_6}</input><br/>
+		                            <input type="checkbox" name="sub_Choice6" value="6"/>${Answer6_6}<br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>

@@ -480,29 +480,31 @@ public class ChicaServiceImpl implements ChicaService
 			}
 		}
 
-		String languageResponse = "English";
+		String languageResponse = null;
 		if (maxNumAnswers > 0)
 		{
 			languageResponse = maxLanguage;
 		}
 		
-		HashMap<Integer, String> answers = maxAnswers;
-		if (answers != null) {
-			for (Integer currRuleId : answers.keySet())
-			{
-				String answer = answers.get(currRuleId);
-				Integer formInstanceId = formInstance.getFormInstanceId();
-				Integer locationId = formInstance.getLocationId();
-				List<Statistics> statistics = atdService
-						.getStatByIdAndRule(formInstanceId, currRuleId, "PSF",locationId);
-				if (statistics != null)
+		if (languageResponse != null) {
+			HashMap<Integer, String> answers = maxAnswers;
+			if (answers != null) {
+				for (Integer currRuleId : answers.keySet())
 				{
-					for (Statistics stat : statistics)
+					String answer = answers.get(currRuleId);
+					Integer formInstanceId = formInstance.getFormInstanceId();
+					Integer locationId = formInstance.getLocationId();
+					List<Statistics> statistics = atdService
+							.getStatByIdAndRule(formInstanceId, currRuleId, "PSF",locationId);
+					if (statistics != null)
 					{
-						stat.setAnswer(answer);
-						stat.setLanguageResponse(languageResponse);
-	
-						atdService.updateStatistics(stat);
+						for (Statistics stat : statistics)
+						{
+							stat.setAnswer(answer);
+							stat.setLanguageResponse(languageResponse);
+		
+							atdService.updateStatistics(stat);
+						}
 					}
 				}
 			}

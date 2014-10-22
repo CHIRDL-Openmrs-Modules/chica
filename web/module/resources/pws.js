@@ -129,8 +129,9 @@ $(function() {
       }
     })
 
-    $("#problemButton").click(function() {
+    $("#problemButton").click(function(event) {
       $("#problemDialog").dialog("open");
+      event.preventDefault();
     });
     
     $("#medDialog").dialog({
@@ -147,12 +148,14 @@ $(function() {
         }
     })
 
-	$("#medButton").click(function() {
+	$("#medButton").click(function(event) {
 	  $("#medDialog").dialog("open");
+	  event.preventDefault();
 	});
 	
-	$("#formPrintButton").click(function() {
+	$("#formPrintButton").click(function(event) {
 		$("#formAccordionDialog").dialog("open");
+		event.preventDefault();
 	});
 	
 	$("#confirmSubmitDialog").dialog({
@@ -175,16 +178,19 @@ $(function() {
 		$("#pwsForm").submit();
 	});
 	
-	$("#cancelSubmitButton").click(function() {
+	$("#cancelSubmitButton").click(function(event) {
 		$("#confirmSubmitDialog").dialog("close");
+		event.preventDefault();
 	});
 	
-	$("#submitButtonBottom").click(function() {
+	$("#submitButtonBottom").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");
+		event.preventDefault();
 	});
 	
-	$("#submitButtonTop").click(function() {
+	$("#submitButtonTop").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");
+		event.preventDefault();
 	});
 	
 	$("#submitWaitDialog").dialog({

@@ -400,3 +400,7 @@ a.icon-button span.ui-icon {
     top: 50%;
     margin-top: -9px;
 }
+
+.largeButton {
+	width: 220px;
+}
