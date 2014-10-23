@@ -41,7 +41,7 @@ preferred_language:= read last {preferred_language from CHICA};
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 endif
 ;;
-Priority: 192       ;;
+Priority: 196;;
  Evoke: ;;
 
 Logic:

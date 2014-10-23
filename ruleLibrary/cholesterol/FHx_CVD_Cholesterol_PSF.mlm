@@ -30,7 +30,7 @@ Exists_Lab_Cholesterol := read Exist {CHOLESTEROL from RMRS} Where it Occurred W
 Cholesterol_Screen := read Exist {Cholesterol_Screen from CHICA} Where it Occurred Within Past 5 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 endif
 ;;
-Priority: 816;;
+Priority: 1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

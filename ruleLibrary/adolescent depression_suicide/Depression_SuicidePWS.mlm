@@ -41,6 +41,8 @@ Priority:		13;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
 If (fun = "False") then || funT || = "NO FUN IN PAST 2 WEEKS - || fun_date ||, ";
 If (happy = "False") then || happyT || = "NOT HAPPY IN GENERAL - || happy_date ||, ";
 If (sad = "True") then || sadT || = "OFTEN FEELS SAD OR DOWN - || sad_date ||, ";

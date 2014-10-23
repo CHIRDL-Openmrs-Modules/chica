@@ -35,6 +35,8 @@ import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.atd.hibernateBeans.Statistics;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.dss.service.DssService;
 
 
@@ -102,13 +104,6 @@ public class physicianNotePhysicalExam implements Rule {
     	Patient patient = Context.getPatientService().getPatient(patientId);
     	LogicContext context = new LogicContextImpl(patientId);
     	LogicDataSource obsDataSource = context.getLogicDataSource("obs");
-    	// Removed sick visit check.  This was a clinic request.
-//    	String conceptName = "VisitType";
-//    	Result result = context.read(patientId, obsDataSource, 
-//			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
-//    	if (result != null && "SickVisit".equalsIgnoreCase(result.toString())) {
-//			noteBuffer.append("This is a sick visit\n");
-//    	}
     	
     	Encounter encounter = getLastEncounter(patient);
     	if (encounter == null) {
@@ -377,9 +372,27 @@ public class physicianNotePhysicalExam implements Rule {
 			null, null, false);
 		if (encounters == null || encounters.size() == 0) {
 			return null;
+		} else if (encounters.size() == 1) {
+			return encounters.get(0);
 		}
 		
-		return encounters.get(encounters.size() - 1);
+		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
+		ATDService atdService = Context.getService(ATDService.class);
+		for (int i = encounters.size() - 1; i >= 0; i--) {
+			Encounter encounter = encounters.get(i);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			if (stats == null || stats.size() == 0) {
+				continue;
+			}
+			
+			for (Statistics stat : stats) {
+				if (stat.getScannedTimestamp() != null) {
+					return encounter;
+				}
+			}
+		}
+		
+		return null;
     }
     
     private static boolean equalEncounters(Integer encounterId, Result result) {

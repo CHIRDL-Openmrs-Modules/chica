@@ -25,6 +25,7 @@
                 <prop key="/module/@MODULE_ID@/viewPatient.form">viewPatient</prop>
 				<prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
 				<prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
+				<prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
 				<prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobile.form">psfMobile</prop>
@@ -124,6 +125,11 @@
         <property name="commandName"><value>displayMergeFormObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/displayMergeForm</value></property>
         <property name="successView"><value>displayMergeForm.form</value></property>
+    </bean>
+    <bean id="displayScanForm" class="@MODULE_PACKAGE@.web.DisplayScanFormController">
+        <property name="commandName"><value>displayScanFormObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/displayScanForm</value></property>
+        <property name="successView"><value>displayScanForm.form</value></property>
     </bean>
     <bean id="finishFormsMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
         <property name="commandName"><value>finishFormsMobileObject</value></property>

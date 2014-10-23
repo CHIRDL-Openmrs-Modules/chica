@@ -35,10 +35,12 @@ drunk := read Last {drunk_last_month from CHICA} Where it Occurred Within Past 3
 location:= read {location from Parameters}; 
 endif
 ;;
-Priority:		442;;
+Priority: 443;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
 If (family = yes) then || RF1 || = "They are at risk because a family member has substance abuse problem. ";
 endif
 

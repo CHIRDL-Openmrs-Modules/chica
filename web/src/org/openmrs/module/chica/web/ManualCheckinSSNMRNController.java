@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.patient.impl.LuhnIdentifierValidator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -42,6 +43,7 @@ public class ManualCheckinSSNMRNController extends SimpleFormController
 		String mrn = request.getParameter("mrnLookup");
 		
 		if (mrn != null){
+			mrn = Util.removeLeadingZeros(mrn);
 			map.put("mrn", mrn);
 			map.put("mrnLookup", mrn);
 			map.put("validate", "valid");
@@ -57,6 +59,7 @@ public class ManualCheckinSSNMRNController extends SimpleFormController
 		HttpSession httpSession = request.getSession();
 		
 		String mrn = request.getParameter("mrnLookup");
+		mrn = Util.removeLeadingZeros(mrn);
 		
 		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
 		boolean valid = false;

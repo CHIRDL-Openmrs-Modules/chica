@@ -37,6 +37,8 @@ Priority:		160;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
 If (problems = Mild) then || mild || = "MILD DEPRESSION";
 If (problems = Moderate/severe) then || mod || = "MODERATE/SEVERE DEPRESSION";
 If (problems = Suicide) then || suicide || = "RISK FOR SUICIDE";

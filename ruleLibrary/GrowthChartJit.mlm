@@ -19,15 +19,12 @@ Data:
 
 mode:=read {mode from Parameters};
 
-If (mode = PRODUCE) then
-VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day; 
-endif
 ;;
 Priority:	;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
-If  (VisitType = SickVisit) then conclude false;
+
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 
 endif

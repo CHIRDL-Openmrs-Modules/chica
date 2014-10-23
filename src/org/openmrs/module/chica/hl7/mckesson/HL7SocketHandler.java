@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +39,7 @@ import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.QueryKiteException;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
@@ -69,14 +71,6 @@ public class HL7SocketHandler extends
 
 	protected final Log log = LogFactory.getLog(getClass());
 
-	private static final String ATTRIBUTE_RELIGION = "Religion";
-	private static final String ATTRIBUTE_MARITAL = "Civil Status";
-	private static final String ATTRIBUTE_MAIDEN = "Mother's maiden name";
-	private static final String ATTRIBUTE_NEXT_OF_KIN = "Next of Kin";
-	public static final String ATTRIBUTE_TELEPHONE = "Telephone Number";
-	protected static final String CITIZENSHIP = "Citizenship";
-	protected static final String ATTRIBUTE_RACE = "Race";
-
 	// search for patient based on medical record number then
 	// run alias query to see if any patient records to merge
 	@Override
@@ -92,7 +86,14 @@ public class HL7SocketHandler extends
 				// look for matched patient
 				Patient matchedPatient = findPatient(hl7Patient);
 				if (matchedPatient == null) {
+					
 					resultPatient = createPatient(hl7Patient);
+					
+					//Merge alias medical record number patients
+					parameters.put("queryKiteAliasStart", new java.util.Date());
+					processAliasString(mrn, resultPatient);
+					parameters.put("queryKiteAliasEnd", new java.util.Date());
+					
 				} else {
 					resultPatient = updatePatient(matchedPatient, hl7Patient,
 							encounterDate);
@@ -100,13 +101,6 @@ public class HL7SocketHandler extends
 
 				parameters.put("processCheckinHL7End", new java.util.Date());
 
-				parameters.put("queryKiteAliasStart", new java.util.Date());
-
-				// merge alias medical record number patients with the matched
-				// patient
-				processAliasString(mrn, resultPatient);
-
-				parameters.put("queryKiteAliasEnd", new java.util.Date());
 			}
 
 		} catch (RuntimeException e) {
@@ -128,7 +122,7 @@ public class HL7SocketHandler extends
 
 				if (tags != null) {
 					for (LocationTag tag : tags) {
-						if (tag.getTag().equalsIgnoreCase(
+						if (tag.getName().equalsIgnoreCase(
 								encounter.getPrinterLocation())) {
 							return tag.getLocationTagId();
 						}
@@ -151,15 +145,21 @@ public class HL7SocketHandler extends
 		PatientIdentifier patientIdentifier = hl7Patient.getPatientIdentifier();
 		String mrn = patientIdentifier.getIdentifier();
 		PatientService patientService = Context.getPatientService();
+		
 		List<Patient> lookupPatients = patientService.getPatients(null, mrn,
 				null, true);
+		
+		if (lookupPatients == null || lookupPatients.size() == 0){
+			lookupPatients = patientService.getPatients(null, "0" + mrn,
+					null, true);
+		}
 
 		if (lookupPatients != null && lookupPatients.size() > 0) {
 			return lookupPatients.iterator().next();
 		}
 
 		// Search by SSN
-		PatientIdentifier ssnIdent = hl7Patient.getPatientIdentifier("SSN");
+		PatientIdentifier ssnIdent = hl7Patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 		if (ssnIdent != null) {
 			String ssn = ssnIdent.getIdentifier();
 			lookupPatients = patientService.getPatients(null, ssn, null, true);
@@ -177,7 +177,7 @@ public class HL7SocketHandler extends
 				hl7Patient.removeIdentifier(ssnIdent);
 				// Add a person attribute to store attempted SSN.
 				PersonAttributeType personAttrType = Context.getPersonService()
-						.getPersonAttributeTypeByName("SSN");
+						.getPersonAttributeTypeByName(ChirdlUtilConstants.PERSON_ATTRIBUTE_SSN);
 				if (personAttrType != null) {
 					PersonAttribute personAttr = new PersonAttribute(
 							personAttrType, ssn);
@@ -263,14 +263,14 @@ public class HL7SocketHandler extends
 
 			if (length >= 2) {
 				if (fields[1].equals("FAILED")) {
-					Error error = new Error("Error", "Query Kite Connection",
+					Error error = new Error("Error", ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION,
 							"Alias query returned FAILED for mrn: " + mrn,
 							null, new Date(), null);
 					chirdlutilbackportsService.saveError(error);
 					return;
 				}
 				if (fields[1].equals("unknown_patient")) {
-					Error error = new Error("Warning", "Query Kite Connection",
+					Error error = new Error("Warning", ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION,
 							"Alias query returned unknown_patient for mrn: "
 									+ mrn, null, new Date(), null);
 					chirdlutilbackportsService.saveError(error);
@@ -292,7 +292,7 @@ public class HL7SocketHandler extends
 				}
 
 				List<Patient> lookupPatients = patientService.getPatients(null,
-						Util.removeLeadingZeros(fields[i]), null);
+						Util.removeLeadingZeros(fields[i]), null, false);
 
 				if (lookupPatients != null && lookupPatients.size() > 0) {
 					Iterator<Patient> iter = lookupPatients.iterator();
@@ -305,7 +305,7 @@ public class HL7SocketHandler extends
 							patientService.mergePatients(preferredPatient,
 									currPatient);
 						} else {
-							Error error = new Error("Error", "General Error",
+							Error error = new Error("Error", ChirdlUtilConstants.ERROR_GENERAL,
 									"Tried to merge patient: "
 											+ currPatient.getPatientId()
 											+ " with itself.", null,
@@ -352,8 +352,8 @@ public class HL7SocketHandler extends
 		addTelephoneNumber(currentPatient, hl7Patient, encounterDate);
 		AddCitizenship(currentPatient, hl7Patient, encounterDate);
 		AddRace(currentPatient, hl7Patient, encounterDate);
+		addMRN(currentPatient, hl7Patient, encounterDate);
 		
-
 		Patient updatedPatient = null;
 		try {
 			updatedPatient = patientService.savePatient(currentPatient);
@@ -418,7 +418,6 @@ public class HL7SocketHandler extends
 		Context.closeSession();
 		
 		String incomingMessageString = null;
-		String sendingFacility = null;
 		Segment inboundHeader = null;
 		Message ackMessage = null;
 		Message originalMessage = message;
@@ -442,7 +441,7 @@ public class HL7SocketHandler extends
 				message = this.parser.parse(incomingMessageString);
 			
 			} catch (Exception e) {
-				Error error = new Error("Fatal", "Hl7 Parsing",
+				Error error = new Error("Fatal", ChirdlUtilConstants.ERROR_HL7_PARSING,
 						"Error parsing the McKesson checkin hl7 "
 								+ e.getMessage(),
 						org.openmrs.module.chirdlutil.util.Util
@@ -502,38 +501,7 @@ public class HL7SocketHandler extends
 			}
 		}
 
-		try {
-			
-			//All messages should be adt a01 v2.5 at this point
-//			if (message instanceof ca.uhn.hl7v2.model.v25.message.ADT_A01){
-//				ca.uhn.hl7v2.model.v25.message.ADT_A01 adt25 = (ca.uhn.hl7v2.model.v25.message.ADT_A01) message;
-//				sendingFacility = adt25.getMSH().getSendingFacility().getNamespaceID().getValue();
-//				
-//				//Check if message is from a blocked source
-//				incomingMessageString = this.parser.encode(message);
-//				allowMessageSources.replaceAll("\\s","");
-//				List<String> messageSourceList = 
-//					new ArrayList<String>(Arrays.asList(allowMessageSources.split(",")));
-//				
-//				if (!messageSourceList.contains(sendingFacility)){
-//					log.error("Message arrived from blocked source: " + sendingFacility );
-//					log.error("Blocked MSH segment:" + 
-//							incomingMessageString.substring(0, incomingMessageString.indexOf("EVN")));
-//					try {
-//						//Return an ACK response instead of defaulting to the HAPI error response
-//						inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-//						ackMessage = makeACK(inboundHeader);
-//					} catch (Exception e3) {
-//						logger.error("Error sending an ack response after blocking a message " +
-//								" facility." + e3.getMessage());
-//						logger.error(org.openmrs.module.chirdlutil.util.Util
-//								.getStackTrace(e3));
-//						ackMessage = originalMessage;
-//					}
-//					return ackMessage;
-//				}
-//			}
-			
+		try {		
 			incomingMessageString = this.parser.encode(message);
 			message.addNonstandardSegment("ZPV");
 		} catch (Exception e) {
@@ -586,39 +554,41 @@ public class HL7SocketHandler extends
 		String printerLocation = null;
 		String insuranceName = null;
 		Message message;
-		try {
-			message = this.parser.parse(incomingMessageString);
-			EncounterService encounterService = Context
-					.getService(EncounterService.class);
-			encounter = encounterService.getEncounter(encounter
-					.getEncounterId());
-			if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
-				locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-						.getLocation(message);
+		
+			try {
+				message = this.parser.parse(incomingMessageString);
+				EncounterService encounterService = Context
+						.getService(EncounterService.class);
+				encounter = encounterService.getEncounter(encounter
+						.getEncounterId());
+				if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
+					locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getLocation(message);
 
-				appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-						.getAppointmentTime(message);
+					appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getAppointmentTime(message);
 
-				planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-						.getInsurancePlan(message);
+					planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getInsurancePlan(message);
 
-				carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-						.getInsuranceCarrier(message);
+					carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getInsuranceCarrier(message);
 
-				printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-						.getPrinterLocation(message, incomingMessageString);
-				
-				insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-						.getInsuranceName(message);
+					printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getPrinterLocation(message, incomingMessageString);
+					
+					insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getInsuranceName(message);
+				}
+			} catch (EncodingNotSupportedException e) {
+				log.error("Encoding not supported when parsing incoming message.", e);
+			} catch (HL7Exception e) {
+				log.error("HL7 version not supported when parsing incoming message", e);
+			} catch (Exception e){
+				log.error("Exception getting encounter information from the incoming message", e);
 			}
 
-		} catch (EncodingNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (HL7Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
@@ -682,7 +652,14 @@ public class HL7SocketHandler extends
 						.getSessionId(), getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date queryKiteAliasStart = (Date) parameters.get("queryKiteAliasStart");
+		if (queryKiteAliasStart == null){
+			queryKiteAliasStart = new java.util.Date();
+		}
 		Date queryKiteAliasEnd = (Date) parameters.get("queryKiteAliasEnd");
+		if (queryKiteAliasEnd == null){
+			queryKiteAliasEnd = new java.util.Date();
+		}
+		
 		patientState.setStartTime(queryKiteAliasStart);
 		patientState.setEndTime(queryKiteAliasEnd);
 		chirdlutilbackportsService.updatePatientState(patientState);
@@ -896,9 +873,9 @@ public class HL7SocketHandler extends
 
 		PatientService patientService = Context.getPatientService();
 
-		PatientIdentifier newSSN = hl7Patient.getPatientIdentifier("SSN");
+		PatientIdentifier newSSN = hl7Patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 		PatientIdentifier currentSSN = currentPatient
-				.getPatientIdentifier("SSN");
+				.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 
 		//hl7 has no SSN. Or hl7 SSN is the same as existing SSN
 		if (newSSN == null
@@ -909,7 +886,7 @@ public class HL7SocketHandler extends
 		}
 
 		PersonAttributeType personAttrType = Context.getPersonService()
-				.getPersonAttributeTypeByName("SSN");
+				.getPersonAttributeTypeByName(ChirdlUtilConstants.PERSON_ATTRIBUTE_SSN);
 
 		// If another patient owns the SSN, do NOT void and add identifier
 		// Instead, store the attempted SSN as an attribute for record
@@ -930,7 +907,7 @@ public class HL7SocketHandler extends
 			currentPatient.addIdentifier(newSSN);
 		} else {
 			// if patient has a different SSN
-				currentPatient.getPatientIdentifier("SSN").setVoided(true);
+				currentPatient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN).setVoided(true);
 				currentPatient.addIdentifier(newSSN);
 		}
 
@@ -949,9 +926,9 @@ public class HL7SocketHandler extends
 	private void addReligion(Patient currentPatient, Patient hl7Patient,
 			Date encounterDate) {
 		PersonAttribute newReligionAttr = hl7Patient
-			.getAttribute(ATTRIBUTE_RELIGION);
+			.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_RELIGION);
 		PersonAttribute currentReligionAttr = currentPatient
-			.getAttribute(ATTRIBUTE_RELIGION);
+			.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_RELIGION);
 		if (newReligionAttr == null || newReligionAttr.getValue() == null
 				|| newReligionAttr.getValue().equals("")){
 			return;
@@ -980,9 +957,9 @@ public class HL7SocketHandler extends
 	private void addMaritalStatus(Patient currentPatient, Patient hl7Patient,
 			Date encounterDate) {
 		PersonAttribute newMaritalStatAttr = hl7Patient
-			.getAttribute(ATTRIBUTE_MARITAL);
+			.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_MARITAL_STATUS);
 		PersonAttribute currentMaritalStatAttr = currentPatient
-			.getAttribute(ATTRIBUTE_MARITAL);
+			.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_MARITAL_STATUS);
 
 		if (newMaritalStatAttr == null || newMaritalStatAttr.getValue() == null
 				|| newMaritalStatAttr.getValue().equals("")) {
@@ -1007,9 +984,9 @@ public class HL7SocketHandler extends
 	private void addMaidenName(Patient currentPatient, Patient hl7Patient,
 			Date encounterDate) {
 		PersonAttribute newMaidenNameAttr = hl7Patient
-				.getAttribute(ATTRIBUTE_MAIDEN);
+				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_MAIDEN_NAME);
 		PersonAttribute currentMaidenNameAttr = currentPatient
-				.getAttribute(ATTRIBUTE_MAIDEN);
+				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_MAIDEN_NAME);
 		
 		if (newMaidenNameAttr == null || newMaidenNameAttr.getValue() == null
 				|| newMaidenNameAttr.getValue().equals("")){
@@ -1037,9 +1014,9 @@ public class HL7SocketHandler extends
 	private void addNK(Patient currentPatient, Patient hl7Patient,
 			Date encounterDate) {
 		PersonAttribute newNextOfKinNameAttr = hl7Patient
-				.getAttribute(ATTRIBUTE_NEXT_OF_KIN);
+				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_NEXT_OF_KIN);
 		PersonAttribute currentNextOfKinNameAttr = currentPatient
-				.getAttribute(ATTRIBUTE_NEXT_OF_KIN);
+				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_NEXT_OF_KIN);
 
 		if (newNextOfKinNameAttr == null || newNextOfKinNameAttr.getValue() == null
 				|| newNextOfKinNameAttr.getValue().equals("")){
@@ -1070,9 +1047,9 @@ public class HL7SocketHandler extends
 	private void addTelephoneNumber(Patient currentPatient, Patient hl7Patient,
 			Date encounterDate) {
 		PersonAttribute hl7TelNumAttr = hl7Patient
-				.getAttribute(ATTRIBUTE_TELEPHONE);
+				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_TELEPHONE);
 		PersonAttribute currentTelNumAttr = currentPatient
-				.getAttribute(ATTRIBUTE_TELEPHONE);
+				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_TELEPHONE);
 
 		if (hl7TelNumAttr == null || hl7TelNumAttr.getValue() == null 
 				|| hl7TelNumAttr.getValue().equals("")){
@@ -1093,8 +1070,8 @@ public class HL7SocketHandler extends
 	 */
 	private void AddCitizenship(Patient currentPatient, Patient hl7Patient,Date encounterDate){
 
-		PersonAttribute currentCitizenshipAttr = currentPatient.getAttribute(CITIZENSHIP);
-		PersonAttribute hl7CitizenshipAttr = hl7Patient.getAttribute(CITIZENSHIP);
+		PersonAttribute currentCitizenshipAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_CITIZENSHIP);
+		PersonAttribute hl7CitizenshipAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_CITIZENSHIP);
 
 		if (hl7CitizenshipAttr == null || hl7CitizenshipAttr.getValue() == null 
 				|| hl7CitizenshipAttr.getValue().trim().equals("")){
@@ -1116,8 +1093,8 @@ public class HL7SocketHandler extends
 	 * @param encounterDate
 	 */
 	private void AddRace(Patient currentPatient, Patient hl7Patient, Date encounterDate){
-		PersonAttribute currentRaceAttr = currentPatient.getAttribute(ATTRIBUTE_RACE);
-		PersonAttribute hl7RaceAttr = hl7Patient.getAttribute(ATTRIBUTE_RACE);
+		PersonAttribute currentRaceAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_RACE);
+		PersonAttribute hl7RaceAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_RACE);
 		
 		if (hl7RaceAttr == null || hl7RaceAttr.getValue() == null 
 				|| hl7RaceAttr.getValue().trim().equals("")){
@@ -1157,6 +1134,80 @@ public class HL7SocketHandler extends
 		return ;
 			
 	}
-		
+	
+	
+	/**
+	 * Updates the existing patient's identifier to the new value from HL7 or manual checkin.
+	 * Since this is a matched patient, if MRNs do not match: 
+	 * Add the new hl7 MRN and set as preferred,  void the old MRN,  
+	 * and write an error to the log.
+	 * 
+	 * @param existingPatient - Patient already exists in our records and was matched to the hl7 or manual checkin patient
+	 * @param newPatient - Patient created from content of HL7 message or manual checkin 
+	 * @param encounterDate
+	 */
+	private void addMRN(Patient existingPatient, Patient newPatient, Date encounterDate){
+		ChirdlUtilBackportsService chirdlutilbackportsService 
+				= Context.getService(ChirdlUtilBackportsService.class);
+		PatientService patientService = Context.getPatientService();
+	
+		try {
+			
+			//Get the existing preferred, non-voided identifier for comparison  
+			PatientIdentifier existingPatientIdentifier = existingPatient.getPatientIdentifier(); 
+			PatientIdentifier newPatientIdentifier= newPatient.getPatientIdentifier();
+			
+			String existingMRN = existingPatientIdentifier.getIdentifier();
+			String newMRN = null;
+			
+			//If new MRN does not exist or matches the existing MRN, no need to update.
+			//If the only difference is a leading 0, do not return. MRN must be updated.
+			if (newPatientIdentifier == null
+					|| (newMRN = newPatientIdentifier.getIdentifier()) == null
+					|| existingMRN.trim().equals(newMRN.trim()) ){
+				return;
+			}
+			
+			//New MRNs will not have a leading zero. 
+			if (Util.removeLeadingZeros(existingMRN.trim()).equals(newMRN.trim())){
+				existingPatientIdentifier.setVoidReason("MRN Leading Zero Correction");
+				Error error = new Error("Warning", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+						"Leading Zero Correction." 
+						+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
+						"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
+				chirdlutilbackportsService.saveError(error);
+			} else {
+				existingPatientIdentifier.setVoidReason("MRN Correction");
+				Error error = new Error("Error", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+						"MRN correction required! Contact Regenstrief about possible corrupted data." 
+						+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
+						"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
+				chirdlutilbackportsService.saveError(error);
+			}
+			//void the existing identifier
+			existingPatientIdentifier.setPreferred(false);
+			existingPatientIdentifier.setVoided(true);
+			existingPatientIdentifier.setVoidedBy(Context.getAuthenticatedUser());
+			existingPatientIdentifier.setDateVoided(new Date());
+			
+			//Create the new identifier object and add to existing patient
+			PatientIdentifier newIdentifier = new PatientIdentifier();
+			newIdentifier.setIdentifier(newMRN);
+			newIdentifier.setIdentifierType( patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN));
+			newIdentifier.setLocation(newPatientIdentifier.getLocation());
+			newIdentifier.setPatient(existingPatient);
+			newIdentifier.setPreferred(true);
+			newIdentifier.setUuid(UUID.randomUUID().toString());
+			newIdentifier.setCreator(Context.getAuthenticatedUser());
+			newIdentifier.setDateCreated(new Date());
+			existingPatient.addIdentifier(newIdentifier);
+			
 
+			
+		} catch (Exception e) {
+			log.error("Exception adding new MRN to existing patient.", e);
+		}
+		
+	}
+	
 }

@@ -503,7 +503,7 @@ public class ImmunizationRegistryQuery
 						, Util.getStackTrace(e1),
 						url, encounter.getPatientId());
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-						, encounter.getEncounterDatetime());
+						, new Date());
 				return null;
 			}
 			
@@ -516,14 +516,14 @@ public class ImmunizationRegistryQuery
 			if (queryResponse == null ){
 				logError( CHIRP_ERROR, "",  url, encounter.getPatientId());
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-						, encounter.getEncounterDatetime());
+						, new Date());
 				return null;
 			}
 			
 			if (queryResponse.isEmpty() || queryResponse.trim().equals("")) {
 				logError(CHIRP_RESPONSE_INVALID, "", url, encounter.getPatientId());
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-						, encounter.getEncounterDatetime());
+						, new Date());
 				return null;
 			}
 			
@@ -537,7 +537,7 @@ public class ImmunizationRegistryQuery
 				
 				
 				//save the obs and file
-				Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_IN_CHIRP, encounter.getEncounterDatetime());
+				Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_IN_CHIRP, new Date());
 				ImmunizationQueryConstructor.saveFile(dir, queryResponse, "qck", encounter);
 				
 				//create the patient in chirp with VXU if VXU is activated.
@@ -562,7 +562,7 @@ public class ImmunizationRegistryQuery
 						queryResponse = HttpUtil.post(url, data,timeout,timeout);	
 						log.info("Immunization: Create patient response = " +  queryResponse);
 						if (queryResponse != null && queryResponse.contains("accepted")){
-							Util.saveObs(chicaPatient, statusConcept, encounterId, CREATED, encounter.getEncounterDatetime());
+							Util.saveObs(chicaPatient, statusConcept, encounterId, CREATED, new Date());
 						} else {
 							//Chirp status remains at "not in chirp"
 							logError(CHIRP_UPDATE_FAILED, 
@@ -575,7 +575,7 @@ public class ImmunizationRegistryQuery
 								Util.getStackTrace(e),
 								url, encounter.getPatientId());
 						Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-								, encounter.getEncounterDatetime());	
+								, new Date());	
 						return null;
 					}
 						
@@ -590,6 +590,7 @@ public class ImmunizationRegistryQuery
 			queryResponse = removeIllegalCharacter(queryResponse);
 			Message queryResponseMessage;
 			try {
+				parser.setValidationContext(new NoValidation());
 				queryResponseMessage = parser.parse(queryResponse);
 				Terser terser = new Terser(queryResponseMessage);
 				msaControlId = terser.get("/MSA-1-1");
@@ -598,7 +599,7 @@ public class ImmunizationRegistryQuery
 					logError(CHIRP_ERROR,
 							"HL7 response: " + queryResponse, url, encounter.getPatientId());
 					Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-							, encounter.getEncounterDatetime());
+							, new Date());
 					return null;
 				}
 			} catch (HL7Exception hl7e){
@@ -606,7 +607,7 @@ public class ImmunizationRegistryQuery
 						"HL7 response = " + queryResponse ,
 						null, encounter.getPatientId());
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-						, encounter.getEncounterDatetime());
+						, new Date());
 				return null;
 			}
 		
@@ -623,7 +624,7 @@ public class ImmunizationRegistryQuery
 				Patient matchPatient = patientMatching.verifyPatientMatch(chicaPatient, chirpPatients);
 				if (matchPatient == null){
 					log.info("Immunization: Patient not matched in CHIRP. Encounter id = " + encounterId);
-					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, encounter.getEncounterDatetime());
+					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 				}
 				
@@ -638,7 +639,7 @@ public class ImmunizationRegistryQuery
 					}
 				} catch (Exception e1) {
 					log.error(Util.getStackTrace(e1));
-					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, encounter.getEncounterDatetime());
+					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 				}
 				
@@ -659,7 +660,7 @@ public class ImmunizationRegistryQuery
 				
 				if (queryResponse == null || queryResponse.trim().equals("")
 						|| !queryResponse.contains("MSH")) {
-					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, encounter.getEncounterDatetime());
+					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 				}
 				
@@ -667,13 +668,14 @@ public class ImmunizationRegistryQuery
 				try {
 					queryResponse = removeIllegalCharacter(queryResponse);
 					PipeParser pipeParser = new PipeParser();
+					pipeParser.setValidationContext(new NoValidation());
 					queryResponseMessage = pipeParser.parse(queryResponse);
 				} catch (HL7Exception e) {
 					logError( CHIRP_PARSING_ERROR, 
 							"HL7 response = " + queryResponse ,
 							null, encounter.getPatientId());
 					Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-							, encounter.getEncounterDatetime());
+							, new Date());
 					return null;
 				}
 				
@@ -682,7 +684,7 @@ public class ImmunizationRegistryQuery
 				if (queryResponseMessage instanceof VXX_V02) {
 					ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxx_2", 
 								encounter);
-					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, encounter.getEncounterDatetime());
+					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 						
 				}
@@ -698,11 +700,11 @@ public class ImmunizationRegistryQuery
 				Patient matchPatient = patientMatching.verifyPatientMatch(chicaPatient, chirpPatients);
 				if (matchPatient == null){
 					log.info("Immunization: VXR Patient is not a match. Encounter id = " + encounterId);
-					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, encounter.getEncounterDatetime());
+					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 				}
 				Util.saveObs(chicaPatient, statusConcept, encounterId, MATCHED,
-						encounter.getEncounterDatetime());
+						new Date());
 				ImmunizationQueryConstructor.saveFile(dir, queryResponse,
 						"vxr", encounter);
 				createImmunizationList(queryResponse, mrn, encounter
@@ -715,7 +717,7 @@ public class ImmunizationRegistryQuery
 			logError( CHIRP_ERROR, Util.getStackTrace(e),
 					url, encounter.getPatientId());
 			Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
-					, encounter.getEncounterDatetime());
+					, new Date());
 		}
 				
 		return queryResponse;

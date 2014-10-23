@@ -48,6 +48,8 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.atd.hibernateBeans.Statistics;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutil.util.ObsComparator;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -138,13 +140,36 @@ public class physicianNoteObs implements Rule {
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
 			null, null, false);
+		Encounter latestEncounter = null;
 		if (encounters == null || encounters.size() == 0) {
+			return noteBuffer.toString();
+		} else if (encounters.size() == 1) {
+			latestEncounter = encounters.get(0);
+		}
+		
+		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
+		ATDService atdService = Context.getService(ATDService.class);
+		for (int i = encounters.size() - 1; i >= 0 && latestEncounter == null; i--) {
+			Encounter encounter = encounters.get(i);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PWS");
+			if (stats == null || stats.size() == 0) {
+				continue;
+			}
+			
+			for (Statistics stat : stats) {
+				if (stat.getScannedTimestamp() != null) {
+					latestEncounter = encounter;
+					break;
+				}
+			}
+		}
+		
+		if (latestEncounter == null) {
 			return noteBuffer.toString();
 		}
 		
-		Encounter encounter = encounters.get(encounters.size() - 1);
 		List<Encounter> encounterList = new ArrayList<Encounter>();
-		encounterList.add(encounter);
+		encounterList.add(latestEncounter);
 		
     	// Get Observations for the encounter.
 		List<Person> persons = new ArrayList<Person>();

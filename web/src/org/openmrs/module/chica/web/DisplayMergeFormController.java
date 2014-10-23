@@ -99,7 +99,7 @@ public class DisplayMergeFormController extends SimpleFormController
 			
 			map.put("leftImageForminstance", leftFormInstanceId);
 			File leftXmlFile = XMLUtil.getXmlFile(leftLocationId, leftFormId, leftFormInstanceId, 
-				XMLUtil.DEFAULT_MERGE_DIRECTORYY);
+				getLocationAttributeDirectoryName());
 			File stylesheetFile = XMLUtil.findStylesheet(leftStylesheet);
 			if (stylesheetFile == null) {
 				log.error("Error finding stylesheet to format the form: " + leftStylesheet);
@@ -146,5 +146,14 @@ public class DisplayMergeFormController extends SimpleFormController
 		map.put("rightOutput", rightOutput);
 
 		return map;
+	}
+	
+	/**
+	 * Returns the directory used to find the XML file.
+	 * 
+	 * @return String containing the location attribute name associated with the directory where the XML resides.
+	 */
+	protected String getLocationAttributeDirectoryName() {
+		return XMLUtil.DEFAULT_MERGE_DIRECTORYY;
 	}
 }
