@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -351,10 +350,6 @@ public class ChicaMobileServlet extends HttpServlet {
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
 		pw.write("<availableJITs>");
-		
-		String cookieName = "test";
-		Cookie cookie = new Cookie(cookieName, "/openmrs/test");
-		response.addCookie(cookie);
 		
 		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
 		
