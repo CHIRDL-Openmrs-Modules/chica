@@ -19,10 +19,10 @@
 	        <c:when test="${hasErrors eq 'true'}">
 	           <c:choose>
 	               <c:when test="${mrn ne null}">
-	                   <div class="redText"><h2>Error loading form ${formName} for ${mrn}</h2></div>
+	                   <div class="ui-state-error"><h2><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>Error loading form ${formName} for ${mrn}</h2></div>
 	               </c:when>
 	               <c:otherwise>
-	                   <div class="redText"><h2>Error loading form ${formName}</h2></div>
+	                   <div class="ui-state-error"><h2><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>Error loading form ${formName}</h2></div>
 	               </c:otherwise>
 	           </c:choose>
                <c:choose>

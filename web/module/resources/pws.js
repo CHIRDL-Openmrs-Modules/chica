@@ -1,6 +1,7 @@
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#formLoading").hide();
-	$("#formServerError").html("<span>" + error + "</span>");
+	$("#noForms").hide();
+	$("#formServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error occurred locating recommended forms: ' + error + '</span>');
 	$("#formServerError").show();
 }
 
@@ -22,10 +23,6 @@ function parseAvailableJITs(responseXML) {
             var formInstanceId = $(this).find("formInstanceId").text();
             var locationId = $(this).find("locationId").text();
             var locationTagId = $(this).find("locationTagId").text();
-            var description = $(this).find("description").text();
-            if (description == null) {
-            	description = "No description available for this form.";
-            }
             
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
         	var action = "action=getPatientJITs&formInstances=" + formInstance + "#view=fit&navpanes=0";
@@ -36,14 +33,17 @@ function parseAvailableJITs(responseXML) {
             count++;
         });
         
-        formList.html(content);
     	$("#formLoading").hide();
-    	var divHeight = $("#formAccordion").height();
-        var newIframeHeight = (divHeight - (75*count));
-        $("#formAccordion div iframe").css({"height":newIframeHeight});
-        $("#formAccordion").accordion("refresh");
-        $('#formAccordion').show();
-
+    	if (count == 0) {
+        	$("#noForms").show();
+        } else {
+        	formList.html(content);
+        	var divHeight = $("#formAccordion").height();
+            var newIframeHeight = (divHeight - (75*count));
+            $("#formAccordion div iframe").css({"height":newIframeHeight});
+            $("#formAccordion").accordion("refresh");
+            $('#formAccordion').show();
+        }
     }
 }
 
@@ -83,22 +83,10 @@ function processCheckboxes(form1) {
 	outputSelected(form1.sub_Choice6, form1.Choice6);
 }
 
-$(function() {
-	$("button, input:submit, input:button").button();
-	$("#submitButtonTop").button();
-	$("#submitButtonBottom").button();
-	$("#formPrintButton").button();
-	$("#problemButton").button();
-	$("#forcePrintButton").button();
-	
-	$("#formAccordion").accordion({
-	      heightStyle: "content",
-	      collapsible: true,
-	      active : false
-	    });
-	$('#formAccordion').hide();
+function getAvailableJits() {
+	$("#noForms").hide();
 	$("#formServerError").hide();
-	
+	$("#formLoading").show();
 	var encounterId = $("#encounterId").val();
 	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
 	var url = "/openmrs/moduleServlet/chica/chicaMobile";
@@ -114,6 +102,25 @@ $(function() {
           parseAvailableJITs(xml);
       }
 	});
+}
+
+$(function() {
+	$("button, input:submit, input:button").button();
+	$("#submitButtonTop").button();
+	$("#submitButtonBottom").button();
+	$("#formPrintButton").button();
+	$("#problemButton").button();
+	$("#forcePrintButton").button();
+	$("#retryButton").button();
+	
+	$("#formAccordion").accordion({
+	      heightStyle: "content",
+	      collapsible: true,
+	      active : false
+	    });
+	$('#formAccordion').hide();
+	
+	getAvailableJits();
 	
     $("#problemDialog").dialog({
       open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
@@ -190,6 +197,11 @@ $(function() {
 	
 	$("#submitButtonTop").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");
+		event.preventDefault();
+	});
+	
+	$("#retryButton").click(function(event) {
+		getAvailableJits();
 		event.preventDefault();
 	});
 	

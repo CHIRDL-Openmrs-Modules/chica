@@ -24,18 +24,18 @@
                         <h3>CHICA Physician Encounter Form</h3>
                     </div>
                     <div id="mrn">
-                        <h3>${MRN}</h3>
+                        <h3><c:out value="${MRN}"/></h3>
                     </div>
                 </div>
                 <div id="infoLeft">
-                    <b>Patient:</b> ${PatientName}<br/>
-                    <b>DOB:</b> ${DOB} <b>Age:</b> ${Age}<br/>
-                    <b>Doctor:</b> ${Doctor}
+                    <b>Patient:</b> <c:out value="${PatientName}"/><br/>
+                    <b>DOB:</b> <c:out value="${DOB}"/> <b>Age:</b> <c:out value="${Age}"/><br/>
+                    <b>Doctor:</b> <c:out value="${Doctor}"/>
                 </div>
                 <div id="infoRight">
-                    <b>MRN:</b> ${MRN}<br/>
-                    <b>Date:</b> ${VisitDate}<br/>
-                <b>Time:</b> ${VisitTime}</div>
+                    <b>MRN:</b> <c:out value="${MRN}"/><br/>
+                    <b>Date:</b> <c:out value="${VisitDate}"/><br/>
+                <b>Time:</b> <c:out value="${VisitTime}"/></div>
                 <div id="vitals">
                     <div class="flagCell">
                         <b><font style="color:black;">A</font></b>
@@ -47,7 +47,7 @@
                         &nbsp;&nbsp;
                     </div>
                     <div class="flagCell">
-                        <b>${HeightA}</b><br/>
+                        <b><c:out value="${HeightA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Height:<br/>
@@ -58,12 +58,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${Height}&nbsp;${HeightSUnits}&nbsp;(${HeightP}%)
+                                <c:out value="${Height}"/>&nbsp;<c:out value="${HeightSUnits}"/>&nbsp;(<c:out value="${HeightP}"/>%)
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${WeightA}</b><br/>
+                        <b><c:out value="${WeightA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Weight:<br/>
@@ -74,12 +74,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${WeightKG}&nbsp;kg.&nbsp;(${WeightP}%)
+                                <c:out value="${WeightKG}"/>&nbsp;kg.&nbsp;(<c:out value="${WeightP}"/>%)
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${BMIA}</b><br/>
+                        <b><c:out value="${BMIA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         BMI:<br/>
@@ -90,12 +90,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${BMI}&nbsp;(${BMIP}%)
+                                <c:out value="${BMI}"/>&nbsp;(<c:out value="${BMIP}"/>%)
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${HCA}</b><br/>
+                        <b><c:out value="${HCA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Head Circ:<br/>
@@ -106,12 +106,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${HC} cm. (${HCP}%)
+                                <c:out value="${HC}"/> cm. (<c:out value="${HCP}"/>%)
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${TempA}</b><br/>
+                        <b><c:out value="${TempA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Temp:<br/>
@@ -122,12 +122,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${Temperature} F (${Temperature_Method})
+                                <c:out value="${Temperature}"/>&nbsp;F&nbsp;(<c:out value="${Temperature_Method}"/>)
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${PulseA}</b><br/>
+                        <b><c:out value="${PulseA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Pulse:<br/>
@@ -138,12 +138,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${Pulse}
+                                <c:out value="${Pulse}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${RRA}</b><br/>
+                        <b><c:out value="${RRA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         RR:<br/>
@@ -154,12 +154,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${RR}
+                                <c:out value="${RR}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${BPA}</b><br/>
+                        <b><c:out value="${BPA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         BP:<br/>
@@ -170,12 +170,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${BP} (${BPP})
+                                <c:out value="${BP}"/> (<c:out value="${BPP}"/>)
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${PulseOxA}</b><br/>
+                        <b><c:out value="${PulseOxA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Pulse Ox:<br/>
@@ -186,12 +186,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${PulseOx}%
+                                <c:out value="${PulseOx}"/>%
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${HearA}</b><br/>
+                        <b><c:out value="${HearA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Hear (L):<br/>
@@ -202,12 +202,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${HearL}
+                                <c:out value="${HearL}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${HearA}</b><br/>
+                        <b><c:out value="${HearA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Hear (R):<br/>
@@ -218,12 +218,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${HearR}
+                                <c:out value="${HearR}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${VisionLA}</b><br/>
+                        <b><c:out value="${VisionLA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Vision (L):<br/>
@@ -234,12 +234,12 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${VisionL}&nbsp;${VisionL_Corrected}
+                                <c:out value="${VisionL}"/>&nbsp;<c:out value="${VisionL_Corrected}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
                     <div class="flagCell">
-                        <b>${VisionRA}</b><br/>
+                        <b><c:out value="${VisionRA}"/></b><br/>
                     </div>
                     <div class="vitalsNames">
                         Vision (R):<br/>
@@ -250,7 +250,7 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${VisionR}&nbsp;${VisionR_Corrected}
+                                <c:out value="${VisionR}"/>&nbsp;<c:out value="${VisionR_Corrected}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -266,7 +266,7 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${Weight}
+                                <c:out value="${Weight}"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -282,7 +282,7 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                ${PrevWeight}&nbsp;(${PrevWeightDate})
+                                <c:out value="${PrevWeight}"/>&nbsp;(<c:out value="${PrevWeightDate}"/>)
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -310,7 +310,7 @@
                         	Abnl<br/>
                         </div>
                         <div class="examFlag">
-                            ${GeneralExamA}<br/>
+                            <c:out value="${GeneralExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             General:<br/>
@@ -322,7 +322,7 @@
                         	<input type="radio" name="Entry_General" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${HeadExamA}<br/>
+                            <c:out value="${HeadExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Head:<br/>
@@ -334,7 +334,7 @@
                         	<input type="radio" name="Entry_Head" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${SkinExamA}<br/>
+                            <c:out value="${SkinExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Skin:<br/>
@@ -346,7 +346,7 @@
                         	<input type="radio" name="Entry_Skin" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${EyesVisionExamA}<br/>
+                            <c:out value="${EyesVisionExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Eyes:<br/>
@@ -358,7 +358,7 @@
                         	<input type="radio" name="Entry_Eyes" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${EarsHearingExamA}<br/>
+                            <c:out value="${EarsHearingExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Ears:<br/>
@@ -370,7 +370,7 @@
                         	<input type="radio" name="Entry_Ears" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${NoseThroatExamA}<br/>
+                            <c:out value="${NoseThroatExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Nose/Throat:<br/>
@@ -382,7 +382,7 @@
                         	<input type="radio" name="Entry_Nose" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${TeethGumsExamA}<br/>
+                            <c:out value="${TeethGumsExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Teeth/Gums:<br/>
@@ -394,7 +394,7 @@
                         	<input type="radio" name="Entry_Teeth" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${NodesExamA}<br/>
+                            <c:out value="${NodesExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Nodes:<br/>
@@ -406,7 +406,7 @@
                         	<input type="radio" name="Entry_Nodes" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${ChestLungsExamA}<br/>
+                            <c:out value="${ChestLungsExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Chest/Lungs:<br/>
@@ -418,7 +418,7 @@
                         	<input type="radio" name="Entry_Chest" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${HeartPulsesExamA}<br/>
+                            <c:out value="${HeartPulsesExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Heart/Pulses:<br/>
@@ -430,7 +430,7 @@
                         	<input type="radio" name="Entry_Heart" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${AbdomenExamA}<br/>
+                            <c:out value="${AbdomenExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Abdomen:<br/>
@@ -442,7 +442,7 @@
                         	<input type="radio" name="Entry_Abdomen" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${ExtGenitaliaExamA}<br/>
+                            <c:out value="${ExtGenitaliaExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Ext Genitalia:<br/>
@@ -454,7 +454,7 @@
                         	<input type="radio" name="Entry_ExtGenitalia" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${BackExamA}<br/>
+                            <c:out value="${BackExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Back:<br/>
@@ -466,7 +466,7 @@
                         	<input type="radio" name="Entry_Back" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${NeuroExamA}<br/>
+                            <c:out value="${NeuroExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Neuro:<br/>
@@ -478,7 +478,7 @@
                         	<input type="radio" name="Entry_Neuro" value="A"/><br/>
                         </div>
                         <div class="examFlag">
-                            ${ExtremitiesExamA}<br/>
+                            <c:out value="${ExtremitiesExamA}"/><br/>
                         </div>
                         <div class="examNames">
                             Extremities:<br/>
@@ -516,19 +516,19 @@
                         	&nbsp;
                         </div>
                         <div class="examExtraData">
-                        	${Language}
+                        	<c:out value="${Language}"/>
                         </div>
                         <div>
                         	&nbsp;
                         </div>
                         <div class="examExtraData">
-                        	${TobaccoLabel} ${TobaccoAnswer}
+                        	<c:out value="${TobaccoLabel}"/>&nbsp;<c:out value="${TobaccoAnswer}"/>
                         </div>
                         <div class="examExtraData">
-                        	${AlcoholLabel} ${AlcoholAnswer}
+                        	<c:out value="${AlcoholLabel}"/>&nbsp;<c:out value="${AlcoholAnswer}"/>
                         </div>
                         <div class="examExtraData">
-                        	${DrugsLabel} ${DrugsAnswer}
+                        	<c:out value="${DrugsLabel}"/>&nbsp;<c:out value="${DrugsAnswer}"/>
                         </div>
                         <div>
                         	&nbsp;
@@ -541,7 +541,7 @@
                                 <div class="ui-state-highlight examExtraData">
                             </c:otherwise>
                         </c:choose>
-                        	Pain (0-10):${Pain}
+                        	Pain (0-10):<c:out value="${Pain}"/>
                         </div>
                         <c:choose>
                             <c:when test="${Allergy == ' NONE'}"> 
@@ -551,10 +551,10 @@
                                 <div class="ui-state-highlight examExtraData">
                             </c:otherwise>
                         </c:choose>
-                        	Allergies:${Allergy}
+                        	Allergies:<c:out value="${Allergy}"/>
                         </div>
                         <div class="examExtraData">
-                            ${MedicationLabel}
+                            <c:out value="${MedicationLabel}"/>
                         </div>
                   </div>
                 </div>
@@ -585,28 +585,28 @@
 	                    </c:when>
 	                    <c:otherwise>
 	                       <div class="questionStem">
-			                   ${Prompt1_Text}
+			                   <c:out value="${Prompt1_Text}"/>
 			               </div>
 			               <div class="answerContainer">
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="1"/>${Answer1_1}<br/>
+			                       <input type="checkbox" name="sub_Choice1" value="1"/><c:out value="${Answer1_1}"/><br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="3"/>${Answer1_3}<br/>
+			                       <input type="checkbox" name="sub_Choice1" value="3"/><c:out value="${Answer1_3}"/><br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="5"/>${Answer1_5}<br/>
+			                       <input type="checkbox" name="sub_Choice1" value="5"/><c:out value="${Answer1_5}"/><br/>
 			                   </div>
 			               </div>
 			               <div class="answerContainer">
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="2"/>${Answer1_2}<br/>
+			                       <input type="checkbox" name="sub_Choice1" value="2"/><c:out value="${Answer1_2}"/><br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="4"/>${Answer1_4}<br/>
+			                       <input type="checkbox" name="sub_Choice1" value="4"/><c:out value="${Answer1_4}"/><br/>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="6"/>${Answer1_6}<br/>
+			                       <input type="checkbox" name="sub_Choice1" value="6"/><c:out value="${Answer1_6}"/><br/>
 			                   </div>
 			               </div>
 	                    </c:otherwise>
@@ -619,28 +619,28 @@
                         </c:when>
                         <c:otherwise>
                             <div class="questionStem">
-		                        ${Prompt2_Text}
+		                        <c:out value="${Prompt2_Text}"/>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="1"/>${Answer2_1}<br/>
+		                            <input type="checkbox" name="sub_Choice2" value="1"/><c:out value="${Answer2_1}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="3"/>${Answer2_3}<br/>
+		                            <input type="checkbox" name="sub_Choice2" value="3"/><c:out value="${Answer2_3}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="5"/>${Answer2_5}<br/>
+		                            <input type="checkbox" name="sub_Choice2" value="5"/><c:out value="${Answer2_5}"/><br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="2"/>${Answer2_2}<br/>
+		                            <input type="checkbox" name="sub_Choice2" value="2"/><c:out value="${Answer2_2}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="4"/>${Answer2_4}<br/>
+		                            <input type="checkbox" name="sub_Choice2" value="4"/><c:out value="${Answer2_4}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="6"/>${Answer2_6}<br/>
+		                            <input type="checkbox" name="sub_Choice2" value="6"/><c:out value="${Answer2_6}"/><br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -653,28 +653,28 @@
                         </c:when>
                         <c:otherwise>
                             <div class="questionStem">
-		                        ${Prompt3_Text}
+		                        <c:out value="${Prompt3_Text}"/>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="1"/>${Answer3_1}<br/>
+		                            <input type="checkbox" name="sub_Choice3" value="1"/><c:out value="${Answer3_1}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="3"/>${Answer3_3}<br/>
+		                            <input type="checkbox" name="sub_Choice3" value="3"/><c:out value="${Answer3_3}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="5"/>${Answer3_5}<br/>
+		                            <input type="checkbox" name="sub_Choice3" value="5"/><c:out value="${Answer3_5}"/><br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="2"/>${Answer3_2}<br/>
+		                            <input type="checkbox" name="sub_Choice3" value="2"/><c:out value="${Answer3_2}"/> <br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="4"/>${Answer3_4}<br/>
+		                            <input type="checkbox" name="sub_Choice3" value="4"/><c:out value="${Answer3_4}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="6"/>${Answer3_6}<br/>
+		                            <input type="checkbox" name="sub_Choice3" value="6"/><c:out value="${Answer3_6}"/><br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -687,28 +687,28 @@
                         </c:when>
                         <c:otherwise>
                             <div class="questionStem">
-		                        ${Prompt4_Text}
+		                        <c:out value="${Prompt4_Text}"/>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="1"/>${Answer4_1}<br/>
+		                            <input type="checkbox" name="sub_Choice4" value="1"/><c:out value="${Answer4_1}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="3"/>${Answer4_3}<br/>
+		                            <input type="checkbox" name="sub_Choice4" value="3"/><c:out value="${Answer4_3}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="5"/>${Answer4_5}<br/>
+		                            <input type="checkbox" name="sub_Choice4" value="5"/><c:out value="${Answer4_5}"/><br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="2"/>${Answer4_2}<br/>
+		                            <input type="checkbox" name="sub_Choice4" value="2"/><c:out value="${Answer4_2}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="4"/>${Answer4_4}<br/>
+		                            <input type="checkbox" name="sub_Choice4" value="4"/><c:out value="${Answer4_4}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="6"/>${Answer4_6}<br/>
+		                            <input type="checkbox" name="sub_Choice4" value="6"/><c:out value="${Answer4_6}"/><br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -721,28 +721,28 @@
                         </c:when>
                         <c:otherwise>
                             <div class="questionStem">
-		                        ${Prompt5_Text}
+		                       <c:out value="${Prompt5_Text}"/>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="1"/>${Answer5_1}<br/>
+		                            <input type="checkbox" name="sub_Choice5" value="1"/><c:out value="${Answer5_1}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="3"/>${Answer5_3}<br/>
+		                            <input type="checkbox" name="sub_Choice5" value="3"/><c:out value="${Answer5_3}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="5"/>${Answer5_5}<br/>
+		                            <input type="checkbox" name="sub_Choice5" value="5"/><c:out value="${Answer5_5}"/><br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="2"/>${Answer5_2}<br/>
+		                            <input type="checkbox" name="sub_Choice5" value="2"/><c:out value="${Answer5_2}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="4"/>${Answer5_4}<br/>
+		                            <input type="checkbox" name="sub_Choice5" value="4"/><c:out value="${Answer5_4}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="6"/>${Answer5_6}<br/>
+		                            <input type="checkbox" name="sub_Choice5" value="6"/><c:out value="${Answer5_6}"/><br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -755,28 +755,28 @@
                         </c:when>
                         <c:otherwise>
                             <div class="questionStem">
-		                        ${Prompt6_Text}
+		                        <c:out value="${Prompt6_Text}"/>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="1"/>${Answer6_1}<br/>
+		                            <input type="checkbox" name="sub_Choice6" value="1"/><c:out value="${Answer6_1}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="3"/>${Answer6_3}<br/>
+		                            <input type="checkbox" name="sub_Choice6" value="3"/><c:out value="${Answer6_3}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="5"/>${Answer6_5}<br/>
+		                            <input type="checkbox" name="sub_Choice6" value="5"/><c:out value="${Answer6_5}"/><br/>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="2"/>${Answer6_2}<br/>
+		                            <input type="checkbox" name="sub_Choice6" value="2"/><c:out value="${Answer6_2}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="4"/>${Answer6_4}<br/>
+		                            <input type="checkbox" name="sub_Choice6" value="4"/><c:out value="${Answer6_4}"/><br/>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="6"/>${Answer6_6}<br/>
+		                            <input type="checkbox" name="sub_Choice6" value="6"/><c:out value="${Answer6_6}"/><br/>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -788,34 +788,34 @@
                 <div id="problemDialog" title="Problem List" class="ui-dialog-titlebar ui-widget-header">
                     <table id="problemTable">
                         <tr>
-                            <td class="padding5">${diag1}</td>
+                            <td class="padding5"><c:out value="${diag1}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag2}</td>
+                            <td class="padding5"><c:out value="${diag2}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag3}</td>
+                            <td class="padding5"><c:out value="${diag3}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag4}</td>
+                            <td class="padding5"><c:out value="${diag4}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag5}</td>
+                            <td class="padding5"><c:out value="${diag5}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag6}</td>
+                            <td class="padding5"><c:out value="${diag6}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag7}</td>
+                            <td class="padding5"><c:out value="${diag7}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag8}</td>
+                            <td class="padding5"><c:out value="${diag8}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag9}</td>
+                            <td class="padding5"><c:out value="${diag9}"/></td>
                         </tr>
                         <tr>
-                            <td class="padding5">${diag10}</td>
+                            <td class="padding5"><c:out value="${diag10}"/></td>
                         </tr>
                     </table>
                 </div>
@@ -823,50 +823,50 @@
                     <table id="medTable">
                         <c:if test="${not empty Med1_A || not empty Med1_B }">
 	                        <tr class="trAlignLeft">
-	                            <td class="tdBorderTop">${Med1_A}</td>
+	                            <td class="tdBorderTop"><c:out value="${Med1_A}"/></td>
 	                        </tr>
 	                        <tr class="trAlignLeft">
-	                            <td>${Med1_B}</td>
+	                            <td><c:out value="${Med1_B}"/></td>
 	                        </tr>
                         </c:if>
                         <c:if test="${not empty Med2_A || not empty Med2_B }">
 	                        <tr class="trAlignLeft">
-	                            <td class="tdBorderTop">${Med2_A}</td>
+	                            <td class="tdBorderTop"><c:out value="${Med2_A}}"/></td>
 	                        </tr>
 	                        <tr class="trAlignLeft">
-	                            <td>${Med2_B}</td>
+	                            <td><c:out value="${Med2_B}"/></td>
 	                        </tr>
                         </c:if>
                         <c:if test="${not empty Med3_A || not empty Med3_B }">
 	                        <tr class="trAlignLeft">
-	                            <td class="tdBorderTop">${Med3_A}</td>
+	                            <td class="tdBorderTop"><c:out value="${Med3_A}"/></td>
 	                        </tr>
 	                        <tr class="trAlignLeft">
-	                            <td>${Med3_B}</td>
+	                            <td><c:out value="${Med3_B}"/></td>
 	                        </tr>
                         </c:if>
                         <c:if test="${not empty Med4_A || not empty Med4_B }">
 	                        <tr class="trAlignLeft">
-	                            <td class="tdBorderTop">${Med4_A}</td>
+	                            <td class="tdBorderTop"><c:out value="${Med4_A}"/></td>
 	                        </tr>
 	                        <tr class="trAlignLeft">
-	                            <td>${Med4_B}</td>
+	                            <td><c:out value="${Med4_B}"/></td>
 	                        </tr>
                         </c:if>
                         <c:if test="${not empty Med5_A || not empty Med5_B }">
 	                        <tr class="trAlignLeft">
-	                            <td class="tdBorderTop">${Med5_A}</td>
+	                            <td class="tdBorderTop"><c:out value="${Med5_A}"/></td>
 	                        </tr>
 	                        <tr class="trAlignLeft">
-	                            <td>${Med5_B}</td>
+	                            <td><c:out value="${Med5_B}"/></td>
 	                        </tr>
                         </c:if>
                         <c:if test="${not empty Med6_A || not empty Med6_B }">
 	                        <tr class="trAlignLeft">
-	                            <td class="tdBorderTop">${Med6_A}</td>
+	                            <td class="tdBorderTop"><c:out value="${Med6_A}"/></td>
 	                        </tr>
 	                        <tr class="trAlignLeft">
-	                            <td>${Med6_B}</td>
+	                            <td><c:out value="${Med6_B}"/></td>
 	                        </tr>
                         </c:if>
                     </table>
@@ -890,6 +890,11 @@
                        <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
                     </div>
                     <div id="formServerError">
+                        <div id="formServerErrorText" class="ui-state-error"></div>
+                        <br/><br/><a href="#" id="retryButton" class="icon-button ui-state-default ui-corner-all">Retry</a>
+                    </div>
+                    <div id="noForms">
+                        There are no recommended forms for ${PatientName}.
                     </div>
 	                <div id="formAccordion">
 	                </div>

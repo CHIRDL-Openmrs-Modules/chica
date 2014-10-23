@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -350,6 +352,10 @@ public class ChicaMobileServlet extends HttpServlet {
 		PrintWriter pw = response.getWriter();
 		pw.write("<availableJITs>");
 		
+		String cookieName = "test";
+		Cookie cookie = new Cookie(cookieName, "/openmrs/test");
+		response.addCookie(cookie);
+		
 		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
 		
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
@@ -361,6 +367,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			return;
 		}
 		
+		Map<String, FormInstanceTag> formInfoMap = new HashMap<String, FormInstanceTag>();
 		List<PatientState> patientStates = 
 				backportsService.getPatientStateByEncounterState(encounterId, createState.getStateId());
 		for (PatientState patientState : patientStates) {
@@ -428,18 +435,26 @@ public class ChicaMobileServlet extends HttpServlet {
 				formName = form.getName();
 			}
 			
-			pw.write("<availableJIT>");
-			pw.write("<formName>" + formName + "</formName>");
-			pw.write("<formId>" + formId + "</formId>");
-			pw.write("<formInstanceId>" + formInstanceId + "</formInstanceId>");
-			pw.write("<locationId>" + locationId + "</locationId>");
-			pw.write("<locationTagId>" + locationTagId + "</locationTagId>");
-			String desc = form.getDescription();
-			if (desc != null && desc.trim().length() > 0) {
-				pw.write("<description>" + desc + "</description>");
-			}
+			FormInstanceTag tag = new FormInstanceTag(locationId, formId, formInstanceId, locationTagId);
+			formInfoMap.put(formName, tag);
+		}
+		
+		// Sort the form names and write them to the print writer.
+		if (!formInfoMap.isEmpty()) {
+			Set<String> formNameSet = formInfoMap.keySet();
+			List<String> formNameList = new ArrayList<String>(formNameSet);
+			Collections.sort(formNameList);
 			
-			pw.write("</availableJIT>");
+			for (String formName : formNameList) {
+				FormInstanceTag tag = formInfoMap.get(formName);
+				pw.write("<availableJIT>");
+				pw.write("<formName>" + formName + "</formName>");
+				pw.write("<formId>" + tag.getFormId() + "</formId>");
+				pw.write("<formInstanceId>" + tag.getFormInstanceId() + "</formInstanceId>");
+				pw.write("<locationId>" + tag.getLocationId() + "</locationId>");
+				pw.write("<locationTagId>" + tag.getLocationTagId() + "</locationTagId>");
+				pw.write("</availableJIT>");
+			}
 		}
 		
 		pw.write("</availableJITs>");
