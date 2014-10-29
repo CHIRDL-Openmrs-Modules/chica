@@ -2,7 +2,6 @@ var formId;
 var formInstanceId;
 var encounterId;
 var english = false;
-var finishAttempts = 0;
 var loadedForms = [];
 
 $(document).on("pagebeforeshow", "#confirm_page", function() {
@@ -292,7 +291,6 @@ function loadQuestions() {
 }
 
 function loadDynamicQuestions() {
-  finishAttempts = 0;
   var url = "/openmrs/moduleServlet/chica/chicaMobile";
   var action = "action=getPrioritizedElements&formId=" + formId + "&formInstanceId=" + formInstanceId + "&encounterId=" + 
   	encounterId + "&maxElements=5";
@@ -429,13 +427,14 @@ function parseQuestionsResult(responseXML) {
 	            var value = $(this).find("Value").text();
 	            var questionNumber = getQuestionNumber(fieldName);
 	            var spanishIndex = fieldName.indexOf("_SP");
+	            var isSpanish = false;
 	            
 	            if (spanishIndex < 0) {
 		            if (count !== 0) {
 		            	content = content + "<br/>";
 		            }
 		            
-		            var questions = createQuestionData(value, questionNumber, "", "Yes");
+		            var questions = createQuestionData(value, questionNumber, "", "Yes", isSpanish);
 		            content = content + questions;
 		            count++;
 	            } else {
@@ -443,7 +442,8 @@ function parseQuestionsResult(responseXML) {
 	            		spanishContent = spanishContent + "<br/>";
 		            }
 	            	
-	            	var questionsSp = createQuestionData(value, questionNumber, "_2", "Si");
+	            	isSpanish = true;
+	            	var questionsSp = createQuestionData(value, questionNumber, "_2", "Si", isSpanish);
 	            	spanishContent = spanishContent + questionsSp;
 	            	spanishCount++;
 	            }
@@ -534,9 +534,14 @@ function parseSaveQuestionsResult(responseXML) {
     }
 }
 
-function createQuestionData(value, questionNumber, spanishText, yesButtonName) {
+function createQuestionData(value, questionNumber, spanishText, yesButtonName, isSpanish) {
 	var content = "";
-	content = content + '<strong>' + value + '</strong><a data-role="button" data-inline="true" class="custom-button" onclick=\'readText("' + value + '")\'></a>';
+	if (isSpanish) {
+		content = content + '<strong>' + value + '</strong><a data-role="button" data-inline="true" class="custom-button" onclick=\'readTextSpanish("' + value + '")\'></a>';
+	} else {
+		content = content + '<strong>' + value + '</strong><a data-role="button" data-inline="true" class="custom-button" onclick=\'readText("' + value + '")\'></a>';
+	}
+	
     content = content + '<div data-role="fieldcontain" style="margin-top:0px;">';
     content = content + '<fieldset data-role="controlgroup" data-type="horizontal">';
     content = content + '<input type="radio" name="QuestionEntry_' + questionNumber + spanishText + '" id="QuestionEntry_' + questionNumber + spanishText + '_Yes" value="Y" data-theme="c" />';
@@ -1076,16 +1081,9 @@ function saveSendToVitals() {
 }
 
 function attemptSaveQuestions() {
-	finishAttempts++;
 	if (areAllQuestionsAnswered()) {
 		saveDynamicQuestions(true);
-	} else if (finishAttempts == 1) {
-    	if (english) {
-    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
-    	}
-	} else if (finishAttempts >= 2) {
+	} else {
 		if (english) {
     	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
     	} else {
