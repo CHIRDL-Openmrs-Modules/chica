@@ -427,13 +427,14 @@ function parseQuestionsResult(responseXML) {
 	            var value = $(this).find("Value").text();
 	            var questionNumber = getQuestionNumber(fieldName);
 	            var spanishIndex = fieldName.indexOf("_SP");
+	            var isSpanish = false;
 	            
 	            if (spanishIndex < 0) {
 		            if (count !== 0) {
 		            	content = content + "<br/>";
 		            }
 		            
-		            var questions = createQuestionData(value, questionNumber, "", "Yes");
+		            var questions = createQuestionData(value, questionNumber, "", "Yes", isSpanish);
 		            content = content + questions;
 		            count++;
 	            } else {
@@ -441,7 +442,8 @@ function parseQuestionsResult(responseXML) {
 	            		spanishContent = spanishContent + "<br/>";
 		            }
 	            	
-	            	var questionsSp = createQuestionData(value, questionNumber, "_2", "Si");
+	            	isSpanish = true;
+	            	var questionsSp = createQuestionData(value, questionNumber, "_2", "Si", isSpanish);
 	            	spanishContent = spanishContent + questionsSp;
 	            	spanishCount++;
 	            }
@@ -532,9 +534,14 @@ function parseSaveQuestionsResult(responseXML) {
     }
 }
 
-function createQuestionData(value, questionNumber, spanishText, yesButtonName) {
+function createQuestionData(value, questionNumber, spanishText, yesButtonName, isSpanish) {
 	var content = "";
-	content = content + '<strong>' + value + '</strong><a data-role="button" data-inline="true" class="custom-button" onclick=\'readText("' + value + '")\'></a>';
+	if (isSpanish) {
+		content = content + '<strong>' + value + '</strong><a data-role="button" data-inline="true" class="custom-button" onclick=\'readTextSpanish("' + value + '")\'></a>';
+	} else {
+		content = content + '<strong>' + value + '</strong><a data-role="button" data-inline="true" class="custom-button" onclick=\'readText("' + value + '")\'></a>';
+	}
+	
     content = content + '<div data-role="fieldcontain" style="margin-top:0px;">';
     content = content + '<fieldset data-role="controlgroup" data-type="horizontal">';
     content = content + '<input type="radio" name="QuestionEntry_' + questionNumber + spanishText + '" id="QuestionEntry_' + questionNumber + spanishText + '_Yes" value="Y" data-theme="c" />';
