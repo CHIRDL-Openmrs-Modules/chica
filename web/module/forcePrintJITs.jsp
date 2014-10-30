@@ -1,49 +1,36 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html  xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<link
-	href="${pageContext.request.contextPath}/moduleResources/chica/chica.css"
-	type="text/css" rel="stylesheet" />
-<script type="text/javascript">
-<!-- borrowed from http://dadabase.de/dev/window_resizer.html -->
-function setSize(width,height) {
-	if (window.outerWidth) {
-		window.outerWidth = width;
-		window.outerHeight = height;
-	}
-	else if (window.resizeTo) {
-		window.resizeTo(width,height);
-	}
-	window.moveTo(50,50);
-}
-</script>		
+<link href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
+	
+<title>Force Print Handouts</title>	
 </head>
-<body  style="scrollbars:no"onload="javascript:setSize(800,475); <c:if test="${!empty checkinPatient}"> javascript:useConfirmationForm();</c:if>" onkeydown="if (event.keyCode==8) {event.keyCode=0; return event.keyCode }">
-
-<form height="100%" name="input" method="post">
-<p>Please choose the form you would like to print for: <b>${patientName}</b></p>
-
-<table>
-<tr>
-<td><select name="options"">
-<c:if test="${isASQInterventionLocation}">
-<option>ASQ</option>
-<option>ASQ Activity Sheet</option>
-</c:if>
-<c:forEach items="${printableJits}" var="printableJit">
-<option value="${printableJit.formId}">${printableJit.displayName}</option>
-</c:forEach>
-</select></td>
-<td><input type="submit" value="OK" tabindex="2"/></td>
-<td><input type="button" value="Cancel" onclick='window.close()' tabindex="3"/></td>
-</tr>
-</table>
-<input type="hidden" value="${patientId}" name="patientId" />
-<input type="hidden" value="${sessionId}" name="sessionId" />
-</form>
- <p><b><c:out value="${resultMessage}"/></b></p>
+<body>
+	<form>
+		 <div id="formsLoading">
+             <span id="formsLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
+         </div>
+         <div id="formsServerError">
+             <div id="formsServerErrorText" class="ui-state-error"></div>
+             <br/><br/><a href="#" id="retryButton" class="icon-button ui-state-default ui-corner-all">Retry</a>
+         </div>
+         <div id="formsContainer">
+             <fieldset>
+                 <label for="forms">Select a form</label>
+                 <select name="forms" id="forms"></select>
+             </fieldset>
+         </div>
+         <input type="hidden" value="${patientId}" id="patientId" />
+         <input type="hidden" value="${sessionId}" id="sessionId" />
+         <input type="hidden" value="${locationId}" id="locationId" />
+         <input type="hidden" value="${locationTagId}" id="locationTagId" />
+	</form>
 </body>
 </page>

@@ -7,11 +7,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,10 +23,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.User;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.ChicaParameterHandler;
@@ -46,6 +58,11 @@ import com.itextpdf.text.pdf.PdfCopyFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
+/**
+ * Servlet giving access to CHICA information
+ *
+ * @author Steve McKee
+ */
 public class ChicaMobileServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -61,6 +78,9 @@ public class ChicaMobileServlet extends HttpServlet {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
+	/**
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		boolean authenticated = authenticateUser(request);
 		if (!authenticated) {
@@ -87,9 +107,16 @@ public class ChicaMobileServlet extends HttpServlet {
 			getPatientJITs(request, response);
 		} else if ("getAvailablePatientJITs".equals(action)) {
 			getAvailablePatientJITs(request, response);
+		} else if ("getForcePrintForms".equals(action)) {
+			getForcePrintForms(request, response);
+		} else if ("forcePrintForm".equals(action)) {
+			forcePrintForm(request, response);
 		}
 	}
 	
+	/**
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
@@ -578,5 +605,284 @@ public class ChicaMobileServlet extends HttpServlet {
 		// close the stamper
 		stamper.close();
 		return baos.toByteArray();
+	}
+	
+	private void getForcePrintForms(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.write("<forcePrintJITs>");
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		PatientService patientService = Context.getPatientService();
+		String patientIdString = request.getParameter("patientId");
+		Integer patientId = null;
+		try {
+			patientId = Integer.parseInt(patientIdString);
+		}
+		catch (Exception e) {
+			String message = "Invalid patientId parameter provided: " + patientIdString;
+			log.error(message);
+			throw new IllegalArgumentException(message);
+		}
+		
+		String sessionIdString = request.getParameter("sessionId");
+		Integer sessionId = null;
+		if (sessionIdString != null && sessionIdString.trim().length() > 0) {
+			try {
+				sessionId = Integer.parseInt(sessionIdString);
+			}
+			catch (Exception e) {
+				String message = "Invalid sessionId parameter provided: " + sessionIdString;
+				log.error(message);
+				throw new IllegalArgumentException(message);
+			}
+		} else {
+			EncounterService encounterService = Context.getEncounterService();
+			List<org.openmrs.Encounter> list = encounterService.getEncountersByPatientId(patientId);
+			if (list != null && list.size() > 0) {
+				Encounter encounter = list.get(0);
+				ChirdlUtilBackportsService chirdlUtilBackportsService = Context
+				        .getService(ChirdlUtilBackportsService.class);
+				State checkinState = chirdlUtilBackportsService.getStateByName("CHECKIN");
+				Integer encounterId = encounter.getEncounterId();
+				List<PatientState> checkinStates = chirdlUtilBackportsService.getPatientStateByEncounterState(
+				    encounterId, checkinState.getStateId());
+				if (checkinStates != null && checkinStates.size() > 0) {
+					PatientState patientState = checkinStates.get(0);
+					sessionId = patientState.getSessionId();
+				}
+			}
+		}
+		
+		if (sessionId == null) {
+			String message = "Could not find a valid sessionId for patient: " + patientIdString;
+			log.error(message);
+			throw new IllegalArgumentException(message);
+		}
+		
+		
+		User user = Context.getUserContext().getAuthenticatedUser();
+		Location location = null;
+		String locationString = request.getParameter("locationId");
+		LocationService locationService = Context.getLocationService();
+		if (locationString == null || locationString.trim().length() == 0) {
+			locationString = user.getUserProperty("location");
+			location = locationService.getLocation(locationString);
+		} else {
+			try {
+				Integer locationId = Integer.parseInt(locationString);
+				location = locationService.getLocation(locationId);
+			} catch (NumberFormatException e) {
+				String message = "Invalid locationId parameter: " + locationString;
+				log.error(message);
+				throw new IllegalArgumentException(message);
+			}
+		}
+		
+		String locationTags = request.getParameter("locationTagId");
+		Integer locationId = null;
+		Integer locationTagId = null;
+		if (location != null) {
+			locationId = location.getLocationId();
+			if (locationTags != null && locationTags.trim().length() > 0) {
+				try {
+					locationTagId = Integer.parseInt(locationTags);
+				} catch (NumberFormatException e) {
+					String message = "Invalid locationTagId parameter: " + locationTags;
+					log.error(message);
+					throw new IllegalArgumentException(message);
+				}
+			} else {
+				locationTags = user.getUserProperty("locationTags");
+				if (locationTags != null) {
+					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+					while (tokenizer.hasMoreTokens()) {
+						String locationTagName = tokenizer.nextToken();
+						locationTagName = locationTagName.trim();
+						Set<LocationTag> tags = location.getTags();
+						for (LocationTag tag : tags) {
+							if (tag.getName().equalsIgnoreCase(locationTagName)) {
+								locationTagId = tag.getLocationTagId();
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		Patient patient = patientService.getPatient(patientId);
+		FormService formService = Context.getFormService();
+		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributesByName("forcePrintable");
+		Map<String, Integer> ageUnitsMinMap = new HashMap<String, Integer>();
+		Map<String, Integer> ageUnitsMaxMap = new HashMap<String, Integer>();
+		Set<FormDisplay> printableJits = new TreeSet<FormDisplay>();
+		for (FormAttributeValue attribute : attributes) {
+			if (attribute.getValue().equalsIgnoreCase("true") && attribute.getLocationId().equals(locationId) && 
+					attribute.getLocationTagId().equals(locationTagId)) {
+				Form form = formService.getForm(attribute.getFormId());
+				if (!form.getRetired()) {
+					FormDisplay formDisplay = new FormDisplay();
+					formDisplay.setFormName(form.getName());
+					formDisplay.setFormId(form.getFormId());
+					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
+						"displayName", locationTagId, locationId);
+					if (attributeValue == null || attributeValue.getValue() == null) {
+						formDisplay.setDisplayName(form.getName());
+					} else {
+						formDisplay.setDisplayName(attributeValue.getValue());
+					}
+					
+					FormAttributeValue ageMin = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
+						"ageMin", locationTagId, locationId);
+					FormAttributeValue ageMinUnits = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
+						"ageMinUnits", locationTagId, locationId);
+					FormAttributeValue ageMax = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "ageMax",
+						locationTagId, locationId);
+					FormAttributeValue ageMaxUnits = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
+						"ageMaxUnits", locationTagId, locationId);
+
+					if(ageMin!=null && ageMin.getValue()!=null && ageMinUnits!=null && ageMinUnits.getValue()!=null &&
+							ageMax!=null && ageMax.getValue()!=null && ageMaxUnits!=null && ageMaxUnits.getValue()!=null){
+						Integer nowAgeWithMinUnits = ageUnitsMinMap.get(ageMinUnits.getValue());
+						if (nowAgeWithMinUnits == null) {
+							nowAgeWithMinUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
+								ageMinUnits.getValue());
+							ageUnitsMinMap.put(ageMinUnits.getValue(), nowAgeWithMinUnits);
+						}
+						
+						Integer nowAgeWithMaxUnits = ageUnitsMaxMap.get(ageMaxUnits.getValue());
+						if (nowAgeWithMaxUnits == null) {
+							nowAgeWithMaxUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
+								ageMaxUnits.getValue());
+							ageUnitsMaxMap.put(ageMaxUnits.getValue(), nowAgeWithMaxUnits);
+						}
+						
+						try{
+
+							if(nowAgeWithMinUnits.intValue()<Integer.parseInt(ageMin.getValue())){
+								continue;
+							}
+							if(nowAgeWithMaxUnits.intValue()>= Integer.parseInt(ageMax.getValue())){
+								continue;
+							}
+						}
+						catch(NumberFormatException e){
+							continue;
+						}
+					}
+
+					printableJits.add(formDisplay);
+				}
+			}
+		}
+		
+		for (FormDisplay formDisplay: printableJits) {
+			pw.write("<forcePrintJIT>");
+			pw.write("<formId>" + formDisplay.getFormId() + "</formId>");
+			pw.write("<displayName>" + formDisplay.getDisplayName() + "</displayName>");
+			pw.write("</forcePrintJIT>");
+		}
+		
+		ageUnitsMinMap.clear();
+		ageUnitsMaxMap.clear();
+		
+		pw.write("</forcePrintJITs>");
+	}
+	
+	private void forcePrintForm(HttpServletRequest request, HttpServletResponse response) {
+		String optionsString = request.getParameter("options");
+
+		String patientIdString = request.getParameter("patientId");
+		Integer patientId = null;
+		try {
+			if (patientIdString != null) {
+				patientId = Integer.parseInt(patientIdString);
+			}
+		}
+		catch (Exception e) {}
+		String sessionIdString = request.getParameter("sessionId");
+		Integer sessionId = null;
+		try {
+			if (sessionIdString != null) {
+				sessionId = Integer.parseInt(sessionIdString);
+			}
+		}
+		catch (Exception e) {}
+		
+		LogicService logicService = Context.getLogicService();
+		
+		//print the form
+		User user = Context.getUserContext().getAuthenticatedUser();
+		String locationString = user.getUserProperty("location");
+		String locationTags = user.getUserProperty("locationTags");
+		LocationService locationService = Context.getLocationService();
+		
+		Integer locationId = null;
+		Location location = null;
+		Integer locationTagId = null;
+		if (locationString != null) {
+			location = locationService.getLocation(locationString);
+			if (location != null) {
+				locationId = location.getLocationId();
+				
+				if (locationTags != null) {
+					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+					while (tokenizer.hasMoreTokens()) {
+						String locationTagName = tokenizer.nextToken();
+						locationTagName = locationTagName.trim();
+						Set<LocationTag> tags = location.getTags();
+						for (LocationTag tag : tags) {
+							if (tag.getName().equalsIgnoreCase(locationTagName)) {
+								locationTagId = tag.getLocationTagId();
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormService formService = Context.getFormService();
+		
+		parameters = new HashMap<String, Object>();
+		parameters.put("sessionId", sessionId);
+		parameters.put("locationTagId", locationTagId);
+		FormInstance formInstance = new FormInstance();
+		formInstance.setLocationId(locationId);
+		parameters.put("formInstance", formInstance);
+		String formName = null;
+		Form form = null;
+
+		// print the form
+		String formIdString = optionsString;
+		Integer formId = null;
+		try {
+			if (formIdString != null) {
+				formId = Integer.parseInt(formIdString);
+			}
+		} catch (Exception e) {
+		}
+		form = formService.getForm(formId);
+		formName = form.getName();
+		parameters.put("param1", formName);
+		parameters.put("param2", "forcePrint");
+		logicService.eval(patientId, "CREATE_JIT", parameters);
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("patientId", patientId);
+		map.put("sessionId", sessionId);
+		if (form != null) {
+			FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "displayName",
+			    locationTagId, locationId);
+			if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
+				formName = attributeValue.getValue();
+			}
+		}
+		
+		String resultMessage = formName + " successfully sent to the printer.";
+		map.put("resultMessage", resultMessage);
 	}
 }

@@ -2,6 +2,7 @@
 <%
     pageContext.setAttribute("redirect", session.getAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR));
 %>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
