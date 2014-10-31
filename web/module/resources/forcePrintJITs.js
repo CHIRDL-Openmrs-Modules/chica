@@ -1,30 +1,50 @@
 $(document).ready(function () {
-	setSize(800, 475);
+	$(window).resize(function() {
+		// Update the iframe height
+		$("#formFrame").height($(window).height() - 200);
+	});
 	
+	setSize();
+
+	$("#createButton").button({ disabled: true });
+	$("#closeButton").button();
+	$("#retryCloseButton").button();
 	$("#retryButton").button();
 	$("#retryButton").click(function(event) {
-		loadForms()
+		loadForms();
+		event.preventDefault();
+	});
+	
+	$("#retryCloseButton").click(function(event) {
+		loadForms();
+		event.preventDefault();
+	});
+	
+	$("#closeButton").click(function(event) {
+		window.close();
+		event.preventDefault();
+	});
+	
+	$("#createButton").click(function(event) {
+		loadForm();
 		event.preventDefault();
 	});
 	
 	loadForms();
 });
 
-function setSize(width,height) {
-	if (window.outerWidth) {
-		window.outerWidth = width;
-		window.outerHeight = height;
-	}
-	else if (window.resizeTo) {
-		window.resizeTo(width,height);
-	}
-	window.moveTo(50,50);
+function setSize() {
+	window.resizeTo($(window).width() * 0.95,$(window).height() * 0.95);
 }
 
 function loadForms() {
 	$("#formsServerError").hide();
 	$("#formsContainer").hide();
+	$("#frameContainer").hide();
+	$("#frameLoading").hide();
+	$("#frameError").hide();
 	$("#formsLoading").show();
+	$("#buttonPanel").show();
 	
 	var patientId = $("#patientId").val();
 	var sessionId = $("#sessionId").val();
@@ -40,20 +60,21 @@ function loadForms() {
 	  "type": "POST",
 	  "url": url,
 	  "timeout": 30000, // optional if you want to handle timeouts (which you should)
-	  "error": handleGetForcePrintFormsError, // this sets up jQuery to give me errors
+	  "error": handleGetAvailableFormsError, // this sets up jQuery to give me errors
 	  "success": function (xml) {
-          parseForcePrintForms(xml);
+		  parseAvailableForms(xml);
       }
 	});
 }
 
-function handleGetForcePrintFormsError(xhr, textStatus, error) {
+function handleGetAvailableFormsError(xhr, textStatus, error) {
 	$("#formsLoading").hide();
+	$("#buttonPanel").hide();
 	$("#formsServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error loading forms: ' + error + '</span>');
 	$("#formsServerError").show();
 }
 
-function parseForcePrintForms(responseXML) {
+function parseAvailableForms(responseXML) {
 	// no matches returned
     if (responseXML === null) {
     	$("#formsLoading").hide();
@@ -72,5 +93,32 @@ function parseForcePrintForms(responseXML) {
     	$("select#forms").append(options.join("")).selectmenu().selectmenu("menuWidget").addClass("overflow");
     	$("#formsLoading").hide();
     	$("#formsContainer").show();
+    	
+    	if (options.length > 0) {
+    		$("#createButton").button("option", "disabled", false);
+    	}
     }
+}
+
+function loadForm() {
+	$("#frameContainer").hide();
+	$("#frameLoading").show();
+	
+	var patientId = $("#patientId").val();
+	var sessionId = $("#sessionId").val();
+	var locationId = $("#locationId").val();
+	var locationTagId = $("#locationTagId").val();
+	var formId = $("#forms").val();
+	var randomNumber = Math.floor((Math.random() * 10000) + 1); 
+	var action = "action=forcePrintForm&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
+		locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
+		"#view=fit&navpanes=0";
+	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
+	
+	$('#formFrame').load(function(){
+		$("#frameLoading").hide();
+		$("#frameContainer").show();
+	});
+	
+	$('#formFrame').attr("src", url + action);
 }

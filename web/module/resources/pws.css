@@ -11,24 +11,6 @@ iframe {
 	padding: 0;
 }
 
-/*input[type="button"], input[type="submit"] {
-    width:100px;
-    right:20px;
-    bottom:20px;
-    background:#75A3A3;
-    color:#fff;
-    height:30px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1p solid #999;
-}*/
-
-/*#problemButton:hover, #medButton:hover, #okSubmitButton:hover, #cancelSubmitButton:hover, #submitButtonTop:hover, #submitButtonBottom:hover, #formPrintButton:hover, #printButton:hover, #selectAllButton:hover, #unselectAllButton:hover {
-    background:#848484;
-    color:#fff;
-}*/
-
 #formContainer {
     width:800px;
     height:1010px;

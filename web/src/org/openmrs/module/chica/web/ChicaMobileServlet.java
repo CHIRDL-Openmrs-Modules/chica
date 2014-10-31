@@ -36,6 +36,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.logic.LogicService;
+import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.ChicaParameterHandler;
@@ -484,6 +485,11 @@ public class ChicaMobileServlet extends HttpServlet {
 	
 	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String formInstances = request.getParameter("formInstances");
+		locatePatientJITs(response, formInstances);
+	}
+	
+	private void locatePatientJITs(HttpServletResponse response, String formInstances) 
+			throws IOException {
 		if (formInstances == null) {
 			return;
 		}
@@ -790,42 +796,71 @@ public class ChicaMobileServlet extends HttpServlet {
 		pw.write("</forcePrintJITs>");
 	}
 	
-	private void forcePrintForm(HttpServletRequest request, HttpServletResponse response) {
-		String optionsString = request.getParameter("options");
-
+	private void forcePrintForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String patientIdString = request.getParameter("patientId");
+		String formIdString = request.getParameter("formId");
+		String sessionIdString = request.getParameter("sessionId");
+
 		Integer patientId = null;
 		try {
 			if (patientIdString != null) {
 				patientId = Integer.parseInt(patientIdString);
 			}
 		}
-		catch (Exception e) {}
-		String sessionIdString = request.getParameter("sessionId");
+		catch (Exception e) {
+			String message = "Invalid patientId parameter provided: " + patientIdString;
+			log.error(message);
+			throw new IllegalArgumentException(message);
+		}
+		
 		Integer sessionId = null;
 		try {
 			if (sessionIdString != null) {
 				sessionId = Integer.parseInt(sessionIdString);
 			}
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+			String message = "Invalid sessionId parameter provided: " + sessionIdString;
+			log.error(message);
+			throw new IllegalArgumentException(message);
+		}
 		
 		LogicService logicService = Context.getLogicService();
 		
 		//print the form
 		User user = Context.getUserContext().getAuthenticatedUser();
-		String locationString = user.getUserProperty("location");
-		String locationTags = user.getUserProperty("locationTags");
-		LocationService locationService = Context.getLocationService();
-		
-		Integer locationId = null;
 		Location location = null;
-		Integer locationTagId = null;
-		if (locationString != null) {
+		String locationString = request.getParameter("locationId");
+		LocationService locationService = Context.getLocationService();
+		if (locationString == null || locationString.trim().length() == 0) {
+			locationString = user.getUserProperty("location");
 			location = locationService.getLocation(locationString);
-			if (location != null) {
-				locationId = location.getLocationId();
-				
+		} else {
+			try {
+				Integer locationId = Integer.parseInt(locationString);
+				location = locationService.getLocation(locationId);
+			} catch (NumberFormatException e) {
+				String message = "Invalid locationId parameter: " + locationString;
+				log.error(message);
+				throw new IllegalArgumentException(message);
+			}
+		}
+		
+		String locationTags = request.getParameter("locationTagId");
+		Integer locationId = null;
+		Integer locationTagId = null;
+		if (location != null) {
+			locationId = location.getLocationId();
+			if (locationTags != null && locationTags.trim().length() > 0) {
+				try {
+					locationTagId = Integer.parseInt(locationTags);
+				} catch (NumberFormatException e) {
+					String message = "Invalid locationTagId parameter: " + locationTags;
+					log.error(message);
+					throw new IllegalArgumentException(message);
+				}
+			} else {
+				locationTags = user.getUserProperty("locationTags");
 				if (locationTags != null) {
 					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
 					while (tokenizer.hasMoreTokens()) {
@@ -839,7 +874,6 @@ public class ChicaMobileServlet extends HttpServlet {
 						}
 					}
 				}
-				
 			}
 		}
 		
@@ -857,32 +891,49 @@ public class ChicaMobileServlet extends HttpServlet {
 		Form form = null;
 
 		// print the form
-		String formIdString = optionsString;
 		Integer formId = null;
 		try {
 			if (formIdString != null) {
 				formId = Integer.parseInt(formIdString);
 			}
 		} catch (Exception e) {
+			String message = "Invalid formId parameter: " + formIdString;
+			log.error(message);
+			throw new IllegalArgumentException(message);
 		}
+		
 		form = formService.getForm(formId);
+		if (form == null) {
+			String message = "No form found for formId: " + formIdString;
+			log.error(message);
+			throw new IllegalArgumentException(message);
+		}
+		
 		formName = form.getName();
 		parameters.put("param1", formName);
 		parameters.put("param2", "forcePrint");
-		logicService.eval(patientId, "CREATE_JIT", parameters);
+		Result result = logicService.eval(patientId, "CREATE_JIT", parameters);
 		Map<String, Object> map = new HashMap<String, Object>();
-
-		map.put("patientId", patientId);
-		map.put("sessionId", sessionId);
-		if (form != null) {
+		
+		// Check the output type
+		FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
+			formId, "outputType", locationTagId, locationId);
+		if (fav != null && fav.getValue() != null && fav.getValue().contains("pdf")) {
+			String formInstanceTag = result.toString();
+			locatePatientJITs(response, formInstanceTag);
+		} else if (fav != null && fav.getValue() != null && fav.getValue().contains("teleformXML")) {
+			response.setContentType("text/xml");
+			response.setHeader("Cache-Control", "no-cache");
+			PrintWriter pw = response.getWriter();
 			FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "displayName",
 			    locationTagId, locationId);
 			if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
 				formName = attributeValue.getValue();
 			}
+			
+			String resultMessage = formName + " successfully sent to the printer.";
+			map.put("resultMessage", resultMessage);
+			pw.write("<span>" + resultMessage + "</span>");
 		}
-		
-		String resultMessage = formName + " successfully sent to the printer.";
-		map.put("resultMessage", resultMessage);
 	}
 }
