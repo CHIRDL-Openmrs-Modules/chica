@@ -846,31 +846,35 @@ public class ChicaMobileServlet extends HttpServlet {
 			}
 		}
 		
+		if (location == null) {
+			String message = "Location not found: " + locationString;
+			log.error(message);
+			throw new IllegalArgumentException(message);
+		}
+		
 		String locationTags = request.getParameter("locationTagId");
 		Integer locationId = null;
 		Integer locationTagId = null;
-		if (location != null) {
-			locationId = location.getLocationId();
-			if (locationTags != null && locationTags.trim().length() > 0) {
-				try {
-					locationTagId = Integer.parseInt(locationTags);
-				} catch (NumberFormatException e) {
-					String message = "Invalid locationTagId parameter: " + locationTags;
-					log.error(message);
-					throw new IllegalArgumentException(message);
-				}
-			} else {
-				locationTags = user.getUserProperty("locationTags");
-				if (locationTags != null) {
-					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
-					while (tokenizer.hasMoreTokens()) {
-						String locationTagName = tokenizer.nextToken();
-						locationTagName = locationTagName.trim();
-						Set<LocationTag> tags = location.getTags();
-						for (LocationTag tag : tags) {
-							if (tag.getName().equalsIgnoreCase(locationTagName)) {
-								locationTagId = tag.getLocationTagId();
-							}
+		locationId = location.getLocationId();
+		if (locationTags != null && locationTags.trim().length() > 0) {
+			try {
+				locationTagId = Integer.parseInt(locationTags);
+			} catch (NumberFormatException e) {
+				String message = "Invalid locationTagId parameter: " + locationTags;
+				log.error(message);
+				throw new IllegalArgumentException(message);
+			}
+		} else {
+			locationTags = user.getUserProperty("locationTags");
+			if (locationTags != null) {
+				StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+				while (tokenizer.hasMoreTokens()) {
+					String locationTagName = tokenizer.nextToken();
+					locationTagName = locationTagName.trim();
+					Set<LocationTag> tags = location.getTags();
+					for (LocationTag tag : tags) {
+						if (tag.getName().equalsIgnoreCase(locationTagName)) {
+							locationTagId = tag.getLocationTagId();
 						}
 					}
 				}
@@ -918,22 +922,43 @@ public class ChicaMobileServlet extends HttpServlet {
 		// Check the output type
 		FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
 			formId, "outputType", locationTagId, locationId);
-		if (fav != null && fav.getValue() != null && fav.getValue().contains("pdf")) {
-			String formInstanceTag = result.toString();
-			locatePatientJITs(response, formInstanceTag);
-		} else if (fav != null && fav.getValue() != null && fav.getValue().contains("teleformXML")) {
+		if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
 			response.setContentType("text/xml");
 			response.setHeader("Cache-Control", "no-cache");
 			PrintWriter pw = response.getWriter();
-			FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "displayName",
-			    locationTagId, locationId);
+			String message = "<span>No outputType attribute set for form: " + formName + 
+					".  Request cannot be completed.</span>"; 
+			log.error(message);
+			pw.write(message);
+			return;
+		}
+		
+		String[] outputTypes = fav.getValue().split(",");
+		String firstOutputType = outputTypes[0];
+		if ("pdf".equalsIgnoreCase(firstOutputType)) {
+			String formInstanceTag = result.toString();
+			locatePatientJITs(response, formInstanceTag);
+		} else if ("teleformXML".equalsIgnoreCase(firstOutputType)) {
+			response.setContentType("text/xml");
+			response.setHeader("Cache-Control", "no-cache");
+			PrintWriter pw = response.getWriter();
+			FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
+				"displayName", locationTagId, locationId);
 			if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
 				formName = attributeValue.getValue();
 			}
 			
 			String resultMessage = formName + " successfully sent to the printer.";
-			map.put("resultMessage", resultMessage);
 			pw.write("<span>" + resultMessage + "</span>");
+		} else {
+			response.setContentType("text/xml");
+			response.setHeader("Cache-Control", "no-cache");
+			PrintWriter pw = response.getWriter();
+			String message = "<span>Invalid outputType attribute '" + firstOutputType + "' found for form: " + formName + 
+					"</span>";
+			log.error(message);
+			pw.write(message);
+			return;
 		}
 	}
 }

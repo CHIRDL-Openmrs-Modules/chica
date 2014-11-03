@@ -1,11 +1,18 @@
+var isIE = true;
 $(document).ready(function () {
+	isIE = checkForIE();
 	$(window).resize(function() {
 		// Update the iframe height
-		$("#formFrame").height($(window).height() - 200);
+		$("#formFrame").height($(window).height() - 220);
 	});
 	
 	setSize();
-
+	
+	$("#formFrame").on("load", function () {
+		$("#frameLoading").hide();
+		$("#frameContainer").show();
+    });
+	
 	$("#createButton").button({ disabled: true });
 	$("#closeButton").button();
 	$("#retryCloseButton").button();
@@ -32,6 +39,21 @@ $(document).ready(function () {
 	
 	loadForms();
 });
+
+function checkForIE() {
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer, return version number
+        return true;
+    else                 // If another browser, return 0
+        return false;
+}
+
+function iframeLoaded() {
+	$("#frameLoading").hide();
+	$("#frameContainer").show();
+}
 
 function setSize() {
 	window.resizeTo($(window).width() * 0.95,$(window).height() * 0.95);
@@ -115,10 +137,10 @@ function loadForm() {
 		"#view=fit&navpanes=0";
 	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
 	
-	$('#formFrame').load(function(){
-		$("#frameLoading").hide();
-		$("#frameContainer").show();
-	});
-	
 	$('#formFrame').attr("src", url + action);
+	
+	// IE doesn't fire the onload event for the iframe.
+	if (isIE) {
+		setTimeout(iframeLoaded, 2000);
+	}
 }
