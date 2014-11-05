@@ -59,7 +59,11 @@
 
 </style>
 </head>
-<body style="font-size: 20px" onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}', '${formId}', '${formInstanceId}', '${encounterId}')">
+<c:set var="search" value="'" />
+<c:set var="replace" value="\\'" />
+<c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
+<c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
+<body style="font-size: 20px" onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${formId}', '${formInstanceId}', '${encounterId}')">
 <form id="psfForm" method="POST" data-ajax="false">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
@@ -78,7 +82,7 @@
     <div data-role="header" class="single-line-header" >
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="confirmLangButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="confirmLangButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a id="confirmVitalsButton" data-role="button" href="#vitals_page" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="fade">Vitals</a>
     </div>
 
@@ -315,7 +319,7 @@
     <div data-role="header" >
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1Button" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage1Button" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="openVitalsConfirm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div data-role="content">
@@ -365,7 +369,7 @@
     <div data-role="header" >
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1SPButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage1SPButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${NewLastName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="openVitalsConfirmSpanish()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
     <div data-role="content">
@@ -690,9 +694,9 @@
                       </div>
                   </div>
                   <div class="ui-block-a" style="text-align: center;height: 25px;margin-bottom: 0px;width: 14%"></div>
-				  <div class="ui-block-b" style="text-align: center;height: 25px;margin-bottom: 0px;width: 86%"></div>
-				  <div class="ui-block-a" style="text-align: center;height: 60px;margin-bottom: 0px;width: 14%"></div>
-				  <div class="ui-block-b" style="text-align: center;height: 60px;margin-bottom: 0px;width: 86%;">
+                  <div class="ui-block-b" style="text-align: center;height: 25px;margin-bottom: 0px;width: 86%"></div>
+                  <div class="ui-block-a" style="text-align: center;height: 60px;margin-bottom: 0px;width: 14%"></div>
+                  <div class="ui-block-b" style="text-align: center;height: 60px;margin-bottom: 0px;width: 86%;">
                       <span><input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" style="vertical-align: top; margin: 0px;"/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given<label></span>
                   </div>
                </div>
