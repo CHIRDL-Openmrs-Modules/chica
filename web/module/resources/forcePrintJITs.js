@@ -1,19 +1,12 @@
-var isIE = true;
+var isChromeSafari = false;
 $(document).ready(function () {
-	isIE = checkForIE();
+	isChromeSafari = checkForChromeSafari();
+	$("#formFrame").height($(window).height() - 220);
 	$(window).resize(function() {
 		// Update the iframe height
 		$("#formFrame").height($(window).height() - 220);
 	});
 	
-	setSize();
-	
-	$("#formFrame").on("load", function () {
-		$("#frameLoading").hide();
-		$("#frameContainer").show();
-    });
-	
-	$("#createButton").button({ disabled: true });
 	$("#closeButton").button();
 	$("#retryCloseButton").button();
 	$("#retryButton").button();
@@ -32,31 +25,19 @@ $(document).ready(function () {
 		event.preventDefault();
 	});
 	
-	$("#createButton").click(function(event) {
-		loadForm();
-		event.preventDefault();
-	});
-	
 	loadForms();
 });
 
-function checkForIE() {
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf("MSIE ");
-
-    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer, return version number
-        return true;
-    else                 // If another browser, return 0
-        return false;
+function checkForChromeSafari() {
+	var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+	var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+	
+	return isChrome || isSafari;
 }
 
 function iframeLoaded() {
 	$("#frameLoading").hide();
 	$("#frameContainer").show();
-}
-
-function setSize() {
-	window.resizeTo($(window).width() * 0.95,$(window).height() * 0.95);
 }
 
 function loadForms() {
@@ -105,6 +86,7 @@ function parseAvailableForms(responseXML) {
         return false;
     } else {
     	var options = [];
+    	options.push("<option value='selectform'>Please select a form...</option>");
     	$(responseXML).find("forcePrintJIT").each(function () {
         	var formName = $(this).find("displayName").text();
             var formId = $(this).find("formId").text();
@@ -112,13 +94,24 @@ function parseAvailableForms(responseXML) {
             options.push("<option value='" + formId + "'>" + formName + "</option>");
         });
     	
-    	$("select#forms").append(options.join("")).selectmenu().selectmenu("menuWidget").addClass("overflow");
+    	$("select#forms").append(options.join("")).selectmenu({
+  		  open: function( event, ui ) {
+  			  $("#frameContainer").hide();
+  		  },
+  		  select: function( event, ui ) {
+  			  var formId = $("#forms").val();
+  			  if (formId == "selectform") {
+  				  // A valid form was not selected
+  			  } else {
+  				loadForm();
+  			  }
+  		  }
+		}).selectmenu("menuWidget").addClass("overflow");
+    	$( ".selector" ).selectmenu();
+
+
     	$("#formsLoading").hide();
     	$("#formsContainer").show();
-    	
-    	if (options.length > 0) {
-    		$("#createButton").button("option", "disabled", false);
-    	}
     }
 }
 
@@ -137,10 +130,21 @@ function loadForm() {
 		"#view=fit&navpanes=0";
 	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
 	
-	$('#formFrame').attr("src", url + action);
+	//$('#formFrame').attr("data", url + action);
+	var obj       = $('object:first');
+	var objdata   = $(obj).attr('data');
+	var container = $(obj).parent();
+	$(obj).attr('data', url + action);
+	var newobj    = $(obj).clone();
+	newobj.on("load", function () {
+		$("#frameLoading").hide();
+		$("#frameContainer").show();
+    });
+	$(obj).remove();
+	$(container).append( newobj );
 	
-	// IE doesn't fire the onload event for the iframe.
-	if (isIE) {
-		setTimeout(iframeLoaded, 2000);
+	// Chrome/Safari doesn't fire the onload event for the object tag.
+	if (isChromeSafari) {
+		setTimeout(iframeLoaded, 1000);
 	}
 }

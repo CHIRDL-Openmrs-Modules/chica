@@ -27,6 +27,7 @@
             /* variable used in js to know the context path */
             var openmrsContextPath = '${pageContext.request.contextPath}';
         </script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
         
         <!--  Page Title : '${pageTitle}' 
             OpenMRS Title: <spring:message code="openmrs.title"/>
@@ -60,10 +61,11 @@
 
                 function popupfull(url) 
                 {
- 		params  = 'width='+(screen.width - 20);
- 		params += ', height='+(screen.height -115);
+ 		params  = 'width='+($(window).width() * 0.95);
+ 		params += ', height='+($(window).height() * 0.95);
         params += ', top=0, left=0'
         params += ', fullscreen=no';
+        params += ', resizable=1';
 
         newwin=window.open(url,'windowname4', params);
         if (window.focus) {newwin.focus()}

@@ -1,6 +1,6 @@
 #content {
     background-color: #F5FBEF;
-    width: 80%;
+    width: 90%;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -36,7 +36,7 @@
     text-align: center;
     margin: 0 auto;
     color: #000;
-    height: 75px;
+    height: 60px;
 }
 
 #frameLoading {
@@ -49,11 +49,6 @@ fieldset {
     border: 0;
 }
 
-label {
-	display: block;
-	margin: 0 0 0 0;
-}
-
 select {
 	width: 400px;
 }
@@ -63,7 +58,7 @@ body {
     background: #b24926;
 }
 
-iframe {
+object {
     width:100%;
     margin: 0;
     padding: 0;

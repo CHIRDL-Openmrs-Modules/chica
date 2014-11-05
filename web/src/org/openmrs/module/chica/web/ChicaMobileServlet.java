@@ -917,28 +917,22 @@ public class ChicaMobileServlet extends HttpServlet {
 		parameters.put("param1", formName);
 		parameters.put("param2", "forcePrint");
 		Result result = logicService.eval(patientId, "CREATE_JIT", parameters);
-		Map<String, Object> map = new HashMap<String, Object>();
 		
 		// Check the output type
 		FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
 			formId, "outputType", locationTagId, locationId);
+		String outputType = null;
 		if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
-			response.setContentType("text/xml");
-			response.setHeader("Cache-Control", "no-cache");
-			PrintWriter pw = response.getWriter();
-			String message = "<span>No outputType attribute set for form: " + formName + 
-					".  Request cannot be completed.</span>"; 
-			log.error(message);
-			pw.write(message);
-			return;
+			outputType = Context.getAdministrationService().getGlobalProperty("atd.defaultOutputType");
+		} else {
+			String[] outputTypes = fav.getValue().split(",");
+			outputType = outputTypes[0];
 		}
 		
-		String[] outputTypes = fav.getValue().split(",");
-		String firstOutputType = outputTypes[0];
-		if ("pdf".equalsIgnoreCase(firstOutputType)) {
+		if ("pdf".equalsIgnoreCase(outputType)) {
 			String formInstanceTag = result.toString();
 			locatePatientJITs(response, formInstanceTag);
-		} else if ("teleformXML".equalsIgnoreCase(firstOutputType)) {
+		} else if ("teleformXML".equalsIgnoreCase(outputType)) {
 			response.setContentType("text/xml");
 			response.setHeader("Cache-Control", "no-cache");
 			PrintWriter pw = response.getWriter();
@@ -954,7 +948,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			response.setContentType("text/xml");
 			response.setHeader("Cache-Control", "no-cache");
 			PrintWriter pw = response.getWriter();
-			String message = "<span>Invalid outputType attribute '" + firstOutputType + "' found for form: " + formName + 
+			String message = "<span>Invalid outputType attribute '" + outputType + "' found for form: " + formName + 
 					"</span>";
 			log.error(message);
 			pw.write(message);

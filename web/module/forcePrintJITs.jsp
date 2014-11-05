@@ -25,16 +25,18 @@
 	         </div>
 	         <div id="formsContainer">
 	             <fieldset>
-	                 <label for="forms">Select a form</label>
 	                 <select name="forms" id="forms"></select>
 	             </fieldset>
 	         </div>
 	         <div id="buttonPanel">
-	             <a href="#" id="createButton" class="icon-button ui-state-default ui-corner-all">Create</a>
 	             <a href="#" id="closeButton" class="icon-button ui-state-default ui-corner-all">Close</a>
 	         </div>
 	         <div id="frameContainer">
-	            <iframe id="formFrame" src="" frameBorder="0" seamless onload="iframeLoaded()"></iframe>
+	            <object id="formFrame" data="" onreadystatechange="return iframeLoaded();" onload="return iframeLoaded();">
+	               <param name="wmode" value="opaque">
+	               <p>It appears your Web browser is not configured to display PDF files. 
+                   <a href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</p>
+	            </object>
 	         </div>
 	         <div id="frameLoading">
 	            <span id="frameLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
@@ -49,4 +51,4 @@
 		</form>
 	</div>
 </body>
-</page>
+</html>
