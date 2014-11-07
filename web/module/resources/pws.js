@@ -27,8 +27,8 @@ function parseAvailableJITs(responseXML) {
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
         	var action = "action=getPatientJITs&formInstances=" + formInstance + "#view=fit&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
-            content = content + '<h3>' + formName + '</h3><div><iframe id="' + 
-            	formInstance + '" src="' + url + action + '"></iframe></div>';
+            content = content + '<h3>' + formName + '</h3><div><iframe class="recommended-forms" src="' + url + action + 
+            	'"></iframe></div>';
             
             count++;
         });
@@ -38,9 +38,10 @@ function parseAvailableJITs(responseXML) {
         	$("#noForms").show();
         } else {
         	formList.html(content);
-        	var divHeight = $("#formAccordion").height();
-            var newIframeHeight = (divHeight - (75*count));
-            $("#formAccordion div iframe").css({"height":newIframeHeight});
+            var divHeight = $("#formAccordion").height();
+        	var total = $("#formAccordion > div").length;
+            var newFormHeight = (divHeight - (100*total));
+            $(".recommended-forms").css({"height":newFormHeight});
             $("#formAccordion").accordion("refresh");
             $('#formAccordion').show();
         }
@@ -241,8 +242,47 @@ $(function() {
         resize: function(e,ui) {
         	var divHeight = $("#formAccordion").height();
         	var count = $("#formAccordion > div").length;
-            var newIframeHeight = (divHeight - (75*count));
-            $("iframe").css({"height":newIframeHeight});
+            var newFormHeight = (divHeight - (100*count));
+            $(".recommended-forms").css({"height":newFormHeight});
+        }
+    });
+	
+	$("#forcePrintButton").click(function(event) {
+		$("#forcePrintDialog").dialog("open");
+		event.preventDefault();
+	});
+	
+	$("#forcePrintDialog").dialog({
+    	open: function() { 
+    		$(".ui-dialog").addClass("ui-dialog-shadow"); 
+    		forcePrint_loadForms();
+    		var formSelectionHeight = $(".force-print-forms-container").height();
+    		$(".force-print-form-object").height($(".pws-force-print-content").height() - formSelectionHeight);
+    	},
+    	close: function() { 
+    		$(".force-print-form-container").hide();
+    		$('.force-print-forms').val("selectform").selectmenu("refresh");
+    	},
+        autoOpen: false,
+        modal: true,
+        minWidth: 250,
+        width: $(window).width() * 0.90,
+        height: $(window).height() * 0.90,
+        show: {
+          effect: "clip",
+          duration: 750
+        },
+        hide: {
+          effect: "clip",
+          duration: 750
+        },
+        resize: function(e,ui) {
+        	var divHeight = $(".pws-force-print-content").height();
+        	var formSelectionHeight = $(".force-print-forms-container").height();
+        	// Update the form height
+        	$(".force-print-form-object").height($(".pws-force-print-content").height() - formSelectionHeight);
+    		// Update the height of the select
+    		$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
         }
     });
 	

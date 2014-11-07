@@ -86,6 +86,7 @@
         <input id="hasErrors" name="hasErrors" type="hidden" value="${hasErrors}"/>
         <input id="startState" name="startState" type="hidden" value="${startState}"/>
         <input id="endState" name="endState" type="hidden" value="${endState}"/>
+        <input id="sessionId" name="endState" type="hidden" value="${sessionId}"/>
     </form>
 </div>
 

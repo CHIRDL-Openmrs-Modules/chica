@@ -803,9 +803,7 @@ public class ChicaMobileServlet extends HttpServlet {
 
 		Integer patientId = null;
 		try {
-			if (patientIdString != null) {
-				patientId = Integer.parseInt(patientIdString);
-			}
+			patientId = Integer.parseInt(patientIdString);
 		}
 		catch (Exception e) {
 			String message = "Invalid patientId parameter provided: " + patientIdString;
@@ -815,9 +813,7 @@ public class ChicaMobileServlet extends HttpServlet {
 		
 		Integer sessionId = null;
 		try {
-			if (sessionIdString != null) {
-				sessionId = Integer.parseInt(sessionIdString);
-			}
+			sessionId = Integer.parseInt(sessionIdString);
 		}
 		catch (Exception e) {
 			String message = "Invalid sessionId parameter provided: " + sessionIdString;

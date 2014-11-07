@@ -5,7 +5,7 @@ body {
     background: #b24926;
 }
 
-iframe {
+.recommended-forms {
 	width:100%;
 	margin: 0;
 	padding: 0;
@@ -396,4 +396,13 @@ a.icon-button span.ui-icon {
 
 .largeButton {
 	width: 220px;
+}
+
+.pws-force-print-content {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }

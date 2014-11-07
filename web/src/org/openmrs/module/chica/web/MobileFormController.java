@@ -58,6 +58,7 @@ public class MobileFormController extends SimpleFormController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		map.put("encounterId", request.getParameter("encounterId"));
+		map.put("sessionId", request.getParameter("sessionId"));
 		
 		String patientIdStr = request.getParameter("patientId");
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));

@@ -1,54 +1,46 @@
 var isChromeSafari = false;
 $(document).ready(function () {
-	isChromeSafari = checkForChromeSafari();
-	$("#formFrame").height($(window).height() - 220);
-	$(window).resize(function() {
-		// Update the iframe height
-		$("#formFrame").height($(window).height() - 220);
-	});
+	isChromeSafari = forcePrint_checkForChromeSafari();
 	
-	$("#closeButton").button();
-	$("#retryCloseButton").button();
-	$("#retryButton").button();
-	$("#retryButton").click(function(event) {
-		loadForms();
+	$(".force-print-close-button").button();
+	$(".force-print-retry-close-button").button();
+	$(".force-print-retry-button").button();
+	$(".force-print-retry-button").click(function(event) {
+		forcePrint_loadForms();
 		event.preventDefault();
 	});
 	
-	$("#retryCloseButton").click(function(event) {
-		loadForms();
-		event.preventDefault();
-	});
-	
-	$("#closeButton").click(function(event) {
+	$(".force-print-retry-close-button").click(function(event) {
 		window.close();
 		event.preventDefault();
 	});
 	
-	loadForms();
+	$(".force-print-close-button").click(function(event) {
+		window.close();
+		event.preventDefault();
+	});
+	
+	$(".force-print-forms-server-error").hide();
+	$(".force-print-forms-container").hide();
+	$(".force-print-form-container").hide();
+	$(".force-print-form-loading").hide();
+	$(".force-print-forms-loading").show();
+	$(".force-print-button-panel").show();
 });
 
-function checkForChromeSafari() {
+function forcePrint_checkForChromeSafari() {
 	var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 	var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
 	
 	return isChrome || isSafari;
 }
 
-function iframeLoaded() {
-	$("#frameLoading").hide();
-	$("#frameContainer").show();
+function forcePrint_formLoaded() {
+	$(".force-print-form-loading").hide();
+	$(".force-print-form-container").show();
 }
 
-function loadForms() {
-	$("#formsServerError").hide();
-	$("#formsContainer").hide();
-	$("#frameContainer").hide();
-	$("#frameLoading").hide();
-	$("#frameError").hide();
-	$("#formsLoading").show();
-	$("#buttonPanel").show();
-	
+function forcePrint_loadForms() {
 	var patientId = $("#patientId").val();
 	var sessionId = $("#sessionId").val();
 	var locationId = $("#locationId").val();
@@ -63,88 +55,84 @@ function loadForms() {
 	  "type": "POST",
 	  "url": url,
 	  "timeout": 30000, // optional if you want to handle timeouts (which you should)
-	  "error": handleGetAvailableFormsError, // this sets up jQuery to give me errors
+	  "error": forcePrint_handleGetAvailableFormsError, // this sets up jQuery to give me errors
 	  "success": function (xml) {
-		  parseAvailableForms(xml);
+		  forcePrint_parseAvailableForms(xml);
       }
 	});
 }
 
-function handleGetAvailableFormsError(xhr, textStatus, error) {
-	$("#formsLoading").hide();
-	$("#buttonPanel").hide();
-	$("#formsServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error loading forms: ' + error + '</span>');
-	$("#formsServerError").show();
+function forcePrint_handleGetAvailableFormsError(xhr, textStatus, error) {
+	$(".force-print-forms-loading").hide();
+	$(".force-print-button-panel").hide();
+	$(".force-print-forms-server-error-text").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error loading forms: ' + error + '</span>');
+	$(".force-print-forms-server-error").show();
 }
 
-function parseAvailableForms(responseXML) {
+function forcePrint_parseAvailableForms(responseXML) {
 	// no matches returned
+	var options = [];
+	options.push("<option value='selectform'>Please select a form...</option>");
     if (responseXML === null) {
-    	$("#formsLoading").hide();
-    	$("#forms").selectmenu();
-    	$("#formsContainer").show();
-        return false;
+    	$(".force-print-forms-loading").hide();
+    	$(".force-print-forms").selectmenu();
+    	$(".force-print-forms-container").show();
     } else {
-    	var options = [];
-    	options.push("<option value='selectform'>Please select a form...</option>");
     	$(responseXML).find("forcePrintJIT").each(function () {
         	var formName = $(this).find("displayName").text();
             var formId = $(this).find("formId").text();
             
             options.push("<option value='" + formId + "'>" + formName + "</option>");
         });
-    	
-    	$("select#forms").append(options.join("")).selectmenu({
-  		  open: function( event, ui ) {
-  			  $("#frameContainer").hide();
-  		  },
-  		  select: function( event, ui ) {
-  			  var formId = $("#forms").val();
-  			  if (formId == "selectform") {
-  				  // A valid form was not selected
-  			  } else {
-  				loadForm();
-  			  }
-  		  }
-		}).selectmenu("menuWidget").addClass("overflow");
-    	$( ".selector" ).selectmenu();
-
-
-    	$("#formsLoading").hide();
-    	$("#formsContainer").show();
     }
+    
+    $(".force-print-forms").append(options.join("")).selectmenu({
+		  open: function( event, ui ) {
+			  $(".force-print-form-container").hide();
+		  },
+		  select: function( event, ui ) {
+			  var formId = $(".force-print-forms").val();
+			  if (formId == "selectform") {
+				  // A valid form was not selected
+			  } else {
+				forcePrint_loadForm();
+			  }
+		  }
+		}).selectmenu("menuWidget").css({"max-height":($(window).height() * 0.60) + "px"});
+
+  	$(".force-print-forms-loading").hide();
+  	$(".force-print-forms-container").show();
 }
 
-function loadForm() {
-	$("#frameContainer").hide();
-	$("#frameLoading").show();
+function forcePrint_loadForm() {
+	$(".force-print-form-container").hide();
+	$(".force-print-form-loading").show();
 	
 	var patientId = $("#patientId").val();
 	var sessionId = $("#sessionId").val();
 	var locationId = $("#locationId").val();
 	var locationTagId = $("#locationTagId").val();
-	var formId = $("#forms").val();
+	var formId = $(".force-print-forms").val();
 	var randomNumber = Math.floor((Math.random() * 10000) + 1); 
 	var action = "action=forcePrintForm&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
 		locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
 		"#view=fit&navpanes=0";
 	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
 	
-	//$('#formFrame').attr("data", url + action);
-	var obj       = $('object:first');
-	var objdata   = $(obj).attr('data');
+	var obj = $(".force-print-form-object");
+	var objdata = $(obj).attr('data');
 	var container = $(obj).parent();
 	$(obj).attr('data', url + action);
 	var newobj    = $(obj).clone();
 	newobj.on("load", function () {
-		$("#frameLoading").hide();
-		$("#frameContainer").show();
+		$(".force-print-form-loading").hide();
+		$(".force-print-form-container").show();
     });
 	$(obj).remove();
 	$(container).append( newobj );
 	
 	// Chrome/Safari doesn't fire the onload event for the object tag.
 	if (isChromeSafari) {
-		setTimeout(iframeLoaded, 1000);
+		setTimeout(forcePrint_formLoaded, 2000);
 	}
 }

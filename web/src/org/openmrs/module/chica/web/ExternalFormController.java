@@ -31,12 +31,12 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.validation.BindException;
@@ -191,6 +191,11 @@ public class ExternalFormController extends SimpleFormController {
 			map.put("hasErrors", "true");
 			map.put("missingFormInstance", "true");
 			return new ModelAndView(view, map);
+		}
+		
+		List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
+		if (sessions != null && sessions.size() > 0) {
+			map.put("sessionId", sessions.get(0).getSessionId());
 		}
 		
 		map.put("encounterId", encounter.getEncounterId());
