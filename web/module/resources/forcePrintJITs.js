@@ -47,7 +47,7 @@ function forcePrint_loadForms() {
 	var locationTagId = $("#locationTagId").val();
 	var action = "action=getForcePrintForms&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
 		locationId + "&locationTagId=" + locationTagId;
-	var url = "/openmrs/moduleServlet/chica/chicaMobile";
+	var url = "/openmrs/moduleServlet/chica/chica";
 	$.ajax({
 	  "cache": false,
 	  "dataType": "xml",
@@ -117,7 +117,7 @@ function forcePrint_loadForm() {
 	var action = "action=forcePrintForm&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
 		locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
 		"#view=fit&navpanes=0";
-	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
+	var url = "/openmrs/moduleServlet/chica/chica?";
 	
 	var obj = $(".force-print-form-object");
 	var objdata = $(obj).attr('data');

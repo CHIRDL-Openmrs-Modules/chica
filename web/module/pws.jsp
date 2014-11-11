@@ -896,7 +896,7 @@
                         <br/><br/><a href="#" id="retryButton" class="icon-button ui-state-default ui-corner-all">Retry</a>
                     </div>
                     <div id="noForms">
-                        There are no recommended forms for ${PatientName}.
+                        There are no recommended handouts for ${PatientName}.
                     </div>
 	                <div id="formAccordion">
 	                </div>
@@ -917,9 +917,9 @@
 			                 </fieldset>
 			             </div>
 			             <div class="force-print-form-container">
-			                <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="return forcePrint_formLoaded();">
-			                   <span class="force-print-black-text"><p>It appears your Web browser is not configured to display PDF files. 
-			                   <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</p></span>
+			                <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
+			                   <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
+			                   <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
 			                </object>
 			             </div>
 			             <div class="force-print-form-loading">

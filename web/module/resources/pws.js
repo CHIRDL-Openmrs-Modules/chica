@@ -26,7 +26,7 @@ function parseAvailableJITs(responseXML) {
             
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
         	var action = "action=getPatientJITs&formInstances=" + formInstance + "#view=fit&navpanes=0";
-        	var url = "/openmrs/moduleServlet/chica/chicaMobile?";
+        	var url = "/openmrs/moduleServlet/chica/chica?";
             content = content + '<h3>' + formName + '</h3><div><iframe class="recommended-forms" src="' + url + action + 
             	'"></iframe></div>';
             
@@ -90,7 +90,7 @@ function getAvailableJits() {
 	$("#formLoading").show();
 	var encounterId = $("#encounterId").val();
 	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
-	var url = "/openmrs/moduleServlet/chica/chicaMobile";
+	var url = "/openmrs/moduleServlet/chica/chica";
 	$.ajax({
 	  "cache": false,
 	  "dataType": "xml",
