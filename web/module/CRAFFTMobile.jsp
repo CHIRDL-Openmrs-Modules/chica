@@ -16,7 +16,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 </head>
 <body style="font-size: 20px" onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}', '${language}')">
-<form id="CRAFFTForm" method="POST" action="CRAFFTMobile.form" method="post" enctype="multipart/form-data">
+<form id="CRAFFTForm" method="POST" action="CRAFFTMobile.form" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
         <div data-role="header" data-theme="b">
