@@ -114,5 +114,5 @@ write ("ADHD NOT DIAGNOSED                        ");
 write ("ADHD DIAGNOSED                              ");
 ;;
 Age_Min: 5          years     ;;
-Age_Max: 18         years     ;;
+Age_Max: 21         years     ;;
 end:

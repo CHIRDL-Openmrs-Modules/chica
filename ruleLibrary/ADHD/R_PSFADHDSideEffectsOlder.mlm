@@ -63,5 +63,5 @@ write ("Are you having side effects from ADHD medicine, including stomach ache, 
 write ("¿Estás teniendo efectos secundarios de la medicina de ADHD incluyendo dolor de estómago, problemas para dormir, dolor de cabeza o pérdida de apetito?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 12 years;;
-Age_Max: 18 years;;
+Age_Max: 21 years;;
 end:

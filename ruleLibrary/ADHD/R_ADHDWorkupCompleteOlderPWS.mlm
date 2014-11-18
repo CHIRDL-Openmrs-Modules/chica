@@ -149,5 +149,5 @@ write ("ADHD NOT Diagnosed                   ");
 write ("Targets set, f/u in 2-4 wks          ");
 ;;
 Age_Min: 6          years     ;;
-Age_Max: 18         years     ;;
+Age_Max: 21         years     ;;
 end:

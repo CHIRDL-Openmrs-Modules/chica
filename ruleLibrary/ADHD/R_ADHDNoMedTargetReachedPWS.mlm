@@ -94,5 +94,5 @@ write ("Start medication ->" );
 write ("Follow-up 2-3 weeks                            ");
 ;;
 Age_Min: 5          years     ;;
-Age_Max: 18         years     ;;
+Age_Max: 21         years     ;;
 end:
