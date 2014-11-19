@@ -48,10 +48,6 @@ function parseAvailableJITs(responseXML) {
     }
 }
 
-$("#pwsForm").submit(function(event) {
-	processCheckboxes(this);
-});
-
 function getSelected(opt) {
 	var selected = new Array();
 	var index = 0;
@@ -72,16 +68,16 @@ function outputSelected(opt, hidden) {
 	for ( var item in sel)
 		strSel += sel[item].value;
 
-	hidden.value = strSel;
+	hidden.val(strSel);
 }
 
 function processCheckboxes(form1) {
-	outputSelected(form1.sub_Choice1, form1.Choice1);
-	outputSelected(form1.sub_Choice2, form1.Choice2);
-	outputSelected(form1.sub_Choice3, form1.Choice3);
-	outputSelected(form1.sub_Choice4, form1.Choice4);
-	outputSelected(form1.sub_Choice5, form1.Choice5);
-	outputSelected(form1.sub_Choice6, form1.Choice6);
+	outputSelected($("input[name='sub_Choice1']"), $("#Choice1"));
+	outputSelected($("input[name='sub_Choice2']"), $("#Choice2"));
+	outputSelected($("input[name='sub_Choice3']"), $("#Choice3"));
+	outputSelected($("input[name='sub_Choice4']"), $("#Choice4"));
+	outputSelected($("input[name='sub_Choice5']"), $("#Choice5"));
+	outputSelected($("input[name='sub_Choice6']"), $("#Choice6"));
 }
 
 function getAvailableJits() {
@@ -183,6 +179,7 @@ $(function() {
 	$("#okSubmitButton").click(function() {
 		$("#confirmSubmitDialog").dialog("close");
 		$("#submitWaitDialog").dialog("open");
+		processCheckboxes();
 		$("#pwsForm").submit();
 	});
 	

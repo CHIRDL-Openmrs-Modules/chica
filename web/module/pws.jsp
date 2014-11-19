@@ -591,24 +591,66 @@
 			               </div>
 			               <div class="answerContainer">
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="1"/><c:out value="${Answer1_1}"/><br/>
+			                       <c:choose>
+			                         <c:when test="${empty Answer1_1}">
+			                             <input type="checkbox" name="sub_Choice1" value="1" disabled/><br/>
+			                         </c:when>
+			                         <c:otherwise>
+			                             <input type="checkbox" name="sub_Choice1" value="1"/><c:out value="${Answer1_1}"/><br/>
+			                         </c:otherwise>
+			                       </c:choose>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="3"/><c:out value="${Answer1_3}"/><br/>
+			                       <c:choose>
+                                     <c:when test="${empty Answer1_3}">
+                                         <input type="checkbox" name="sub_Choice1" value="3" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice1" value="3"/><c:out value="${Answer1_3}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="5"/><c:out value="${Answer1_5}"/><br/>
+			                       <c:choose>
+                                     <c:when test="${empty Answer1_5}">
+                                         <input type="checkbox" name="sub_Choice1" value="5" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice1" value="5"/><c:out value="${Answer1_5}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 			                   </div>
 			               </div>
 			               <div class="answerContainer">
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="2"/><c:out value="${Answer1_2}"/><br/>
+			                       <c:choose>
+                                     <c:when test="${empty Answer1_2}">
+                                         <input type="checkbox" name="sub_Choice1" value="2" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice1" value="2"/><c:out value="${Answer1_2}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="4"/><c:out value="${Answer1_4}"/><br/>
+			                       <c:choose>
+                                     <c:when test="${empty Answer1_4}">
+                                         <input type="checkbox" name="sub_Choice1" value="4" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice1" value="4"/><c:out value="${Answer1_4}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 			                   </div>
 			                   <div class="answerCheckbox">
-			                       <input type="checkbox" name="sub_Choice1" value="6"/><c:out value="${Answer1_6}"/><br/>
+			                       <c:choose>
+                                     <c:when test="${empty Answer1_6}">
+                                         <input type="checkbox" name="sub_Choice1" value="6" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice1" value="6"/><c:out value="${Answer1_6}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 			                   </div>
 			               </div>
 	                    </c:otherwise>
@@ -625,24 +667,66 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="1"/><c:out value="${Answer2_1}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer2_1}">
+                                         <input type="checkbox" name="sub_Choice2" value="1" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice2" value="1"/><c:out value="${Answer2_1}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="3"/><c:out value="${Answer2_3}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer2_3}">
+                                         <input type="checkbox" name="sub_Choice2" value="3" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice2" value="3"/><c:out value="${Answer2_3}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="5"/><c:out value="${Answer2_5}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer2_5}">
+                                         <input type="checkbox" name="sub_Choice2" value="5" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice2" value="5"/><c:out value="${Answer2_5}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="2"/><c:out value="${Answer2_2}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer2_2}">
+                                         <input type="checkbox" name="sub_Choice2" value="2" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice2" value="2"/><c:out value="${Answer2_2}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="4"/><c:out value="${Answer2_4}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer2_4}">
+                                         <input type="checkbox" name="sub_Choice2" value="4" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice2" value="4"/><c:out value="${Answer2_4}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice2" value="6"/><c:out value="${Answer2_6}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer2_6}">
+                                         <input type="checkbox" name="sub_Choice2" value="6" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice2" value="6"/><c:out value="${Answer2_6}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -659,24 +743,66 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="1"/><c:out value="${Answer3_1}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer3_1}">
+                                         <input type="checkbox" name="sub_Choice3" value="1" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice3" value="1"/><c:out value="${Answer3_1}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="3"/><c:out value="${Answer3_3}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer3_3}">
+                                         <input type="checkbox" name="sub_Choice3" value="3" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice3" value="3"/><c:out value="${Answer3_3}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="5"/><c:out value="${Answer3_5}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer3_5}">
+                                         <input type="checkbox" name="sub_Choice3" value="5" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice3" value="5"/><c:out value="${Answer3_5}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="2"/><c:out value="${Answer3_2}"/> <br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer3_2}">
+                                         <input type="checkbox" name="sub_Choice3" value="2" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice3" value="2"/><c:out value="${Answer3_2}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="4"/><c:out value="${Answer3_4}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer3_4}">
+                                         <input type="checkbox" name="sub_Choice3" value="4" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice3" value="4"/><c:out value="${Answer3_4}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice3" value="6"/><c:out value="${Answer3_6}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer3_6}">
+                                         <input type="checkbox" name="sub_Choice3" value="6" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice3" value="6"/><c:out value="${Answer3_6}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -693,24 +819,66 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="1"/><c:out value="${Answer4_1}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer4_1}">
+                                         <input type="checkbox" name="sub_Choice4" value="1" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice4" value="1"/><c:out value="${Answer4_1}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="3"/><c:out value="${Answer4_3}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer4_3}">
+                                         <input type="checkbox" name="sub_Choice4" value="3" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice4" value="3"/><c:out value="${Answer4_3}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="5"/><c:out value="${Answer4_5}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer4_5}">
+                                         <input type="checkbox" name="sub_Choice4" value="5" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice4" value="5"/><c:out value="${Answer4_5}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="2"/><c:out value="${Answer4_2}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer4_2}">
+                                         <input type="checkbox" name="sub_Choice4" value="2" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice4" value="2"/><c:out value="${Answer4_2}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="4"/><c:out value="${Answer4_4}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer4_4}">
+                                         <input type="checkbox" name="sub_Choice4" value="4" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice4" value="4"/><c:out value="${Answer4_4}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice4" value="6"/><c:out value="${Answer4_6}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer4_6}">
+                                         <input type="checkbox" name="sub_Choice4" value="6" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice4" value="6"/><c:out value="${Answer4_6}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -727,24 +895,66 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="1"/><c:out value="${Answer5_1}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer5_1}">
+                                         <input type="checkbox" name="sub_Choice5" value="1" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice5" value="1"/><c:out value="${Answer5_1}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="3"/><c:out value="${Answer5_3}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer5_3}">
+                                         <input type="checkbox" name="sub_Choice5" value="3" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice5" value="3"/><c:out value="${Answer5_3}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="5"/><c:out value="${Answer5_5}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer5_5}">
+                                         <input type="checkbox" name="sub_Choice5" value="5" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice5" value="5"/><c:out value="${Answer5_5}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="2"/><c:out value="${Answer5_2}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer5_2}">
+                                         <input type="checkbox" name="sub_Choice5" value="2" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice5" value="2"/><c:out value="${Answer5_2}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="4"/><c:out value="${Answer5_4}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer5_4}">
+                                         <input type="checkbox" name="sub_Choice5" value="4" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice5" value="4"/><c:out value="${Answer5_4}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice5" value="6"/><c:out value="${Answer5_6}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer5_6}">
+                                         <input type="checkbox" name="sub_Choice5" value="6" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice5" value="6"/><c:out value="${Answer5_6}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -761,24 +971,66 @@
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="1"/><c:out value="${Answer6_1}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer6_1}">
+                                         <input type="checkbox" name="sub_Choice6" value="1" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice6" value="1"/><c:out value="${Answer6_1}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="3"/><c:out value="${Answer6_3}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer6_3}">
+                                         <input type="checkbox" name="sub_Choice6" value="3" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice6" value="3"/><c:out value="${Answer6_3}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="5"/><c:out value="${Answer6_5}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer6_5}">
+                                         <input type="checkbox" name="sub_Choice6" value="5" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice6" value="5"/><c:out value="${Answer6_5}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
 		                    <div class="answerContainer">
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="2"/><c:out value="${Answer6_2}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer6_2}">
+                                         <input type="checkbox" name="sub_Choice6" value="2" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice6" value="2"/><c:out value="${Answer6_2}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="4"/><c:out value="${Answer6_4}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer6_4}">
+                                         <input type="checkbox" name="sub_Choice6" value="4" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice6" value="4"/><c:out value="${Answer6_4}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                        <div class="answerCheckbox">
-		                            <input type="checkbox" name="sub_Choice6" value="6"/><c:out value="${Answer6_6}"/><br/>
+		                            <c:choose>
+                                     <c:when test="${empty Answer6_6}">
+                                         <input type="checkbox" name="sub_Choice6" value="6" disabled/><br/>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <input type="checkbox" name="sub_Choice6" value="6"/><c:out value="${Answer6_6}"/><br/>
+                                     </c:otherwise>
+                                   </c:choose>
 		                        </div>
 		                    </div>
                         </c:otherwise>
@@ -931,12 +1183,12 @@
 			             <input type="hidden" value="${locationTagId}" id="locationTagId" />
                     </div>
                 </div>
-                <input type=hidden name="Choice1"/>
-			    <input type=hidden name="Choice2"/>
-			    <input type=hidden name="Choice3"/>
-			    <input type=hidden name="Choice4"/>
-			    <input type=hidden name="Choice5"/>
-			    <input type=hidden name="Choice6"/>
+                <input type=hidden id= "Choice1" name="Choice1"/>
+			    <input type=hidden id= "Choice2" name="Choice2"/>
+			    <input type=hidden id= "Choice3" name="Choice3"/>
+			    <input type=hidden id= "Choice4" name="Choice4"/>
+			    <input type=hidden id= "Choice5" name="Choice5"/>
+			    <input type=hidden id= "Choice6" name="Choice6"/>
 			    <input id="patientId" name="patientId" type="hidden" value="${patient.patientId}"/>
 				<input id="encounterId" name="encounterId" type="hidden" value="${encounterId}"/>
 				<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>

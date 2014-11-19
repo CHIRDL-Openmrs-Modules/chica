@@ -80,6 +80,7 @@ N/A
 					   <div style="width:100%">
                            <button type="button" onclick="printSelection(document.getElementById('divRight'));return false">Print</button>
                        </div>
+                       <hr/>
 					   <div id="divRight" style="height:100%; width:100%; position:relative; overflow:scroll">
                             ${rightHtmlOutput}
                        </div>

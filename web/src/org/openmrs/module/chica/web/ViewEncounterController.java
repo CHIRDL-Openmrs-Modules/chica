@@ -238,6 +238,8 @@ public class ViewEncounterController extends SimpleFormController {
 						if (formName.equals("TeacherSummaryReport")) {
 							rightImageStylesheet = "teacherSummaryReport.xsl";
 							displayMergeForms = true;
+						} else if (formName.equals("PWS")) {
+							rightImageStylesheet = "pws.xsl";
 						}
 					} else {
 						
@@ -261,6 +263,7 @@ public class ViewEncounterController extends SimpleFormController {
 						
 						if (formName.equals("PSF")) {
 							rightName = "PWS";
+							rightImageStylesheet = "pws.xsl";
 						}
 						
 						if (formName.equals("ParentSummaryReport")) {

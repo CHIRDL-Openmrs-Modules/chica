@@ -168,7 +168,7 @@ public class ChicaServlet extends HttpServlet {
 			// Check to make sure the form is type PDF.
 			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, 
 				locationTagId, locationId);
-			if (fav == null || fav.getValue() == null) {
+			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
 				continue;
 			}
 			
@@ -197,6 +197,8 @@ public class ChicaServlet extends HttpServlet {
 			fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, 
 				locationTagId, locationId);
 			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
+				log.error(ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY + " global property not defined for "
+						+ "formId: " + formId + " locationId: " + locationId + " locationTagId: " + locationTagId);
 				continue;
 			}
 			
@@ -206,10 +208,12 @@ public class ChicaServlet extends HttpServlet {
 			File mergeFile = new File(pdfDir, locationId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + 
 				ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceId + ChirdlUtilConstants.FILE_EXTENSION_PDF);
 			if (!mergeFile.exists()) {
-				mergeFile = new File(pdfDir, ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationId + 
+				File secondMergeFile = new File(pdfDir, ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationId + 
 					ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
 					formInstanceId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + ChirdlUtilConstants.FILE_EXTENSION_PDF);
-				if (!mergeFile.exists()) {
+				if (!secondMergeFile.exists()) {
+					log.error("Cannot locate PDF merge file for formId: " + formId + " locationId: " + locationId +
+						" locationTagId: " + locationTagId + " " + mergeFile.getAbsolutePath());
 					continue;
 				}
 			}
