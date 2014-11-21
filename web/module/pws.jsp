@@ -291,7 +291,7 @@
                     <div id="vitalsLegend">
                     <b><font style="color:red;">*</font>=Abnormal, U=Uncorrected,<br/>
                     C=Corrected, A=Axillary,
-                    R=Rectal, O=Oral<br/>
+                    R=Rectal, O=Oral,<br/>
                     F=Failed, P=Passed</b></div>
                 </div>
                 <div id="exam">

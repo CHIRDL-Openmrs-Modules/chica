@@ -15,15 +15,14 @@
 					#formContainer {
 						font-size:12px;
 					    width:600px;
-					    height:983px;
+					    height:818px;
 					    margin:0 auto;
 					    border: 1px solid black;
-					    margin-bottom:40px;
 					}
 					
 					#titleContainer {
 					    width:590px;
-					    height:30px;
+					    height:20px;
 					    position: relative;
 					    padding:5px;
 					    margin-right:10px;
@@ -34,10 +33,10 @@
 					#mrn,
 					#submitFormTop {
 					    width: 600px;
-					    height: 100%;
+					    height: 80%;
 					    text-align:center;
 					    position: absolute;
-					    top: 0;
+					    top: -15;
 					    left: 0;
 					}
 					
@@ -109,27 +108,31 @@
 					    border-top: 1px solid black;
 					    float:left;
 					    margin-left:-1px;
-					    height:65px;
+					    height:45px;
 					    text-align:center;
 					    font-size:0.8em;
 					    padding-top:2px;
+					}
+					
+					.vitalsLegendRow {
+						width:225px;
 					}
 					
 					#exam {
 					    border-bottom: 1px solid black;
 					    float:left;
 					    width:367px;
-					    height:345px;
+					    height:280px;
 					    margin-top:-190px;
 					    padding:2px 2px 0px 5px;
 					}
 					
 					#buttons {
 					    width:226px;
-					    height:131px;
+					    height:86px;
 					    border-bottom: 1px solid black;
 					    float:left;
-					    margin-top:26px;
+					    margin-top:6px;
 					    margin-left:0px;
 					}
 					
@@ -144,28 +147,32 @@
 					    text-align:left;
 					    width:175px;
 					    height:15px;
+					    vertical-align: text-bottom;
 					}
 					
 					.examNames {
 					    float:left;
 					    width:80px;
-					    height:19px;
+					    height:15px;
 					    text-align:left;
+					    vertical-align: text-bottom;
 					}
 					
 					.examHeader {
 					    float:left;
 					    width:30px;
-					    height:19px;
+					    height:15px;
 					    text-align:center;
+					    vertical-align: text-bottom;
 					}
 					
 					.examFlag {
 					    float:left;
 					    width:15px;
-					    height:19px;
+					    height:15px;
 					    text-align:center;
 					    color:red;
+					    vertical-align: text-bottom;
 					}
 					
 					#examLegend {
@@ -185,9 +192,11 @@
 					
 					.examExtraCheckbox {
 					    width:189px;
+					    height: 19px;
 					}
 					
 					.examExtraData {
+					    height: 15px;
 					    width:187px;
 					    padding-left:2px;
 					    margin: 1px 0 1px 0;
@@ -196,7 +205,7 @@
 					.questionContainer {
 					    float:left;
 					    width:300px;
-					    height:160px;
+					    height:130px;
 					    font-size:0.75em;
 					    padding-top:10px;
 					    border-bottom: 1px solid black;
@@ -219,6 +228,7 @@
 					
 					.answerCheckbox {
 					    width:160px;
+					    height:15px
 					}
 					
 					.highlightYellow {
@@ -228,7 +238,6 @@
             </head>
             <body>
 		        <div id="formContainer">
-		            <form id="pwsForm" name="pwsForm" action="pws.form" method="post">
 		                <div id="titleContainer">
 		                    <div id="title">
 		                        <h3>CHICA Physician Encounter Form</h3>
@@ -239,7 +248,7 @@
 		                </div>
 		                <div id="infoLeft">
 		                    <b>Patient:</b> <xsl:value-of select="Records/Record/Field[@id = 'PatientName']"/><br/>
-		                    <b>DOB:</b> <xsl:value-of select="Records/Record/Field[@id = 'DOB']"/> <b>Age:</b> <xsl:value-of select="Records/Record/Field[@id = 'AGE']"/><br/>
+		                	<b>DOB:</b> <xsl:value-of select="Records/Record/Field[@id = 'DOB']"/>&#160;&#160;<b>Age:</b> <xsl:value-of select="Records/Record/Field[@id = 'Age']"/><br/>
 		                    <b>Doctor:</b> <xsl:value-of select="Records/Record/Field[@id = 'Doctor']"/>
 		                </div>
 		                <div id="infoRight">
@@ -497,10 +506,10 @@
 		                        </xsl:choose>
 		                    </div>
 		                    <div id="vitalsLegend">
-		                    <b><font style="color:red;">*</font>=Abnormal, U=Uncorrected,<br/>
-		                    C=Corrected, A=Axillary,
-		                    R=Rectal, O=Oral<br/>
-		                    F=Failed, P=Passed</b></div>
+		                    	<div class="vitalsLegendRow"><b><font style="color:red;">*</font>=Abnormal, U=Uncorrected,</b></div>
+		                    	<div class="vitalsLegendRow"><b>C=Corrected, A=Axillary, R=Rectal, O=Oral,</b></div>
+		                    	<div class="vitalsLegendRow"><b>F=Failed, P=Passed</b></div>
+		                    </div>
 		                </div>
 		                <div id="exam">
 		                    <div id="physicalExam">
@@ -1035,11 +1044,11 @@
 		                               </div>
 		                               <div class="answerCheckbox">
 		                                   <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer1_5'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                   	<xsl:when test="contains(Records/Record/Field[@id = 'Choice1']/Value, '5')">
+		                                   		<input type="checkbox" name="sub_Choice1" value="5" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_5']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_5']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice1" value="5" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_5']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                               </div>
@@ -1047,31 +1056,31 @@
 		                           <div class="answerContainer">
 		                               <div class="answerCheckbox">
 		                                   <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer1_2'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                   	<xsl:when test="contains(Records/Record/Field[@id = 'Choice1']/Value, '2')">
+		                                   		<input type="checkbox" name="sub_Choice1" value="2" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_2']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_2']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice1" value="2" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_2']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                               </div>
 		                               <div class="answerCheckbox">
 		                                   <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer1_4'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                   	<xsl:when test="contains(Records/Record/Field[@id = 'Choice1']/Value, '4')">
+		                                   		<input type="checkbox" name="sub_Choice1" value="4" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_4']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_4']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice1" value="4" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_4']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                               </div>
 		                               <div class="answerCheckbox">
 		                                   <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer1_6'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                   	<xsl:when test="contains(Records/Record/Field[@id = 'Choice1']/Value, '6')">
+		                                   		<input type="checkbox" name="sub_Choice1" value="6" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_6']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_6']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice1" value="6" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer1_6']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                               </div>
@@ -1091,31 +1100,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer2_1'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice2']/Value, '1')">
+		                                    		<input type="checkbox" name="sub_Choice2" value="1" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_1']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_1']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice2" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_1']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer2_3'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice2']/Value, '3')">
+		                                    		<input type="checkbox" name="sub_Choice2" value="3" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_3']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_3']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice2" value="3" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_3']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer2_5'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice2']/Value, '5')">
+		                                    		<input type="checkbox" name="sub_Choice2" value="5" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_5']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_5']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice2" value="5" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_5']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1123,31 +1132,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer2_2'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice2']/Value, '2')">
+		                                    		<input type="checkbox" name="sub_Choice2" value="2" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_2']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_2']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice2" value="2" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_2']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer2_4'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice2']/Value, '4')">
+		                                    		<input type="checkbox" name="sub_Choice2" value="4" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_4']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_4']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice2" value="4" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_4']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer2_6'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice2']/Value, '6')">
+		                                    		<input type="checkbox" name="sub_Choice2" value="6" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_6']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_6']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice2" value="6" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer2_6']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1167,31 +1176,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer3_1'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice3']/Value, '1')">
+		                                    		<input type="checkbox" name="sub_Choice3" value="1" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_1']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_1']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice3" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_1']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer3_3'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice3']/Value, '3')">
+		                                    		<input type="checkbox" name="sub_Choice3" value="3" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_3']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_3']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice3" value="3" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_3']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer3_5'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice3']/Value, '5')">
+		                                    		<input type="checkbox" name="sub_Choice3" value="5" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_5']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_5']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice3" value="5" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_5']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1199,31 +1208,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer3_2'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice3']/Value, '2')">
+		                                    		<input type="checkbox" name="sub_Choice3" value="2" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_2']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_2']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice3" value="2" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_2']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer3_4'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice3']/Value, '4')">
+		                                    		<input type="checkbox" name="sub_Choice3" value="4" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_4']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_4']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice3" value="4" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_4']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer3_6'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice3']/Value, '6')">
+		                                    		<input type="checkbox" name="sub_Choice3" value="6" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_6']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_6']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice3" value="6" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer3_6']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1243,31 +1252,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer4_1'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice4']/Value, '1')">
+		                                    		<input type="checkbox" name="sub_Choice4" value="1" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_1']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_1']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice4" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_1']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer4_3'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice4']/Value, '3')">
+		                                    		<input type="checkbox" name="sub_Choice4" value="3" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_3']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_3']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice4" value="3" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_3']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer4_5'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice4']/Value, '5')">
+		                                    		<input type="checkbox" name="sub_Choice4" value="5" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_5']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_5']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice4" value="5" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_5']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1275,31 +1284,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer4_2'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice4']/Value, '2')">
+		                                    		<input type="checkbox" name="sub_Choice4" value="2" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_2']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_2']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice4" value="2" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_2']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer4_4'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice4']/Value, '4')">
+		                                    		<input type="checkbox" name="sub_Choice4" value="4" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_4']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_4']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice4" value="4" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_4']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer4_6'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice4']/Value, '6')">
+		                                    		<input type="checkbox" name="sub_Choice4" value="6" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_6']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_6']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice4" value="6" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer4_6']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1319,31 +1328,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer5_1'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice5']/Value, '1')">
+		                                    		<input type="checkbox" name="sub_Choice5" value="1" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_1']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_1']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice5" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_1']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer5_3'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice5']/Value, '3')">
+		                                    		<input type="checkbox" name="sub_Choice5" value="3" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_3']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_3']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice5" value="3" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_3']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer5_5'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice5']/Value, '5')">
+		                                    		<input type="checkbox" name="sub_Choice5" value="5" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_5']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_5']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice5" value="5" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_5']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1351,31 +1360,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer5_2'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice5']/Value, '2')">
+		                                    		<input type="checkbox" name="sub_Choice5" value="2" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_2']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_2']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice5" value="2" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_2']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer5_4'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice5']/Value, '4')">
+		                                    		<input type="checkbox" name="sub_Choice5" value="4" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_4']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_4']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice5" value="4" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_4']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer5_6'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice5']/Value, '6')">
+		                                    		<input type="checkbox" name="sub_Choice5" value="6" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_6']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_6']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice5" value="6" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer5_6']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1395,31 +1404,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer6_1'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice6']/Value, '1')">
+		                                    		<input type="checkbox" name="sub_Choice6" value="1" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_1']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_1']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice6" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_1']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer6_3'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice6']/Value, '3')">
+		                                    		<input type="checkbox" name="sub_Choice6" value="3" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_3']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_3']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice6" value="3" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_3']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer6_5'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice6']/Value, '5')">
+		                                    		<input type="checkbox" name="sub_Choice6" value="5" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_5']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_5']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice6" value="5" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_5']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1427,31 +1436,31 @@
 		                            <div class="answerContainer">
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer6_2'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice6']/Value, '2')">
+		                                    		<input type="checkbox" name="sub_Choice6" value="2" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_2']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_2']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice6" value="2" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_2']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer6_4'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice6']/Value, '4')">
+		                                    		<input type="checkbox" name="sub_Choice6" value="4" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_4']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_4']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice6" value="4" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_4']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
 		                                <div class="answerCheckbox">
 		                                    <xsl:choose>
-		                                     <xsl:when test="Records/Record/Field[@id = 'Answer6_6'] = ''">
-		                                         <input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><br/>
+		                                    	<xsl:when test="contains(Records/Record/Field[@id = 'Choice6']/Value, '6')">
+		                                    		<input type="checkbox" name="sub_Choice6" value="6" disabled="disabled" checked="checked"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_6']"/><br/>
 		                                     </xsl:when>
 		                                     <xsl:otherwise>
-		                                     	<input type="checkbox" name="sub_Choice1" value="1" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_6']"/><br/>
+		                                     	<input type="checkbox" name="sub_Choice6" value="6" disabled="disabled"/><xsl:value-of select="Records/Record/Field[@id = 'Answer6_6']"/><br/>
 		                                     </xsl:otherwise>
 		                                   </xsl:choose>
 		                                </div>
@@ -1459,7 +1468,6 @@
 		                        </xsl:otherwise>
 		                    </xsl:choose>
 		                </div>
-		            </form>
 		        </div>
 		    </body>
         </html>
