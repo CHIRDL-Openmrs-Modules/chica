@@ -1,0 +1,49 @@
+Maintenance:
+	Title:		Diet and Exercize PWS;;
+	Filename:		dietExercisePWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2014-10-27 15:20:00;;
+	Validation:	;;
+Library:
+	Purpose:		Merge indicator on PWS if Diet and Exercise box checked                                                                                                                                                                                                                              ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	diet, exercise;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+handoutReviewed := read {Handout_Reviewed_by_MA from CHICA} Where it Occurred Within Past 1 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If 'diet and exercise' is in handoutReviewed then || DietAndExeGivenLabel || = "Diet and Exercise Handout Given";
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+;;
+Action:
+write ("|| DietAndExeGivenLabel ||") At DietAndExeGivenLabel;                                                                                
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

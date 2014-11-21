@@ -62,5 +62,5 @@ write ("Have you met your ADHD treatment target of having better self-esteem?");
 write ("¿Has alcanzado tu objetivo de tratamiento de ADHD en la mejoría de tu autoestima?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 12 years;;
-Age_Max: 18 years;;
+Age_Max: 21 years;;
 end:

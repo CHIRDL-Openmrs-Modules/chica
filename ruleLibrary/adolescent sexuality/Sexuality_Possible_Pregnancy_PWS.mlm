@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 pregnant := read Last {might_be_pregnant from CHICA} Where it Occurred Within Past 14 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 endif
 ;;
-Priority:		20;;
+Priority:		19;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
