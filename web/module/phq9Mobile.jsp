@@ -15,7 +15,11 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 </head>
-<body style="font-size: 20px" onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}', '${language}')">
+<c:set var="search" value="'" />
+<c:set var="replace" value="\\'" />
+<c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
+<c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
+<body style="font-size: 20px" onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="phq9Form" method="POST" action="phq9Mobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
