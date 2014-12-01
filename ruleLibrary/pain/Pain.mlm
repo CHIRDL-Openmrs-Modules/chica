@@ -34,13 +34,10 @@ Priority:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (pq = no) then || HL_Text || = "";
 If (pq = no) then || Pain_Text || = "0";
 
-If (pq = yes) then || HL_Text || = " ggggggggggggg";
 If (pq = yes) then || Pain_Text || = " _______";
 
-If (pq = NULL) then || HL_Text || = " ggggggggggggg";
 If (pq = NULL) then || Pain_Text || = " _______";
 Conclude True;
 
@@ -48,7 +45,6 @@ endif
 
 ;;
 Action:
-write ("|| HL_Text ||")  At Pain_HL;
 write ("|| Pain_Text ||") At Pain;
 write ("");
 write ("");

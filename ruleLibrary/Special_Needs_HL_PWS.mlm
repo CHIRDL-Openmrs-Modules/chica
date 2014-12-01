@@ -34,7 +34,6 @@ Priority:       ;;
 Logic:
 If (mode = PRODUCE) then
 
-If (specialNeeds = yes) then || HL_Text || = " ggggggggggggg";
 If (specialNeeds = yes) then || Special_Need_Text || = "Y";
 Conclude True;
 
@@ -42,7 +41,6 @@ endif
 
 ;;
 Action:
-write ("|| HL_Text ||")  At Special_Need_HL;
 write ("|| Special_Need_Text ||") At Special_Need;
 write ("");
 write ("");
