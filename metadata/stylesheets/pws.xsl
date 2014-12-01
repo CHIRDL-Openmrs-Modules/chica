@@ -15,7 +15,7 @@
 					#formContainer {
 						font-size:12px;
 					    width:600px;
-					    height:818px;
+					    height:788px;
 					    margin:0 auto;
 					    border: 1px solid black;
 					}
@@ -123,13 +123,13 @@
 					    float:left;
 					    width:367px;
 					    height:280px;
-					    margin-top:-190px;
+					    margin-top:-220px;
 					    padding:2px 2px 0px 5px;
 					}
 					
 					#buttons {
 					    width:226px;
-					    height:86px;
+					    height:56px;
 					    border-bottom: 1px solid black;
 					    float:left;
 					    margin-top:6px;
@@ -234,10 +234,22 @@
 					.highlightYellow {
 						background-color: yellow;
 					}
+					
+					.infoLeftItem {
+						height: 15px;
+						width: 230px;
+					}
+					
+					.infoRightItem {
+						height: 15px;
+						width: 138px;
+					}
+					
                 </style>
             </head>
             <body>
 		        <div id="formContainer">
+		            <form id="pwsForm" name="pwsForm" action="pws.form" method="post">
 		                <div id="titleContainer">
 		                    <div id="title">
 		                        <h3>CHICA Physician Encounter Form</h3>
@@ -247,14 +259,27 @@
 		                    </div>
 		                </div>
 		                <div id="infoLeft">
-		                    <b>Patient:</b> <xsl:value-of select="Records/Record/Field[@id = 'PatientName']"/><br/>
-		                	<b>DOB:</b> <xsl:value-of select="Records/Record/Field[@id = 'DOB']"/>&#160;&#160;<b>Age:</b> <xsl:value-of select="Records/Record/Field[@id = 'Age']"/><br/>
-		                    <b>Doctor:</b> <xsl:value-of select="Records/Record/Field[@id = 'Doctor']"/>
+		                	<div class="infoLeftItem">
+		                    	<b>Patient:</b> <xsl:value-of select="Records/Record/Field[@id = 'PatientName']"/>
+		                	</div>
+		                	<div class="infoLeftItem">
+		                		<b>DOB:</b> <xsl:value-of select="Records/Record/Field[@id = 'DOB']"/>&#160;&#160;<b>Age:</b> <xsl:value-of select="Records/Record/Field[@id = 'Age']"/>
+		                	</div>
+		                	<div class="infoLeftItem">
+		                    	<b>Doctor:</b> <xsl:value-of select="Records/Record/Field[@id = 'Doctor']"/>
+		                	</div>
 		                </div>
 		                <div id="infoRight">
-		                    <b>MRN:</b> <xsl:value-of select="Records/Record/Field[@id = 'MRN']"/><br/>
-		                    <b>Date:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitDate']"/><br/>
-		                <b>Time:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitTime']"/></div>
+		                	<div class="infoRightItem">
+		                    	<b>MRN:</b> <xsl:value-of select="Records/Record/Field[@id = 'MRN']"/>
+		                	</div>
+		                	<div class="infoRightItem">
+		                    	<b>Date:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitDate']"/>
+		                	</div>
+		                	<div class="infoRightItem">
+		                		<b>Time:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitTime']"/>
+		                	</div>
+		                </div>
 		                <div id="vitals">
 		                    <div class="flagCell">
 		                        <b><font style="color:black;">A</font></b>
@@ -1468,6 +1493,7 @@
 		                        </xsl:otherwise>
 		                    </xsl:choose>
 		                </div>
+		            </form>
 		        </div>
 		    </body>
         </html>
