@@ -89,5 +89,5 @@ write ("Given asthma action plan");
 write ("Does not have asthma                              ");
 ;;
 Age_Min: 3          years     ;;
-Age_Max: 12         years     ;;
+Age_Max: 21         years     ;;
 end:

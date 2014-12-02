@@ -1,0 +1,57 @@
+Maintenance:
+	Title:		Research PSF Asthma Day Symptoms;;
+	Filename:		R_PSFAsthmaDaySx_older;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2005-05-12T03:57:05-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Assess for frequency of daytime symptoms in patients with known asthma.                                                                                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Explanation:	If a patient is known to the system to have asthma, this PSF asks if symptoms occur >=3x per week                                                                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	asthma PSF symptoms grade;;
+	Citations:		NHLBI asthma guidelines;;
+	Links:		http://www.nhlbi.nih.gov/guidelines/asthma/asthgdln.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+CurrentStatus := read Last {AsthmaStatus from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+endif
+;;
+Priority: 353;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (CurrentStatus = Intermittent) OR (CurrentStatus = Persistent-controller) OR (CurrentStatus = Persistent-no-controller) OR (CurrentStatus = Persistent-non-adherent) then conclude True;
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "AsthmaSymptoms","Daytime 3 or More Per Wk";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you have coughing, wheezing, breathing problems or a tight chest during the daytime 3 or more times a week?");
+write ("¿Tienes tos, te silba el pecho, tienes problemas al respirar o pecho congestionado durante el día 3 o más veces a la semana?") At Spanish;                                                                                                                                                                                                            
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:
