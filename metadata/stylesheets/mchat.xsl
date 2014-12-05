@@ -209,10 +209,24 @@
                         <div class="question">Does your child enjoy being swung, bounced on your knee, etc.?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_1']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_1']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -221,10 +235,24 @@
                         <div class="questionBold">Does your child take an interest in other children?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_2']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_2']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -233,10 +261,24 @@
                         <div class="question">Does your child like climbing on things, such as up stairs?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_3']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_3']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -245,10 +287,24 @@
                         <div class="questionBold">Does your child enjoy playing peek-a-bool/hide-and-seek?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_4']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_4']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -257,10 +313,24 @@
                         <div class="question">Does your child ever pretend, for example, to talk on the phone or take care of a doll or pretend other things?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_5']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_5']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -269,10 +339,24 @@
                         <div class="questionBold">Does your child ever use his/her index finger to point, to ask for something?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_6']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_6']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -281,10 +365,24 @@
                         <div class="question">Does your child ever use his/her index finger to point, to indicate interest in something?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_7']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_7']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -293,10 +391,24 @@
                         <div class="questionBold">Can your child play properly with small toys (e.g. cars or blocks) without just mouthing, fiddling, or dropping them?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_8']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_8']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -305,10 +417,24 @@
                         <div class="question">Does your child ever bring objects over to you (parent) to show you something?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_9']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_9']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -325,10 +451,24 @@
                         <div class="questionBold">Does your child ever look you in the eye for more than a second or two?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_10']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_10']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -337,10 +477,24 @@
                         <div class="question">Does your child ever seem oversensitive to noise? (e.g. plugging ears)</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_11']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_11']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -349,10 +503,24 @@
                         <div class="questionBold">Does your child smile in response to your face or your smile?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_12']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_12']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -361,10 +529,24 @@
                         <div class="question">Does your child imitate you? (e.g. you make a face-will your child imitate it?)</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_13']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_13']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -381,10 +563,24 @@
                         <div class="questionBold">Does your child respond to his/her name when you call?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_14']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_14']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -393,10 +589,24 @@
                         <div class="question">If you point at a toy across the room, does your child look at it?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_15']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_15']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -405,10 +615,24 @@
                         <div class="questionBold">Does your child walk?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_16']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_16']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -417,10 +641,24 @@
                         <div class="question">Does your child look at things you are looking at?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_17']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_17']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -429,10 +667,24 @@
                         <div class="questionBold">Does your child make unusual finger movements near his/her face?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_18']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_18']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -441,10 +693,24 @@
                         <div class="question">Does your child try to attract your attention to his/her own activity?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_19']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_19']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -461,10 +727,24 @@
                         <div class="questionBold">Have you ever wondered if your child is deaf?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_20']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_20']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -473,10 +753,24 @@
                         <div class="question">Does your child understand what people say?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_21']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_21']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -485,10 +779,24 @@
                         <div class="questionBold">Does your child sometimes stare at nothing or wander with no purpose?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_22']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_22']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -505,10 +813,24 @@
                         <div class="question">Does your child look at your face to check your reaction when faced with something unfamiliar?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_23']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_23']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -544,10 +866,24 @@
                         <div class="question">&#191;Disfruta su niño (a) cuando lo balancean o hacen saltar sobre su rodilla?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_1_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_1_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -556,10 +892,24 @@
                         <div class="questionBold">&#191;Se interesa su niño (a) en otros niños?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_2_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_2_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -568,10 +918,24 @@
                         <div class="question">&#191;Le gusta a su niño (a) subirse a las cosas, por ejemplo subir las escaleras?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_3_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_3_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -580,10 +944,24 @@
                         <div class="questionBold">&#191;Disfruta su niño (a) jugando "peek-a-boo" o "hide and seek" (a las escondidas)?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_4_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_4_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -592,10 +970,24 @@
                         <div class="question">&#191;Le gusta a su niño (a) jugar a pretendar, como por ejemplo, pretende que habla por tel&#233;fono, que cuida sus muñecas, o pretende otras cosas?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_5_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_5_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -604,10 +996,24 @@
                         <div class="questionBold">&#191;Utiliza su niño (a) su dedo &#237;ndice para señalar algo, o para preguntar alguna cosa?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_6_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_6_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -616,10 +1022,24 @@
                         <div class="question">&#191;Usa su niño (a) su dedo &#237;ndice para señalar o indicar inter&#233;s en algo?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_7_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_7_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -628,10 +1048,24 @@
                         <div class="questionBold">&#191;Puede su niño (a) jugar bien con jugetes pequeños (como carros o cubos) sin llevárselos a la boca, manipularlos o dejarlos caer)?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_8_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_8_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -640,10 +1074,24 @@
                         <div class="question">&#191;Le trae su niño (a) a usted (padre o madre) objetos o cosas, con el prop&#243;sito de mostrarle algo alguna vez?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_9_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_9_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -660,10 +1108,24 @@
                         <div class="questionBold">&#191;Lo mira su niño (a) directamente a los ojos por mas de uno o dos segundos?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_10_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_10_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -672,10 +1134,24 @@
                         <div class="question">&#191;Parece su niño (a) ser demasiado sensitivo al ruido? (por ejemplo, se tapa los oidos)?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_11_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_11_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -684,10 +1160,24 @@
                         <div class="questionBold">&#191;Sonrie su niño (a) en respuesta a su cara o a su sonrisa?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_12_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_12_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -696,10 +1186,24 @@
                         <div class="question">&#191;Lo imita su niño (a)? Por ejemplo, si usted le hace una mueca,  su niño (a) trata de imitarlo?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_13_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_13_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -716,10 +1220,24 @@
                         <div class="questionBold">&#191;Responde su niño (a) a su nombre cuando lo(a) llaman?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_14_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_14_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -728,10 +1246,24 @@
                         <div class="question">&#191;Si usted señala a un juguete que est&#225;al otro lado de la habitaci&#243;n a su niño (a), lo mira?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_15_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_15_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -740,10 +1272,24 @@
                         <div class="questionBold">&#191;Camina su niño (a)?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_16_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_16_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -752,10 +1298,24 @@
                         <div class="question">&#191;Presta su niño (a) atenci&#243;n a las cosas que usted est&#225;mirando?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_17_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_17_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -764,10 +1324,24 @@
                         <div class="questionBold">&#191;Hace su niño (a) movimientos raros con los dedos cerca de su cara?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_18_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_18_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -776,10 +1350,24 @@
                         <div class="question">&#191;Trata su niño (a) de llamar su atenci&#243;n (de sus padres) a las actividades que estada llevando a cabo?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_19_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_19_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -796,10 +1384,24 @@
                         <div class="questionBold">&#191;Se ha preguntado alguna vez si su niño (a) es sordo (a)?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_20_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_20_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -808,10 +1410,24 @@
                         <div class="question">&#191;Comprende su niño (a) lo que otras dicen?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_21_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_21_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -820,10 +1436,24 @@
                         <div class="questionBold">&#191;Ha notado si su niño (a) se queda con una Mirada fija en nada, o si camina algunas veces sin sentido?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_22_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_22_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
@@ -840,10 +1470,24 @@
                         <div class="question">&#191;Su niño le mira a su cara para chequear su reacci&#243;n cuando esta en una situaci&#243;n diferente?</div>
                         <div class="answerContainer">
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_23_sp']/Value = '1'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                             <div class="answerLabel">
-                                <input class="radioAnswer" type="radio"></input>
+                                <xsl:choose>
+                                    <xsl:when test="Records/Record/Field[@id = 'Choice_23_sp']/Value = '0'">
+                                        <input type="radio" disabled="disabled" checked="checked"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <input type="radio" disabled="disabled"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </div>
                         </div>
                     </div>
