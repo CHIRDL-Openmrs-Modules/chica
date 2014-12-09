@@ -12,7 +12,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/finishFormsMobile.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.timer.js"></script>
 </head>
-<body style="font-size: 20px">
+<body>
 
 <div id="finished_form" data-url="finished_form" data-role="page" style="font-size: 20px">
 	<div data-role="header">

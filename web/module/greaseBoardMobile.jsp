@@ -15,7 +15,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/greaseBoardMobile.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 </head>
-<body style="font-size: 20px">
+<body>
 
 <div data-role="page" id="patient_list_page" data-theme="b" type="patient_page">
     <div data-role="header" class="single-line-header" data-theme="a" data-position="fixed">
@@ -56,8 +56,8 @@
             </div>
         </div>
     </div>
-    <div data-role="footer" data-theme="a" data-position="fixed" style="text-align: left;font-size: 10px;">
-        <h4 style="font-size:15px">
+    <div data-role="footer" data-theme="a" data-position="fixed" style="text-align: left;">
+        <h4>
         <div class="ui-grid-b">
             <div class="ui-block-a" style="text-align: left;"><span style="color:red">*</span> = Pre-screener reprinted</div>               
         </div>
