@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<div id="finished_form" data-url="finished_form" data-role="page" style="font-size: 20px">
+<div id="finished_form" data-url="finished_form" data-role="page">
 	<div data-role="header">
 	   <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	</div>
