@@ -15,7 +15,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/loginMobile.js"></script>
 </head>
-<body style="font-size: 20px">
+<body>
 
     <div id="login_mobile" data-url="login_mobile" data-role="page" data-theme="b">
         <div data-role="header">

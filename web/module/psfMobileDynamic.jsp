@@ -63,7 +63,7 @@
 <c:set var="replace" value="\\'" />
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-<body style="font-size: 20px" onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${formId}', '${formInstanceId}', '${encounterId}')">
+<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${formId}', '${formInstanceId}', '${encounterId}')">
 <form id="psfForm" method="POST" data-ajax="false">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
@@ -78,7 +78,7 @@
         </div>
     </div>
 </c:if>
-<div data-role="page" id="confirm_page" data-theme="b" style="font-size:20px;">
+<div data-role="page" id="confirm_page" data-theme="b">
     <div data-role="header" class="single-line-header" >
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>

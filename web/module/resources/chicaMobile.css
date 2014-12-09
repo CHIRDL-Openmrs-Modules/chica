@@ -3,13 +3,9 @@ input[masktype=password] {
     -webkit-text-security: disc;
 }
 
-.ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
-    font-size: 20px;
-}
-
 .custom-button {
-    height: 40px !important;
-    width: 40px !important;
+    height: 1.5em !important;
+    width: 1.5em !important;
 }
 
 .custom-button .ui-btn-inner {
@@ -18,14 +14,19 @@ input[masktype=password] {
 
 .custom-button .ui-btn-inner .ui-btn-text {
     display: block !important;
-    height: 40px !important;
+    height: 1.2em !important;
     width: 100% !important;
     background-image: url('/openmrs/moduleResources/chica/images/speaker.png') !important;
     background-repeat: no-repeat  !important;
     background-position: center  !important; 
+    margin-top:2px;
 }
 
-.ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
+.ui-btn-text, body, .ui-btn-inner, .ui-checkbox label, .ui-controlgroup-label,  .ui-controlgroup .ui-checkbox label, .ui-controlgroup .ui-radio label, .ui-radio label, .ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
+    font-size: 20px;
+}
+
+a[data-role="button"] {
     font-size: 20px;
 }
 
@@ -41,4 +42,33 @@ input[masktype=password] {
 
 .extended-header .ui-header a {
     display: none;
+}
+
+@media screen and ( max-device-height: 2000px ){
+    .ui-btn-text, body, .ui-btn-inner, .ui-checkbox label, .ui-controlgroup-label,  .ui-controlgroup .ui-checkbox label, .ui-controlgroup .ui-radio label, .ui-radio label, .ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
+        font-size: 1.1em;
+    }
+    
+    a[data-role="button"] {
+        font-size: .8em;
+    }
+    
+    .custom-button {
+	    height: 1.5em !important;
+	    width: 1.5em !important;
+	}
+
+	.custom-button .ui-btn-inner {
+	    padding: 0 !important;    
+	}
+	
+	.custom-button .ui-btn-inner .ui-btn-text {
+	    display: block !important;
+	    height: 1.2em !important;
+	    width: 100% !important;
+	    background-image: url('/openmrs/moduleResources/chica/images/speaker.png') !important;
+	    background-repeat: no-repeat  !important;
+	    background-position: center  !important; 
+	    margin-top:-1px;
+	}
 }
