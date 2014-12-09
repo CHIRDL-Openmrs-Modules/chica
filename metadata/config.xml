@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.61.5</version>
+    <version>1.61.6</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -312,8 +312,19 @@
         <description>Activate VXU to create a patient in the CHIRP registry.
         </description>
     </globalProperty>
+     <globalProperty>
+        <property>chica.filterHL7RegistrationOnPriorCheckin</property>
+        <defaultValue>false</defaultValue>
+        <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
+        </description>
+    </globalProperty>
     
-    
+    <!-- Servlets -->
+    <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
+    <servlet>
+        <servlet-name>chicaMobile</servlet-name>
+        <servlet-class>@MODULE_PACKAGE@.web.ChicaMobileServlet</servlet-class>
+    </servlet>
     
     <!-- Internationalization -->
     <!-- All message codes should start with @MODULE_ID@.* -->
@@ -346,12 +357,6 @@
         chica_hl7_export_status.hbm.xml
     </mappingFiles>
     
-    <!-- Servlets -->
-    <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
-    <servlet>
-        <servlet-name>chicaMobile</servlet-name>
-        <servlet-class>@MODULE_PACKAGE@.web.ChicaMobileServlet</servlet-class>
-    </servlet>
-    
+   
 </module>
 

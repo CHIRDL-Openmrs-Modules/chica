@@ -3,6 +3,11 @@
  */
 package org.openmrs.module.chica.hl7.mckesson;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.openmrs.PersonAddress;
 import org.openmrs.module.chirdlutil.util.Util;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -10,8 +15,11 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.datatype.CE;
 import ca.uhn.hl7v2.model.v25.datatype.CX;
 import ca.uhn.hl7v2.model.v25.datatype.FN;
+import ca.uhn.hl7v2.model.v25.datatype.SAD;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
+import ca.uhn.hl7v2.model.v25.datatype.XAD;
 import ca.uhn.hl7v2.model.v25.datatype.XPN;
+import ca.uhn.hl7v2.model.v25.segment.NK1;
 import ca.uhn.hl7v2.model.v25.segment.PID;
 
 /**
@@ -164,5 +172,69 @@ public class HL7PatientHandler25 extends
 		return stIdent;
 	}
 	
+	protected PersonAddress getAddress(XAD xad){
+
+		PersonAddress address = new PersonAddress();
+	
+		if (xad == null){
+			return null;
+		}
+		
+		SAD streetAddress = xad.getStreetAddress();
+		String streetAddrString = streetAddress.getStreetOrMailingAddress()
+					.toString();
+		String otherDesignation = xad.getOtherDesignation().toString();
+		String city = xad.getCity().toString();
+	
+		String stateProvince = xad.getStateOrProvince().toString();
+		String postalCode = xad.getZipOrPostalCode().toString();
+		String country = xad.getCountry().toString();
+		address.setAddress1(streetAddrString);
+		address.setAddress2(otherDesignation);
+		address.setCityVillage(city);
+		address.setStateProvince(stateProvince);
+		address.setCountry(country);
+		address.setPostalCode(postalCode);
+		UUID uuid = UUID.randomUUID();
+		address.setUuid(uuid.toString());
+		address.setPreferred(true);
+	
+		return address;
+	}
+	
+	@Override
+	public List<PersonAddress> getAddresses(Message message)
+	{
+		List<PersonAddress> addresses = new ArrayList<PersonAddress>();
+		XAD[] xadAddresses = null;
+		
+		try
+		{
+			PID pid = getPID(message);
+			NK1 nk1 = getNK1(message);
+			
+			if (pid != null ){
+				
+				xadAddresses = pid.getPatientAddress(); 
+			}
+			if ((xadAddresses == null || xadAddresses.length == 0) && nk1 != null){
+					xadAddresses = nk1.getAddress();
+			}
+				
+			for (XAD xadAddress : xadAddresses)
+			{
+				addresses.add(getAddress(xadAddress));
+			}
+
+		} catch (Exception e)
+		{
+			logger.warn("Unable to collect address from PID or NK1 for", e);
+		}
+		return addresses;
+	}
+	
+	
 	
 }
+
+

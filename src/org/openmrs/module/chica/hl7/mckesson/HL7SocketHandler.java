@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -17,6 +18,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -25,6 +28,7 @@ import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
@@ -53,7 +57,8 @@ import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
-import org.openmrs.util.OpenmrsUtil;
+import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
+import org.openmrs.util.OpenmrsConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
@@ -413,8 +418,12 @@ public class HL7SocketHandler extends
 		
 		AdministrationService adminService = Context.getAdministrationService();
 		parameters.put("processCheckinHL7Start", new java.util.Date());
+		boolean filterDuplicateCheckin = false;
 		Context.openSession();
-//		String allowMessageSources = adminService.getGlobalProperty("chica.allowableHL7MessageSources");
+		String filterDuplicateRegistrationStr = adminService.getGlobalProperty("chica.filterHL7RegistrationOnPriorCheckin");
+		if (filterDuplicateRegistrationStr != null && filterDuplicateRegistrationStr.equalsIgnoreCase("true")){
+			filterDuplicateCheckin = true;
+		}
 		Context.closeSession();
 		
 		String incomingMessageString = null;
@@ -516,6 +525,11 @@ public class HL7SocketHandler extends
 
 			if (printerLocation != null && printerLocation.equals("0")) {
 				// ignore this message because it is just kids getting shots
+				return message;
+			}
+			
+			if (filterDuplicateCheckin && priorCheckinExists(message)){
+				//ignore this message, because patient was already checked in. 
 				return message;
 			}
 		}
@@ -696,7 +710,7 @@ public class HL7SocketHandler extends
 	 * @param encounterDate
 	 * @should update date created if name already exists
 	 */
-	void addName(Patient currentPatient, Patient hl7Patient, Date encounterDate) {
+	void addName(Patient currentPatient, Patient newPatient, Date encounterDate) {
 
 		/*
 		 * Condition where newest hl7 name matches an older existing name ( not
@@ -705,56 +719,70 @@ public class HL7SocketHandler extends
 		 * have an updated date, and will not get set as the preferred name.
 		 * Then, the wrong name will be displayed on the form.
 		 */
-
-		for (PersonName pn : currentPatient.getNames()) {
-			if (pn != null
-					&& OpenmrsUtil.nullSafeEquals(pn.getFamilyName()
-							, hl7Patient.getFamilyName())
-					&& OpenmrsUtil.nullSafeEquals(pn.getGivenName()
-							,hl7Patient.getGivenName())
-					&& OpenmrsUtil.nullSafeEquals(pn.getMiddleName()
-							, hl7Patient.getMiddleName())) {
-				pn.setDateCreated(encounterDate);
+		try{
+			PersonName newName = newPatient.getPersonName();
+			if (newName == null
+					|| (StringUtils.isBlank(newName.getFamilyName())
+							&& StringUtils.isBlank(newName.getMiddleName())
+							&& StringUtils.isBlank(newName.getGivenName())
+							&& StringUtils.isBlank(newName.getFamilyName2())
+							&& StringUtils.isBlank(newName.getFullName())
+							&& StringUtils.isBlank(newName.getPrefix())
+							&& StringUtils.isBlank(newName.getFamilyNamePrefix()) 
+							&& StringUtils.isBlank(newName.getFamilyNameSuffix()))) {
+				return;
 			}
 
-		}
+			boolean found = false;
 
-		currentPatient.addName(hl7Patient.getPersonName());
-		Set<PersonName> names = currentPatient.getNames();
+			for (PersonName pn : currentPatient.getNames()) {
+				if (!found && pn.equalsContent(newName)) {
+					pn.setDateCreated(encounterDate);
+					found = true;
+					break;
+				}
 
-		// reset all addresses preferred status
-		for (PersonName name : names) {
-			name.setPreferred(false);
-		}
-
-		// Sort the list of names based on date
-		List<PersonName> nameList = new ArrayList<PersonName>(names);
-
-		Collections.sort(nameList, new Comparator<PersonName>() {
-			public int compare(PersonName n1, PersonName n2) {
-				Date date1 = n1.getDateCreated();
-				Date date2 = n2.getDateCreated();
-				return date1.compareTo(date2) > 0 ? 0 : 1;
 			}
-		});
 
-		try {
-			// Latest to preferred
+			if (newName.getUuid() == null) {
+				UUID uuid = UUID.randomUUID();
+				newName.setUuid(uuid.toString());
+			}
+
+			currentPatient.addName(newName);
+			Set<PersonName> names = currentPatient.getNames();
+
+			// reset all addresses preferred status
+			for (PersonName name : names) {
+				name.setPreferred(false);
+			}
+
+			// Sort the list of names based on date
+			List<PersonName> nameList = new ArrayList<PersonName>(names);
+
+			Collections.sort(nameList, new Comparator<PersonName>() {
+				public int compare(PersonName n1, PersonName n2) {
+					Date date1 = n1.getDateCreated();
+					Date date2 = n2.getDateCreated();
+					return date1.compareTo(date2) > 0 ? 0 : 1;
+				}
+			});
+
+
 			if (nameList.size() > 0 && nameList.get(0) != null) {
+				// set latest to preferred
 				nameList.get(0).setPreferred(true);
 				Set<PersonName> nameSet = new TreeSet<PersonName>(nameList);
-				if (nameSet.size()> 0){
+				if (nameSet.size() > 0) {
 					currentPatient.getNames().clear();
 					currentPatient.getNames().addAll(nameSet);
-				}else{
-					//Safety check. If nameSet is empty, don't clear.  There should
-					//at least be the new name from the hl7 message
-					log.error("Name set is empty, do not clear." 
-							+ "Name will not be updated.");
 				}
 			}
+
+
 		} catch (Exception e) {
-			log.error("Error setting preferred status to the updated patient name.",e);
+			log.error("Error updating patient name. MRN: "
+					+ newPatient.getPatientIdentifier(), e);
 		}
 	}
 
@@ -767,62 +795,55 @@ public class HL7SocketHandler extends
 	 * @param encounterDate
 	 * @should set latest address to preferred and add to addresses
 	 */
-	public void addAddress(Patient currentPatient, Patient hl7Patient,
+	public void addAddress(Patient currentPatient, Patient newPatient,
 			Date encounterDate) {
 
-		/*
-		 * OpenMRS addAddress() first checks for equality based on id only, so
-		 * Patient.addAddress() will never result in a match between the
-		 * hl7patient address and existing address and will always be added
-		 * (because there are no ids for the hl7patient yet)
-		 */
-
-		PersonAddress hl7Address = hl7Patient.getPersonAddress();
-
-		if (hl7Address == null) {
-			return;
-		}
-
-		String hl7Address1 = hl7Address.getAddress1();
-		String hl7Address2 = hl7Address.getAddress2();
-		String hl7City = hl7Address.getCityVillage();
-		String hl7County = hl7Address.getCountyDistrict();
-		String hl7State = hl7Address.getStateProvince();
-		String hl7Zip = hl7Address.getPostalCode();
-		String hl7Country = hl7Address.getCountry();
-
-		boolean found = false;
-
-		for (PersonAddress pa : currentPatient.getAddresses()) {
-			if (!found && OpenmrsUtil.nullSafeEquals(pa.getAddress1(), hl7Address1)
-					&& OpenmrsUtil.nullSafeEquals(pa.getAddress2(), hl7Address2)
-					&& OpenmrsUtil.nullSafeEquals(pa.getCityVillage(), hl7City)
-					&& OpenmrsUtil.nullSafeEquals(pa.getCountyDistrict(), hl7County)
-					&& OpenmrsUtil.nullSafeEquals(pa.getStateProvince(), hl7State)
-					&& OpenmrsUtil.nullSafeEquals(pa.getPostalCode(), hl7Zip)
-					&& OpenmrsUtil.nullSafeEquals(pa.getCountry(), hl7Country)) {
-				pa.setDateCreated(encounterDate);
-				found = true;
-			}
-
-		}
-
-		if (!found) {
-			hl7Patient.getPersonAddress().setDateCreated(encounterDate);
-			currentPatient.addAddress(hl7Patient.getPersonAddress());
-		}
-
-		// reset all addresses preferred status
-		Set<PersonAddress> addresses = currentPatient.getAddresses();
-		for (PersonAddress address : addresses) {
-			address.setPreferred(false);
-		}
-
-		// Sort the list of names based on date
-		List<PersonAddress> addressList = new ArrayList<PersonAddress>(
-				addresses);
+		PersonAddress newAddress = newPatient.getPersonAddress();
 
 		try {
+			if (newAddress == null
+					|| (StringUtils.isBlank(newAddress.getAddress1())
+							&& StringUtils.isBlank(newAddress.getAddress2())
+							&& StringUtils.isBlank(newAddress.getCityVillage())
+							&& StringUtils.isBlank(newAddress
+									.getStateProvince())
+							&& StringUtils.isBlank(newAddress.getCountry())
+							&& StringUtils.isBlank(newAddress.getPostalCode())
+							&& StringUtils.isBlank(newAddress.getCountyDistrict()) 
+							&& StringUtils.isBlank(newAddress.getStateProvince()))) {
+				return;
+			}
+
+			boolean found = false;
+
+			for (PersonAddress pa : currentPatient.getAddresses()) {
+				if (!found && pa.equalsContent(newAddress)) {
+					pa.setDateCreated(encounterDate);
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				PersonAddress address = newPatient.getPersonAddress();
+				if (address.getUuid() == null) {
+					UUID uuid = UUID.randomUUID();
+					address.setUuid(uuid.toString());
+				}
+				address.setDateCreated(encounterDate);
+				currentPatient.addAddress(address);
+			}
+
+			// reset all addresses preferred status
+			Set<PersonAddress> addresses = currentPatient.getAddresses();
+			for (PersonAddress address : addresses) {
+				address.setPreferred(false);
+			}
+
+			// Sort the list of names based on date
+			List<PersonAddress> addressList = new ArrayList<PersonAddress>(
+					addresses);
+
 			Collections.sort(addressList, new Comparator<PersonAddress>() {
 				public int compare(PersonAddress a1, PersonAddress a2) {
 					Date date1 = a1.getDateCreated();
@@ -830,29 +851,19 @@ public class HL7SocketHandler extends
 					return date1.compareTo(date2) > 0 ? 0 : 1;
 				}
 			});
-		} catch (Exception e) {
-			log.error("Sort exception for address list", e);
-			return;
-		}
 
-		try {
 			if (addressList.size() > 0 && addressList.get(0) != null) {
-				// Latest to preferred
+				// set latest to preferred
 				addressList.get(0).setPreferred(true);
-				Set<PersonAddress> addressSet = new TreeSet<PersonAddress>(
-						addressList);
-				if (addressSet.size()> 0){
+				Set<PersonAddress> addressSet = new TreeSet<PersonAddress>(addressList);
+				if (addressSet.size() > 0) {
 					currentPatient.getAddresses().clear();
 					currentPatient.getAddresses().addAll(addressSet);
-				}else{
-					//Safety check.  The set should at least have the one hl7 address.
-					//Do not clear addresses.
-					log.error("Safety check.  The set should contain at least the new" +
-							" hl7Address. If empty, do not clear. Addresses are not updated.");
 				}
+
 			}
 		} catch (Exception e) {
-			log.error("Error adding addresses to patient", e);
+			log.error("Error adding addresses to patient MRN: " + newPatient.getPatientIdentifier(), e);
 
 		}
 
@@ -911,7 +922,6 @@ public class HL7SocketHandler extends
 				currentPatient.addIdentifier(newSSN);
 		}
 
-		
 
 	}
 
@@ -1145,21 +1155,29 @@ public class HL7SocketHandler extends
 	 * @param existingPatient - Patient already exists in our records and was matched to the hl7 or manual checkin patient
 	 * @param newPatient - Patient created from content of HL7 message or manual checkin 
 	 * @param encounterDate
+	 * @should remove leading zeros
 	 */
-	private void addMRN(Patient existingPatient, Patient newPatient, Date encounterDate){
-		ChirdlUtilBackportsService chirdlutilbackportsService 
-				= Context.getService(ChirdlUtilBackportsService.class);
+	public void addMRN(Patient existingPatient, Patient newPatient, Date encounterDate){
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		PatientService patientService = Context.getPatientService();
-	
+		String newMRN = null;
+		String existingMRN = null;
+
 		try {
-			
+
 			//Get the existing preferred, non-voided identifier for comparison  
 			PatientIdentifier existingPatientIdentifier = existingPatient.getPatientIdentifier(); 
+
 			PatientIdentifier newPatientIdentifier= newPatient.getPatientIdentifier();
-			
-			String existingMRN = existingPatientIdentifier.getIdentifier();
-			String newMRN = null;
-			
+
+			existingMRN = existingPatientIdentifier.getIdentifier();
+			newMRN = null;
+
+			PatientIdentifierType identifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
+			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+			identifierTypes.add(identifierType);
+
 			//If new MRN does not exist or matches the existing MRN, no need to update.
 			//If the only difference is a leading 0, do not return. MRN must be updated.
 			if (newPatientIdentifier == null
@@ -1167,29 +1185,36 @@ public class HL7SocketHandler extends
 					|| existingMRN.trim().equals(newMRN.trim()) ){
 				return;
 			}
-			
+
 			//New MRNs will not have a leading zero. 
-			if (Util.removeLeadingZeros(existingMRN.trim()).equals(newMRN.trim())){
-				existingPatientIdentifier.setVoidReason("MRN Leading Zero Correction");
-				Error error = new Error("Warning", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
-						"Leading Zero Correction." 
-						+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
-						"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
-				chirdlutilbackportsService.saveError(error);
-			} else {
-				existingPatientIdentifier.setVoidReason("MRN Correction");
-				Error error = new Error("Error", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
-						"MRN correction required! Contact Regenstrief about possible corrupted data." 
-						+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
-						"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
-				chirdlutilbackportsService.saveError(error);
+			try {
+				if (Util.removeLeadingZeros(existingMRN.trim()).equals(Util.removeLeadingZeros(newMRN.trim()))){
+					existingPatientIdentifier.setVoidReason("MRN Leading Zero Correction");
+					Error error = new Error("Warning", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+							"Leading Zero Correction." 
+									+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
+									"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
+					chirdlutilbackportsService.saveError(error);
+				} else {
+					existingPatientIdentifier.setVoidReason("MRN Correction");
+					Error error = new Error("Error", ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+							"MRN correction required! Contact downstream data warehouse about possible corrupted data." 
+									+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
+									"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
+					chirdlutilbackportsService.saveError(error);
+				}
+			} catch (Exception e) {
+
+				log.error("Insert to error table failed. Error category = " + ChirdlUtilConstants.ERROR_MRN_VALIDITY 
+						+  "Existing MRN: " + existingMRN + "; New MRN: " + newMRN, e);
 			}
 			//void the existing identifier
+
 			existingPatientIdentifier.setPreferred(false);
 			existingPatientIdentifier.setVoided(true);
 			existingPatientIdentifier.setVoidedBy(Context.getAuthenticatedUser());
 			existingPatientIdentifier.setDateVoided(new Date());
-			
+
 			//Create the new identifier object and add to existing patient
 			PatientIdentifier newIdentifier = new PatientIdentifier();
 			newIdentifier.setIdentifier(newMRN);
@@ -1197,17 +1222,86 @@ public class HL7SocketHandler extends
 			newIdentifier.setLocation(newPatientIdentifier.getLocation());
 			newIdentifier.setPatient(existingPatient);
 			newIdentifier.setPreferred(true);
-			newIdentifier.setUuid(UUID.randomUUID().toString());
 			newIdentifier.setCreator(Context.getAuthenticatedUser());
 			newIdentifier.setDateCreated(new Date());
 			existingPatient.addIdentifier(newIdentifier);
-			
 
-			
 		} catch (Exception e) {
-			log.error("Exception adding new MRN to existing patient.", e);
+			log.error("Exception adding new MRN to existing patient. Existing MRN: " 
+					+ existingMRN + "; New MRN: " + newMRN, e);
 		}
-		
+
+	}
+	
+	
+	/**
+	 * Check if patient from this hl7 message already has an encounter today.
+	 * Save the message to the sockethl7listener_patient_message table for record
+	 * Save to the error table for monitoring
+	 * @param message
+	 * @return 
+	 */
+	private boolean priorCheckinExists(Message hl7message) {
+
+		boolean encounterFound = true;
+
+		PatientService patientService = Context.getPatientService();
+		org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
+		SocketHL7ListenerService sockethl7listenerService = Context.getService(SocketHL7ListenerService.class);
+		AdministrationService adminService = Context.getService(AdministrationService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService  = Context.getService(ChirdlUtilBackportsService.class);
+
+		try {
+
+			Context.openSession();
+			Context.authenticate(adminService.getGlobalProperty("scheduler.username"), adminService.getGlobalProperty("scheduler.password"));
+			Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_IDENTIFIER_TYPES);
+			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
+
+			//Pull the identifiers from the HL7
+			for (PatientIdentifier identifier : patientHandler.getIdentifiers(hl7message)) {
+
+				List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+				identifierTypes.add(identifier.getIdentifierType());
+
+				List<Patient> patients = patientService.getPatients(null,identifier.getIdentifier(), identifierTypes, true);
+
+				if (patients == null || patients.size() != 1){
+					return !encounterFound;
+				}
+
+				Patient patient  = patients.get(0);
+
+				//Get all encounters for that patient from the start of the day
+				Date startOfDay = DateUtils.truncate(new Date(), Calendar.DATE);
+				List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startOfDay, null,
+						null, null, null, false);
+				
+				if (encounters == null || encounters.size() == 0){
+					return !encounterFound;
+				}
+
+				//Save the hl7 message and error
+				sockethl7listenerService.setHl7Message(patient.getId(), 
+							null, this.parser.encode(hl7message), false, true, super.getPort());
+
+				Error error = new Error("Error", ChirdlUtilConstants. ERROR_GENERAL,
+							"An HL7 registration message arrived for a patient that is already checkied in.  MRN =  "
+									+ patient.getPatientIdentifier().getIdentifier(), null, new Date(), null);
+				chirdlutilbackportsService.saveError(error);
+
+				return encounterFound;
+				
+			}
+
+		} catch (Exception e) {
+			log.error(Util.getStackTrace(e));
+		} finally {
+			Context.closeSession();
+		}
+
+		return !encounterFound;
+
 	}
 	
 }

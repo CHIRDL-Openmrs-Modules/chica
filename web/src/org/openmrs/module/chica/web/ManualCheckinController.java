@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -319,9 +320,11 @@ public class ManualCheckinController extends SimpleFormController
 		name.setMiddleName(request.getParameter("middleName"));
 		name.setFamilyName(request.getParameter("lastName"));
 		name.setDateCreated(new Date());
+		name.setCreator(Context.getAuthenticatedUser());
 		checkinPatient.addName(name);
 		
 		PersonAddress address = new PersonAddress();
+		
 		address.setAddress1(request.getParameter("address1"));
 		address.setAddress2(request.getParameter("address2"));
 		address.setCityVillage(request.getParameter("city"));
@@ -329,7 +332,18 @@ public class ManualCheckinController extends SimpleFormController
 		address.setStateProvince(request.getParameter("state"));
 		address.setDateCreated(encounterDate);
 		address.setCreator(Context.getAuthenticatedUser());
-		checkinPatient.addAddress(address);
+		
+		if (!StringUtils.isBlank(address.getAddress1()) 
+			 || !StringUtils.isBlank(address.getAddress2())
+			 || !StringUtils.isBlank(address.getCityVillage()) 
+			 || !StringUtils.isBlank(address.getStateProvince()) 
+			 || !StringUtils.isBlank(address.getCountry()) 
+			 || !StringUtils.isBlank(address.getPostalCode()) 
+			 || !StringUtils.isBlank(address.getCountyDistrict()) 
+			 || !StringUtils.isBlank(address.getStateProvince())
+		){
+			checkinPatient.addAddress(address);
+		}
 		
 		checkinPatient.setGender(request.getParameter("sex"));
 
@@ -341,6 +355,10 @@ public class ManualCheckinController extends SimpleFormController
 					.getPersonAttributeTypeByName("Race");
 			attribute.setAttributeType(attributeType);
 			attribute.setValue(race);
+			attribute.setCreator(Context.getAuthenticatedUser());
+			attribute.setDateCreated(encounterDate);
+			UUID uuid = UUID.randomUUID();
+			attribute.setUuid(uuid.toString());
 			checkinPatient.addAttribute(attribute);
 		}
 		
@@ -355,14 +373,18 @@ public class ManualCheckinController extends SimpleFormController
 			if (attributeType == null) {
 				attributeType = new PersonAttributeType();
 				attributeType.setDateCreated(new Date());
+				attributeType.setCreator(Context.getAuthenticatedUser());
 				attributeType.setName("Next of Kin");
 				attributeType.setDescription("Next of Kin");
-				attributeType.setUuid(UUID.randomUUID().toString());
 				attributeType = personService.savePersonAttributeType(attributeType);
 			}
 			
 			attribute.setAttributeType(attributeType);
 			attribute.setValue(nextOfKinFirstName + "|" + nextOfKinLastName);
+			attribute.setCreator(Context.getAuthenticatedUser());
+			attribute.setDateCreated(encounterDate);
+			UUID uuid = UUID.randomUUID();
+			attribute.setUuid(uuid.toString());
 			checkinPatient.addAttribute(attribute);
 		}
 
@@ -374,6 +396,10 @@ public class ManualCheckinController extends SimpleFormController
 					.getPersonAttributeTypeByName("Telephone Number");
 			attribute.setAttributeType(attributeType);
 			attribute.setValue(dayPhone);
+			attribute.setCreator(Context.getAuthenticatedUser());
+			attribute.setDateCreated(encounterDate);
+			UUID uuid = UUID.randomUUID();
+			attribute.setUuid(uuid.toString());
 			checkinPatient.addAttribute(attribute);
 		}
 		LocationService locationService = Context.getLocationService();
