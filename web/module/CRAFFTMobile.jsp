@@ -19,8 +19,8 @@
 <c:set var="replace" value="\\'" />
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-<body style="font-size: 20px" onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
-<form id="CRAFFTForm" method="POST" action="CRAFFTMobile.form" method="post" enctype="multipart/form-data">
+<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
+<form id="CRAFFTForm" method="POST" action="CRAFFTMobile.form" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
         <div data-role="header" data-theme="b">

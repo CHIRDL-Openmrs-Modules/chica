@@ -2,6 +2,7 @@
 <%
     pageContext.setAttribute("redirect", session.getAttribute(WebConstants.OPENMRS_LOGIN_REDIRECT_HTTPSESSION_ATTR));
 %>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -14,7 +15,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/loginMobile.js"></script>
 </head>
-<body style="font-size: 20px">
+<body>
 
     <div id="login_mobile" data-url="login_mobile" data-role="page" data-theme="b">
         <div data-role="header">

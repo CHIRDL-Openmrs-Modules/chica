@@ -19,7 +19,7 @@
 <c:set var="replace" value="\\'" />
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-<body style="font-size: 20px" onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', '${AgeInYears}', '${patient.gender}')">
+<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', '${AgeInYears}', '${patient.gender}')">
 <form id="sexRiskForm" method="POST" action="sexRiskMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
@@ -35,7 +35,7 @@
     </div>
 </c:if>
 
-<div data-role="page" id="instruction_page" data-theme="b" style="font-size: 20px">
+<div data-role="page" id="instruction_page" data-theme="b">
     <div data-role="header" >
         <h1>Sex Risk Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
