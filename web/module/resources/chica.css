@@ -91,6 +91,7 @@ td.viewEncounterJITID{
 }
 td.viewEncounterAction{
 	width:14%;
+	padding: 0, 0, 0, 0;
 }
 
 
@@ -139,10 +140,46 @@ input.CheckinFormButton {
 
 .chicaBackground {
 text-align:left; 
-background-color:#8FABC7;
+background-color:#b24926;
+/*background-color:#4d4d4d;*/
 }
 
+.table1 {
+	background-color: #b24926;
+	/*background-color: #4d4d4d;*/
+}
 
+.tableRowEven, .tableRowOdd {
+    padding:5px;
+    text-align:center;
+    background-color:#FFFFCC;
+    border: 2px solid #E7EFE0;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+    color:#666;
+    text-shadow:1px 1px 1px #fff;
+}
+
+.tableRowOdd {
+    background-color:#FFFFFF;
+}
+
+.chicaTableHeader {
+text-align:center; 
+background-color:#DEF3CA;
+border: 1px solid #5B5C59;
+border-top-left-radius:5px;
+border-top-right-radius:5px;
+font-family: "Trebuchet MS", sans-serif;
+font-size: 12px;
+font-weight: bold;
+line-height: 1.4em;
+font-style: normal;
+border-collapse:separate;
+
+
+}
 
 .pagerButtonStyle{
 width:250px;
@@ -205,7 +242,7 @@ border-color: black;
 .formTitleStyle{
 text-align:center; 
 font-size: 20px;
-vertical-aligh:center;
+vertical-align:center;
 }
 
 .exitButton{
@@ -233,14 +270,15 @@ border-color: black;
 height:100%;
 }
 
-.displayLeftTiffHeaderSegment{
+.displayLeftTiffHeaderSegment, .displayRighttiffHeaderSegment {
 text-align:left; 
 font-size: 20px;
+text-shadow: 1px 1px #000000;
+color: #FFFFFF;
 }
 
 .displayRighttiffHeaderSegment{
 text-align:center; 
-font-size: 20px;
 }
 
 .tiffs{
@@ -250,20 +288,16 @@ border-bottom-width:3px;
 border-style:solid;
 border-color: black;
 }
+
 .viewEncounterHeaderArea{
-height:10%;
-border-width:0px;
-border-style:solid;
-border-color: black;
+padding-top: 20px;
+padding-bottom: 20px;
+background-color:#b24926;
+text-shadow: 1px 1px #000000;
+/*background-color:#4d4d4d;*/
+color: #FFFFFF;
 }
 
-.viewEncounterHeaderText{
-height:100%;
-border-width:1px;
-border-bottom-width:3px;
-border-style:solid;
-border-color: black;
-}
 .greaseBoardFooter{
 height:100%;
 width:100%;
@@ -296,5 +330,30 @@ padding:5px;
 text-align:center;
 }
 
+a.icon-button, a.icon-button-small, a.icon-button-medium, a.icon-button-large {
+    padding: 0 0 .4em 5px;
+    text-decoration: none;
+    position: relative;
+    height: 25px;
+}
 
+a.icon-button-small {
+    width: 50px;
+}
+
+a.icon-button-medium {
+    width: 100px;
+}
+
+a.icon-button-large {
+    width: 150px;
+}
+
+a.icon-button span.ui-icon, a.icon-button-small span.ui-icon, a.icon-button-medium span.ui-icon, a.icon-button-large span.ui-icon {
+    margin: 0 5px 0 0;
+    position: absolute;
+    left: .2em;
+    top: 50%;
+    margin-top: -9px;
+}
 
