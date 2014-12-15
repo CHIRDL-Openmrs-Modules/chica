@@ -9,7 +9,7 @@ td{
 	  font-size:13px;
 }
 .encounterarea {
-	  height:75%;
+	  height:80%;
 	  width: 100%;
 	  overflow: auto;
 	  font-size:13px;
@@ -144,11 +144,6 @@ background-color:#b24926;
 /*background-color:#4d4d4d;*/
 }
 
-.table1 {
-	background-color: #b24926;
-	/*background-color: #4d4d4d;*/
-}
-
 .tableRowEven, .tableRowOdd {
     padding:5px;
     text-align:center;
@@ -262,12 +257,7 @@ font-weight:bold;
 }
 
 .viewEncounterFooter{
-border-width:1px;
-border-bottom-width:1px;
-border-top-width:1px;
-border-style:solid;
-border-color: black;
-height:100%;
+border: 1px solid black;
 }
 
 .displayLeftTiffHeaderSegment, .displayRighttiffHeaderSegment {
@@ -290,6 +280,7 @@ border-color: black;
 }
 
 .viewEncounterHeaderArea{
+height: 80px;
 padding-top: 20px;
 padding-bottom: 20px;
 background-color:#b24926;
@@ -330,30 +321,21 @@ padding:5px;
 text-align:center;
 }
 
-a.icon-button, a.icon-button-small, a.icon-button-medium, a.icon-button-large {
-    padding: 0 0 .4em 5px;
+button.icon-button, button.icon-button-small, button.icon-button-medium, button.icon-button-large {
+    padding: 0 0 0 0;
     text-decoration: none;
     position: relative;
-    height: 25px;
+    height: 40px;
 }
 
-a.icon-button-small {
+button.icon-button-small {
     width: 50px;
 }
 
-a.icon-button-medium {
+button.icon-button-medium {
     width: 100px;
 }
 
-a.icon-button-large {
+button.icon-button-large {
     width: 150px;
 }
-
-a.icon-button span.ui-icon, a.icon-button-small span.ui-icon, a.icon-button-medium span.ui-icon, a.icon-button-large span.ui-icon {
-    margin: 0 5px 0 0;
-    position: absolute;
-    left: .2em;
-    top: 50%;
-    margin-top: -9px;
-}
-

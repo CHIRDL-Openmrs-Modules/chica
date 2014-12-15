@@ -9,9 +9,21 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script type="text/javascript">
 $(function() {
-    $("#exitButton").button();
-    $("#printLeftButton").button();
-    $("#printRightButton").button();
+    $("#exitButton").button({
+        icons: {
+            primary: "ui-icon-arrowreturnthick-1-w"
+        }
+    });
+    $("#printLeftButton").button({
+        icons: {
+            primary: "ui-icon-print"
+        }
+    });
+    $("#printRightButton").button({
+        icons: {
+            primary: "ui-icon-print"
+        }
+    });
 });
 
 function printSelection(node){
@@ -33,7 +45,7 @@ function printSelection(node){
 		class="displayTiffHeader chicaBackground">
 		<tr width="100%">
 			<td width="25%">
-			 <a href="#" id="exitButton" onclick="history.go(-1);return true;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Exit</a>
+			 <button id="exitButton" onclick="history.go(-1);return true;" class="icon-button-medium ui-state-default ui-corner-all">Exit</button>
 			</td>
 			<td width="25%" class="displayLeftTiffHeaderSegment"><c:if
 					test="${!empty leftImageFormname}">
@@ -65,7 +77,7 @@ N/A
 					</c:when>
 					<c:otherwise>
 					   <div style="width:100%">
-					       <a href="#" id="printLeftButton" onclick="printSelection(document.getElementById('divLeft'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
+					       <button id="printLeftButton" onclick="printSelection(document.getElementById('divLeft'));return false;" class="icon-button-medium ui-state-default ui-corner-all">Print</button>
 					   </div>
 					   <hr/>
 					   <div id="divLeft" style="height:100%; width:100%; position:relative; overflow:scroll">
@@ -87,7 +99,7 @@ N/A
 					</c:when>
 					<c:otherwise>
 					   <div style="width:100%">
-					       <a href="#" id="printRightButton" onclick="printSelection(document.getElementById('divRight'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
+					       <button id="printRightButton" onclick="printSelection(document.getElementById('divRight'));return false;" class="icon-button-medium ui-state-default ui-corner-all">Print</button>
                        </div>
                        <hr/>
 					   <div id="divRight" style="height:100%; width:100%; position:relative; overflow:scroll">
