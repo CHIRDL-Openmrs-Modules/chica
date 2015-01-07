@@ -1,5 +1,5 @@
+var loadedOptionalHandouts = false;
 function handleGetAvailableJITsError(xhr, textStatus, error) {
-	$("#formLoading").hide();
 	$("#noForms").hide();
 	$("#formServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error occurred locating recommended forms: ' + error + '</span>');
 	$("#formServerError").show();
@@ -33,7 +33,6 @@ function parseAvailableJITs(responseXML) {
             count++;
         });
         
-    	$("#formLoading").hide();
     	if (count == 0) {
         	$("#noForms").show();
         } else {
@@ -82,12 +81,17 @@ function processCheckboxes(form1) {
 
 function getAvailableJits() {
 	$("#noForms").hide();
-	$("#formServerError").hide();
-	$("#formLoading").show();
 	var encounterId = $("#encounterId").val();
 	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
 	var url = "/openmrs/moduleServlet/chica/chica";
 	$.ajax({
+	  beforeSend: function(){
+		  $("#formServerError").hide();
+		  $("#formLoading").show();
+      },
+      complete: function(){
+    	  $("#formLoading").hide();
+      },
 	  "cache": false,
 	  "dataType": "xml",
 	  "data": action,
@@ -215,8 +219,12 @@ $(function() {
 	
 	$("#formAccordionDialog").dialog({
     	open: function() { 
+    		$(".recommended-forms").show();
     		$(".ui-dialog").addClass("ui-dialog-shadow"); 
     		$("#formAccordionDialog").scrollTop(0);
+    	},
+    	beforeClose: function() { 
+    		$(".recommended-forms").hide();
     	},
     	close: function() { 
     		$("#formAccordion").accordion({
@@ -252,10 +260,23 @@ $(function() {
 	$("#forcePrintDialog").dialog({
     	open: function() { 
     		$(".ui-dialog").addClass("ui-dialog-shadow"); 
-    		forcePrint_loadForms();
+    		if(!loadedOptionalHandouts) {
+    			forcePrint_loadForms();
+    			loadedOptionalHandouts = true;
+    		}
     		var formSelectionHeight = $(".force-print-forms-container").height();
     		$(".force-print-form-object").height($(".pws-force-print-content").height() - formSelectionHeight);
     	},
+    	beforeClose: function(event, ui) { 
+        	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
+        	$(".force-print-form-container").hide();
+        	var obj = $(".force-print-form-object");
+        	var container = obj.parent();
+        	var newobj = obj.clone();
+        	obj.remove();
+        	newobj.attr("data", "");
+        	container.append(newobj);
+        },
     	close: function() { 
     		$(".force-print-form-container").hide();
     		$('.force-print-forms').val("selectform").selectmenu("refresh");

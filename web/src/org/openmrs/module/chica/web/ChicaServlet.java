@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -27,6 +28,7 @@ import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
@@ -35,6 +37,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
@@ -68,6 +71,10 @@ public class ChicaServlet extends HttpServlet {
 	private static final String GET_AVAILABLE_PATIENT_JITS = "getAvailablePatientJITs";
 	private static final String GET_FORCE_PRINT_FORMS = "getForcePrintForms";
 	private static final String FORCE_PRINT_FORM = "forcePrintForm";
+	private static final String GET_GREASEBOARD_PATIENTS = "getGreaseboardPatients";
+	private static final String VERIFY_MRN = "verifyMRN";
+	private static final String GET_MANUAL_CHECKIN = "getManualCheckin";
+	private static final String SAVE_MANUAL_CHECKIN = "saveManualCheckin";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -78,6 +85,11 @@ public class ChicaServlet extends HttpServlet {
 	private static final String PARAM_FORM_INSTANCES = "formInstances";
 	private static final String PARAM_FORM_INSTANCE = "formInstance";
 	private static final String PARAM_PATIENT_ID = "patientId";
+	private static final String PARAM_MRN = "mrn";
+	private static final String PARAM_PATIENT_ROWS = "patientRows";
+	private static final String PARAM_NEED_VITALS = "needVitals";
+	private static final String PARAM_WAITING_FOR_MD = "waitingForMD";
+	private static final String PARAM_BAD_SCANS = "badScans";
 	
 	private static final String XML_AVAILABLE_JITS_START = "<availableJITs>";
 	private static final String XML_AVAILABLE_JITS_END = "</availableJITs>";
@@ -93,10 +105,44 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_FORCE_PRINT_JIT_START = "<forcePrintJIT>";
 	private static final String XML_FORCE_PRINT_JIT_END = "</forcePrintJIT>";
 	private static final String XML_DISPLAY_NAME = "displayName";
+	private static final String XML_PATIENT_ROWS_START = "<patientRows>";
+	private static final String XML_PATIENT_ROWS_END = "</patientRows>";
+	private static final String XML_GREASEBOARD_START = "<greaseboard>";
+	private static final String XML_GREASEBOARD_END = "</greaseboard>";
+	private static final String XML_NEED_VITALS_START = "<needVitals>";
+	private static final String XML_NEED_VITALS_END = "</needVitals>";
+	private static final String XML_WAITING_FOR_MD_START = "<waitingForMD>";
+	private static final String XML_WAITING_FOR_MD_END = "</waitingForMD>";
+	private static final String XML_BAD_SCANS_START = "<badScans>";
+	private static final String XML_BAD_SCANS_END = "</badScans>";
+	private static final String XML_URL_START = "<url>";
+	private static final String XML_URL_END = "</url>";
 	
 	private static final String CONTENT_DISPOSITION_PDF = "inline;filename=patientJITS.pdf";
 	
+	private static final String MAX_CACHE_AGE = "600";
+	
 	private Log log = LogFactory.getLog(this.getClass());
+	
+	/**
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	public void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		boolean authenticated = ServletUtil.authenticateUser(request);
+		if (!authenticated) {
+			response.setHeader(
+				ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+		
+		String action = request.getParameter(PARAM_ACTION);
+		if (GET_PATIENT_JITS.equals(action)) {
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
+			response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
+		} else if (FORCE_PRINT_FORM.equals(action)) {
+			getForcePrintFormHeader(request, response);
+		}
+	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -122,6 +168,14 @@ public class ChicaServlet extends HttpServlet {
 			getForcePrintForms(request, response);
 		} else if (FORCE_PRINT_FORM.equals(action)) {
 			forcePrintForm(request, response);
+		} else if (GET_GREASEBOARD_PATIENTS.equals(action)) {
+			getGreaseboardPatients(request, response);
+		} else if (VERIFY_MRN.equals(action)) {
+			ManualCheckinSSNMRN.verifyMRN(request, response);
+		} else if (GET_MANUAL_CHECKIN.equals(action)) {
+			ManualCheckin.getManualCheckinPatient(request, response);
+		} else if (SAVE_MANUAL_CHECKIN.equals(action)) {
+			ManualCheckin.saveManualCheckinPatient(request, response);
 		}
 	}
 	
@@ -318,12 +372,15 @@ public class ChicaServlet extends HttpServlet {
 		
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
 		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
+		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_CACHE_CONTROL_PUBLIC + ", " + 
+				ChirdlUtilConstants.HTTP_CACHE_CONTROL_MAX_AGE + "=" + MAX_CACHE_AGE);
 		
 		if (filesToCombine.size() == 1) {
 			String filePath = null;
 			try {
 				Document document = new Document();
-		        PdfCopy copy = new PdfCopy(document, response.getOutputStream());
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+		        PdfCopy copy = new PdfCopy(document, output);
 		        document.open();
 		        PdfReader reader;
 		        int n;
@@ -343,14 +400,29 @@ public class ChicaServlet extends HttpServlet {
 	            reader.close();
 	
 		        document.close();
+		        response.setContentLength(output.size());
+		        response.getOutputStream().write(output.toByteArray());
 			} catch (BadPdfFormatException e) {
 				log.error("Bad PDF found: " + filePath, e);
 				throw new IOException(e);
 			} catch (DocumentException e) {
-				log.error("Error handling PDF document", e);
+				log.error("Error handling PDF document: " + filePath, e);
 				throw new IOException(e);
 			}
 		} else {
+			int contentSize = 0;
+			for (int i = 0; i < filesToCombine.size(); i++) {
+	        	String filePath = filesToCombine.get(i);
+	            try {
+	            	contentSize += renamePdfFields(filePath, i).length;
+	            }
+	            catch (DocumentException e) {
+	            	log.error("Error handling PDF document: " + filePath, e);
+					throw new IOException(e);
+	            }
+	        }
+			
+			response.setContentLength(contentSize);
 			String filePath = null;
 			try {
 				PdfCopyFields copy = new PdfCopyFields(response.getOutputStream());
@@ -396,14 +468,27 @@ public class ChicaServlet extends HttpServlet {
 		pw.write(XML_FORCE_PRINT_JITS_START);
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		PatientService patientService = Context.getPatientService();
 		String patientIdString = request.getParameter(PARAM_PATIENT_ID);
-		Integer patientId = null;
-		try {
-			patientId = Integer.parseInt(patientIdString);
+		Patient patient = null;
+		if (patientIdString == null || patientIdString.trim().length()==0) {
+			String mrn = request.getParameter("mrn");
+			if (mrn != null && mrn.trim().length() > 0) {
+				patient = getPatientByMRN(mrn);
+			}
+		} else {
+			try {
+				Integer patientId = Integer.parseInt(patientIdString);
+				patient = Context.getPatientService().getPatient(patientId);
+			}
+			catch (Exception e) {
+				String message = "Invalid patientId parameter provided: " + patientIdString;
+				log.error(message);
+				throw new IllegalArgumentException(message);
+			}
 		}
-		catch (Exception e) {
-			String message = "Invalid patientId parameter provided: " + patientIdString;
+		
+		if (patient == null) {
+			String message = "No valid patient could be located.";
 			log.error(message);
 			throw new IllegalArgumentException(message);
 		}
@@ -420,21 +505,7 @@ public class ChicaServlet extends HttpServlet {
 				throw new IllegalArgumentException(message);
 			}
 		} else {
-			EncounterService encounterService = Context.getEncounterService();
-			List<org.openmrs.Encounter> list = encounterService.getEncountersByPatientId(patientId);
-			if (list != null && list.size() > 0) {
-				Encounter encounter = list.get(0);
-				ChirdlUtilBackportsService chirdlUtilBackportsService = Context
-				        .getService(ChirdlUtilBackportsService.class);
-				State checkinState = chirdlUtilBackportsService.getStateByName(ChirdlUtilConstants.STATE_CHECKIN);
-				Integer encounterId = encounter.getEncounterId();
-				List<PatientState> checkinStates = chirdlUtilBackportsService.getPatientStateByEncounterState(
-				    encounterId, checkinState.getStateId());
-				if (checkinStates != null && checkinStates.size() > 0) {
-					PatientState patientState = checkinStates.get(0);
-					sessionId = patientState.getSessionId();
-				}
-			}
+			sessionId = getEncounterSessionId(patient.getPatientId());
 		}
 		
 		if (sessionId == null) {
@@ -493,7 +564,6 @@ public class ChicaServlet extends HttpServlet {
 			}
 		}
 		
-		Patient patient = patientService.getPatient(patientId);
 		FormService formService = Context.getFormService();
 		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributesByName(
 			ChirdlUtilConstants.FORM_ATTR_FORCE_PRINTABLE);
@@ -574,27 +644,53 @@ public class ChicaServlet extends HttpServlet {
 		pw.write(XML_FORCE_PRINT_JITS_END);
 	}
 	
-	private void forcePrintForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void forcePrintForm(HttpServletRequest request, HttpServletResponse response) throws IOException {	
 		String patientIdString = request.getParameter(PARAM_PATIENT_ID);
 		String formIdString = request.getParameter(PARAM_FORM_ID);
 		String sessionIdString = request.getParameter(PARAM_SESSION_ID);
 
 		Integer patientId = null;
-		try {
-			patientId = Integer.parseInt(patientIdString);
+		if (patientIdString == null || patientIdString.trim().length()==0) {
+			String mrn = request.getParameter(PARAM_MRN);
+			if (mrn != null && mrn.trim().length() > 0) {
+				Patient patient = getPatientByMRN(mrn);
+				if (patient != null) {
+					patientId = patient.getPatientId();
+				}
+			}
+		} else {
+			try {
+				patientId = Integer.parseInt(patientIdString);
+			}
+			catch (Exception e) {
+				String message = "Invalid patientId parameter provided: " + patientIdString;
+				log.error(message);
+				throw new IllegalArgumentException(message);
+			}
 		}
-		catch (Exception e) {
-			String message = "Invalid patientId parameter provided: " + patientIdString;
+		
+		if (patientId == null) {
+			String message = "No valid patient could be located.";
 			log.error(message);
 			throw new IllegalArgumentException(message);
 		}
 		
 		Integer sessionId = null;
-		try {
-			sessionId = Integer.parseInt(sessionIdString);
+		if (sessionIdString != null && sessionIdString.trim().length() > 0) {
+			try {
+				sessionId = Integer.parseInt(sessionIdString);
+			}
+			catch (Exception e) {
+				String message = "Invalid sessionId parameter provided: " + sessionIdString;
+				log.error(message);
+				throw new IllegalArgumentException(message);
+			}
+		} else {
+			sessionId = getEncounterSessionId(patientId);
 		}
-		catch (Exception e) {
-			String message = "Invalid sessionId parameter provided: " + sessionIdString;
+		
+		if (sessionId == null) {
+			String message = "Could not find a valid sessionId for patient: " + patientIdString;
 			log.error(message);
 			throw new IllegalArgumentException(message);
 		}
@@ -719,6 +815,7 @@ public class ChicaServlet extends HttpServlet {
 			}
 			
 			String resultMessage = formName + " successfully sent to the printer.";
+			response.setContentLength(resultMessage.getBytes().length);
 			pw.write(ChirdlUtilConstants.HTML_SPAN_START + resultMessage + ChirdlUtilConstants.HTML_SPAN_END);
 		} else {
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -727,9 +824,135 @@ public class ChicaServlet extends HttpServlet {
 			PrintWriter pw = response.getWriter();
 			String message = ChirdlUtilConstants.HTML_SPAN_START + "Invalid outputType attribute '" + outputType + 
 					"' found for form: " + formName + ChirdlUtilConstants.HTML_SPAN_END;
+			response.setContentLength(message.getBytes().length);
 			log.error(message);
 			pw.write(message);
 			return;
 		}
+	}
+	
+	private Integer getEncounterSessionId(Integer patientId) {
+		EncounterService encounterService = Context.getEncounterService();
+		List<org.openmrs.Encounter> list = encounterService.getEncountersByPatientId(patientId);
+		if (list != null && list.size() > 0) {
+			Encounter encounter = list.get(0);
+			ChirdlUtilBackportsService chirdlUtilBackportsService = Context
+			        .getService(ChirdlUtilBackportsService.class);
+			State checkinState = chirdlUtilBackportsService.getStateByName(ChirdlUtilConstants.STATE_CHECKIN);
+			Integer encounterId = encounter.getEncounterId();
+			List<PatientState> checkinStates = chirdlUtilBackportsService.getPatientStateByEncounterState(
+			    encounterId, checkinState.getStateId());
+			if (checkinStates != null && checkinStates.size() > 0) {
+				PatientState patientState = checkinStates.get(0);
+				return patientState.getSessionId();
+			}
+		}
+		
+		return null;
+	}
+	
+	private Patient getPatientByMRN(String mrn) {
+		PatientService patientService = Context.getPatientService();
+		Patient patient = null;
+		mrn = Util.removeLeadingZeros(mrn);
+		PatientIdentifierType identifierType = patientService
+				.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
+		List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+		identifierTypes.add(identifierType);
+		List<Patient> patients = patientService.getPatients(null, mrn,
+				identifierTypes,true);
+		if (patients.size() == 0){
+			patients = patientService.getPatients(null, "0" + mrn,
+					identifierTypes,true);
+		}
+
+		if (patients.size() > 0) {
+			patient = patients.get(0);
+		}
+		
+		return patient;
+	}
+	
+	private void getForcePrintFormHeader(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String formIdStr = request.getParameter(PARAM_FORM_ID);
+		String locationIdStr = request.getParameter(PARAM_LOCATION_ID);
+		String locationTagIdStr = request.getParameter(PARAM_LOCATION_TAG_ID);
+		Integer formId = null;
+		Integer locationId = null;
+		Integer locationTagId = null;
+		
+		try {
+			formId = Integer.parseInt(formIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Invalid argument formId: " + formIdStr);
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+			response.getWriter().write("Invalid argument formId: " + formIdStr);
+			return;
+		}
+		
+		try {
+			locationId = Integer.parseInt(locationIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Invalid argument locationId: " + locationIdStr);
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+			response.getWriter().write("Invalid argument locationId: " + locationIdStr);
+			return;
+		}
+		
+		try {
+			locationTagId = Integer.parseInt(locationTagIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Invalid argument locationTagId: " + locationTagIdStr);
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+			response.getWriter().write("Invalid argument locationTagId: " + locationTagIdStr);
+			return;
+		}
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
+			formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, locationTagId, locationId);
+		String outputType = null;
+		if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
+			outputType = Context.getAdministrationService().getGlobalProperty(
+				ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
+		} else {
+			String[] outputTypes = fav.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+			outputType = outputTypes[0];
+		}
+		
+		if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType)) {
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
+		} else {
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+    private void getGreaseboardPatients(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		GreaseBoardBuilder.generatePatientRows(map);
+		List<PatientRow> patientRows = (List<PatientRow>)map.get(PARAM_PATIENT_ROWS);
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		PrintWriter pw = response.getWriter();
+		pw.write(XML_GREASEBOARD_START);
+		pw.write(XML_NEED_VITALS_START + map.get(PARAM_NEED_VITALS) + XML_NEED_VITALS_END);
+		pw.write(XML_WAITING_FOR_MD_START + map.get(PARAM_WAITING_FOR_MD) + XML_WAITING_FOR_MD_END);
+		pw.write(XML_PATIENT_ROWS_START);
+		if (patientRows != null) {
+			for (PatientRow row : patientRows) {
+				pw.write(row.toXml());
+			}
+		}
+		pw.write(XML_PATIENT_ROWS_END);
+		pw.write(XML_BAD_SCANS_START);
+		List<URL> badScans = (List<URL>)map.get(PARAM_BAD_SCANS);
+		if (badScans != null) {
+			for (URL badScan : badScans) {
+				pw.write(XML_URL_START + badScan + XML_URL_END);
+			}
+		}
+		pw.write(XML_BAD_SCANS_END);
+		pw.write(XML_GREASEBOARD_END);
 	}
 }

@@ -41,12 +41,22 @@ function forcePrint_formLoaded() {
 }
 
 function forcePrint_loadForms() {
+	$(".force-print-forms-server-error").hide();
+	$(".force-print-forms-loading").show();
+  	$(".force-print-forms-container").hide();
 	var patientId = $("#patientId").val();
+	var mrn = $("#mrn").val();
 	var sessionId = $("#sessionId").val();
 	var locationId = $("#locationId").val();
 	var locationTagId = $("#locationTagId").val();
-	var action = "action=getForcePrintForms&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
-		locationId + "&locationTagId=" + locationTagId;
+	var action = "";
+	if (patientId === "") {
+		action = "action=getForcePrintForms&mrn=" + mrn + "&sessionId=" + sessionId + "&locationId=" + 
+			locationId + "&locationTagId=" + locationTagId;
+	} else {
+		action = "action=getForcePrintForms&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
+			locationId + "&locationTagId=" + locationTagId;
+	}
 	var url = "/openmrs/moduleServlet/chica/chica";
 	$.ajax({
 	  "cache": false,
@@ -102,6 +112,7 @@ function forcePrint_parseAvailableForms(responseXML) {
 
   	$(".force-print-forms-loading").hide();
   	$(".force-print-forms-container").show();
+  	$('.force-print-forms').val("selectform").selectmenu("refresh");
 }
 
 function forcePrint_loadForm() {
@@ -109,30 +120,43 @@ function forcePrint_loadForm() {
 	$(".force-print-form-loading").show();
 	
 	var patientId = $("#patientId").val();
+	var mrn = $("#mrn").val();
 	var sessionId = $("#sessionId").val();
 	var locationId = $("#locationId").val();
 	var locationTagId = $("#locationTagId").val();
 	var formId = $(".force-print-forms").val();
 	var randomNumber = Math.floor((Math.random() * 10000) + 1); 
-	var action = "action=forcePrintForm&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
-		locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
-		"#view=fit&navpanes=0";
-	var url = "/openmrs/moduleServlet/chica/chica?";
+	var action = "";
+	if (patientId === "") {
+		action = "action=forcePrintForm&mrn=" + mrn + "&sessionId=" + sessionId + "&locationId=" + 
+			locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
+			"#view=fit&navpanes=0";
+	} else {
+		action = "action=forcePrintForm&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
+			locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
+			"#view=fit&navpanes=0";
+	}
 	
+	var url = "/openmrs/moduleServlet/chica/chica?";
 	var obj = $(".force-print-form-object");
-	var objdata = $(obj).attr('data');
-	var container = $(obj).parent();
-	$(obj).attr('data', url + action);
-	var newobj    = $(obj).clone();
+	var container = obj.parent();
+	var newUrl = url + action;
+	var newobj = obj.clone();
+	obj.remove();
+	newobj.attr("data", url + action);
 	newobj.on("load", function () {
 		$(".force-print-form-loading").hide();
 		$(".force-print-form-container").show();
     });
-	$(obj).remove();
-	$(container).append( newobj );
+	
+	container.append(newobj);
 	
 	// Chrome/Safari doesn't fire the onload event for the object tag.
 	if (isChromeSafari) {
 		setTimeout(forcePrint_formLoaded, 2000);
 	}
+}
+
+function forcePrint_removeForms() {
+	$(".force-print-forms").find("option").remove();
 }

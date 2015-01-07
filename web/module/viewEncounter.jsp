@@ -69,11 +69,22 @@
               if (formInstance == "unselected") {
                   // A valid form was not selected
               } else {
+            	  $("#loadingDialog").dialog("open");
             	  var form = $(this).closest('form');
             	  form.submit();
               }
     	  }
     	});
+	    
+	    $("#loadingDialog").dialog({
+	        open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+	        autoOpen: false,
+	        modal: true,
+	        maxWidth: 100,
+	        maxHeight: 50,
+	        width: 100,
+	        height: 50
+	    }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	    
 	    $(window).bind('resize', resizeContent);
 	    resizeContent();
@@ -96,16 +107,13 @@ function exitForm(){
 // End -->
 </script>
 <style>
-fieldset {
-	border: 0;
-	font-size: 10px;
-	height: 10px;
-	margin-top: -8px;
+#submitWaitText {
+    text-align:center;
+    color:#000;
 }
 
-select,.ui-selectmenu {
-	width: 200px;
-	height: 20px;
+#submitWaitDialog {
+    border: 4px solid #FA8258;
 }
 </style>
 </head>
@@ -122,7 +130,7 @@ select,.ui-selectmenu {
 		</div>
 	</c:if>
 	<div class="viewEncounterHeaderArea" id="top">
-		<table width="100%" class="viewEncounterHeaderText">
+		<table width="100%">
 			<tr>
 				<td width="100%" class="formTitleStyle"><b>Encounters:
 						${titleMRN} <br>${titleLastName}, ${titleFirstName}
@@ -134,21 +142,21 @@ select,.ui-selectmenu {
 	<div class="encounterarea" id="middle">
 		<table style="width: 100%; overflow: auto;" class="chicaBackground">
 			<tbody>
-				<tr>
-					<th class="viewEncounterDate chicaTableHeader"><b>Encounter
-							Date</b></th>
-					<th class="viewEncounterStation chicaTableHeader"><b>Station</b></th>
-					<th class="viewEncounterAge chicaTableHeader"><b>Age at
-							visit</b></th>
-					<th class="viewEncounterWeight chicaTableHeader"><b>Weight<BR>Percentile
-					</b></th>
-					<th class="viewEncounterHeight chicaTableHeader"><b>Height<BR>Percentile
-					</b></th>
-					<th class="viewEncounterDoctor chicaTableHeader"><b>Doctor</b></th>
-					<th class="viewEncounterPSFID chicaTableHeader"><b>PSF ID</b></th>
-					<th class="viewEncounterPWSID chicaTableHeader"><b>PWS ID</b></th>
-					<th class="viewEncounterAction chicaTableHeader"><b>Action</b></th>
-				</tr>
+			    <tr>
+                    <th class="viewEncounterDate chicaTableHeader"><b>Encounter
+                            Date</b></th>
+                    <th class="viewEncounterStation chicaTableHeader"><b>Station</b></th>
+                    <th class="viewEncounterAge chicaTableHeader"><b>Age at
+                            visit</b></th>
+                    <th class="viewEncounterWeight chicaTableHeader"><b>Weight<BR>Percentile
+                    </b></th>
+                    <th class="viewEncounterHeight chicaTableHeader"><b>Height<BR>Percentile
+                    </b></th>
+                    <th class="viewEncounterDoctor chicaTableHeader"><b>Doctor</b></th>
+                    <th class="viewEncounterPSFID chicaTableHeader"><b>PSF ID</b></th>
+                    <th class="viewEncounterPWSID chicaTableHeader"><b>PWS ID</b></th>
+                    <th class="viewEncounterAction chicaTableHeader"><b>Action</b></th>
+               </tr>
 				<c:forEach items="${patientRows}" var="row" varStatus="status">
 					<c:choose>
 						<c:when test='${(status.index)%2 eq 0}'>
@@ -178,8 +186,8 @@ select,.ui-selectmenu {
 							</c:if></td>
 						<td class="viewEncounterAction ${rowColor}">
 							<form method="post" STYLE="margin: 0px; padding: 0px" action="">
-								<fieldset>
-									<select name="options" class="view-forms">
+								<fieldset class="tableFieldset">
+									<select name="options" class="view-forms tableSelect">
 										<option value="unselected" selected="selected">Select
 											a form</option>
 										<c:forEach items="${row.formInstances}" var="formInstance">
@@ -188,10 +196,9 @@ select,.ui-selectmenu {
 												${formNameMap[formInstance.formId] }</option>
 										</c:forEach>
 									</select>
+									<input type="hidden" value="${row.patientId}" name="patientId" />
+                                    <input type="hidden" value="${row.encounter.encounterId}" name="encounterId" />
 								</fieldset>
-								<input type="hidden" value="${row.patientId}" name="patientId" />
-								<input type="hidden" value="${row.encounter.encounterId}"
-									name="encounterId" />
 							</form>
 						</td>
 					</tr>
@@ -223,5 +230,10 @@ select,.ui-selectmenu {
 			</tr>
 		</table>
 	</div>
+	<div id="loadingDialog" class="noTitle">
+        <div id="submitWaitText">
+            <span>Loading...</span>
+        </div>
+    </div>
 </body>
 </html>

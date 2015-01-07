@@ -46,8 +46,8 @@ $(document).ready(function () {
 	         </div>
 	         <div class="force-print-form-container">
 	            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="return forcePrint_formLoaded();">
-	               <span class="force-print-black-text"><p>It appears your Web browser is not configured to display PDF files. 
-                   <a class="force-print-black-text" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</p></span>
+	               <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
+                   <a class="force-print-black-text" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
 	            </object>
 	         </div>
 	         <div class="force-print-form-loading">
