@@ -15,8 +15,6 @@
                 <prop key="/module/@MODULE_ID@/fillOutPWS.form">fillOutPWS</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoard.form">greaseBoard</prop>
                 <prop key="/module/@MODULE_ID@/weeklyReports.form">weeklyReports</prop>
-                <prop key="/module/@MODULE_ID@/manualCheckin.form">manualCheckin</prop>
-                <prop key="/module/@MODULE_ID@/manualCheckinSSNMRN.form">manualCheckinSSNMRN</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/pager.form">pager</prop>     
@@ -35,6 +33,9 @@
                 <prop key="/module/@MODULE_ID@/phq9Mobile.form">phq9Mobile</prop>
                 <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
+                <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
+                <prop key="/module/@MODULE_ID@/finishFormsWeb.form">finishFormsWeb</prop>
+                <prop key="/module/@MODULE_ID@/externalFormLoader.form">externalFormLoader</prop>
             </props>
         </property>
     </bean>
@@ -88,16 +89,6 @@
         <property name="formView"><value>/module/@MODULE_ID@/viewEncounter</value></property>
         <property name="successView"><value>viewEncounter.form</value></property>
     </bean>
-    <bean id="manualCheckin" class="@MODULE_PACKAGE@.web.ManualCheckinController">
-        <property name="commandName"><value>manualCheckinObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/manualCheckin</value></property>
-        <property name="successView"><value>manualCheckin.form</value></property>
-    </bean>
-    <bean id="manualCheckinSSNMRN" class="@MODULE_PACKAGE@.web.ManualCheckinSSNMRNController">
-        <property name="commandName"><value>manualCheckinSSNMRNObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/manualCheckinSSNMRN</value></property>
-        <property name="successView"><value>manualCheckin.form</value></property>
-    </bean>
     <bean id="forcePrintSSNMRN" class="@MODULE_PACKAGE@.web.ForcePrintSSNMRNController">
         <property name="commandName"><value>forcePrintSSNMRNObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/forcePrintSSNMRN</value></property>
@@ -143,6 +134,11 @@
         <property name="formView"><value>/module/@MODULE_ID@/psfMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
+    <bean id="pws" class="@MODULE_PACKAGE@.web.MobileFormController">
+        <property name="commandName"><value>pwsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/pws</value></property>
+        <property name="successView"><value>finishFormsWeb.form</value></property>
+    </bean>
     <bean id="psfMobileTabs" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>psfMobileTabsObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/psfMobileTabs</value></property>
@@ -172,6 +168,16 @@
         <property name="commandName"><value>sexRiskMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/sexRiskMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="finishFormsWeb" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
+        <property name="commandName"><value>finishFormsWebObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/finishFormsWeb</value></property>
+        <property name="successView"><value>finishFormsWeb.form</value></property>
+    </bean>
+    <bean id="externalFormLoader" class="@MODULE_PACKAGE@.web.ExternalFormController">
+        <property name="commandName"><value>externalFormLoaderObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/externalFormLoader</value></property>
+        <property name="successView"><value>externalFormLoader.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">

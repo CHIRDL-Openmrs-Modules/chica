@@ -1,0 +1,408 @@
+body {
+    /*font-family:Verdana, Geneva, sans-serif;*/
+    font-size:14px;
+    /*background-color:#61380B;*/
+    background: #b24926;
+}
+
+.recommended-forms {
+	width:100%;
+	margin: 0;
+	padding: 0;
+}
+
+#formContainer {
+    width:800px;
+    height:1010px;
+    margin:0 auto;
+    border: 1px solid black;
+    background-color:#F5FBEF;
+    box-shadow: 10px 10px 5px #2E2E2E;
+    -webkit-box-shadow: 10px 10px 5px #2E2E2E;
+    -moz-box-shadow: 10px 10px 5px #2E2E2E;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    margin-bottom:40px;
+}
+
+@-moz-document url-prefix() {
+    #formContainer {
+        height:1039px;
+    }
+}
+
+#titleContainer {
+    width:790px;
+    height:50px;
+    position: relative;
+    padding:5px;
+    margin-right:10px;
+    border-bottom: 1px solid black;
+}
+
+#title, 
+#mrn,
+#submitFormTop {
+    width: 800px;
+    height: 100%;
+    text-align:center;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#title {
+	font-size:16px;
+}
+
+#mrn {
+    z-index: 10;
+    text-align:right;
+    margin-left:-5px;
+    font-size:16px;
+}
+
+#submitFormTop {
+    z-index: 20;
+    text-align:left;
+}
+
+#infoLeft {
+    width:337px;
+    float:left;
+    padding:2px 2px 2px 5px;
+    border-bottom: 1px solid black;
+}
+
+#infoRight {
+    width:184px;
+    float:left;
+    padding:2px;
+    border-bottom: 1px solid black;
+}
+
+#vitals {
+    width:265px;
+    height:272px;
+    float:left;
+    border-left: 1px solid black;
+}
+
+@-moz-document url-prefix() {
+    #vitals {
+        height: 290px;
+    }
+}
+
+.flagCell {
+    width:15px;
+    border-right:1px solid black;
+    text-align:center;
+    float:left;
+    color:red;
+}
+
+.vitalsNames {
+    float:left;
+    width:85px;
+    text-align:right;
+}
+
+.vitalsValues {
+    float:left;
+    width:155px;
+    margin-left:5px;
+    text-align:left;
+}
+
+#vitalsLegend {
+    width:267px;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    float:left;
+    margin-left:-1px;
+    height:40px;
+    text-align:center;
+    font-size:0.8em;
+    padding-top:2px;
+}
+
+#exam {
+    border-bottom: 1px solid black;
+    float:left;
+    width:545px;
+    height:330px;
+    margin-top:-220px;
+    padding:2px 2px 2px 5px;
+}
+
+@-moz-document url-prefix() {
+    #exam {
+        margin-top:-225px;
+        height: 346px;
+    }
+}
+
+#buttons {
+    width:270px;
+    height:83px;
+    border-bottom: 1px solid black;
+    float:left;
+    margin-top:31px;
+    margin-left:-22px;
+}
+
+@-moz-document url-prefix() {
+    #buttons {
+        margin-top:43px;
+        height:82px;
+    }
+}
+
+#physicalExam {
+    float:left;
+    width:155px;
+    height:350px;
+}
+
+#examTitle {
+    float:left;
+    text-align:left;
+    width:175px;
+    height:15px;
+}
+
+.examNames {
+    float:left;
+    width:80px;
+    height:19px;
+    text-align:left;
+}
+
+.examHeader {
+    float:left;
+    width:30px;
+    height:19px;
+    text-align:center;
+}
+
+.examFlag {
+    float:left;
+    width:15px;
+    height:19px;
+    text-align:center;
+    color:red;
+}
+
+#examLegend {
+    float:left;
+    text-align:center;
+    width:175px;
+    height:15px;
+    font-size:0.8em;
+}
+
+#examExtras {
+    float:left;
+    width:260px;
+    height:350px;
+    margin-left:75px;
+}
+
+#medTable {
+    border-bottom: 1px solid black;
+    color: #000;
+    width:100%;
+}
+
+#problemTable {
+    color: #000;
+    width:100%;
+}
+
+#submitContainer {
+    width:800px;
+    height:50px;
+    text-align:center;
+}
+
+#confirmButtons {
+    text-align:center;
+}
+
+#submitButtonBottom {
+    margin-top:8px;
+}
+
+#submitButtonTop {
+    margin-top:15px;
+    margin-left:5px;
+}
+
+#confirmText {
+    text-align:center;
+    color:#000;
+    padding-bottom:20px;
+}
+
+#submitWaitText {
+    text-align:center;
+    color:#000;
+}
+
+#submitWaitDialog {
+    border: 4px solid #FA8258;
+}
+
+#printButtonPanel { 
+    margin:0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#formServerError { 
+    margin:0 auto;
+    text-align: center;
+    color: red;
+}
+
+#formInfoPanel {
+    margin:0 auto;
+    text-align: center;
+    font-style: italic;
+    font-size: .8em; 
+    color: #000;
+}
+
+#printButton {
+    width: 125px;
+}
+
+#formLoadingPanel {
+    color: #000;
+    line-height: 400px;
+}
+
+#formLoading {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+
+#noForms {
+	text-align: center;
+    margin: 0 auto;
+    color: #000;
+}
+
+#formAccordion {
+	width:100%;
+	height:100%;
+}
+
+#formServerErrorText {
+	height: 60px;
+	line-height: 60px;
+}
+
+.examExtraCheckbox {
+    width:260px;
+}
+
+.examExtraData {
+    width:260px;
+    padding-left:2px;
+    margin: 1px 0 1px 0;
+}
+
+.questionContainer {
+    float:left;
+    width:400px;
+    height:160px;
+    font-size:0.88em;
+    padding-top:10px;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    margin-left:-1px;
+}
+
+.questionStem {
+    padding:2px 5px 2px 5px;
+    width:390px;
+    height:65px;
+}
+
+.answerContainer {
+    float:left;
+    padding:2px;
+    width:195px;
+    height:88px;
+}
+
+.answerCheckbox {
+    width:210px;
+}
+
+.buttonsData {
+    width:260px;
+    padding-top:5px;
+    display:block;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.tdBorderTop {
+    border-top: 1px solid black;
+}
+
+.tdBorderBottom {
+    border-bottom: 1px solid black;
+    padding:5px;
+}
+
+.trAlignLeft {
+    text-align:left;
+}
+
+.padding5 {
+    padding:5px;
+}
+
+.noTitle .ui-header a {
+    display: none;
+}
+
+.ui-dialog-shadow { 
+    box-shadow: 10px 10px 5px #2E2E2E;
+}
+
+a.icon-button {
+    padding: 0 0 .4em 5px;
+    text-decoration: none;
+    position: relative;
+    height: 25px;
+}
+a.icon-button span.ui-icon {
+    margin: 0 5px 0 0;
+    position: absolute;
+    left: .2em;
+    top: 50%;
+    margin-top: -9px;
+}
+
+.largeButton {
+	width: 220px;
+}
+
+.pws-force-print-content {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}

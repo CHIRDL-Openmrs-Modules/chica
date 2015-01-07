@@ -19,6 +19,7 @@ import org.openmrs.Form;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.ConceptService;
@@ -153,6 +154,8 @@ public class ViewEncounterController extends SimpleFormController {
 					} else if (formName.equals("PHQ9_JIT_MOBILE")) {
 						leftImageStylesheet = "PHQ9_JIT_MOBILE.xsl";
 						displayScanForms = true;
+					} else if (formName.equals("MCHAT")) {
+						leftImageStylesheet = "mchat.xsl";
 					}
 				} else {
 					ArrayList<String> leftNames = new ArrayList<String>();
@@ -238,6 +241,8 @@ public class ViewEncounterController extends SimpleFormController {
 						if (formName.equals("TeacherSummaryReport")) {
 							rightImageStylesheet = "teacherSummaryReport.xsl";
 							displayMergeForms = true;
+						} else if (formName.equals("PWS")) {
+							rightImageStylesheet = "pws.xsl";
 						}
 					} else {
 						
@@ -261,6 +266,7 @@ public class ViewEncounterController extends SimpleFormController {
 						
 						if (formName.equals("PSF")) {
 							rightName = "PWS";
+							rightImageStylesheet = "pws.xsl";
 						}
 						
 						if (formName.equals("ParentSummaryReport")) {
@@ -337,16 +343,36 @@ public class ViewEncounterController extends SimpleFormController {
 		try {
 
 			String pidparam = request.getParameter("patientId");
+			Patient patient = null;
 
-			if (pidparam == null || pidparam.length()==0) {
-				return map;
+			if (pidparam == null || pidparam.trim().length()==0) {
+				String mrn = request.getParameter("mrn");
+				if (mrn != null && mrn.trim().length() > 0) {
+					mrn = Util.removeLeadingZeros(mrn);
+					PatientIdentifierType identifierType = patientService
+							.getPatientIdentifierTypeByName("MRN_OTHER");
+					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+					identifierTypes.add(identifierType);
+					List<Patient> patients = patientService.getPatients(null, mrn,
+							identifierTypes,true);
+					if (patients.size() == 0){
+						patients = patientService.getPatients(null, "0" + mrn,
+								identifierTypes,true);
+					}
+
+					if (patients.size() > 0)
+					{
+						patient = patients.get(0);
+					}
+				}
+			} else {
+				patient = patientService.getPatient(Integer.valueOf(pidparam));
 			}
-			Patient patient = patientService.getPatient(Integer
-					.valueOf(pidparam));
+			
 			if (patient == null) {
 				return map;
 			}
-
+			
 			// title name, mrn, and dob
 			String dobString = "";
 			Date dob = patient.getBirthdate();
@@ -362,7 +388,7 @@ public class ViewEncounterController extends SimpleFormController {
 			EncounterService encounterService = Context
 					.getService(EncounterService.class);
 			List<org.openmrs.Encounter> list = encounterService
-					.getEncountersByPatientId(Integer.valueOf(pidparam));
+					.getEncountersByPatientId(patient.getPatientId());
 			List<PatientRow> rows = new ArrayList<PatientRow>();
 
 			ArrayList<String> formsToProcess = new ArrayList<String>();
