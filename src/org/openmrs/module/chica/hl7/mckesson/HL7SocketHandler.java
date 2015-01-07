@@ -66,6 +66,8 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
+import org.openmrs.module.chirdlutil.util.Util;
+
 
 /**
  * @author tmdugan
@@ -530,6 +532,10 @@ public class HL7SocketHandler extends
 			
 			if (filterDuplicateCheckin && priorCheckinExists(message)){
 				//ignore this message, because patient was already checked in. 
+				return message;
+			}
+			
+			if (!(isValidAge(message))){
 				return message;
 			}
 		}
@@ -1303,5 +1309,17 @@ public class HL7SocketHandler extends
 		return !encounterFound;
 
 	}
+	
+	private boolean isValidAge(Message message){
+		boolean ageOk = false;
+		HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
+		Date dob = patientHandler.getBirthdate(message);
+		int age = Util.getAgeInUnits(dob, new java.util.Date(), Util.MONTH_ABBR);
+		
+		//get age from location tag attributes
+	 return ageOk;
+		
+	}
+	
 	
 }
