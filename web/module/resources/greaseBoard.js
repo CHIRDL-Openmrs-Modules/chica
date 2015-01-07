@@ -19,6 +19,10 @@ $(function() {
         }
     });
     
+    $("#selectPagerButton").click(function() {
+    	$("#pagerDialog").dialog("open");
+    });
+    
     $("#checkMRNButton").click(function() {
     	$("#listErrorDialog").dialog("close");
     });
@@ -306,6 +310,33 @@ $(function() {
           }
         }
     });
+    $( "#pagerDialog" ).dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+        },
+        close: function() { 
+            $("#pagerDescription").val("");
+            $("#pagerName").val("");
+            $("#pagerTextCount").html("0 of 160 character max");
+            $("#pagerError").hide();
+        },
+        show: {
+            effect: "clip",
+            duration: 750
+          },
+          hide: {
+            effect: "clip",
+            duration: 750
+          },
+        buttons: {
+          "Send": function() {
+            sendPage();
+          }
+        }
+    });
     
     $("#forcePrintButton").click(function(event) {
         $("#forcePrintDialog").dialog("open");
@@ -337,6 +368,12 @@ $(function() {
     $(".tableSelect").selectmenu();
     
     $("#manualCheckinState").selectmenu().selectmenu("menuWidget").addClass("stateOverflow");
+    
+    $("#pagerDescription").keyup(function() {
+    	var max = 160;
+    	var length = $(this).val().length;
+    	$("#pagerTextCount").html(length + " of " + max + " character max");
+    });
     
     $(window).bind('resize', resizeContent);
     resizeContent();
@@ -555,7 +592,7 @@ function parsePatientList(responseXML) {
         	content += '<td class="chkTime ' + rowColor + '">' + $(this).find("checkin").text() + '</td>';
         	var reprintStatus = $(this).find("reprintStatus").text();
         	if (reprintStatus === "true") {
-        		content += '<td class="reprint ' + rowColor + '"><span style="color: red;text-shadow: 1px 1px #000000;"><b>*</b></td>';
+        		content += '<td class="reprint ' + rowColor + '"><span style="color: red;text-shadow: 1px 1px #000000;"><b>*</b></span></td>';
         	} else {
         		content += '<td class="reprint ' + rowColor + '"></td>';
         	}
@@ -1098,4 +1135,13 @@ function parseManualCheckinResult(responseXML) {
 
 function closeManualCheckinDialog() {
 	$("#manualCheckinDialog").dialog("close")
+}
+
+function sendPage() {
+	$("#pagerError").hide();
+	var name = $("#pagerName").val();
+	if (name.trim().length == 0) {
+		$("#pagerErrorMessage").html("Please specify your name.");
+		$("#pagerError").show("highlight", 750);
+	}
 }

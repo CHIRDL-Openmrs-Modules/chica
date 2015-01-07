@@ -115,6 +115,16 @@ label {
 .insuranceOverflow {
     max-height: 100px;
 }
+
+#pagerTop {
+    padding-bottom: 20px;
+}
+
+#pagerDescription {
+    width: 270px;
+    height: 100px;
+    resize: none;
+}
 </style>
 <openmrs:htmlInclude file="/openmrs.css" />
 <openmrs:htmlInclude file="/style.css" />
@@ -210,10 +220,7 @@ label {
                                 <button id="printHandoutsButton" class="icon-button-extra-large ui-state-default ui-corner-all">Print Patient Handouts</button>
                             </td>
                             <td align="left">
-                                <form method="post" name="pageForm" action="">
-                                    <input type="hidden" name="page" value="sendPage" />
-                                    <button id="selectPagerButton" onclick="javascript:pagerPopUp('pager.form')" class="icon-button-extra-large-help ui-state-default ui-corner-all">"Get Help Now!"</button>
-                                </form>
+                                <button id="selectPagerButton" class="icon-button-extra-large-help ui-state-default ui-corner-all">"Get Help Now!"</button>
                             </td>
                         </tr>
                     </table>
@@ -566,6 +573,24 @@ label {
         <div style="margin: 0 auto;text-align: center;">
             <div id="newPatientText" style="color:#000000;"><p><b>Are you sure you want to select OTHER as the Station?</b></p></div>
         </div>
+    </div>
+    <div id="pagerDialog" title="Page Request" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+        <div id="pagerTop">
+	        <div>
+	            <span style="color:#000000;text-align:right;"><span style="color: red;text-shadow: 1px 1px #000000;"><b>*</b></span> Your Name:</span>
+	        </div>
+	        <div>
+	            <input type="text" id="pagerName" name="pagerName" size="35"/>
+	        </div>
+        </div>
+        <div>
+            <span style="color:#000000;text-align:right;">Please specify the issue and the best number to reach you:</span>
+        </div>
+        <div>
+            <textarea id="pagerDescription" maxlength="160"></textarea>
+            <span id="pagerTextCount" style="color:#000000;">0 of 160 character max</span>
+        </div>
+        <div id="pagerError"><span id="pagerErrorMessage" class="alertText"></span></div>
     </div>
     <input type="hidden" id="badScans" />
 </body>
