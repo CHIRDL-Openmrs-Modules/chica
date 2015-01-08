@@ -75,6 +75,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String VERIFY_MRN = "verifyMRN";
 	private static final String GET_MANUAL_CHECKIN = "getManualCheckin";
 	private static final String SAVE_MANUAL_CHECKIN = "saveManualCheckin";
+	private static final String SEND_PAGE_REQUEST = "sendPageRequest";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -176,6 +177,8 @@ public class ChicaServlet extends HttpServlet {
 			ManualCheckin.getManualCheckinPatient(request, response);
 		} else if (SAVE_MANUAL_CHECKIN.equals(action)) {
 			ManualCheckin.saveManualCheckinPatient(request, response);
+		} else if (SEND_PAGE_REQUEST.equals(action)) {
+			Pager.sendPage(request, response);
 		}
 	}
 	

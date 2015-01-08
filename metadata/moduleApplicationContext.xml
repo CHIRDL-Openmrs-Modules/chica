@@ -17,7 +17,6 @@
                 <prop key="/module/@MODULE_ID@/weeklyReports.form">weeklyReports</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
-                <prop key="/module/@MODULE_ID@/pager.form">pager</prop>     
                 <prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
                 <prop key="/module/@MODULE_ID@/displayTiff.form">displayTiff</prop>
                 <prop key="/module/@MODULE_ID@/viewPatient.form">viewPatient</prop>
@@ -93,11 +92,6 @@
         <property name="commandName"><value>forcePrintSSNMRNObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/forcePrintSSNMRN</value></property>
         <property name="successView"><value>forcePrintJITs.form</value></property>
-    </bean>
-    <bean id="pager" class="@MODULE_PACKAGE@.web.PagerController">
-        <property name="commandName"><value>PagerObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/pager</value></property>
-        <property name="successView"><value>pager.form</value></property>
     </bean>
     <bean id="viewPatient" class="@MODULE_PACKAGE@.web.ViewPatientController">
         <property name="commandName"><value>viewPatientObject</value></property>

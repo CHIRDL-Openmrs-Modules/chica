@@ -45,11 +45,13 @@ $(function() {
     
     $("#forcePrintDialog").dialog({
         open: function() { 
-            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+        	$(this).dialog("option", "height", $(window).height() * 0.90);
+        	$(this).dialog("option", "width", $(window).width() * 0.90);
             forcePrint_removeForms();
             forcePrint_loadForms();
             var formSelectionHeight = $(".force-print-forms-container").height();
             $(".force-print-form-object").height($(".greaseBoard-force-print-content").height() - formSelectionHeight);
+            $(".ui-dialog").addClass("ui-dialog-shadow");
         },
         beforeClose: function(event, ui) { 
         	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
@@ -68,7 +70,8 @@ $(function() {
         },
         autoOpen: false,
         modal: true,
-        minWidth: 250,
+        minWidth: 450,
+        minHeight: 350,
         width: $(window).width() * 0.90,
         height: $(window).height() * 0.90,
         show: {
@@ -98,6 +101,7 @@ $(function() {
         },
         autoOpen: false,
         modal: true,
+        resizable: false,
         show: {
           effect: "clip",
           duration: 750
@@ -126,6 +130,7 @@ $(function() {
         },
         autoOpen: false,
         modal: true,
+        resizable: false,
         show: {
           effect: "clip",
           duration: 750
@@ -136,6 +141,7 @@ $(function() {
         },
         buttons: [
           {
+        	  id: "checkinMRNOKButton",
 	          text:"OK",
 	          icons: {
 	        	  primary: "ui-icon-newwin"
@@ -160,6 +166,7 @@ $(function() {
         },
         autoOpen: false,
         modal: true,
+        resizable: false,
         show: {
           effect: "clip",
           duration: 750
@@ -181,6 +188,7 @@ $(function() {
         },
         autoOpen: false,
         modal: true,
+        resizable: false,
         show: {
           effect: "clip",
           duration: 750
@@ -191,6 +199,7 @@ $(function() {
         },
         buttons: [
           {
+        	  id: "viewEncountersMRNOKButton",
 	          text:"OK",
 	          icons: {
 	        	  primary: "ui-icon-newwin"
@@ -212,6 +221,7 @@ $(function() {
         },
         autoOpen: false,
         modal: true,
+        resizable: false,
         show: {
           effect: "clip",
           duration: 750
@@ -222,6 +232,7 @@ $(function() {
         },
         buttons: [
           {
+        	  id: "printHandoutsMRNOKButton",
 	          text:"OK",
 	          icons: {
 	        	  primary: "ui-icon-newwin"
@@ -315,13 +326,27 @@ $(function() {
         modal: true,
         autoOpen: false,
         open: function() { 
-            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $("#pagerSaving").hide();
+            $("#pagerComplete").hide();
+            $("#pagerDialog").dialog("option", "buttons", 
+  			  [
+  			    {
+  			      id: "pagerSendButton",
+  			      text: "Send",
+  			      click: function() {
+  			    	  sendPage();
+  			      }
+  			    }
+  			  ]
+  			);
+            $(".ui-dialog").addClass("ui-dialog-shadow");
         },
         close: function() { 
             $("#pagerDescription").val("");
             $("#pagerName").val("");
             $("#pagerTextCount").html("0 of 160 character max");
             $("#pagerError").hide();
+            $("#pagerBody").show();
         },
         show: {
             effect: "clip",
@@ -330,12 +355,7 @@ $(function() {
           hide: {
             effect: "clip",
             duration: 750
-          },
-        buttons: {
-          "Send": function() {
-            sendPage();
           }
-        }
     });
     
     $("#forcePrintButton").click(function(event) {
@@ -350,6 +370,12 @@ $(function() {
     $("#mrnLookup").keypress(function(e){
 	    if (e.which == 13) {
 	     checkMRN();    
+	    }
+	});
+    
+    $("#pagerName").keypress(function(e){
+	    if (e.which == 13) {
+	     sendPage();    
 	    }
 	});
     
@@ -387,9 +413,11 @@ function checkMRN() {
 	  $.ajax({
 		  beforeSend: function(){
 			  $("#mrnLoading").show();
+			  $("#checkinMRNOKButton").button("disable");
 	      },
 	      complete: function(){
 	    	  $("#mrnLoading").hide();
+	    	  $("#checkinMRNOKButton").button("enable");
 	      },
 	      "cache": false,
 	      "dataType": "xml",
@@ -409,10 +437,12 @@ function checkEncounterMRN() {
 	var url = "/openmrs/moduleServlet/chica/chica";
 	  $.ajax({
 		  beforeSend: function(){
+			  $("#viewEncountersMRNOKButton").button("disable");
 			  $("#encounterMrnLoading").show();
 	      },
 	      complete: function(){
 	    	  $("#encounterMrnLoading").hide();
+	    	  $("#viewEncountersMRNOKButton").button("enable");
 	      },
 	      "cache": false,
 	      "dataType": "xml",
@@ -432,10 +462,12 @@ function checkPrintHandoutsMRN() {
 	var url = "/openmrs/moduleServlet/chica/chica";
 	  $.ajax({
 		  beforeSend: function(){
+			  $("#printHandoutsMRNOKButton").button("disable");
 			  $("#printHandoutsMrnLoading").show();
 	      },
 	      complete: function(){
 	    	  $("#printHandoutsMrnLoading").hide();
+	    	  $("#printHandoutsMRNOKButton").button("enable");
 	      },
 	      "cache": false,
 	      "dataType": "xml",
@@ -546,10 +578,8 @@ function populateList() {
       "data": "action=getGreaseboardPatients",
       "type": "POST",
       "url": url,
-      "timeout": 60000, // optional if you want to handle timeouts (which you
-						// should)
-      "error": handlePatientListAjaxError, // this sets up jQuery to give me
-											// errors
+      "timeout": 60000, // optional if you want to handle timeouts (which you should)
+      "error": handlePatientListAjaxError, // this sets up jQuery to give me errors
       "success": function (xml) {
           parsePatientList(xml);
       }
@@ -779,12 +809,6 @@ function parseManualCheckinInfo(responseXML) {
     	$("#manualCheckinDoctor").selectmenu("destroy");
     	$("#manualCheckinDoctor").append(options.join(""));
     	$("#manualCheckinDoctor").selectmenu().selectmenu("menuWidget").addClass("doctorOverflow");
-    	// .selectmenu({
-// change: function() {
-// alert($("#manualCheckinStation option:selected").val());
-// }
-// });
-// $("#manualCheckinDoctor").selectmenu("refresh");
     	$("#manualCheckinSSNOne").val(patient.find("ssn1").text());
         $("#manualCheckinSSNTwo").val(patient.find("ssn2").text());
         $("#manualCheckinSSNThree").val(patient.find("ssn3").text());
@@ -857,6 +881,7 @@ function parseManualCheckinInfo(responseXML) {
         	$("#manualCheckinDialog").dialog("option", "buttons", 
 			  [
 			    {
+			      id: "manualCheckinAddCheckinButton",
 			      text: "Add + Checkin",
 			      click: function() {
 			    	  $("#manualCheckinError").hide();
@@ -869,6 +894,7 @@ function parseManualCheckinInfo(responseXML) {
         	$("#manualCheckinDialog").dialog("option", "buttons", 
   			  [
   			    {
+  			      id: "manualCheckinCheckinButton",
   			      text: "Checkin",
   			      click: function() {
   			    	  $("#manualCheckinError").hide();
@@ -1089,12 +1115,16 @@ function submitManualCheckin() {
 	var manualCheckinData = submitForm.serialize();
     $.ajax({
     	beforeSend: function(){
+    		$("#manualCheckinAddCheckinButton").button("disable");
+    		$("#manualCheckinCheckinButton").button("disable");
     		$("#manualCheckin").hide();
     		$("#savingContainer").html('<img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Checking in patient ' + $("#manualCheckinFirstName").val() + ' ' + $("#manualCheckinLastName").val() + '...');
     		$("#manualCheckinSaving").show();
         },
         complete: function(){
     	    $("#manualCheckinSaving").hide();
+    	    $("#manualCheckinAddCheckinButton").button("enable");
+    	    $("#manualCheckinCheckinButton").button("enable");
         },
         "cache": false,
         "data": "action=saveManualCheckin&" + manualCheckinData,
@@ -1143,5 +1173,66 @@ function sendPage() {
 	if (name.trim().length == 0) {
 		$("#pagerErrorMessage").html("Please specify your name.");
 		$("#pagerError").show("highlight", 750);
+		return;
 	}
+	
+	var url = "/openmrs/moduleServlet/chica/chica";
+	var reporter = $("#pagerName").val();
+	var message = $("#pagerDescription").val();
+	$.ajax({
+		beforeSend: function(){
+			//$(".ui-dialog-buttonpane button:contains('Send')").button("disable");
+			$("#pagerSendButton").button("disable");
+			$("#pagerError").hide();
+			$("#pagerSaving").show();
+	    },
+	    complete: function(){
+	     $("#pagerSaving").hide();
+	     //$(".ui-dialog-buttonpane button:contains('Send')").button("enable");
+	     $("#pagerSendButton").button("enable");
+	    },
+	    "cache": false,
+	    "dataType": "xml",
+	    "data": "action=sendPageRequest&reporter=" + encodeURIComponent(reporter) + "&message=" + encodeURIComponent(message),
+	    "type": "POST",
+	    "url": url,
+	    "timeout": 30000, // optional if you want to handle timeouts (which you should)
+	    "error": handleSendPageAjaxError, // this sets up jQuery to give me errors
+	    "success": function (xml) {
+	        parsePagerResult(xml);
+	    }
+	});
+}
+
+function handleSendPageAjaxError(xhr, textStatus, error) {
+    var error = "An error occurred on the server.";
+    if (textStatus === "timeout") {
+        error = "The server took too long to send the page request.";
+    }
+    
+    $("#pagerErrorMessage").html("<p>" + error + "  Click Send to try again.</p>");
+    $("#pagerError").show("highlight", 750);
+}
+
+function parsePagerResult(responseXML) {
+    // no matches returned
+    if (responseXML === null) {
+    	$("#pagerErrorMessage").html("<p><b>Error sending page request.  Click Send to try again.</b></p>");
+        $("#pagerError").show("highlight", 750);
+    } else {
+    	var result = $(responseXML).find("result").text();
+        if (result === "success") {
+        	$("#pagerBody").hide();
+        	$("#pagerComplete").show();
+        	$("#pagerDialog").dialog("option", "buttons", []);
+        	setTimeout("closePagerDialog()", 5000);
+        } else {
+        	$("#pagerErrorMessage").html("<b>" + $(responseXML).find("response").text() + "</b>");
+            $("#pagerError").show("highlight", 750);
+        }
+    }
+}
+
+function closePagerDialog() {
+	$("#pagerDialog").dialog("close");
 }

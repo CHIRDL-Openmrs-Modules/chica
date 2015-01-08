@@ -116,14 +116,28 @@ label {
     max-height: 100px;
 }
 
-#pagerTop {
-    padding-bottom: 20px;
+#pagerIssue {
+    padding-top: 20px;
 }
 
 #pagerDescription {
     width: 270px;
     height: 100px;
     resize: none;
+}
+
+#pagerSaving {
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 10px;
+}
+
+#pagerError {
+    padding-top: 10px;
+}
+
+.ui-dialog-shadow { 
+    box-shadow: 10px 10px 5px #2E2E2E;
 }
 </style>
 <openmrs:htmlInclude file="/openmrs.css" />
@@ -286,7 +300,7 @@ label {
             <div id="mrnLoading" class="force-print-form-loading">
                  <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
               </div>
-            <div id="mrnError"><span id="mrnMessage" class="alertText"></span></div>
+            <div id="mrnError" style="text-align:center;"><span id="mrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="mrnLookup" tabindex="1"/></div>
         </div>
     </div>
@@ -296,7 +310,7 @@ label {
             <div id="encounterMrnLoading" class="force-print-form-loading">
                  <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
               </div>
-            <div id="encounterMrnError"><span id="encounterMrnMessage" class="alertText"></span></div>
+            <div id="encounterMrnError" style="text-align:center;"><span id="encounterMrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="encounterMrnLookup" tabindex="1"/></div>
         </div>
     </div>
@@ -306,7 +320,7 @@ label {
             <div id="printHandoutsMrnLoading" class="force-print-form-loading">
                  <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
               </div>
-            <div id="printHandoutsMrnError"><span id="printHandoutsMrnMessage" class="alertText"></span></div>
+            <div id="printHandoutsMrnError" style="text-align:center;"><span id="printHandoutsMrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="printHandoutsMrnLookup" tabindex="1"/></div>
         </div>
     </div>
@@ -317,7 +331,7 @@ label {
         <div id="manualCheckinSaving" style="height:400px;margin: 0 auto;text-align: center;">
              <span id="savingContainer" style="color:#000000;"></span>
         </div>
-        <div id="manualCheckinError"><span id="manualCheckinMessage" class="alertText"></span></div>
+        <div id="manualCheckinError" style="text-align:center;"><span id="manualCheckinMessage" class="alertText"></span></div>
         <div id="manualCheckinComplete" style="text-align:center;"><span id="manualCheckinCompleteMessage" style="color:#000000;"></span></div>
         <div id="manualCheckin" style="margin: 0 auto;text-align: center;width:745px;height:400px;float:left;">
             <form id="manualCheckinForm" action="${pageContext.request.contextPath}/moduleServlet/chica/chica">
@@ -575,22 +589,28 @@ label {
         </div>
     </div>
     <div id="pagerDialog" title="Page Request" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-        <div id="pagerTop">
+        <div id="pagerBody">
 	        <div>
-	            <span style="color:#000000;text-align:right;"><span style="color: red;text-shadow: 1px 1px #000000;"><b>*</b></span> Your Name:</span>
+		        <div>
+		            <span style="color:#000000;text-align:right;"><span style="color: red;text-shadow: 1px 1px #000000;"><b>*</b></span> Your Name:</span>
+		        </div>
+		        <div>
+		            <input type="text" id="pagerName" name="pagerName" size="35"/>
+		        </div>
+	        </div>
+	        <div id="pagerIssue">
+	            <span style="color:#000000;text-align:right;">Please specify the issue and the best number to reach you:</span>
 	        </div>
 	        <div>
-	            <input type="text" id="pagerName" name="pagerName" size="35"/>
+	            <textarea id="pagerDescription" maxlength="160"></textarea>
+	            <span id="pagerTextCount" style="color:#000000;">0 of 160 character max</span>
+	        </div>
+	        <div id="pagerError" style="text-align:center;"><span id="pagerErrorMessage" class="alertText"></span></div>
+	        <div id="pagerSaving">
+	             <span style="color:#000000;"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Sending request...</span>
 	        </div>
         </div>
-        <div>
-            <span style="color:#000000;text-align:right;">Please specify the issue and the best number to reach you:</span>
-        </div>
-        <div>
-            <textarea id="pagerDescription" maxlength="160"></textarea>
-            <span id="pagerTextCount" style="color:#000000;">0 of 160 character max</span>
-        </div>
-        <div id="pagerError"><span id="pagerErrorMessage" class="alertText"></span></div>
+        <div id="pagerComplete" style="text-align:center;"><span style="color:#000000;">Page request successfully sent.</span></div>
     </div>
     <input type="hidden" id="badScans" />
 </body>

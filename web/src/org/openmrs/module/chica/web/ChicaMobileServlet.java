@@ -247,7 +247,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			pw.write("Please log in.");
 		} else {
 			String systemPasscode = Context.getAdministrationService().getGlobalProperty(
-				ChirdlUtilConstants.GLOBAL_RPOP_PASSCODE);
+				ChirdlUtilConstants.GLOBAL_PROP_PASSCODE);
 			if (systemPasscode == null) {
 				log.error("Please specify global propery chica.passcode");
 				pw.write("Passcode not properly set on server.");

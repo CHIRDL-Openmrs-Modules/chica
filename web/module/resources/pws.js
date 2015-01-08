@@ -233,7 +233,8 @@ $(function() {
     	},
         autoOpen: false,
         modal: true,
-        minWidth: 250,
+        minHeight: 350,
+        minWidth: 450,
         width: $(window).width() * 0.70,
         height: $(window).height() * 0.80,
         show: {
@@ -283,7 +284,8 @@ $(function() {
     	},
         autoOpen: false,
         modal: true,
-        minWidth: 250,
+        minHeight: 350,
+        minWidth: 450,
         width: $(window).width() * 0.90,
         height: $(window).height() * 0.90,
         show: {
