@@ -35,6 +35,7 @@
                 <prop key="/module/@MODULE_ID@/phq9Mobile.form">phq9Mobile</prop>
                 <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
+                <prop key="/module/@MODULE_ID@/MCHATMobile.form">MCHATMobile</prop>
             </props>
         </property>
     </bean>
@@ -171,6 +172,11 @@
     <bean id="sexRiskMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>sexRiskMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/sexRiskMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="MCHATMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>MCHATMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/MCHATMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
     <bean parent="serviceContext">
