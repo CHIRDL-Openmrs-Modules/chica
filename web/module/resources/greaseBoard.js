@@ -1019,7 +1019,7 @@ function confirmation(optionsSelect, formName) {
 }
 
 function displayBadScans(context, badScans) {
-	var str = context + '/module/atd/displayBadScans.form?badScans='+badScans;
+	var str = context + '/module/chica/displayBadScans.form?badScans='+badScans;
 	popupfull(str);
 }
 

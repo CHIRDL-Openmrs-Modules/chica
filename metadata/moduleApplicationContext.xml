@@ -35,6 +35,7 @@
                 <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsWeb.form">finishFormsWeb</prop>
                 <prop key="/module/@MODULE_ID@/externalFormLoader.form">externalFormLoader</prop>
+                <prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
             </props>
         </property>
     </bean>
@@ -172,6 +173,11 @@
         <property name="commandName"><value>externalFormLoaderObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/externalFormLoader</value></property>
         <property name="successView"><value>externalFormLoader.form</value></property>
+    </bean>
+    <bean id="displayBadScans" class="@MODULE_PACKAGE@.web.DisplayBadScansController">
+        <property name="commandName"><value>displayBadScansObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/displayBadScans</value></property>
+        <property name="successView"><value>displayBadScans.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">
