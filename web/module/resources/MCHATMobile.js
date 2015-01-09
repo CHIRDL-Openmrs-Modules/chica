@@ -30,13 +30,11 @@ function init(patientName, birthdate, formInst, language) {
 function setLanguage(patientName, birthdate) {
 	english = !english;
     var langButtonText = "Español";
-    // var additionalQuestions = "Please answer these questions about your child. Keep in mind how your child usually behaves. If you have seen your child do the behavior a few times, but he or she does not usually do it, then please answer no. Please circle yes or no for every question. Thank you very much.";
 	var additionalQuestions = "Please fill out the following about how your child usually is. Please try to answer every question. If the behavior is rare (e.g., you've seen it once or twice), please answer as if the child does not do it.";
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
     if (!english) {
         langButtonText = "English";
-        // additionalQuestions = "Por favor responda a estas preguntas sobre su hijo/a. Tenga en cuenta cómo su hijo/a se comporta habitualmente. Si usted ha visto a su hijo/a comportarse de una de estas maneras algunas veces, pero no es un comportamiento habitual, por favor responda no. Seleccione, rodeando con un círculo. Muchas gracias.";
 		additionalQuestions = "Por favor conteste acerca de como su niño(a) es usualmente. Por favor trata de contestar cada pregunta. Si el comportamiento de su niño no ocurre con frecuencia, conteste como si no lo hiciera.";
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
@@ -52,13 +50,13 @@ function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
     // Transfer answers
-    for (var i = 1; i < 21; i++) {
+    for (var i = 1; i < 24; i++) {
 	    if (english) {
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_Yes", "#QuestionEntry_" + i + "_Yes");
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_No", "#QuestionEntry_" + i + "_No");
+	    	setQuestionCheckboxes("#Choice_" + i + "_sp_Yes", "#Choice_" + i + "_Yes");
+	    	setQuestionCheckboxes("#Choice_" + i + "_sp_No", "#Choice_" + i + "_No");
 	    } else {
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_Yes", "#QuestionEntry_" + i + "_2_Yes");
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_No", "#QuestionEntry_" + i + "_2_No");
+	    	setQuestionCheckboxes("#Choice_" + i + "_Yes", "#Choice_" + i + "_sp_Yes");
+	    	setQuestionCheckboxes("#Choice_" + i + "_No", "#Choice_" + i + "_sp_No");
 	    }
     }
     
@@ -144,38 +142,51 @@ function handleFinishFormError() {
 	}
 }
 
+
 function calculateScore() {
-	var score = 0;
-	var valueFound = false;
-	for (var i = 1; i < 7; i++) {
-	    if (english) {
-	    	$("input[name=QuestionEntry_" + i + "]:checked").each(function() {
-	    		valueFound = true;
-	    		var value = parseInt($(this).val())
-	            score = score + value;
-	        });
-	    } else {
-	    	$("input[name=QuestionEntry_" + i + "_2]:checked").each(function() {
-	    		valueFound = true;
-	    		var value = parseInt($(this).val())
-	            score = score + value;
-	        });
-	    }
-    }
+	var MchatTotalItemsFailed = 0;
+	var MchatCriticalItemsFailed = 0;
+	var critical = [2,7,9,13,14,15];
+	var valueFound = false; 
+	for (var i = 1; i < 24; i++) {
+		if (english) {
+			$("input[name=Choice_" + i + "]:checked").each(function() {
+				valueFound = true;
+				var value = parseInt($(this).val());
+				MchatTotalItemsFailed += value;
+				if(critical.indexOf(i) > -1 && value == 1) {
+					MchatCriticalItemsFailed++;
+				}
+			});
+		} else {
+			$("input[name=Choice_" + i + "_sp]:checked").each(function() {
+				valueFound = true;
+				var value = parseInt($(this).val());
+				MchatTotalItemsFailed += value;
+				if(critical.indexOf(i) > -1 && value == 1) {
+					MchatCriticalItemsFailed++;
+				}
+			});
+		}
+	
+	}
 	
 	if (valueFound) {
-		$("#MCHATScore").val(score);
+		$("#MchatTotalItemsFailed").val(MchatTotalItemsFailed);
+		$("#MchatCriticalItemsFailed").val(MchatCriticalItemsFailed);
 	}
+	
+	//alert("Total Items Failed: " + MchatTotalItemsFailed + "\nTotal Critical Items Failed: " + MchatCriticalItemsFailed);
 }
 
 function areAllQuestionsAnswered() {
-	var spanishChar = "_2";
+	var spanishChar = "_sp";
 	if (english) {
 		spanishChar = "";
 	}
 	
-	var questionName = "QuestionEntry_";
-	for (var i = 1; i < 21; i++) {
+	var questionName = "Choice_";
+	for (var i = 1; i < 24; i++) {
 		if (!$("input[name='" + questionName + i + spanishChar + "']:checked").val()) {
 		   return false;
 		}
