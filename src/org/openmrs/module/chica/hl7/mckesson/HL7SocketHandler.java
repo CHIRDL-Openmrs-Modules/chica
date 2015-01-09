@@ -68,8 +68,6 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 
-import org.openmrs.module.chirdlutil.util.Util;
-
 
 /**
  * @author tmdugan
@@ -527,6 +525,8 @@ public class HL7SocketHandler extends
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
 			String printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 					.getPrinterLocation(message, incomingMessageString);
+			String locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
+					.getLocation(message);
 
 			if (printerLocation != null && printerLocation.equals("0")) {
 				// ignore this message because it is just kids getting shots
@@ -539,7 +539,7 @@ public class HL7SocketHandler extends
 			}
 			
 			
-			if (!(isValidAge(message, printerLocation))){
+			if (!(isValidAge(message, printerLocation, locationString))){
 				return message;
 			}
 		}
@@ -1321,29 +1321,29 @@ public class HL7SocketHandler extends
 	 * @param locationTagId
 	 * @return ageOk
 	 */
-	private boolean isValidAge(Message message, String printerLocation){
+	private boolean isValidAge(Message message, String printerLocation, String locationString){
 		
-		boolean ageOk = true;
-		Integer locationTagId;
-		Integer locationId;
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		LocationService locationService = Context.getLocationService();
-		LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
-		if (locationTag != null){
-			locationTagId = locationTag.getId();
-			List<Location> locations = locationService.getLocationsByTag(locationTag);
-			for (Location loc : locations){
-				locationId = loc.
-			}
-			
-		}
+		
+		boolean ageOk = true;
 		
 		HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
 		Date dob = patientHandler.getBirthdate(message);
 		int age = Util.getAgeInUnits(dob, new java.util.Date(), Util.MONTH_ABBR);
 		
+		Integer locationTagId = null;
+		Integer locationId = null;
+		LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
+		Location location = locationService.getLocation(locationString);
+		
+		if (locationTag == null || location == null){
+			//Unknown location and location tag. Can not retrieve filter constraint
+			return ageOk;
+		}
+		
 		LocationTagAttributeValue AgeLimitAttributeValue = chirdlutilbackportsService
-				.getLocationTagAttributeValue(locationTagId, ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN,locationId);
+				.getLocationTagAttributeValue(locationTag.getLocationTagId(), ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN ,location.getLocationId());
 		
 		try {
 			// Age must be less than attribute limit. 
