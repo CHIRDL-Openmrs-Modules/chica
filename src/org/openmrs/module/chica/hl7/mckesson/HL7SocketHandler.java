@@ -47,6 +47,7 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -66,6 +67,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
+
 import org.openmrs.module.chirdlutil.util.Util;
 
 
@@ -77,6 +79,7 @@ public class HL7SocketHandler extends
 		org.openmrs.module.sockethl7listener.HL7SocketHandler {
 
 	protected final Log log = LogFactory.getLog(getClass());
+	
 
 	// search for patient based on medical record number then
 	// run alias query to see if any patient records to merge
@@ -535,7 +538,8 @@ public class HL7SocketHandler extends
 				return message;
 			}
 			
-			if (!(isValidAge(message))){
+			
+			if (!(isValidAge(message, printerLocation))){
 				return message;
 			}
 		}
@@ -1310,14 +1314,49 @@ public class HL7SocketHandler extends
 
 	}
 	
-	private boolean isValidAge(Message message){
-		boolean ageOk = false;
+	/**
+	 * If the age limit for the location tag exists as a numeric value, and the patient's age is greater than or equal to that limit, return false.
+	 * @param message
+	 * @param locationId
+	 * @param locationTagId
+	 * @return ageOk
+	 */
+	private boolean isValidAge(Message message, String printerLocation){
+		
+		boolean ageOk = true;
+		Integer locationTagId;
+		Integer locationId;
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationService locationService = Context.getLocationService();
+		LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
+		if (locationTag != null){
+			locationTagId = locationTag.getId();
+			List<Location> locations = locationService.getLocationsByTag(locationTag);
+			for (Location loc : locations){
+				locationId = loc.
+			}
+			
+		}
+		
 		HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
 		Date dob = patientHandler.getBirthdate(message);
 		int age = Util.getAgeInUnits(dob, new java.util.Date(), Util.MONTH_ABBR);
 		
-		//get age from location tag attributes
-	 return ageOk;
+		LocationTagAttributeValue AgeLimitAttributeValue = chirdlutilbackportsService
+				.getLocationTagAttributeValue(locationTagId, ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN,locationId);
+		
+		try {
+			// Age must be less than attribute limit. 
+			if (AgeLimitAttributeValue != null  && age >= Integer.valueOf(AgeLimitAttributeValue.getValue())){
+				return !ageOk;
+			}
+		} catch (NumberFormatException e) {
+			//String was either null, empty, or not a digit
+			//No age limit value could be retrieved from attributes, so do not filter
+			return ageOk;
+		}
+		
+		return ageOk;
 		
 	}
 	

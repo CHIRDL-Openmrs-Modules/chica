@@ -3612,6 +3612,23 @@ where action_name='REPRINT';
         delete from global_property where property = 'chica.presnetStudyPostUrl';
         </sql>
     </diff>
+    <diff>
+        <version>1.6.7</version>
+        <author>Meena Sheley</author>
+        <date>January 09, 2015</date>
+        <description>
+        Add location tag attribute to limit patient age at checkin.
+        </description>
+        <sql>
+        INSERT INTO `chirdlutilbackports_location_tag_attribute`(name,description) 
+        VALUES ( 'CheckinAgeLimit', 'Limit age limit for registration by HL7.');
+        
+        insert into chirdlutilbackports_location_tag_attribute_value (location_id, value, location_tag_attribute_id, location_tag_id)    
+        select a.location_id, CONCAT_WS('',(select value from chirdlutilbackports_location_tag_attribute_value where location_tag_id = b.location_tag_id AND location_tag_attribute_id = (select location_tag_attribute_id from chirdlutilbackports_location_tag_attribute where name='CheckinAgeLimit'))), (select location_tag_attribute_id from chirdlutilbackports_location_tag_attribute where name='CheckinAgeLimit'), b.location_tag_id
+        from location a, location_tag b, location_tag_map c
+        where a.location_id = c.location_id AND c.location_tag_id = b.location_tag_id AND a.retired = 0 AND b.retired = 0;
+        </sql>
+    </diff>
 </sqldiff>
 
 
