@@ -33,6 +33,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/greaseBoard.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.floatThead.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <style>
@@ -40,6 +41,7 @@
   display:none; 
   position:absolute; 
   background:#000000; 
+  z-index: 3 !important ;
 }
 
 #img-load { 
@@ -138,6 +140,14 @@ label {
 
 .ui-dialog-shadow { 
     box-shadow: 10px 10px 5px #2E2E2E;
+}
+
+.ui-dialog { 
+    z-index: 1002 !important ;
+}
+
+.ui-selectmenu { 
+    z-index: 2 !important ;
 }
 </style>
 <openmrs:htmlInclude file="/openmrs.css" />
@@ -250,8 +260,7 @@ label {
                                 in Process</span></td>
                         </tr>
                         <tr>
-                            <td><span class="formReadyTextStyle">__</span>&nbsp;<span style="color: white; text-shadow: 1px 1px #000000;">Form
-                                Ready to Pickup</span></td>
+                            <td><span class="formReadyTextStyle">__</span>&nbsp;<span style="color: white; text-shadow: 1px 1px #000000;">Form Ready</span></td>
                         </tr>
                     </table>
                 </td>

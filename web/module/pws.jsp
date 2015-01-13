@@ -496,8 +496,15 @@
                         </div>
                     </div>
                   <div id="examExtras">
-                   	<div class="examExtraCheckbox">
-                        	<input type="checkbox" name="Special_Need" value="Y"/>Special Need Child<br/>
+                   	    <div class="examExtraCheckbox">
+                   	        <c:choose>
+                   	            <c:if test="${Special_Need == 'Y'}">
+                   	                <input type="checkbox" name="Special_Need" value="Y" checked disabled/>Special Need Child<br/>
+                   	            </c:if>
+                   	            <c:otherwise>
+                        	        <input type="checkbox" name="Special_Need" value="Y"/>Special Need Child<br/>
+                        	    </c:otherwise>
+                        	</c:choose>
                         </div>
                         <div>
                         	&nbsp;
@@ -1128,10 +1135,6 @@
                 <div id="confirmSubmitDialog" title="Confirm" class="ui-overlay">
                     <div id="confirmText">
                         <span>Click OK to permanently submit the form.</span>
-                    </div>
-                    <div id="confirmButtons">
-	                    <input id="okSubmitButton" type="button" value="OK"/>
-	                    <input id="cancelSubmitButton" type="button" value="Cancel"/>
                     </div>
                 </div>
                 <div id="submitWaitDialog" class="noTitle">

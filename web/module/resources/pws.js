@@ -170,6 +170,7 @@ $(function() {
 	  open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
       autoOpen: false,
       modal: true,
+      resizable: false,
       show: {
           effect: "clip",
           duration: 750
@@ -177,20 +178,24 @@ $(function() {
         hide: {
           effect: "clip",
           duration: 750
-        }
+        },
+        buttons: [
+          {
+	          text:"OK",
+	          click: function() {
+	        	  $("#confirmSubmitDialog").dialog("close");
+	      		  $("#submitWaitDialog").dialog("open");
+	      		  processCheckboxes();
+	      		  $("#pwsForm").submit();
+	          }
+          },
+	      {   text:"Cancel",
+	          click: function() {
+	        	  $("#confirmSubmitDialog").dialog("close");
+	          }
+          }
+        ]
     })
-	
-	$("#okSubmitButton").click(function() {
-		$("#confirmSubmitDialog").dialog("close");
-		$("#submitWaitDialog").dialog("open");
-		processCheckboxes();
-		$("#pwsForm").submit();
-	});
-	
-	$("#cancelSubmitButton").click(function(event) {
-		$("#confirmSubmitDialog").dialog("close");
-		event.preventDefault();
-	});
 	
 	$("#submitButtonBottom").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");

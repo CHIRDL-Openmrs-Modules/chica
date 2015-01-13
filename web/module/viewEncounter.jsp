@@ -35,6 +35,8 @@
 	src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script
 	src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.floatThead.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/viewEncounter.js"></script>
 <!--<meta http-equiv="refresh" content="${refreshPeriod}" /> -->
 <openmrs:htmlInclude file="/openmrs.css" />
 <openmrs:htmlInclude file="/style.css" />
@@ -51,69 +53,34 @@
 		<title><spring:message code="openmrs.title" /></title>
 	</c:otherwise>
 </c:choose>
-<SCRIPT LANGUAGE="JavaScript">
-<!-- Idea by:  Nic Wolfe -->
-<!-- This script and many more are available free online at -->
-<!-- The JavaScript Source!! http://javascript.internet.com -->
-
-	$(function() {
-	    $("#viewPatientButton").button({
-            icons: {
-                primary: "ui-icon-newwin"
-            }
-        });
-	    $("#exitButton").button();
-	    $(".view-forms").selectmenu({
-    	  select: function( event, ui ) {
-    		  var formInstance = ui.item.value;
-              if (formInstance == "unselected") {
-                  // A valid form was not selected
-              } else {
-            	  $("#loadingDialog").dialog("open");
-            	  var form = $(this).closest('form');
-            	  form.submit();
-              }
-    	  }
-    	});
-	    
-	    $("#loadingDialog").dialog({
-	        open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
-	        autoOpen: false,
-	        modal: true,
-	        maxWidth: 100,
-	        maxHeight: 50,
-	        width: 100,
-	        height: 50
-	    }).dialog("widget").find(".ui-dialog-titlebar").hide();
-	    
-	    $(window).bind('resize', resizeContent);
-	    resizeContent();
-	});
-	
-	function resizeContent() {
-		var windowHeight = $(window).height();
-		$("#middle").css("height", windowHeight - 230);
-	}
-
-function lookupPatient(){
-	document.location.href = "viewPatient.form";
-	return false;
-}
-
-function exitForm(){
-	 document.location.href = "greaseBoard.form";
-	 return false;
-}
-// End -->
-</script>
 <style>
 #submitWaitText {
     text-align:center;
     color:#000;
 }
 
-#submitWaitDialog {
+#loadingDialog {
     border: 4px solid #FA8258;
+    padding: 0,0,0,0;
+}
+
+.form-loading {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    color: #000;
+}
+
+.ui-dialog-shadow { 
+    box-shadow: 10px 10px 5px #2E2E2E;
+}
+
+.ui-dialog { 
+    z-index: 1002 !important ;
+}
+
+.ui-selectmenu { 
+    z-index: 2 !important ;
 }
 </style>
 </head>
@@ -140,9 +107,9 @@ function exitForm(){
 		</table>
 	</div>
 	<div class="encounterarea" id="middle">
-		<table style="width: 100%; overflow: auto;" class="chicaBackground">
-			<tbody>
-			    <tr>
+		<table style="width: 100%; overflow: auto;" class="chicaBackground" id="encountersTable">
+		    <thead id="encounterHeader">
+		        <tr>
                     <th class="viewEncounterDate chicaTableHeader"><b>Encounter
                             Date</b></th>
                     <th class="viewEncounterStation chicaTableHeader"><b>Station</b></th>
@@ -157,6 +124,8 @@ function exitForm(){
                     <th class="viewEncounterPWSID chicaTableHeader"><b>PWS ID</b></th>
                     <th class="viewEncounterAction chicaTableHeader"><b>Action</b></th>
                </tr>
+		    </thead>
+			<tbody>
 				<c:forEach items="${patientRows}" var="row" varStatus="status">
 					<c:choose>
 						<c:when test='${(status.index)%2 eq 0}'>
@@ -212,7 +181,7 @@ function exitForm(){
 			<tr>
 				<td align="center" style="padding-top:10px;">
 					<div>
-						<button id="viewPatientButton" class="icon-button-large ui-state-default ui-corner-all" onclick="return lookupPatient();">View Patient</button>
+						<button id="viewPatientButton" class="icon-button-large ui-state-default ui-corner-all">View Patient</button>
 						<button id="exitButton" class="icon-button-large ui-state-default ui-corner-all" onclick="javascript:window.close();">Exit</button>
 					</div>
 				</td>
@@ -233,6 +202,16 @@ function exitForm(){
 	<div id="loadingDialog" class="noTitle">
         <div id="submitWaitText">
             <span>Loading...</span>
+        </div>
+    </div>
+    <div id="viewEncountersMRNDialog" title="View Encounters" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+        <div style="margin: 0 auto;text-align: center;">
+            <div style="color:#000000;"><p><b>Type the MRN #. Press OK to display the patient's encounters.</b></p></div>
+            <div id="encounterMrnLoading" class="form-loading">
+                 <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
+              </div>
+            <div id="encounterMrnError" style="text-align:center;"><span id="encounterMrnMessage" class="alertText"></span></div>
+            <div style="padding-bottom:10px;"><input type="text" size="20" id="encounterMrnLookup" tabindex="1"/></div>
         </div>
     </div>
 </body>

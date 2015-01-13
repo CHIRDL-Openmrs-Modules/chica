@@ -1,4 +1,5 @@
 var timer = null;
+var patientListFail = 0;
 $(function() {
 	$("#badScansArea").hide();
 	$("#mrnError").hide();
@@ -369,24 +370,28 @@ $(function() {
     
     $("#mrnLookup").keypress(function(e){
 	    if (e.which == 13) {
+	     e.preventDefault();
 	     checkMRN();    
 	    }
 	});
     
     $("#pagerName").keypress(function(e){
 	    if (e.which == 13) {
+	     e.preventDefault();
 	     sendPage();    
 	    }
 	});
     
     $("#encounterMrnLookup").keypress(function(e){
 	    if (e.which == 13) {
+	     e.preventDefault();
 	     checkEncounterMRN();    
 	    }
 	});
     
     $("#printHandoutsMrnLookup").keypress(function(e){
 	    if (e.which == 13) {
+	     e.preventDefault();
 	     checkPrintHandoutsMRN();    
 	    }
 	});
@@ -400,6 +405,13 @@ $(function() {
     	var length = $(this).val().length;
     	$("#pagerTextCount").html(length + " of " + max + " character max");
     });
+    
+    $("#patientTable").floatThead({
+        scrollContainer: function(){
+            return $(".encounterarea");
+        }       
+    });
+    $("#patientTable").show();
     
     $(window).bind('resize', resizeContent);
     resizeContent();
@@ -508,16 +520,15 @@ function getManualCheckinInfo() {
 }
 
 function setOverlayCSS() {
-	 var encounterArea = $(".encounterarea");
+	 var encounterArea = $("#middle");
 	$("#overlay").css({
       opacity : 0.3,
-      top     : encounterArea.offset().top,
       width   : encounterArea.outerWidth(),
       height  : encounterArea.outerHeight()
     });
 
     $("#img-load").css({
-      top  : (encounterArea.height() / 2),
+      top  : (encounterArea.height() / 2) -15,
       left : ((encounterArea.width() / 2) -30)
     });
 }
@@ -581,6 +592,7 @@ function populateList() {
       "timeout": 60000, // optional if you want to handle timeouts (which you should)
       "error": handlePatientListAjaxError, // this sets up jQuery to give me errors
       "success": function (xml) {
+    	  patientListFail = 0;
           parsePatientList(xml);
       }
   });
@@ -588,7 +600,6 @@ function populateList() {
 
 function parsePatientList(responseXML) {
     // no matches returned
-	// $("#loadingDialog").popup("close");
     if (responseXML === null) {
         return false;
     } else {
@@ -624,7 +635,7 @@ function parsePatientList(responseXML) {
         	if (reprintStatus === "true") {
         		content += '<td class="reprint ' + rowColor + '"><span style="color: red;text-shadow: 1px 1px #000000;"><b>*</b></span></td>';
         	} else {
-        		content += '<td class="reprint ' + rowColor + '"></td>';
+        		content += '<td class="reprint ' + rowColor + '">&nbsp;</td>';
         	}
         	
         	content += '<td class="status ' + $(this).find("statusColor").text() + '" style="vertical-align:middle">' + $(this).find("status").text() + '</td>';
@@ -669,6 +680,7 @@ function parsePatientList(responseXML) {
         }
         
         $("#patientTable tbody").html(content);
+        $("#patientTable").trigger("reflow");
         $(".view-forms").selectmenu({
             select: function( event, ui ) {
                 var formInstance = ui.item.value;
@@ -684,14 +696,21 @@ function parsePatientList(responseXML) {
 }
 
 function handlePatientListAjaxError(xhr, textStatus, error) {
-    var error = "An error occurred on the server.";
-    if (textStatus === "timeout") {
-        error = "The server took too long to retrieve the patient list.";
-    }
-    
-    timer.pause();
-    $("#listErrorResultDiv").html("<p>" + error + "  Click OK to try again.</p>");
-    $("#listErrorDialog").dialog("open");
+	patientListFail++;
+	if (patientListFail < 4) {
+		// try populating again before informing user.
+		setTimeout("populateList()", 1);
+	}
+	else {
+	    var error = "An error occurred on the server.";
+	    if (textStatus === "timeout") {
+	        error = "The server took too long to retrieve the patient list.";
+	    }
+	    
+	    timer.pause();
+	    $("#listErrorResultDiv").html("<p>" + error + "  Click OK to try again.</p>");
+	    $("#listErrorDialog").dialog("open");
+	}
 }
 
 function verifyMRN(responseXML) {

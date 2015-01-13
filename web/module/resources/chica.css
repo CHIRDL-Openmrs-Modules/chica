@@ -157,12 +157,12 @@ background-color:#b24926;
 .tableRowEven, .tableRowOdd, .tableRowManualCheckin {
     padding:5px;
     text-align:center;
-    background-color:#FFFFCC;
+    background-color:#D1F0FF;
     border: 2px solid #E7EFE0;
     -moz-border-radius:2px;
     -webkit-border-radius:2px;
     border-radius:2px;
-    color:#666;
+    color: #181818 ;
     text-shadow:1px 1px 1px #fff;
 }
 
@@ -171,7 +171,7 @@ background-color:#b24926;
 }
 
 .tableRowManualCheckin {
-	background-color:#D1F0FF;
+	background-color:#FFFFCC;
 }
 
 .chicaTableHeader {
