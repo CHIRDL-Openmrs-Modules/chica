@@ -1342,8 +1342,10 @@ public class HL7SocketHandler extends
 			return ageOk;
 		}
 		
+		String test = ChirdlUtilConstants.LOC_TAG_ATTR_ACTIVE_PRINTER_STATION;
+		
 		LocationTagAttributeValue AgeLimitAttributeValue = chirdlutilbackportsService
-				.getLocationTagAttributeValue(locationTag.getLocationTagId(), ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN ,location.getLocationId());
+				.getLocationTagAttributeValue(locationTag.getLocationTagId(), test ,location.getLocationId());
 		
 		try {
 			// Age must be less than attribute limit. 
