@@ -46,12 +46,10 @@ $(function() {
     
     $("#forcePrintDialog").dialog({
         open: function() { 
-        	$(this).dialog("option", "height", $(window).height() * 0.90);
-        	$(this).dialog("option", "width", $(window).width() * 0.90);
+        	//$(this).dialog("option", "height", $(window).height() * 0.90);
+        	//$(this).dialog("option", "width", $(window).width() * 0.90);
             forcePrint_removeForms();
             forcePrint_loadForms();
-            var formSelectionHeight = $(".force-print-forms-container").height();
-            $(".force-print-form-object").height($(".greaseBoard-force-print-content").height() - formSelectionHeight);
             $(".ui-dialog").addClass("ui-dialog-shadow");
         },
         beforeClose: function(event, ui) { 
@@ -84,12 +82,7 @@ $(function() {
           duration: 750
         },
         resize: function(e,ui) {
-            var divHeight = $(".greaseBoard-force-print-content").height();
-            var formSelectionHeight = $(".force-print-forms-container").height();
-            // Update the form height
-            $(".force-print-form-object").height($(".greaseBoard-force-print-content").height() - formSelectionHeight);
-            // Update the height of the select
-            $(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
+            updateForcePrintDimensions();
         }
     });
     
@@ -1254,4 +1247,13 @@ function parsePagerResult(responseXML) {
 
 function closePagerDialog() {
 	$("#pagerDialog").dialog("close");
+}
+
+function updateForcePrintDimensions() {
+	var divHeight = $(".greaseBoard-force-print-content").height();
+    var formSelectionHeight = $(".force-print-forms-container").height();
+    // Update the form height
+    $(".force-print-form-object").height($(".greaseBoard-force-print-content").height() - formSelectionHeight);
+    // Update the height of the select
+    $(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
 }

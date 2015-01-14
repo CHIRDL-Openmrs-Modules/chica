@@ -113,6 +113,8 @@ function forcePrint_parseAvailableForms(responseXML) {
   	$(".force-print-forms-loading").hide();
   	$(".force-print-forms-container").show();
   	$('.force-print-forms').val("selectform").selectmenu("refresh");
+  	var divHeight = $(".force-print-forms").parent().parent().parent().height();
+  	$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
 }
 
 function forcePrint_loadForm() {
