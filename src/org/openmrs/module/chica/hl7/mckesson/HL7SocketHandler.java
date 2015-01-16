@@ -538,7 +538,6 @@ public class HL7SocketHandler extends
 				return message;
 			}
 			
-			
 			if (!(isValidAge(message, printerLocation, locationString))){
 				return message;
 			}
@@ -1315,39 +1314,42 @@ public class HL7SocketHandler extends
 	}
 	
 	/**
-	 * If the age limit for the location tag exists as a numeric value, and the patient's age is greater than or equal to that limit, return false.
+	 *  If there is no location tag attribute value or it is not numeric, check-in the patient.
+	 * If the age limit for the location tag exists as a numeric value, and the patient's age is greater than or equal to that limit,
+	 * do not check-in patient. 
 	 * @param message
 	 * @param locationId
 	 * @param locationTagId
 	 * @return ageOk
 	 */
 	private boolean isValidAge(Message message, String printerLocation, String locationString){
-		
+
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		AdministrationService adminService = Context.getAdministrationService();
 		LocationService locationService = Context.getLocationService();
-		
+		Context.openSession();
+		Context.authenticate(adminService.getGlobalProperty("scheduler.username"), adminService.getGlobalProperty("scheduler.password"));
+		Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_LOCATIONS);
 		boolean ageOk = true;
-		
-		HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
-		Date dob = patientHandler.getBirthdate(message);
-		int age = Util.getAgeInUnits(dob, new java.util.Date(), Util.MONTH_ABBR);
-		
-		Integer locationTagId = null;
-		Integer locationId = null;
-		LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
-		Location location = locationService.getLocation(locationString);
-		
-		if (locationTag == null || location == null){
-			//Unknown location and location tag. Can not retrieve filter constraint
-			return ageOk;
-		}
-		
-		String test = ChirdlUtilConstants.LOC_TAG_ATTR_ACTIVE_PRINTER_STATION;
-		
-		LocationTagAttributeValue AgeLimitAttributeValue = chirdlutilbackportsService
-				.getLocationTagAttributeValue(locationTag.getLocationTagId(), test ,location.getLocationId());
-		
+
 		try {
+			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
+			Date dob = patientHandler.getBirthdate(message);
+			int age = Util.getAgeInUnits(dob, new java.util.Date(), Util.YEAR_ABBR);
+
+			LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
+			Location location = locationService.getLocation(locationString);
+
+			if (locationTag == null || location == null){
+				//Unknown location and location tag. Can not retrieve filter constraint
+				return ageOk;
+			}
+
+			String test = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
+
+			LocationTagAttributeValue AgeLimitAttributeValue = chirdlutilbackportsService
+					.getLocationTagAttributeValue(locationTag.getLocationTagId(), test ,location.getLocationId());
+
 			// Age must be less than attribute limit. 
 			if (AgeLimitAttributeValue != null  && age >= Integer.valueOf(AgeLimitAttributeValue.getValue())){
 				return !ageOk;
@@ -1356,10 +1358,14 @@ public class HL7SocketHandler extends
 			//String was either null, empty, or not a digit
 			//No age limit value could be retrieved from attributes, so do not filter
 			return ageOk;
+		} catch (Exception e){
+			log.error(" isValidAge() error ", e);
+		} finally {
+			Context.closeSession();
 		}
-		
+
 		return ageOk;
-		
+
 	}
 	
 	
