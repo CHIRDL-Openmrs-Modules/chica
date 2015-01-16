@@ -715,8 +715,10 @@ function verifyMRN(responseXML) {
     	var result = $(responseXML).find("result").text();
         if (result == "true") {
         	getManualCheckinInfo();
-        	$("#manualCheckinDialog").dialog("open");
+        	$("#checkinMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#checkinMRNDialog").dialog("close");
+        	$("#checkinMRNDialog").dialog("option", "hide", { effect: "clip", duration: 750 } );
+        	$("#manualCheckinDialog").dialog("open");
         } else {
         	$("#mrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the record.</b></p>");
             $("#mrnError").show("highlight", 750);
@@ -755,8 +757,10 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#locationId").val("");
         	$("#locationTagId").val("");
         	$("#mrn").val($("#printHandoutsMrnLookup").val());
-        	$("#forcePrintDialog").dialog("open");
+        	$("#printHandoutsMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#printHandoutsMRNDialog").dialog("close");
+        	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "clip", duration: 750 } );
+        	$("#forcePrintDialog").dialog("open");
         } else {
         	$("#printHandoutsMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
             $("#printHandoutsMrnError").show("highlight", 750);
