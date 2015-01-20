@@ -29,9 +29,9 @@
 		</filterset>
 		
 		<path id="classpath">
-			<fileset dir="lib">
+			<!--<fileset dir="lib">
 				<include name="**/*.jar"/>
-			</fileset>
+			</fileset>-->
 			<fileset dir="lib-common">
 				<include name="**/*.jar"/>
 			</fileset>
@@ -99,9 +99,9 @@
 		<!-- Copy lib folder -->
 		<!-- (lib should only contain this module's required -->
 		<!-- libraries that OpenMRS doesn't contain already) -->
-		<copy todir="build/lib" failonerror="false">
+		<!--<copy todir="build/lib" failonerror="false">
 			<fileset dir="lib" includes="**/*" />
-		</copy>
+		</copy>-->
 		
 	    <!-- Copy log4j properties -->
 	     <copy todir="build/">
