@@ -14,6 +14,7 @@
 package org.openmrs.module.chica;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -150,14 +151,6 @@ public class VaccineFollowUp extends AbstractTask {
 			log.info("HPV study: 4 mo followup check");
 		}
 		
-		//for testing
-		if (followUpType.equalsIgnoreCase("test")){
-			if ( this.testTime != null && !testTime.trim().equals("") &&  isInteger(testTime) ){
-				followUpTimePeriod = Integer.valueOf(testTime);
-				followUpType = "2wk"; //for the obs name
-				log.info("HPV study: Test time follow up: " + followUpTimePeriod + "days");
-			}
-		}//end testing
 		
 		if (followUpTimePeriod == null){
 			return null;
@@ -165,11 +158,16 @@ public class VaccineFollowUp extends AbstractTask {
 		
 		ConceptService conceptService = Context.getConceptService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
+		ObsService obsService = Context.getService(ObsService.class);
 
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, -(followUpTimePeriod));
 		Date startDateTime = DateUtil.getStartOfDay(c.getTime());
 		Date stopDatetime = DateUtil.getEndOfDay(c.getTime());
+		
+		Concept hpvConcept = conceptService.getConceptByName(followUpType + "_HPV");
+		Concept TdapConcept = conceptService.getConceptByName(followUpType + "_Tdap");
+		Concept MCVConcept = conceptService.getConceptByName(followUpType + "_MCV");
 
 		List<Encounter> encounters = chicaService
 				.getEncountersForEnrolledPatients(enrollmentConcept,
@@ -184,6 +182,28 @@ public class VaccineFollowUp extends AbstractTask {
 
 		for (Encounter encounter : encounters) {
 			
+			
+			Patient patient = encounter.getPatient();
+			
+			//find out if patient has an observation of 
+			// from an earlier time on the same day.
+			List<Patient> patients = new ArrayList<Patient>();
+			List<Concept> concepts = new ArrayList<Concept>();
+			patients.add(patient);
+			concepts.add(hpvConcept);
+			concepts.add(TdapConcept);
+			concepts.add(MCVConcept);
+			
+			//We may run this more than once per day, just in cast CHIRP was not available.
+			//Check if these observation already exist for this encounter.
+			//If observations exist, no need to query CHIRP.
+			//Encounters have already been filtered by date minus followup time period, so no need for dates in getObservations method
+			List<Obs> obs = obsService.getObservations(patients, encounters, concepts, null, null, null, null, null, null, null, null, true);
+			 if (obs != null && obs.size()> 0){
+				 continue;
+			 }
+			
+		
 			log.info("	HPV Study: " + followUpType  + " follow-up query CHIRP for " + encounter.getPatientId()+  " : ");
 			String queryResponse = ImmunizationRegistryQuery
 					.queryCHIRP(encounter);
@@ -192,7 +212,7 @@ public class VaccineFollowUp extends AbstractTask {
 				log.error("	HPV Study: Unable to access immunization records from "
 						+ " chirp for  followup. MRN: "
 						+ encounter.getPatient().getPatientIdentifier());
-				return null;
+				 continue;
 			}
 			
 			ImmunizationQueryOutput immunizations = ImmunizationForecastLookup
@@ -202,7 +222,7 @@ public class VaccineFollowUp extends AbstractTask {
 				log.error("	HPV Study: The immunization list is empty after the query to "
 						+ " chirp for  followup. MRN: "
 						+ encounter.getPatient().getPatientIdentifier());
-				return null;
+				 continue;
 			}
 
 			// patient has immunization records
@@ -216,6 +236,7 @@ public class VaccineFollowUp extends AbstractTask {
 			String TdapName = map.get("Tdap");
 			String MCVName = map.get("MCV");
 
+			
 			HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
 					.getImmunizationPrevious();
 
@@ -228,7 +249,7 @@ public class VaccineFollowUp extends AbstractTask {
 					hpvDoses = HPVGiven.size();
 				}
 
-				// Tdap
+				
 
 				HashMap<Integer, ImmunizationPrevious> TdapGiven = prevImmunizations
 						.get(TdapName);
@@ -245,15 +266,15 @@ public class VaccineFollowUp extends AbstractTask {
 				}
 
 			}
-			Concept hpvConcept = conceptService.getConceptByName(followUpType + "_HPV");
+			
 			saveObs(encounter.getPatient(), hpvConcept,
 					null, hpvDoses.toString());
 
-			Concept TdapConcept = conceptService.getConceptByName(followUpType + "_Tdap");
+			
 			saveObs(encounter.getPatient(), TdapConcept,
 					null, TdapDoses.toString());
 
-			Concept MCVConcept = conceptService.getConceptByName(followUpType + "_MCV");
+			
 			saveObs(encounter.getPatient(), MCVConcept,
 					null, MCVDoses.toString());
 
