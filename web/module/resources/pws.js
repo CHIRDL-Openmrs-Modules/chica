@@ -37,12 +37,17 @@ function parseAvailableJITs(responseXML) {
         	$("#noForms").show();
         } else {
         	formList.html(content);
-            var divHeight = $("#formAccordion").height();
-        	var total = $("#formAccordion > div").length;
-            var newFormHeight = (divHeight - (100*total));
-            $(".recommended-forms").css({"height":newFormHeight});
             $("#formAccordion").accordion("refresh");
             $('#formAccordion').show();
+            var divHeight = $("#dialogWrapper").height();
+            var count = 0;
+            $("#formAccordion > h3").each(function() {
+            	count++;
+            });
+            
+            var newFormHeight = (divHeight - (count*40) - 45);
+            //alert(newFormHeight);
+            $(".recommended-forms").css({"height":newFormHeight});
         }
     }
 }
@@ -241,7 +246,7 @@ $(function() {
         minHeight: 350,
         minWidth: 450,
         width: $(window).width() * 0.70,
-        height: $(window).height() * 0.80,
+        height: $(window).height() * 0.90,
         show: {
           effect: "clip",
           duration: 750
@@ -251,9 +256,13 @@ $(function() {
           duration: 750
         },
         resize: function(e,ui) {
-        	var divHeight = $("#formAccordion").height();
-        	var count = $("#formAccordion > div").length;
-            var newFormHeight = (divHeight - (100*count));
+        	var divHeight = $("#dialogWrapper").height();
+            var count = 0;
+            $("#formAccordion > h3").each(function() {
+            	count++;
+            });
+            
+            var newFormHeight = (divHeight - (count*40) - 45);
             $(".recommended-forms").css({"height":newFormHeight});
         }
     });

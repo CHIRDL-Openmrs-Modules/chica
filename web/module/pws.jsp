@@ -1143,17 +1143,19 @@
                     </div>
                 </div>
                 <div id="formAccordionDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div id="formLoading">
-                       <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
-                    </div>
-                    <div id="formServerError">
-                        <div id="formServerErrorText" class="ui-state-error"></div>
-                        <br/><br/><a href="#" id="retryButton" class="icon-button ui-state-default ui-corner-all">Retry</a>
-                    </div>
-                    <div id="noForms">
-                        There are no recommended handouts for ${PatientName}.
-                    </div>
-	                <div id="formAccordion">
+                    <div id="dialogWrapper" style="height:100%;">
+	                    <div id="formLoading">
+	                       <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
+	                    </div>
+	                    <div id="formServerError">
+	                        <div id="formServerErrorText" class="ui-state-error"></div>
+	                        <br/><br/><a href="#" id="retryButton" class="icon-button ui-state-default ui-corner-all">Retry</a>
+	                    </div>
+	                    <div id="noForms">
+	                        There are no recommended handouts for ${PatientName}.
+	                    </div>
+		                <div id="formAccordion">
+		                </div>
 	                </div>
                 </div>
                 <div id="forcePrintDialog" title="Other Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
