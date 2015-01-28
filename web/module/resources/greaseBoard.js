@@ -631,7 +631,12 @@ function parsePatientList(responseXML) {
         		content += '<td class="reprint ' + rowColor + '">&nbsp;</td>';
         	}
         	
-        	content += '<td class="status ' + $(this).find("statusColor").text() + '" style="vertical-align:middle">' + $(this).find("status").text() + '</td>';
+        	var statusText = $(this).find("status").text();
+        	if (statusText == null || statusText.trim().length == 0) {
+        		content += '<td class="status ' + rowColor + '" style="vertical-align:middle">Please wait...</td>';
+        	} else {
+        		content += '<td class="status ' + $(this).find("statusColor").text() + '" style="vertical-align:middle">' + statusText + '</td>';
+        	}
             content +='<td class="action ' + rowColor + '">' +
 							'<form method="post" style="margin: 0px; padding: 0px;">' +
 							    '<fieldset class="tableFieldset">' +
