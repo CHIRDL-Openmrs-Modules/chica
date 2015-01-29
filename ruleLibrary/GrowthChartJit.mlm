@@ -31,7 +31,7 @@ endif
 
 ;;
 Action:
-call CREATE_JIT with "GrowthChart";
+call CREATE_JIT with "GrowthChart", "", "true";
 ;;
 Age_Min: 0 days;;
 Age_Max: 20 years;;
