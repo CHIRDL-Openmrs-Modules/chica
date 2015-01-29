@@ -25,7 +25,7 @@ function parseAvailableJITs(responseXML) {
             var locationTagId = $(this).find("locationTagId").text();
             
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
-        	var action = "action=getPatientJITs&formInstances=" + formInstance + "#view=fit&navpanes=0";
+        	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
             content = content + '<h3>' + formName + '</h3><div><iframe class="recommended-forms" src="' + url + action + 
             	'"></iframe></div>';
