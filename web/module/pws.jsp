@@ -1143,7 +1143,7 @@
                     </div>
                 </div>
                 <div id="formAccordionDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div id="dialogWrapper" style="height:100%;">
+                    <div id="accordionContainer" style="height:100%;">
 	                    <div id="formLoading">
 	                       <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
 	                    </div>
