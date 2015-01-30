@@ -11,10 +11,11 @@ function parseAvailableJITs(responseXML) {
     	$("#loading").hide();
         return false;
     } else {
-    	var formList = null;
-		formList = $("#formAccordion");
+    	var tabs = null;
+		tabs = $("#tabs");
     	
-        var content = "";
+        var tabList = "<ul>";
+        var divList = "";
         var count = 0;
         var formInstance = "";
         $(responseXML).find("availableJIT").each(function () {
@@ -27,7 +28,8 @@ function parseAvailableJITs(responseXML) {
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
         	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
-            content = content + '<h3>' + formName + '</h3><div><iframe class="recommended-forms" src="' + url + action + 
+        	tabList += '<li><a href="#tabs-' + count + '">' + formName + '</a></li>';
+        	divList += '<div id="tabs-' + count + '" style="float:left;"><iframe class="recommended-forms" src="' + url + action + 
             	'"></iframe></div>';
             
             count++;
@@ -36,13 +38,20 @@ function parseAvailableJITs(responseXML) {
     	if (count == 0) {
         	$("#noForms").show();
         } else {
-        	formList.html(content);
-            $("#formAccordion").accordion("refresh");
-            $('#formAccordion').show();
-            var divHeight = $("#accordionContainer").height();
-            var count = $("#formAccordion > h3").length;
-            var newFormHeight = (divHeight - (count*40) - 45);
-            $(".recommended-forms").css({"height":newFormHeight});
+        	tabList += "</ul>"
+        	tabs.html(tabList + divList);
+        	$("#tabs").tabs({
+        		overflowTabs: true,
+        		heightStyle: "content",
+        		tabPadding: 23,
+        		containerPadding: 40
+        	}).addClass("ui-tabs-vertical ui-helper-clearfix");
+            $("#tabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
+            $('#tabs').show();
+            var divHeight = $("#formTabDialogContainer").height();
+//            var count = $("#formAccordion > h3").length;
+//            var newFormHeight = (divHeight - (count*40) - 45);
+            $(".recommended-forms").css({"height":divHeight - 45});
         }
     }
 }
@@ -114,12 +123,7 @@ $(function() {
 	$("#forcePrintButton").button();
 	$("#retryButton").button();
 	
-	$("#formAccordion").accordion({
-	      heightStyle: "content",
-	      collapsible: true,
-	      active : false
-	    });
-	$('#formAccordion').hide();
+	$('#tabs').hide();
 	
 	getAvailableJits();
 	
@@ -162,7 +166,7 @@ $(function() {
 	});
 	
 	$("#formPrintButton").click(function(event) {
-		$("#formAccordionDialog").dialog("open");
+		$("#formTabDialog").dialog("open");
 		event.preventDefault();
 	});
 	
@@ -222,25 +226,25 @@ $(function() {
         height: 50
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	
-	$("#formAccordionDialog").dialog({
+	$("#formTabDialog").dialog({
     	open: function() { 
+    		$("#tabs").show();
     		$(".recommended-forms").show();
     		$(".ui-dialog").addClass("ui-dialog-shadow"); 
-    		$("#formAccordionDialog").scrollTop(0);
+    		$("#formTabDialog").scrollTop(0);
     	},
     	beforeClose: function() { 
     		$(".recommended-forms").hide();
     	},
     	close: function() { 
-    		$("#formAccordion").accordion({
-    			active: false
-    		});
+    		$("#tabs").hide();
     	},
         autoOpen: false,
         modal: true,
         minHeight: 350,
         minWidth: 450,
-        width: $(window).width() * 0.70,
+        width: 950,
+        //width: $(window).width() * 0.70,
         height: $(window).height() * 0.90,
         show: {
           effect: "clip",
@@ -251,10 +255,8 @@ $(function() {
           duration: 750
         },
         resize: function(e,ui) {
-        	var divHeight = $("#accordionContainer").height();
-        	var count = $("#formAccordion > h3").length;
-            var newFormHeight = (divHeight - (count*40) - 45);
-            $(".recommended-forms").css({"height":newFormHeight});
+        	var divHeight = $("#formTabDialogContainer").height();
+            $(".recommended-forms").css({"height":divHeight - 45});
         }
     });
 	
@@ -311,5 +313,5 @@ $(function() {
         }
     });
 	
-	$("#formAccordionDialog").dialog("open");
+	$("#formTabDialog").dialog("open");
   });

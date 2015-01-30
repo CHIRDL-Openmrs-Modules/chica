@@ -1142,8 +1142,8 @@
                         <span>Submitting...</span>
                     </div>
                 </div>
-                <div id="formAccordionDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div id="accordionContainer" style="height:100%;">
+                <div id="formTabDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                    <div id="formTabDialogContainer">
 	                    <div id="formLoading">
 	                       <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
 	                    </div>
@@ -1154,8 +1154,9 @@
 	                    <div id="noForms">
 	                        There are no recommended handouts for ${PatientName}.
 	                    </div>
-		                <div id="formAccordion">
-		                </div>
+	                    <div id="formTabContainer">
+	                        <div id="tabs" style="width: 100%;height: 100%;"></div>
+	                    </div>
 	                </div>
                 </div>
                 <div id="forcePrintDialog" title="Other Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
