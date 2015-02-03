@@ -333,8 +333,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		List<String> filesToCombine = new ArrayList<String>();
 		for (String formInstance : formInstances.split(ChirdlUtilConstants.GENERAL_INFO_COMMA)) {
-			FormInstanceTag formInstanceTag = 
-					org.openmrs.module.chirdlutilbackports.util.Util.parseFormInstanceTag(formInstance);
+			FormInstanceTag formInstanceTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 			if (formInstanceTag == null) {
 				continue;
 			}
@@ -403,6 +402,7 @@ public class ChicaServlet extends HttpServlet {
 	            reader.close();
 	
 		        document.close();
+		        response.addHeader("Accept-Ranges", "bytes");
 		        response.setContentLength(output.size());
 		        response.getOutputStream().write(output.toByteArray());
 			} catch (BadPdfFormatException e) {
@@ -803,7 +803,8 @@ public class ChicaServlet extends HttpServlet {
 			outputType = outputTypes[0];
 		}
 		
-		if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType)) {
+		if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType) || 
+				ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_PDF.equalsIgnoreCase(outputType)) {
 			String formInstanceTag = result.toString();
 			locatePatientJITs(response, formInstanceTag);
 		} else if (ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_XML.equalsIgnoreCase(outputType)) {
