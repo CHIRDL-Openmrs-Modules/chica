@@ -173,6 +173,7 @@ public class VaccineFollowUp extends AbstractTask {
 								DateUtil.getStartOfDay(new Date()), 
 								DateUtil.getEndOfDay(new Date()),
 								false);
+						
 						// If this observation already exists for today, do not query CHIRP again.
 						if (obsList.size() > 0) {
 							continue;
