@@ -15,6 +15,7 @@ package org.openmrs.module.chica;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import org.apache.taglibs.standard.lang.jstl.IntegerLiteral;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -54,10 +56,12 @@ public class VaccineFollowUp extends AbstractTask {
 	private String conceptProperty; //String containing concept name
 	private List<Integer> followUpIntervals = new ArrayList<Integer>();
 	
-	private String PROPERTY_NAME_CONCEPT = "concept";
-	private String TWO_WEEKS = "2wk";
-	private String FOUR_MONTHS = "4mo";
-
+	private String PROPERTY_KEY_CONCEPT = "concept";
+	private String TWO_WEEKS = "2wk"; //this is part of the concept name
+	private String FOUR_MONTHS = "4mo"; //this is part of the concept name
+	private String PROPERTY_KEY_TIME_PERIOD_DAYS = "follow_up_days";
+	private String followUpDays = "";
+	
 	@Override
 	public void initialize(TaskDefinition config) {
 
@@ -65,30 +69,13 @@ public class VaccineFollowUp extends AbstractTask {
 		this.taskConfig = config;
 		
 		try {
-			log.info("Initializing vaccine follow-up scheduled task.");
-	
-			Map<String,String> propertyMap = this.taskConfig.getProperties();
-			for (Map.Entry<String, String> parameter : propertyMap.entrySet()) {
-			    String parameterName = parameter.getKey();
-			    String value = null;
-			    if (!parameterName.isEmpty() && parameterName.startsWith("interval")
-			    		&& isInteger( value = parameter.getValue() ))
-			    	{
-			    	Integer  interval = Integer.valueOf(value);
-			    	followUpIntervals.add(interval);
-			    }
-			    
-			}
-		    
-		    conceptProperty = this.taskConfig.getProperty(PROPERTY_NAME_CONCEPT);
-		    
-			//perform2wkFollupUp = this.taskConfig.getProperty(PROPERTY_NAME_TWO_WEEK);
-			//conceptProperty = this.taskConfig.getProperty(PROPERTY_NAME_CONCEPT);
-			//perform4moFollupUp = this.taskConfig.getProperty(PROPERTY_NAME_FOUR_MONTH_CHECK);
-			//testTime = this.taskConfig.getProperty(PROPERTY_NAME_TEST_CHECK);
-			//testPeriod = Integer.valueOf(testTime);
 			
+			log.info("Initializing vaccine follow-up scheduled task.");
+			followUpDays = this.taskConfig.getProperty(PROPERTY_KEY_TIME_PERIOD_DAYS);
+		    conceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_CONCEPT);
+		    
 		}catch(Exception e){
+			
 			log.error(taskDefinition.getName() + " failed during initialize", e);
 		}
 	}
@@ -104,13 +91,13 @@ public class VaccineFollowUp extends AbstractTask {
 		try {
 
 				if (conceptProperty == null || conceptProperty.trim().equals("")) {
-					log.error("HPV study: Task property '" + PROPERTY_NAME_CONCEPT + "' does not exist for this patient for this task. ");
+					log.error("HPV study: Task property '" + PROPERTY_KEY_CONCEPT + "' does not exist for this patient for this task. ");
 					return;
 				}
 				
 				Concept enrollmentConcept = conceptService.getConceptByName(conceptProperty);
 				if (enrollmentConcept == null) {
-					log.error ("HPV study:  Task property '" + PROPERTY_NAME_CONCEPT + "' is not a valid concept");
+					log.error ("HPV study:  Task property '" + PROPERTY_KEY_CONCEPT + "' is not a valid concept");
 					return;
 				}
 				
@@ -129,14 +116,25 @@ public class VaccineFollowUp extends AbstractTask {
 
 		ConceptService conceptService = Context.getConceptService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
+		ObsService obsService = Context.getObsService();
 
-		for (Integer followUpTimePeriod : timePeriods){
-			
-			
-			
-			log.info("HPV study: Lookup enrollments for encounters " + followUpTimePeriod + " days ago");
+		List<String> timePeriodList = Arrays.asList(followUpDays
+				.split("\\s*,\\s*"));
+		Integer timePeriod = null;
+
+		for (String timePeriodString : timePeriodList) {
+
+			try {
+				timePeriod = Integer.valueOf(timePeriodString);
+			} catch (NumberFormatException e) {
+				// String was not an integer
+				continue;
+			}
+
+			log.info("HPV study: Lookup enrollments for encounters "
+					+ timePeriod + " days ago");
 			Calendar c = Calendar.getInstance();
-			c.add(Calendar.DATE, -(followUpTimePeriod));
+			c.add(Calendar.DATE, -(timePeriod));
 			Date startDateTime = DateUtil.getStartOfDay(c.getTime());
 			Date stopDatetime = DateUtil.getEndOfDay(c.getTime());
 
@@ -144,27 +142,55 @@ public class VaccineFollowUp extends AbstractTask {
 					.getEncountersForEnrolledPatients(enrollmentConcept,
 							startDateTime, stopDatetime);
 
-			SimpleDateFormat sdf = new SimpleDateFormat("mm-dd-yyyy");
-
-			log.info("HPV study: " + encounters == null ? "0" : encounters.size()    
-					+ "encounters found for date "  + sdf.format(startDateTime) );
-
+			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+			log.info("HPV study: " + encounters == null ? "0 " : encounters.size()
+					+ "encounters found for date: "
+					+ sdf.format(startDateTime));
 
 			for (Encounter encounter : encounters) {
 
-
 				try {
 					
-					//check if observation chirp not available exists for the start and stop dates
-					//for this patient
+
+					/* If follow-up observations exist already for today,
+					 * do not query for this encounter again. 
+					 */
+					String followUpType = null;
+					if (timePeriod == 14)
+						followUpType = TWO_WEEKS;
+					if (timePeriod == 120)
+						followUpType = FOUR_MONTHS;
+					if (followUpType != null) {
+
+						List<Person> patients = new ArrayList<Person>();
+						patients.add(encounter.getPatient());
+						List<Concept> concepts = new ArrayList<Concept>();
+
+						concepts.add(conceptService
+								.getConceptByName(followUpType + "_HPV"));
+						List<Obs> obsList = obsService.getObservations(
+								patients, null, concepts, null, null, null, null, null, null,
+								DateUtil.getStartOfDay(new Date()), 
+								DateUtil.getEndOfDay(new Date()),
+								false);
+						// If this observation already exists for today, do not query CHIRP again.
+						if (obsList.size() > 0) {
+							continue;
+						}
+					}
+
+					
 					String queryResponse = ImmunizationRegistryQuery
 							.queryCHIRP(encounter);
 
-					//queryCHIRP() returns null for any issues with query such as CHIRP availability, parse errors, no patient match, etc
-					//queryCHIRP() handles saving the chirp status observations for these issues.
+					/* The method queryCHIRP() returns null for any issues with query such
+					 * as CHIRP availability, parse errors, no patient match, etc.
+					 * It also handles saving the observations for these CHIRP issues
+					 */
+					
 					if (queryResponse == null) {
-						log.error("	HPV Study: Unable to access immunization records from "
-								+ " chirp for  followup. MRN: "
+						log.info("	HPV Study:Follow-up query has no immunization records. "
+								+ " Possible causes: CHIRP availablility, parse errors, or no patient matches. MRN: "
 								+ encounter.getPatient().getPatientIdentifier());
 						continue;
 					}
@@ -173,7 +199,7 @@ public class VaccineFollowUp extends AbstractTask {
 							.getImmunizationList(encounter.getPatientId());
 
 					if (immunizations == null) {
-						log.error("	HPV Study: The immunization list is empty after the query to "
+						log.info("	HPV Study: The immunization list is empty after the query to "
 								+ " chirp for  followup. MRN: "
 								+ encounter.getPatient().getPatientIdentifier());
 						continue;
@@ -220,33 +246,36 @@ public class VaccineFollowUp extends AbstractTask {
 
 					}
 
-					String followUpType = null;	
-					if (followUpTimePeriod == 14 ) followUpType = TWO_WEEKS;
-					if (followUpTimePeriod == 120) followUpType = FOUR_MONTHS;
-					if (followUpType != null){
-						Concept hpvConcept = conceptService.getConceptByName(followUpType + "_HPV");
-						saveObs(encounter.getPatient(), hpvConcept,
-								null, hpvDoses.toString());
+					if (followUpType != null) {
+						
+						Concept hpvConcept = conceptService
+								.getConceptByName(followUpType + "_HPV");
+						saveObs(encounter.getPatient(), hpvConcept, null,
+								hpvDoses.toString());
 
-						Concept TdapConcept = conceptService.getConceptByName(followUpType + "_Tdap");
-						saveObs(encounter.getPatient(), TdapConcept,
-								null, TdapDoses.toString());
+						Concept TdapConcept = conceptService
+								.getConceptByName(followUpType + "_Tdap");
+						saveObs(encounter.getPatient(), TdapConcept, null,
+								TdapDoses.toString());
 
-						Concept MCVConcept = conceptService.getConceptByName(followUpType + "_MCV");
-						saveObs(encounter.getPatient(), MCVConcept,
-								null, MCVDoses.toString());
-						return null;
+						Concept MCVConcept = conceptService
+								.getConceptByName(followUpType + "_MCV");
+						saveObs(encounter.getPatient(), MCVConcept, null,
+								MCVDoses.toString());
 
 					}
-					
-					// Follow-up is not a defined follow-up time period for the HPV Study, but write results to log
-					log.info("Follow-up check for time period " + followUpTimePeriod + " days. Patient: " + encounter.getPatientId() 
-							+ " HPV doses: " + hpvDoses
+
+					log.info("Follow-up check for time period " + timePeriod
+							+ " days. Patient: " + encounter.getPatientId()
+							+ " HPV doses: " + hpvDoses 
 							+ " MCV doses: " + MCVDoses 
 							+ " TDaP doses: " + TdapDoses);
-					
+
 				} catch (Exception e) {
-					log.error(" HPV Study exception for encounter = " + encounter.getId() + " patient: " + encounter.getPatientId());
+					log.error(" HPV Study exception for encounter = "
+							+ encounter.getId() + " patient: "
+							+ encounter.getPatientId());
+					continue;
 				}
 
 			}
