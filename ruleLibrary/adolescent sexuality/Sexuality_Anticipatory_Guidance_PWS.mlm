@@ -30,14 +30,15 @@ VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 intercourse := read Last {has_had_intercourse from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 endif
 ;;
-Priority:		445;;
+Priority: 445;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
 If(adolescentInterventionSite = "true") then conclude False;
 If  (VisitType = SickVisit) then conclude false;
-If (intercourse = yes) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+If (intercourse = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 endif
 
@@ -84,13 +85,13 @@ endif;
 endif
 ;;
 Action:
-write ("Different adolescents begin engaging in sexual activity at different ages.  Anticipatory guidance is a good idea.  Review the following:");                                                                                                                                                      
+write ("||firstname|| did not endorse sexual activity.  Anticipatory guidance is a good idea.  Review the following:");                                                                                                                                                      
 write ("Sexually active ->");
 write ("Gave out condoms");
 write ("May be pregnant -> test ->");
 write ("Prescribed birth control");
 write ("Has not had sex->");
-write ("Avoid peer pressure");
+write ("Provide anticipatory relationship guidance");
 ;;
 Age_Min: 11 years;;
 Age_Max: 21 years;;
