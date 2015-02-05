@@ -19,19 +19,14 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.taglibs.standard.lang.jstl.IntegerLiteral;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
-import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
@@ -39,7 +34,10 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationRegistryQuery;
 import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -151,7 +149,6 @@ public class VaccineFollowUp extends AbstractTask {
 
 				try {
 					
-
 					/* If follow-up observations exist already for today,
 					 * do not query for this encounter again. 
 					 */
@@ -190,7 +187,7 @@ public class VaccineFollowUp extends AbstractTask {
 					 */
 					
 					if (queryResponse == null) {
-						log.info("	HPV Study:Follow-up query has no immunization records. "
+						log.info("	HPV Study:  "
 								+ " Possible causes: CHIRP availablility, parse errors, or no patient matches. MRN: "
 								+ encounter.getPatient().getPatientIdentifier());
 						continue;
@@ -200,9 +197,10 @@ public class VaccineFollowUp extends AbstractTask {
 							.getImmunizationList(encounter.getPatientId());
 
 					if (immunizations == null) {
-						log.info("	HPV Study: The immunization list is empty after the query to "
-								+ " chirp for  followup. MRN: "
-								+ encounter.getPatient().getPatientIdentifier());
+						
+						this.logError("HPV Study: Previously existing vaccines no longer in CHIRP for: " 
+										+ encounter.getPatient().getPatientIdentifier(),
+										"", "https://chirp.in.gov", encounter.getPatientId());
 						continue;
 					}
 
@@ -365,6 +363,17 @@ public class VaccineFollowUp extends AbstractTask {
 		obsService.saveObs(obs, null);
 		return obs;
 	
+	}
+	
+	private void logError(String text, String details, String url, Integer patientId){
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		
+		Error error = new Error("ERROR", ChirdlUtilConstants.ERROR_QUERY_IMMUNIZATION_CONNECTION, 
+				text + details , null, new Date(), null);
+		chirdlutilbackportsService.saveError(error);
+		log.error(text + details);
+		return;
 	}
 
 
