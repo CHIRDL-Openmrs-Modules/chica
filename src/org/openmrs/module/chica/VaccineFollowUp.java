@@ -209,7 +209,6 @@ public class VaccineFollowUp extends AbstractTask {
 					Integer hpvDoses = 0;
 					Integer TdapDoses = 0;
 					Integer MCVDoses = 0;
-					
 					//
 					HashMap<String, String> map = this.setupVISNameLookup();
 					String HPVName = map.get("HPV");
