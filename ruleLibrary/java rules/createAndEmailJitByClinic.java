@@ -61,7 +61,7 @@ public class createAndEmailJitByClinic implements Rule {
 	/**
 	 * *
 	 * 
-	 * @see org.openmrs.logic.Rule#getTTL() 
+	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
