@@ -32,7 +32,7 @@ DomViolElement := read Last 2 {Domest_Violence_Concern from CHICA} Where it Occu
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 endif
 ;;
-Priority:		161;;
+Priority:		151;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
