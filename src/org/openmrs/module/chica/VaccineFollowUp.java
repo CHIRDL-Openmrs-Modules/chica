@@ -187,8 +187,7 @@ public class VaccineFollowUp extends AbstractTask {
 					 */
 					
 					if (queryResponse == null) {
-						log.info("	HPV Study:  "
-								+ " Possible causes: CHIRP availablility, parse errors, or no patient matches. MRN: "
+						log.info("	HPV Study:  Errors with CHIRP query: CHIRP availablility, parse errors, or no patient matches. MRN: "
 								+ encounter.getPatient().getPatientIdentifier());
 						continue;
 					}
@@ -198,9 +197,8 @@ public class VaccineFollowUp extends AbstractTask {
 
 					if (immunizations == null) {
 						
-						this.logError("HPV Study: Previously existing vaccines no longer in CHIRP for: " 
-										+ encounter.getPatient().getPatientIdentifier(),
-										"", "https://chirp.in.gov", encounter.getPatientId());
+						this.logError("ERROR", "HPV Study: Previously existing vaccines no longer in CHIRP for: " 
+										+ encounter.getPatient().getPatientIdentifier(), encounter);
 						continue;
 					}
 
@@ -316,18 +314,6 @@ public class VaccineFollowUp extends AbstractTask {
 		log.info("HPV study: Shutting down hpv follow-up scheduled task.");
 	}
 	
-	private boolean isInteger(String str)
-	{
-		try
-		{
-			Integer.parseInt(str);
-			return true;
-		}
-		catch(NumberFormatException nfe)
-		{
-			return false;
-		}
-	}
 
 	private Obs saveObs (Patient patient, Concept concept, Integer encounterId, String value) {
 		
@@ -365,14 +351,15 @@ public class VaccineFollowUp extends AbstractTask {
 	
 	}
 	
-	private void logError(String text, String details, String url, Integer patientId){
+	private void logError(String severity, String details, Encounter encounter){
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
-		Error error = new Error("ERROR", ChirdlUtilConstants.ERROR_QUERY_IMMUNIZATION_CONNECTION, 
-				text + details , null, new Date(), null);
+		Error error = new Error(severity, ChirdlUtilConstants.ERROR_QUERY_IMMUNIZATION_CONNECTION, 
+				details + " Patient id: " + encounter.getPatientId() 
+				+ "encounter id: " + encounter.getEncounterId()  , null, new Date(), null);
 		chirdlutilbackportsService.saveError(error);
-		log.error(text + details);
+		log.error( details);
 		return;
 	}
 
