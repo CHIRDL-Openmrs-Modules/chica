@@ -314,17 +314,17 @@ public class ImmunizationRegistryQuery
 							if (obxCode.equals(LOINC_DOSE_NUMBER_CODE)) {
 								if (obsValueType.equals("NM")) {
 									
-										NM data = (NM) obxValue;
-										String dataString = data.getValue();
-										try {
-											if (dataString != null && forecastedImmunization != null) {
-												forecastedImmunization.setDose(Integer
-													.parseInt(dataString));
-											}
-										} catch (NumberFormatException  e) {
-											log.error("Invalid number format for Dose number: " + dataString);
-											forecastedImmunization.setDose(0);
+									NM data = (NM) obxValue;
+									String dataString = data.getValue();
+									try {
+										if (dataString != null && forecastedImmunization != null) {
+											forecastedImmunization.setDose(Integer
+												.parseInt(dataString));
 										}
+									} catch (NumberFormatException  e) {
+										log.error("Invalid number format for Dose number: " + dataString);
+										forecastedImmunization.setDose(0);
+									}
 									
 									
 								}
