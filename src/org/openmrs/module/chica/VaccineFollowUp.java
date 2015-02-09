@@ -83,7 +83,6 @@ public class VaccineFollowUp extends AbstractTask {
 	public void execute() {
 		Context.openSession();
 
-
 		ConceptService conceptService = Context.getConceptService();
 
 		try {
@@ -101,8 +100,8 @@ public class VaccineFollowUp extends AbstractTask {
 				
 				followUpCheck(enrollmentConcept, followUpIntervals);
 				
-		} catch (Throwable e) {
-			log.error("HPV study: Error during vaccine follow-up check.", e);
+		} catch (Exception e) {
+			log.error("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
 			Context.closeSession();
 		}
@@ -128,9 +127,7 @@ public class VaccineFollowUp extends AbstractTask {
 				// String was not an integer
 				continue;
 			}
-
-			log.info("HPV study: Lookup enrollments for encounters "
-					+ timePeriod + " days ago");
+			
 			Calendar c = Calendar.getInstance();
 			c.add(Calendar.DATE, -(timePeriod));
 			Date startDateTime = DateUtil.getStartOfDay(c.getTime());
@@ -142,14 +139,16 @@ public class VaccineFollowUp extends AbstractTask {
 
 			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
 			log.info("HPV study: " + encounters == null ? "0 " : encounters.size()
-					+ "encounters found for date: "
+					+ " encounters found for date: "
 					+ sdf.format(startDateTime));
 
 			for (Encounter encounter : encounters) {
 
 				try {
 					
-					/* If follow-up observations exist already for today,
+					/* This task may run multiple times per day to handle conditions
+					 * when CHIRP was not available previously.
+					 * If follow-up observations exist already for today,
 					 * do not query for this encounter again. 
 					 */
 					String followUpType = null;
@@ -178,8 +177,7 @@ public class VaccineFollowUp extends AbstractTask {
 					}
 
 					
-					String queryResponse = ImmunizationRegistryQuery
-							.queryCHIRP(encounter);
+					String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 
 					/* The method queryCHIRP() returns null for any issues with query such
 					 * as CHIRP availability, parse errors, no patient match, etc.
@@ -187,7 +185,7 @@ public class VaccineFollowUp extends AbstractTask {
 					 */
 					
 					if (queryResponse == null) {
-						log.info("	HPV Study:  Errors with CHIRP query: CHIRP availablility, parse errors, or no patient matches. MRN: "
+						log.info("	HPV Study: Follow-up CHIRP query problems: CHIRP availablility, parse errors, or no patient matches. MRN: "
 								+ encounter.getPatient().getPatientIdentifier());
 						continue;
 					}
@@ -196,8 +194,7 @@ public class VaccineFollowUp extends AbstractTask {
 							.getImmunizationList(encounter.getPatientId());
 
 					if (immunizations == null) {
-						
-						this.logError("ERROR", "HPV Study: Previously existing vaccines no longer in CHIRP for: " 
+						this.logError("ERROR", "HPV Study: Previously existing vaccines are no longer in CHIRP for: " 
 										+ encounter.getPatient().getPatientIdentifier(), encounter);
 						continue;
 					}
@@ -218,22 +215,17 @@ public class VaccineFollowUp extends AbstractTask {
 
 					if (prevImmunizations != null) {
 
-						// HPV
 						HashMap<Integer, ImmunizationPrevious> HPVGiven = prevImmunizations
 								.get(HPVName);
 						if (HPVGiven != null) {
 							hpvDoses = HPVGiven.size();
 						}
 
-						// Tdap
-
 						HashMap<Integer, ImmunizationPrevious> TdapGiven = prevImmunizations
 								.get(TdapName);
 						if (TdapGiven != null) {
 							TdapDoses = TdapGiven.size();
 						}
-
-						// MCV
 
 						HashMap<Integer, ImmunizationPrevious> MCVGiven = prevImmunizations
 								.get(MCVName);
