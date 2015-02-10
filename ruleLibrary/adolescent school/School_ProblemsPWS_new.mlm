@@ -48,8 +48,7 @@ endif
 
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
-gisInterventionSite := call LocationAttributeLookup With "isGISInterventionLocation";
-If(gisInterventionSite = "true") then conclude False;
+
 If (Gender = M) then || heshe || = "he";
 If (Gender = F) then || heshe || = "she";
 If (grades = "True") AND (GradesPastProblems = null) then conclude True;

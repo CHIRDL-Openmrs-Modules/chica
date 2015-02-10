@@ -38,8 +38,7 @@ Priority:		437;;
 Logic:
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
-gisInterventionSite := call LocationAttributeLookup With "isGISInterventionLocation";
-If(gisInterventionSite = "true") then conclude False;
+
 
 If (recentObesityAdvice = true) then conclude False;
 
