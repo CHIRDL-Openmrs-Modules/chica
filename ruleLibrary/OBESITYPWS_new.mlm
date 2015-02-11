@@ -39,8 +39,7 @@ Priority:		428;;
 Logic:
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
-gisInterventionSite := call LocationAttributeLookup With "isGISInterventionLocation";
-If(gisInterventionSite = "true") then conclude False;
+
 
 If (addressed = True) then conclude False;
 If (Gender = M) then || heshe || = "he";
