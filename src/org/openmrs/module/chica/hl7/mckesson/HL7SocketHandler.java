@@ -1263,7 +1263,7 @@ public class HL7SocketHandler extends
 		try {
 
 			Context.openSession();
-			Context.authenticate(adminService.getGlobalProperty("scheduler.username"), adminService.getGlobalProperty("scheduler.password"));
+			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
 			Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_IDENTIFIER_TYPES);
 			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
 
@@ -1328,14 +1328,14 @@ public class HL7SocketHandler extends
 		AdministrationService adminService = Context.getAdministrationService();
 		LocationService locationService = Context.getLocationService();
 		Context.openSession();
-		Context.authenticate(adminService.getGlobalProperty("scheduler.username"), adminService.getGlobalProperty("scheduler.password"));
+		Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
 		Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_LOCATIONS);
 		boolean ageOk = true;
 
 		try {
 			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
 			Date dob = patientHandler.getBirthdate(message);
-			int age = Util.getAgeInUnits(dob, new java.util.Date(), Util.YEAR_ABBR);
+			int age = Util.getAgeInUnits(dob, new java.util.Date(), ChirdlUtilConstants.YEAR_ABBR);
 
 			LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
 			Location location = locationService.getLocation(locationString);
