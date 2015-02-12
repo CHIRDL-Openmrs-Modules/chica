@@ -37,7 +37,7 @@ RMRS1BW := read Exist {BIRTH WEIGHT from RMRS};
 RMRS2BW := read Exist {WEIGHT NEWBORN BABY A from RMRS};
 endif
 ;;
-Priority:		556;;
+Priority: 557;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

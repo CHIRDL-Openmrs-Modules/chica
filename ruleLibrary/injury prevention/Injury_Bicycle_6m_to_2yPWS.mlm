@@ -63,7 +63,6 @@ endif
 
 ;;
 Action:
-call CREATE_JIT with "BICYCLE_SAFETY_JIT";
 write ("The AAP has age-specific recommendations for bicycle or tricycle safety.  Please review the following, and check those you review:");                                                                                                                                                               
 write ("Don't put child on bike backseat");
 write ("");
