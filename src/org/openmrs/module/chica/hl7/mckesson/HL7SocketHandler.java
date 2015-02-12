@@ -1314,9 +1314,9 @@ public class HL7SocketHandler extends
 	}
 	
 	/**
-	 *  If there is no location tag attribute value or it is not numeric, check-in the patient.
+	 * If there is no location tag attribute value or it is not numeric, check-in the patient.
 	 * If the age limit for the location tag exists as a numeric value, and the patient's age is greater than or equal to that limit,
-	 * do not check-in patient. 
+	 * do not check-in patient.
 	 * @param message
 	 * @param locationId
 	 * @param locationTagId
