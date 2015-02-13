@@ -31,7 +31,7 @@ Status := read Last {AsthmaStatus from CHICA} ;
 Spacer := read Exist {UsesMDISpacer from CHICA} Where it Occurred Within Past 3 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 endif
 ;;
-Priority: 372;;
+Priority: 373;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
