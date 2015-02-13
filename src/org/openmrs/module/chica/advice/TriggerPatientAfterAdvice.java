@@ -12,8 +12,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.TeleformFileState;
 import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.MedicationListLookup;
-import org.openmrs.module.chica.gis.PatientGISDataStorage;
-import org.openmrs.module.chica.gis.QueryGIS;
 import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -47,9 +45,6 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					threadManager.execute(new CheckinPatient(encounter), location.getLocationId());
 					//spawn the medication query thread
 					threadManager.execute(new QueryMeds(encounter), location.getLocationId());
-					//spawn the GIS query thread
-					Thread gisThread = new Thread(new QueryGIS(encounter));
-					gisThread.start();
 					//spawn the immunization query thread
 					Thread immunThread = new Thread(new QueryImmunizationForecast(encounter));
 					immunThread.start();
@@ -97,10 +92,9 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 		}
 		else if(method.getName().equals("cleanCache")) 
 		{
-            log.info("clear regenObs, medicationList, and GIS cache");
+            log.info("clear regenObs and medicationList");
             ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource("RMRS")).clearObs();
             MedicationListLookup.clearMedicationLists();
-            PatientGISDataStorage.clearAllPatientGISData();
             ImmunizationForecastLookup.clearimmunizationLists();
         }
 	}
