@@ -533,14 +533,15 @@ public class HL7SocketHandler extends
 				return message;
 			}
 			
+			if ( !(isValidAge(message, printerLocation, locationString))){
+				return message;
+			}
+			
 			if (filterDuplicateCheckin && priorCheckinExists(message)){
 				//ignore this message, because patient was already checked in. 
 				return message;
 			}
 			
-			if (!(isValidAge(message, printerLocation, locationString))){
-				return message;
-			}
 		}
 		return super.processMessage(message, parameters);
 	}
@@ -1291,6 +1292,7 @@ public class HL7SocketHandler extends
 				}
 
 				//Save the hl7 message and error
+				
 				sockethl7listenerService.setHl7Message(patient.getId(), 
 							null, this.parser.encode(hl7message), false, true, super.getPort());
 
@@ -1327,39 +1329,54 @@ public class HL7SocketHandler extends
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		AdministrationService adminService = Context.getAdministrationService();
 		LocationService locationService = Context.getLocationService();
+		SocketHL7ListenerService sockethl7listenerService = Context.getService(SocketHL7ListenerService.class);
+		
 		Context.openSession();
-		Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+		Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
+				adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
 		Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_LOCATIONS);
+		String attribute = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
+		
 		boolean ageOk = true;
 
 		try {
+			
+			if (printerLocation == null || locationString == null){
+				return ageOk;
+			}
+			LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
+			Location location = locationService.getLocation(locationString);
+			if (locationTag == null || location == null){
+				return ageOk;
+			}
+			
+			LocationTagAttributeValue ageLimitAttributeValue = chirdlutilbackportsService
+					.getLocationTagAttributeValue(locationTag.getLocationTagId(), attribute ,location.getLocationId());
+			
+			if (ageLimitAttributeValue == null ) {
+				return ageOk;
+			}
+			
+			String ageLimitString = ageLimitAttributeValue.getValue();
+			int ageLimit = Integer.valueOf(ageLimitString);
+			
 			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
 			Date dob = patientHandler.getBirthdate(message);
 			int age = Util.getAgeInUnits(dob, new java.util.Date(), ChirdlUtilConstants.YEAR_ABBR);
 
-			LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
-			Location location = locationService.getLocation(locationString);
-
-			if (locationTag == null || location == null){
-				//Unknown location and location tag. Can not retrieve filter constraint
-				return ageOk;
-			}
-
-			String test = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
-
-			LocationTagAttributeValue AgeLimitAttributeValue = chirdlutilbackportsService
-					.getLocationTagAttributeValue(locationTag.getLocationTagId(), test ,location.getLocationId());
-
-			// Age must be less than attribute limit. 
-			if (AgeLimitAttributeValue != null  && age >= Integer.valueOf(AgeLimitAttributeValue.getValue())){
+			if (age >= ageLimit){
+				//save the message
+				saveMessage(message);
 				return !ageOk;
 			}
+			
+			
 		} catch (NumberFormatException e) {
 			//String was either null, empty, or not a digit
 			//No age limit value could be retrieved from attributes, so do not filter
 			return ageOk;
 		} catch (Exception e){
-			log.error(" isValidAge() error ", e);
+			log.error("Error checking if age is within limits specified by location tag attribute. ", e);
 		} finally {
 			Context.closeSession();
 		}
@@ -1367,6 +1384,17 @@ public class HL7SocketHandler extends
 		return ageOk;
 
 	}
+	
+	private boolean isInteger(String string){
+		boolean valid = true;
+		try {
+			Integer.parseInt(string);
+		} catch (NumberFormatException e) {
+			valid = false;
+		}
+		return valid;
+	}	
+	
 	
 	
 }
