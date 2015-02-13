@@ -34,8 +34,6 @@ Priority:		445;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
-adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
-If(adolescentInterventionSite = "true") then conclude False;
 If  (VisitType = SickVisit) then conclude false;
 If (intercourse = yes) then conclude False;
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
