@@ -49,8 +49,6 @@ function parseAvailableJITs(responseXML) {
             $("#tabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
             $('#tabs').show();
             var divHeight = $("#formTabDialogContainer").height();
-//            var count = $("#formAccordion > h3").length;
-//            var newFormHeight = (divHeight - (count*40) - 45);
             $(".recommended-forms").css({"height":divHeight - 45});
         }
     }
@@ -244,7 +242,6 @@ $(function() {
         minHeight: 350,
         minWidth: 450,
         width: 950,
-        //width: $(window).width() * 0.70,
         height: $(window).height() * 0.90,
         show: {
           effect: "clip",
@@ -257,7 +254,15 @@ $(function() {
         resize: function(e,ui) {
         	var divHeight = $("#formTabDialogContainer").height();
             $(".recommended-forms").css({"height":divHeight - 45});
-        }
+        },
+        buttons: [
+          {
+	          text:"Close",
+	          click: function() {
+	        	  $("#formTabDialog").dialog("close");
+	          }
+          }
+        ]
     });
 	
 	$("#forcePrintButton").click(function(event) {
@@ -310,7 +315,15 @@ $(function() {
         	$(".force-print-form-object").height($(".pws-force-print-content").height() - formSelectionHeight);
     		// Update the height of the select
     		$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
-        }
+        },
+        buttons: [
+          {
+	          text:"Close",
+	          click: function() {
+	        	  $("#forcePrintDialog").dialog("close");
+	          }
+          }
+        ]
     });
 	
 	$("#formTabDialog").dialog("open");

@@ -56,6 +56,7 @@ $(function() {
             forcePrint_removeForms();
             forcePrint_loadForms();
             $(".ui-dialog").addClass("ui-dialog-shadow");
+            updateForcePrintDimensions();
         },
         beforeClose: function(event, ui) { 
         	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
@@ -88,7 +89,15 @@ $(function() {
         },
         resize: function(e,ui) {
             updateForcePrintDimensions();
-        }
+        },
+        buttons: [
+          {
+	          text:"Close",
+	          click: function() {
+	        	  $("#forcePrintDialog").dialog("close");
+	          }
+          }
+        ]
     });
     
     $("#listErrorDialog").dialog({
@@ -148,6 +157,13 @@ $(function() {
 	          click: function() {
 	            checkMRN();
 	          }
+          },
+          {
+        	  id: "checkinMRNCancelButton",
+	          text:"Cancel",
+	          click: function() {
+	            $("#checkinMRNDialog").dialog("close");
+	          }
           }
         ]
     });
@@ -206,6 +222,13 @@ $(function() {
 	          click: function() {
 	            checkEncounterMRN();
 	          }
+          },
+          {
+        	  id: "viewEncountersMRNCancelButton",
+	          text:"Cancel",
+	          click: function() {
+	            $("#viewEncountersMRNDialog").dialog("close");
+	          }
           }
         ]
     });
@@ -238,6 +261,13 @@ $(function() {
 	          },
 	          click: function() {
 	            checkPrintHandoutsMRN();
+	          }
+          },
+          {
+        	  id: "printHandoutsMRNCancelButton",
+	          text:"Cancel",
+	          click: function() {
+	            $("#printHandoutsMRNDialog").dialog("close");
 	          }
           }
         ]
@@ -335,7 +365,14 @@ $(function() {
   			      click: function() {
   			    	  sendPage();
   			      }
-  			    }
+  			    },
+  	            {
+  	        	  id: "pagerCancelButton",
+  		          text:"Cancel",
+  		          click: function() {
+  		            $("#pagerDialog").dialog("close");
+  		          }
+  	            }
   			  ]
   			);
             $(".ui-dialog").addClass("ui-dialog-shadow");
@@ -913,7 +950,14 @@ function parseManualCheckinInfo(responseXML) {
 			    	  $("#manualCheckinError").hide();
 		          	  checkForm();
 			      }
-			    }
+			    },
+  	            {
+  	        	  id: "manualCheckinAddCancelButton",
+  		          text:"Cancel",
+  		          click: function() {
+  		            $("#manualCheckinDialog").dialog("close");
+  		          }
+  	            }
 			  ]
 			);
         } else {
@@ -926,7 +970,14 @@ function parseManualCheckinInfo(responseXML) {
   			    	  $("#manualCheckinError").hide();
   		          	  checkForm();
   			      }
-  			    }
+  			    },
+  	            {
+	        	  id: "manualCheckinAddCancelButton",
+		          text:"Cancel",
+		          click: function() {
+		            $("#manualCheckinDialog").dialog("close");
+		          }
+	            }
   			  ]
   			);
         }
