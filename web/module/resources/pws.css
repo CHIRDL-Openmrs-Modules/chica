@@ -484,3 +484,8 @@ div#tabs .ui-tabs-nav li.ui-tabs-selected {
     background-color: #fff;
     width: 250px;
 }
+
+.ui-tabs .ui-tabs-nav
+{
+    background: #cc9966;
+}

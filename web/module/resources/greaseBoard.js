@@ -9,10 +9,15 @@ $(function() {
 	$("#manualCheckin").hide();
     
     $("#manualCheckinDob").datepicker({
+    	showOn: "button",
+    	buttonImage: "/openmrs/moduleResources/chica/images/calendar.gif",
+    	buttonImageOnly: true,
+    	buttonText: "Select date of birth",
     	changeMonth:true,
     	changeYear:true,
-    	appendText: "(mm/dd/yyyy)"
-    })
+    	appendText: "(mm/dd/yyyy)",
+    	yearRange: "-21:+0"
+    });
     
     $("#checkinButton, #viewEncountersButton, #printHandoutsButton, #selectPagerButton, #viewBadScans").button({
         icons: {

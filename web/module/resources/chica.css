@@ -406,3 +406,7 @@ button.icon-button-small-dialog, a.icon-button-small-dialog, button.icon-button-
 .alertText {
 	color: red;
 }
+
+.ui-dialog-titlebar {
+	cursor: default !important;
+}
