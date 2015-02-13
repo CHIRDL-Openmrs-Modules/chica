@@ -137,14 +137,36 @@ public class ChicaMobileServlet extends HttpServlet {
 		doGet(request, response);
 	}
 	
+	/**
+	 * Retrieves patient encounters that have an existing instance of their primary form for the day.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void getPatientsWithPrimaryForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		getPatientsWithForms(request, response, PRIMARY_FORM);
 	}
 	
+	/**
+	 * Retrieves instances of a patient's secondary forms for the day.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void getPatientSecondaryForms(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		getPatientsWithForms(request, response, SECONDARY_FORMS);
 	}
 	
+	/**
+	 * Retrieves patient's primary or secondary forms for the day.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @param formType The type of form (PRIMARY_FORM or SECONDARY_FORMS).
+	 * @throws IOException
+	 */
 	private void getPatientsWithForms(HttpServletRequest request, HttpServletResponse response, int formType) 
 	throws IOException {
 		Integer sessionId = null;
@@ -234,6 +256,13 @@ public class ChicaMobileServlet extends HttpServlet {
 		pw.write(XML_PATIENTS_WITH_FORMS_END);
 	}
 	
+	/**
+	 * Verifies the CHICA passcode.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void verifyPasscode(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String passcode = request.getParameter(PARAM_PASSCODE);
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -264,6 +293,13 @@ public class ChicaMobileServlet extends HttpServlet {
 		pw.write(XML_PASSCODE_RESULT_END);
 	}
 	
+	/**
+	 * Retrieves prioritized elements for a form.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void getPrioritizedElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
 		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
@@ -289,6 +325,13 @@ public class ChicaMobileServlet extends HttpServlet {
 		pw.write(XML_RECORDS_END);
 	}
 	
+	/**
+	 * Saves a form's export elements to the database.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unchecked")
     private void saveExportElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Integer patientId = Integer.parseInt(request.getParameter(PARAM_PATIENT_ID));

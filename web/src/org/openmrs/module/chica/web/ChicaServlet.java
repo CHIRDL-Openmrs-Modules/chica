@@ -57,7 +57,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
 /**
- * Servlet giving access to CHICA information
+ * Servlet giving access to CHICA information.
  *
  * @author Steve McKee
  */
@@ -189,6 +189,13 @@ public class ChicaServlet extends HttpServlet {
 		doGet(request, response);
 	}
 	
+	/**
+	 * Retrieves the available form instances for a patient .
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void getAvailablePatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
 		response.setHeader(
@@ -312,11 +319,25 @@ public class ChicaServlet extends HttpServlet {
 		pw.write(XML_AVAILABLE_JITS_END);
 	}
 	
+	/**
+	 * Retrieves the patient's JITs based on form instances provided.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String formInstances = request.getParameter(PARAM_FORM_INSTANCES);
 		locatePatientJITs(response, formInstances);
 	}
 	
+	/**
+	 * Locates and loads the patient JITs based on the formInstances provided.
+	 * 
+	 * @param response HttpServletResponse
+	 * @param formInstances The form instances to load.  This should be a comma delimited list.
+	 * @throws IOException
+	 */
 	private void locatePatientJITs(HttpServletResponse response, String formInstances) 
 			throws IOException {
 		if (formInstances == null) {
@@ -447,23 +468,39 @@ public class ChicaServlet extends HttpServlet {
 		}
 	}
 	
-	private static byte[] renamePdfFields(String datasheet, int i) throws IOException, DocumentException {
+	/**
+	 * Renames the fields in the PDF.  This needs to be done due to fields with the same name in the document.
+	 * 
+	 * @param pdfFile The PDF file that will have its fields renamed.
+	 * @param instance The instance of the field in the PDF document.
+	 * @return Array of bytes of the PDF document after the fields are renamed.
+	 * @throws IOException
+	 * @throws DocumentException
+	 */
+	private static byte[] renamePdfFields(String pdfFile, int instance) throws IOException, DocumentException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		// Create the stamper
-		PdfStamper stamper = new PdfStamper(new PdfReader(datasheet), baos);
+		PdfStamper stamper = new PdfStamper(new PdfReader(pdfFile), baos);
 		// Get the fields
 		AcroFields form = stamper.getAcroFields();
 		// Loop over the fields
 		Set<String> keys = new HashSet<String>(form.getFields().keySet());
 		for (String key : keys) {
 			// rename the fields
-			form.renameField(key, String.format("%s_%d", key, i));
+			form.renameField(key, String.format("%s_%d", key, instance));
 		}
 		// close the stamper
 		stamper.close();
 		return baos.toByteArray();
 	}
 	
+	/**
+	 * Retrieves the list of possible force print forms for a patient..
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void getForcePrintForms(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
 		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
@@ -647,6 +684,13 @@ public class ChicaServlet extends HttpServlet {
 		pw.write(XML_FORCE_PRINT_JITS_END);
 	}
 	
+	/**
+	 * Force prints a specified form for a patient..
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void forcePrintForm(HttpServletRequest request, HttpServletResponse response) throws IOException {	
 		String patientIdString = request.getParameter(PARAM_PATIENT_ID);
 		String formIdString = request.getParameter(PARAM_FORM_ID);
@@ -835,6 +879,12 @@ public class ChicaServlet extends HttpServlet {
 		}
 	}
 	
+	/**
+	 * Returns the latest session ID for a patient based on their latest encounter with a checkin state.
+	 * 
+	 * @param patientId The patient ID used to determine the session ID returned.
+	 * @return session ID.
+	 */
 	private Integer getEncounterSessionId(Integer patientId) {
 		EncounterService encounterService = Context.getEncounterService();
 		List<org.openmrs.Encounter> list = encounterService.getEncountersByPatientId(patientId);
@@ -855,6 +905,12 @@ public class ChicaServlet extends HttpServlet {
 		return null;
 	}
 	
+	/**
+	 * Retrieves a patient based on MRN.
+	 * 
+	 * @param mrn MRN used to find a patient.
+	 * @return The patient or null if a patient cannot be found with the specified MRN.
+	 */
 	private Patient getPatientByMRN(String mrn) {
 		PatientService patientService = Context.getPatientService();
 		Patient patient = null;
@@ -877,6 +933,13 @@ public class ChicaServlet extends HttpServlet {
 		return patient;
 	}
 	
+	/**
+	 * Provides the necessary information for the servlet header for force printing a form.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	private void getForcePrintFormHeader(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String formIdStr = request.getParameter(PARAM_FORM_ID);
 		String locationIdStr = request.getParameter(PARAM_LOCATION_ID);
@@ -931,6 +994,13 @@ public class ChicaServlet extends HttpServlet {
 		}
 	}
 	
+	/**
+	 * Retrieves the greaseboard patient information for the day..
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unchecked")
     private void getGreaseboardPatients(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
