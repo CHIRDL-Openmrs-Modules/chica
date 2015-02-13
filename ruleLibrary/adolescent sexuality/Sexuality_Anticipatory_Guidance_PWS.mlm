@@ -78,6 +78,7 @@ If  (Box3=true) then
  CALL storeNote With "note3","PSYCHOSOCIAL";
 endif;
 If  (Box6=true) then
+ CALL storeObs With "Patient_Education","anticipatory_sexual_relationship_guidance";
  CALL storeNote With "note6","PSYCHOSOCIAL";
 endif;
 
