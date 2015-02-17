@@ -12,6 +12,8 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -35,6 +37,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class ForcePrintJITsController extends SimpleFormController {
 	
+	protected final Log log = LogFactory.getLog(getClass());
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -101,20 +105,23 @@ public class ForcePrintJITsController extends SimpleFormController {
 		
 		
 		Patient patient = patientService.getPatient(patientId);
-		int age = Util.getAgeInUnits(patient.getBirthdate(), new Date(), "yo");
 		
 		FormService formService = Context.getFormService();
 		Set<FormDisplay> printableJits = new TreeSet<FormDisplay>();
 		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributesByName("forcePrintable");
 		
+		Date birthdate = patient.getBirthdate();
+		Date today = new Date();
+		
 		for (FormAttributeValue attribute : attributes) {
 			if (attribute.getValue().equalsIgnoreCase("true") && attribute.getLocationId().equals(locationId)) {
 				Form form = formService.getForm(attribute.getFormId());
+				Integer formId = form.getFormId();
 				if (!form.getRetired()) {
 					FormDisplay formDisplay = new FormDisplay();
 					formDisplay.setFormName(form.getName());
 					formDisplay.setFormId(form.getFormId());
-					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "displayName",
+					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(formId, "displayName",
 					    locationTagId, locationId);
 					if (attributeValue == null || attributeValue.getValue() == null) {
 						formDisplay.setDisplayName(form.getName());
@@ -122,11 +129,33 @@ public class ForcePrintJITsController extends SimpleFormController {
 						formDisplay.setDisplayName(attributeValue.getValue());
 					}
 					
-					if ((form.getName().equalsIgnoreCase("ImmunizationSchedule") 
-							&&  age >= 7 )
-							|| (form.getName().equalsIgnoreCase("ImmunizationSchedule7yrOrOlder") 
-									&&  age < 7 )){
-						continue;
+					FormAttributeValue ageMin = chirdlutilbackportsService.getFormAttributeValue(formId, "ageMin",
+							locationTagId, locationId);
+					FormAttributeValue ageMinUnits = chirdlutilbackportsService.getFormAttributeValue(formId, "ageMinUnits",
+							locationTagId, locationId);
+					FormAttributeValue ageMax = chirdlutilbackportsService.getFormAttributeValue(formId, "ageMax",
+							locationTagId, locationId);
+					FormAttributeValue ageMaxUnits = chirdlutilbackportsService.getFormAttributeValue(formId, "ageMaxUnits",
+							locationTagId, locationId);
+
+					if(ageMin!=null && ageMin.getValue()!=null && ageMinUnits!=null && ageMinUnits.getValue()!=null &&
+							ageMax!=null && ageMax.getValue()!=null && ageMaxUnits!=null && ageMaxUnits.getValue()!=null){
+						Integer ageWithMinUnits = Util.getAgeInUnits(birthdate, today, ageMinUnits.getValue());
+						Integer ageWithMaxUnits = Util.getAgeInUnits(birthdate, today, ageMaxUnits.getValue());
+						try{
+
+							if(ageWithMinUnits.intValue()<Integer.parseInt(ageMin.getValue())){
+								continue;
+							}
+							if(ageWithMaxUnits.intValue()>= Integer.parseInt(ageMax.getValue())){
+								continue;
+							}
+						}
+						catch(NumberFormatException e){
+							log.error("Error with age restrictions for form: "+form.getName()+
+								". Values are ageMin "+ageWithMinUnits+" and ageMax "+ageWithMaxUnits);
+							//if error in age check, display form in printable JITs
+						}
 					}
 					printableJits.add(formDisplay);
 				}
@@ -137,8 +166,6 @@ public class ForcePrintJITsController extends SimpleFormController {
 		String givenName = patient.getPersonName().getGivenName();
 		String patientName = givenName + " " + familyName;
 		
-		boolean isASQInterventionLocation = isInterventionLocation(locationId, "isASQInterventionLocation");
-		map.put("isASQInterventionLocation", isASQInterventionLocation);
 		map.put("printableJits", printableJits);
 		map.put("patientId", patientId);
 		map.put("sessionId", sessionId);
@@ -259,19 +286,5 @@ public class ForcePrintJITsController extends SimpleFormController {
 		
 		return new ModelAndView(new RedirectView("forcePrintJITs.form"), map);
 		
-	}
-	
-	private boolean isInterventionLocation(Integer locationId, String interLocationAttributeName) {
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		
-		LocationAttributeValue locationAttributeValue = chirdlutilbackportsService.getLocationAttributeValue(locationId,
-		    interLocationAttributeName);
-		if (locationAttributeValue != null) {
-			String interventionSiteString = locationAttributeValue.getValue();
-			if (interventionSiteString.equalsIgnoreCase("true")) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
