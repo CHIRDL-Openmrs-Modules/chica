@@ -24,11 +24,9 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -178,7 +176,6 @@ public class ForcePrintJITsController extends SimpleFormController {
 	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
 	                                BindException errors) throws Exception {
 		String optionsString = request.getParameter("options");
-		ATDService atdService = Context.getService(ATDService.class);
 
 		String patientIdString = request.getParameter("patientId");
 		Integer patientId = null;
@@ -196,9 +193,6 @@ public class ForcePrintJITsController extends SimpleFormController {
 			}
 		}
 		catch (Exception e) {}
-		
-		PatientService patientService = Context.getPatientService();
-		Patient patient = patientService.getPatient(patientId);
 		
 		LogicService logicService = Context.getLogicService();
 		
@@ -246,39 +240,29 @@ public class ForcePrintJITsController extends SimpleFormController {
 		Form form = null;
 		
 		//print the form
-		if (optionsString != null && optionsString.equalsIgnoreCase("ASQ")) {
-			parameters.put("mode", "PRODUCE");
-			atdService.evaluateRule("CHOOSE_ASQ_JIT_PWS", patient, parameters);
-			formName = "ASQ";
-		} else if (optionsString != null && optionsString.equalsIgnoreCase("ASQ Activity Sheet")) {
-			parameters.put("mode", "PRODUCE");
-			atdService.evaluateRule("CHOOSE_ASQ_ACTIVITY_JIT", patient, parameters);
-			formName = "ASQ Activity Sheet";
-		} else {
-			String formIdString = optionsString;
-			Integer formId = null;
-			try {
-				if (formIdString != null) {
-					formId = Integer.parseInt(formIdString);
-				}
+		String formIdString = optionsString;
+		Integer formId = null;
+		try {
+			if (formIdString != null) {
+				formId = Integer.parseInt(formIdString);
 			}
-			catch (Exception e) {}
-			form = formService.getForm(formId);
-			formName = form.getName();
-			parameters.put("param1", formName);
-			parameters.put("param2", "forcePrint");
-			logicService.eval(patientId, "CREATE_JIT", parameters);
 		}
+		catch (Exception e) {}
+		form = formService.getForm(formId);
+		formName = form.getName();
+		parameters.put("param1", formName);
+		parameters.put("param2", "forcePrint");
+		logicService.eval(patientId, "CREATE_JIT", parameters);
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		map.put("patientId", patientId);
 		map.put("sessionId", sessionId);
-		if (form != null) {
-			FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), "displayName",
-			    locationTagId, locationId);
-			if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
-				formName = attributeValue.getValue();
-			}
+
+		FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(),
+		    "displayName", locationTagId, locationId);
+		if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
+			formName = attributeValue.getValue();
 		}
 		
 		String resultMessage = formName + " successfully sent to the printer.";
