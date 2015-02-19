@@ -240,7 +240,7 @@ public class ChicaServlet extends HttpServlet {
 			String[] values = value.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
 			boolean isPdfType = false;
 			for (String favValue : values) {
-				if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equals(favValue)) {
+				if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(favValue.trim())) {
 					isPdfType = true;
 					break;
 				}
@@ -844,7 +844,7 @@ public class ChicaServlet extends HttpServlet {
 				ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
 		} else {
 			String[] outputTypes = fav.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
-			outputType = outputTypes[0];
+			outputType = outputTypes[0].trim();
 		}
 		
 		if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType) || 
@@ -984,7 +984,7 @@ public class ChicaServlet extends HttpServlet {
 				ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
 		} else {
 			String[] outputTypes = fav.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
-			outputType = outputTypes[0];
+			outputType = outputTypes[0].trim();
 		}
 		
 		if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType)) {
