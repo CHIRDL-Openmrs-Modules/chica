@@ -674,7 +674,7 @@ function parsePatientList(responseXML) {
         	}
         	
         	var statusText = $(this).find("status").text();
-        	if (statusText == null || statusText.trim().length == 0) {
+        	if (statusText == null || statusText == "null" || statusText.trim().length == 0) {
         		content += '<td class="status ' + rowColor + '" style="vertical-align:middle">Please wait...</td>';
         	} else {
         		content += '<td class="status ' + $(this).find("statusColor").text() + '" style="vertical-align:middle">' + statusText + '</td>';
