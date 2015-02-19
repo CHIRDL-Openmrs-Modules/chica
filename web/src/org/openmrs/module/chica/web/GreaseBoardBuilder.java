@@ -360,7 +360,7 @@ public class GreaseBoardBuilder {
 			row.setStatus("Printing PWS...");
 			return;
 		}
-		if (stateName.equals("PWS_wait_to_scan")) {
+		if (stateName.equals("PWS_wait_to_scan") || stateName.equals("PWS WAIT FOR SUBMISSION")) {
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PWS Ready");
 			return;
