@@ -31,7 +31,7 @@ CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
 ;;
-Priority: 271;;
+Priority: 1000;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then

@@ -112,7 +112,6 @@ If(TeacherVanderbilt = False) then
 call CREATE_JIT with "ADHD TFU";
 endif;
 
-call CREATE_JIT with "TargetOutcomes";
 
 If(preferred_language = Spanish) then
 call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
