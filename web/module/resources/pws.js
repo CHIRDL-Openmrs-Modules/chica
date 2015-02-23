@@ -242,7 +242,7 @@ $(function() {
         minHeight: 350,
         minWidth: 450,
         width: 950,
-        height: $(window).height() * 0.90,
+        height: $(window).height() * 0.95,
         show: {
           effect: "clip",
           duration: 750
