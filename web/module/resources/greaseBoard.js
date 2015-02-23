@@ -273,7 +273,7 @@ $(function() {
         ]
     });
     
-    $( "#otherDoctorDialog" ).dialog({
+    $("#otherDoctorDialog").dialog({
         resizable: false,
         modal: true,
         autoOpen: false,
@@ -299,7 +299,7 @@ $(function() {
         }
     });
 
-    $( "#otherStationDialog" ).dialog({
+    $("#otherStationDialog").dialog({
         resizable: false,
         modal: true,
         autoOpen: false,
@@ -325,7 +325,7 @@ $(function() {
         }
     });
     
-    $( "#newPatientDialog" ).dialog({
+    $("#newPatientDialog").dialog({
         resizable: false,
         modal: true,
         autoOpen: false,
@@ -350,7 +350,7 @@ $(function() {
           }
         }
     });
-    $( "#pagerDialog" ).dialog({
+    $("#pagerDialog").dialog({
         resizable: false,
         modal: true,
         autoOpen: false,
@@ -392,6 +392,32 @@ $(function() {
             effect: "clip",
             duration: 750
           }
+    });
+    $("#adhdWorkupDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+          },
+        show: {
+            effect: "clip",
+            duration: 750
+          },
+          hide: {
+            effect: "clip",
+            duration: 750
+          },
+        buttons: {
+          "Yes": function() {
+        	var form = $(this).data("form");
+            $(this).dialog("close");
+            form.submit();
+          },
+          "No": function() {
+            $(this).dialog("close");
+          }
+        }
     });
     
     $("#forcePrintButton").click(function(event) {
@@ -727,8 +753,8 @@ function parsePatientList(responseXML) {
                 if (formInstance == "unselected") {
                     // A valid form was not selected
                 } else {
-                    var form = $(this).closest('form');
-                    confirmation(this, form);
+                	var form = $(this).closest("form");
+                	confirmation(this, form);
                 }
             }
         });
@@ -1073,8 +1099,7 @@ function confirmation(optionsSelect, formName) {
         var patientId = formName.find("input[name=greaseBoardPatientId]").val();
         var str = 'viewEncounter.form?patientId='+patientId;
         popupfull(str);
-    }
-	if(optionsSelect[selectedIndex].text == 'Print JITS'){
+    } else if(optionsSelect[selectedIndex].text == 'Print JITS'){
 	    answer = false;
 	    var patientId = formName.find("input[name=greaseBoardPatientId]").val();
 		var sessionId = formName.find("input[name=greaseBoardSessionId]").val();
@@ -1086,12 +1111,10 @@ function confirmation(optionsSelect, formName) {
 		$("#locationTagId").val(locationTagId);
 		$("#forcePrintDialog").dialog("open");
         event.preventDefault();
-	}
-    if(optionsSelect[selectedIndex].text == 'ADHD WU'){
-        answer = confirm("Are you sure you want to initiate an ADHD Workup?")
-    }
-    if(answer){
-        formName.submit();
+	} else if(optionsSelect[selectedIndex].text == 'ADHD WU'){
+        $("#adhdWorkupDialog").data("form", formName).dialog("open");
+    } else {
+    	formName.submit();
     }
 }
 

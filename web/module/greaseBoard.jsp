@@ -621,6 +621,11 @@ label {
         </div>
         <div id="pagerComplete" style="text-align:center;"><span style="color:#000000;">Page request successfully sent.</span></div>
     </div>
+    <div id="adhdWorkupDialog" title="ADHD Workup" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+        <div style="margin: 0 auto;text-align: center;">
+            <div style="color:#000000;"><p><b>Are you sure you want to initiate an ADHD Workup?</b></p></div>
+        </div>
+    </div>
     <input type="hidden" id="badScans" />
 </body>
 </html>
