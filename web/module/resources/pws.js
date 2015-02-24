@@ -29,8 +29,8 @@ function parseAvailableJITs(responseXML) {
         	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
         	tabList += '<li><a href="#tabs-' + count + '">' + formName + '</a></li>';
-        	divList += '<div id="tabs-' + count + '" style="float:left;"><iframe class="recommended-forms" src="' + url + action + 
-            	'"></iframe></div>';
+        	divList += '<div id="tabs-' + count + '" style="float:left;"><object class="recommended-forms" data="' + url + action + 
+            	'"></object></div>';
             
             count++;
         });
@@ -130,12 +130,12 @@ $(function() {
       autoOpen: false,
       modal: true,
       show: {
-        effect: "clip",
-        duration: 750
+        effect: "fade",
+        duration: 500
       },
       hide: {
-        effect: "clip",
-        duration: 750
+        effect: "fade",
+        duration: 500
       }
     })
 
@@ -149,12 +149,12 @@ $(function() {
         autoOpen: false,
         modal: true,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         }
     })
 
@@ -174,12 +174,12 @@ $(function() {
       modal: true,
       resizable: false,
       show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         buttons: [
           {
@@ -221,7 +221,15 @@ $(function() {
         maxWidth: 100,
         maxHeight: 50,
         width: 100,
-        height: 50
+        height: 50,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          }
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	
 	$("#formTabDialog").dialog({
@@ -244,12 +252,12 @@ $(function() {
         width: 950,
         height: $(window).height() * 0.95,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         resize: function(e,ui) {
         	var divHeight = $("#formTabDialogContainer").height();
@@ -301,12 +309,12 @@ $(function() {
         width: $(window).width() * 0.90,
         height: $(window).height() * 0.90,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         resize: function(e,ui) {
         	var divHeight = $(".pws-force-print-content").height();

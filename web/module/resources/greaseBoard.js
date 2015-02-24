@@ -80,12 +80,12 @@ $(function() {
         width: $(window).width() * 0.90,
         height: $(window).height() * 0.90,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         resize: function(e,ui) {
             updateForcePrintDimensions();
@@ -111,12 +111,12 @@ $(function() {
         modal: true,
         resizable: false,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         buttons: [
           {
@@ -140,12 +140,12 @@ $(function() {
         modal: true,
         resizable: false,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         buttons: [
           {
@@ -183,12 +183,12 @@ $(function() {
         modal: true,
         resizable: false,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         width:775
     });
@@ -205,12 +205,12 @@ $(function() {
         modal: true,
         resizable: false,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         buttons: [
           {
@@ -245,12 +245,12 @@ $(function() {
         modal: true,
         resizable: false,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         buttons: [
           {
@@ -281,12 +281,12 @@ $(function() {
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
           },
         show: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
           hide: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
         buttons: {
           "Yes": function() {
@@ -307,12 +307,12 @@ $(function() {
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
           },
         show: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
           hide: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
         buttons: {
           "Yes": function() {
@@ -333,12 +333,12 @@ $(function() {
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
           },
         show: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
           hide: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
         buttons: {
           "Yes": function() {
@@ -385,12 +385,12 @@ $(function() {
             $("#pagerBody").show();
         },
         show: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
           hide: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           }
     });
     $("#adhdWorkupDialog").dialog({
@@ -401,12 +401,12 @@ $(function() {
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
           },
         show: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
           hide: {
-            effect: "clip",
-            duration: 750
+            effect: "fade",
+            duration: 500
           },
         buttons: {
           "Yes": function() {
@@ -790,7 +790,7 @@ function verifyMRN(responseXML) {
         	getManualCheckinInfo();
         	$("#checkinMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#checkinMRNDialog").dialog("close");
-        	$("#checkinMRNDialog").dialog("option", "hide", { effect: "clip", duration: 750 } );
+        	$("#checkinMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
         	$("#manualCheckinDialog").dialog("open");
         } else {
         	$("#mrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the record.</b></p>");
@@ -807,8 +807,8 @@ function verifyEncounterMRN(responseXML) {
     } else {
     	var result = $(responseXML).find("result").text();
         if (result == "true") {
-        	popupfull("viewEncounter.form?mrn=" + $("#encounterMrnLookup").val());
         	$("#viewEncountersMRNDialog").dialog("close");
+        	popupfull("viewEncounter.form?mrn=" + $("#encounterMrnLookup").val());
         } else {
         	$("#encounterMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the encounters.</b></p>");
             $("#encounterMrnError").show("highlight", 750);
@@ -832,7 +832,7 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#mrn").val($("#printHandoutsMrnLookup").val());
         	$("#printHandoutsMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#printHandoutsMRNDialog").dialog("close");
-        	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "clip", duration: 750 } );
+        	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
         	$("#forcePrintDialog").dialog("open");
         } else {
         	$("#printHandoutsMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
