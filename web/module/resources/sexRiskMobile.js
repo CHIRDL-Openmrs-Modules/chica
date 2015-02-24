@@ -192,7 +192,17 @@ function areAllQuestionsAnswered() {
 	   return false;
 	}
 	
-    if (gender.toUpperCase() == "F" && $("input[name='" + questionName +"']").val() == "yes") {
+	var value = "";
+	$("input[name='" + questionName + "']:checked").each(function() { 
+		valueFound = true; 
+		value = $(this).val(); 
+    }); 
+	
+	if (value == "no") {
+		return true;
+	}
+
+    if (gender.toUpperCase() == "F" && value == "yes") {
 		questionName = "QuestionEntry_2" + spanishChar;
 		if (!$("input[name='" + questionName +"']:checked").val()) {
 		   return false;
