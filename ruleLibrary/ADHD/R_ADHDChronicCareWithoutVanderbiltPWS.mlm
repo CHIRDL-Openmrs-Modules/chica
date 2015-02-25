@@ -89,7 +89,6 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "TargetOutcomes";
 write ("ADHD follow-up visit. || SEPrompt ||");                                                                                                                                                                                                                                                                                                                   
 write ("Doing Well ->                                           ");
 write ("Follow-up 3-4 mos                    ");

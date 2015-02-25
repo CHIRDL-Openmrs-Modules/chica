@@ -125,7 +125,6 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "TargetOutcomes";
 
 If(preferred_language = Spanish) then
 call CREATE_JIT with "Diagnosed Toolkit Spanish";

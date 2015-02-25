@@ -86,7 +86,6 @@ endif;
 endif
 ;;
 Action:
-call CREATE_JIT with "TargetOutcomes";
 write ("|| firstname || has met target goals for ADHD management, but seems to be experiencing significant side effects.  Confirm this and consider decreasing the dose of ADHD meds or changing them.");                                                                                                                                                                                                                                                                                                                   
 write ("Targets Met ->                     ");
 write ("Lower Dose, f/u 2-3 wks                     ");
