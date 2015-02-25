@@ -29,8 +29,10 @@ function parseAvailableJITs(responseXML) {
         	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
         	tabList += '<li><a href="#tabs-' + count + '">' + formName + '</a></li>';
-        	divList += '<div id="tabs-' + count + '" style="float:left;"><object class="recommended-forms" data="' + url + action + 
-            	'"></object></div>';
+        	divList += '<div id="tabs-' + count + '" style="float:left;"><object type="application/pdf" class="recommended-forms" data="' + url + action + 
+            	'"><span style="color: #000;font-size:14px;">It appears your Web browser is not configured to display PDF files. ' +
+            	'<a href="http://get.adobe.com/reader/" target="_blank"><font style="color: #0000FF;text-decoration: none; border-bottom: 1px solid #0000FF;">Click here to download the Adobe PDF Reader.</font></a>  ' + 
+            	'Please restart your browser once the installation is complete.</span></object></div>';
             
             count++;
         });
