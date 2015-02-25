@@ -13,7 +13,7 @@ body {
 
 #formContainer {
     width:800px;
-    height:1010px;
+    height:1045px;
     margin:0 auto;
     border: 1px solid black;
     background-color:#F5FBEF;
@@ -84,7 +84,7 @@ body {
 
 #vitals {
     width:265px;
-    height:272px;
+    height:305px;
     float:left;
     border-left: 1px solid black;
 }
@@ -97,7 +97,6 @@ body {
 
 .flagCell {
     width:15px;
-    border-right:1px solid black;
     text-align:center;
     float:left;
     color:red;
@@ -106,12 +105,15 @@ body {
 .vitalsNames {
     float:left;
     width:85px;
+    height: 18px;
     text-align:right;
+    border-left:1px solid black;
 }
 
 .vitalsValues {
     float:left;
-    width:155px;
+    width:153px;
+    height: 18px;
     margin-left:5px;
     text-align:left;
 }
@@ -165,6 +167,7 @@ body {
     float:left;
     width:155px;
     height:350px;
+    margin-top: -10px;
 }
 
 #examTitle {
