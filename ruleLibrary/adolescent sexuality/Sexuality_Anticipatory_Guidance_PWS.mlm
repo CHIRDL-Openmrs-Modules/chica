@@ -90,7 +90,7 @@ write ("Gave out condoms");
 write ("May be pregnant -> test ->");
 write ("Prescribed birth control");
 write ("Has not had sex->");
-write ("Provide anticipatory relationship guidance");
+write ("Provide relationship guidance");
 ;;
 Age_Min: 11 years;;
 Age_Max: 21 years;;
