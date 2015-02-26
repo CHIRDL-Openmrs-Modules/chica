@@ -44,11 +44,12 @@ If (mode = CONSUME) then
 
 /* This section defines the variables used when calling the storeNote function. */
 If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "I counseled || firstname || about preventing sexually transmitted infection and unwanted pregnancy.";
+
 If  (Box1=true) then || note1 || = "|| firstname || reported being sexually active.";
 If  (Box2=true) then || note2 || = "I counseled || firstname || about how to acquire and properly use condoms.";
 If  (Box3=true) then || note3 || = "I am concerned about || firstname || being pregnant and am obtaining a urine pregnancy test.";
 If  (Box5=true) then || note5 || = "|| firstname || denied being sexually active.";
-If  (Box6=true) then || note6 || = "I counseled || firstname || about how to respond to negative peer pressure regarding sex.";
+If  (Box6=true) then || note4 || = "I provided anticipatory sexual and relationship guidance to || firstname ||."; 
 /* */
 
 If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
@@ -59,21 +60,21 @@ If  (Box1=true) then
  CALL storeObs With "has_had_intercourse","yes";
  CALL storeNote With "note1","PSYCHOSOCIAL";
 endif;
-If  (Box5=true) then
- CALL storeObs With "has_had_intercourse","no";
- CALL storeNote With "note5","PSYCHOSOCIAL";
-endif;
 If  (Box2=true) then
  CALL storeObs With "gave_out_condoms","yes";
  CALL storeNote With "note2","PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "pregnancy_test_performed","yes";
+ CALL storeNote With "note3","PSYCHOSOCIAL";
 endif;
 If  (Box4=true) then
  CALL storeObs With "prescribed_birth_control","yes";
  CALL storeNote With "I prescribed birth control.","PSYCHOSOCIAL";
 endif;
-If  (Box3=true) then
- CALL storeObs With "pregnancy_test_performed","yes";
- CALL storeNote With "note3","PSYCHOSOCIAL";
+If  (Box5=true) then
+ CALL storeObs With "has_had_intercourse","no";
+ CALL storeNote With "note5","PSYCHOSOCIAL";
 endif;
 If  (Box6=true) then
  CALL storeObs With "Patient_Education","anticipatory_sexual_relationship_guidance";
