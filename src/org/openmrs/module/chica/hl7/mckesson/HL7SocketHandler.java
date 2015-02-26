@@ -1455,7 +1455,7 @@ public class HL7SocketHandler extends
 			//No age limit value could be retrieved from attributes, so do not filter
 			return ageOk;
 		} catch (Exception e){
-			log.error("Error checking if age is within limits specified by location tag attribute. ", e);
+			log.error("Exception while verifying patient age. ", e);
 		} finally {
 			Context.closeSession();
 		}
