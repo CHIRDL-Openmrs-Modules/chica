@@ -194,7 +194,6 @@ function areAllQuestionsAnswered() {
 	
 	var value = "";
 	$("input[name='" + questionName + "']:checked").each(function() { 
-		valueFound = true; 
 		value = $(this).val(); 
     }); 
 	
