@@ -497,7 +497,7 @@ function checkMRN() {
 	      "data": "action=verifyMRN&mrn=" + encodeURIComponent($("#mrnLookup").val()),
 	      "type": "POST",
 	      "url": url,
-	      "timeout": 30000, // optional if you want to handle timeouts (which you should)
+	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleVerifyMRNAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
 	          verifyMRN(xml);
@@ -522,7 +522,7 @@ function checkEncounterMRN() {
 	      "data": "action=verifyMRN&mrn=" + encodeURIComponent($("#encounterMrnLookup").val()),
 	      "type": "POST",
 	      "url": url,
-	      "timeout": 30000, // optional if you want to handle timeouts (which you should)
+	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleVerifyEncounterMRNAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
 	          verifyEncounterMRN(xml);
@@ -547,7 +547,7 @@ function checkPrintHandoutsMRN() {
 	      "data": "action=verifyMRN&mrn=" + encodeURIComponent($("#printHandoutsMrnLookup").val()),
 	      "type": "POST",
 	      "url": url,
-	      "timeout": 30000, // optional if you want to handle timeouts (which you should)
+	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleVerifyPrintHandoutsMRNAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
 	          verifyPrintHandoutsMRN(xml);
@@ -572,7 +572,7 @@ function getManualCheckinInfo() {
 	      "data": "action=getManualCheckin&mrn=" + encodeURIComponent($("#mrnLookup").val()),
 	      "type": "POST",
 	      "url": url,
-	      "timeout": 30000, // optional if you want to handle timeouts (which you should)
+	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleGetManualCheckinAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
 	          parseManualCheckinInfo(xml);
@@ -1296,7 +1296,7 @@ function sendPage() {
 	    "data": "action=sendPageRequest&reporter=" + encodeURIComponent(reporter) + "&message=" + encodeURIComponent(message),
 	    "type": "POST",
 	    "url": url,
-	    "timeout": 30000, // optional if you want to handle timeouts (which you should)
+	    "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	    "error": handleSendPageAjaxError, // this sets up jQuery to give me errors
 	    "success": function (xml) {
 	        parsePagerResult(xml);

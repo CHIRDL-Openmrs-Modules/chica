@@ -1,22 +1,10 @@
 var isChromeSafari = false;
 $(document).ready(function () {
 	isChromeSafari = forcePrint_checkForChromeSafari();
-	
-	$(".force-print-close-button").button();
-	$(".force-print-retry-close-button").button();
+
 	$(".force-print-retry-button").button();
 	$(".force-print-retry-button").click(function(event) {
 		forcePrint_loadForms();
-		event.preventDefault();
-	});
-	
-	$(".force-print-retry-close-button").click(function(event) {
-		window.close();
-		event.preventDefault();
-	});
-	
-	$(".force-print-close-button").click(function(event) {
-		window.close();
 		event.preventDefault();
 	});
 	

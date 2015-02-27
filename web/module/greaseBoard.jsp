@@ -275,7 +275,6 @@ label {
               <div class="force-print-forms-server-error">
                   <div class="force-print-forms-server-error-text ui-state-error"></div>
                   <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
-                  <a href="#" class="force-print-retry-close-button force-print-icon-button ui-state-default ui-corner-all">Close</a>
               </div>
               <div class="force-print-forms-container">
                   <fieldset class="force-print-fieldset">
