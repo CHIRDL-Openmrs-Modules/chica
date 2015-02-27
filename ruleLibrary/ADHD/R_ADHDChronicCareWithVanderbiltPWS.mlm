@@ -113,7 +113,6 @@ If(TeacherVanderbiltDoneFU = False) then
 call CREATE_JIT with "ADHD TFU";
 endif;
 
-call CREATE_JIT with "TargetOutcomes";
 write ("ADHD follow-up visit. || SEPrompt || || firstname || is due for Vanderbilt assessments from both the parent and teacher (attached). CPT 96110");                                                                                                                                                                                                                                                                                                                   
 write ("Parent Vanderbilt Scanned                      ");
 write ("Teacher Vandrblt to fax                     ");
