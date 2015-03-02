@@ -68,6 +68,18 @@
                    <c:when test="${invalidEndState eq 'true'}">
                        <div><p>An end state with name ${endState} cannot be found in the system.</p></div>
                    </c:when>
+                   <c:when test="${missingProviderId eq 'true'}">
+                       <div><p>A valid providerId parameter was not provided.</p></div>
+                   </c:when>
+                   <c:when test="${invalidProviderId eq 'true'}">
+                       <div><p>A provider with providerId ${providerId} cannot be found in the system.</p></div>
+                   </c:when>
+                   <c:when test="${missingVendor eq 'true'}">
+                       <div><p>A valid vendor parameter was not provided.</p></div>
+                   </c:when>
+                   <c:when test="${invalidVendor eq 'true'}">
+                       <div><p>A vendor with name ${vendor} cannot be found in the system.</p></div>
+                   </c:when>
                </c:choose>
 	        </c:when>
 	        <c:otherwise>

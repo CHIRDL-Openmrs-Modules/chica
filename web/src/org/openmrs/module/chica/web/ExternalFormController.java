@@ -28,11 +28,14 @@ import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttribute;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chica.vendor.Vendor;
+import org.openmrs.module.chica.vendor.VendorFactory;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -52,6 +55,8 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class ExternalFormController extends SimpleFormController {
 	
+	private final static String PERSON_ATTR_TYPE_PROVIDER_ID = "Provider ID";
+	
 	/**
 	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
 	 */
@@ -66,9 +71,25 @@ public class ExternalFormController extends SimpleFormController {
 	@Override
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		String formName = request.getParameter("formName");
-		String formPage = request.getParameter("formPage");
-		String mrn = request.getParameter("mrn");
+		
+		String vendorStr = request.getParameter("vendor");
+    	map.put("vendor", vendorStr);
+    	if (vendorStr == null || vendorStr.trim().length() == 0) {
+			map.put("hasErrors", "true");
+			map.put("missingVendor", "true");
+			return map;
+		}
+    	
+    	Vendor vendor = VendorFactory.getVendor(vendorStr, request);
+    	if (vendor == null) {
+    		map.put("hasErrors", "true");
+			map.put("invalidVendor", "true");
+			return map;
+    	}
+    	
+		String formName = vendor.getFormName();
+		String formPage = vendor.getFormPage();
+		String mrn = vendor.getMrn();
 		map.put("formName", formName);
 		map.put("formPage", formPage);
 		map.put("mrn", mrn);
@@ -91,17 +112,24 @@ public class ExternalFormController extends SimpleFormController {
 			return map;
 		}
 		
-		String username = request.getParameter("username");
+		String username = vendor.getUsername();
 		if (username == null || username.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingUser", "true");
 			return map;
 		}
 		
-		String password = request.getParameter("password");
+		String password = vendor.getPassword();
 		if (password == null || password.trim().length() == 0) {
 			map.put("hasErrors", "true");
 			map.put("missingPassword", "true");
+			return map;
+		}
+		
+		String providerId = vendor.getProviderId();
+		if (providerId == null || providerId.trim().length() == 0) {
+			map.put("hasErrors", "true");
+			map.put("missingProviderId", "true");
 			return map;
 		}
 		
@@ -125,16 +153,36 @@ public class ExternalFormController extends SimpleFormController {
                                     BindException errors) throws Exception {
     	Map<String, Object> map = new HashMap<String, Object>();
     	String view = getFormView();
-    	String formName = request.getParameter("formName");
-    	String formPage = request.getParameter("formPage");
-    	String mrn = request.getParameter("mrn");
-    	String startStateStr = request.getParameter("startState");
-    	String endStateStr = request.getParameter("endState");
+    	
+    	String vendorStr = request.getParameter("vendor");
+    	map.put("vendor", vendorStr);
+    	if (vendorStr == null || vendorStr.trim().length() == 0) {
+			map.put("hasErrors", "true");
+			map.put("missingVendor", "true");
+			return new ModelAndView(view, map);
+		}
+    	
+    	Vendor vendor = VendorFactory.getVendor(vendorStr, request);
+    	if (vendor == null) {
+    		map.put("hasErrors", "true");
+			map.put("invalidVendor", "true");
+			return new ModelAndView(view, map);
+    	}
+    	
+    	String formName = vendor.getFormName();
+    	String formPage = vendor.getFormPage();
+    	String mrn = vendor.getMrn();
+    	String startStateStr = vendor.getStartState();
+    	String endStateStr = vendor.getEndState();
+    	String providerId = vendor.getProviderId();
+    	
     	map.put("formName", formName);
 		map.put("formPage", formPage);
 		map.put("mrn", mrn);
 		map.put("startState", startStateStr);
 		map.put("endState", endStateStr);
+		map.put("providerId", providerId);
+		map.put("vendor", vendor);
 		
 		Form form = Context.getFormService().getForm(formName);
 		if (form == null) {
@@ -176,6 +224,19 @@ public class ExternalFormController extends SimpleFormController {
 			map.put("invalidEndState", "true");
 			return new ModelAndView(view, map);
 		}
+		
+		if (providerId == null || providerId.trim().length() == 0) {
+			map.put("hasErrors", "true");
+			map.put("missingProviderId", "true");
+			return new ModelAndView(view, map);
+		}
+		
+//		PersonAttribute pat = backportsService.getPersonAttributeByValue(PERSON_ATTR_TYPE_PROVIDER_ID, providerId);
+//		if (pat == null) {
+//			map.put("hasErrors", "true");
+//			map.put("invalidProviderId", "true");
+//			return new ModelAndView(view, map);
+//		}
 		
 		Encounter encounter = getRecentEncounter(
 			patient, backportsService, startState.getStateId(), endState.getStateId(), form.getFormId());
