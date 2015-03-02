@@ -1,8 +1,6 @@
 var english = false;
 var formInstance = null;
 var finishAttempts = 0;
-var age = 0.0;
-var ageRange = null;
 var gender = null;
 
 $(document).on("pageinit", function() {
@@ -18,7 +16,7 @@ $(document).on("pageinit", function() {
 	});
 });
 
-function init(patientName, birthdate, formInst, language, age, gender) {
+function init(patientName, birthdate, formInst, language, gender) {
 	// This looks backwards, but the setLanguage method reverses it.
 	if (language.toUpperCase() == "ENGLISH") {
 		english = false;
@@ -29,16 +27,43 @@ function init(patientName, birthdate, formInst, language, age, gender) {
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
 	
-	this.age = age;
-	if (age < 14) {
-		ageRange = "early";
-	} else if (age >= 14 && age < 18) {
-		ageRange = "middle";
-	} else if (age >= 18) {
-		ageRange = "late";
-	}
-	
 	this.gender = gender;
+	
+	$("#question_2_container").hide();
+	$("#question_2_container_sp").hide();
+	
+	$("#QuestionEntry_1_Yes").click(function() {
+		if (gender.toUpperCase() == "F") {
+			$("#question_2_container").show();
+			$("#question_2_container_sp").show();
+		}
+	});
+	
+	$("#QuestionEntry_1_2_Yes").click(function() {
+		if (gender.toUpperCase() == "F") {
+			$("#question_2_container").show();
+			$("#question_2_container_sp").show();
+		}
+	});
+	
+	$("#QuestionEntry_1_No").click(function() {
+		$("#question_2_container").hide();
+		$("#question_2_container_sp").hide();
+		$("#QuestionEntry_2_No").prop("checked", false).checkboxradio('refresh');
+		$("#QuestionEntry_2_Yes").prop("checked", false).checkboxradio('refresh');
+		$("#QuestionEntry_2_2_No").prop("checked", false).checkboxradio('refresh');
+		$("#QuestionEntry_2_2_Yes").prop("checked", false).checkboxradio('refresh');
+		
+	});
+	
+	$("#QuestionEntry_1_2_No").click(function() {
+		$("#question_2_container").hide();
+		$("#question_2_container_sp").hide();
+		$("#QuestionEntry_2_No").prop("checked", false).checkboxradio('refresh');
+		$("#QuestionEntry_2_Yes").prop("checked", false).checkboxradio('refresh');
+		$("#QuestionEntry_2_2_No").prop("checked", false).checkboxradio('refresh');
+		$("#QuestionEntry_2_2_Yes").prop("checked", false).checkboxradio('refresh');
+	});
 }
 
 function setLanguage(patientName, birthdate) {
@@ -46,7 +71,7 @@ function setLanguage(patientName, birthdate) {
     var langButtonText = "Español";
     var additionalQuestions = "The following are some additional questions about sexual behavior.";
     var startButtonText = "Start";
-    var vitalsButtonText = "Vitals"
+    var vitalsButtonText = "Vitals";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "Las preguntas siguientes son adicionales acerca del comportamiento sexual.";
@@ -66,15 +91,15 @@ function setLanguageFromForm(patientName, birthdate) {
     // Transfer answers
     for (var i = 1; i < 6; i++) {
 	    if (english) {
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_" + ageRange + "_" + gender + "_Yes", "#QuestionEntry_" + i + "_" + ageRange + "_" + gender + "_Yes");
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_" + ageRange + "_" + gender + "_No", "#QuestionEntry_" + i + "_" + ageRange + "_" + gender + "_No");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_Yes", "#QuestionEntry_" + i + "_Yes");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_No", "#QuestionEntry_" + i + "_No");
 	    } else {
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_" + ageRange + "_" + gender + "_Yes", "#QuestionEntry_" + i + "_2_" + ageRange + "_" + gender + "_Yes");
-	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_" + ageRange + "_" + gender + "_No", "#QuestionEntry_" + i + "_2_" + ageRange + "_" + gender + "_No");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_Yes", "#QuestionEntry_" + i + "_2_Yes");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_No", "#QuestionEntry_" + i + "_2_No");
 	    }
     }
     
-    changePage();
+    changePage(1);
 }
 
 function setQuestionCheckboxes(initialCheckBoxId, newCheckBoxId) {
@@ -109,15 +134,15 @@ function attemptFinishForm() {
 		finishForm();
 	} else if (finishAttempts == 1) {
     	if (english) {
-    	    $("#not_finished_dialog_" + ageRange + "_" + gender).popup("open", { transition: "pop"});
+    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
     	} else {
-    		$("#not_finished_dialog_" + ageRange + "_" + gender + "_sp").popup("open", { transition: "pop"});
+    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
     	}
 	} else if (finishAttempts >= 2) {
 		if (english) {
-    	    $("#not_finished_final_dialog_" + ageRange + "_" + gender).popup("open", { transition: "pop"});
+    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
     	} else {
-    		$("#not_finished_final_dialog_" + ageRange + "_" + gender + "_sp").popup("open", { transition: "pop"});
+    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
     	}
 	}
 }
@@ -125,31 +150,10 @@ function attemptFinishForm() {
 function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
 	//$.mobile.changePage("#empty_page");
-	$("#finish_error_dialog_early_M").popup("close");
-	$("#finish_error_dialog_early_F").popup("close");
-	$("#finish_error_dialog_middle_M").popup("close");
-	$("#finish_error_dialog_middle_F").popup("close");
-	$("#finish_error_dialog_late_M").popup("close");
-	$("#finish_error_dialog_late_F").popup("close");
-	$("#finish_error_dialog_early_M_sp").popup("close");
-	$("#finish_error_dialog_early_F_sp").popup("close");
-	$("#finish_error_dialog_middle_M_sp").popup("close");
-	$("#finish_error_dialog_middle_F_sp").popup("close");
-	$("#finish_error_dialog_late_M_sp").popup("close");
-	$("#finish_error_dialog_late_F_sp").popup("close");
-	$("#not_finished_final_dialog_early_M").popup("close");
-	$("#not_finished_final_dialog_early_F").popup("close");
-	$("#not_finished_final_dialog_middle_M").popup("close");
-	$("#not_finished_final_dialog_middle_F").popup("close");
-	$("#not_finished_final_dialog_late_M").popup("close");
-	$("#not_finished_final_dialog_late_F").popup("close");
-	$("#not_finished_final_dialog_early_M_sp").popup("close");
-	$("#not_finished_final_dialog_early_F_sp").popup("close");
-	$("#not_finished_final_dialog_middle_M_sp").popup("close");
-	$("#not_finished_final_dialog_middle_F_sp").popup("close");
-	$("#not_finished_final_dialog_late_M_sp").popup("close");
-	$("#not_finished_final_dialog_late_F_sp").popup("close");
-	calculateScore();
+	$("#finish_error_dialog").popup("close");
+	$("#finish_error_dialog_sp").popup("close");
+	$("#not_finished_final_dialog").popup("close");
+	$("#not_finished_final_dialog_sp").popup("close");
 	setLanguageField();
 	var submitForm = $("#sexRiskForm"); 
 	var token = getAuthenticationToken();
@@ -171,58 +175,9 @@ function finishForm() {
 
 function handleFinishFormError() {
 	if (english) {
-	    $("#finish_error_dialog_" + ageRange + "_" + gender).popup("open", { transition: "pop"});
+	    $("#finish_error_dialog").popup("open", { transition: "pop"});
 	} else {
-		$("#finish_error_dialog_" + ageRange + "_" + gender + "_sp").popup("open", { transition: "pop"});
-	}
-}
-
-function calculateScore() {
-	var score = 0;
-	var maxQuestions = 0;
-	if (gender.toUpperCase() === "M") {
-		if (age < 14) {
-			ageRange = "early";
-			maxQuestions = 3;
-		} else if (age >= 14 && age < 18) {
-			ageRange = "middle";
-			maxQuestions = 4;
-		} else if (age >= 18) {
-			ageRange = "late";
-			maxQuestions = 5;
-		}
-	} else if (gender.toUpperCase() === "F") {
-		if (age < 14) {
-			ageRange = "early";
-			maxQuestions = 4;
-		} else if (age >= 14 && age < 18) {
-			ageRange = "middle";
-			maxQuestions = 4;
-		} else if (age >= 18) {
-			ageRange = "late";
-			maxQuestions = 5;
-		}
-	}
-		
-	var valueFound = false;
-	for (var i = 1; i <= maxQuestions; i++) {
-	    if (english) {
-	    	$("input[name=QuestionEntry_" + i + "_" + ageRange + "_" + gender + "]:checked").each(function() {
-	    		valueFound = true;
-	    		var value = parseInt($(this).val())
-	            score = score + value;
-	        });
-	    } else {
-	    	$("input[name=QuestionEntry_" + i + "_2_" + ageRange + "_" + gender + "]:checked").each(function() {
-	    		valueFound = true;
-	    		var value = parseInt($(this).val())
-	            score = score + value;
-	        });
-	    }
-    }
-	
-	if (valueFound) {
-		$("#SexRiskScore").val(score);
+		$("#finish_error_dialog_sp").popup("open", { transition: "pop"});
 	}
 }
 
@@ -232,21 +187,32 @@ function areAllQuestionsAnswered() {
 		spanishChar = "";
 	}
 	
-	var questionName = "QuestionEntry_";
-	for (var i = 1; i < 6; i++) {
-		var fieldName = questionName + i + spanishChar + "_" + ageRange + "_" + gender;
-		if ($("#" + fieldName + "_Yes").length) {
-			if (!$("input[name='" + fieldName +"']:checked").val()) {
-			   return false;
-			}
-		}
+	var questionName = "QuestionEntry_1" + spanishChar;
+	if (!$("input[name='" + questionName +"']:checked").val()) {
+	   return false;
 	}
+	
+	var value = "";
+	$("input[name='" + questionName + "']:checked").each(function() { 
+		value = $(this).val(); 
+    }); 
+	
+	if (value == "no") {
+		return true;
+	}
+
+    if (gender.toUpperCase() == "F" && value == "yes") {
+		questionName = "QuestionEntry_2" + spanishChar;
+		if (!$("input[name='" + questionName +"']:checked").val()) {
+		   return false;
+		}
+    }
 	
 	return true;
 }
 
-function changePage() {
-    var newPage = "#question_page_" + ageRange + "_" + gender;
+function changePage(pageNum) {
+    var newPage = "#question_page_" + pageNum;
     if (!english) {
         newPage = newPage + "_sp";
     }
