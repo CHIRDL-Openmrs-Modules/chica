@@ -1436,7 +1436,7 @@ public class HL7SocketHandler extends
 			}
 			
 			String ageLimitString = ageLimitAttributeValue.getValue();
-			int ageLimit = Integer.valueOf(ageLimitString);
+			Integer ageLimit = Integer.valueOf(ageLimitString);
 			
 			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
 			Date dob = patientHandler.getBirthdate(message);
