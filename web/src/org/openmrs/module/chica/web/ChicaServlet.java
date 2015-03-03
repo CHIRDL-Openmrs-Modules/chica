@@ -40,6 +40,7 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
@@ -610,6 +611,11 @@ public class ChicaServlet extends HttpServlet {
 		Map<String, Integer> ageUnitsMinMap = new HashMap<String, Integer>();
 		Map<String, Integer> ageUnitsMaxMap = new HashMap<String, Integer>();
 		Set<FormDisplay> printableJits = new TreeSet<FormDisplay>();
+		FormAttribute ageMinAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MIN);
+		FormAttribute ageMaxAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX);
+		FormAttribute ageMinUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MIN_UNITS);
+		FormAttribute ageMaxUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS);
+		FormAttribute displayNameAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME);
 		for (FormAttributeValue attribute : attributes) {
 			if (attribute.getValue().equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE) && 
 					attribute.getLocationId().equals(locationId) && 
@@ -620,7 +626,7 @@ public class ChicaServlet extends HttpServlet {
 					formDisplay.setFormName(form.getName());
 					formDisplay.setFormId(form.getFormId());
 					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
+						displayNameAttr, locationTagId, locationId);
 					if (attributeValue == null || attributeValue.getValue() == null) {
 						formDisplay.setDisplayName(form.getName());
 					} else {
@@ -628,42 +634,58 @@ public class ChicaServlet extends HttpServlet {
 					}
 					
 					FormAttributeValue ageMin = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ChirdlUtilConstants.FORM_ATTR_AGE_MIN, locationTagId, locationId);
+						ageMinAttr, locationTagId, locationId);
+					if (ageMin == null || ageMin.getValue() == null || ageMin.getValue().trim().length() == 0) {
+						printableJits.add(formDisplay);
+						continue;
+					}
+					
 					FormAttributeValue ageMinUnits = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ChirdlUtilConstants.FORM_ATTR_AGE_MIN_UNITS, locationTagId, locationId);
+						ageMinUnitsAttr, locationTagId, locationId);
+					if (ageMinUnits == null || ageMinUnits.getValue() == null || ageMinUnits.getValue().trim().length() == 0) {
+						printableJits.add(formDisplay);
+						continue;
+					}
+					
 					FormAttributeValue ageMax = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ChirdlUtilConstants.FORM_ATTR_AGE_MAX, locationTagId, locationId);
+						ageMaxAttr, locationTagId, locationId);
+					if (ageMax == null || ageMax.getValue() == null || ageMax.getValue().trim().length() == 0) {
+						printableJits.add(formDisplay);
+						continue;
+					}
+					
 					FormAttributeValue ageMaxUnits = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS, locationTagId, locationId);
+						ageMaxUnitsAttr, locationTagId, locationId);
+					if (ageMaxUnits == null || ageMaxUnits.getValue() == null || ageMaxUnits.getValue().trim().length() == 0) {
+						printableJits.add(formDisplay);
+						continue;
+					}
 
-					if(ageMin!=null && ageMin.getValue()!=null && ageMinUnits!=null && ageMinUnits.getValue()!=null &&
-							ageMax!=null && ageMax.getValue()!=null && ageMaxUnits!=null && ageMaxUnits.getValue()!=null){
-						Integer nowAgeWithMinUnits = ageUnitsMinMap.get(ageMinUnits.getValue());
-						if (nowAgeWithMinUnits == null) {
-							nowAgeWithMinUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
-								ageMinUnits.getValue());
-							ageUnitsMinMap.put(ageMinUnits.getValue(), nowAgeWithMinUnits);
-						}
-						
-						Integer nowAgeWithMaxUnits = ageUnitsMaxMap.get(ageMaxUnits.getValue());
-						if (nowAgeWithMaxUnits == null) {
-							nowAgeWithMaxUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
-								ageMaxUnits.getValue());
-							ageUnitsMaxMap.put(ageMaxUnits.getValue(), nowAgeWithMaxUnits);
-						}
-						
-						try{
+					Integer nowAgeWithMinUnits = ageUnitsMinMap.get(ageMinUnits.getValue());
+					if (nowAgeWithMinUnits == null) {
+						nowAgeWithMinUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
+							ageMinUnits.getValue());
+						ageUnitsMinMap.put(ageMinUnits.getValue(), nowAgeWithMinUnits);
+					}
+					
+					Integer nowAgeWithMaxUnits = ageUnitsMaxMap.get(ageMaxUnits.getValue());
+					if (nowAgeWithMaxUnits == null) {
+						nowAgeWithMaxUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
+							ageMaxUnits.getValue());
+						ageUnitsMaxMap.put(ageMaxUnits.getValue(), nowAgeWithMaxUnits);
+					}
+					
+					try{
 
-							if(nowAgeWithMinUnits.intValue()<Integer.parseInt(ageMin.getValue())){
-								continue;
-							}
-							if(nowAgeWithMaxUnits.intValue()>= Integer.parseInt(ageMax.getValue())){
-								continue;
-							}
-						}
-						catch(NumberFormatException e){
+						if(nowAgeWithMinUnits.intValue()<Integer.parseInt(ageMin.getValue())){
 							continue;
 						}
+						if(nowAgeWithMaxUnits.intValue()>= Integer.parseInt(ageMax.getValue())){
+							continue;
+						}
+					}
+					catch(NumberFormatException e){
+						continue;
 					}
 
 					printableJits.add(formDisplay);
