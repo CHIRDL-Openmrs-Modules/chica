@@ -1,5 +1,6 @@
 var timer = null;
 var patientListFail = 0;
+var refreshPeriod = 30000;
 $(function() {
 	$("#badScansArea").hide();
 	$("#mrnError").hide();
@@ -615,21 +616,21 @@ function resizeContent() {
     setOverlayCSS();
 }
 
-function startTimer(refreshPeriod) {
-	if (refreshPeriod === null) {
+function startTimer(period) {
+	if (period === null) {
 		refreshPeriod = 30000;
 	} else {
-		refreshPeriod = refreshPeriod * 1000;
+		refreshPeriod = period * 1000;
 	}
-	
-    timer = $.timer(function () {
-        populateList();
-    });
-
-    timer.set({
-        time: refreshPeriod,
-        autostart: true
-    });
+//	
+//    timer = $.timer(function () {
+//        populateList();
+//    });
+//
+//    timer.set({
+//        time: refreshPeriod,
+//        autostart: true
+//    });
     
     // This delay allows the wait cursor to display when loading the patient
 	// list.
@@ -655,6 +656,7 @@ function populateList() {
       "success": function (xml) {
     	  patientListFail = 0;
           parsePatientList(xml);
+          setTimeout("populateList()", refreshPeriod);
       }
   });
 }

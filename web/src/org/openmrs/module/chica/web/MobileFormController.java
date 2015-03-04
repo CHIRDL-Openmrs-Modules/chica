@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,10 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
 import org.openmrs.Patient;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
@@ -29,10 +32,10 @@ import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
-import org.openmrs.module.chirdlutilbackports.util.Util;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -42,6 +45,9 @@ public class MobileFormController extends SimpleFormController {
 	
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
+	
+	private static final String PROVIDER_VIEW = "_provider_view";
+	private static final String PROVIDER_SUBMIT = "_provider_submit";
 	
 	/*
 	 * (non-Javadoc)
@@ -57,20 +63,25 @@ public class MobileFormController extends SimpleFormController {
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		map.put("encounterId", request.getParameter("encounterId"));
+		String encounterIdStr = request.getParameter("encounterId");
+		map.put("encounterId", encounterIdStr);
 		map.put("sessionId", request.getParameter("sessionId"));
 		
 		String patientIdStr = request.getParameter("patientId");
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
 		map.put("patient", patient);
 		
+		String providerId = request.getParameter("providerId");
+		map.put("providerId", providerId);
+		
 		TeleformTranslator translator = new TeleformTranslator();
 		String formInstance = request.getParameter("formInstance");
-		FormInstanceTag formInstTag = Util.parseFormInstanceTag(formInstance);
+		FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 		Integer locationId = formInstTag.getLocationId();
 		Integer formId = formInstTag.getFormId();
 		Integer formInstanceId = formInstTag.getFormInstanceId();
 		Integer locationTagId = formInstTag.getLocationTagId();
+		Integer encounterId = Integer.parseInt(encounterIdStr);
 		map.put("formInstance", formInstance);
 		map.put("formId", formId);
 		map.put("formInstanceId", formInstanceId);
@@ -100,6 +111,13 @@ public class MobileFormController extends SimpleFormController {
 			return map;
 		}
 		
+		// Save who is viewing the form.
+		if (providerId != null && providerId.trim().length() > 0) {
+			saveProviderViewer(patient, formId, encounterId, providerId);
+		} else {
+			log.error("No valid providerId provided.  Cannot log who is viewing form: " + formId);
+		}
+		
 		return map;
 	}
 	
@@ -115,7 +133,7 @@ public class MobileFormController extends SimpleFormController {
 		//from the selected form
 		String formInstance = request.getParameter("formInstance");
 		if (formInstance != null && formInstance.trim().length() > 0) {
-			FormInstanceTag formInstTag = Util.parseFormInstanceTag(formInstance);
+			FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 			chosenLocationId = formInstTag.getLocationId();
 			chosenLocationTagId = formInstTag.getLocationTagId();
 			chosenFormId = formInstTag.getFormId();
@@ -138,6 +156,17 @@ public class MobileFormController extends SimpleFormController {
 		String patientIdStr = request.getParameter("patientId");
 		map.put("patientId", patientIdStr);
 		String view = getSuccessView();
+		
+		// Save who is submitting the form.
+		String providerId = request.getParameter("providerId");
+		if (providerId != null && providerId.trim().length() > 0) {
+			Integer patientId = Integer.parseInt(patientIdStr);
+			Patient patient = Context.getPatientService().getPatient(patientId);
+			Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
+			saveProviderSubmitter(patient, chosenFormId, encounterId, providerId);
+		} else {
+			log.error("No valid providerId provided.  Cannot log who is submitting form: " + chosenFormId);
+		}
 		
 		return new ModelAndView(new RedirectView(view), map);
 	}
@@ -278,5 +307,51 @@ public class MobileFormController extends SimpleFormController {
 		}
 	}
 	
+	/**
+	 * Saves the viewer's provider ID to an observation.
+	 * 
+	 * @param patient The patient who owns the form.
+	 * @param formId The ID of the form being viewed.
+	 * @param encounterId The encounter ID of the encounter where the form was created.
+	 * @param providerId The ID of the provider to be stored.
+	 */
+	private void saveProviderViewer(Patient patient, Integer formId, Integer encounterId, String providerId) {
+		Form form = Context.getFormService().getForm(formId);
+		String conceptName = form.getName() + PROVIDER_VIEW;
+		saveProviderInfo(patient, formId, encounterId, providerId, conceptName);
+	}
 	
+	/**
+	 * Saves the submitter's provider ID to an observation.
+	 * 
+	 * @param patient The patient who owns the form.
+	 * @param formId The ID of the form being viewed.
+	 * @param encounterId The encounter ID of the encounter where the form was created.
+	 * @param providerId The ID of the provider to be stored.
+	 */
+	private void saveProviderSubmitter(Patient patient, Integer formId, Integer encounterId, String providerId) {
+		Form form = Context.getFormService().getForm(formId);
+		String conceptName = form.getName() + PROVIDER_SUBMIT;
+		saveProviderInfo(patient, formId, encounterId, providerId, conceptName);
+	}
+	
+	/**
+	 * Saves the submitter's provider ID to an observation.
+	 * 
+	 * @param patient The patient who owns the form.
+	 * @param formId The ID of the form being viewed.
+	 * @param encounterId The encounter ID of the encounter where the form was created.
+	 * @param providerId The ID of the provider to be stored.
+	 * @param conceptName The name of the concept.
+	 */
+	private void saveProviderInfo(Patient patient, Integer formId, Integer encounterId, String providerId, String conceptName) {
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConceptByName(conceptName);
+		if (concept == null) {
+			log.error("Could not log provider info.  Concept " + conceptName + " not found.");
+			return;
+		}
+		
+		Util.saveObs(patient, concept, encounterId, providerId, new Date());
+	}
 }

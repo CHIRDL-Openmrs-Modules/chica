@@ -1205,6 +1205,7 @@
 				<input id="maxElements" name="maxElements" type="hidden" value="5"/>
 				<input id="language" name="language" type="hidden" value="${language}"/>
 				<input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
+				<input id="providerId" name="providerId" type="hidden" value="${providerId}"/>
             </form>
     	</div>
     </body>

@@ -99,6 +99,8 @@
         <input id="startState" name="startState" type="hidden" value="${startState}"/>
         <input id="endState" name="endState" type="hidden" value="${endState}"/>
         <input id="sessionId" name="endState" type="hidden" value="${sessionId}"/>
+        <input id="providerId" name="providerId" type="hidden" value="${providerId}"/>
+        <input id="vendor" name="vendor" type="hidden" value="${providerId}"/>
     </form>
 </div>
 
