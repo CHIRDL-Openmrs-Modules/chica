@@ -31,6 +31,7 @@ import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
@@ -49,6 +50,18 @@ public class MobileFormController extends SimpleFormController {
 	private static final String PROVIDER_VIEW = "_provider_view";
 	private static final String PROVIDER_SUBMIT = "_provider_submit";
 	
+	private static final String PARAM_ENCOUNTER_ID = "encounterId";
+	private static final String PARAM_SESSION_ID = "sessionId";
+	private static final String PARAM_PATIENT_ID = "patientId";
+	private static final String PARAM_PATIENT = "patient";
+	private static final String PARAM_PROVIDER_ID = "providerId";
+	private static final String PARM_FORM_INSTANCE = "formInstance";
+	private static final String PARAM_FORM_ID = "formId";
+	private static final String PARAM_FORM_INSTANCE_ID = "formInstanceId";
+	private static final String PARAM_LOCATION_ID = "locationId";
+	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
+	private static final String PARAM_ERROR_MESSAGE = "errorMessage";
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -63,37 +76,37 @@ public class MobileFormController extends SimpleFormController {
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		String encounterIdStr = request.getParameter("encounterId");
-		map.put("encounterId", encounterIdStr);
-		map.put("sessionId", request.getParameter("sessionId"));
+		String encounterIdStr = request.getParameter(PARAM_ENCOUNTER_ID);
+		map.put(PARAM_ENCOUNTER_ID, encounterIdStr);
+		map.put(PARAM_SESSION_ID, request.getParameter(PARAM_SESSION_ID));
 		
-		String patientIdStr = request.getParameter("patientId");
+		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
-		map.put("patient", patient);
+		map.put(PARAM_PATIENT, patient);
 		
-		String providerId = request.getParameter("providerId");
-		map.put("providerId", providerId);
+		String providerId = request.getParameter(PARAM_PROVIDER_ID);
+		map.put(PARAM_PROVIDER_ID, providerId);
 		
 		TeleformTranslator translator = new TeleformTranslator();
-		String formInstance = request.getParameter("formInstance");
+		String formInstance = request.getParameter(PARM_FORM_INSTANCE);
 		FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 		Integer locationId = formInstTag.getLocationId();
 		Integer formId = formInstTag.getFormId();
 		Integer formInstanceId = formInstTag.getFormInstanceId();
 		Integer locationTagId = formInstTag.getLocationTagId();
 		Integer encounterId = Integer.parseInt(encounterIdStr);
-		map.put("formInstance", formInstance);
-		map.put("formId", formId);
-		map.put("formInstanceId", formInstanceId);
-		map.put("locationId", locationId);
-		map.put("locationTagId", locationTagId);
+		map.put(PARM_FORM_INSTANCE, formInstance);
+		map.put(PARAM_FORM_ID, formId);
+		map.put(PARAM_FORM_INSTANCE_ID, formInstanceId);
+		map.put(PARAM_LOCATION_ID, locationId);
+		map.put(PARAM_LOCATION_TAG_ID, locationTagId);
 		String mergeFilename = getMergeFilename(locationId, locationTagId, formId, formInstanceId);
 		if (mergeFilename == null) {
 			String message = 
 				"Could not locate form instance. Please contact support with the following information: Form ID: " + formId + 
 				" Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
 			log.error(message);
-			map.put("errorMessage", message);
+			map.put(PARAM_ERROR_MESSAGE, message);
 			return map;
 		}
 		
@@ -107,7 +120,7 @@ public class MobileFormController extends SimpleFormController {
 				"Error retrieving data to display a form. Please contact support with the following information: Form ID: " + 
 				formId + " Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
 			log.error(message);
-			map.put("errorMessage", message);
+			map.put(PARAM_ERROR_MESSAGE, message);
 			return map;
 		}
 		
@@ -131,7 +144,7 @@ public class MobileFormController extends SimpleFormController {
 		
 		//parse out the location_id,form_id,location_tag_id, and form_instance_id
 		//from the selected form
-		String formInstance = request.getParameter("formInstance");
+		String formInstance = request.getParameter(PARM_FORM_INSTANCE);
 		if (formInstance != null && formInstance.trim().length() > 0) {
 			FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 			chosenLocationId = formInstTag.getLocationId();
@@ -153,16 +166,16 @@ public class MobileFormController extends SimpleFormController {
 		} 
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		String patientIdStr = request.getParameter("patientId");
-		map.put("patientId", patientIdStr);
+		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
+		map.put(PARAM_PATIENT_ID, patientIdStr);
 		String view = getSuccessView();
 		
 		// Save who is submitting the form.
-		String providerId = request.getParameter("providerId");
+		String providerId = request.getParameter(PARAM_PROVIDER_ID);
 		if (providerId != null && providerId.trim().length() > 0) {
 			Integer patientId = Integer.parseInt(patientIdStr);
 			Patient patient = Context.getPatientService().getPatient(patientId);
-			Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
+			Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
 			saveProviderSubmitter(patient, chosenFormId, encounterId, providerId);
 		} else {
 			log.error("No valid providerId provided.  Cannot log who is submitting form: " + chosenFormId);
@@ -176,23 +189,23 @@ public class MobileFormController extends SimpleFormController {
 		String mergeFilename = null;
 		ArrayList<String> possibleMergeFilenames = new ArrayList<String>();
 		String defaultMergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(chosenFormId, "defaultMergeDirectory", chosenLocationTagId, chosenLocationId));
+		        .getFormAttributeValue(chosenFormId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, chosenLocationTagId, chosenLocationId));
 		String pendingMergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(chosenFormId, "defaultMergeDirectory", chosenLocationTagId, chosenLocationId))
-		        + "Pending/";
+		        .getFormAttributeValue(chosenFormId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, chosenLocationTagId, chosenLocationId))
+		        + ChirdlUtilConstants.FILE_PENDING + File.separator;
 		
 		// Parse the merge file
 		FormInstance formInstance = new FormInstance(chosenLocationId, chosenFormId, chosenFormInstanceId);
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ".xml");
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ".20");
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ".22");
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ".23");
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ".19");
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ".xml");
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ".20");
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ".22");
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ".23");
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ".19");
+		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20);
+		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_22);
+		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_23);
+		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_19);
+		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20);
+		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_22);
+		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_23);
+		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_19);
 		
 		for (String currFilename : possibleMergeFilenames) {
 			File file = new File(currFilename);
@@ -209,7 +222,7 @@ public class MobileFormController extends SimpleFormController {
 	                             TeleformTranslator translator, InputStream inputMergeFile) throws Exception {
 		FormService formService = Context.getFormService();
 		LogicService logicService = Context.getLogicService();
-		FormDatasource formDatasource = (FormDatasource) logicService.getLogicDataSource("form");
+		FormDatasource formDatasource = (FormDatasource) logicService.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_FORM);
 		HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = formDatasource.getFormFields(new FormInstance(
 		        locationId, formId, formInstanceId));
 		
@@ -225,7 +238,7 @@ public class MobileFormController extends SimpleFormController {
 		for (FormField formField : formFields) {
 			org.openmrs.Field currField = formField.getField();
 			FieldType fieldType = currField.getFieldType();
-			if (fieldType == null || !fieldType.equals(translator.getFieldType("Export Field"))) {
+			if (fieldType == null || !fieldType.equals(translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT))) {
 				Field lookupField = fieldMap.get(currField.getName());
 				if (lookupField != null) {
 					map.put(currField.getName(), lookupField.getValue());
@@ -245,7 +258,7 @@ public class MobileFormController extends SimpleFormController {
 		for (FormField formField : formFields) {
 			org.openmrs.Field currField = formField.getField();
 			FieldType fieldType = currField.getFieldType();
-			if (fieldType != null && fieldType.equals(translator.getFieldType("Export Field"))) {
+			if (fieldType != null && fieldType.equals(translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT))) {
 				inputFields.add(currField.getName());
 			}
 		}
@@ -284,14 +297,14 @@ public class MobileFormController extends SimpleFormController {
 		}
 		
 		String exportDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(formId, "defaultExportDirectory", locationTagId, locationId));
+		        .getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_EXPORT_DIRECTORY, locationTagId, locationId));
 		String defaultMergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(formId, "defaultMergeDirectory", locationTagId, locationId));
+		        .getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId));
 		
 		FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 		//Write the xml for the export file
 		//Use xmle extension to represent form completion through electronic means.
-		String exportFilename = exportDirectory + formInstance.toString() + ".xmle";
+		String exportFilename = exportDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XMLE;
 		
 		OutputStream output = new FileOutputStream(exportFilename);
 		XMLUtil.serializeXML(records, output);
@@ -299,7 +312,7 @@ public class MobileFormController extends SimpleFormController {
 		output.close();
 		
 		//rename the merge file to trigger state change
-		String newMergeFilename = defaultMergeDirectory + formInstance.toString() + ".20";
+		String newMergeFilename = defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20;
 		File newFile = new File(newMergeFilename);
 		if (!newFile.exists()) {
 			IOUtil.copyFile(mergeFilename, newMergeFilename);
