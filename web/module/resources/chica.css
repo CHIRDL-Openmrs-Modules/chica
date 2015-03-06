@@ -24,46 +24,46 @@ td{
       color: #FFFFFF;
 }
 
-td.ln{
+th.ln, td.ln{
 	width:12%;
 }
 
-td.fn{
+th.fn, td.fn{
 	width:10%;
 }
 
-td.mrn		{
+th.mrn, td.mrn		{
+	width:8%;
+}
+th.dob, td.dob{
 	width:10%;
 }
-td.dob{
-	width:10%;
-}
-td.sex{
-	width:3%;
+th.sex, td.sex{
+	width:6%;
 	text-align:center;
 }
-td.MD{
+th.MD, td.MD{
 	width:10%;
 }
 
-td.aptTime{
+th.aptTime, td.aptTime{
 	width:9%;
 }
 
-td.chkTime{
+th.chkTime, td.chkTime{
 	width:9%;
 }
 
-td.reprint{
-	width:4%;
+th.reprint, td.reprint{
+	width:7%;
 	text-align:center;
 }
 
-td.status{
+th.status, td.status{
 	width:12%;
 }
-td.action{
-	width:11%;
+th.action, td.action{
+	width:7%;
 }
 
 td.viewEncounterDate{

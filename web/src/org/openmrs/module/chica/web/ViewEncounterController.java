@@ -459,7 +459,7 @@ public class ViewEncounterController extends SimpleFormController {
 				String providerName = getProviderName(provider);
 				String station = enct.getPrinterLocation();
 				
-
+				row.setPatientId(patient.getPatientId());
 				row.setFirstName(firstName);
 				row.setMdName(providerName);
 				row.setAppointment(apptDateString);
