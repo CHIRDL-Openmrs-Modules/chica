@@ -31,9 +31,7 @@ Maintenance:
     Logic:
         If (mode = PRODUCE) then
 		
-            immunizationInterventionSite := call LocationAttributeLookup With "isImmunizationInterventionLocation";
-            If (immunizationInterventionSite = null) OR NOT (immunizationInterventionSite = "true") then conclude False;
-			If (chirp_status = CHIRP_not_available) OR  (chirp_status = CHIRP_login_failed)  then  
+           If (chirp_status = CHIRP_not_available) OR  (chirp_status = CHIRP_login_failed)  then  
                  CALL queryCHIRP;
             endif;
 			If (chirp_status = CHIRP_not_available) OR ( chirp_status = CHIRP_match_not_found) OR (chirp_status = CHIRP_login_failed)  then  

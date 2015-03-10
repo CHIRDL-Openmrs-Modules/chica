@@ -1,6 +1,6 @@
 Maintenance:
- Title: Research PSF ADHD Improved Relationships;;
- Filename: R_PSFADHDImprovedRelationships;;
+ Title: Research PSF ADHD Increased Independence;;
+ Filename: R_PSFADHDIncreasedIndependenceOlder;;
  Version: 1.0;;
  Institution: Indiana University School of Medicine;;
  Author: Aaron Carroll;;
@@ -31,7 +31,7 @@ CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
 ;;
-Priority: 274;;
+Priority: 1000;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
@@ -41,7 +41,7 @@ If (Gender = F) then || text || = "her";
 
 
 If (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
-If (Target = "Improved_Relationships") then conclude True;
+If (Target = "Increased_Independence") then conclude True;
 
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 
@@ -58,9 +58,9 @@ endif;
 endif
 ;;
 Action:
-write ("Has || firstname || met || text || ADHD treatment target of Improved Relationships?");
-write ("¿Ha alcanzado || firstname || su objetivo de tratamiento de ADHD en la mejoría de relaciones?") At Spanish;                                                                                                                                                                                                                                                                            
+write ("Have you met your ADHD treatment target of being more indepedent?");
+write ("¿Has alcanzado tu objetivo de tratamiento de ADHD en ser más independiente?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
-Age_Min: 5 years;;
-Age_Max: 12 years;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
 end:

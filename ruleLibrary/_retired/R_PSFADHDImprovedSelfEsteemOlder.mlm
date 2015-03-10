@@ -1,6 +1,6 @@
 Maintenance:
- Title: Research PSF ADHD Improved Relationships;;
- Filename: R_PSFADHDImprovedRelationshipsOlder;;
+ Title: Research PSF ADHD Improved Self Esteem;;
+ Filename: R_PSFADHDImprovedSelfEsteemOlder;;
  Version: 1.0;;
  Institution: Indiana University School of Medicine;;
  Author: Aaron Carroll;;
@@ -26,12 +26,12 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-location:= read {location from Parameters};
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+location:= read {location from Parameters};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
-Priority: 275;;
+Priority: 1000;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
@@ -41,7 +41,7 @@ If (Gender = F) then || text || = "her";
 
 
 If (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
-If (Target = "Improved_Relationships") then conclude True;
+If (Target = "Improved_Self_Esteem") then conclude True;
 
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 
@@ -58,8 +58,8 @@ endif;
 endif
 ;;
 Action:
-write ("Have you met your ADHD treatment target of Improved Relationships?");
-write ("¿Has alcanzado tu objetivo de tratamiento de ADHD en la mejoría de relaciones?") At Spanish;                                                                                                                                                                                                                                                                            
+write ("Have you met your ADHD treatment target of having better self-esteem?");
+write ("¿Has alcanzado tu objetivo de tratamiento de ADHD en la mejoría de tu autoestima?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 12 years;;
 Age_Max: 21 years;;

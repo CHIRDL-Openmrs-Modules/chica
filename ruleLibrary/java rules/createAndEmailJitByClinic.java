@@ -173,6 +173,20 @@ public class createAndEmailJitByClinic implements Rule {
 			org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId, "defaultMergeDirectory", 
 				locationTagId, locationId));
 		File pdfFile = new File(mergeDirectory, formInstance.toString() + ".pdf");
+		if (!pdfFile.exists()) {
+			// Check the pdf directory
+			File pdfDir = new File(mergeDirectory, "pdf");
+			if (pdfDir.exists()) {
+				pdfFile = new File(pdfDir, formInstance.toString() + ".pdf");
+				if (!pdfFile.exists()) {
+					log.error("Cannot find PDF file to zip and email.  Directory: " + mergeDirectory + " File: " + formInstance.toString());
+					return Result.emptyResult();
+				}
+			} else {
+				log.error("Cannot find PDF file to zip and email.  Directory: " + mergeDirectory + " File: " + formInstance.toString());
+				return Result.emptyResult();
+			}
+		}
 		
 		String emailAddys = emailLav.getValue();
 		String[] emailList = emailAddys.split(",");

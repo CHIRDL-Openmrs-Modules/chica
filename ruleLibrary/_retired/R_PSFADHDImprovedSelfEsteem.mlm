@@ -1,6 +1,6 @@
 Maintenance:
- Title: Research PSF ADHD Improved Academics;;
- Filename: R_PSFADHDImprovedAcademicsOlder;;
+ Title: Research PSF ADHD Improved Self Esteem;;
+ Filename: R_PSFADHDImprovedSelfEsteem;;
  Version: 1.0;;
  Institution: Indiana University School of Medicine;;
  Author: Aaron Carroll;;
@@ -26,12 +26,12 @@ Box5:=read {box5 from Parameters};
 Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
-location:= read {location from Parameters};
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+location:= read {location from Parameters};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 endif
 ;;
-Priority: 273;;
+Priority: 1000;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
@@ -41,7 +41,7 @@ If (Gender = F) then || text || = "her";
 
 
 If (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
-If (Target = "Improved_Academics") then conclude True;
+If (Target = "Improved_Self_Esteem") then conclude True;
 
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 
@@ -58,9 +58,9 @@ endif;
 endif
 ;;
 Action:
-write ("Have you met your ADHD treatment target of doing better in school?");
-write ("¿Has alcanzado tu objetivo de tratamiento de ADHD en mejorar en la escuela?") At Spanish;                                                                                                                                                                                                                                                                            
+write ("Has || firstname || met || text || ADHD treatment target of having better self-esteem?");
+write ("¿Ha alcanzado || firstname || su objetivo de tratamiento de ADHD en la mejoría de su autoestima?") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
-Age_Min: 12 years;;
-Age_Max: 21 years;;
+Age_Min: 5 years;;
+Age_Max: 12 years;;
 end:

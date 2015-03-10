@@ -1,6 +1,6 @@
 Maintenance:
  Title: Research PSF ADHD Disruptive Behaviors;;
- Filename: R_PSFADHDDisruptiveBehaviorsOlder;;
+ Filename: R_PSFADHDDisruptiveBehaviors;;
  Version: 1.0;;
  Institution: Indiana University School of Medicine;;
  Author: Aaron Carroll;;
@@ -31,7 +31,7 @@ CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 Target := read last {CHICA_ADHD_Targets from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 endif
 ;;
-Priority: 271;;
+Priority: 1000;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) then
@@ -58,11 +58,11 @@ endif;
 endif
 ;;
 Action:
-write ("Have you met your ADHD treatment target of decreased disruptive behaviors?");
-write ("¿Has alcanzado tu objetivo de tratamiento de ADHD en la reducción de las conductas disruptivas?") At Spanish;      
+write ("Has || firstname || met || text || ADHD treatment target of decreased disruptive behaviors?");
+write ("¿Ha alcanzado || firstname || su objetivo de tratamiento de ADHD en la reducción de las conductas disruptivas?") At Spanish;      
 
                                                                                                                                                                                                                                                                       
 ;;
-Age_Min: 12 years;;
-Age_Max: 21 years;;
+Age_Min: 5 years;;
+Age_Max: 12 years;;
 end:
