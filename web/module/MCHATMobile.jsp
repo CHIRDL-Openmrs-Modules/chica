@@ -71,9 +71,9 @@
 					<strong>${quest1}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest1}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_1" id="Choice_1_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_1" id="Choice_1_Yes" value="passed" data-theme="c" />
 							<label for="Choice_1_Yes">Yes</label>
-							<input type="radio" name="Choice_1" id="Choice_1_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_1" id="Choice_1_No" value="failed" data-theme="c" />
 							<label for="Choice_1_No">No</label>
 						</fieldset>
 					</div>
@@ -83,9 +83,9 @@
 					<strong>${quest2}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest2}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_2" id="Choice_2_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_2" id="Choice_2_Yes" value="passed" data-theme="c" />
 							<label for="Choice_2_Yes">Yes</label>
-							<input type="radio" name="Choice_2" id="Choice_2_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_2" id="Choice_2_No" value="failed" data-theme="c" />
 							<label for="Choice_2_No">No</label>
 						</fieldset>
 					</div>
@@ -95,9 +95,9 @@
 					<strong>${quest3}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest3}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_3" id="Choice_3_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_3" id="Choice_3_Yes" value="passed" data-theme="c" />
 							<label for="Choice_3_Yes">Yes</label>
-							<input type="radio" name="Choice_3" id="Choice_3_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_3" id="Choice_3_No" value="failed" data-theme="c" />
 							<label for="Choice_3_No">No</label>
 						</fieldset>
 					</div>
@@ -107,9 +107,9 @@
 					<strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest4}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_4" id="Choice_4_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_4" id="Choice_4_Yes" value="passed" data-theme="c" />
 							<label for="Choice_4_Yes">Yes</label>
-							<input type="radio" name="Choice_4" id="Choice_4_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_4" id="Choice_4_No" value="failed" data-theme="c" />
 							<label for="Choice_4_No">No</label>
 						</fieldset>
 					</div>
@@ -119,9 +119,9 @@
 					<strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest5}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_5" id="Choice_5_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_5" id="Choice_5_Yes" value="passed" data-theme="c" />
 							<label for="Choice_5_Yes">Yes</label>
-							<input type="radio" name="Choice_5" id="Choice_5_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_5" id="Choice_5_No" value="failed" data-theme="c" />
 							<label for="Choice_5_No">No</label>
 						</fieldset>
 					</div>
@@ -147,9 +147,9 @@
 					<strong>${quest6}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest6}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_6" id="Choice_6_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_6" id="Choice_6_Yes" value="passed" data-theme="c" />
 							<label for="Choice_6_Yes">Yes</label>
-							<input type="radio" name="Choice_6" id="Choice_6_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_6" id="Choice_6_No" value="failed" data-theme="c" />
 							<label for="Choice_6_No">No</label>
 						</fieldset>
 					</div>
@@ -159,9 +159,9 @@
 					<strong>${quest7}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest7}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_7" id="Choice_7_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_7" id="Choice_7_Yes" value="passed" data-theme="c" />
 							<label for="Choice_7_Yes">Yes</label>
-							<input type="radio" name="Choice_7" id="Choice_7_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_7" id="Choice_7_No" value="failed" data-theme="c" />
 							<label for="Choice_7_No">No</label>
 						</fieldset>
 					</div>
@@ -171,9 +171,9 @@
 					<strong>${quest8}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest8}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_8" id="Choice_8_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_8" id="Choice_8_Yes" value="passed" data-theme="c" />
 							<label for="Choice_8_Yes">Yes</label>
-							<input type="radio" name="Choice_8" id="Choice_8_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_8" id="Choice_8_No" value="failed" data-theme="c" />
 							<label for="Choice_8_No">No</label>
 						</fieldset>
 					</div>
@@ -183,9 +183,9 @@
 					<strong>${quest9}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest9}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_9" id="Choice_9_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_9" id="Choice_9_Yes" value="passed" data-theme="c" />
 							<label for="Choice_9_Yes">Yes</label>
-							<input type="radio" name="Choice_9" id="Choice_9_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_9" id="Choice_9_No" value="failed" data-theme="c" />
 							<label for="Choice_9_No">No</label>
 						</fieldset>
 					</div>
@@ -195,9 +195,9 @@
 					<strong>${quest10}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest10}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_10" id="Choice_10_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_10" id="Choice_10_Yes" value="passed" data-theme="c" />
 							<label for="Choice_10_Yes">Yes</label>
-							<input type="radio" name="Choice_10" id="Choice_10_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_10" id="Choice_10_No" value="failed" data-theme="c" />
 							<label for="Choice_10_No">No</label>
 						</fieldset>
 					</div>
@@ -224,9 +224,9 @@
 					<strong>${quest11}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest11}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_11" id="Choice_11_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_11" id="Choice_11_Yes" value="failed" data-theme="c" />
 							<label for="Choice_11_Yes">Yes</label>
-							<input type="radio" name="Choice_11" id="Choice_11_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_11" id="Choice_11_No" value="passed" data-theme="c" />
 							<label for="Choice_11_No">No</label>
 						</fieldset>
 					</div>
@@ -236,9 +236,9 @@
 					<strong>${quest12}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest12}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_12" id="Choice_12_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_12" id="Choice_12_Yes" value="passed" data-theme="c" />
 							<label for="Choice_12_Yes">Yes</label>
-							<input type="radio" name="Choice_12" id="Choice_12_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_12" id="Choice_12_No" value="failed" data-theme="c" />
 							<label for="Choice_12_No">No</label>
 						</fieldset>
 					</div>
@@ -248,9 +248,9 @@
 					<strong>${quest13}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest13}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_13" id="Choice_13_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_13" id="Choice_13_Yes" value="passed" data-theme="c" />
 							<label for="Choice_13_Yes">Yes</label>
-							<input type="radio" name="Choice_13" id="Choice_13_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_13" id="Choice_13_No" value="failed" data-theme="c" />
 							<label for="Choice_13_No">No</label>
 						</fieldset>
 					</div>
@@ -260,9 +260,9 @@
 					<strong>${quest14}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest14}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_14" id="Choice_14_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_14" id="Choice_14_Yes" value="passed" data-theme="c" />
 							<label for="Choice_14_Yes">Yes</label>
-							<input type="radio" name="Choice_14" id="Choice_14_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_14" id="Choice_14_No" value="failed" data-theme="c" />
 							<label for="Choice_14_No">No</label>
 						</fieldset>
 					</div>
@@ -272,9 +272,9 @@
 					<strong>${quest15}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest15}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_15" id="Choice_15_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_15" id="Choice_15_Yes" value="passed" data-theme="c" />
 							<label for="Choice_15_Yes">Yes</label>
-							<input type="radio" name="Choice_15" id="Choice_15_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_15" id="Choice_15_No" value="failed" data-theme="c" />
 							<label for="Choice_15_No">No</label>
 						</fieldset>
 					</div>
@@ -301,9 +301,9 @@
 					<strong>${quest16}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest16}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_16" id="Choice_16_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_16" id="Choice_16_Yes" value="passed" data-theme="c" />
 							<label for="Choice_16_Yes">Yes</label>
-							<input type="radio" name="Choice_16" id="Choice_16_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_16" id="Choice_16_No" value="failed" data-theme="c" />
 							<label for="Choice_16_No">No</label>
 						</fieldset>
 					</div>
@@ -313,9 +313,9 @@
 					<strong>${quest17}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest17}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_17" id="Choice_17_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_17" id="Choice_17_Yes" value="passed" data-theme="c" />
 							<label for="Choice_17_Yes">Yes</label>
-							<input type="radio" name="Choice_17" id="Choice_17_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_17" id="Choice_17_No" value="failed" data-theme="c" />
 							<label for="Choice_17_No">No</label>
 						</fieldset>
 					</div>
@@ -325,9 +325,9 @@
 					<strong>${quest18}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest18}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_18" id="Choice_18_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_18" id="Choice_18_Yes" value="failed" data-theme="c" />
 							<label for="Choice_18_Yes">Yes</label>
-							<input type="radio" name="Choice_18" id="Choice_18_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_18" id="Choice_18_No" value="passed" data-theme="c" />
 							<label for="Choice_18_No">No</label>
 						</fieldset>
 					</div>
@@ -337,9 +337,9 @@
 					<strong>${quest19}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest19}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_19" id="Choice_19_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_19" id="Choice_19_Yes" value="passed" data-theme="c" />
 							<label for="Choice_19_Yes">Yes</label>
-							<input type="radio" name="Choice_19" id="Choice_19_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_19" id="Choice_19_No" value="failed" data-theme="c" />
 							<label for="Choice_19_No">No</label>
 						</fieldset>
 					</div>
@@ -349,9 +349,9 @@
 					<strong>${quest20}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest20}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_20" id="Choice_20_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_20" id="Choice_20_Yes" value="failed" data-theme="c" />
 							<label for="Choice_20_Yes">Yes</label>
-							<input type="radio" name="Choice_20" id="Choice_20_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_20" id="Choice_20_No" value="passed" data-theme="c" />
 							<label for="Choice_20_No">No</label>
 						</fieldset>
 					</div>
@@ -378,9 +378,9 @@
 					<strong>${quest21}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest21}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_21" id="Choice_21_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_21" id="Choice_21_Yes" value="passed" data-theme="c" />
 							<label for="Choice_21_Yes">Yes</label>
-							<input type="radio" name="Choice_21" id="Choice_21_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_21" id="Choice_21_No" value="failed" data-theme="c" />
 							<label for="Choice_21_No">No</label>
 						</fieldset>
 					</div>
@@ -390,9 +390,9 @@
 					<strong>${quest22}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest22}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_22" id="Choice_22_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_22" id="Choice_22_Yes" value="failed" data-theme="c" />
 							<label for="Choice_22_Yes">Yes</label>
-							<input type="radio" name="Choice_22" id="Choice_22_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_22" id="Choice_22_No" value="passed" data-theme="c" />
 							<label for="Choice_22_No">No</label>
 						</fieldset>
 					</div>
@@ -402,9 +402,9 @@
 					<strong>${quest23}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest23}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_23" id="Choice_23_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_23" id="Choice_23_Yes" value="passed" data-theme="c" />
 							<label for="Choice_23_Yes">Yes</label>
-							<input type="radio" name="Choice_23" id="Choice_23_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_23" id="Choice_23_No" value="failed" data-theme="c" />
 							<label for="Choice_23_No">No</label>
 						</fieldset>
 					</div>
@@ -465,9 +465,9 @@
 					<strong>${quest1_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest1_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_1_sp" id="Choice_1_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_1_sp" id="Choice_1_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_1_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_1_sp" id="Choice_1_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_1_sp" id="Choice_1_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_1_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -477,9 +477,9 @@
 					<strong>${quest2_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest2_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_2_sp" id="Choice_2_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_2_sp" id="Choice_2_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_2_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_2_sp" id="Choice_2_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_2_sp" id="Choice_2_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_2_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -489,9 +489,9 @@
 					<strong>${quest3_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest3_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_3_sp" id="Choice_3_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_3_sp" id="Choice_3_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_3_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_3_sp" id="Choice_3_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_3_sp" id="Choice_3_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_3_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -501,9 +501,9 @@
 					<strong>${quest4_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest4_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_4_sp" id="Choice_4_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_4_sp" id="Choice_4_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_4_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_4_sp" id="Choice_4_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_4_sp" id="Choice_4_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_4_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -513,9 +513,9 @@
 					<strong>${quest5_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest5_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_5_sp" id="Choice_5_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_5_sp" id="Choice_5_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_5_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_5_sp" id="Choice_5_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_5_sp" id="Choice_5_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_5_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -541,9 +541,9 @@
 					<strong>${quest6_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest6_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_6_sp" id="Choice_6_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_6_sp" id="Choice_6_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_6_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_6_sp" id="Choice_6_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_6_sp" id="Choice_6_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_6_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -553,9 +553,9 @@
 					<strong>${quest7_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest7_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_7_sp" id="Choice_7_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_7_sp" id="Choice_7_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_7_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_7_sp" id="Choice_7_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_7_sp" id="Choice_7_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_7_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -565,9 +565,9 @@
 					<strong>${quest8_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest8_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_8_sp" id="Choice_8_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_8_sp" id="Choice_8_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_8_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_8_sp" id="Choice_8_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_8_sp" id="Choice_8_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_8_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -577,9 +577,9 @@
 					<strong>${quest9_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest9_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_9_sp" id="Choice_9_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_9_sp" id="Choice_9_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_9_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_9_sp" id="Choice_9_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_9_sp" id="Choice_9_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_9_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -589,9 +589,9 @@
 					<strong>${quest10_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest10_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_10_sp" id="Choice_10_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_10_sp" id="Choice_10_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_10_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_10_sp" id="Choice_10_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_10_sp" id="Choice_10_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_10_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -618,9 +618,9 @@
 					<strong>${quest11_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest11_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_11_sp" id="Choice_11_sp_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_11_sp" id="Choice_11_sp_Yes" value="failed" data-theme="c" />
 							<label for="Choice_11_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_11_sp" id="Choice_11_sp_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_11_sp" id="Choice_11_sp_No" value="passed" data-theme="c" />
 							<label for="Choice_11_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -630,9 +630,9 @@
 					<strong>${quest12_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest12_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_12_sp" id="Choice_12_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_12_sp" id="Choice_12_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_12_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_12_sp" id="Choice_12_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_12_sp" id="Choice_12_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_12_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -642,9 +642,9 @@
 					<strong>${quest13_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest13_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_13_sp" id="Choice_13_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_13_sp" id="Choice_13_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_13_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_13_sp" id="Choice_13_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_13_sp" id="Choice_13_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_13_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -654,9 +654,9 @@
 					<strong>${quest14_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest14_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_14_sp" id="Choice_14_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_14_sp" id="Choice_14_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_14_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_14_sp" id="Choice_14_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_14_sp" id="Choice_14_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_14_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -666,9 +666,9 @@
 					<strong>${quest15_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest15_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_15_sp" id="Choice_15_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_15_sp" id="Choice_15_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_15_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_15_sp" id="Choice_15_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_15_sp" id="Choice_15_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_15_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -695,9 +695,9 @@
 					<strong>${quest16_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest16_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_16_sp" id="Choice_16_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_16_sp" id="Choice_16_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_16_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_16_sp" id="Choice_16_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_16_sp" id="Choice_16_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_16_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -707,9 +707,9 @@
 					<strong>${quest17_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest17_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_17_sp" id="Choice_17_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_17_sp" id="Choice_17_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_17_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_17_sp" id="Choice_17_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_17_sp" id="Choice_17_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_17_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -719,9 +719,9 @@
 					<strong>${quest18_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest18_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_18_sp" id="Choice_18_sp_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_18_sp" id="Choice_18_sp_Yes" value="failed" data-theme="c" />
 							<label for="Choice_18_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_18_sp" id="Choice_18_sp_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_18_sp" id="Choice_18_sp_No" value="passed" data-theme="c" />
 							<label for="Choice_18_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -731,9 +731,9 @@
 					<strong>${quest19_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest19_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_19_sp" id="Choice_19_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_19_sp" id="Choice_19_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_19_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_19_sp" id="Choice_19_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_19_sp" id="Choice_19_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_19_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -743,9 +743,9 @@
 					<strong>${quest20_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest20_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_20_sp" id="Choice_20_sp_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_20_sp" id="Choice_20_sp_Yes" value="failed" data-theme="c" />
 							<label for="Choice_20_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_20_sp" id="Choice_20_sp_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_20_sp" id="Choice_20_sp_No" value="passed" data-theme="c" />
 							<label for="Choice_20_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -772,9 +772,9 @@
 					<strong>${quest21_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest21_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_21_sp" id="Choice_21_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_21_sp" id="Choice_21_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_21_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_21_sp" id="Choice_21_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_21_sp" id="Choice_21_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_21_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -784,9 +784,9 @@
 					<strong>${quest22_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest22_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_22_sp" id="Choice_22_sp_Yes" value="1" data-theme="c" />
+							<input type="radio" name="Choice_22_sp" id="Choice_22_sp_Yes" value="failed" data-theme="c" />
 							<label for="Choice_22_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_22_sp" id="Choice_22_sp_No" value="0" data-theme="c" />
+							<input type="radio" name="Choice_22_sp" id="Choice_22_sp_No" value="passed" data-theme="c" />
 							<label for="Choice_22_sp_No">No</label>
 						</fieldset>
 					</div>
@@ -796,9 +796,9 @@
 					<strong>${quest23_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest23_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
 						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_23_sp" id="Choice_23_sp_Yes" value="0" data-theme="c" />
+							<input type="radio" name="Choice_23_sp" id="Choice_23_sp_Yes" value="passed" data-theme="c" />
 							<label for="Choice_23_sp_Yes">S&iacute;</label>
-							<input type="radio" name="Choice_23_sp" id="Choice_23_sp_No" value="1" data-theme="c" />
+							<input type="radio" name="Choice_23_sp" id="Choice_23_sp_No" value="failed" data-theme="c" />
 							<label for="Choice_23_sp_No">No</label>
 						</fieldset>
 					</div>

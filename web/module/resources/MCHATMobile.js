@@ -152,18 +152,28 @@ function calculateScore() {
 		if (english) {
 			$("input[name=Choice_" + i + "]:checked").each(function() {
 				valueFound = true;
-				var value = parseInt($(this).val());
-				MchatTotalItemsFailed += value;
-				if(critical.indexOf(i) > -1 && value == 1) {
+				var value = $(this).val();
+				if(value == "failed"){
+					MchatTotalItemsFailed++;
+				}				
+				//var value = parseInt($(this).val());
+				//MchatTotalItemsFailed += value;
+				//if(critical.indexOf(i) > -1 && value == 1) {
+				if(critical.indexOf(i) > -1 && value == "failed") {
 					MchatCriticalItemsFailed++;
 				}
 			});
 		} else {
 			$("input[name=Choice_" + i + "_sp]:checked").each(function() {
 				valueFound = true;
-				var value = parseInt($(this).val());
-				MchatTotalItemsFailed += value;
-				if(critical.indexOf(i) > -1 && value == 1) {
+				var value = $(this).val();
+				if(value == "failed"){
+					MchatTotalItemsFailed++;
+				}
+				//var value = parseInt($(this).val());
+				//MchatTotalItemsFailed += value;
+				//if(critical.indexOf(i) > -1 && value == 1) {
+				if(critical.indexOf(i) > -1 && value == "failed") {
 					MchatCriticalItemsFailed++;
 				}
 			});
@@ -176,7 +186,7 @@ function calculateScore() {
 		$("#MchatCriticalItemsFailed").val(MchatCriticalItemsFailed);
 	}
 	
-	//alert("Total Items Failed: " + MchatTotalItemsFailed + "\nTotal Critical Items Failed: " + MchatCriticalItemsFailed);
+	alert("Total Items Failed: " + MchatTotalItemsFailed + "\nTotal Critical Items Failed: " + MchatCriticalItemsFailed);
 }
 
 function areAllQuestionsAnswered() {
