@@ -21,10 +21,22 @@
 
 	<div data-role="content">
 	   <form id="complete_form" method="POST" data-ajax="false">
-	       <div align="center"><p>There are no more forms to complete for ${patient.givenName}&nbsp;${patient.familyName}.  Please click "Finish" to return to the patient list.</p></div>
-	       <br/>
-	       <div align="center"><p>No hay m&#225;s formas para completar para ${patient.givenName}&nbsp;${patient.familyName}. Haga clic en "Finish" para volver a la lista de pacientes.</p></div>
-	       <br/>
+	       <c:choose>
+	       <c:when test="${empty (notifications)}">
+		       <div align="center"><p>There are no more forms to complete for ${patient.givenName}&nbsp;${patient.familyName}.  Please click "Finish" to return to the patient list.</p></div>
+		       <br/>
+		       <div align="center"><p>No hay m&#225;s formas para completar para ${patient.givenName}&nbsp;${patient.familyName}. Haga clic en "Finish" para volver a la lista de pacientes.</p></div>
+		       <br/>
+	       </c:when>
+	       <c:otherwise>
+	           <c:forEach items="${notifications}" var="notification" varStatus="status">
+	               <c:set var="counter" value="${status.count}"/>
+                   <div align="left"><p>${counter}. ${notification}</p></div>
+                   <br/>
+               <br/>
+               </c:forEach>
+	       </c:otherwise>
+	       </c:choose>
 	       <div align="center">
 	           <a data-theme="b" data-role="button" onclick="finish()" rel="external" data-ajax="false" style="width: 100px;">Finish</a>
 	       </div>

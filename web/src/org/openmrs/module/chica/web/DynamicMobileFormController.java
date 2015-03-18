@@ -100,7 +100,8 @@ public class DynamicMobileFormController extends SimpleFormController {
 		Integer patientId = Integer.parseInt(patientIdStr);
 		Integer formId = Integer.parseInt(request.getParameter("formId"));
 		Integer formInstanceId = Integer.parseInt(request.getParameter("formInstanceId"));
-		Integer locationId = Integer.parseInt(request.getParameter("locationId"));
+		String locationIdStr = request.getParameter("locationId");
+		Integer locationId = Integer.parseInt(locationIdStr);
 		Integer locationTagId = Integer.parseInt(request.getParameter("locationTagId"));
 		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
 		Integer sessionId = Integer.parseInt(request.getParameter("sessionId"));
@@ -122,6 +123,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("patientId", patientIdStr);
+		map.put("locationId", locationIdStr);
 		String language = request.getParameter("language");
 		map.put("language", language);
 		

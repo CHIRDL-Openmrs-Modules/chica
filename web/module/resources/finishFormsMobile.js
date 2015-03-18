@@ -12,7 +12,7 @@ function startSubmitTimer() {
     });
 
     timer.set({
-        time: 300000,
+        time: 600000,
         autostart: true
     });
 }
