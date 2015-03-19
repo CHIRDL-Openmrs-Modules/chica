@@ -97,7 +97,10 @@ public class MobileFormsCompletionController extends SimpleFormController {
 			}
 			
 			for ( Result subResult : result) {
-				notifications.add(subResult.toString());
+				String value = subResult.toString().trim();
+				if (value.length() > 0) {
+					notifications.add(value);
+				}
 			}
 		}
 		
