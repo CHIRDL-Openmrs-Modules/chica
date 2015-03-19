@@ -28,6 +28,9 @@ public class MobileFormsCompletionController extends SimpleFormController {
 	private static final String PARAM_LOCATION_ID = "locationId";
 	private static final String PARAM_PATIENT = "patient";
 	private static final String PARAM_NOTIFICATIONS = "notifications";
+	private static final String PARAM_ENCOUNTER_ID = "encounterId";
+	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
+	private static final String PARAM_SESSION_ID = "sessionId";
 
 	/*
 	 * (non-Javadoc)
@@ -48,14 +51,29 @@ public class MobileFormsCompletionController extends SimpleFormController {
 	}
 	
 	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception {
+	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
 		String locationIdStr = request.getParameter(PARAM_LOCATION_ID);
+		String encounterIdStr = request.getParameter(PARAM_ENCOUNTER_ID);
+		String locationTagIdStr = request.getParameter(PARAM_LOCATION_TAG_ID);
+		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
 		Integer locationId = Integer.parseInt(locationIdStr);
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
+		
+		Map<String,Object> parameters = new HashMap<String,Object>();
+		parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
+		// The LocationAttributeLookup rule requires a location ID through a FormInstance object.
+		FormInstance formInstance = new FormInstance(locationId, null, null);
+		parameters.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, formInstance);
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, Integer.parseInt(encounterIdStr));
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, Integer.parseInt(locationTagIdStr));
+		parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, Integer.parseInt(sessionIdStr));
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put(PARAM_PATIENT, patient);
-		map.put(PARAM_NOTIFICATIONS, runRules(patient, locationId));
+		map.put(PARAM_NOTIFICATIONS, runRules(patient, parameters));
+		
 		return map;
 	}
 	
@@ -63,10 +81,10 @@ public class MobileFormsCompletionController extends SimpleFormController {
 	 * Runs all rules with the rule type of Staff_notification and adds the result to a list.
 	 * 
 	 * @param patient The patient used to run the rules.
-	 * @param locationId The clinic location of the patient.
+	 * @param parameters Map of parameters that will be passed to the executing rules.
 	 * @return List of string results of the rules that are run.
 	 */
-	private List<String> runRules(Patient patient, Integer locationId) {
+	private List<String> runRules(Patient patient, Map<String,Object> parameters) {
 		List<String> notifications = new ArrayList<String>();
 		DssService dssService = Context.getService(DssService.class);
 		Rule rule = new Rule();
@@ -76,12 +94,6 @@ public class MobileFormsCompletionController extends SimpleFormController {
 			return notifications;
 		}
 		
-		Map<String,Object> parameters = new HashMap<String,Object>();
-		parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
-		
-		// The LocationAttributeLookup rule requires a location ID through a FormInstance object.
-		FormInstance formInstance = new FormInstance(locationId, null, null);
-		parameters.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, formInstance);
 		for (Rule foundRule : rules) {
 			foundRule.setParameters(parameters);
 		}
