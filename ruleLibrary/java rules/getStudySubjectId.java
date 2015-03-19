@@ -86,6 +86,6 @@ public class getStudySubjectId implements Rule {
 			return Result.emptyResult();
 		}
 		
-		return new Result(subject.getSubjectId());
+		return new Result(subject.getSubjectId().toString());
 	}
 }
