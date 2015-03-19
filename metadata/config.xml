@@ -355,6 +355,7 @@
         high_bp.hbm.xml
         chica_hl7_export_map.hbm.xml
         chica_hl7_export_status.hbm.xml
+        study_subject.hbm.xml
     </mappingFiles>
     
    
