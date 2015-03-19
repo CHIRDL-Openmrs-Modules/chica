@@ -94,8 +94,13 @@ public class MobileFormsCompletionController extends SimpleFormController {
 			return notifications;
 		}
 		
-		for (Rule foundRule : rules) {
-			foundRule.setParameters(parameters);
+		for (int i = rules.size() - 1; i >= 0; i--) {
+			Rule foundRule = rules.get(i);
+			if (foundRule.checkAgeRestrictions(patient)) {
+				foundRule.setParameters(parameters);
+			} else {
+				rules.remove(i);
+			}
 		}
 		
 		List<Result> results = dssService.runRules(patient, rules);
