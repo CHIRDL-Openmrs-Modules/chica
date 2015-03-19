@@ -57,7 +57,7 @@ public class getStudySubjectId implements Rule {
 	 * @see org.openmrs.logic.rule.Rule#getDatatype(String)
 	 */
 	public Datatype getDefaultDatatype() {
-		return Datatype.CODED;
+		return Datatype.TEXT;
 	}
 	
 	/**
