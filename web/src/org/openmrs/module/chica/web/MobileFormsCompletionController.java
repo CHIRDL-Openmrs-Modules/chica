@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.chica.TabletNotification;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.hibernateBeans.Rule;
@@ -84,8 +85,8 @@ public class MobileFormsCompletionController extends SimpleFormController {
 	 * @param parameters Map of parameters that will be passed to the executing rules.
 	 * @return List of string results of the rules that are run.
 	 */
-	private List<String> runRules(Patient patient, Map<String,Object> parameters) {
-		List<String> notifications = new ArrayList<String>();
+	private List<TabletNotification> runRules(Patient patient, Map<String,Object> parameters) {
+		List<TabletNotification> notifications = new ArrayList<TabletNotification>();
 		DssService dssService = Context.getService(DssService.class);
 		Rule rule = new Rule();
 		rule.setRuleType(STAFF_NOTIFICATION);
@@ -113,11 +114,23 @@ public class MobileFormsCompletionController extends SimpleFormController {
 				continue;
 			}
 			
-			for ( Result subResult : result) {
+			TabletNotification notification = new TabletNotification();
+			boolean foundResults = false;
+			for (int i = 0; i < result.size(); i++) {
+				Result subResult = result.get(i);
 				String value = subResult.toString().trim();
 				if (value.length() > 0) {
-					notifications.add(value);
+					foundResults = true;
+					if (i == 0) {
+						notification.setStatement(value);
+					} else {
+						notification.addSubStatement(value);
+					}
 				}
+			}
+			
+			if (foundResults) {
+				notifications.add(notification);
 			}
 		}
 		

@@ -29,13 +29,18 @@
 	       <c:otherwise>
 	           <div align="left"><p>There are some additional items to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
                <br/>
-               <br/>
-	           <c:forEach items="${notifications}" var="notification" varStatus="status">
-	               <c:set var="counter" value="${status.count}"/>
-                   <div align="left"><p>${counter}. ${notification}</p></div>
-                   <br/>
-               <br/>
-               </c:forEach>
+               <ol type="1">
+		           <c:forEach items="${notifications}" var="notification">
+	                   <li><div align="left" style="width: 100%;">${notification.statement}</div></li>
+	                   <ol type="a">
+		                   <c:forEach items="${notification.subStatements}" var="subStatement" varStatus="status">
+		                        <li><div style="margin-left: 20px; width: 100%;">${subStatement}</div></li>
+		                   </c:forEach>
+	                   </ol>
+	                   <br/>
+	               <br/>
+	               </c:forEach>
+               </ol>
 	       </c:otherwise>
 	       </c:choose>
 	       <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
