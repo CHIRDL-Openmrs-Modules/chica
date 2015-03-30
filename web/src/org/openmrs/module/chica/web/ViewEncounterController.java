@@ -153,6 +153,8 @@ public class ViewEncounterController extends SimpleFormController {
 					} else if (formName.equals("PHQ9_JIT_MOBILE")) {
 						leftImageStylesheet = "PHQ9_JIT_MOBILE.xsl";
 						displayScanForms = true;
+					} else if (formName.equals("MCHAT")) {
+						leftImageStylesheet = "mchat.xsl";
 					}
 				} else {
 					ArrayList<String> leftNames = new ArrayList<String>();
