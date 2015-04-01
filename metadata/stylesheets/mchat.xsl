@@ -144,6 +144,10 @@
                         border-spacing: 0px 1px;
                         margin-top: -10px;
                     }
+                    
+                    .textBold {
+                        font-weight: bold;
+                    }
                 </style>
             </head>
             <body>
@@ -170,6 +174,7 @@
                             <td class="question"></td>
                             <td class="answerLabel">Yes</td>
                             <td class="answerLabel">No</td>
+                            <td></td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumber">1.</td>
@@ -194,11 +199,16 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_1']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
-                            <td class="questionNumberBold">2.</td>
-                            <td class="questionBold">Does your child take an interest in other children?</td>
-                            <td class="answerLabelBold">
+                            <td class="questionNumberBold textBold">2.</td>
+                            <td class="questionBold textBold">Does your child take an interest in other children?</td>
+                            <td class="answerLabelBold textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_2']/Value = 'passed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -208,7 +218,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
-                            <td class="answerLabelBold">
+                            <td class="answerLabelBold textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_2']/Value = 'failed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -217,6 +227,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_2']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                         <tr class="questionContainer">
@@ -242,6 +257,11 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_3']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumberBold">4.</td>
@@ -265,6 +285,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_4']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                         <tr class="questionContainer">
@@ -290,6 +315,11 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_5']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumberBold">6.</td>
@@ -314,11 +344,16 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_6']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
-                            <td class="questionNumber">7.</td>
-                            <td class="question">Does your child ever use his/her index finger to point, to indicate interest in something?</td>
-                            <td class="answerLabel">
+                            <td class="questionNumber textBold">7.</td>
+                            <td class="question textBold">Does your child ever use his/her index finger to point, to indicate interest in something?</td>
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_7']/Value = 'passed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -328,7 +363,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
-                            <td class="answerLabel">
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_7']/Value = 'failed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -337,6 +372,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_7']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                         <tr class="questionContainer">
@@ -362,11 +402,16 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_8']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
-                            <td class="questionNumber">9.</td>
-                            <td class="question">Does your child ever bring objects over to you (parent) to show you something?</td>
-                            <td class="answerLabel">
+                            <td class="questionNumber textBold">9.</td>
+                            <td class="question textBold">Does your child ever bring objects over to you (parent) to show you something?</td>
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_9']/Value = 'passed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -376,7 +421,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
-                            <td class="answerLabel">
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_9']/Value = 'failed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -386,12 +431,18 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_9']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="emptyQuestionContainer">
                             <td class="emptyQuestionNumber"></td>
                             <td class="emptyQuestion"></td>
                             <td class="emptyAnswerLabel"></td>
                             <td class="emptyAnswerLabel"></td>
+                            <td></td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumberBold">10.</td>
@@ -415,6 +466,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_10']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                         <tr class="questionContainer">
@@ -440,6 +496,11 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_11']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumberBold">12.</td>
@@ -464,11 +525,16 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_12']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
-                            <td class="questionNumber">13.</td>
-                            <td class="question">Does your child imitate you? (e.g. you make a face-will your child imitate it?)</td>
-                            <td class="answerLabel">
+                            <td class="questionNumber textBold">13.</td>
+                            <td class="question textBold">Does your child imitate you? (e.g. you make a face-will your child imitate it?)</td>
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_13']/Value = 'passed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -478,7 +544,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
-                            <td class="answerLabel">
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_13']/Value = 'failed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -488,17 +554,23 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_13']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="emptyQuestionContainer">
                             <td class="emptyQuestionNumber"></td>
                             <td class="emptyQuestion"></td>
                             <td class="emptyAnswerLabel"></td>
                             <td class="emptyAnswerLabel"></td>
+                            <td></td>
                         </tr>
                         <tr class="questionContainer">
-                            <td class="questionNumberBold">14.</td>
-                            <td class="questionBold">Does your child respond to his/her name when you call?</td>
-                            <td class="answerLabelBold">
+                            <td class="questionNumberBold textBold">14.</td>
+                            <td class="questionBold textBold">Does your child respond to his/her name when you call?</td>
+                            <td class="answerLabelBold textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_14']/Value = 'passed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -508,7 +580,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
-                            <td class="answerLabelBold">
+                            <td class="answerLabelBold textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_14']/Value = 'failed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -518,11 +590,16 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_14']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
-                            <td class="questionNumber">15.</td>
-                            <td class="question">If you point at a toy across the room, does your child look at it?</td>
-                            <td class="answerLabel">
+                            <td class="questionNumber textBold">15.</td>
+                            <td class="question textBold">If you point at a toy across the room, does your child look at it?</td>
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_15']/Value = 'passed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -532,7 +609,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
-                            <td class="answerLabel">
+                            <td class="answerLabel textBold">
                                 <xsl:choose>
                                     <xsl:when test="Records/Record/Field[@id = 'Choice_15']/Value = 'failed'">
                                         <input type="radio" disabled="disabled" checked="checked"/>
@@ -541,6 +618,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_15']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                         <tr class="questionContainer">
@@ -566,6 +648,11 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_16']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumber">17.</td>
@@ -589,6 +676,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_17']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                         <tr class="questionContainer">
@@ -614,6 +706,11 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_18']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumber">19.</td>
@@ -638,12 +735,18 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_19']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="emptyQuestionContainer">
                             <td class="emptyQuestionNumber"></td>
                             <td class="emptyQuestion"></td>
                             <td class="emptyAnswerLabel"></td>
                             <td class="emptyAnswerLabel"></td>
+                            <td></td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumberBold">20.</td>
@@ -667,6 +770,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_20']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                         <tr class="questionContainer">
@@ -692,6 +800,11 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_21']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumberBold">22.</td>
@@ -716,12 +829,18 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_22']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
+                            </td>
                         </tr>
                         <tr class="emptyQuestionContainer">
                             <td class="emptyQuestionNumber"></td>
                             <td class="emptyQuestion"></td>
                             <td class="emptyAnswerLabel"></td>
                             <td class="emptyAnswerLabel"></td>
+                            <td></td>
                         </tr>
                         <tr class="questionContainer">
                             <td class="questionNumber">23.</td>
@@ -745,6 +864,11 @@
                                         <input type="radio" disabled="disabled"/>
                                     </xsl:otherwise>
                                 </xsl:choose>
+                            </td>
+                            <td>
+                                <xsl:if test="Records/Record/Field[@id = 'Choice_23']/Value = 'failed'">
+                                    <xsl:text>*</xsl:text>
+                                </xsl:if>
                             </td>
                         </tr>
                     </table>
