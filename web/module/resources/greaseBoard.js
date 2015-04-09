@@ -52,8 +52,6 @@ $(function() {
     
     $("#forcePrintDialog").dialog({
         open: function() { 
-        	//$(this).dialog("option", "height", $(window).height() * 0.90);
-        	//$(this).dialog("option", "width", $(window).width() * 0.90);
             forcePrint_removeForms();
             forcePrint_loadForms();
             $(".ui-dialog").addClass("ui-dialog-shadow");
@@ -685,9 +683,11 @@ function parsePatientList(responseXML) {
             	rowColor = "tableRowManualCheckin";
             }
             
+            var firstName = $(this).find("firstName").text();
+            var lastName = $(this).find("lastName").text();
         	content += '<tr style="text-align: left">';
-        	content += '<td class="ln ' + rowColor + '">' + $(this).find("lastName").text() + '</td>';
-        	content += '<td class="fn ' + rowColor + '">' + $(this).find("firstName").text() + '</td>';
+        	content += '<td class="ln ' + rowColor + '">' + lastName + '</td>';
+        	content += '<td class="fn ' + rowColor + '">' + firstName + '</td>';
         	content += '<td class="mrn ' + rowColor + '">' + $(this).find("mrn").text() + '</td>';
         	content += '<td class="dob ' + rowColor + '">' + $(this).find("dob").text() + '</td>';
         	content += '<td class="sex ' + rowColor + '">' + $(this).find("sex").text() + '</td>';
@@ -723,6 +723,7 @@ function parsePatientList(responseXML) {
 								'<input type="hidden" value="' + $(this).find("sessionId").text() + '" name="greaseBoardSessionId"/>' +
 								'<input type="hidden" value="' + $(this).find("locationId").text() + '" name="greaseBoardLocationId"/>' +
 								'<input type="hidden" value="' + $(this).find("locationTagId").text() + '" name="greaseBoardLocationTagId"/>' +
+								'<input type="hidden" value="' + firstName + " " + lastName + '" name="greaseBoardPatientName"/>' +
 							'</form>' +
 						'</td>';
             content = content + '</tr>';
@@ -831,7 +832,10 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#sessionId").val("");
         	$("#locationId").val("");
         	$("#locationTagId").val("");
-        	$("#mrn").val($("#printHandoutsMrnLookup").val());
+        	$("#patientName").val("");
+        	var mrn = $("#printHandoutsMrnLookup").val();
+        	$("#mrn").val(mrn);
+        	$("#patientForm").html("<p>Please choose a form for #" + mrn + ".</p>");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#printHandoutsMRNDialog").dialog("close");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
@@ -1107,11 +1111,14 @@ function confirmation(optionsSelect, formName) {
 		var sessionId = formName.find("input[name=greaseBoardSessionId]").val();
 		var locationId = formName.find("input[name=greaseBoardLocationId]").val();
 		var locationTagId = formName.find("input[name=greaseBoardLocationTagId]").val();
+		var patientName = formName.find("input[name=greaseBoardPatientName]").val();
 		$("#patientId").val(patientId);
 		$("#sessionId").val(sessionId);
 		$("#locationId").val(locationId);
 		$("#locationTagId").val(locationTagId);
+		$("#patientName").val(patientName);
 		$("#forcePrintDialog").dialog("open");
+		$("#patientForm").html("<p>Please choose a form for " + patientName + ".</p>");
         event.preventDefault();
 	} else if(optionsSelect[selectedIndex].text == 'ADHD WU'){
         $("#adhdWorkupDialog").data("form", formName).dialog("open");

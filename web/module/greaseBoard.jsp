@@ -277,6 +277,7 @@ label {
                   <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
               </div>
               <div class="force-print-forms-container">
+                  <div id="patientForm">Please choose a form for ${patientName}.</div>
                   <fieldset class="force-print-fieldset">
                       <select class="force-print-forms"></select>
                   </fieldset>
@@ -296,6 +297,7 @@ label {
                   <input type="hidden" id="locationId" />
                   <input type="hidden" id="locationTagId" />
                   <input type="hidden" id="mrn" />
+                  <input type="hidden" id="patientName" />
               </form>
          </div>
      </div>

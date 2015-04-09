@@ -33,6 +33,7 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
+import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
@@ -49,6 +50,7 @@ import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.patient.impl.LuhnIdentifierValidator;
@@ -164,17 +166,15 @@ public class ManualCheckin
 		//Sort provider by lastname,firstname, and remove duplicates
 		//Ensure proper case.
 		UserService userService = Context.getUserService();
-		List<User> doctors = userService.getUsersByRole(userService
-				.getRole("Provider"));
+		Role role = userService.getRole("Provider");
+		List<User> doctors = Context.getService(ChirdlUtilBackportsService.class).getUsersByRole(role, false);
 		
 		List<User> doctorList = new ArrayList<User>();
 		
-		Comparator comparator = new Comparator(){
+		Comparator<User> comparator = new Comparator<User>(){
 			 
-            public int compare(Object o1, Object o2) 
+            public int compare(User p1, User p2) 
             {
-               User p1 = (User) o1;
-               User p2 = (User) o2;
                PersonName pn1 = new PersonName();
                PersonName pn2 = new PersonName();
                if (p1 != null){
@@ -557,7 +557,6 @@ public class ManualCheckin
 		
 		ConceptService conceptService = Context.getConceptService();
 		ConceptSource conceptSource = conceptService.getConceptSourceByName("Wishard Race Codes");
-		List<ConceptMap> conceptMaps = conceptService.getConceptsByConceptSource(conceptSource);
 		
 		String generalPatientRaceCategory = null;
 		

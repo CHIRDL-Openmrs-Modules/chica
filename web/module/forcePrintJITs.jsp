@@ -13,7 +13,7 @@
 $(document).ready(function () {
     $(".force-print-form-object").height($(window).height() - 220);
     $(window).resize(function() {
-        // Update the iframe height
+        // Update the object height
         $(".force-print-form-object").height($(window).height() - 220);
         // Update the height of the select
         $(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":($(window).height() * 0.60) + "px"});
@@ -36,6 +36,7 @@ $(document).ready(function () {
 	             <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
 	         </div>
 	         <div class="force-print-forms-container">
+	             <p>Please choose a form for ${patientName}.</p>
 	             <fieldset class="force-print-fieldset">
 	                 <select class="force-print-forms"></select>
 	             </fieldset>
