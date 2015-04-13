@@ -85,9 +85,6 @@ function forcePrint_parseAvailableForms(responseXML) {
     }
     
     $(".force-print-forms").append(options.join("")).selectmenu({
-		  open: function( event, ui ) {
-			  $(".force-print-form-container").hide();
-		  },
 		  select: function( event, ui ) {
 			  var formId = $(".force-print-forms").val();
 			  if (formId == "selectform") {
@@ -97,6 +94,7 @@ function forcePrint_parseAvailableForms(responseXML) {
 			  }
 		  }
 		}).selectmenu("menuWidget").css({"max-height":($(window).height() * 0.60) + "px"});
+    $(".force-print-forms").css({"max-width":"325px"});
 
   	$(".force-print-forms-loading").hide();
   	$(".force-print-forms-container").show();

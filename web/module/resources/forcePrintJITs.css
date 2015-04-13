@@ -29,7 +29,12 @@
     text-align: center;
     margin: 0 auto;
     color: #000;
-    height: 70px;
+    height: 98%;
+    width: 350px;
+    background: #cc9966;
+    float: left;
+    border-radius: 7px;
+    padding-top: 10px;
 }
 
 .force-print-form-loading {
@@ -52,7 +57,11 @@
 }
 
 .force-print-forms {
-	width: 400px;
+	width: 325px;
+}
+
+.force-print-forms option {
+    width: 200px !important;   
 }
 
 .force-print-body {
@@ -62,9 +71,9 @@
 
 .force-print-form-object {
     width:100%;
-    margin: 0;
-    padding: 0;
+    height: 100%;
     background-color:#F5FBEF;
+    float: left;
 }
 
 .overflow {
@@ -84,4 +93,19 @@ a.force-print-icon-button {
 
 .force-print-blue-text {
     color: blue;
+}
+
+.force-print-patient-name {
+	color: #FFFFFF;
+}
+
+.force-print-form-container {
+	height: 99%;
+	width: 550px;
+	float: left;
+	padding-left: 10px;
+}
+
+.ui-selectmenu-menu li { 
+	max-width: 290px;
 }

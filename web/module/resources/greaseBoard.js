@@ -74,9 +74,9 @@ $(function() {
         },
         autoOpen: false,
         modal: true,
-        minWidth: 450,
         minHeight: 350,
-        width: $(window).width() * 0.90,
+        minWidth: 950,
+        width: 950,
         height: $(window).height() * 0.90,
         show: {
           effect: "fade",
@@ -835,7 +835,7 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#patientName").val("");
         	var mrn = $("#printHandoutsMrnLookup").val();
         	$("#mrn").val(mrn);
-        	$("#patientForm").html("<p>Please choose a form for #" + mrn + ".</p>");
+        	$(".force-print-patient-name").html("<p>Please choose a form for #" + mrn + ".</p>");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#printHandoutsMRNDialog").dialog("close");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
@@ -1118,7 +1118,7 @@ function confirmation(optionsSelect, formName) {
 		$("#locationTagId").val(locationTagId);
 		$("#patientName").val(patientName);
 		$("#forcePrintDialog").dialog("open");
-		$("#patientForm").html("<p>Please choose a form for " + patientName + ".</p>");
+		$(".force-print-patient-name").html("<p>Please choose a form for " + patientName + ".</p>");
         event.preventDefault();
 	} else if(optionsSelect[selectedIndex].text == 'ADHD WU'){
         $("#adhdWorkupDialog").data("form", formName).dialog("open");
@@ -1348,9 +1348,6 @@ function closePagerDialog() {
 
 function updateForcePrintDimensions() {
 	var divHeight = $(".greaseBoard-force-print-content").height();
-    var formSelectionHeight = $(".force-print-forms-container").height();
-    // Update the form height
-    $(".force-print-form-object").height($(".greaseBoard-force-print-content").height() - formSelectionHeight);
     // Update the height of the select
     $(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
 }

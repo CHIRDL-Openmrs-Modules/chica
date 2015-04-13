@@ -14,7 +14,7 @@ function parseAvailableJITs(responseXML) {
     	var tabs = null;
 		tabs = $("#tabs");
     	
-        var tabList = "<ul>";
+        var tabList = '<ul id="tabList">';
         var divList = "";
         var count = 0;
         var formInstance = "";
@@ -28,7 +28,7 @@ function parseAvailableJITs(responseXML) {
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
         	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
-        	tabList += '<li><a href="#tabs-' + count + '">' + formName + '</a></li>';
+        	tabList += '<li><a href="#tabs-' + count + '" title="' + formName + '">' + formName + '</a></li>';
         	divList += '<div id="tabs-' + count + '" style="float:left;"><object type="application/pdf" class="recommended-forms" data="' + url + action + 
             	'"><span style="color: #000;font-size:14px;">It appears your Web browser is not configured to display PDF files. ' +
             	'<a href="http://get.adobe.com/reader/" target="_blank"><font style="color: #0000FF;text-decoration: none; border-bottom: 1px solid #0000FF;">Click here to download the Adobe PDF Reader.</font></a>  ' + 
@@ -287,8 +287,6 @@ $(function() {
     			forcePrint_loadForms();
     			loadedOptionalHandouts = true;
     		}
-    		var formSelectionHeight = $(".force-print-forms-container").height();
-    		$(".force-print-form-object").height($(".pws-force-print-content").height() - formSelectionHeight);
     	},
     	beforeClose: function(event, ui) { 
         	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
@@ -302,13 +300,13 @@ $(function() {
         },
     	close: function() { 
     		$(".force-print-form-container").hide();
-    		$('.force-print-forms').val("selectform").selectmenu("refresh");
+    		$(".force-print-forms").val("selectForm").selectmenu("refresh");
     	},
         autoOpen: false,
         modal: true,
         minHeight: 350,
-        minWidth: 450,
-        width: $(window).width() * 0.90,
+        minWidth: 950,
+        width: 950,
         height: $(window).height() * 0.90,
         show: {
           effect: "fade",
@@ -320,9 +318,6 @@ $(function() {
         },
         resize: function(e,ui) {
         	var divHeight = $(".pws-force-print-content").height();
-        	var formSelectionHeight = $(".force-print-forms-container").height();
-        	// Update the form height
-        	$(".force-print-form-object").height($(".pws-force-print-content").height() - formSelectionHeight);
     		// Update the height of the select
     		$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
         },
@@ -336,5 +331,6 @@ $(function() {
         ]
     });
 	
+	$("#tabList").tooltip();
 	$("#formTabDialog").dialog("open");
   });

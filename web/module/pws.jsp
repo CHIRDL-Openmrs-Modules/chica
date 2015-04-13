@@ -1170,7 +1170,7 @@
 			                 <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
 			             </div>
 			             <div class="force-print-forms-container">
-			                 <div id="patientForm">Please choose a form for ${PatientName}.</div>
+			                 <div class="force-print-patient-name">Please choose a form for ${PatientName}.</div>
 			                 <fieldset class="force-print-fieldset">
 			                     <select class="force-print-forms"></select>
 			                 </fieldset>
