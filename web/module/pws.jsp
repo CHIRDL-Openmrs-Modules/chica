@@ -1144,7 +1144,7 @@
                     </div>
                 </div>
                 <div id="formTabDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div id="formTabDialogContainer">
+                    <div id="formTabDialogContainer" style="overflow-x: hidden;overflow-y: scroll;">
 	                    <div id="formLoading">
 	                       <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
 	                    </div>

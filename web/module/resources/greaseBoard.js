@@ -86,9 +86,10 @@ $(function() {
           effect: "fade",
           duration: 500
         },
-        resize: function(e,ui) {
-            updateForcePrintDimensions();
-        },
+//        resize: function(e,ui) {
+//            updateForcePrintDimensions();
+//        },
+        resizable: false,
         buttons: [
           {
 	          text:"Close",

@@ -52,6 +52,7 @@ function parseAvailableJITs(responseXML) {
             $('#tabs').show();
             var divHeight = $("#formTabDialogContainer").height();
             $(".recommended-forms").css({"height":divHeight - 45});
+            $("#formTabDialogContainer").css("background", "#cc9966");
         }
     }
 }
@@ -261,10 +262,11 @@ $(function() {
           effect: "fade",
           duration: 500
         },
-        resize: function(e,ui) {
-        	var divHeight = $("#formTabDialogContainer").height();
-            $(".recommended-forms").css({"height":divHeight - 45});
-        },
+//        resize: function(e,ui) {
+//        	var divHeight = $("#formTabDialogContainer").height();
+//            $(".recommended-forms").css({"height":divHeight - 45});
+//        },
+        resizable: false,
         buttons: [
           {
 	          text:"Close",
@@ -316,11 +318,12 @@ $(function() {
           effect: "fade",
           duration: 500
         },
-        resize: function(e,ui) {
-        	var divHeight = $(".pws-force-print-content").height();
-    		// Update the height of the select
-    		$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
-        },
+//        resize: function(e,ui) {
+//        	var divHeight = $(".pws-force-print-content").height();
+//    		// Update the height of the select
+//    		$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
+//        },
+        resizable: false,
         buttons: [
           {
 	          text:"Close",
