@@ -16,6 +16,7 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -617,18 +618,17 @@ public class HL7SocketHandler extends
 			String locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
 					.getLocation(message);
 
-			if (printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS)) {
-				// ignore this message because it is just kids getting shots
-				return message;
-			}
-			
-			if ( !(isValidAge(message, printerLocation, locationString))){
-				return message;
-			}
-			
-			if (filterDuplicateCheckin && priorCheckinExists(message)){
-				//ignore this message, because patient was already checked in. 
-				return message;
+			if ((printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS))||
+					!(isValidAge(message, printerLocation, locationString)) ||
+					(filterDuplicateCheckin && priorCheckinExists(message))) {
+
+				try {
+					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
+					ackMessage = makeACK(inboundHeader);
+				} catch (Exception e) {
+					log.error("Exception creating ACK for registration.", e);
+				}
+				return ackMessage;
 			}
 			
 		}
