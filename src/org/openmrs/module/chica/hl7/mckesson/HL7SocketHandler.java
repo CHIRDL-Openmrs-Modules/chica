@@ -16,6 +16,7 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -73,6 +74,7 @@ import org.openmrs.util.OpenmrsConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
+import ca.uhn.hl7v2.app.Responder;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
@@ -617,6 +619,20 @@ public class HL7SocketHandler extends
 			String locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
 					.getLocation(message);
 
+			if (printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS)||
+				!(isValidAge(message, printerLocation, locationString)) ||
+				filterDuplicateCheckin && priorCheckinExists(message)){
+				
+				try {
+					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
+					ackMessage = makeACK(inboundHeader);
+				} catch (Exception e) {
+					log.error("Error constructing ACK response after filtering duplicates and age ", e);
+					//ackMessage
+				} 
+				
+			}
+								
 			if (printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS)) {
 				// ignore this message because it is just kids getting shots
 				return message;
