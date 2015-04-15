@@ -1144,7 +1144,7 @@
                     </div>
                 </div>
                 <div id="formTabDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div id="formTabDialogContainer" style="overflow-x: hidden;overflow-y: scroll;">
+                    <div id="formTabDialogContainer" style="overflow-x: hidden;overflow-y: hidden;">
 	                    <div id="formLoading">
 	                       <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
 	                    </div>
@@ -1156,7 +1156,7 @@
 	                        There are no recommended handouts for ${PatientName}.
 	                    </div>
 	                    <div id="formTabContainer">
-	                        <div id="tabs" style="width: 100%;height: 100%;"></div>
+	                        <div id="tabs" style="width: 100%;height: 100%;overflow-x: hidden;overflow-y: auto;"></div>
 	                    </div>
 	                </div>
                 </div>

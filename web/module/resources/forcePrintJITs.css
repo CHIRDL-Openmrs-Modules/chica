@@ -30,7 +30,7 @@
     margin: 0 auto;
     color: #000;
     height: 98%;
-    width: 350px;
+    width: 330px;
     background: #cc9966;
     float: left;
     border-radius: 7px;
@@ -57,7 +57,7 @@
 }
 
 .force-print-forms {
-	width: 325px;
+	width: 305px;
 }
 
 .force-print-forms option {
@@ -107,5 +107,5 @@ a.force-print-icon-button {
 }
 
 .ui-selectmenu-menu li { 
-	max-width: 290px;
+	max-width: 270px;
 }
