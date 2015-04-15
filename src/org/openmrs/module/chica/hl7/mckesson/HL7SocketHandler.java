@@ -627,6 +627,7 @@ public class HL7SocketHandler extends
 					ackMessage = makeACK(inboundHeader);
 				} catch (Exception e) {
 					log.error("Exception creating ACK for registration.", e);
+					return message;
 				}
 				return ackMessage;
 			}
