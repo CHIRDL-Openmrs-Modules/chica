@@ -44,7 +44,7 @@ currRxStatus := read last {CHICA_ADHD_RX from CHICA} ;
 endif
 ;;
 Priority: 199;;
- Evoke: ;;
+ Evoke: ;; 
 
 Logic:
 If (mode = PRODUCE) then
