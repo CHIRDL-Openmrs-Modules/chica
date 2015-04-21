@@ -1,6 +1,5 @@
 var english = false;
 var formInstance = null;
-var finishAttempts = 0;
 
 $(document).on("pageinit", function() {
     // Initialize all pages because radio button reset will not work properly.
@@ -86,16 +85,9 @@ function setLanguageField() {
 }
 
 function attemptFinishForm() {
-	finishAttempts++;
 	if (areAllQuestionsAnswered()) {
 		finishForm();
-	} else if (finishAttempts == 1) {
-    	if (english) {
-    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
-    	}
-	} else if (finishAttempts >= 2) {
+	} else {
 		if (english) {
     	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
     	} else {
@@ -148,6 +140,7 @@ function calculateScore() {
 	var MchatCriticalItemsFailed = 0;
 	var critical = [2,7,9,13,14,15];
 	var valueFound = false; 
+	var criticalValueFound = false;
 	for (var i = 1; i < 24; i++) {
 		if (english) {
 			$("input[name=Choice_" + i + "]:checked").each(function() {
@@ -160,6 +153,7 @@ function calculateScore() {
 				//MchatTotalItemsFailed += value;
 				//if(critical.indexOf(i) > -1 && value == 1) {
 				if(critical.indexOf(i) > -1 && value == "failed") {
+					criticalValueFound = true;
 					MchatCriticalItemsFailed++;
 				}
 			});
@@ -174,6 +168,7 @@ function calculateScore() {
 				//MchatTotalItemsFailed += value;
 				//if(critical.indexOf(i) > -1 && value == 1) {
 				if(critical.indexOf(i) > -1 && value == "failed") {
+					criticalValueFound = true;
 					MchatCriticalItemsFailed++;
 				}
 			});
@@ -183,10 +178,11 @@ function calculateScore() {
 	
 	if (valueFound) {
 		$("#MchatTotalItemsFailed").val(MchatTotalItemsFailed);
-		$("#MchatCriticalItemsFailed").val(MchatCriticalItemsFailed);
 	}
 	
-	alert("Total Items Failed: " + MchatTotalItemsFailed + "\nTotal Critical Items Failed: " + MchatCriticalItemsFailed);
+	if (criticalValueFound) {
+		$("#MchatCriticalItemsFailed").val(MchatCriticalItemsFailed);
+	}
 }
 
 function areAllQuestionsAnswered() {
