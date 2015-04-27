@@ -183,6 +183,8 @@ function calculateScore() {
 	if (criticalValueFound) {
 		$("#MchatCriticalItemsFailed").val(MchatCriticalItemsFailed);
 	}
+	
+	//alert("Total Items Failed: " + MchatTotalItemsFailed + "\nTotal Critical Items Failed: " + MchatCriticalItemsFailed);
 }
 
 function areAllQuestionsAnswered() {
