@@ -27,7 +27,12 @@ Box6:=read {box6 from Parameters};
 
 If (mode = PRODUCE) then
 VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
-pastProblems := read Last {past_school_problems from CHICA};    
+pastProblems := read Last {past_school_problems from CHICA};   
+grades := read Last {grades_dropped_lately from CHICA} Where it Occurred Within Past 180 Days;
+special := read Last {special_education_classes from CHICA} Where it Occurred Within Past 365 Days;
+suspend := read Last {school_suspension_this_year from CHICA} Where it Occurred Within Past 365 Days;
+GradesPastProblems := read last {past_school_problems from CHICA} Where it Occurred Within Past 180 Days;
+OtherPastProblems :=  read last {past_school_problems from CHICA} Where it Occurred Within Past 365 Days; 
 endif
 ;;
 Priority:		292;;
@@ -35,7 +40,9 @@ Priority:		292;;
 Logic:
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
-
+If (grades = "True") AND (GradesPastProblems = null) then conclude false;
+If (special = "True") AND (OtherPastProblems = null) then conclude false;
+If (suspend = "True") AND (OtherPastProblems = null) then conclude false;
 If (pastProblems = "True") then conclude True;
 conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 
@@ -59,7 +66,7 @@ endif;
 If  (Box2=true) then
  CALL storeObs With "school_problem_response","Academic Strategies";
  CALL storeObs With "past_school_problems","True";
- CALL storeNote With "I discussed homework strategies with the family","EDUCATION";
+ CALL storeNote With "I discussed homework strategies with the family.","EDUCATION";
 endif;
 If  (Box3=true) then
  CALL storeObs With "school_problem_response","Parent Teacher Meeting";
@@ -78,7 +85,7 @@ If  (Box5=true) then
 endif;
 If  (Box6=true) then
  CALL storeObs With "past_school_problems","False";
- CALL storeNote With "School or learning problems are resolved","EDUCATION";
+ CALL storeNote With "School or learning problems are resolved.","EDUCATION";
 endif;
 
 

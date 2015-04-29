@@ -71,7 +71,7 @@ endif;
 endif
 ;;
 Action:
-write ("Infants with risk factors of prematurity or a family history of deafness should have yearly hearing screening between 6 months and 3 years.  This child either has a positive or unknown risk factor of || premieF || || deafF ||");                                                                
+write ("Prematurity or family hx of deafness indicate hearing screening at 6-36 months. This child has a positive risk of || premieF || || deafF ||");                                                                
 write ("Prematurity ->");
 write ("Refer for Audiology screening");
 write ("Family history of deafness->");
