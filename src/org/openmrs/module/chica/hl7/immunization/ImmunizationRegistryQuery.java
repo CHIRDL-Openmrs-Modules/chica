@@ -322,7 +322,7 @@ public class ImmunizationRegistryQuery
 												.parseInt(dataString));
 										}
 									} catch (NumberFormatException  e) {
-										log.error("Invalid number format for Dose number: " + dataString);
+										log.info("Invalid number format for Dose number: " + dataString);
 										forecastedImmunization.setDose(0);
 									}
 									
