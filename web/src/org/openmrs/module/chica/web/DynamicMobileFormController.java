@@ -65,7 +65,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 		map.put("patient", patient);
 		
 		String formInstance = request.getParameter("formInstance");
-		FormInstanceTag formInstTag = org.openmrs.module.chirdlutilbackports.util.Util.parseFormInstanceTag(formInstance);
+		FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 		Integer locationId = formInstTag.getLocationId();
 		Integer formId = formInstTag.getFormId();
 		Integer formInstanceId = formInstTag.getFormInstanceId();

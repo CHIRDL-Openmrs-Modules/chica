@@ -36,6 +36,10 @@ Logic:
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
 If (intercourse = yes) then conclude False;
+
+If (Gender = F) then || Box3_Text || = "May be pregnant -> test ->";
+If (Gender = F) then || Box4_Text || = "Prescribed birth control";
+
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
 endif
@@ -85,11 +89,11 @@ endif;
 endif
 ;;
 Action:
-write ("||firstname|| did not endorse sexual activity.  Anticipatory guidance is a good idea.  Review the following:");                                                                                                                                                      
+write ("|| firstname || did not endorse sexual activity.  Anticipatory guidance is a good idea.  Review the following:");                                                                                                                                                      
 write ("Sexually active ->");
 write ("Gave out condoms");
-write ("May be pregnant -> test ->");
-write ("Prescribed birth control");
+write("|| Box3_Text ||");
+write("|| Box4_Text ||");
 write ("Has not had sex->");
 write ("Provide relationship guidance");
 ;;
