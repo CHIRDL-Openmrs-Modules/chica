@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -21,6 +22,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.module.dss.hibernateBeans.Rule;
+import org.openmrs.module.dss.service.DssService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -130,6 +133,18 @@ public class DynamicMobileFormController extends SimpleFormController {
 				patient, parameterMap, parameterHandler);
 			// Calculate all the percentiles
 			org.openmrs.module.chica.util.Util.calculatePercentiles(encounterId, patient, locationTagId);
+			
+			// Run null priority rules
+			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("sessionId", sessionId);
+			parameters.put("formInstance", new FormInstance(locationId, formId, formInstanceId));
+			parameters.put("locationTagId", locationTagId);
+			parameters.put("locationId", locationId);
+			parameters.put("location", Context.getLocationService().getLocation(locationId).getName());
+			parameters.put("encounterId", encounterId);
+			parameters.put("mode", "CONSUME");
+			runNullPriorityRulesOnConsume(Context.getFormService().getForm(formId), patient, parameters);
+			
 			FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 			changeState(locationTagId, encounterId, sessionId, formInstance);
 		} catch (Exception e) {
@@ -213,4 +228,22 @@ public class DynamicMobileFormController extends SimpleFormController {
 		}
 	}
 	
+	/**
+	 * Runs all null priority rules with the mode of CONSUME.
+	 * 
+	 * @param form The form to run the rules for.
+	 * @param patient The patient to run the rules for.
+	 * @param parameters Map containing parameters needed for the rules to execute.
+	 */
+	private void runNullPriorityRulesOnConsume(Form form, Patient patient, HashMap<String, Object> parameters) {
+		DssService dssService = Context.getService(DssService.class);
+		List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
+		
+		for (Rule currRule : nonPriorRules) {
+			if (currRule.checkAgeRestrictions(patient)) {
+				currRule.setParameters(parameters);
+				dssService.runRule(patient, currRule);
+			}
+		}
+	}
 }
