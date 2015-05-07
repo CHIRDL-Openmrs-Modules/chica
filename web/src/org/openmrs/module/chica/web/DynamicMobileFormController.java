@@ -205,9 +205,9 @@ public class DynamicMobileFormController extends SimpleFormController {
 	 * @param formInstance The instance of the form.
 	 */
 	private void completeForm(Integer formId, Patient patient, HashMap<String, Object> parameters, FormInstance formInstance) {
-		ChirdlRunnable runnable = new CompleteForm(patient.getPatientId(), formId, parameters, formInstance);
-		ThreadManager manager = ThreadManager.getInstance();
-		manager.execute(runnable, (Integer)parameters.get("locationId"));
+		Runnable runnable = new CompleteForm(patient.getPatientId(), formId, parameters, formInstance); 
+		Thread thread = new Thread(runnable);  
+		thread.start();  
 	}
 	
 	/**
