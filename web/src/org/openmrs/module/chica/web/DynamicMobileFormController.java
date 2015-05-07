@@ -1,5 +1,7 @@
 package org.openmrs.module.chica.web;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +14,15 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chica.advice.ChangeState;
+import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
+import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -217,14 +223,84 @@ public class DynamicMobileFormController extends SimpleFormController {
 	 * @param parameters Map containing parameters needed for the rules to execute.
 	 */
 	private void runNullPriorityRulesOnConsume(Form form, Patient patient, HashMap<String, Object> parameters) {
-		DssService dssService = Context.getService(DssService.class);
-		List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
-		
-		for (Rule currRule : nonPriorRules) {
-			if (currRule.checkAgeRestrictions(patient)) {
-				currRule.setParameters(parameters);
-				dssService.runRule(patient, currRule);
+		ChirdlRunnable runnable = new NullPriorityRuleRunner(patient.getPatientId(), form.getFormId(), parameters);
+		ThreadManager manager = ThreadManager.getInstance();
+		manager.execute(runnable, (Integer)parameters.get("locationId"));
+	}
+	
+	/**
+	 * Runs null priority rules for a given patient and form.
+	 *
+	 * @author Steve McKee
+	 */
+	public class NullPriorityRuleRunner implements ChirdlRunnable {
+		private Log log = LogFactory.getLog(this.getClass());
+		private Integer patientId;
+		private Integer formId;
+		private HashMap<String, Object> parameters;
+
+		/**
+		 * Constructor method
+		 * 
+		 * @param patientId Patient identifier
+		 * @param formId Form identifier
+		 * @param parameters HashMap of parameters for the rule execution
+		 */
+		public NullPriorityRuleRunner(Integer patientId, Integer formId, HashMap<String, Object> parameters) {
+			this.patientId = patientId;
+			this.formId = formId;
+			this.parameters = parameters;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+				new Timestamp(new Date().getTime()) + ")");
+			
+			Context.openSession();
+			try {
+				AdministrationService adminService = Context.getAdministrationService();
+				Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
+					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+
+				Patient patient = Context.getPatientService().getPatient(patientId);
+				Form form = Context.getFormService().getForm(formId);
+
+				DssService dssService = Context.getService(DssService.class);
+				List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
+				
+				for (Rule currRule : nonPriorRules) {
+					if (currRule.checkAgeRestrictions(patient)) {
+						currRule.setParameters(parameters);
+						dssService.runRule(patient, currRule);
+					}
+				}
+			} catch (Exception e) {
+				this.log.error(e.getMessage());
+				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			} finally {
+				Context.closeSession();
+				log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+					new Timestamp(new Date().getTime()) + ")");
 			}
 		}
+		
+		/**
+		 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
+		 */
+	    public String getName() {
+		    return "Null Priority Runner (Patient: " + patientId + " Form: " + formId + ")";
+	    }
+
+		/**
+		 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getPriority()
+		 */
+	    public int getPriority() {
+		    return ChirdlRunnable.PRIORITY_TWO;
+	    }
 	}
 }
