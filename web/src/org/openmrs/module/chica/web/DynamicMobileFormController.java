@@ -1,7 +1,5 @@
 package org.openmrs.module.chica.web;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +16,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
-import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
-import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -215,7 +211,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 	 *
 	 * @author Steve McKee
 	 */
-	public class CompleteForm implements ChirdlRunnable {
+	public class CompleteForm implements Runnable {
 		private Log log = LogFactory.getLog(this.getClass());
 		private Integer patientId;
 		private Integer formId;
@@ -244,9 +240,6 @@ public class DynamicMobileFormController extends SimpleFormController {
 		 * @see java.lang.Runnable#run()
 		 */
 		public void run() {
-			log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
-			
 			Context.openSession();
 			try {
 				try {
@@ -279,23 +272,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 				}
 			} finally {
 				Context.closeSession();
-				log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-					new Timestamp(new Date().getTime()) + ")");
 			}
 		}
-		
-		/**
-		 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
-		 */
-	    public String getName() {
-		    return "Complete Form (Patient: " + patientId + " Form: " + formId + ")";
-	    }
-
-		/**
-		 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getPriority()
-		 */
-	    public int getPriority() {
-		    return ChirdlRunnable.PRIORITY_FOUR;
-	    }
 	}
 }
