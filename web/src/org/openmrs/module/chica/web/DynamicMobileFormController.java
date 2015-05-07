@@ -133,7 +133,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 			parameters.put("location", Context.getLocationService().getLocation(locationId).getName());
 			parameters.put("encounterId", encounterId);
 			parameters.put("mode", "CONSUME");
-			runNullPriorityRulesOnConsume(Context.getFormService().getForm(formId), patient, parameters);
+			runNullPriorityRulesOnConsume(formId, patient, parameters);
 			
 			FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 			changeState(locationTagId, encounterId, sessionId, formInstance);
@@ -218,12 +218,12 @@ public class DynamicMobileFormController extends SimpleFormController {
 	/**
 	 * Runs all null priority rules with the mode of CONSUME.
 	 * 
-	 * @param form The form to run the rules for.
+	 * @param formId The identifier of the form to run the rules for.
 	 * @param patient The patient to run the rules for.
 	 * @param parameters Map containing parameters needed for the rules to execute.
 	 */
-	private void runNullPriorityRulesOnConsume(Form form, Patient patient, HashMap<String, Object> parameters) {
-		ChirdlRunnable runnable = new NullPriorityRuleRunner(patient.getPatientId(), form.getFormId(), parameters);
+	private void runNullPriorityRulesOnConsume(Integer formId, Patient patient, HashMap<String, Object> parameters) {
+		ChirdlRunnable runnable = new NullPriorityRuleRunner(patient.getPatientId(), formId, parameters);
 		ThreadManager manager = ThreadManager.getInstance();
 		manager.execute(runnable, (Integer)parameters.get("locationId"));
 	}
