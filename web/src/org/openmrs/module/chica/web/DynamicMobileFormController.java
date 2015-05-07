@@ -300,7 +300,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 		 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getPriority()
 		 */
 	    public int getPriority() {
-		    return ChirdlRunnable.PRIORITY_TWO;
+		    return ChirdlRunnable.PRIORITY_FOUR;
 	    }
 	}
 }
