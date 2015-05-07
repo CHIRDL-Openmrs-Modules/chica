@@ -126,8 +126,9 @@ public class DynamicMobileFormController extends SimpleFormController {
 			
 			// Run null priority rules
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 			parameters.put("sessionId", sessionId);
-			parameters.put("formInstance", new FormInstance(locationId, formId, formInstanceId));
+			parameters.put("formInstance", formInstance);
 			parameters.put("locationTagId", locationTagId);
 			parameters.put("locationId", locationId);
 			parameters.put("location", Context.getLocationService().getLocation(locationId).getName());
@@ -135,7 +136,6 @@ public class DynamicMobileFormController extends SimpleFormController {
 			parameters.put("mode", "CONSUME");
 			runNullPriorityRulesOnConsume(formId, patient, parameters);
 			
-			FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 			changeState(locationTagId, encounterId, sessionId, formInstance);
 		} catch (Exception e) {
 			log.error("Error saving form", e);
