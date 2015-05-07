@@ -12,17 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
-import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
-import org.openmrs.module.chica.advice.ChangeState;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -74,7 +73,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 		map.put("patient", patient);
 		
 		String formInstance = request.getParameter("formInstance");
-		FormInstanceTag formInstTag = org.openmrs.module.chirdlutilbackports.util.Util.parseFormInstanceTag(formInstance);
+		FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 		Integer locationId = formInstTag.getLocationId();
 		Integer formId = formInstTag.getFormId();
 		Integer formInstanceId = formInstTag.getFormInstanceId();
@@ -127,16 +126,14 @@ public class DynamicMobileFormController extends SimpleFormController {
 			// Run null priority rules
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
 			FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
-			parameters.put("sessionId", sessionId);
 			parameters.put("formInstance", formInstance);
+			parameters.put("sessionId", sessionId);
 			parameters.put("locationTagId", locationTagId);
 			parameters.put("locationId", locationId);
 			parameters.put("location", Context.getLocationService().getLocation(locationId).getName());
 			parameters.put("encounterId", encounterId);
 			parameters.put("mode", "CONSUME");
-			runNullPriorityRulesOnConsume(formId, patient, parameters);
-			
-			changeState(locationTagId, encounterId, sessionId, formInstance);
+			completeForm(formId, patient, parameters, formInstance);
 		} catch (Exception e) {
 			log.error("Error saving form", e);
 		}
@@ -174,18 +171,13 @@ public class DynamicMobileFormController extends SimpleFormController {
 	/**
 	 * Changes to the next state in the state flow process.
 	 * 
-	 * @param locationTagId The location tag identifier.
-	 * @param encounterId The encounter identifier.
-	 * @param sessionId The session identifier.
 	 * @param formInstance The FormInstance object containing relevant form information.
+	 * @param parameters Map containing parameters needed for the rules to execute.
 	 */
-	private void changeState(Integer locationTagId, Integer encounterId, Integer sessionId,
-	                         FormInstance formInstance) {
+	private void changeState(FormInstance formInstance, HashMap<String, Object> parameters) {
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
 		List<PatientState> states = service.getPatientStatesByFormInstance(formInstance, false);
 		if (states != null && states.size() > 0) {
-			Integer locationId = formInstance.getLocationId();
-			Location location = Context.getLocationService().getLocation(locationId);
 			for (PatientState formInstState : states) {
 				
 				// only process unfinished states for this sessionId
@@ -194,18 +186,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 				}
 				
 				try {
-					HashMap<String, Object> parameters = new HashMap<String, Object>();
-					parameters.put("formInstance", formInstState.getFormInstance());
-					parameters.put("sessionId", sessionId);
-					parameters.put("formInstance", formInstance);
-					parameters.put("locationTagId", locationTagId);
-					parameters.put("locationId", locationId);
-					parameters.put("location", location.getName());
-					parameters.put("encounterId", encounterId);
-					parameters.put("mode", "CONSUME");
-					Runnable runnable = new ChangeState(formInstState, parameters);
-					Thread thread = new Thread(runnable);
-					thread.start();
+					BaseStateActionHandler.getInstance().changeState(formInstState, parameters);
 				}
 				catch (Exception e) {
 					log.error(e.getMessage());
@@ -216,28 +197,30 @@ public class DynamicMobileFormController extends SimpleFormController {
 	}
 	
 	/**
-	 * Runs all null priority rules with the mode of CONSUME.
+	 * Runs all null priority rules and changes the patient state.
 	 * 
 	 * @param formId The identifier of the form to run the rules for.
 	 * @param patient The patient to run the rules for.
 	 * @param parameters Map containing parameters needed for the rules to execute.
+	 * @param formInstance The instance of the form.
 	 */
-	private void runNullPriorityRulesOnConsume(Integer formId, Patient patient, HashMap<String, Object> parameters) {
-		ChirdlRunnable runnable = new NullPriorityRuleRunner(patient.getPatientId(), formId, parameters);
+	private void completeForm(Integer formId, Patient patient, HashMap<String, Object> parameters, FormInstance formInstance) {
+		ChirdlRunnable runnable = new CompleteForm(patient.getPatientId(), formId, parameters, formInstance);
 		ThreadManager manager = ThreadManager.getInstance();
 		manager.execute(runnable, (Integer)parameters.get("locationId"));
 	}
 	
 	/**
-	 * Runs null priority rules for a given patient and form.
+	 * Runs null priority rules for a patient/form and changes the state.
 	 *
 	 * @author Steve McKee
 	 */
-	public class NullPriorityRuleRunner implements ChirdlRunnable {
+	public class CompleteForm implements ChirdlRunnable {
 		private Log log = LogFactory.getLog(this.getClass());
 		private Integer patientId;
 		private Integer formId;
 		private HashMap<String, Object> parameters;
+		private FormInstance formInstance;
 
 		/**
 		 * Constructor method
@@ -245,11 +228,14 @@ public class DynamicMobileFormController extends SimpleFormController {
 		 * @param patientId Patient identifier
 		 * @param formId Form identifier
 		 * @param parameters HashMap of parameters for the rule execution
+		 * @param formInstance The instance of the form
 		 */
-		public NullPriorityRuleRunner(Integer patientId, Integer formId, HashMap<String, Object> parameters) {
+		public CompleteForm(Integer patientId, Integer formId, HashMap<String, Object> parameters, 
+		                              FormInstance formInstance) {
 			this.patientId = patientId;
 			this.formId = formId;
 			this.parameters = parameters;
+			this.formInstance = formInstance;
 		}
 
 		/*
@@ -263,25 +249,34 @@ public class DynamicMobileFormController extends SimpleFormController {
 			
 			Context.openSession();
 			try {
-				AdministrationService adminService = Context.getAdministrationService();
-				Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
-
-				Patient patient = Context.getPatientService().getPatient(patientId);
-				Form form = Context.getFormService().getForm(formId);
-
-				DssService dssService = Context.getService(DssService.class);
-				List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
-				
-				for (Rule currRule : nonPriorRules) {
-					if (currRule.checkAgeRestrictions(patient)) {
-						currRule.setParameters(parameters);
-						dssService.runRule(patient, currRule);
+				try {
+					AdministrationService adminService = Context.getAdministrationService();
+					Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
+						adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+	
+					Patient patient = Context.getPatientService().getPatient(patientId);
+					Form form = Context.getFormService().getForm(formId);
+	
+					DssService dssService = Context.getService(DssService.class);
+					List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
+					
+					for (Rule currRule : nonPriorRules) {
+						if (currRule.checkAgeRestrictions(patient)) {
+							currRule.setParameters(parameters);
+							dssService.runRule(patient, currRule);
+						}
 					}
+				} catch (Exception e) {
+					this.log.error(e.getMessage());
+					this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				} 
+			
+				try {
+					changeState(formInstance, parameters);
+				} catch (Exception e) {
+					this.log.error(e.getMessage());
+					this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 				}
-			} catch (Exception e) {
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			} finally {
 				Context.closeSession();
 				log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
@@ -293,7 +288,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 		 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
 		 */
 	    public String getName() {
-		    return "Null Priority Runner (Patient: " + patientId + " Form: " + formId + ")";
+		    return "Complete Form (Patient: " + patientId + " Form: " + formId + ")";
 	    }
 
 		/**
