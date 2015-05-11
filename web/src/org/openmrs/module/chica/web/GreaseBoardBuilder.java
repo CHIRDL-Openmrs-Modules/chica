@@ -102,7 +102,7 @@ public class GreaseBoardBuilder {
 				location = locationService.getLocation(locationString);
 				if (location != null) {
 					locationId = location.getLocationId();
-					String showBadScans = adminService.getGlobalProperty("atd.showBadScans");
+					String showBadScans = adminService.getGlobalProperty("chica.showBadScans");
 					if (showBadScans != null && showBadScans.equals("true")) {
 						List<URL> badScans = atdService.getBadScans(location.getName());
 						responseMap.put("badScans", badScans);

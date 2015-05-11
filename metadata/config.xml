@@ -318,6 +318,12 @@
         <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.showBadScans</property>
+        <defaultValue>false</defaultValue>
+        <description>Whether or not to display a notice on the greaseboard of bad scans.  Valid values are 'true' and 'false'.
+        </description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
