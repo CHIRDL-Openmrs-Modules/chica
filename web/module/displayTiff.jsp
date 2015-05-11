@@ -51,7 +51,7 @@ body {
 		class="displayTiffHeader chicaBackground">
 		<tr width="100%">
 			<td width="25%">
-			 <a href="#" id="exitButton" onclick="history.go(-1);return true;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Exit</a>
+			 <a href="#" id="exitButton" onclick="history.go(-1);return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Exit</a>
 			</td>
 			<td width="25%" class="displayLeftTiffHeaderSegment"><c:if
 					test="${!empty leftImageFormname}">

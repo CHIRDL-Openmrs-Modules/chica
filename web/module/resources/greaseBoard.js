@@ -508,6 +508,7 @@ function checkMRN() {
 function checkEncounterMRN() {
 	$("#encounterMrnError").hide();
 	var url = "/openmrs/moduleServlet/chica/chica";
+	var newTab = window.open ('', '_blank');
 	  $.ajax({
 		  beforeSend: function(){
 			  $("#viewEncountersMRNOKButton").button("disable");
@@ -525,7 +526,7 @@ function checkEncounterMRN() {
 	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleVerifyEncounterMRNAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
-	          verifyEncounterMRN(xml);
+	          verifyEncounterMRN(xml, newTab);
 	      }
 	  });
 }
@@ -803,7 +804,7 @@ function verifyMRN(responseXML) {
     }
 }
 
-function verifyEncounterMRN(responseXML) {
+function verifyEncounterMRN(responseXML, newTab) {
     // no matches returned
     if (responseXML === null) {
     	$("#encounterMrnMessage").html("<p><b>Error retrieving MRN information.  Please try again.</b></p>");
@@ -812,7 +813,7 @@ function verifyEncounterMRN(responseXML) {
     	var result = $(responseXML).find("result").text();
         if (result == "true") {
         	$("#viewEncountersMRNDialog").dialog("close");
-        	popupfull("viewEncounter.form?mrn=" + $("#encounterMrnLookup").val());
+        	popupfull("viewEncounter.form?mrn=" + $("#encounterMrnLookup").val(), newTab);
         } else {
         	$("#encounterMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the encounters.</b></p>");
             $("#encounterMrnError").show("highlight", 750);
@@ -1085,16 +1086,10 @@ function lookupPatient(){
     return false;
 }
 
-function popupfull(url) 
+function popupfull(url, newTab) 
 {
-	params  = 'width='+($(window).width() * 0.95);
-	params += ', height='+($(window).height() * 0.95);
-params += ', top=0, left=0'
-params += ', fullscreen=no';
-params += ', resizable=1';
-
-newwin=window.open(url,'windowname4', params);
-if (window.focus) {newwin.focus()}
+	newTab.location = url;
+	
 	return false;
 }
 
@@ -1105,7 +1100,8 @@ function confirmation(optionsSelect, formName) {
         answer = false;
         var patientId = formName.find("input[name=greaseBoardPatientId]").val();
         var str = 'viewEncounter.form?patientId='+patientId;
-        popupfull(str);
+        var newTab = window.open ('', '_blank');
+        popupfull(str, newTab);
     } else if(optionsSelect[selectedIndex].text == 'Print JITS'){
 	    answer = false;
 	    var patientId = formName.find("input[name=greaseBoardPatientId]").val();
@@ -1129,8 +1125,9 @@ function confirmation(optionsSelect, formName) {
 }
 
 function displayBadScans(context, badScans) {
+	var newTab = window.open ('', '_blank');
 	var str = context + '/module/chica/displayBadScans.form?badScans='+badScans;
-	popupfull(str);
+	popupfull(str, newTab);
 }
 
 function checkForm() {       
