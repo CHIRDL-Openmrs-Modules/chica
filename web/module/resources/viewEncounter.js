@@ -42,12 +42,12 @@ $(function() {
         modal: true,
         resizable: false,
         show: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         hide: {
-          effect: "clip",
-          duration: 750
+          effect: "fade",
+          duration: 500
         },
         buttons: [
           {
@@ -58,6 +58,13 @@ $(function() {
 	          },
 	          click: function() {
 	            checkEncounterMRN();
+	          }
+          },
+          {
+        	  id: "viewEncountersMRNCancelButton",
+	          text:"Cancel",
+	          click: function() {
+	        	  $("#viewEncountersMRNDialog").dialog("close");
 	          }
           }
         ]
