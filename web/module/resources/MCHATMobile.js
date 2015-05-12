@@ -152,24 +152,28 @@ function calculateScore() {
 				//var value = parseInt($(this).val());
 				//MchatTotalItemsFailed += value;
 				//if(critical.indexOf(i) > -1 && value == 1) {
-				if(critical.indexOf(i) > -1 && value == "failed") {
+				if(critical.indexOf(i) > -1) {
 					criticalValueFound = true;
-					MchatCriticalItemsFailed++;
+					if (value == "failed") {
+						MchatCriticalItemsFailed++;
+					}
 				}
 			});
 		} else {
 			$("input[name=Choice_" + i + "_sp]:checked").each(function() {
 				valueFound = true;
 				var value = $(this).val();
-				if(value == "failed"){
+				if (value == "failed"){
 					MchatTotalItemsFailed++;
 				}
 				//var value = parseInt($(this).val());
 				//MchatTotalItemsFailed += value;
 				//if(critical.indexOf(i) > -1 && value == 1) {
-				if(critical.indexOf(i) > -1 && value == "failed") {
+				if(critical.indexOf(i) > -1) {
 					criticalValueFound = true;
-					MchatCriticalItemsFailed++;
+					if (value == "failed") {
+						MchatCriticalItemsFailed++;
+					}
 				}
 			});
 		}
