@@ -181,7 +181,7 @@
                             <td class="question">Does your child enjoy being swung, bounced on your knee, etc.?</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_1']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_1']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_1_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -191,7 +191,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_1']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_1']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_1_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -200,7 +200,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_1']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_1']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_1_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -210,7 +210,7 @@
                             <td class="questionBold textBold">Does your child take an interest in other children?</td>
                             <td class="answerLabelBold textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_2']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_2']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_2_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -220,7 +220,7 @@
                             </td>
                             <td class="answerLabelBold textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_2']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_2']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_2_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -229,7 +229,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_2']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_2']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_2_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -239,7 +239,7 @@
                             <td class="question">Does your child like climbing on things, such as up stairs?</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_3']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_3']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_3_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -249,7 +249,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_3']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_3']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_3_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -258,7 +258,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_3']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_3']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_3_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -268,7 +268,7 @@
                             <td class="questionBold">Does your child enjoy playing peek-a-bool/hide-and-seek?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_4']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_4']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_4_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -278,7 +278,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_4']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_4']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_4_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -287,7 +287,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_4']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_4']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_4_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -297,7 +297,7 @@
                             <td class="question">Does your child ever pretend, for example, to talk on the phone or take care of a doll or pretend other things?</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_5']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_5']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_5_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -307,7 +307,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_5']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_5']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_5_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -316,7 +316,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_5']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_5']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_5_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -326,7 +326,7 @@
                             <td class="questionBold">Does your child ever use his/her index finger to point, to ask for something?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_6']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_6']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_6_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -336,7 +336,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_6']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_6']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_6_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -345,7 +345,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_6']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_6']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_6_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -355,7 +355,7 @@
                             <td class="question textBold">Does your child ever use his/her index finger to point, to indicate interest in something?</td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_7']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_7']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_7_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -365,7 +365,7 @@
                             </td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_7']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_7']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_7_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -374,7 +374,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_7']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_7']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_7_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -384,7 +384,7 @@
                             <td class="questionBold">Can your child play properly with small toys (e.g. cars or blocks) without just mouthing, fiddling, or dropping them?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_8']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_8']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_8_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -394,7 +394,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_8']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_8']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_8_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -403,7 +403,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_8']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_8']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_8_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -413,7 +413,7 @@
                             <td class="question textBold">Does your child ever bring objects over to you (parent) to show you something?</td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_9']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_9']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_9_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -423,7 +423,7 @@
                             </td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_9']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_9']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_9_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -432,7 +432,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_9']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_9']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_9_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -449,7 +449,7 @@
                             <td class="questionBold">Does your child ever look you in the eye for more than a second or two?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_10']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_10']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_10_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -459,7 +459,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_10']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_10']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_10_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -468,7 +468,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_10']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_10']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_10_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -478,7 +478,7 @@
                             <td class="question">Does your child ever seem oversensitive to noise? (e.g. plugging ears)</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_11']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_11']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_11_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -488,7 +488,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_11']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_11']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_11_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -497,7 +497,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_11']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_11']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_11_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -507,7 +507,7 @@
                             <td class="questionBold">Does your child smile in response to your face or your smile?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_12']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_12']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_12_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -517,7 +517,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_12']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_12']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_12_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -526,7 +526,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_12']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_12']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_12_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -536,7 +536,7 @@
                             <td class="question textBold">Does your child imitate you? (e.g. you make a face-will your child imitate it?)</td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_13']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_13']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_13_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -546,7 +546,7 @@
                             </td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_13']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_13']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_13_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -555,7 +555,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_13']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_13']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_13_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -572,7 +572,7 @@
                             <td class="questionBold textBold">Does your child respond to his/her name when you call?</td>
                             <td class="answerLabelBold textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_14']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_14']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_14_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -582,7 +582,7 @@
                             </td>
                             <td class="answerLabelBold textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_14']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_14']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_14_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -591,7 +591,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_14']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_14']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_14_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -601,7 +601,7 @@
                             <td class="question textBold">If you point at a toy across the room, does your child look at it?</td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_15']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_15']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_15_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -611,7 +611,7 @@
                             </td>
                             <td class="answerLabel textBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_15']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_15']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_15_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -620,7 +620,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_15']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_15']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_15_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -630,7 +630,7 @@
                             <td class="questionBold">Does your child walk?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_16']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_16']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_16_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -640,7 +640,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_16']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_16']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_16_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -649,7 +649,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_16']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_16']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_16_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -659,7 +659,7 @@
                             <td class="question">Does your child look at things you are looking at?</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_17']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_17']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_17_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -669,7 +669,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_17']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_17']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_17_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -678,7 +678,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_17']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_17']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_17_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -688,7 +688,7 @@
                             <td class="questionBold">Does your child make unusual finger movements near his/her face?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_18']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_18']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_18_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -698,7 +698,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_18']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_18']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_18_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -707,7 +707,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_18']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_18']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_18_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -717,7 +717,7 @@
                             <td class="question">Does your child try to attract your attention to his/her own activity?</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_19']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_19']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_19_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -727,7 +727,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_19']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_19']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_19_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -736,7 +736,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_19']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_19']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_19_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -753,7 +753,7 @@
                             <td class="questionBold">Have you ever wondered if your child is deaf?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_20']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_20']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_20_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -763,7 +763,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_20']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_20']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_20_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -772,7 +772,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_20']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_20']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_20_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -782,7 +782,7 @@
                             <td class="question">Does your child understand what people say?</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_21']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_21']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_21_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -792,7 +792,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_21']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_21']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_21_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -801,7 +801,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_21']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_21']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_21_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -811,7 +811,7 @@
                             <td class="questionBold">Does your child sometimes stare at nothing or wander with no purpose?</td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_22']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_22']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_22_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -821,7 +821,7 @@
                             </td>
                             <td class="answerLabelBold">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_22']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_22']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_22_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -830,7 +830,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_22']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_22']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_22_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
@@ -847,7 +847,7 @@
                             <td class="question">Does your child look at your face to check your reaction when faced with something unfamiliar?</td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_23']/Value = 'passed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_23']/Value = 'passed') or (Records/Record/Field[@id = 'Choice_23_sp']/Value = 'passed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -857,7 +857,7 @@
                             </td>
                             <td class="answerLabel">
                                 <xsl:choose>
-                                    <xsl:when test="Records/Record/Field[@id = 'Choice_23']/Value = 'failed'">
+                                    <xsl:when test="(Records/Record/Field[@id = 'Choice_23']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_23_sp']/Value = 'failed')">
                                         <input type="radio" disabled="disabled" checked="checked"/>
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -866,7 +866,7 @@
                                 </xsl:choose>
                             </td>
                             <td>
-                                <xsl:if test="Records/Record/Field[@id = 'Choice_23']/Value = 'failed'">
+                                <xsl:if test="(Records/Record/Field[@id = 'Choice_23']/Value = 'failed') or (Records/Record/Field[@id = 'Choice_23_sp']/Value = 'failed')">
                                     <xsl:text>*</xsl:text>
                                 </xsl:if>
                             </td>
