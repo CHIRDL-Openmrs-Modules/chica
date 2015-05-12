@@ -493,9 +493,6 @@ public class GreaseBoardController extends SimpleFormController
 			
 			map.put("refreshPeriod", adminService.getGlobalProperty(
 					"chica.greaseBoardRefresh"));
-		
-			boolean isASQInterventionLocation = isInterventionLocation(locationId,"isASQInterventionLocation");
-			map.put("isASQInterventionLocation", isASQInterventionLocation);
 		}catch(UnexpectedRollbackException ex){
 			//ignore this exception since it happens with an APIAuthenticationException
 		}catch(APIAuthenticationException ex2){
@@ -632,19 +629,5 @@ public class GreaseBoardController extends SimpleFormController
 		//PSF_rescan and PWS_rescan states are currently not given
 		//a status on the greaseboard
 		
-	}
-	
-	private boolean isInterventionLocation(Integer locationId,String interLocationAttributeName) {
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		
-		LocationAttributeValue locationAttributeValue = chirdlutilbackportsService.getLocationAttributeValue(locationId,
-			interLocationAttributeName);
-		if (locationAttributeValue != null) {
-			String interventionSiteString = locationAttributeValue.getValue();
-			if (interventionSiteString.equalsIgnoreCase("true")) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

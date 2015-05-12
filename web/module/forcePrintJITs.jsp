@@ -29,10 +29,6 @@ function setSize(width,height) {
 <table>
 <tr>
 <td><select name="options"">
-<c:if test="${isASQInterventionLocation}">
-<option>ASQ</option>
-<option>ASQ Activity Sheet</option>
-</c:if>
 <c:forEach items="${printableJits}" var="printableJit">
 <option value="${printableJit.formId}">${printableJit.displayName}</option>
 </c:forEach>
