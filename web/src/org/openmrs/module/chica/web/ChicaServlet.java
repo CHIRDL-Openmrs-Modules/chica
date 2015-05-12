@@ -64,6 +64,11 @@ import com.itextpdf.text.pdf.PdfStamper;
  */
 public class ChicaServlet extends HttpServlet {
 	
+	private static final String WEEKS = "weeks";
+	private static final String DAYS = "days";
+	private static final String MONTHS = "months";
+	private static final String YEARS = "years";
+
 	private static final long serialVersionUID = 1L;
 	
 	private static final String IS_AUTHENTICATED = "isAuthenticated";
@@ -1092,13 +1097,13 @@ public class ChicaServlet extends HttpServlet {
 	 * @return The units provided converted into the units expected by the Util.getAgeInUnits method.
 	 */
 	private String convertUnits(String currentUnits) {
-		if (currentUnits.compareToIgnoreCase("years") == 0) {
+		if (currentUnits.compareToIgnoreCase(YEARS) == 0) {
 			return Util.YEAR_ABBR;
-		} else if (currentUnits.compareToIgnoreCase("months") == 0) {
+		} else if (currentUnits.compareToIgnoreCase(MONTHS) == 0) {
 			return Util.MONTH_ABBR;
-		} else if (currentUnits.compareToIgnoreCase("days") == 0) {
+		} else if (currentUnits.compareToIgnoreCase(DAYS) == 0) {
 			return Util.DAY_ABBR;
-		} else if (currentUnits.compareToIgnoreCase("weeks") == 0) {
+		} else if (currentUnits.compareToIgnoreCase(WEEKS) == 0) {
 			return Util.WEEK_ABBR;
 		}
 		
