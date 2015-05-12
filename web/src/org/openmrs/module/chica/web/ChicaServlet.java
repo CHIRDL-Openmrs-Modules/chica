@@ -512,7 +512,7 @@ public class ChicaServlet extends HttpServlet {
 		String patientIdString = request.getParameter(PARAM_PATIENT_ID);
 		Patient patient = null;
 		if (patientIdString == null || patientIdString.trim().length()==0) {
-			String mrn = request.getParameter("mrn");
+			String mrn = request.getParameter(PARAM_MRN);
 			if (mrn != null && mrn.trim().length() > 0) {
 				patient = getPatientByMRN(mrn);
 			}
@@ -606,21 +606,37 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		FormService formService = Context.getFormService();
-		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributesByName(
-			ChirdlUtilConstants.FORM_ATTR_FORCE_PRINTABLE);
+		FormAttribute forcePrintAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_FORCE_PRINTABLE);
+		if (forcePrintAttr == null) {
+			return;
+		}
+		
+		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributeValues(
+			forcePrintAttr.getFormAttributeId(), locationId, locationTagId);
 		Map<String, Integer> ageUnitsMinMap = new HashMap<String, Integer>();
 		Map<String, Integer> ageUnitsMaxMap = new HashMap<String, Integer>();
 		Set<FormDisplay> printableJits = new TreeSet<FormDisplay>();
+		
 		FormAttribute ageMinAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MIN);
 		FormAttribute ageMaxAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX);
 		FormAttribute ageMinUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MIN_UNITS);
 		FormAttribute ageMaxUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS);
 		FormAttribute displayNameAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME);
+		
+		Map<Integer, String> formAttrValAgeMinMap = getFormAttributeValues(chirdlutilbackportsService, ageMinAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+		Map<Integer, String> formAttrValAgeMinUnitsMap = getFormAttributeValues(chirdlutilbackportsService, ageMinUnitsAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+		Map<Integer, String> formAttrValAgeMaxMap = getFormAttributeValues(chirdlutilbackportsService, ageMaxAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+		Map<Integer, String> formAttrValAgeMaxUnitsMap = getFormAttributeValues(chirdlutilbackportsService, ageMaxUnitsAttr.getFormAttributeId(), 
+			locationId, locationTagId);
 		for (FormAttributeValue attribute : attributes) {
 			if (attribute.getValue().equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE) && 
 					attribute.getLocationId().equals(locationId) && 
 					attribute.getLocationTagId().equals(locationTagId)) {
 				Form form = formService.getForm(attribute.getFormId());
+				Integer formId = form.getFormId();
 				if (!form.getRetired()) {
 					FormDisplay formDisplay = new FormDisplay();
 					formDisplay.setFormName(form.getName());
@@ -633,54 +649,50 @@ public class ChicaServlet extends HttpServlet {
 						formDisplay.setDisplayName(attributeValue.getValue());
 					}
 					
-					FormAttributeValue ageMin = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ageMinAttr, locationTagId, locationId);
-					if (ageMin == null || ageMin.getValue() == null || ageMin.getValue().trim().length() == 0) {
+					String ageMin = formAttrValAgeMinMap.get(formId);
+					if (ageMin == null || ageMin.trim().length() == 0) {
 						printableJits.add(formDisplay);
 						continue;
 					}
 					
-					FormAttributeValue ageMinUnits = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ageMinUnitsAttr, locationTagId, locationId);
-					if (ageMinUnits == null || ageMinUnits.getValue() == null || ageMinUnits.getValue().trim().length() == 0) {
+					String ageMinUnits = formAttrValAgeMinUnitsMap.get(formId);
+					if (ageMinUnits == null || ageMinUnits.trim().length() == 0) {
 						printableJits.add(formDisplay);
 						continue;
 					}
 					
-					FormAttributeValue ageMax = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ageMaxAttr, locationTagId, locationId);
-					if (ageMax == null || ageMax.getValue() == null || ageMax.getValue().trim().length() == 0) {
+					String ageMax = formAttrValAgeMaxMap.get(formId);
+					if (ageMax == null || ageMax.trim().length() == 0) {
 						printableJits.add(formDisplay);
 						continue;
 					}
 					
-					FormAttributeValue ageMaxUnits = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						ageMaxUnitsAttr, locationTagId, locationId);
-					if (ageMaxUnits == null || ageMaxUnits.getValue() == null || ageMaxUnits.getValue().trim().length() == 0) {
+					String ageMaxUnits = formAttrValAgeMaxUnitsMap.get(formId);
+					if (ageMaxUnits == null || ageMaxUnits.trim().length() == 0) {
 						printableJits.add(formDisplay);
 						continue;
 					}
 
-					Integer nowAgeWithMinUnits = ageUnitsMinMap.get(ageMinUnits.getValue());
+					Integer nowAgeWithMinUnits = ageUnitsMinMap.get(ageMinUnits);
 					if (nowAgeWithMinUnits == null) {
 						nowAgeWithMinUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
-							ageMinUnits.getValue());
-						ageUnitsMinMap.put(ageMinUnits.getValue(), nowAgeWithMinUnits);
+							convertUnits(ageMinUnits));
+						ageUnitsMinMap.put(ageMinUnits, nowAgeWithMinUnits);
 					}
 					
-					Integer nowAgeWithMaxUnits = ageUnitsMaxMap.get(ageMaxUnits.getValue());
+					Integer nowAgeWithMaxUnits = ageUnitsMaxMap.get(ageMaxUnits);
 					if (nowAgeWithMaxUnits == null) {
 						nowAgeWithMaxUnits = Util.getAgeInUnits(patient.getBirthdate(), new Date(), 
-							ageMaxUnits.getValue());
-						ageUnitsMaxMap.put(ageMaxUnits.getValue(), nowAgeWithMaxUnits);
+							convertUnits(ageMaxUnits));
+						ageUnitsMaxMap.put(ageMaxUnits, nowAgeWithMaxUnits);
 					}
 					
 					try{
 
-						if(nowAgeWithMinUnits.intValue()<Integer.parseInt(ageMin.getValue())){
+						if(nowAgeWithMinUnits.intValue()<Integer.parseInt(ageMin)){
 							continue;
 						}
-						if(nowAgeWithMaxUnits.intValue()>= Integer.parseInt(ageMax.getValue())){
+						if(nowAgeWithMaxUnits.intValue()>= Integer.parseInt(ageMax)){
 							continue;
 						}
 					}
@@ -702,6 +714,10 @@ public class ChicaServlet extends HttpServlet {
 		
 		ageUnitsMinMap.clear();
 		ageUnitsMaxMap.clear();
+		formAttrValAgeMinMap.clear();
+		formAttrValAgeMinUnitsMap.clear();
+		formAttrValAgeMaxMap.clear();
+		formAttrValAgeMaxUnitsMap.clear();
 		
 		pw.write(XML_FORCE_PRINT_JITS_END);
 	}
@@ -1050,5 +1066,42 @@ public class ChicaServlet extends HttpServlet {
 		}
 		pw.write(XML_BAD_SCANS_END);
 		pw.write(XML_GREASEBOARD_END);
+	}
+	
+	private Map<Integer, String> getFormAttributeValues(ChirdlUtilBackportsService backportsService, Integer attributeId, 
+		Integer locationId, Integer locationTagId) {
+		Map<Integer, String> formToValueMap = new HashMap<Integer, String>();
+		List<FormAttributeValue> values = backportsService.getFormAttributeValues(attributeId, locationId, locationTagId);
+		if (values == null) {
+			return formToValueMap;
+		}
+		
+		for (FormAttributeValue value : values) {
+			String entry = value.getValue();
+			if (entry != null && entry.length() > 0)
+			formToValueMap.put(value.getFormId(), entry);
+		}
+		
+		return formToValueMap;
+	}
+	
+	/**
+	 * Convert database units into units used by the Util.getAgeInUnits class.  This is extremely cheesy.
+	 * 
+	 * @param currentUnits The units to convert
+	 * @return The units provided converted into the units expected by the Util.getAgeInUnits method.
+	 */
+	private String convertUnits(String currentUnits) {
+		if (currentUnits.compareToIgnoreCase("years") == 0) {
+			return Util.YEAR_ABBR;
+		} else if (currentUnits.compareToIgnoreCase("months") == 0) {
+			return Util.MONTH_ABBR;
+		} else if (currentUnits.compareToIgnoreCase("days") == 0) {
+			return Util.DAY_ABBR;
+		} else if (currentUnits.compareToIgnoreCase("weeks") == 0) {
+			return Util.WEEK_ABBR;
+		}
+		
+		return null;
 	}
 }

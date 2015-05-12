@@ -3629,7 +3629,7 @@ where action_name='REPRINT';
             INSERT INTO chirdlutilbackports_form_attribute  
             (`name`, `description`)  
             VALUES  
-            ('ageMinUnits', 'Minimum age units for displaying form for force print'); 
+            ('ageMinUnits', 'Minimum age units (years, months, days, weeks) for displaying form for force print'); 
              
             INSERT INTO chirdlutilbackports_form_attribute  
             (`name`, `description`)  
@@ -3639,7 +3639,7 @@ where action_name='REPRINT';
             INSERT INTO chirdlutilbackports_form_attribute  
             (`name`, `description`)  
             VALUES  
-            ('ageMaxUnits', 'Maximum age units for displaying form for force print');  
+            ('ageMaxUnits', 'Maximum age units (years, months, days, weeks) for displaying form for force print');  
         </sql>  
     </diff>  
     
