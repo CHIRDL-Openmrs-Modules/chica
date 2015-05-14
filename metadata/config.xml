@@ -324,6 +324,11 @@
         <description>Whether or not to display a notice on the greaseboard of bad scans.  Valid values are 'true' and 'false'.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.g3EncryptionKey</property>
+        <description>Encryption key used to decrypt information sent from the G3 application.
+        </description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

@@ -19,20 +19,28 @@ import org.openmrs.module.chica.vendor.Vendor;
 
 
 /**
- * Cerner vendor implementation for receiving data from external sources.
- * 
+ *
  * @author Steve McKee
  */
-public class CernerVendor implements Vendor {
+public abstract class VendorImpl implements Vendor {
 	
-	private HttpServletRequest request = null;
+	protected static final String PARAM_MRN = "mrn";
+	protected static final String PARAM_FORM_PAGE = "formPage";
+	protected static final String PARAM_PROVIDER_ID = "providerId";
+	protected static final String PARAM_END_STATE = "endState";
+	protected static final String PARAM_START_STATE = "startState";
+	protected static final String PARAM_FORM_NAME = "formName";
+	protected static final String PARAM_PASSWORD = "password";
+	protected static final String PARAM_USERNAME = "username";
+	
+	protected HttpServletRequest request = null;
 	
 	/**
 	 * Constructor method
 	 * 
 	 * @param request HttpServletRequest object for accessing URL parameters.
 	 */
-	public CernerVendor(HttpServletRequest request) {
+	public VendorImpl(HttpServletRequest request) {
 		if (request == null) {
 			throw new IllegalArgumentException("Parameter request cannot be null.");
 		}
@@ -44,55 +52,55 @@ public class CernerVendor implements Vendor {
 	 * @see org.openmrs.module.chica.vendor.Vendor#getUsername()
 	 */
 	public String getUsername() {
-		return request.getParameter("username");
+		return request.getParameter(PARAM_USERNAME);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getPassword()
 	 */
 	public String getPassword() {
-		return request.getParameter("password");
+		return request.getParameter(PARAM_PASSWORD);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getFormName()
 	 */
 	public String getFormName() {
-		return request.getParameter("formName");
+		return request.getParameter(PARAM_FORM_NAME);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getStartState()
 	 */
 	public String getStartState() {
-		return request.getParameter("startState");
+		return request.getParameter(PARAM_START_STATE);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getEndState()
 	 */
 	public String getEndState() {
-		return request.getParameter("endState");
+		return request.getParameter(PARAM_END_STATE);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getProviderId()
 	 */
 	public String getProviderId() {
-		return request.getParameter("providerId");
+		return request.getParameter(PARAM_PROVIDER_ID);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getFormPage()
 	 */
 	public String getFormPage() {
-		return request.getParameter("formPage");
+		return request.getParameter(PARAM_FORM_PAGE);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getMrn()
 	 */
 	public String getMrn() {
-		return request.getParameter("mrn");
+		return request.getParameter(PARAM_MRN);
 	}
 }
