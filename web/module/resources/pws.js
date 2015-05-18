@@ -51,7 +51,8 @@ function parseAvailableJITs(responseXML) {
             $("#tabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
             $('#tabs').show();
             var divHeight = $("#formTabDialogContainer").height();
-            $(".recommended-forms").css({"height":divHeight - 45});
+            $(".recommended-forms").css({"height":divHeight});
+            $("#tabs").css({"height":divHeight});
             $("#formTabDialogContainer").css("background", "#cc9966");
         }
     }
