@@ -62,13 +62,42 @@ public class G3Vendor extends VendorImpl implements Vendor {
 			return null;
 		}
 		
-		//String key = "RegenstriefChicaPlugin";
 		String key = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_G3_ENCRYPTION_KEY);
 		if (key == null || key.trim().length() == 0) {
 			log.error("Cannot find value for global property " + ChirdlUtilConstants.GLOBAL_PROP_G3_ENCRYPTION_KEY + ".  Cannot continue.");
 			return null;
 		}
 		
+		return decryptValue(password, key);
+	}
+	
+	/**
+	 * @see org.openmrs.module.chica.vendor.impl.VendorImpl#getUsername()
+	 */
+	public String getUsername() {
+		String username = request.getParameter(PARAM_USERNAME);
+		if (username == null || username.trim().length() == 0) {
+			log.error("No " + PARAM_USERNAME + " parameter found in HTTP request.");
+			return null;
+		}
+		
+		String key = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_G3_ENCRYPTION_KEY);
+		if (key == null || key.trim().length() == 0) {
+			log.error("Cannot find value for global property " + ChirdlUtilConstants.GLOBAL_PROP_G3_ENCRYPTION_KEY + ".  Cannot continue.");
+			return null;
+		}
+		
+		return decryptValue(username, key);
+	}
+	
+	/**
+	 * Decrypts an encrypted value with the provided key.
+	 * 
+	 * @param encryptedValue The value to decrypt
+	 * @param key The key used to decrypt the value
+	 * @return The decrypted value or null if it can't be decrypted
+	 */
+	private String decryptValue(String encryptedValue, String key) {
 		// Decrypt the password
 		Cipher cipher;
         try {
@@ -104,7 +133,7 @@ public class G3Vendor extends VendorImpl implements Vendor {
 		
 		String decrypted;
         try {
-	        decrypted = new String(cipher.doFinal(Base64.decodeBase64(password.getBytes())));
+	        decrypted = new String(cipher.doFinal(Base64.decodeBase64(encryptedValue.getBytes())));
         }
         catch (IllegalBlockSizeException e) {
 	        log.error("Illegal Block Size", e);
