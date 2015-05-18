@@ -12,6 +12,9 @@ import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.Util;
 
+
+
+
 /**
  * @author tmdugan
  * 
@@ -76,7 +79,7 @@ public class KiteQueryThread implements Runnable
 	{
 		AdministrationService adminService = Context.getAdministrationService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
-
+		
 		String host = adminService.getGlobalProperty("chica.kiteHost");
 		if (host == null)
 		{
@@ -102,7 +105,8 @@ public class KiteQueryThread implements Runnable
 		{
 		}
 
-		String response = null;
+		
+		String response1 = null;
 		String queryString = queryPrefix + "|" + mrn + "\n";
 
 		KiteMessageHandler serverTest = new KiteMessageHandler(host, port,
@@ -112,7 +116,7 @@ public class KiteQueryThread implements Runnable
 		{
 			serverTest.openSocket();
 			serverTest.sendMessage(queryString);
-			response = serverTest.getMessage();
+			response1 = serverTest.getMessage();
 
 		} catch (Exception e)
 		{
@@ -129,6 +133,6 @@ public class KiteQueryThread implements Runnable
 			serverTest.closeSocket();
 		}
 
-		return response;
+		return response1;
 	}
 }
