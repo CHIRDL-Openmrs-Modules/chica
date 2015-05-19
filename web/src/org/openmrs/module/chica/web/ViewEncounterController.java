@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,15 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
 import org.openmrs.Form;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
@@ -349,6 +345,10 @@ public class ViewEncounterController extends SimpleFormController {
 				String mrn = request.getParameter("mrn");
 				if (mrn != null && mrn.trim().length() > 0) {
 					mrn = Util.removeLeadingZeros(mrn);
+					if (!mrn.contains("-") && mrn.length() > 1) {
+						mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length()-1);
+					}
+					
 					PatientIdentifierType identifierType = patientService
 							.getPatientIdentifierTypeByName("MRN_OTHER");
 					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
@@ -622,30 +622,6 @@ public class ViewEncounterController extends SimpleFormController {
 
 		return mdName;
 
-	}
-
-	private String searchEncounterForObs(Encounter enc, String conceptName) {
-		String name = "N/A";
-
-		Set<Obs> allObs = enc.getObs();
-		ConceptService conceptService = Context.getConceptService();
-		if (allObs != null) {
-			for (Obs obs : allObs) {
-				Concept obsConcept = obs.getConcept();
-				Concept wtcentileConcept = conceptService
-						.getConceptByName(conceptName);
-				if (obsConcept != null
-						&& wtcentileConcept != null
-						&& wtcentileConcept.getConceptId().equals(obsConcept
-								.getConceptId())) {
-					Double wtcentile = obs.getValueNumeric();
-					if (wtcentile != null) {
-						name = wtcentile.toString();
-					}
-				}
-			}
-		}
-		return name;
 	}
 
 }
