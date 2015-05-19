@@ -15,6 +15,7 @@ package org.openmrs.module.chica.web;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.module.chirdlutilbackports.util.PatientStateStartDateComparator;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -384,6 +386,7 @@ public class ExternalFormController extends SimpleFormController {
 			if (!containsEndState) {
 				patientStates = formIdToPatientStateMapStart.get(formId);
 				if (patientStates != null) {
+					Collections.sort(patientStates, new PatientStateStartDateComparator(PatientStateStartDateComparator.DESCENDING));
 					for (PatientState patientState : patientStates) {
 						FormInstance formInstance = patientState.getFormInstance();
 						if (formInstance != null) {
@@ -396,6 +399,7 @@ public class ExternalFormController extends SimpleFormController {
 			} else {
 				patientStates = formIdToPatientStateMapEnd.get(formId);
 				if (patientStates != null) {
+					Collections.sort(patientStates, new PatientStateStartDateComparator(PatientStateStartDateComparator.DESCENDING));
 					for (PatientState patientState : patientStates) {
 						if (patientState.getEndTime() == null) {
 							FormInstance formInstance = patientState.getFormInstance();
