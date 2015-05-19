@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions
+  xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:tns="http://www.regenstrief.org/services"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  name="CcdService" targetNamespace="http://www.regenstrief.org/services">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.regenstrief.org/services">
+      <xsd:element name="getDump" type="tns:getDump"/>
+      <xsd:complexType name="EntityIdentifier">
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="system" type="xsd:string" use="required"/>
+      </xsd:complexType>
+      <xsd:complexType name="getDump">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="user" type="tns:EntityIdentifier"/>
+          <xsd:element minOccurs="1" maxOccurs="1" name="password" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="role" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="purpose" type="xsd:string"/>
+          <xsd:element minOccurs="1" maxOccurs="1" name="patient" type="tns:EntityIdentifier"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="minDate" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="maxDate" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="classesToInclude" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="classesToExclude" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="minimal" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getDumpResponse" type="tns:getDumpResponse"/>
+      <xsd:complexType name="getDumpResponse">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="hl7" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="timing" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="getDump">
+    <wsdl:part element="tns:getDump" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getDumpResponse">
+    <wsdl:part element="tns:getDumpResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="IDumpService">
+    <wsdl:operation name="getDump">
+      <wsdl:input message="tns:getDump" name="getDump"></wsdl:input>
+      <wsdl:output message="tns:getDumpResponse" name="getDumpResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DumpServiceSoapBinding" type="tns:IDumpService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getDump">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getDump">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getDumpResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DumpService">
+    <wsdl:port binding="tns:DumpServiceSoapBinding" name="GetDump">
+      <soap:address location="https://172.31.80.31:8443/NHIN/services/MRNRequestForDump"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
