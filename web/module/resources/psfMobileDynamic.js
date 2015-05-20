@@ -208,6 +208,13 @@ function init(patientName, birthdate, formInst, formId, formInstanceId, encounte
 	this.encounterId = encounterId;
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
+	
+	var showVitals = $("#showVitals").val();
+	if (showVitals == "false") {
+		$("#confirmVitalsButton").hide();
+		$("#vitalsDirectButton").hide();
+		$("#vitalsDirectButton_sp").hide();
+	}
 }
 
 function displayQuestions() {
@@ -740,13 +747,20 @@ function parsePatientForms(responseXML) {
         }
         
         $.mobile.loading("hide");
+        $('#content_frame').html("");
         
-        // Go to the vitals page
-        $('#content_frame').html(""); 
-        if (english) {
-        	$.mobile.changePage("#finished_dialog", { transition: "pop" });
+        // Check to see if we need to show the vitals
+        var showVitals = $("#showVitals").val();
+        if (showVitals == "false") {
+        	// Submit the form
+        	completeForm();
         } else {
-        	$.mobile.changePage("#finished_dialog_sp", { transition: "pop" });
+        	// Go to the vitals page
+            if (english) {
+            	$.mobile.changePage("#finished_dialog", { transition: "pop" });
+            } else {
+            	$.mobile.changePage("#finished_dialog_sp", { transition: "pop" });
+            }
         }
     }
 }
@@ -989,10 +1003,25 @@ function displayValidationError(fieldName, expectedFormats, fieldId) {
 }
 
 function populateValues() {
-    setDecimalValueFields(document.getElementById("height").value, "HeightP", "HeightS");
-    setDecimalValueFields(document.getElementById("weight").value, "WeightP", "WeightS");
-    setDecimalValueFields(document.getElementById("temp").value, "TempP", "TempS");
-    setDecimalValueFields(document.getElementById("hc").value, "HCP", "HCS");
+	var height = document.getElementById("height");
+	if (height != undefined && height != null) {
+		setDecimalValueFields(height.value, "HeightP", "HeightS");
+	}
+	
+	var weight = document.getElementById("weight");
+	if (weight != undefined && weight != null) {
+		setDecimalValueFields(weight.value, "WeightP", "WeightS");
+	}
+	
+	var temp = document.getElementById("temp");
+	if (temp != undefined && temp != null) {
+		setDecimalValueFields(temp.value, "TempP", "TempS");
+	}
+	
+	var hc = document.getElementById("hc");
+	if (hc != undefined && hc != null) {
+		setDecimalValueFields(hc.value, "HCP", "HCS");
+	}
 }
 
 function setDecimalValueFields(value, beforeDecName, afterDecName) {

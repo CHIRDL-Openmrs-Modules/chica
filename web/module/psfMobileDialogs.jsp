@@ -175,3 +175,15 @@
         </div>
     </div>
 </div>
+<a id='lnkSubmitError' href="#submitErrorDialog" data-rel="dialog" data-transition="pop" data-position-to="window" style='display:none;'></a>
+<div id="submitErrorDialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c" >
+    <div data-role="header" data-theme="b">
+        <h1>Error</h1>
+    </div>
+    <div data-role="content">
+        <div id="submitErrorDiv"></div>
+        <div style="margin: 0 auto;text-align: center;">
+            <a id="submitErrorButton" data-rel="back" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
+        </div>
+    </div>
+</div>
