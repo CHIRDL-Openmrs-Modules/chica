@@ -749,8 +749,7 @@ function parsePatientForms(responseXML) {
         $('#content_frame').html("");
         
         // Check to see if we need to show the vitals
-        var showVitals = $("#showVitals").val();
-        if (showVitals == "false") {
+        if (!shouldShowVitals()) {
         	// Submit the form
         	completeForm();
         } else {
