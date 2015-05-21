@@ -749,7 +749,7 @@ function parsePatientForms(responseXML) {
         $('#content_frame').html("");
         
         // Check to see if we need to show the vitals
-        if (!shouldShowVitals()) {
+        if (!shouldShowVitalsButton()) {
         	// Submit the form
         	completeForm();
         } else {
