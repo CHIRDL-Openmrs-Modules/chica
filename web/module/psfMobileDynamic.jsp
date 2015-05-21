@@ -311,7 +311,7 @@
                   <div class="ui-block-b" style="text-align: center;height: 25px;margin-bottom: 0px;width: 86%"></div>
                   <div class="ui-block-a" style="text-align: center;height: 60px;margin-bottom: 0px;width: 14%"></div>
                   <div class="ui-block-b" style="text-align: center;height: 60px;margin-bottom: 0px;width: 86%;">
-                      <span><input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" style="vertical-align: top; margin: 0px;"/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given<label></span>
+                      <span><input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" style="vertical-align: top; margin: 0px;"/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label></span>
                   </div>
                </div>
             </div>

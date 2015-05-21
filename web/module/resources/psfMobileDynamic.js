@@ -1145,3 +1145,12 @@ function areAllQuestionsAnswered() {
 	
 	return true;
 }
+
+function shouldShowVitalsButton() {
+	 var showVitals = $("#showVitals").val();
+     if (showVitals == "false") {
+     	return false;
+     }
+     
+     return true;
+}
