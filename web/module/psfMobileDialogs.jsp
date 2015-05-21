@@ -17,7 +17,7 @@
     <div data-role="content">
         <div id="errorResultDiv_sp"></div>
         <div style="margin: 0 auto;text-align: center;">
-            <a href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" style="width: 150px;">Acceptar</a>
+            <a href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" style="width: 150px;">Aceptar</a>
         </div>
     </div>
 </div>
