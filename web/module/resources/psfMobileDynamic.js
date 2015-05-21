@@ -209,8 +209,7 @@ function init(patientName, birthdate, formInst, formId, formInstanceId, encounte
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
 	
-	var showVitals = $("#showVitals").val();
-	if (showVitals == "false") {
+	if (!shouldShowVitalsButton()) {
 		$("#confirmVitalsButton").hide();
 		$("#vitalsDirectButton").hide();
 		$("#vitalsDirectButton_sp").hide();
