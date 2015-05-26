@@ -3612,6 +3612,17 @@ where action_name='REPRINT';
         delete from global_property where property = 'chica.presnetStudyPostUrl';
         </sql>
     </diff>
+    <diff>
+        <version>1.6.7</version>
+        <author>Meena Sheley</author>
+        <date>May 22, 2015</date>
+        <description>
+        Remove the unused chica.kiteHost global property
+        Remove the unused chica.kitePort global property
+        </description>
+        <sql>
+        </sql>
+    </diff>
 </sqldiff>
 
 

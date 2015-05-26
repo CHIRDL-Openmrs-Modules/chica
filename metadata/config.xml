@@ -318,6 +318,16 @@
         <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
         </description>
     </globalProperty>
+     <globalProperty>
+        <property>chica.mrfQueryConfigFile</property>
+     	<description>MRF query web service configuration file location.
+        </description>
+    </globalProperty>
+     <globalProperty>
+        <property>chica.MRFQueryPassword</property>
+     	<description>MRF query web service password.
+        </description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

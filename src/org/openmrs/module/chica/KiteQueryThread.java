@@ -1,7 +1,15 @@
 package org.openmrs.module.chica;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
@@ -9,8 +17,14 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.mrfservices.DumpServiceStub;
+import org.openmrs.module.chica.mrfservices.DumpServiceStub.GetDumpE;
+import org.openmrs.module.chica.mrfservices.DumpServiceStub.GetDumpResponseE;
 import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chica.xmlBeans.StatsConfig;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 
 /**
  * @author tmdugan
@@ -23,7 +37,17 @@ public class KiteQueryThread implements Runnable
 	private String mrn = null;
 	private String queryPrefix = null;
 	private QueryKiteException exception = null;
-	private String response = null;
+	private String responseString = null;
+	private static final String GLOBAL_PROPERTY_MRF_QUERY_TIMEOUT = "chica.kiteTimeout";
+	private static final String GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE = "chica.mrfQueryConfigFile";
+	private static final String GLOBAL_PROPERTY_MRF_QUERY_PASSWORD = "chica.MRFQueryPassword";
+	private static final String MRF_PARAM_SYSTEM = "system";
+	private static final String MRF_PARAM_USER_ID = "id";
+	private static final String MRF_PARAM_PATIENT_IDENTIFIER_SYSTEM = "patient_identifier_system";
+	private static final String MRF_PARAM_CLASSES_TO_INCLUDE = "classes_to_include";
+	private static final String MRF_PARAM_CLASSES_TO_EXCLUDE = "classes_to_exclude";
+
+	private static final String MRF_PARAM_MRN = "mrn";
 
 	public KiteQueryThread(String mrn, String queryPrefix)
 	{
@@ -48,14 +72,14 @@ public class KiteQueryThread implements Runnable
 
 			try
 			{
-				this.response = queryKite(this.mrn, this.queryPrefix);
+				responseString = queryKite(this.mrn, this.queryPrefix);
 			} catch (QueryKiteException e)
 			{
 				this.exception = e;
 			}
 		} catch (Exception e)
 		{
-			
+
 		}finally{
 			Context.closeSession();
 		}
@@ -63,7 +87,7 @@ public class KiteQueryThread implements Runnable
 
 	public String getResponse()
 	{
-		return this.response;
+		return this.responseString;
 	}
 
 	public QueryKiteException getException()
@@ -71,64 +95,80 @@ public class KiteQueryThread implements Runnable
 		return this.exception;
 	}
 
+	/**
+	 * @param mrn
+	 * @param queryPrefix
+	 * @return
+	 * @throws QueryKiteException
+	 */
 	private String queryKite(String mrn, String queryPrefix)
 			throws QueryKiteException
-	{
+			{
 		AdministrationService adminService = Context.getAdministrationService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
+		String configFile = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE);
+		String password = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_PASSWORD);
 
-		String host = adminService.getGlobalProperty("chica.kiteHost");
-		if (host == null)
-		{
-			log.error("Could not query kite. No host provided.");
+		Properties props = null; 
+		if(configFile == null){
+			log.error("Could not find MRF query config file. Please set global property " + GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE); 
 			return null;
 		}
-		Integer port = null;
-		try
-		{
-			port = Integer.parseInt(adminService
-					.getGlobalProperty("chica.kitePort"));
-		} catch (NumberFormatException e)
-		{
+
+		props = IOUtil.getProps(configFile);
+		if (props == null) {
+			return null;
 		}
 
-		Integer timeout = null;
-		try
-		{
-			timeout = Integer.parseInt(adminService
-					.getGlobalProperty("chica.kiteTimeout"));
-			timeout = timeout * 1000; // convert seconds to milliseconds
-		} catch (NumberFormatException e)
-		{
+		try{
+
+			DumpServiceStub service = new DumpServiceStub();
+			GetDumpE dumpE = new GetDumpE();
+			DumpServiceStub.GetDump dump = new DumpServiceStub.GetDump();
+			dumpE.setGetDump(dump);
+			
+			DumpServiceStub.EntityIdentifier login = new DumpServiceStub.EntityIdentifier();
+			login.setId(props.getProperty(MRF_PARAM_USER_ID));
+			login.setSystem(props.getProperty(MRF_PARAM_SYSTEM));
+			dump.setUser(login);
+
+			DumpServiceStub.EntityIdentifier patient = new DumpServiceStub.EntityIdentifier();
+			patient.setId(props.getProperty(MRF_PARAM_MRN));
+			patient.setSystem(props.getProperty(MRF_PARAM_PATIENT_IDENTIFIER_SYSTEM));
+			dump.setPatient(patient);
+			dump.setPassword(password);
+			dump.setClassesToExclude(props.getProperty(MRF_PARAM_CLASSES_TO_EXCLUDE));
+			dump.setClassesToInclude(props.getProperty(MRF_PARAM_CLASSES_TO_INCLUDE));
+
+			long start = Calendar.getInstance().getTimeInMillis();
+			GetDumpResponseE response = service.getDump(dumpE);
+
+			long stop = Calendar.getInstance().getTimeInMillis();
+			responseString = response.getGetDumpResponse().getHl7();
+
+			//LOGGING
+			log.error(responseString);
+			byte[] utf8Bytes = responseString.getBytes("UTF-8");
+			log.info("Size: " + utf8Bytes.length);
+			log.info("query time: " + (stop - start));
+			log.info("Size: " + utf8Bytes.length);
+			log.info("query time: " + (stop - start));
+			String[] timings = response.getGetDumpResponse().getTiming();
+			for (String timing : timings){
+				System.out.println(timing);
+				log.info(timing);
+			}
+
+		} catch (AxisFault e) {
+			log.error(Util.getStackTrace(e));
+		} catch (RemoteException e) {
+			log.error(Util.getStackTrace(e));
+		} catch (UnsupportedEncodingException e) {
+			log.error(Util.getStackTrace(e));
+		} catch (Exception e){
+			log.error(Util.getStackTrace(e));
 		}
 
-		String response = null;
-		String queryString = queryPrefix + "|" + mrn + "\n";
 
-		KiteMessageHandler serverTest = new KiteMessageHandler(host, port,
-				timeout);
-
-		try
-		{
-			serverTest.openSocket();
-			serverTest.sendMessage(queryString);
-			response = serverTest.getMessage();
-
-		} catch (Exception e)
-		{
-			Error error = new Error("Error", "Query Kite Connection",
-					queryPrefix + ": " + e.getMessage(), Util.getStackTrace(e),
-					new Date(), null);
-			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-			chirdlutilbackportsService.saveError(error);
-			throw new QueryKiteException("Query Kite Connection timed out",
-					error);
-
-		} finally
-		{
-			serverTest.closeSocket();
-		}
-
-		return response;
+		return responseString;
 	}
 }

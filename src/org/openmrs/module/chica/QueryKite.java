@@ -36,6 +36,7 @@ import org.openmrs.module.chirdlutil.util.Util;
 public class QueryKite
 {
 	private static Log log = LogFactory.getLog(QueryKite.class);
+	private static final String GLOBAL_PROPERTY_MRF_QUERY_TIMEOUT = "chica.kiteTimeout";
 
 	public static String queryKite(String mrn, String queryPrefix)
 			throws QueryKiteException
@@ -45,8 +46,7 @@ public class QueryKite
 		Integer timeout = 5000;
 		try
 		{
-			timeout = Integer.parseInt(adminService
-					.getGlobalProperty("chica.kiteTimeout"));
+			timeout = Integer.parseInt( adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_TIMEOUT));
 			timeout = timeout * 1000; // convert seconds to
 			// milliseconds
 		} catch (NumberFormatException e)
@@ -129,10 +129,10 @@ public class QueryKite
 			try
 			{
 				aliasFile = new FileOutputStream(aliasDirectory
-						+ "/" + filename);
+						+ filename);
 			} catch (FileNotFoundException e1)
 			{
-				log.error("Could not find alias file: " + aliasDirectory + "/"
+				log.error("Could not find alias file: " + aliasDirectory 
 						+ filename);
 			}
 			if (aliasFile != null)
@@ -264,10 +264,10 @@ public class QueryKite
 			try
 			{
 				mrfDumpFile = new FileOutputStream(
-						mrfDirectory + "/" + filename);
+						mrfDirectory  + filename);
 			} catch (FileNotFoundException e1)
 			{
-				log.error("Couldn't find file: "+mrfDirectory + "/" + filename);
+				log.error("Couldn't find file: "+mrfDirectory + filename);
 			}
 			if (mrfDumpFile != null)
 			{
