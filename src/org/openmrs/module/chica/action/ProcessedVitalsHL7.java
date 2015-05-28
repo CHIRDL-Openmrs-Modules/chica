@@ -34,7 +34,6 @@ public class ProcessedVitalsHL7 implements ProcessStateAction {
 	/**
 	 * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#changeState(org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState, java.util.HashMap)
 	 */
-	@Override
 	public void changeState(PatientState patientState, HashMap<String, Object> parameters) {
 		// Deliberately empty because processAction changes the state
 	}
@@ -42,7 +41,6 @@ public class ProcessedVitalsHL7 implements ProcessStateAction {
 	/**
 	 * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#processAction(org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState, java.util.HashMap)
 	 */
-	@Override
 	public void processAction(StateAction stateAction, Patient patient, PatientState patientState,
 	                          HashMap<String, Object> parameters) {
 		// This action currently doesn't do much, but it's a placeholder in case future enhancements are performed
