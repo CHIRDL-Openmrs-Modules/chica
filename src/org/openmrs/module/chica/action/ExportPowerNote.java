@@ -14,14 +14,20 @@
 package org.openmrs.module.chica.action;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.logic.result.Result;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
+import org.openmrs.module.dss.hibernateBeans.Rule;
+import org.openmrs.module.dss.service.DssService;
 
 
 /**
@@ -31,6 +37,10 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
  */
 public class ExportPowerNote implements ProcessStateAction {
 	
+	private static final String PHYSICIAN_NOTE = "PhysicianNote";
+	private static final String PRODUCE = "PRODUCE";
+	private static final String MODE = "mode";
+
 	/**
 	 * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#changeState(org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState, java.util.HashMap)
 	 */
@@ -47,6 +57,27 @@ public class ExportPowerNote implements ProcessStateAction {
 		State currState = patientState.getState();
 		Integer locationTagId = patientState.getLocationTagId();
 		Integer locationId = patientState.getLocationId();
+		
+		// Get the note
+		DssService dssService = Context.getService(DssService.class);
+		
+		Map<String,Object> ruleParams = new HashMap<String,Object>();
+		ruleParams.put(MODE, PRODUCE);
+		
+		Rule rule = new Rule();
+    	rule.setTokenName(PHYSICIAN_NOTE);
+		rule.setParameters(ruleParams);
+		
+		Result result = dssService.runRule(patient, rule);
+		String note = result.toString();
+		
+		//********************************
+		
+		
+			// TODO: This section is currently unimplemented until the hooks are there to export the actual HL7 message.
+		
+		
+		//********************************
 		
 		StateManager.endState(patientState);
 		
