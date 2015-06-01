@@ -1135,7 +1135,7 @@
                 </div>
                 <div id="confirmSubmitDialog" title="Confirm" class="ui-overlay">
                     <div id="confirmText">
-                        <span>Click OK to permanently submit the form.</span>
+                        <span>Click OK to finalize the form.</span>
                     </div>
                 </div>
                 <div id="submitWaitDialog" class="noTitle">
