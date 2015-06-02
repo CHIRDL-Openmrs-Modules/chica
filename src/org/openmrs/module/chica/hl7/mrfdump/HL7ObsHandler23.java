@@ -89,6 +89,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		return obx;
 	}
 
+	
 	public static OBR getOBR(ORU_R01 oru, int orderRep)
 	{
 
@@ -460,7 +461,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 					ORU_R01_ORDER_OBSERVATION order = oru.getRESPONSE()
 							.getORDER_OBSERVATION(i);
 
-					int numObs = order.getOBSERVATIONReps();
+					int numObs = order.getOBSERVATIONReps(); 
 					for (int j = 0; j < numObs; j++)
 					{
 						Obs obs = hl7SocketHandler.CreateObservation(null,

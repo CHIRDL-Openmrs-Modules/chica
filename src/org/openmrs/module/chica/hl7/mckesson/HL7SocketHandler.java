@@ -53,6 +53,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.QueryKiteException;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -74,10 +75,13 @@ import org.openmrs.util.OpenmrsConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
+import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 
 /**
@@ -146,6 +150,10 @@ public class HL7SocketHandler extends
 				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
 				Patient matchedPatient = findPatient(hl7Patient);
+				parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
+				processAliasString(mrn, resultPatient);
+				parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
+				
 				if (matchedPatient == null) {
 					
 					resultPatient = createPatient(hl7Patient);
@@ -331,19 +339,46 @@ public class HL7SocketHandler extends
 				.getService(ChirdlUtilBackportsService.class);
 
 		PatientService patientService = Context.getPatientService();
-		String aliasString = null;
+		String response = null;
 		try {
-			aliasString = QueryKite.aliasQuery(mrn);
+			response = QueryKite.mrfQuery(mrn, preferredPatient, true);
 		} catch (QueryKiteException e) {
 			Error ce = e.getError();
 			chirdlutilbackportsService.saveError(ce);
 
 		}
 
-		// alias query failed
-		if (aliasString == null) {
+		// query failed
+		if (response == null) {
 			return;
 		}
+		
+		//get PIDs from response hl7
+		 Message responseMessage  = null;
+		try {
+			this.parser.setValidationContext(new NoValidation());
+			PipeParser pipeParser = new PipeParser();
+			
+			
+		} catch (EncodingNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HL7Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 HL7PatientHandler hl7PatientHandler = new HL7PatientHandler23();
+		 Set<PatientIdentifier> identifiers = hl7PatientHandler.getIdentifiers(responseMessage);
+		 if (identifiers == null || identifiers.size() == 0){
+			 //no aliases
+			 log.info("no aliases");
+			 return;
+		 }
+		 for (PatientIdentifier identifier : identifiers){
+			 String identifierString = identifier.getIdentifier();
+			 log.info(identifierString + " , ");
+		 }
+		/*
 		String[] fields = PipeParser.split(aliasString, "|");
 		if (fields != null) {
 			int length = fields.length;
@@ -402,7 +437,7 @@ public class HL7SocketHandler extends
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	/**

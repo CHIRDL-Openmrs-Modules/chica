@@ -38,7 +38,7 @@ public class QueryKite
 	private static Log log = LogFactory.getLog(QueryKite.class);
 	private static final String GLOBAL_PROPERTY_MRF_QUERY_TIMEOUT = "chica.kiteTimeout";
 
-	public static String queryKite(String mrn, String queryPrefix)
+	public static String queryKite(String mrn)
 			throws QueryKiteException
 	{
 		AdministrationService adminService = Context.getAdministrationService();
@@ -53,7 +53,7 @@ public class QueryKite
 		{
 		}
 		
-		KiteQueryThread kiteQueryThread = new KiteQueryThread(mrn, queryPrefix);
+		KiteQueryThread kiteQueryThread = new KiteQueryThread(mrn);
 		Thread thread = new Thread(kiteQueryThread);
 		thread.start();
 		try {
@@ -67,16 +67,14 @@ public class QueryKite
 				if(kiteQueryThread.getException()!=null) {
 					log.error("Exception");
 					throw kiteQueryThread.getException();
-				} else {
-					//return the response if no exception
-					log.info("Success");
-					return kiteQueryThread.getResponse();
 				}
-			} else {
-				//the timeout was exceeded so return null
-				log.warn("Timeout exceeded.");
-				return null;
+				//return the response if no exception
+				log.info("Success");
+				return kiteQueryThread.getResponse();
 			}
+			//the timeout was exceeded so return null
+			log.warn("Timeout exceeded.");
+			return null;
 		} catch (InterruptedException e) {
 			log.warn("Kite Query thread interrupted", e);
 			return null;
@@ -90,7 +88,7 @@ public class QueryKite
 		String response = null;
 		try
 		{
-		    response = queryKite(mrn, "FIND-ALIASES");
+		    response = queryKite(mrn);
 		} catch (Exception e)
 		{
 			Error error = new Error("Error", "Query Kite Connection"
@@ -103,7 +101,7 @@ public class QueryKite
 		//If the response is null this means the connection was broken
 		//Try querying again
 		if(response == null){
-			response = queryKite(mrn, "FIND-ALIASES");
+			response = queryKite(mrn);
 			if(response != null){
 				log.info("Re-query of FIND-ALIASES for mrn: "+mrn+" successful");
 			}else{
@@ -213,7 +211,7 @@ public class QueryKite
 			
 			try
 			{
-				response = queryKite(mrn, "ZET-MRF");
+				response = queryKite(mrn);
 			} 
 			catch (Exception e)
 			{
@@ -232,7 +230,7 @@ public class QueryKite
 		//Try querying again
 		if (response == null)
 		{
-			response = queryKite(mrn, "ZET-MRF");
+			response = queryKite(mrn);
 			if (response != null)
 			{
 				log.info("Re-query of GET-MRF for mrn: " + mrn

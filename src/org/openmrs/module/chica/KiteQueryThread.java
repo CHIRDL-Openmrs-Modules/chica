@@ -35,7 +35,6 @@ public class KiteQueryThread implements Runnable
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private String mrn = null;
-	private String queryPrefix = null;
 	private QueryKiteException exception = null;
 	private String responseString = null;
 	private static final String GLOBAL_PROPERTY_MRF_QUERY_TIMEOUT = "chica.kiteTimeout";
@@ -49,10 +48,9 @@ public class KiteQueryThread implements Runnable
 
 	private static final String MRF_PARAM_MRN = "mrn";
 
-	public KiteQueryThread(String mrn, String queryPrefix)
+	public KiteQueryThread(String mrn)
 	{
 		this.mrn = mrn;
-		this.queryPrefix = queryPrefix;
 	}
 
 	/*
@@ -72,7 +70,7 @@ public class KiteQueryThread implements Runnable
 
 			try
 			{
-				responseString = queryKite(this.mrn, this.queryPrefix);
+				responseString = queryKite(this.mrn);
 			} catch (QueryKiteException e)
 			{
 				this.exception = e;
@@ -101,7 +99,7 @@ public class KiteQueryThread implements Runnable
 	 * @return
 	 * @throws QueryKiteException
 	 */
-	private String queryKite(String mrn, String queryPrefix)
+	private String queryKite(String mrn)
 			throws QueryKiteException
 			{
 		AdministrationService adminService = Context.getAdministrationService();
