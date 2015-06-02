@@ -66,7 +66,7 @@ If  (ParentAssessPredomInattentiveCount >= 6) AND (ParentAssessPerformanceCount 
 Else
  CALL storeObs With "ParentAssessmentScale","NegativeADHDCombinedInattentionHyperactivity";
 endif;
-call CREATE_JIT with "ParentSummaryReport";
+call CREATE_JIT with "ParentSummaryReport", "", "true";
 
 endif
 ;;

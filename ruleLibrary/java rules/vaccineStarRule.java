@@ -27,6 +27,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.ImmunizationForecast;
 import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.ImmunizationQueryOutput;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 
 public class vaccineStarRule implements Rule
@@ -133,6 +134,7 @@ public class vaccineStarRule implements Rule
 						FormInstance formInstance = new FormInstance();
 						formInstance.setLocationId(locationId);
 						parameters.put("formInstance", formInstance);
+						parameters.put(ChirdlUtilConstants.PARAMETER_3, Boolean.TRUE.booleanValue());
 						logicService.eval(patientId, "CREATE_JIT", parameters);
 					}
 

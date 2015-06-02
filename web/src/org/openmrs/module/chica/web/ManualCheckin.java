@@ -1,20 +1,24 @@
 package org.openmrs.module.chica.web;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -29,6 +33,7 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
+import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
@@ -43,61 +48,50 @@ import org.openmrs.module.chica.hl7.mckesson.HL7SocketHandler;
 import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.patient.impl.LuhnIdentifierValidator;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
-public class ManualCheckinController extends SimpleFormController
+public class ManualCheckin
 {
 
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request)
-			throws Exception
-	{
-		return "testing";
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception
-	{
+	protected static final Log log = LogFactory.getLog(ManualCheckin.class);
+	private static final String PARAM_MRN = "mrn";
+	
+	public static void getManualCheckinPatient(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		PrintWriter pw = response.getWriter();
+		pw.write("<manualCheckin>");
+		
 		PatientService patientService = Context.getPatientService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		Map<String, Object> map = new HashMap<String, Object>();
 		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
 		
 		//set stations
 		User user = Context.getAuthenticatedUser();
-		LocationService locationService = Context.getLocationService();
-		String locationString = user.getUserProperty("location");
-
-		Location location = locationService
-			.getLocation(locationString);
 		List<String> stationNames =  chicaService.getPrinterStations(user);
-		map.put("stations", stationNames);
-		
-		String checkin = request.getParameter("checkin");
-
-		if (checkin != null)
-		{
-			checkin(request,map,location);
+		pw.write("<stations>");
+		if (stationNames != null) {
+			for (String stationName : stationNames) {
+				pw.write("<station>" + stationName + "</station>");
+			}
 		}
+		pw.write("</stations>");
 		
 		// process mrn 
-		String mrn = request.getParameter("mrnLookup");
+		String mrn = request.getParameter(PARAM_MRN);
+		if (mrn != null) {
+			mrn = Util.removeLeadingZeros(mrn);
+		}
+		
 		if (mrn != null && !mrn.contains("-") && mrn.length() > 1)
 		{
 			mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length()-1);
@@ -111,10 +105,10 @@ public class ManualCheckinController extends SimpleFormController
 		}
 		
 		if (!valid) {
-			map.put("validate", "");
+			pw.write("<validated>false</validated>");
 		}
 		else {
-			map.put("validate", "valid");
+			pw.write("<validated>true</validated>");
 		}
 		
 		// see if there is a patient that already has the mrn
@@ -134,35 +128,53 @@ public class ManualCheckinController extends SimpleFormController
 			if (patients.size() > 0)
 			{
 				Patient patient = patients.get(0);
-				patientFound(map, patient);
-				map.put("checkinButton", "Checkin");
+				populatePatient(pw, patient);
+				pw.write("<newPatient>false</newPatient>");
 
-			} else
-			{
-				map.put("checkinButton", "Add + Checkin");
-				map.put("mrn", mrn);
-				map.put("newPatient", "true");
+			} else {
+				pw.write("<newPatient>true</newPatient>");
 			}
 		}
+		
+		TreeMap<String,String> raceCodes = new TreeMap<String,String>();
+		ConceptService conceptService = Context.getConceptService();
+		ConceptSource conceptSource = conceptService.getConceptSourceByName("Wishard Race Codes");
+		List<ConceptMap> conceptMaps = conceptService.getConceptsByConceptSource(conceptSource);
+		for(ConceptMap conceptMap:conceptMaps){
+			String generalRaceCategory = conceptMap.getConcept().getName().getName();
+			String raceCode = conceptMap.getSourceCode();
+			raceCodes.put(generalRaceCategory, raceCode);
+		}
+		
+		pw.write("<raceCodes>");
+		Set<Entry<String,String>> raceSet = raceCodes.entrySet();
+		Iterator<Entry<String,String>> raceIter = raceSet.iterator();
+		while (raceIter.hasNext()) {
+			Entry<String,String> raceEntry = raceIter.next();
+			pw.write("<raceCode category=\"" + ServletUtil.escapeXML(raceEntry.getKey()) + "\">" + raceEntry.getValue() + "</raceCode>");
+		}
+		pw.write("</raceCodes>");
 
 		List<String> categories = chicaService.getInsCategories();
 		Collections.sort(categories);
-		map.put("insuranceCategories", categories);
+		pw.write("<insuranceCategories>");
+		for (String category : categories) {
+			ServletUtil.writeTag("insuranceCategory", ServletUtil.escapeXML(category), pw);
+		}
+		pw.write("</insuranceCategories>");
 
 		//Sort provider by lastname,firstname, and remove duplicates
 		//Ensure proper case.
 		UserService userService = Context.getUserService();
-		List<User> doctors = userService.getUsersByRole(userService
-				.getRole("Provider"));
+		Role role = userService.getRole("Provider");
+		List<User> doctors = Context.getService(ChirdlUtilBackportsService.class).getUsersByRole(role, false);
 		
 		List<User> doctorList = new ArrayList<User>();
 		
-		Comparator comparator = new Comparator(){
+		Comparator<User> comparator = new Comparator<User>(){
 			 
-            public int compare(Object o1, Object o2) 
+            public int compare(User p1, User p2) 
             {
-               User p1 = (User) o1;
-               User p2 = (User) o2;
                PersonName pn1 = new PersonName();
                PersonName pn2 = new PersonName();
                if (p1 != null){
@@ -221,7 +233,7 @@ public class ManualCheckinController extends SimpleFormController
 
 		//weed out duplicates from already sorted list
 		Integer size = doctors.size();
-		ArrayList<User> noDups  = new ArrayList(size);
+		ArrayList<User> noDups  = new ArrayList<User>(size);
 		if(size > 0)
 		{
 			User prev =  doctors.get(0);
@@ -246,12 +258,27 @@ public class ManualCheckinController extends SimpleFormController
 			}
 		}
 		
-		map.put("doctors", doctorList);
-
-		return map;
+		pw.write("<doctors>");
+		for (User doctor : doctorList) {
+			pw.write("<doctor>");
+			ServletUtil.writeTag("lastName", ServletUtil.escapeXML(doctor.getPerson().getFamilyName()), pw);
+			ServletUtil.writeTag("firstName", ServletUtil.escapeXML(doctor.getPerson().getGivenName()), pw);
+			ServletUtil.writeTag("middleName", ServletUtil.escapeXML(doctor.getPerson().getMiddleName()), pw);
+			ServletUtil.writeTag("userId", doctor.getUserId(), pw);
+			pw.write("</doctor>");
+		}
+		pw.write("</doctors>");
+		pw.write("</manualCheckin>");
 	}
 	
-    private int compareOnlyName(Object o1, Object o2) 
+	public static void saveManualCheckinPatient(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		
+		checkin(request, response);
+	}
+	
+    private static int compareOnlyName(Object o1, Object o2) 
     {
        User p1 = (User) o1;
        User p2 = (User) o2;
@@ -305,8 +332,7 @@ public class ManualCheckinController extends SimpleFormController
        return p1LastName.compareTo(p2LastName);
     }
 
-	private void checkin(HttpServletRequest request,Map<String, Object> map,
-			Location encounterLocation){
+	private static void checkin(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		Date encounterDate = new Date();
 
@@ -316,38 +342,25 @@ public class ManualCheckinController extends SimpleFormController
 		
 		Patient checkinPatient = new Patient();
 		PersonName name = new PersonName();
-		name.setGivenName(request.getParameter("firstName"));
-		name.setMiddleName(request.getParameter("middleName"));
-		name.setFamilyName(request.getParameter("lastName"));
+		name.setGivenName(request.getParameter("manualCheckinFirstName"));
+		name.setMiddleName(request.getParameter("manualCheckinMiddleName"));
+		name.setFamilyName(request.getParameter("manualCheckinLastName"));
 		name.setDateCreated(new Date());
-		name.setCreator(Context.getAuthenticatedUser());
 		checkinPatient.addName(name);
 		
 		PersonAddress address = new PersonAddress();
-		
-		address.setAddress1(request.getParameter("address1"));
-		address.setAddress2(request.getParameter("address2"));
-		address.setCityVillage(request.getParameter("city"));
-		address.setPostalCode(request.getParameter("zip"));
-		address.setStateProvince(request.getParameter("state"));
+		address.setAddress1(request.getParameter("manualCheckinStreetAddress"));
+		address.setAddress2(request.getParameter("manualCheckinStreetAddress2"));
+		address.setCityVillage(request.getParameter("manualCheckinCity"));
+		address.setPostalCode(request.getParameter("manualCheckinZip"));
+		address.setStateProvince(request.getParameter("manualCheckinState"));
 		address.setDateCreated(encounterDate);
 		address.setCreator(Context.getAuthenticatedUser());
+		checkinPatient.addAddress(address);
 		
-		if (!StringUtils.isBlank(address.getAddress1()) 
-			 || !StringUtils.isBlank(address.getAddress2())
-			 || !StringUtils.isBlank(address.getCityVillage()) 
-			 || !StringUtils.isBlank(address.getStateProvince()) 
-			 || !StringUtils.isBlank(address.getCountry()) 
-			 || !StringUtils.isBlank(address.getPostalCode()) 
-			 || !StringUtils.isBlank(address.getCountyDistrict()) 
-			 || !StringUtils.isBlank(address.getStateProvince())
-		){
-			checkinPatient.addAddress(address);
-		}
-		
-		checkinPatient.setGender(request.getParameter("sex"));
+		checkinPatient.setGender(request.getParameter("manualCheckinSex"));
 
-		String race = request.getParameter("race");
+		String race = request.getParameter("manualCheckinRace");
 		if (race != null && race.length()>0)
 		{
 			PersonAttribute attribute = new PersonAttribute();
@@ -355,15 +368,11 @@ public class ManualCheckinController extends SimpleFormController
 					.getPersonAttributeTypeByName("Race");
 			attribute.setAttributeType(attributeType);
 			attribute.setValue(race);
-			attribute.setCreator(Context.getAuthenticatedUser());
-			attribute.setDateCreated(encounterDate);
-			UUID uuid = UUID.randomUUID();
-			attribute.setUuid(uuid.toString());
 			checkinPatient.addAttribute(attribute);
 		}
 		
-		String nextOfKinFirstName = request.getParameter("nextOfKinFirstName");
-		String nextOfKinLastName = request.getParameter("nextOfKinLastName");
+		String nextOfKinFirstName = request.getParameter("manualCheckinNOKFirstName");
+		String nextOfKinLastName = request.getParameter("manualCheckinNOKLastName");
 		if (nextOfKinFirstName != null && nextOfKinFirstName.trim().length()>0 && nextOfKinLastName != null && 
 				nextOfKinLastName.trim().length()>0)
 		{
@@ -373,22 +382,18 @@ public class ManualCheckinController extends SimpleFormController
 			if (attributeType == null) {
 				attributeType = new PersonAttributeType();
 				attributeType.setDateCreated(new Date());
-				attributeType.setCreator(Context.getAuthenticatedUser());
 				attributeType.setName("Next of Kin");
 				attributeType.setDescription("Next of Kin");
+				attributeType.setUuid(UUID.randomUUID().toString());
 				attributeType = personService.savePersonAttributeType(attributeType);
 			}
 			
 			attribute.setAttributeType(attributeType);
 			attribute.setValue(nextOfKinFirstName + "|" + nextOfKinLastName);
-			attribute.setCreator(Context.getAuthenticatedUser());
-			attribute.setDateCreated(encounterDate);
-			UUID uuid = UUID.randomUUID();
-			attribute.setUuid(uuid.toString());
 			checkinPatient.addAttribute(attribute);
 		}
 
-		String dayPhone = request.getParameter("dayPhone");
+		String dayPhone = request.getParameter("manualCheckinPhone");
 		if (dayPhone != null && dayPhone.length()>0)
 		{
 			PersonAttribute attribute = new PersonAttribute();
@@ -396,15 +401,14 @@ public class ManualCheckinController extends SimpleFormController
 					.getPersonAttributeTypeByName("Telephone Number");
 			attribute.setAttributeType(attributeType);
 			attribute.setValue(dayPhone);
-			attribute.setCreator(Context.getAuthenticatedUser());
-			attribute.setDateCreated(encounterDate);
-			UUID uuid = UUID.randomUUID();
-			attribute.setUuid(uuid.toString());
 			checkinPatient.addAttribute(attribute);
 		}
 		LocationService locationService = Context.getLocationService();
 		User user = Context.getAuthenticatedUser();
 
+		String locationString = user.getUserProperty(ChirdlUtilConstants.USER_PROPERTY_LOCATION);
+		Location encounterLocation = locationService
+			.getLocation(locationString);
 		if (encounterLocation == null){
 			encounterLocation = locationService.getDefaultLocation();
 			//Default location is created by openmrs and 
@@ -413,9 +417,9 @@ public class ManualCheckinController extends SimpleFormController
 					" was not found in Location table. Default location " +
 					" was used for this checkin.");
 		}
-		String ssn1 = request.getParameter("ssn1");
-		String ssn2 = request.getParameter("ssn2");
-		String ssn3 = request.getParameter("ssn3");
+		String ssn1 = request.getParameter("manualCheckinSSNOne");
+		String ssn2 = request.getParameter("manualCheckinSSNTwo");
+		String ssn3 = request.getParameter("manualCheckinSSNThree");
 
 		if (ssn1 != null && ssn2 != null && ssn3 != null&&ssn1.length()>0&&ssn2.length()>0&&ssn3.length()>0)
 		{
@@ -430,7 +434,7 @@ public class ManualCheckinController extends SimpleFormController
 			checkinPatient.addIdentifier(pi);
 		}
 
-		String mrn = request.getParameter("mrn");
+		String mrn = request.getParameter("manualCheckinMrn");
 		if (mrn != null)
 		{
 			PatientIdentifierType identifierType = patientService
@@ -444,50 +448,33 @@ public class ManualCheckinController extends SimpleFormController
 			checkinPatient.addIdentifier(pi);
 		}
 
-		String dob1 = request.getParameter("dob1");
-		String dob2 = request.getParameter("dob2");
-		String dob3 = request.getParameter("dob3");
+		String dob = request.getParameter("manualCheckinDob");
 
-		if (dob1 != null && dob2 != null && dob3 != null)
+		if (dob != null)
 		{
-			while(dob1.length()<2){
-				dob1="0"+dob1;
-			}
-			while(dob2.length()<2){
-				dob2="0"+dob2;
-			}
-			
-			while(dob3.length()<3){
-				dob3="0"+dob3;
-			}
-			if(dob3.length()<4){
-				dob3="2"+dob3;
-			}
-			String dob = dob1 + "/" + dob2 + "/" + dob3;
-			SimpleDateFormat dateFormatter = new SimpleDateFormat(
-					"MM/dd/yyyy");
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
 			try
 			{
 				Date birthdate = dateFormatter.parse(dob);
 				checkinPatient.setBirthdate(birthdate);
 			} catch (Exception e)
 			{
-				this.log.error("Error parsing date: "+dob);
+				log.error("Error parsing date: "+dob);
 			}
 		}
 		Provider provider = new Provider();
 		Integer userId = null;
 		try
 		{
-			userId = Integer.parseInt(request.getParameter("doctor"));
+			userId = Integer.parseInt(request.getParameter("manualCheckinDoctor"));
 			UserService userService = Context.getUserService();
 			user = userService.getUser(userId);
 			provider.setProviderfromUser(user);
 		} catch (Exception e)
 		{
-			this.log.error("Could not assign provider: "+userId);
-			this.log.error(e.getMessage());
-			this.log.error(Util.getStackTrace(e));
+			log.error("Could not assign provider: "+userId);
+			log.error(e.getMessage());
+			log.error(Util.getStackTrace(e));
 		}
 		
 		PipeParser parser = new PipeParser();
@@ -502,7 +489,7 @@ public class ManualCheckinController extends SimpleFormController
 		org.openmrs.module.chica.hibernateBeans.Encounter newEncounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
 		newEncounter.setLocation(encounterLocation);
 		newEncounter.setEncounterDatetime(encounterDate);
-		newEncounter.setPrinterLocation(request.getParameter("station"));
+		newEncounter.setPrinterLocation(request.getParameter("manualCheckinStation"));
 		newEncounter.setEncounterDatetime(encounterDate);
 		EncounterType encType = encounterService.getEncounterType("ManualCheckin");
 		if (encType == null){
@@ -521,7 +508,7 @@ public class ManualCheckinController extends SimpleFormController
 			if (enc != null){
 				checkinSuccess = true;
 				// Set the insurance category
-				String insuranceCategory = request.getParameter("insuranceCategory");
+				String insuranceCategory = request.getParameter("manualCheckinInsuranceCategory");
 				if (insuranceCategory != null && insuranceCategory.trim().length() > 0) {
 					Concept concept = Context.getConceptService().getConcept("Insurance");
 		    		org.openmrs.module.chirdlutil.util.Util.saveObs(enc.getPatient(), concept, enc.getEncounterId(), 
@@ -530,46 +517,46 @@ public class ManualCheckinController extends SimpleFormController
 			}
 		}
 		
-		String checkinPatientName = checkinPatient.getFamilyName();
-		if(checkinPatient.getGivenName() != null){
-			checkinPatientName+=", "+checkinPatient.getGivenName();
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setHeader(
+			ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		PrintWriter pw = response.getWriter();
+		pw.write("<manualCheckinResult><result>");
+		if (checkinSuccess) {
+			pw.write("success");
+		} else {
+			pw.write("fail");
 		}
-			
-		map.put("checkinSuccess", checkinSuccess);
-		map.put("checkinPatient",checkinPatientName);
-		map.put("checkinMRN",checkinPatient.getPatientIdentifier().getIdentifier());
+		
+		pw.write("</result></manualCheckinResult>");
 	}
 	
 	//put all the patient attributes in the jsp map
-	private void patientFound(Map<String, Object> map, Patient patient)
+	private static void populatePatient(PrintWriter pw, Patient patient)
 	{
-		map.put("firstName", patient.getGivenName());
-		map.put("middleName", patient.getMiddleName());
-		map.put("lastName", patient.getFamilyName());
+		pw.write("<patient>");
+		ServletUtil.writeTag("firstName", ServletUtil.escapeXML(patient.getGivenName()), pw);
+		ServletUtil.writeTag("middleName", ServletUtil.escapeXML(patient.getMiddleName()), pw);
+		ServletUtil.writeTag("lastName", ServletUtil.escapeXML(patient.getFamilyName()), pw);
 		PersonAddress address = patient.getPersonAddress();
 		if (address != null)
 		{
-			map.put("address1", address.getAddress1());
-			map.put("address2", address.getAddress2());
-			map.put("city", address.getCityVillage());
-			map.put("zip", address.getPostalCode());
-			map.put("state", address.getStateProvince());
+			ServletUtil.writeTag("address1", ServletUtil.escapeXML(address.getAddress1()), pw);
+			ServletUtil.writeTag("address2", ServletUtil.escapeXML(address.getAddress2()), pw);
+			ServletUtil.writeTag("city", ServletUtil.escapeXML(address.getCityVillage()), pw);
+			ServletUtil.writeTag("zip", ServletUtil.escapeXML(address.getPostalCode()), pw);
+			ServletUtil.writeTag("state", ServletUtil.escapeXML(address.getStateProvince()), pw);
 		}
-		map.put("sex", patient.getGender());
+		
+		ServletUtil.writeTag("sex", ServletUtil.escapeXML(patient.getGender()), pw);
 		Date dob = patient.getBirthdate();
-		SimpleDateFormat format = new SimpleDateFormat("MM");
-		map.put("dob1", format.format(dob));
-		format = new SimpleDateFormat("dd");
-		map.put("dob2", format.format(dob));
-		format = new SimpleDateFormat("yyyy");
-		map.put("dob3", format.format(dob));
-		PersonAttribute attribute = patient.getAttribute("Race");
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+		ServletUtil.writeTag("dob", ServletUtil.escapeXML(format.format(dob)), pw);
+		
+		PersonAttribute attribute = patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_RACE);
 		
 		ConceptService conceptService = Context.getConceptService();
 		ConceptSource conceptSource = conceptService.getConceptSourceByName("Wishard Race Codes");
-		List<ConceptMap> conceptMaps = conceptService.getConceptsByConceptSource(conceptSource);
-		
-		TreeMap<String,String> raceCodes = new TreeMap<String,String>();
 		
 		String generalPatientRaceCategory = null;
 		
@@ -580,31 +567,16 @@ public class ManualCheckinController extends SimpleFormController
 			}
 		}
 		
-		for(ConceptMap conceptMap:conceptMaps){
-			String generalRaceCategory = conceptMap.getConcept().getName().getName();
-			String raceCode = conceptMap.getSourceCode();
-			
-			if(generalPatientRaceCategory!=null&&generalRaceCategory.equalsIgnoreCase(generalPatientRaceCategory)){
-				raceCodes.put(generalRaceCategory, attribute.getValue());
-				map.put("race", generalRaceCategory);
-			}else{
-				raceCodes.put(generalRaceCategory, raceCode);
-			}
-		}
+		pw.write("<race>");
+		pw.write(ServletUtil.escapeXML("" + generalPatientRaceCategory));
+		pw.write("</race>");
 		
-		map.put("raceCodes", raceCodes);
-		
-		attribute = patient.getAttribute("Religion");
-		if (attribute != null)
-		{
-			map.put("religion", attribute.getValue());
-		}
-
 		attribute = patient.getAttribute("Telephone Number");
 		if (attribute != null)
 		{
-			map.put("dayPhone", attribute.getValue());
+			ServletUtil.writeTag("dayPhone", ServletUtil.escapeXML(attribute.getValue()), pw);
 		}
+		
 		PatientIdentifier ssnIdent = patient.getPatientIdentifier("SSN");
 		String ssn = null;
 		if(ssnIdent != null){
@@ -616,15 +588,15 @@ public class ManualCheckinController extends SimpleFormController
 
 			if (ssn.length() >= 3)
 			{
-				map.put("ssn1", ssn.substring(0, 3));
+				ServletUtil.writeTag("ssn1", ServletUtil.escapeXML(ssn.substring(0, 3)), pw);
 			}
 			if (ssn.length() >= 5)
 			{
-				map.put("ssn2", ssn.substring(3, 5));
+				ServletUtil.writeTag("ssn2", ServletUtil.escapeXML(ssn.substring(3, 5)), pw);
 			}
 			if (ssn.length() >= 9)
 			{
-				map.put("ssn3", ssn.substring(5, 9));
+				ServletUtil.writeTag("ssn3", ServletUtil.escapeXML(ssn.substring(5, 9)), pw);
 			}
 		}
 
@@ -634,11 +606,11 @@ public class ManualCheckinController extends SimpleFormController
 			String value = attribute.getValue();
 			StringTokenizer tokenizer = new StringTokenizer(value, "|");
 			if (tokenizer.hasMoreTokens()) {
-				map.put("nextOfKinFirstName", tokenizer.nextToken());
+				ServletUtil.writeTag("nextOfKinFirstName", ServletUtil.escapeXML(tokenizer.nextToken()), pw);
 			}
 			
 			if (tokenizer.hasMoreTokens()) {
-				map.put("nextOfKinLastName", tokenizer.nextToken());
+				ServletUtil.writeTag("nextOfKinLastName", ServletUtil.escapeXML(tokenizer.nextToken()), pw);
 			}
 		}
 
@@ -648,7 +620,7 @@ public class ManualCheckinController extends SimpleFormController
 		{
 			String mrn = patientIdentifier.getIdentifier();
 			mrn = Util.removeLeadingZeros(mrn);
-			map.put("mrn", mrn);
+			ServletUtil.writeTag("mrn", ServletUtil.escapeXML(mrn), pw);
 		}
 
 		EncounterService encounterService = Context
@@ -667,11 +639,13 @@ public class ManualCheckinController extends SimpleFormController
 			}
 			if (provider != null)
 			{
-				map.put("doctor", provider.getUserId());
+				ServletUtil.writeTag("doctor", provider.getUserId(), pw);
 			}
 
-			map.put("station", encounter.getPrinterLocation());
-			map.put("insuranceCode", encounter.getInsuranceSmsCode());
+			ServletUtil.writeTag("station", ServletUtil.escapeXML(encounter.getPrinterLocation()), pw);
+			ServletUtil.writeTag("insuranceCode", ServletUtil.escapeXML(encounter.getInsuranceSmsCode()), pw);
 		}
+		
+		pw.write("</patient>");
 	}
 }
