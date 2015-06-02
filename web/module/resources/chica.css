@@ -9,57 +9,61 @@ td{
 	  font-size:13px;
 }
 .encounterarea {
-	  height:75%;
+	  height:80%;
 	  width: 100%;
 	  overflow: auto;
 	  font-size:13px;
+	  background-color:#F5FBEF;
 }
 
 .headerarea {
-	  height:5%;
-	  width: 100%;
+	  height:40px;
+	  padding-top: 10px;
+	  background-color:#b24926;
+      text-shadow: 1px 1px #000000;
+      color: #FFFFFF;
 }
 
-td.ln{
+th.ln, td.ln{
 	width:12%;
 }
 
-td.fn{
+th.fn, td.fn{
 	width:10%;
 }
 
-td.mrn		{
+th.mrn, td.mrn		{
+	width:8%;
+}
+th.dob, td.dob{
 	width:10%;
 }
-td.dob{
-	width:10%;
-}
-td.sex{
-	width:3%;
+th.sex, td.sex{
+	width:6%;
 	text-align:center;
 }
-td.MD{
+th.MD, td.MD{
 	width:10%;
 }
 
-td.aptTime{
+th.aptTime, td.aptTime{
 	width:9%;
 }
 
-td.chkTime{
+th.chkTime, td.chkTime{
 	width:9%;
 }
 
-td.reprint{
-	width:4%;
+th.reprint, td.reprint{
+	width:7%;
 	text-align:center;
 }
 
-td.status{
-	width:12%;
-}
-td.action{
+th.status, td.status{
 	width:11%;
+}
+th.action, td.action{
+	width:7%;
 }
 
 td.viewEncounterDate{
@@ -91,6 +95,7 @@ td.viewEncounterJITID{
 }
 td.viewEncounterAction{
 	width:14%;
+	padding: 0, 0, 0, 0;
 }
 
 
@@ -101,25 +106,31 @@ td.viewEncounterAction{
 
 .red_highlight{
 	background-color:red;
+	text-align: center;
 }
 
 .yellow_highlight{
 	background-color:yellow;
+	text-align: center;
 }
 
 .green_highlight{
 	background-color:#33CC00;
+	text-align: center;
 }
 
 .purple_highlight{
 	background-color:#CC66FF;
+	text-align: center;
 }
 
 .blue_highlight{
 	background-color:blue;
+	text-align: center;
 }
 .almond_highlight{
 	background-color:#FFC;
+	text-align: center;
 }
 
 input.readonly {
@@ -139,10 +150,45 @@ input.CheckinFormButton {
 
 .chicaBackground {
 text-align:left; 
-background-color:#8FABC7;
+background-color:#b24926;
+/*background-color:#4d4d4d;*/
 }
 
+.tableRowEven, .tableRowOdd, .tableRowManualCheckin {
+    padding:5px;
+    text-align:center;
+    background-color:#D1F0FF;
+    border: 2px solid #E7EFE0;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+    color: #181818 ;
+    text-shadow:1px 1px 1px #fff;
+}
 
+.tableRowOdd {
+    background-color:#FFFFFF;
+}
+
+.tableRowManualCheckin {
+	background-color:#FFFFCC;
+}
+
+.chicaTableHeader {
+	text-align:center; 
+	background-color:#DEF3CA;
+	border: 1px solid #5B5C59;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+	font-family: "Trebuchet MS", sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1.4em;
+	font-style: normal;
+	border-collapse:separate;
+	min-height: 30px;
+	height: 30px;
+}
 
 .pagerButtonStyle{
 width:250px;
@@ -205,7 +251,7 @@ border-color: black;
 .formTitleStyle{
 text-align:center; 
 font-size: 20px;
-vertical-aligh:center;
+vertical-align:center;
 }
 
 .exitButton{
@@ -225,22 +271,18 @@ font-weight:bold;
 }
 
 .viewEncounterFooter{
-border-width:1px;
-border-bottom-width:1px;
-border-top-width:1px;
-border-style:solid;
-border-color: black;
-height:100%;
+border: 1px solid black;
 }
 
-.displayLeftTiffHeaderSegment{
+.displayLeftTiffHeaderSegment, .displayRighttiffHeaderSegment {
 text-align:left; 
 font-size: 20px;
+text-shadow: 1px 1px #000000;
+color: #FFFFFF;
 }
 
 .displayRighttiffHeaderSegment{
 text-align:center; 
-font-size: 20px;
 }
 
 .tiffs{
@@ -250,20 +292,16 @@ border-bottom-width:3px;
 border-style:solid;
 border-color: black;
 }
+
 .viewEncounterHeaderArea{
-height:10%;
-border-width:0px;
-border-style:solid;
-border-color: black;
+height: 80px;
+padding-top: 20px;
+padding-bottom: 20px;
+background-color:#b24926;
+text-shadow: 1px 1px #000000;
+color: #FFFFFF;
 }
 
-.viewEncounterHeaderText{
-height:100%;
-border-width:1px;
-border-bottom-width:3px;
-border-style:solid;
-border-color: black;
-}
 .greaseBoardFooter{
 height:100%;
 width:100%;
@@ -296,5 +334,79 @@ padding:5px;
 text-align:center;
 }
 
+button.icon-button, button.icon-button-small, button.icon-button-medium, button.icon-button-large, button.icon-button-extra-large, button.icon-button-extra-large-help, button.icon-button-small-dialog, button.icon-button-medium-dialog, button.icon-button-large-dialog, button.icon-button-extra-large-dialog, button.icon-button-extra-large-dialog-help {
+    padding: 0 0 0 0;
+    text-decoration: none;
+    position: relative;
+    height: 40px;
+}
 
+a.icon-button {
+    padding: 0 0 .4em 5px;
+    text-decoration: none;
+    position: relative;
+    height: 25px;
+}
 
+a.icon-button span.ui-icon, a.icon-button-small span.ui-icon, a.icon-button-medium span.ui-icon, a.icon-button-large span.ui-icon, a.icon-button-extra-large span.ui-icon, a.icon-button-small-dialog span.ui-icon, a.icon-button-medium-dialog span.ui-icon, a.icon-button-large-dialog span.ui-icon, a.icon-button-extra-large-dialog span.ui-icon {
+    margin: 0 5px 0 0;
+    position: absolute;
+    left: .2em;
+    top: 50%;
+    margin-top: -9px;
+}
+
+button.icon-button-small, a.icon-button-small, button.icon-button-small-dialog, a.icon-button-small-dialog {
+    width: 50px;
+}
+
+button.icon-button-medium, a.icon-button-medium, button.icon-button-medium-dialog, a.icon-button-medium-dialog {
+    width: 100px;
+}
+
+button.icon-button-large, a.icon-button-large, button.icon-button-large-dialog, a.icon-button-large-dialog {
+    width: 150px;
+}
+
+button.icon-button-extra-large, a.icon-button-extra-large, button.icon-button-extra-large-dialog, a.icon-button-extra-large-dialog {
+    width: 200px;
+}
+
+button.icon-button-extra-large-help, button.icon-button-extra-large-dialog-help {
+	width: 200px;
+	color: red;
+	font-size: 1.4em;
+}
+
+button.icon-button-small-dialog, a.icon-button-small-dialog, button.icon-button-medium-dialog, a.icon-button-medium-dialog, button.icon-button-large-dialog, a.icon-button-large-dialog, button.icon-button-extra-large-dialog, a.icon-button-extra-large-dialog {
+	height: 30px;
+}
+
+.tableFieldset {
+    border: 0;
+    font-size: 10px;
+    height: 10px;
+    margin-top: -8px;
+}
+
+.tableSelect {
+    width: 200px;
+    height: 20px;
+}
+
+.greaseBoard-force-print-content {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.alertText {
+	color: red;
+}
+
+.ui-dialog-titlebar {
+	cursor: default !important;
+}

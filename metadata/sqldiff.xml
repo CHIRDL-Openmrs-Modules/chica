@@ -3612,6 +3612,37 @@ where action_name='REPRINT';
         delete from global_property where property = 'chica.presnetStudyPostUrl';
         </sql>
     </diff>
+    <diff>  
+        <version>1.6.7</version>  
+        <author>Tammy Dugan</author>  
+        <date>Feb 17, 2015</date>  
+        <description>  
+        Configure age range for force print of forms  
+        </description>  
+        <sql>     
+ 
+            INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('ageMin', 'Minimum age to display form for force print');  
+
+            INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('ageMinUnits', 'Minimum age units (years, months, days, weeks) for displaying form for force print'); 
+             
+            INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('ageMax', 'Maximum age to display form for force print');  
+ 
+            INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('ageMaxUnits', 'Maximum age units (years, months, days, weeks) for displaying form for force print');  
+        </sql>  
+    </diff>  
+    
 </sqldiff>
 
 

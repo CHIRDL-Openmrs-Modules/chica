@@ -1266,7 +1266,7 @@ public class HL7SocketHandler extends
 		PatientService patientService = Context.getPatientService();
 		String newMRN = null;
 		String existingMRN = null;
-
+	
 		try {
 
 			//Get the existing preferred, non-voided identifier for comparison  

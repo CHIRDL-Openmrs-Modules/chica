@@ -479,7 +479,7 @@ public class Util {
 	 * @param encounterId The encounter ID.
 	 * @param stateId The state ID.
 	 */
-	private static void getPatientStatesByEncounterId(ChirdlUtilBackportsService chirdlUtilBackportsService,
+	public static void getPatientStatesByEncounterId(ChirdlUtilBackportsService chirdlUtilBackportsService,
 	                                           Map<Integer, List<PatientState>> formIdToPatientStateMap,
 	                                           Integer encounterId, Integer stateId, boolean requireFinishedEndState) {
 		List<PatientState> patientStates = chirdlUtilBackportsService.getPatientStateByEncounterState(encounterId, stateId);

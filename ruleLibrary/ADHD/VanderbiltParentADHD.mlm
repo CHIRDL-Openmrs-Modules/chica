@@ -95,7 +95,7 @@ Else
  CALL storeObs With "ParentAssessmentScale","NegativeAnxietyDepressionScreen";
 endif;
 
-call CREATE_JIT with "ParentSummaryReport";
+call CREATE_JIT with "ParentSummaryReport", "", "true";
 
 endif
 ;;

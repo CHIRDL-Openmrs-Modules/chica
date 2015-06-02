@@ -1,10 +1,21 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 
-<page height="100%">
+<html>
+<head>
 <link
     href="${pageContext.request.contextPath}/moduleResources/chica/chica.css"
     type="text/css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script type="text/javascript">
+$(function() {
+    $("#exitButton").button();
+    $("#printLeftButton").button();
+    $("#printRightButton").button();
+});
 
 function printSelection(node){
 
@@ -19,7 +30,23 @@ function printSelection(node){
 
 }
 </script>
+<style>
+html {
+    height: 100%;
+    width: 100%;
+}
 
+body {
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    font-size: 12px;
+}
+</style>
+</head>
+<body>
+    <div style="height:100%;overflow:scroll;background-color:#F5FBEF;">
     <c:set var="leftHeaderSize" value="30%"/>
     <c:set var="rightHeaderSize" value="50%"/>
     <c:set var="leftPrintSize" value="50%"/>
@@ -40,7 +67,7 @@ function printSelection(node){
     <table width="100%" class="displayTiffHeader chicaBackground">
         <tr>
             <td width="20%">
-             <INPUT TYPE="button" class="exitButton" VALUE="Exit" onClick="history.go(-1);return true;">
+             <a href="#" id="exitButton" onclick="history.go(-1);return true;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Exit</a>
             </td>
             <c:if test="${leftHeaderSize ne '0%' }">
 	            <td width='<c:out value="${leftHeaderSize}"/>' class="displayLeftTiffHeaderSegment">
@@ -72,12 +99,12 @@ function printSelection(node){
         <tr>
             <c:if test="${leftPrintSize ne '0%' }">
 	            <td width='<c:out value="${leftPrintSize}"/>'>
-	                <button type="button" onclick="printSelection(document.getElementById('divLeft'));return false">Print</button>
+	                <a href="#" id="printLeftButton" onclick="printSelection(document.getElementById('divLeft'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 	            </td>
             </c:if>
             <c:if test="${rightPrintSize ne '0%' }">
 	            <td width='<c:out value="${rightPrintSize}"/>' style="BORDER-LEFT: black solid 1px;">
-	                <button type="button" onclick="printSelection(document.getElementById('divRight'));return false">Print</button>
+	                <a href="#" id="printRightButton" onclick="printSelection(document.getElementById('divRight'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 	            </td>
             </c:if>
         </tr>
@@ -121,4 +148,6 @@ function printSelection(node){
             </table>
         </c:otherwise>
     </c:choose>
-</page>
+    </div>
+    </body>
+</html>

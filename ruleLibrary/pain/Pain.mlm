@@ -36,9 +36,9 @@ If (mode = PRODUCE) then
 
 If (pq = no) then || Pain_Text || = "0";
 
-If (pq = yes) then || Pain_Text || = " _______";
+If (pq = yes) then || Pain_Text || = "pain documented in note";
 
-If (pq = NULL) then || Pain_Text || = " _______";
+If (pq = NULL) then || Pain_Text || = "unknown";
 Conclude True;
 
 endif
