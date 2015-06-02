@@ -36,11 +36,11 @@ If (mode = PRODUCE) then
 
 If (allergies = none) then || Allergy_Text || = " NONE";
 
-If (allergies = "FAMILY REPORTED") then || Allergy_Text || = "allergy documented in note";
+If (allergies = "FAMILY REPORTED") then || Allergy_Text || = " _______";
 
-If (allergies = "PHYSICIAN CONFIRMED") then || Allergy_Text || = "allergy documented in note ";
+If (allergies = "PHYSICIAN CONFIRMED") then || Allergy_Text || = " _________";
 
-If (allergies = NULL) then || Allergy_Text || = "allergy documented in note ";
+If (allergies = NULL) then || Allergy_Text || = " _______";
 Conclude True;
 
 endif

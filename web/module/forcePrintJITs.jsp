@@ -1,60 +1,49 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html  xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
-<script>
-$(document).ready(function () {
-    $(".force-print-form-object").height($(window).height() - 220);
-    $(window).resize(function() {
-        // Update the object height
-        $(".force-print-form-object").height($(window).height() - 220);
-        // Update the height of the select
-        $(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":($(window).height() * 0.60) + "px"});
-    });
-    
-    forcePrint_loadForms();
-});
-</script>
-	
-<title>Force Print Handouts</title>	
+<link
+	href="${pageContext.request.contextPath}/moduleResources/chica/chica.css"
+	type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+<!-- borrowed from http://dadabase.de/dev/window_resizer.html -->
+function setSize(width,height) {
+	if (window.outerWidth) {
+		window.outerWidth = width;
+		window.outerHeight = height;
+	}
+	else if (window.resizeTo) {
+		window.resizeTo(width,height);
+	}
+	window.moveTo(50,50);
+}
+</script>		
 </head>
-<body class="force-print-body">
-    <div class="force-print-content">
-		<form>
-			 <div class="force-print-forms-loading">
-	             <span id="formsLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
-	         </div>
-	         <div class="force-print-forms-server-error">
-	             <div class="force-print-forms-server-error-text ui-state-error"></div>
-	             <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
-	         </div>
-	         <div class="force-print-forms-container">
-	             <p>Please choose a form for ${patientName}.</p>
-	             <fieldset class="force-print-fieldset">
-	                 <select class="force-print-forms"></select>
-	             </fieldset>
-	         </div>
-	         <div class="force-print-form-container">
-	            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="return forcePrint_formLoaded();">
-	               <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
-                   <a class="force-print-black-text" href='http://get.adobe.com/reader/' target="_blank">Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-	            </object>
-	         </div>
-	         <div class="force-print-form-loading">
-	            <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
-	         </div>
-	         <input type="hidden" value="${patientId}" id="patientId" />
-	         <input type="hidden" value="${sessionId}" id="sessionId" />
-	         <input type="hidden" value="${locationId}" id="locationId" />
-	         <input type="hidden" value="${locationTagId}" id="locationTagId" />
-		</form>
-	</div>
+<body  style="scrollbars:no"onload="javascript:setSize(800,475); <c:if test="${!empty checkinPatient}"> javascript:useConfirmationForm();</c:if>" onkeydown="if (event.keyCode==8) {event.keyCode=0; return event.keyCode }">
+
+<form height="100%" name="input" method="post">
+<p>Please choose the form you would like to print for: <b>${patientName}</b></p>
+
+<table>
+<tr>
+<td><select name="options"">
+<c:if test="${isASQInterventionLocation}">
+<option>ASQ</option>
+<option>ASQ Activity Sheet</option>
+</c:if>
+<c:forEach items="${printableJits}" var="printableJit">
+<option value="${printableJit.formId}">${printableJit.displayName}</option>
+</c:forEach>
+</select></td>
+<td><input type="submit" value="OK" tabindex="2"/></td>
+<td><input type="button" value="Cancel" onclick='window.close()' tabindex="3"/></td>
+</tr>
+</table>
+<input type="hidden" value="${patientId}" name="patientId" />
+<input type="hidden" value="${sessionId}" name="sessionId" />
+</form>
+ <p><b><c:out value="${resultMessage}"/></b></p>
 </body>
-</html>
+</page>

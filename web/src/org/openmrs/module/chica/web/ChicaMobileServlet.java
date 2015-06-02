@@ -17,160 +17,64 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chica.util.PatientRow;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 
-/**
- * Servlet giving access to CHICA Mobile clients
- *
- * @author Steve McKee
- */
 public class ChicaMobileServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private static final int PRIMARY_FORM = 0;
 	private static final int SECONDARY_FORMS = 1;
-	private static final String PATIENTS_WITH_PRIMARY_FORM = "patientsWithPrimaryForm";
-	private static final String GET_PATTIENT_SECONDARY_FORMS = "getPatientSecondaryForms";
-	private static final String VERIFY_PASSCODE = "verifyPasscode";
-	private static final String IS_AUTHENTICATED = "isAuthenticated";
-	private static final String AUTHENTICATE_USER = "authenticateUser";
-	private static final String GET_PRIORITIZED_ELEMENTS = "getPrioritizedElements";
-	private static final String SAVE_EXPORT_ELEMENTS = "saveExportElements";
-	
-	private static final String PARAM_ACTION = "action";
-	private static final String PARAM_ENCOUNTER_ID = "encounterId";
-	private static final String PARAM_SESSION_ID = "sessionId";
-	private static final String PARAM_PASSCODE = "passcode";
-	private static final String PARAM_FORM_ID = "formId";
-	private static final String PARAM_FORM_INSTANCE_ID = "formInstanceId";
-	private static final String PARAM_MAX_ELEMENTS = "maxElements";
-	private static final String PARAM_PATIENT_ID = "patientId";
-	private static final String PARAM_LOCATION_ID = "locationId";
-	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
-	
-	private static final String XML_PATIENTS_WITH_FORMS_START = "<patientsWithForms>";
-	private static final String XML_PATIENTS_WITH_FORMS_END = "</patientsWithForms>";
-	private static final String XML_ERROR_START = "<error>";
-	private static final String XML_ERROR_END = "</error>";
-	private static final String XML_PATIENT_START = "<patient>";
-	private static final String XML_PATIENT_END = "</patient>";
-	private static final String XML_ID = "id";
-	private static final String XML_MRN = "mrn";
-	private static final String XML_FIRST_NAME = "firstName";
-	private static final String XML_LAST_NAME = "lastName";
-	private static final String XML_APPOINTMENT = "appointment";
-	private static final String XML_CHECKIN = "checkin";
-	private static final String XML_DATE_OF_BIRTH = "dob";
-	private static final String XML_AGE = "age";
-	private static final String XML_MD_NAME = "mdName";
-	private static final String XML_SEX = "sex";
-	private static final String XML_STATION = "station";
-	private static final String XML_STATUS = "status";
-	private static final String XML_SESSION_ID = "sessionId";
-	private static final String XML_ENCOUNTER_ID = "encounterId";
-	private static final String XML_REPRINT_STATUS = "reprintStatus";
-	private static final String XML_FORM_INSTANCES_START = "<formInstances>";
-	private static final String XML_FORM_INSTANCES_END = "</formInstances>";
-	private static final String XML_FORM_INSTANCE_START = "<formInstance>";
-	private static final String XML_FORM_INSTANCE_END = "</formInstance>";
-	private static final String XML_FORM_ID = "formId";
-	private static final String XML_FORM_INSTANCE_ID = "formInstanceId";
-	private static final String XML_LOCATION_ID = "locationId";
-	private static final String XML_URL = "url";
-	private static final String XML_PASSCODE_RESULT_START = "<passcodeResult>";
-	private static final String XML_PASSCODE_RESULT_END = "</passcodeResult>";
-	private static final String XML_RESULT_START = "<result>";
-	private static final String XML_RESULT_END = "</result>";
-	private static final String XML_RECORDS_START = "<Records>";
-	private static final String XML_RECORDS_END = "</Records>";
-	private static final String XML_RECORD_START = "<Record>";
-	private static final String XML_RECORD_END = "</Record>";
-	private static final String XML_VALUE = "Value";
-	private static final String XML_FIELD = "Field";
-	private static final String XML_FIELD_END = "</Field>";
-	private static final String XML_SAVE_RESULT_START = "<saveResult>";
-	private static final String XML_SAVE_RESULT_END = "</saveResult>";
-	private static final String XML_RESULT = "result";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		boolean authenticated = ServletUtil.authenticateUser(request);
+		boolean authenticated = authenticateUser(request);
 		if (!authenticated) {
-			response.setHeader(
-				ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
+			response.setHeader("WWW-Authenticate", "BASIC realm=\"chica\"");  
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 		
-		String action = request.getParameter(PARAM_ACTION);
-		if (PATIENTS_WITH_PRIMARY_FORM.equals(action)) {
+		String action = request.getParameter("action");
+		if ("patientsWithPrimaryForm".equals(action)) {
 			getPatientsWithPrimaryForm(request, response);
-		} else if (GET_PATTIENT_SECONDARY_FORMS.equals(action)) {
+		} else if ("getPatientSecondaryForms".equals(action)) {
 			getPatientSecondaryForms(request, response);
-		} else if (VERIFY_PASSCODE.equals(action)) {
+		} else if ("verifyPasscode".equals(action)) {
 			verifyPasscode(request, response);
-		} else if (IS_AUTHENTICATED.equals(action)) {
-			ServletUtil.isUserAuthenticated(response);
-		} else if (AUTHENTICATE_USER.equals(action)) {
-			ServletUtil.authenticateUser(request, response);
-		} else if (GET_PRIORITIZED_ELEMENTS.equals(action)) {
+		} else if ("isAuthenticated".equals(action)) {
+			isUserAuthenticated(response);
+		} else if ("authenticateUser".equals(action)) {
+			authenticateUser(request, response);
+		} else if ("getPrioritizedElements".equals(action)) {
 			getPrioritizedElements(request, response);
-		} else if (SAVE_EXPORT_ELEMENTS.equals(action)) {
+		} else if ("saveExportElements".equals(action)) {
 			saveExportElements(request, response);
 		}
 	}
 	
-	/**
-	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
 	
-	/**
-	 * Retrieves patient encounters that have an existing instance of their primary form for the day.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
 	private void getPatientsWithPrimaryForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		getPatientsWithForms(request, response, PRIMARY_FORM);
 	}
 	
-	/**
-	 * Retrieves instances of a patient's secondary forms for the day.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
 	private void getPatientSecondaryForms(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		getPatientsWithForms(request, response, SECONDARY_FORMS);
 	}
 	
-	/**
-	 * Retrieves patient's primary or secondary forms for the day.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @param formType The type of form (PRIMARY_FORM or SECONDARY_FORMS).
-	 * @throws IOException
-	 */
 	private void getPatientsWithForms(HttpServletRequest request, HttpServletResponse response, int formType) 
 	throws IOException {
 		Integer sessionId = null;
-		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
+		String sessionIdStr = request.getParameter("sessionId");
 		if (sessionIdStr != null) {
 			try {
 				sessionId = Integer.parseInt(sessionIdStr);
@@ -178,18 +82,17 @@ public class ChicaMobileServlet extends HttpServlet {
 				log.error("Error parsing patientId: " + sessionIdStr, e);
 			}
 		}
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-		response.setHeader(
-			ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
-		pw.write(XML_PATIENTS_WITH_FORMS_START);
+		pw.write("<patientsWithForms>");
 		ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
 		String result = "";
 		StringWriter stringWriter = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(stringWriter);
 		if (Context.getAuthenticatedUser() == null) {
-			pw.write(XML_ERROR_START + "Please log in." + XML_ERROR_END);
-			pw.write(XML_PATIENTS_WITH_FORMS_END);
+			pw.write("<error>Please log in.</error>");
+			pw.write("</patientsWithForms>");
 			return;
 		}
 		
@@ -205,44 +108,44 @@ public class ChicaMobileServlet extends HttpServlet {
 				
 			if (result == null) {
 				for (PatientRow row : rows) {
-					printWriter.write(XML_PATIENT_START);
-					ServletUtil.writeTag(XML_ID, row.getPatientId(), printWriter);
-					ServletUtil.writeTag(XML_MRN, row.getMrn(), printWriter);
-					ServletUtil.writeTag(XML_FIRST_NAME, ServletUtil.escapeXML(row.getFirstName()), printWriter);
-					ServletUtil.writeTag(XML_LAST_NAME, ServletUtil.escapeXML(row.getLastName()), printWriter);
-					ServletUtil.writeTag(XML_APPOINTMENT, ServletUtil.escapeXML(row.getAppointment()), printWriter);
-					ServletUtil.writeTag(XML_CHECKIN, ServletUtil.escapeXML(row.getCheckin()), printWriter);
-					ServletUtil.writeTag(XML_DATE_OF_BIRTH, ServletUtil.escapeXML(row.getDob()), printWriter);
-					ServletUtil.writeTag(XML_AGE, ServletUtil.escapeXML(row.getAgeAtVisit()), printWriter);
-					ServletUtil.writeTag(XML_MD_NAME, ServletUtil.escapeXML(row.getMdName()), printWriter);
-					ServletUtil.writeTag(XML_SEX, row.getSex(), printWriter);
-					ServletUtil.writeTag(XML_STATION, ServletUtil.escapeXML(row.getStation()), printWriter);
-					ServletUtil.writeTag(XML_STATUS, ServletUtil.escapeXML(row.getStatus()), printWriter);
-					ServletUtil.writeTag(XML_SESSION_ID, row.getSessionId(), printWriter);
-					ServletUtil.writeTag(XML_ENCOUNTER_ID, row.getEncounter().getEncounterId(), printWriter);
-					ServletUtil.writeTag(XML_REPRINT_STATUS, row.isReprintStatus(), printWriter);
-					printWriter.write(XML_FORM_INSTANCES_START);
+					printWriter.write("<patient>");
+					writeTag("id", row.getPatientId(), printWriter);
+					writeTag("mrn", row.getMrn(), printWriter);
+					writeTag("firstName", escapeXML(row.getFirstName()), printWriter);
+					writeTag("lastName", escapeXML(row.getLastName()), printWriter);
+					writeTag("appointment", escapeXML(row.getAppointment()), printWriter);
+					writeTag("checkin", escapeXML(row.getCheckin()), printWriter);
+					writeTag("dob", escapeXML(row.getDob()), printWriter);
+					writeTag("age", escapeXML(row.getAgeAtVisit()), printWriter);
+					writeTag("mdName", escapeXML(row.getMdName()), printWriter);
+					writeTag("sex", row.getSex(), printWriter);
+					writeTag("station", escapeXML(row.getStation()), printWriter);
+					writeTag("status", escapeXML(row.getStatus()), printWriter);
+					writeTag("sessionId", row.getSessionId(), printWriter);
+					writeTag("encounterId", row.getEncounter().getEncounterId(), printWriter);
+					writeTag("reprintStatus", row.isReprintStatus(), printWriter);
+					printWriter.write("<formInstances>");
 					Set<FormInstance> formInstances = row.getFormInstances();
 					if (formInstances != null) {
 						for (FormInstance formInstance : formInstances) {
-							printWriter.write(XML_FORM_INSTANCE_START);
-							ServletUtil.writeTag(XML_FORM_ID, formInstance.getFormId(), printWriter);
-							ServletUtil.writeTag(XML_FORM_INSTANCE_ID, formInstance.getFormInstanceId(), printWriter);
-							ServletUtil.writeTag(XML_LOCATION_ID, formInstance.getLocationId(), printWriter);
+							printWriter.write("<formInstance>");
+							writeTag("formId", formInstance.getFormId(), printWriter);
+							writeTag("formInstanceId", formInstance.getFormInstanceId(), printWriter);
+							writeTag("locationId", formInstance.getLocationId(), printWriter);
 							// If we're looking for a specific patient, lookup the form url
 							if (sessionId != null) {
 								String url = Util.getFormUrl(formInstance.getFormId());
 								if (url != null) {
-									ServletUtil.writeTag(XML_URL, ServletUtil.escapeXML(url), printWriter);
+									writeTag("url", url, printWriter);
 								}
 							}
 							
-							printWriter.write(XML_FORM_INSTANCE_END);
+							printWriter.write("</formInstance>");
 						}
 					}
 					
-					printWriter.write(XML_FORM_INSTANCES_END);
-					printWriter.write(XML_PATIENT_END);
+					printWriter.write("</formInstances>");
+					printWriter.write("</patient>");
 				}
 			}
 			
@@ -250,33 +153,25 @@ public class ChicaMobileServlet extends HttpServlet {
 		}
 		catch (Exception e) {
 			log.error("Error generating patients with forms", e);
-			pw.write(XML_ERROR_START + "An error occurred retrieving the patient list" + XML_ERROR_END);
+			pw.write("<error>An error occurred retrieving the patient list</error>");
 		}
 		
-		pw.write(XML_PATIENTS_WITH_FORMS_END);
+		pw.write("</patientsWithForms>");
 	}
 	
-	/**
-	 * Verifies the CHICA passcode.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
 	private void verifyPasscode(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String passcode = request.getParameter(PARAM_PASSCODE);
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		String passcode = request.getParameter("passcode");
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
-		pw.write(XML_PASSCODE_RESULT_START);
-		pw.write(XML_RESULT_START);
+		pw.write("<passcodeResult>");
+		pw.write("<result>");
 		if (passcode == null || passcode.trim().length() == 0) {
 			pw.write("Please enter a passcode.");
 		} else if (Context.getAuthenticatedUser() == null) {
 			pw.write("Please log in.");
 		} else {
-			String systemPasscode = Context.getAdministrationService().getGlobalProperty(
-				ChirdlUtilConstants.GLOBAL_PROP_PASSCODE);
+			String systemPasscode = Context.getAdministrationService().getGlobalProperty("chica.passcode");
 			if (systemPasscode == null) {
 				log.error("Please specify global propery chica.passcode");
 				pw.write("Passcode not properly set on server.");
@@ -289,75 +184,133 @@ public class ChicaMobileServlet extends HttpServlet {
 			}
 		}
 		
-		pw.write(XML_RESULT_END);
-		pw.write(XML_PASSCODE_RESULT_END);
+		pw.write("</result>");
+		pw.write("</passcodeResult>");
 	}
 	
-	/**
-	 * Retrieves prioritized elements for a form.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
+	private String escapeXML(String str) {
+		if (str == null) {
+			return str;
+		}
+		
+		return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;")
+		        .replaceAll("'", "&apos;");
+	}
+	
+	private void writeTag(String tagName, Object value, PrintWriter pw) {
+		pw.write("<" + tagName + ">");
+		if (value != null) {
+			pw.write(value.toString());
+		}
+		
+		pw.write("</" + tagName + ">");
+	}
+	
+	private void isUserAuthenticated(HttpServletResponse response) throws IOException {
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
+		// The servlet has already checked authentication by this point.
+		PrintWriter pw = response.getWriter();
+		pw.write("<userAuthenticated>");
+		pw.write("<result>");
+		pw.write("true");
+		pw.write("</result>");
+		pw.write("</userAuthenticated>");
+	}
+	
+	private void authenticateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.write("<userAuthenticated>");
+		pw.write("<result>");
+		pw.write("true");
+		pw.write("</result>");
+		pw.write("</userAuthenticated>");
+	}
+	
 	private void getPrioritizedElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
-		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
-		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
-		Integer maxElements = Integer.parseInt(request.getParameter(PARAM_MAX_ELEMENTS));
+		Integer formId = Integer.parseInt(request.getParameter("formId"));
+		Integer formInstanceId = Integer.parseInt(request.getParameter("formInstanceId"));
+		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
+		Integer maxElements = Integer.parseInt(request.getParameter("maxElements"));
 		
 		DynamicFormAccess formAccess = new DynamicFormAccess();
 		List<Field> fields = formAccess.getPrioritizedElements(formId, formInstanceId, encounterId, maxElements);
 		
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
-		pw.write(XML_RECORDS_START);
-		pw.write(XML_RECORD_START);
+		pw.write("<Records>");
+		pw.write("<Record>");
 		for(Field field : fields){
-			pw.write(ChirdlUtilConstants.XML_START_TAG + XML_FIELD + " " + XML_ID + "=\"" + field.getId() + "\"" + 
-					ChirdlUtilConstants.XML_END_TAG);
-			ServletUtil.writeTag(XML_VALUE, ServletUtil.escapeXML(field.getValue()), pw);
-			pw.write(XML_FIELD_END);
+			pw.write("<Field id=\"" + field.getId() + "\">");
+			pw.write("<Value>" + field.getValue() + "</Value>");
+			pw.write("</Field>");
 		}
 		
-		pw.write(XML_RECORD_END);
-		pw.write(XML_RECORDS_END);
+		pw.write("</Record>");
+		pw.write("</Records>");
 	}
 	
-	/**
-	 * Saves a form's export elements to the database.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
-	@SuppressWarnings("unchecked")
-    private void saveExportElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Integer patientId = Integer.parseInt(request.getParameter(PARAM_PATIENT_ID));
-		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
-		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
-		Integer locationId = Integer.parseInt(request.getParameter(PARAM_LOCATION_ID));
-		Integer locationTagId = Integer.parseInt(request.getParameter(PARAM_LOCATION_TAG_ID));
-		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
+	private void saveExportElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Integer patientId = Integer.parseInt(request.getParameter("patientId"));
+		Integer formId = Integer.parseInt(request.getParameter("formId"));
+		Integer formInstanceId = Integer.parseInt(request.getParameter("formInstanceId"));
+		Integer locationId = Integer.parseInt(request.getParameter("locationId"));
+		Integer locationTagId = Integer.parseInt(request.getParameter("locationTagId"));
+		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
 		
 		Map<String, String[]> parameterMap = request.getParameterMap();
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		response.setContentType("text/xml");
+		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
-		pw.write(XML_SAVE_RESULT_START);
+		pw.write("<saveResult>");
 		try {
 			ParameterHandler parameterHandler = new ChicaParameterHandler();
 			DynamicFormAccess formAccess = new DynamicFormAccess();
 			Patient patient = Context.getPatientService().getPatient(patientId);
 			formAccess.saveExportElements(new FormInstance(locationId, formId, formInstanceId), locationTagId, encounterId, 
 				patient, parameterMap, parameterHandler);
-			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_TRUE, pw);
+			pw.write("<result>true</result>");
 		} catch (Exception e) {
 			log.error("Error saving prioritized elements", e);
-			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_FALSE, pw);
+			pw.write("<result>false</result>");
 		}
 		
-		pw.write(XML_SAVE_RESULT_END);
+		pw.write("</saveResult>");
+	}
+	
+	private boolean authenticateUser(HttpServletRequest request) throws IOException {
+		if (Context.getAuthenticatedUser() != null) {
+			return true;
+		}
+		
+		String auth = request.getHeader("Authorization");
+		if (auth == null) {
+            return false;  // no auth
+        }
+        if (!auth.toUpperCase().startsWith("BASIC ")) { 
+            return false;  // we only do BASIC
+        }
+        // Get encoded user and password, comes after "BASIC "
+        String userpassEncoded = auth.substring(6);
+        // Decode it, using any base 64 decoder
+        sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
+        String userpassDecoded = new String(dec.decodeBuffer(userpassEncoded));
+        String[] userpass = userpassDecoded.split(":");
+        if (userpass.length != 2) {
+        	return false;
+        }
+        
+        String user = userpass[0];
+        String pass = userpass[1];
+        try {
+        	Context.authenticate(user, pass);
+        } catch (ContextAuthenticationException e) {
+        	return false;
+        }
+        
+        return true;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,12 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Form;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
@@ -237,8 +240,6 @@ public class ViewEncounterController extends SimpleFormController {
 						if (formName.equals("TeacherSummaryReport")) {
 							rightImageStylesheet = "teacherSummaryReport.xsl";
 							displayMergeForms = true;
-						} else if (formName.equals("PWS")) {
-							rightImageStylesheet = "pws.xsl";
 						}
 					} else {
 						
@@ -262,7 +263,6 @@ public class ViewEncounterController extends SimpleFormController {
 						
 						if (formName.equals("PSF")) {
 							rightName = "PWS";
-							rightImageStylesheet = "pws.xsl";
 						}
 						
 						if (formName.equals("ParentSummaryReport")) {
@@ -339,40 +339,16 @@ public class ViewEncounterController extends SimpleFormController {
 		try {
 
 			String pidparam = request.getParameter("patientId");
-			Patient patient = null;
 
-			if (pidparam == null || pidparam.trim().length()==0) {
-				String mrn = request.getParameter("mrn");
-				if (mrn != null && mrn.trim().length() > 0) {
-					mrn = Util.removeLeadingZeros(mrn);
-					if (!mrn.contains("-") && mrn.length() > 1) {
-						mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length()-1);
-					}
-					
-					PatientIdentifierType identifierType = patientService
-							.getPatientIdentifierTypeByName("MRN_OTHER");
-					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
-					identifierTypes.add(identifierType);
-					List<Patient> patients = patientService.getPatients(null, mrn,
-							identifierTypes,true);
-					if (patients.size() == 0){
-						patients = patientService.getPatients(null, "0" + mrn,
-								identifierTypes,true);
-					}
-
-					if (patients.size() > 0)
-					{
-						patient = patients.get(0);
-					}
-				}
-			} else {
-				patient = patientService.getPatient(Integer.valueOf(pidparam));
+			if (pidparam == null || pidparam.length()==0) {
+				return map;
 			}
-			
+			Patient patient = patientService.getPatient(Integer
+					.valueOf(pidparam));
 			if (patient == null) {
 				return map;
 			}
-			
+
 			// title name, mrn, and dob
 			String dobString = "";
 			Date dob = patient.getBirthdate();
@@ -388,7 +364,7 @@ public class ViewEncounterController extends SimpleFormController {
 			EncounterService encounterService = Context
 					.getService(EncounterService.class);
 			List<org.openmrs.Encounter> list = encounterService
-					.getEncountersByPatientId(patient.getPatientId());
+					.getEncountersByPatientId(Integer.valueOf(pidparam));
 			List<PatientRow> rows = new ArrayList<PatientRow>();
 
 			ArrayList<String> formsToProcess = new ArrayList<String>();
@@ -459,7 +435,7 @@ public class ViewEncounterController extends SimpleFormController {
 				String providerName = getProviderName(provider);
 				String station = enct.getPrinterLocation();
 				
-				row.setPatientId(patient.getPatientId());
+
 				row.setFirstName(firstName);
 				row.setMdName(providerName);
 				row.setAppointment(apptDateString);
@@ -622,6 +598,30 @@ public class ViewEncounterController extends SimpleFormController {
 
 		return mdName;
 
+	}
+
+	private String searchEncounterForObs(Encounter enc, String conceptName) {
+		String name = "N/A";
+
+		Set<Obs> allObs = enc.getObs();
+		ConceptService conceptService = Context.getConceptService();
+		if (allObs != null) {
+			for (Obs obs : allObs) {
+				Concept obsConcept = obs.getConcept();
+				Concept wtcentileConcept = conceptService
+						.getConceptByName(conceptName);
+				if (obsConcept != null
+						&& wtcentileConcept != null
+						&& wtcentileConcept.getConceptId().equals(obsConcept
+								.getConceptId())) {
+					Double wtcentile = obs.getValueNumeric();
+					if (wtcentile != null) {
+						name = wtcentile.toString();
+					}
+				}
+			}
+		}
+		return name;
 	}
 
 }

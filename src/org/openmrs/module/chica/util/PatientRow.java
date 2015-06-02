@@ -6,7 +6,6 @@ package org.openmrs.module.chica.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -30,7 +29,7 @@ public class PatientRow implements Serializable
 	private String statusColor = null;
 	private Integer patientId = null;
 	private Integer sessionId = null;
-	private boolean isManualCheckin = false;
+	private String rowColor = null;
 	private FormInstance psfId	= null;
 	private FormInstance pwsId = null;
 	private String ageAtVisit = null;
@@ -42,8 +41,6 @@ public class PatientRow implements Serializable
 	private ArrayList<String> printableJits;
 	private HashSet<FormInstance> formInstances;
 	private boolean pwsScanned = false;
-	private Integer locationId = null;
-	private Integer locationTagId = null;
 	
 	
     /**
@@ -219,6 +216,13 @@ public class PatientRow implements Serializable
 		this.sessionId = sessionId;
 	}
 	
+	public String getRowColor() {
+		return rowColor;
+	}
+	
+	public void setRowColor(String rowColor) {
+		this.rowColor = rowColor;
+	}
 	public FormInstance getPsfId()
 	{
 		return this.psfId;
@@ -269,120 +273,4 @@ public class PatientRow implements Serializable
 	public void setPwsScanned(boolean pwsScanned) {
 		this.pwsScanned = pwsScanned;
 	}
-		
-	/**
-     * @return the locationId
-     */
-    public Integer getLocationId() {
-    	return locationId;
-    }
-	
-    /**
-     * @param locationId the locationId to set
-     */
-    public void setLocationId(Integer locationId) {
-    	this.locationId = locationId;
-    }
-	
-    /**
-     * @return the locationTagId
-     */
-    public Integer getLocationTagId() {
-    	return locationTagId;
-    }
-	
-    /**
-     * @param locationTagId the locationTagId to set
-     */
-    public void setLocationTagId(Integer locationTagId) {
-    	this.locationTagId = locationTagId;
-    }
-    
-    /**
-     * @return the isManualCheckin
-     */
-    public boolean getIsManualCheckin() {
-    	return isManualCheckin;
-    }
-	
-    /**
-     * @param isManualCheckin the isManualCheckin to set
-     */
-    public void setIsManualCheckin(boolean isManualCheckin) {
-    	this.isManualCheckin = isManualCheckin;
-    }
-    
-    /**
-     * 
-     * Creates an XML representation of this PatientRow object.
-     * 
-     * @return String containing the XML representation of this PatientRow object.
-     */
-    public String toXml() {
-    	StringBuffer xmlWriter = new StringBuffer();
-    	xmlWriter.append("<patientRow>");
-    	xmlWriter.append("<firstName>" + firstName + "</firstName>");
-    	xmlWriter.append("<lastName>" + lastName + "</lastName>");
-    	xmlWriter.append("<mrn>" + mrn + "</mrn>");
-    	xmlWriter.append("<dob>" + dob + "</dob>");
-    	xmlWriter.append("<sex>" + sex + "</sex>");
-    	xmlWriter.append("<mdName>" + mdName + "</mdName>");
-    	xmlWriter.append("<appointment>" + appointment + "</appointment>");
-    	xmlWriter.append("<checkin>" + checkin + "</checkin>");
-    	xmlWriter.append("<status>" + status + "</status>");
-    	xmlWriter.append("<statusColor>" + statusColor + "</statusColor>");
-    	xmlWriter.append("<patientId>" + patientId + "</patientId>");
-    	xmlWriter.append("<sessionId>" + sessionId + "</sessionId>");
-    	xmlWriter.append("<isManualCheckin>" + isManualCheckin + "</isManualCheckin>");
-    	xmlWriter.append("<psfId>");
-    	if (psfId != null) {
-    		xmlWriter.append("<formId>" + psfId.getFormId() + "</formId>");
-    		xmlWriter.append("<formInstanceId>" + psfId.getFormInstanceId() + "</formInstanceId>");
-    		xmlWriter.append("<locationId>" + psfId.getLocationId() + "</locationId>");
-    	}
-    	xmlWriter.append("</psfId>");
-    	xmlWriter.append("<pwsId>");
-    	if (pwsId != null) {
-    		xmlWriter.append("<formId>" + pwsId.getFormId() + "</formId>");
-    		xmlWriter.append("<formInstanceId>" + pwsId.getFormInstanceId() + "</formInstanceId>");
-    		xmlWriter.append("<locationId>" + pwsId.getLocationId() + "</locationId>");
-    	}
-    	xmlWriter.append("</pwsId>");
-    	xmlWriter.append("<ageAtVisit>" + ageAtVisit + "</ageAtVisit>");
-    	xmlWriter.append("<station>" + station + "</station>");
-    	xmlWriter.append("<weightPercentile>" + weightPercentile + "</weightPercentile>");
-    	xmlWriter.append("<heightPercentile>" + heightPercentile + "</heightPercentile>");
-    	xmlWriter.append("<reprintStatus>" + reprintStatus + "</reprintStatus>");
-    	xmlWriter.append("<printableJits>");
-    	if (printableJits != null) {
-    		for (String jit : printableJits) {
-    			xmlWriter.append("<printableJit>" + jit + "</printableJit>");
-    		}
-    	}
-    	xmlWriter.append("</printableJits>");
-    	xmlWriter.append("<formInstances>");
-    	if (formInstances != null) {
-    		Iterator<FormInstance> iter = formInstances.iterator();
-    		while (iter.hasNext()) {
-    			FormInstance formInstance = iter.next();
-    			xmlWriter.append("<formInstance>");
-    			xmlWriter.append("<formId>" + formInstance.getFormId() + "</formId>");
-        		xmlWriter.append("<formInstanceId>" + formInstance.getFormInstanceId() + "</formInstanceId>");
-        		xmlWriter.append("<locationId>" + formInstance.getLocationId() + "</locationId>");
-        		xmlWriter.append("</formInstance>");
-    		}
-    	}
-    	xmlWriter.append("</formInstances>");
-    	xmlWriter.append("<pwsScanned>" + pwsScanned + "</pwsScanned>");
-    	xmlWriter.append("<locationId>" + locationId + "</locationId>");
-    	xmlWriter.append("<locationTagId>" + locationTagId + "</locationTagId>");
-    	xmlWriter.append("<encounter>");
-    	if (encounter != null) {
-    		//TODO: fill in encounter information.  This isn't needed for the immediate implementation for the grease board.
-    	}
-    	xmlWriter.append("</encounter>");
-    	xmlWriter.append("</patientRow>");
-    	
-    	return xmlWriter.toString();
-    }
 }

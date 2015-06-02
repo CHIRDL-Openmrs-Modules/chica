@@ -111,7 +111,7 @@ write ("Allergy to Penicillin");
 write ("Cephalosporins");
 write ("Sulfonamides");
 write ("Macrolides");
-write ("Doc other allergy in note");
+write ("Other__________________");
 write ("No true med allergy");
 ;;
 Age_Min: 0 days;;
