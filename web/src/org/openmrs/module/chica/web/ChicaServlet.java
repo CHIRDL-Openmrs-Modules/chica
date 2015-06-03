@@ -958,6 +958,10 @@ public class ChicaServlet extends HttpServlet {
 		PatientService patientService = Context.getPatientService();
 		Patient patient = null;
 		mrn = Util.removeLeadingZeros(mrn);
+		if (mrn != null && !mrn.contains("-") && mrn.length() > 1) {
+			mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
+		}
+		
 		PatientIdentifierType identifierType = patientService
 				.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 		List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
