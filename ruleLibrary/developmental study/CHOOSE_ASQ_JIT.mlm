@@ -31,113 +31,113 @@ AgeInDays := call ChicaAgeRule with "days";
 
 If (AgeInMonths >= 1) and (AgeInMonths < 3) then 
 
-call CREATE_JIT with "ASQ_2";
+call CREATE_JIT with "ASQ_2", "", "true";
 conclude false;
 
 
 If (AgeInMonths >= 3) and (AgeInMonths < 5) then 
 
-call CREATE_JIT with "ASQ_4";
+call CREATE_JIT with "ASQ_4", "", "true";
 conclude false;
 
 
 If (AgeInMonths >= 5) and (AgeInMonths < 7) then 
 
-call CREATE_JIT with "ASQ_6";
+call CREATE_JIT with "ASQ_6", "", "true";
 conclude false;
 
 
 If (AgeInMonths >= 7) and (AgeInMonths < 9) then 
 
-call CREATE_JIT with "ASQ_8";
+call CREATE_JIT with "ASQ_8", "", "true";
 conclude false;
 
 
 If (AgeInMonths = 9) then 
 
-call CREATE_JIT with "ASQ_9";
+call CREATE_JIT with "ASQ_9", "", "true";
 conclude false;
 
 
 If (AgeInMonths = 10) then 
 
-call CREATE_JIT with "ASQ_10";
+call CREATE_JIT with "ASQ_10", "", "true";
 conclude false;
 
 
 If (AgeInMonths >= 11) and (AgeInMonths < 13) then 
 
-call CREATE_JIT with "ASQ_12";
+call CREATE_JIT with "ASQ_12", "", "true";
 conclude false;
 
 If (AgeInMonths >= 13) and (AgeInMonths < 15) then 
 
-call CREATE_JIT with "ASQ_14";
+call CREATE_JIT with "ASQ_14", "", "true";
 conclude false;
   
 If (AgeInMonths >= 15) and (AgeInMonths < 17) then 
 
-call CREATE_JIT with "ASQ_16";
+call CREATE_JIT with "ASQ_16", "", "true";
 conclude false;
 
 If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
 
-call CREATE_JIT with "ASQ_18";
+call CREATE_JIT with "ASQ_18", "", "true";
 conclude false;
 
 If (AgeInMonths >= 19) and (AgeInMonths < 21) then 
 
-call CREATE_JIT with "ASQ_20";
+call CREATE_JIT with "ASQ_20", "", "true";
 conclude false;
 
 If (AgeInMonths >= 21) and (AgeInMonths < 23) then 
 
-call CREATE_JIT with "ASQ_22";
+call CREATE_JIT with "ASQ_22", "", "true";
 conclude false;
 
 If (AgeInMonths >= 23) and (AgeInDays < 776) then 
 
-call CREATE_JIT with "ASQ_24";
+call CREATE_JIT with "ASQ_24", "", "true";
 conclude false;
 
 If (AgeInDays >= 776) and (AgeInDays < 866) then 
 
-call CREATE_JIT with "ASQ_27";
+call CREATE_JIT with "ASQ_27", "", "true";
 conclude false;
 
 If (AgeInDays >= 866) and (AgeInDays < 959) then 
 
-call CREATE_JIT with "ASQ_30";
+call CREATE_JIT with "ASQ_30", "", "true";
 conclude false;
 
 If (AgeInDays >= 959) and (AgeInDays < 1050) then 
 
-call CREATE_JIT with "ASQ_33";
+call CREATE_JIT with "ASQ_33", "", "true";
 conclude false;
 
 If (AgeInDays >= 1050) and (AgeInMonths < 39) then 
 
-call CREATE_JIT with "ASQ_36";
+call CREATE_JIT with "ASQ_36", "", "true";
 conclude false;
 
 If (AgeInMonths >= 39) and (AgeInMonths < 45) then 
 
-call CREATE_JIT with "ASQ_42";
+call CREATE_JIT with "ASQ_42", "", "true";
 conclude false;
 
 If (AgeInMonths >= 45) and (AgeInMonths < 51) then 
 
-call CREATE_JIT with "ASQ_48";
+call CREATE_JIT with "ASQ_48", "", "true";
 conclude false;
 
 If (AgeInMonths >= 51) and (AgeInMonths < 57) then 
 
-call CREATE_JIT with "ASQ_54";
+call CREATE_JIT with "ASQ_54", "", "true";
 conclude false;
 
 If (AgeInMonths >= 57) and (AgeInMonths < 66) then 
 
-call CREATE_JIT with "ASQ_60";
+call CREATE_JIT with "ASQ_60", "", "true";
 conclude false;
 
 endif;
