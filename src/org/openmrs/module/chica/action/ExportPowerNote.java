@@ -43,6 +43,7 @@ import ca.uhn.hl7v2.model.v25.message.MDM_T02;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
 import ca.uhn.hl7v2.model.v25.segment.PID;
+import ca.uhn.hl7v2.model.v25.segment.EVN;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -125,6 +126,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			
 			addSegmentMSH(openmrsEncounter, mdm);
 			addSegmentPID(openmrsEncounter.getPatient(), mdm);
+			addSegmentEVN(openmrsEncounter, mdm);
 			
 			BufferedReader reader = null;
 			
@@ -133,8 +135,7 @@ public class ExportPowerNote implements ProcessStateAction {
 				String line = null;
 				
 				while ((line = reader.readLine()) != null) {
-					addSegmentOBX(conceptName, line, hl7Abbreviation,
-					    numberOfOBXSegments, mdm);
+					addSegmentOBX(conceptName, line, hl7Abbreviation, numberOfOBXSegments, mdm);
 					
 					numberOfOBXSegments++;
 				}
@@ -267,8 +268,7 @@ public class ExportPowerNote implements ProcessStateAction {
 		
 	}
 	
-	public OBX addSegmentOBX(String name, String value,String hl7Abbreviation, int obsRep,
-	                         MDM_T02 mdm) {
+	public OBX addSegmentOBX(String name, String value, String hl7Abbreviation, int obsRep, MDM_T02 mdm) {
 		OBX obx = null;
 		
 		try {
@@ -287,6 +287,28 @@ public class ExportPowerNote implements ProcessStateAction {
 			log.error("Exception constructing OBX segment for concept ." + name, e);
 		}
 		return obx;
+		
+	}
+	
+	public EVN addSegmentEVN(Encounter encounter, MDM_T02 mdm) {
+		EVN evn = null;
+		String dateFormat = "yyyyMMddHHmm";
+		try {
+			evn = mdm.getEVN();
+			evn.getEventTypeCode().setValue("T02");
+			
+			SimpleDateFormat df = new SimpleDateFormat(dateFormat);
+			Date encounterDate = encounter.getEncounterDatetime();
+			String dateString = "";
+			if (encounterDate != null)
+				dateString = df.format(encounterDate);
+			evn.getRecordedDateTime().getTime().setValue(dateString);
+			
+		}
+		catch (Exception e) {
+			log.error("Exception constructing EVN segment for concept.", e);
+		}
+		return evn;
 		
 	}
 }
