@@ -28,6 +28,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -44,6 +45,7 @@ import ca.uhn.hl7v2.model.v25.segment.MSH;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
 import ca.uhn.hl7v2.model.v25.segment.PID;
 import ca.uhn.hl7v2.model.v25.segment.EVN;
+import ca.uhn.hl7v2.model.v25.segment.TXA;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -127,7 +129,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			addSegmentMSH(openmrsEncounter, mdm);
 			addSegmentPID(openmrsEncounter.getPatient(), mdm);
 			addSegmentEVN(openmrsEncounter, mdm);
-			
+			addSegmentTXA(openmrsEncounter, conceptName, mdm);
 			BufferedReader reader = null;
 			
 			try {
@@ -168,16 +170,11 @@ public class ExportPowerNote implements ProcessStateAction {
 	private MSH addSegmentMSH(Encounter enc, MDM_T02 mdm) {
 		
 		MSH msh = mdm.getMSH();
-		String ourApplication = "";
-		String ourFacility = "";
-		String messageType = "";
-		String triggerEvent = "";
-		String version = "";
-		String receivingApp = "";
-		String receivingFacility = "";
-		String ackType = "";
-		String app_acknowledgement_type = "";
-		String processing_id = "";
+		String ourApplication = "CHICA";
+		String ourFacility = enc.getLocation().getName();
+		String messageType = "MDM^T02";
+		String version = "2.2";
+		String processing_id = "T";
 		
 		// Get current date
 		String dateFormat = "yyyyMMddHHmmss";
@@ -192,15 +189,12 @@ public class ExportPowerNote implements ProcessStateAction {
 			msh.getSendingApplication().getNamespaceID().setValue(ourApplication);
 			msh.getSendingFacility().getNamespaceID().setValue(ourFacility);
 			msh.getMessageType().getMessageCode().setValue(messageType);
-			msh.getMessageType().getTriggerEvent().setValue(triggerEvent);
 			msh.getMessageControlID().setValue("");
 			msh.getVersionID().getVersionID().setValue(version);
-			msh.getReceivingApplication().getNamespaceID().setValue(receivingApp);
-			msh.getReceivingFacility().getNamespaceID().setValue(receivingFacility);
-			msh.getAcceptAcknowledgmentType().setValue(ackType);
-			msh.getApplicationAcknowledgmentType().setValue(app_acknowledgement_type);
+			
 			msh.getProcessingID().getProcessingID().setValue(processing_id);
 			msh.getMessageControlID().setValue(ourApplication + "-" + formattedDate);
+			
 		}
 		catch (Exception e) {
 			log.error("Exception contructing export message MSH segment. EncounterId: " + enc.getEncounterId(), e);
@@ -309,6 +303,36 @@ public class ExportPowerNote implements ProcessStateAction {
 			log.error("Exception constructing EVN segment for concept.", e);
 		}
 		return evn;
+		
+	}
+	
+	public TXA addSegmentTXA(Encounter encounter, String conceptName, MDM_T02 mdm) {
+		TXA txa = null;
+		String dateFormat = "yyyyMMddHHmm";
+		try {
+			txa = mdm.getTXA();
+			SimpleDateFormat df = new SimpleDateFormat(dateFormat);
+			Date encounterDate = encounter.getEncounterDatetime();
+			String dateString = "";
+			if (encounterDate != null)
+				dateString = df.format(encounterDate);
+			
+			txa.getSetIDTXA().setValue("1");
+			txa.getDocumentType().setValue(conceptName);
+			txa.getDocumentContentPresentation().setValue("FT");
+			txa.getActivityDateTime().getTime().setValue(dateString);
+			txa.getOriginationDateTime().getTime().setValue(dateString);
+			Integer uniqueId = Util.GENERATOR.nextInt();
+			txa.getUniqueDocumentNumber().getEntityIdentifier().setValue(uniqueId.toString());
+			txa.getDocumentCompletionStatus().setValue("A");
+			txa.getDocumentAvailabilityStatus().setValue("U");
+			txa.getDocumentStorageStatus().setValue("AV");
+			txa.getDocumentChangeReason().setValue("AC");
+		}
+		catch (Exception e) {
+			log.error("Exception constructing EVN segment for concept.", e);
+		}
+		return txa;
 		
 	}
 }
