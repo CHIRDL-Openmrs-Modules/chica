@@ -13,10 +13,14 @@
  */
 package org.openmrs.module.chica.hl7.mckesson;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -50,14 +54,18 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.QueryKiteException;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
+import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -80,6 +88,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
@@ -150,23 +159,21 @@ public class HL7SocketHandler extends
 				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
 				Patient matchedPatient = findPatient(hl7Patient);
-				parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
-				processAliasString(mrn, resultPatient);
-				parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
 				
 				if (matchedPatient == null) {
-					
-					resultPatient = createPatient(hl7Patient);
-					
-					//Merge alias medical record number patients
-					parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
-					processAliasString(mrn, resultPatient);
-					parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
-					
-				} else {
+					resultPatient = createPatient(hl7Patient);	
+				}
+				else {
 					resultPatient = updatePatient(matchedPatient, hl7Patient,
 							encounterDate);
 				}
+				
+				//Always query MRF and perform alias even if the patient already matched in CHICA.
+				parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
+				String response = QueryKite.mrfQuery(mrn, resultPatient, true);
+				parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
+				
+				
 
 				parameters.put(PROCESS_HL7_CHECKIN_END, new java.util.Date());
 
@@ -177,6 +184,9 @@ public class HL7SocketHandler extends
 			logger.error(org.openmrs.module.chirdlutil.util.Util
 					.getStackTrace(e));
 
+		} catch (QueryKiteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return resultPatient;
 
@@ -335,86 +345,54 @@ public class HL7SocketHandler extends
 	 * @param preferredPatient
 	 */
 	private void processAliasString(String mrn, Patient preferredPatient) {
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context
-				.getService(ChirdlUtilBackportsService.class);
+		
+		String response = QueryKite.mrfQuery(mrn, preferredPatient, true);
+		long startTime = System.currentTimeMillis();
+		long startTime2 = System.currentTimeMillis();
+		
+		log.info("Starting mrf parsing");
+		LogicService logicService = Context.getLogicService();
 
-		PatientService patientService = Context.getPatientService();
-		String response = null;
-		try {
-			response = QueryKite.mrfQuery(mrn, preferredPatient, true);
-		} catch (QueryKiteException e) {
-			Error ce = e.getError();
-			chirdlutilbackportsService.saveError(ce);
-
+		ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
+				.getLogicDataSource("RMRS");
+		
+		HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
+		//mrf dump has multiple messages
+		List<String> messages = HL7ToObs.parseHL7Batch(response);
+		for (String messageString : messages){
+			HL7ToObs.processMessage(messageString, preferredPatient, regenObs);
+			//checkAliases(mrn, messageString);
 		}
+		
+		log.info("Elapsed time for mrf parsing is "+
+				(System.currentTimeMillis()-startTime)/1000);
+		
 
 		// query failed
 		if (response == null) {
 			return;
 		}
-		
-		//get PIDs from response hl7
-		 Message responseMessage  = null;
-		try {
-			this.parser.setValidationContext(new NoValidation());
-			PipeParser pipeParser = new PipeParser();
-			
-			
-		} catch (EncodingNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (HL7Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 HL7PatientHandler hl7PatientHandler = new HL7PatientHandler23();
-		 Set<PatientIdentifier> identifiers = hl7PatientHandler.getIdentifiers(responseMessage);
-		 if (identifiers == null || identifiers.size() == 0){
-			 //no aliases
-			 log.info("no aliases");
-			 return;
-		 }
-		 for (PatientIdentifier identifier : identifiers){
-			 String identifierString = identifier.getIdentifier();
-			 log.info(identifierString + " , ");
-		 }
-		/*
-		String[] fields = PipeParser.split(aliasString, "|");
-		if (fields != null) {
-			int length = fields.length;
 
-			if (length >= 2) {
-				if (fields[1].equals(ALIAS_FAILED)) {
-					Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION,
-							"Alias query returned FAILED for mrn: " + mrn,
-							null, new Date(), null);
-					chirdlutilbackportsService.saveError(error);
-					return;
-				}
-				if (fields[1].equals(ALIAS_UNKNOWN_PATIENT)) {
-					Error error = new Error(ERROR_LEVEL_WARNING, ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION,
-							"Alias query returned unknown_patient for mrn: "
-									+ mrn, null, new Date(), null);
-					chirdlutilbackportsService.saveError(error);
-					return;
-				}
-			}
+		//mrf dump has multiple messages
+		List<String> messages = HL7ToObs.parseHL7Batch(response);
 
-			for (int i = 1; i < length; i++) {
-				if (fields[i].contains(ALIAS_DONE)) {
-					break;
-				}
+		for (String message : messages){
+			
+			//get identifiers and merge if necessary
+			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
+			List<String> identifiers = patientHandler.getIdentiferStrings(response);
+
+			for (String identifier : identifiers){
 
 				// don't look up the preferred patient's mrn
 				// so we don't merge a patient to themselves
-				if (Util.removeLeadingZeros(fields[i]).equals(
-						Util.removeLeadingZeros(mrn))
-						|| fields[i].equals(ALIAS_NONE)) {
+				if (Util.removeLeadingZeros(identifier).equals(
+						Util.removeLeadingZeros(mrn))) {
 					continue;
 				}
 
 				List<Patient> lookupPatients = patientService.getPatients(null,
-						Util.removeLeadingZeros(fields[i]), null, false);
+						Util.removeLeadingZeros(identifier), null, false);
 
 				if (lookupPatients != null && lookupPatients.size() > 0) {
 					Iterator<Patient> iter = lookupPatients.iterator();
@@ -431,13 +409,18 @@ public class HL7SocketHandler extends
 									"Tried to merge patient: "
 											+ currPatient.getPatientId()
 											+ " with itself.", null,
-									new Date(), null);
+											new Date(), null);
 							chirdlutilbackportsService.saveError(error);
 						}
 					}
 				}
+
 			}
-		}*/
+			
+			//parse the obs
+			
+		}
+
 	}
 
 	/**
@@ -1555,6 +1538,52 @@ public class HL7SocketHandler extends
 			log.error("Error if existing patient");
 		}
 		return null;
+	}
+	
+	private void checkAliases(String mrn, Patient patient, Message message){
+			
+			
+			//get identifiers and merge if necessary
+			PatientService patientService = Context.getPatientService();
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
+			List<String> identifiers = patientHandler.getIdentiferStrings(message);
+
+			for (String identifier : identifiers){
+
+				// don't look up the preferred patient's mrn
+				// so we don't merge a patient to themselves
+				if (Util.removeLeadingZeros(identifier).equals(
+						Util.removeLeadingZeros(mrn))) {
+					continue;
+				}
+
+				List<Patient> lookupPatients = patientService.getPatients(null,
+						Util.removeLeadingZeros(identifier), null, false);
+
+				if (lookupPatients != null && lookupPatients.size() > 0) {
+					Iterator<Patient> iter = lookupPatients.iterator();
+
+					while (iter.hasNext()) {
+						Patient currPatient = iter.next();
+						// only merge different patients
+						if (!patient.getPatientId().equals(
+								currPatient.getPatientId())) {
+							patientService.mergePatients(patient,
+									currPatient);
+						} else {
+							Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_GENERAL,
+									"Tried to merge patient: "
+											+ currPatient.getPatientId()
+											+ " with itself.", null,
+											new Date(), null);
+							chirdlutilbackportsService.saveError(error);
+						}
+					}
+				}
+
+			}
+			
 	}
 	
 	

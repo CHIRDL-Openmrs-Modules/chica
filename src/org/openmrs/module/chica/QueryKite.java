@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -305,8 +306,12 @@ public class QueryKite
 					.getLogicDataSource("RMRS");
 			
 			HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
-
-			HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);
+			//mrf dump has multiple messages
+			List<String> messages = HL7ToObs.parseHL7Batch(response);
+			for (String messageString : messages){
+				HL7ToObs.processMessage(messageString, patient, regenObs);
+			}
+			
 			log.info("Elapsed time for mrf parsing is "+
 					(System.currentTimeMillis()-startTime)/1000);
 		}

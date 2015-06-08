@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -110,7 +111,7 @@ public class HL7ToObs {
 		}
 	}
 	
-	private static void processMessage(String messageString, Patient patient,
+	public static void processMessage(String messageString, Patient patient,
 	                                   HashMap<Integer, HashMap<String, Set<Obs>>> patientObsMap) {
 		Integer patientId = patient.getPatientId();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
@@ -244,4 +245,57 @@ public class HL7ToObs {
 		
 		return newMessage.toString();
 	}
+	
+public static List<String> parseHL7Batch(String message){
+		
+		BufferedReader reader = new BufferedReader(new StringReader(message));
+		String line = null;
+		List<String> parsedMessages = new ArrayList<String>();
+		
+		StringWriter output;
+		PrintWriter writer;
+		
+			try {
+				// skip lines before hl7 message begins
+				while ((line = reader.readLine()) != null && !line.startsWith("MSH")) {
+				}
+				
+				output = new StringWriter();
+				writer = new PrintWriter(output);
+				if (line != null) {
+					writer.println(line); // write out the MSH line
+				}
+				
+				while ((line = reader.readLine()) != null) {
+					if (line.startsWith("MSH")) {
+						writer.flush();
+						writer.close();
+						try {
+							parsedMessages.add(output.toString());
+						}
+						catch (Exception e) {
+							//catch this error so other MSH's are processed
+						}
+						
+						// process the next message
+						output = new StringWriter();
+						writer = new PrintWriter(output);
+					}
+					writer.println(line);
+				}
+
+
+				writer.flush();
+				writer.close();
+				parsedMessages.add(output.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return parsedMessages;
+		
+	}
+	
+	
 }

@@ -3,12 +3,22 @@
  */
 package org.openmrs.module.chica.hl7.mckesson;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAddress;
+import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -21,6 +31,10 @@ import ca.uhn.hl7v2.model.v25.datatype.XAD;
 import ca.uhn.hl7v2.model.v25.datatype.XPN;
 import ca.uhn.hl7v2.model.v25.segment.NK1;
 import ca.uhn.hl7v2.model.v25.segment.PID;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * @author tmdugan
@@ -231,6 +245,62 @@ public class HL7PatientHandler25 extends
 			logger.warn("Unable to collect address from PID or NK1 for", e);
 		}
 		return addresses;
+	}
+	
+private  Set<PatientIdentifier> getIdentifiers(String response){
+	
+	try {
+		
+		PipeParser pipeParser = new PipeParser();
+		pipeParser.setValidationContext(new NoValidation());
+		String newMessageString = HL7ToObs.replaceVersion(response);
+		Message newMessage = pipeParser.parse(newMessageString);
+		Message message = null;
+		Set<PatientIdentifier> identifiers = null;
+		
+		
+			String line = null;
+			try {
+				List<String> identifier = getIdentiferStrings(newMessage);
+			}
+			catch (Exception e) {
+				//error is logged in processMessage
+				//catch this error so other MSH's are processed
+			}
+			
+		} catch (EncodingNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HL7Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
+		return null;
+	}
+
+	public List<String> getIdentiferStrings(Message newMessage){
+		List<String> identifiers  = new ArrayList<String>();
+		try {
+			
+			//Split the messages
+			//get pid-3-1 from each message
+			//add to list
+			PipeParser pipeParser = new PipeParser();
+			pipeParser.setValidationContext(new NoValidation());
+			Terser terser = new Terser(newMessage);
+			String pid = terser.get("/.PID-3-1");
+			identifiers.add(pid);
+		} catch (EncodingNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HL7Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return identifiers;
 	}
 	
 	
