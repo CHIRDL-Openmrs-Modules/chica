@@ -172,7 +172,8 @@ public class ExportPowerNote implements ProcessStateAction {
 		MSH msh = mdm.getMSH();
 		String ourApplication = "CHICA";
 		String ourFacility = enc.getLocation().getName();
-		String messageType = "MDM^T02";
+		String messageCode = "MDM";
+		String messageStructure = "T02";
 		String version = "2.2";
 		String processing_id = "T";
 		
@@ -188,7 +189,8 @@ public class ExportPowerNote implements ProcessStateAction {
 			
 			msh.getSendingApplication().getNamespaceID().setValue(ourApplication);
 			msh.getSendingFacility().getNamespaceID().setValue(ourFacility);
-			msh.getMessageType().getMessageCode().setValue(messageType);
+			msh.getMessageType().getMessageCode().setValue(messageCode);
+			msh.getMessageType().getTriggerEvent().setValue(messageStructure);
 			msh.getMessageControlID().setValue("");
 			msh.getVersionID().getVersionID().setValue(version);
 			
@@ -269,7 +271,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			obx = mdm.getOBXNTE(obsRep).getOBX();
 			obx.getSetIDOBX().setValue(String.valueOf(obsRep + 1));
 			obx.getValueType().setValue(hl7Abbreviation);
-			obx.getObservationIdentifier().getText().setValue(name);
+			obx.getObservationIdentifier().getIdentifier().setValue(name);
 			obx.getObservationResultStatus().setValue("F");
 			
 			TX tx = new TX(mdm);
@@ -322,12 +324,16 @@ public class ExportPowerNote implements ProcessStateAction {
 			txa.getDocumentContentPresentation().setValue("FT");
 			txa.getActivityDateTime().getTime().setValue(dateString);
 			txa.getOriginationDateTime().getTime().setValue(dateString);
-			Integer uniqueId = Util.GENERATOR.nextInt();
+			Integer uniqueId = -1;
+			
+			while(uniqueId < 0){
+				uniqueId = Util.GENERATOR.nextInt();
+			}
 			txa.getUniqueDocumentNumber().getEntityIdentifier().setValue(uniqueId.toString());
 			txa.getDocumentCompletionStatus().setValue("A");
-			txa.getDocumentAvailabilityStatus().setValue("U");
-			txa.getDocumentStorageStatus().setValue("AV");
-			txa.getDocumentChangeReason().setValue("AC");
+			txa.getDocumentConfidentialityStatus().setValue("U");
+			txa.getDocumentAvailabilityStatus().setValue("AV");
+			txa.getDocumentStorageStatus().setValue("AC");
 		}
 		catch (Exception e) {
 			log.error("Exception constructing EVN segment for concept.", e);
