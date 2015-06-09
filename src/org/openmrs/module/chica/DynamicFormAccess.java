@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.chica;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -31,10 +33,13 @@ import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
@@ -45,9 +50,12 @@ import org.openmrs.module.atd.hibernateBeans.PatientATD;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
+import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -65,6 +73,7 @@ import org.openmrs.module.dss.service.DssService;
 public class DynamicFormAccess {
 	
 	private Log log = LogFactory.getLog(this.getClass());
+	private static final String PSF_FORM = "PSF"; // DWE CHICA-430 PSF needs to have elements removed from the xml when it is saved
 	
 	/**
 	 * Default Constructor
@@ -296,7 +305,7 @@ public class DynamicFormAccess {
 		
 		saveDssElementsToDatabase(patient, formInstance, elementList, encounter, locationTagId, formName,
 		    waitForScanFieldIdToAtdMap);
-		serializeFields(formInstance, locationTagId, fields);
+		serializeFields(formInstance, locationTagId, fields, new ArrayList<String>()); // DWE CHICA-430 Add new ArrayList<String>()
 		
 		return fields;
 	}
@@ -421,7 +430,7 @@ public class DynamicFormAccess {
 			}
 		}
 		
-		serializeFields(formInstance, locationTagId, fields);
+		serializeFields(formInstance, locationTagId, fields, new ArrayList<String>()); // DWE CHICA-430 Add new ArrayList<String>()
 		return fields;
 	}
 	
@@ -706,8 +715,12 @@ public class DynamicFormAccess {
 			}
 		}
 		
+		// DWE CHICA-430 Now that rules have run and obs records have been added/updated/voided
+		// create the list of fields to remove from the xml
+		List<String> elementsToRemoveList = createElementsToRemoveList(form, formInstanceId, encounter);
+		
 		fieldIdToPatientAtdMap.clear();
-		serializeFields(formInstance, locationTagId, fieldsToAdd);
+		serializeFields(formInstance, locationTagId, fieldsToAdd, elementsToRemoveList); // DWE CHICA-430 Add elementsToRemoveList
 	}
 	
 	/**
@@ -935,10 +948,184 @@ public class DynamicFormAccess {
 	 * @param formInstance FormInstance object to identify the form that will have the fields add/updated.
 	 * @param locationTagId The locationTagId where the form was created.
 	 * @param fields The fields to add/update.
+	 * @param elementsToRemoveList - DWE CHICA-430 Added parameter that contains a list of xml elements to remove
 	 */
-	private void serializeFields(FormInstance formInstance, Integer locationTagId, List<Field> fields) {
-		ChirdlRunnable runnable = new FormWriter(formInstance, locationTagId, fields);
+	private void serializeFields(FormInstance formInstance, Integer locationTagId, List<Field> fields, List<String> elementsToRemoveList) {
+		ChirdlRunnable runnable = new FormWriter(formInstance, locationTagId, fields, elementsToRemoveList); // DWE CHICA-430 Add elementsToRemoveList;
 		ThreadManager manager = ThreadManager.getInstance();
 		manager.execute(runnable, formInstance.getLocationId());
+	}
+	
+	/**
+	 * DWE CHICA-430
+	 * Gets a list of xml elements to remove. Elements will be removed if the obs record has been voided.
+	 * 
+	 * Currently only used for the PSF
+	 * 
+	 * @param formId
+	 * @param formInstanceId
+	 * @param encounterId
+	 * @return list of element ids to remove
+	 */
+	private List<String> createElementsToRemoveList(Form form, Integer formInstanceId, Encounter encounter)
+	{
+		if(form.getName().equals(PSF_FORM)) // Currently only used for the PSF
+		{
+			try
+			{
+				List<String> elementsToRemoveList = new ArrayList<String>();
+				ObsService obsService = Context.getObsService();
+				List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+				encounters.add(encounter);
+				
+				FieldType mergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
+				List<FieldType> fieldTypes = new ArrayList<FieldType>();
+				fieldTypes.add(mergeType);
+				
+				// Get the list of export fields for this form
+				List<FormField> formFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, fieldTypes, false);
+				
+				for(FormField formField : formFields)
+				{
+					Concept concept = formField.getField().getConcept();
+					if(concept != null)
+					{
+						List<Concept> questions = new ArrayList<Concept>();
+						questions.add(concept);
+						List<Obs> obsList = obsService.getObservations(null, encounters, questions, null, null, null, null,
+								null, null, encounter.getEncounterDatetime(), null, true);
+						
+						// Check to see if any of the obs records have been voided for the encounter
+						// If an obs has been voided, but a new one was created, it will be added back to the xml
+						// with the "fieldsToAdd" list
+						for(Obs obs : obsList)
+						{
+							if(obs.getVoided())
+							{
+								elementsToRemoveList.add(formField.getField().getName());
+								break;
+							}
+						}
+					}
+				}
+				
+				return elementsToRemoveList;
+			}
+			catch(Exception e)
+			{
+				log.error("Unable to create list of xml elements to remove (formId = " + form.getId() + " formInstanceId = " + formInstanceId + ").");
+				return new ArrayList<String>();
+			}	
+		}
+		else
+		{
+			return new ArrayList<String>();
+		}	
+	}
+	
+	/**
+	 * DWE CHICA-430
+	 * Get a list of "Export Field" types with values that were previously entered for the form 
+	 * for this encounter
+	 * 
+	 * Currently only used for the PSF
+	 * 
+	 * @param formId
+	 * @param formInstanceId
+	 * @param encounterId
+	 * @return list of fields with values that were previously entered for the form
+	 */
+	public List<Field> getExportElements(Integer formId, Integer formInstanceId, Integer encounterId, Integer locationTagId)
+	{
+		try
+		{
+			EncounterService encounterService = Context.getEncounterService();
+			Encounter encounter = encounterService.getEncounter(encounterId);
+			Integer locationId = encounter.getLocation().getId();
+			List<Field> fields = new ArrayList<Field>();
+			FormService formService = Context.getFormService();
+			Form form = formService.getForm(formId);
+
+			if(form.getName().equals(PSF_FORM)) // Currently only used for the PSF
+			{
+				FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
+
+				String scanDirectory = IOUtil.formatDirectoryName(
+						org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId, org.openmrs.module.chirdlutil.util.XMLUtil.DEFAULT_EXPORT_DIRECTORY, 
+								locationTagId, locationId));
+
+				if (scanDirectory == null) 
+				{
+					log.info("No " + org.openmrs.module.chirdlutil.util.XMLUtil.DEFAULT_EXPORT_DIRECTORY + " found for Form: " + formId + " Location ID: " + locationId + 
+							" Location Tag ID: " + locationTagId + ".");
+					return new ArrayList<Field>();
+				}
+
+				File file = new File(scanDirectory, formInstance.toString() + ".20");
+				if (file.exists()) 
+				{
+					try
+					{
+						Records records = (Records) org.openmrs.module.chirdlutil.util.XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
+						Map<String, Field> fieldMap = new HashMap<String, Field>();
+						List<Field> currentFields = records.getRecord().getFields();
+
+						// Create a map with the current fields so the map can be used to lookup field values
+						for(Field field : currentFields)
+						{
+							fieldMap.put(field.getId(), field);
+						}
+
+						FieldType exportType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
+						List<FieldType> fieldTypes = new ArrayList<FieldType>();
+						fieldTypes.add(exportType);
+
+						// Get the list of export fields for this form
+						List<FormField> formFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, fieldTypes, false);
+
+						// Locate values for the export fields
+						for(FormField formField : formFields)
+						{
+							String fieldName = formField.getField().getName();
+							Field field = new Field();
+							field.setId(fieldName);
+							Field currentField = fieldMap.get(fieldName);
+							if(currentField != null)
+							{
+								field.setValue(currentField.getValue());
+							}
+							else
+							{
+								field.setValue("");
+							}
+
+							fields.add(field);
+						}	
+					}
+					catch(IOException ioe)
+					{
+						log.error(ioe.getMessage());
+						log.error(Util.getStackTrace(ioe));
+						return new ArrayList<Field>();
+					}
+
+					return fields;
+				}
+				else 
+				{
+					return new ArrayList<Field>();
+				}	
+			}
+			else
+			{
+				return new ArrayList<Field>();
+			}
+		}
+		catch(APIException apie)
+		{
+			log.error(apie.getMessage());
+			log.error(Util.getStackTrace(apie));
+			return new ArrayList<Field>();
+		}
 	}
 }

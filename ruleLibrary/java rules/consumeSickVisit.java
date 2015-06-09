@@ -3,6 +3,7 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
+import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
@@ -105,6 +106,10 @@ public class consumeSickVisit implements Rule {
 			if (enteredValue.equalsIgnoreCase("Y")) {
 				answer = "SickVisit";
 			}
+			
+			// DWE CHICA-430 Allow the checkbox to be unchecked by voiding the obs for this concept
+			Concept concept = conceptService.getConceptByName(conceptName);
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
 			
 			if (answer != null) {
 				org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient,
