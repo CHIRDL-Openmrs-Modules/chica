@@ -441,6 +441,10 @@ public class ManualCheckin
 					.getPatientIdentifierTypeByName("MRN_OTHER");
 			PatientIdentifier pi = new PatientIdentifier();
 			mrn = Util.removeLeadingZeros(mrn);
+			if (!mrn.contains("-") && mrn.length() > 1) {
+				mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
+			}
+			
 			pi.setIdentifier(mrn);
 			pi.setIdentifierType(identifierType);
 			pi.setLocation(encounterLocation);
