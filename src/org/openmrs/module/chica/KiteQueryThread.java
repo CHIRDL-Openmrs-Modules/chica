@@ -103,7 +103,7 @@ public class KiteQueryThread implements Runnable
 			throws QueryKiteException
 			{
 		AdministrationService adminService = Context.getAdministrationService();
-		String configFile = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE);
+		String configFile = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE);   
 		String password = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_PASSWORD);
 
 		Properties props = null; 
@@ -130,7 +130,8 @@ public class KiteQueryThread implements Runnable
 			dump.setUser(login);
 
 			DumpServiceStub.EntityIdentifier patient = new DumpServiceStub.EntityIdentifier();
-			patient.setId(props.getProperty(MRF_PARAM_MRN));
+			//patient.setId(props.getProperty(MRF_PARAM_MRN));
+			patient.setId(mrn);
 			patient.setSystem(props.getProperty(MRF_PARAM_PATIENT_IDENTIFIER_SYSTEM));
 			dump.setPatient(patient);
 			dump.setPassword(password);

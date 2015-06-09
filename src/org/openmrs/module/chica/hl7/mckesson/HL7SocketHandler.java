@@ -344,7 +344,7 @@ public class HL7SocketHandler extends
 	 * @param mrn
 	 * @param preferredPatient
 	 */
-	private void processAliasString(String mrn, Patient preferredPatient) {
+/*	private void processAliasString(String mrn, Patient preferredPatient) {
 		
 		String response = QueryKite.mrfQuery(mrn, preferredPatient, true);
 		long startTime = System.currentTimeMillis();
@@ -421,7 +421,7 @@ public class HL7SocketHandler extends
 			
 		}
 
-	}
+	}*/
 
 	/**
 	 * Update matched patient to values from hl7 message (non-Javadoc)
@@ -1540,14 +1540,33 @@ public class HL7SocketHandler extends
 		return null;
 	}
 	
-	private void checkAliases(String mrn, Patient patient, Message message){
+	public static void checkAliases(String mrn, Patient patient, String messageString){
 			
 			
 			//get identifiers and merge if necessary
 			PatientService patientService = Context.getPatientService();
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
-			List<String> identifiers = patientHandler.getIdentiferStrings(message);
+			
+			PipeParser pipeParser = new PipeParser();
+			pipeParser.setValidationContext(new NoValidation());
+			String newMessageString = HL7ToObs.replaceVersion(messageString);
+			Message newMessage = null;
+			try {
+				newMessage = pipeParser.parse(newMessageString);
+			} catch (EncodingNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (HL7Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//convert message string to Message
+			if (newMessage == null){
+				return;
+			}
+			
+			List<String> identifiers = patientHandler.getIdentiferStrings(newMessage);
 
 			for (String identifier : identifiers){
 
