@@ -1013,7 +1013,7 @@ public class DynamicFormAccess {
 			}
 			catch(Exception e)
 			{
-				log.error("Unable to create list of xml elements to remove (formId = " + form.getId() + " formInstanceId = " + formInstanceId + ").");
+				log.error("Unable to create list of xml elements to remove (formId = " + form.getId() + " formInstanceId = " + formInstanceId + ").", e);
 				return new ArrayList<String>();
 			}	
 		}
@@ -1061,7 +1061,7 @@ public class DynamicFormAccess {
 					return new ArrayList<Field>();
 				}
 
-				File file = new File(scanDirectory, formInstance.toString() + ".20");
+				File file = new File(scanDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20);
 				if (file.exists()) 
 				{
 					try
