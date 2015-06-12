@@ -24,7 +24,6 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.logic.op.OperandObject;
-
 import org.openmrs.module.chica.impl.ChicaServiceImpl;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.atd.service.ATDService;
@@ -86,6 +85,7 @@ public class consumeWeight implements Rule
 		ATDService atdService = Context.getService(ATDService.class);
 		Integer ruleId = null;
 		Integer locationTagId = null;
+		Integer formFieldId = null;
 
 		if (parameters != null)
 		{
@@ -101,6 +101,7 @@ public class consumeWeight implements Rule
 			
 			encounterId = (Integer) parameters.get("encounterId");
 			locationTagId = (Integer) parameters.get("locationTagId");
+			formFieldId = (Integer)parameters.get("formFieldId"); // DWE CHICA-437
 		}
 
 		if (formInstance == null)
@@ -165,10 +166,10 @@ public class consumeWeight implements Rule
 		if(fullResult != null&&fullResult.length()>0)
 		{
 			Concept concept = conceptService.getConceptByName(conceptName);
-			org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId, formFieldId); // DWE CHICA-437 Added formFieldId
 			org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept,
 					encounterId, fullResult,formInstance,
-					ruleId,locationTagId);
+					ruleId,locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 		}
 		
 		return Result.emptyResult();
