@@ -84,6 +84,7 @@ public class storeObs implements Rule
 		Integer locationTagId = null;
 		PatientService patientService = Context.getPatientService();
 		Patient patient = patientService.getPatient(patientId);
+		Integer formFieldId = null;
 
 		if (parameters != null)
 		{
@@ -100,6 +101,7 @@ public class storeObs implements Rule
 			}
 			encounterId = (Integer) parameters.get("encounterId");
 			value = (String) parameters.get("param2");
+			formFieldId = (Integer)parameters.get("formFieldId"); // DWE CHICA-437
 		}
 		ConceptService conceptService = Context.getConceptService();
 
@@ -118,7 +120,7 @@ public class storeObs implements Rule
 		}
 
 		Obs obs = org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, currConcept, encounterId, value, formInstance,
-				ruleId,locationTagId);
+				ruleId,locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 		
 		if (obs == null) {
 			return Result.emptyResult();

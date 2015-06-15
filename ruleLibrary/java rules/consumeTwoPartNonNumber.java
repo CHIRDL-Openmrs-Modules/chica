@@ -19,7 +19,6 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.logic.op.OperandObject;
-
 import org.openmrs.module.chica.util.Util;
 
 public class consumeTwoPartNonNumber implements Rule
@@ -78,6 +77,7 @@ public class consumeTwoPartNonNumber implements Rule
 		Integer encounterId = null;
 		Integer ruleId = null;
 		Integer locationTagId = null;
+		Integer formFieldId = null;
 
 		if (parameters != null)
 		{
@@ -93,6 +93,7 @@ public class consumeTwoPartNonNumber implements Rule
 			
 			encounterId = (Integer) parameters.get("encounterId");
 			locationTagId = (Integer) parameters.get("locationTagId");
+			formFieldId = (Integer)parameters.get("formFieldId"); // DWE CHICA-437
 		}
 
 		if (formInstance == null)
@@ -142,7 +143,7 @@ public class consumeTwoPartNonNumber implements Rule
 		{
 			org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, conceptService.getConceptByName(conceptName),
 					encounterId, fullResult,formInstance,
-					ruleId,locationTagId);
+					ruleId,locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 		}
 		
 		return Result.emptyResult();
