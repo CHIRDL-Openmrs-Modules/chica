@@ -70,7 +70,7 @@ public class KiteQueryThread implements Runnable
 
 			try
 			{
-				responseString = queryKite(this.mrn);
+				responseString = QueryKite.getMRFDump(this.mrn);
 			} catch (QueryKiteException e)
 			{
 				this.exception = e;
