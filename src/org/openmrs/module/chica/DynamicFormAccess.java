@@ -73,7 +73,6 @@ import org.openmrs.module.dss.service.DssService;
 public class DynamicFormAccess {
 	
 	private Log log = LogFactory.getLog(this.getClass());
-	private static final String PSF_FORM = "PSF"; // DWE CHICA-430 PSF needs to have elements removed from the xml when it is saved
 	
 	/**
 	 * Default Constructor
@@ -717,7 +716,7 @@ public class DynamicFormAccess {
 		
 		// DWE CHICA-430 Now that rules have run and obs records have been added/updated/voided
 		// create the list of fields to remove from the xml
-		List<String> elementsToRemoveList = createElementsToRemoveList(form, formInstanceId, encounter);
+		List<String> elementsToRemoveList = createElementsToRemoveList(form, formInstanceId, encounter, locationTagId, locationId);
 		
 		fieldIdToPatientAtdMap.clear();
 		serializeFields(formInstance, locationTagId, fieldsToAdd, elementsToRemoveList); // DWE CHICA-430 Add elementsToRemoveList
@@ -965,11 +964,16 @@ public class DynamicFormAccess {
 	 * @param formId
 	 * @param formInstanceId
 	 * @param encounterId
+	 * @param locationTagId
+	 * @param locationId
 	 * @return list of element ids to remove
 	 */
-	private List<String> createElementsToRemoveList(Form form, Integer formInstanceId, Encounter encounter)
+	private List<String> createElementsToRemoveList(Form form, Integer formInstanceId, Encounter encounter, Integer locationTagId, Integer locationId)
 	{
-		if(form.getName().equals(PSF_FORM)) // Currently only used for the PSF
+		String displayAndUpdatePreviousValues = org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DISPLAY_AND_UPDATE_PREVIOUS_VALUES, 
+				locationTagId, locationId);
+		
+		if(displayAndUpdatePreviousValues.equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) // Currently only used for the PSF
 		{
 			try
 			{
@@ -1046,7 +1050,10 @@ public class DynamicFormAccess {
 			FormService formService = Context.getFormService();
 			Form form = formService.getForm(formId);
 
-			if(form.getName().equals(PSF_FORM)) // Currently only used for the PSF
+			String displayAndUpdatePreviousValues = org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_AND_UPDATE_PREVIOUS_VALUES, 
+					locationTagId, locationId);
+			
+			if(displayAndUpdatePreviousValues.equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) // Currently only used for the PSF
 			{
 				FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 
