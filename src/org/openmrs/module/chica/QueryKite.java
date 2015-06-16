@@ -106,8 +106,8 @@ public class QueryKite
 		String response = null;
 		try
 		{
-				response = QueryKite.getMRFDump(mrn);
-		    
+			response = QueryKite.getMRFDump(mrn);
+
 		} catch (Exception e)
 		{
 			Error error = new Error("Error", "Query Kite Connection"
@@ -116,59 +116,64 @@ public class QueryKite
 			chirdlutilbackportsService.saveError(error);
 			return null;
 		}
-		
+
 		//For the alias query only, do not requery if the response was null.  This would take too long.
 		//A requery is performed later in a separate thread if no mrf dump exists already.
-		
+
 		if (response != null)
 		{
 			// save alias query results to a file
 			String aliasDirectory = IOUtil.formatDirectoryName(adminService
 					.getGlobalProperty("chica.aliasArchiveDirectory"));
-			
+
 			if (aliasDirectory != null)
 			{
-			String filename = "r" + Util.archiveStamp() + "_" + mrn + ".txt";
+				String filename = "r" + Util.archiveStamp() + "_" + mrn + ".txt";
 
-			FileOutputStream aliasFile = null;
-			
-			try
-			{
-				aliasFile = new FileOutputStream(aliasDirectory
-						+ filename);
-			} catch (FileNotFoundException e1)
-			{
-				log.error("Could not find alias file: " + aliasDirectory 
-						+ filename);
-			}
-			if (aliasFile != null)
-			{
+				FileOutputStream aliasFile = null;
+
 				try
 				{
-
-					ByteArrayInputStream aliasInput = new ByteArrayInputStream(
-							response.getBytes());
-					IOUtil.bufferedReadWrite(aliasInput, aliasFile);
-					aliasFile.flush();
-					aliasFile.close();
-				} catch (Exception e)
+					aliasFile = new FileOutputStream(aliasDirectory
+							+ filename);
+				} catch (FileNotFoundException e1)
+				{
+					log.error("Could not find alias file: " + aliasDirectory 
+							+ filename);
+				}
+				if (aliasFile != null)
 				{
 					try
 					{
+
+						ByteArrayInputStream aliasInput = new ByteArrayInputStream(
+								response.getBytes());
+						IOUtil.bufferedReadWrite(aliasInput, aliasFile);
 						aliasFile.flush();
 						aliasFile.close();
-					} catch (Exception e1)
+					} catch (Exception e)
 					{
+						try
+						{
+							aliasFile.flush();
+							aliasFile.close();
+						} catch (Exception e1)
+						{
+						}
+						log.error("There was an error writing the dump file");
+						log.error(e.getMessage());
+						log.error(Util.getStackTrace(e));
 					}
-					log.error("There was an error writing the dump file");
-					log.error(e.getMessage());
-					log.error(Util.getStackTrace(e));
 				}
 			}
-		}
-		}
 			
-			return response;
+			//parse hl7
+			//merge the aliases
+			//save obs
+			
+		}
+
+		return response;
 	}
 	
 
@@ -328,7 +333,7 @@ public class QueryKite
 					List<String> messages = HL7ToObs.parseHL7Batch(response);
 					for (String messageString : messages){
 						HL7ToObs.processMessage(messageString, patient, regenObs);
-						HL7SocketHandler.checkAliases(mrn, patient, messageString);
+						HL7SocketHandler.mergeAliases(mrn, patient, messageString);;
 
 						log.info("Elapsed time for mrf parsing is "+
 								(System.currentTimeMillis()-startTime)/1000);

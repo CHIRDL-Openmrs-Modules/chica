@@ -170,7 +170,7 @@ public class HL7SocketHandler extends
 				
 				//Always query MRF and perform alias even if the patient already matched in CHICA.
 				parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
-				String response = QueryKite.mrfQuery(mrn, resultPatient, true);
+				String response = QueryKite.aliasQuery(mrn)mrfQuery(mrn, resultPatient, true);
 				parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
 				
 				
@@ -1540,7 +1540,7 @@ public class HL7SocketHandler extends
 		return null;
 	}
 	
-	public static void checkAliases(String mrn, Patient patient, String messageString){
+	public static void mergeAliases(String mrn, Patient patient, String messageString){
 			
 			
 			//get identifiers and merge if necessary
