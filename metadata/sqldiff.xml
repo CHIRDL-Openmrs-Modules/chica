@@ -3654,7 +3654,30 @@ where action_name='REPRINT';
         VALUES (301, 'PSF_Image_not_found', 'PSF Tiff image not found', now()), 
         (302, 'PWS_Image_not_found', 'PWS Tiff image not found', now());
         </sql>
-    </diff> 
+    </diff>     
+    <diff>  
+        <version>1.6.9</version>  
+        <author>David Ely</author>  
+        <date>June 16, 2015</date>  
+        <description>  
+        CHICA-430 Add form attribute to determine if the xml will be updated when editing previously saved values and will also allow previously entered values to be displayed on the form when editing.
+        Set to true for the PSF
+        </description>  
+        <sql>  
+            INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('displayAndUpdatePreviousValues', 'Indicates if the xml will be updated when editing previously saved values and will also allow previously entered values to be displayed on the form when editing');
+           
+            INSERT INTO chirdlutilbackports_form_attribute_value (`form_id`, `value`, `form_attribute_id`,location_tag_id,location_Id) 
+            select max(form_id),'true',max(form_attribute_id), 
+            d.location_tag_id,d.location_id 
+            from form a, chirdlutilbackports_form_attribute b, location_tag_map d ,location c where a.form_id=(select form_id from form where name='PSF' and retired=0) 
+            and b.name='displayAndUpdatePreviousValues' and a.retired=0 and d.location_id=c.location_id and (c.name='PEPS' or c.name='FMPS' or c.name='PCPS' or c.name='BBPS' or c.name='TEPS') 
+            group by d.location_tag_id,d.location_id;
+            
+    </sql>  
+    </diff>
 </sqldiff>
 
 
