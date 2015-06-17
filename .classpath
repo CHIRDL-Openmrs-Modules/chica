@@ -140,6 +140,6 @@
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.3.32.jar"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutil-1.8.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/atd-2.1.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/atd-2.1.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
