@@ -3642,7 +3642,19 @@ where action_name='REPRINT';
             ('ageMaxUnits', 'Maximum age units (years, months, days, weeks) for displaying form for force print');  
         </sql>  
     </diff>  
-    
+    <diff>
+        <version>1.6.8</version>
+        <author>David Ely</author>
+        <date>May 22, 2015</date>
+        <description>
+        Add HL7 export status for PSF and PWS image not found
+        </description>
+        <sql>
+        INSERT INTO `chica_hl7_export_status` 
+        VALUES (301, 'PSF_Image_not_found', 'PSF Tiff image not found', now()), 
+        (302, 'PWS_Image_not_found', 'PWS Tiff image not found', now());
+        </sql>
+    </diff> 
 </sqldiff>
 
 
