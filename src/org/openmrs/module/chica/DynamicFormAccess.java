@@ -353,6 +353,8 @@ public class DynamicFormAccess {
 				continue;
 			}
 			
+			parameters.put("formFieldId", currFormField.getFormFieldId()); // DWE CHICA-437
+			
 			//store the leaf index as the result if the
 			//current field has a parent
 			if (currFormField.getParent() == null) {
@@ -568,10 +570,13 @@ public class DynamicFormAccess {
 			}
 			
 			String lookupFieldName = null;
+			Integer formFieldId = null; // DWE CHICA-437 Get the form field id here so that it can be used to determine if obs records should be voided when rules are evaluated
 			if (parentField != null) {
 				lookupFieldName = parentField.getField().getName();
+				formFieldId = parentField.getFormFieldId();
 			} else {
 				lookupFieldName = fieldName;
+				formFieldId = currField.getFormFieldId();
 			}
 			
 			if (ruleName != null) {
@@ -629,6 +634,13 @@ public class DynamicFormAccess {
 				saveField.setValue(value);
 				fieldsToAdd.add(saveField);
 			}
+			
+			// DWE CHICA-437 
+			if(formFieldId != null)
+			{
+				parameters.put("formFieldId", formFieldId);
+			}
+						
 			//----------end set rule parameters
 		}
 		
