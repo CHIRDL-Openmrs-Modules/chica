@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.61.11</version>
+    <version>1.63.1</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -20,11 +20,11 @@
     <require_version>1.1.10.2283</require_version>
     <require_modules>
         <require_module version="2.29.0">org.openmrs.module.dss</require_module>
-        <require_module version="2.0.0">org.openmrs.module.atd</require_module>
+        <require_module version="2.1.0">org.openmrs.module.atd</require_module>
         <require_module version="1.3.30">org.openmrs.module.sockethl7listener</require_module>
         <require_module version="1.0.4">org.openmrs.module.rgccd</require_module>
-        <require_module version="1.7.1">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.0.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+        <require_module version="1.8.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.2.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.chica.extension.html.AdminList</class>
@@ -318,12 +318,27 @@
         <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.showBadScans</property>
+        <defaultValue>false</defaultValue>
+        <description>Whether or not to display a notice on the greaseboard of bad scans.  Valid values are 'true' and 'false'.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.g3EncryptionKey</property>
+        <description>Encryption key used to decrypt information sent from the G3 application.
+        </description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
     <servlet>
         <servlet-name>chicaMobile</servlet-name>
         <servlet-class>@MODULE_PACKAGE@.web.ChicaMobileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>chica</servlet-name>
+        <servlet-class>@MODULE_PACKAGE@.web.ChicaServlet</servlet-class>
     </servlet>
     
     <!-- Internationalization -->
