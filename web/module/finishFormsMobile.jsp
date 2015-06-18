@@ -15,40 +15,22 @@
 <body>
 
 <div id="finished_form" data-url="finished_form" data-role="page">
-	<div data-role="header">
-	   <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	</div>
+    <div data-role="header">
+       <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+    </div>
 
-	<div data-role="content">
-	   <form id="complete_form" method="POST" data-ajax="false">
-	       <c:choose>
-	       <c:when test="${empty (notifications)}">
-		       <div align="left"><p>There are no more items to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
-		       <br/>
-	       </c:when>
-	       <c:otherwise>
-	           <div align="left"><p>There are some additional items to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
-               <br/>
-               <ol type="1">
-		           <c:forEach items="${notifications}" var="notification">
-	                   <li><div align="left" style="width: 100%;">${notification.statement}</div></li>
-	                   <ol type="a">
-		                   <c:forEach items="${notification.subStatements}" var="subStatement" varStatus="status">
-		                        <li><div style="margin-left: 20px; width: 100%;">${subStatement}</div></li>
-		                   </c:forEach>
-	                   </ol>
-	                   <br/>
-	               <br/>
-	               </c:forEach>
-               </ol>
-	       </c:otherwise>
-	       </c:choose>
-	       <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-		        <a data-theme="b" data-role="button" onclick="finish()" rel="external" data-ajax="false" style="width: 150px;">Finish</a>
-		    </div>
-	   </form>	
-	</div>
-	<div id="loadingDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+    <div data-role="content">
+       <form id="complete_form" method="POST" data-ajax="false">
+           <div align="center"><p>There are no more forms to complete for ${patient.givenName}&nbsp;${patient.familyName}.  Please click "Finish" to return to the patient list.</p></div>
+           <br/>
+           <div align="center"><p>No hay m&#225;s formas para completar para ${patient.givenName}&nbsp;${patient.familyName}. Haga clic en "Finish" para volver a la lista de pacientes.</p></div>
+           <br/>
+           <div align="center">
+               <a data-theme="b" data-role="button" onclick="finish()" rel="external" data-ajax="false" style="width: 100px;">Finish</a>
+           </div>
+       </form>  
+    </div>
+    <div id="loadingDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
         <div data-role="content">
             <div style="margin: 0 auto;text-align: center;">
                 Loading...
