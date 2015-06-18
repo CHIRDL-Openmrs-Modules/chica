@@ -587,11 +587,11 @@
                   </div>
                   <div class="ui-block-a" style="text-align: center;margin-bottom: 10px;margin-top: 10px;width: 100%;">
                       <fieldset data-role="controlgroup" data-type="horizontal" style="margin: auto;">
-                            <input type="radio" name="Oral" id="Temperature_Method_Oral" value="Oral Temp Type" data-theme="c" ${Oral == 'Oral Temp Type' ? 'checked' : ''}/>
+                            <input type="radio" name="TemperatureType" id="Temperature_Method_Oral" value="Oral Temp Type" data-theme="c" ${TemperatureType == 'Oral Temp Type' ? 'checked' : ''}/>
                             <label for="Temperature_Method_Oral">Oral</label>
-                            <input type="radio" name="Rectal" id="Temperature_Method_Rectal" value="Rectal Temp Type" data-theme="c" ${Rectal == 'Rectal Temp Type' ? 'checked' : ''}/>
+                            <input type="radio" name="TemperatureType" id="Temperature_Method_Rectal" value="Rectal Temp Type" data-theme="c" ${TemperatureType == 'Rectal Temp Type' ? 'checked' : ''}/>
                             <label for="Temperature_Method_Rectal">Rectal</label>
-                            <input type="radio" name="Axillary" id="Temperature_Method_Axillary" value="Axillary Temp Type" data-theme="c" ${Axillary == 'Axillary Temp Type' ? 'checked' : ''}/>
+                            <input type="radio" name="TemperatureType" id="Temperature_Method_Axillary" value="Axillary Temp Type" data-theme="c" ${TemperatureType == 'Axillary Temp Type' ? 'checked' : ''}/>
                             <label for="Temperature_Method_Axillary">Axillary</label>
                         </fieldset>
                   </div>

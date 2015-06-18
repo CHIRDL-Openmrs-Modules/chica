@@ -111,7 +111,7 @@ public class consumeSickVisit implements Rule {
 			
 			// DWE CHICA-430 Allow the checkbox to be unchecked by voiding the obs for this concept
 			Concept concept = conceptService.getConceptByName(conceptName);
-			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId);
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, formFieldId);
 			
 			if (answer != null) {
 				org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient,

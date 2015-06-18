@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -990,7 +991,8 @@ public class DynamicFormAccess {
 			try
 			{
 				List<String> elementsToRemoveList = new ArrayList<String>();
-				ObsService obsService = Context.getObsService();
+				ATDService atdService = Context.getService(ATDService.class);
+				//ObsService obsService = Context.getObsService();
 				List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
 				encounters.add(encounter);
 				
@@ -1006,11 +1008,9 @@ public class DynamicFormAccess {
 					Concept concept = formField.getField().getConcept();
 					if(concept != null)
 					{
-						List<Concept> questions = new ArrayList<Concept>();
-						questions.add(concept);
-						List<Obs> obsList = obsService.getObservations(null, encounters, questions, null, null, null, null,
-								null, null, encounter.getEncounterDatetime(), null, true);
-						
+						// Find obs records using the atd_statistics table and the form field id
+						List<Obs> obsList = atdService.getObsWithStatistics(encounter.getEncounterId(), concept.getConceptId(), formField.getFormFieldId(), true);
+					
 						// Check to see if any of the obs records have been voided for the encounter
 						// If an obs has been voided, but a new one was created, it will be added back to the xml
 						// with the "fieldsToAdd" list
