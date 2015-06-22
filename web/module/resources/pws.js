@@ -263,10 +263,6 @@ $(function() {
           effect: "fade",
           duration: 500
         },
-//        resize: function(e,ui) {
-//        	var divHeight = $("#formTabDialogContainer").height();
-//            $(".recommended-forms").css({"height":divHeight - 45});
-//        },
         resizable: false,
         buttons: [
           {
@@ -319,11 +315,6 @@ $(function() {
           effect: "fade",
           duration: 500
         },
-//        resize: function(e,ui) {
-//        	var divHeight = $(".pws-force-print-content").height();
-//    		// Update the height of the select
-//    		$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
-//        },
         resizable: false,
         buttons: [
           {
@@ -336,5 +327,4 @@ $(function() {
     });
 	
 	$("#tabList").tooltip();
-	$("#formTabDialog").dialog("open");
   });
