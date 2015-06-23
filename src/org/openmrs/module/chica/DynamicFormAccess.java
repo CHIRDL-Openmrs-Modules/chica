@@ -986,7 +986,7 @@ public class DynamicFormAccess {
 		String displayAndUpdatePreviousValues = org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DISPLAY_AND_UPDATE_PREVIOUS_VALUES, 
 				locationTagId, locationId);
 		
-		if(displayAndUpdatePreviousValues.equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) // Currently only used for the PSF
+		if(displayAndUpdatePreviousValues != null && displayAndUpdatePreviousValues.equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) // Currently only used for the PSF
 		{
 			try
 			{
@@ -1065,7 +1065,7 @@ public class DynamicFormAccess {
 			String displayAndUpdatePreviousValues = org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_AND_UPDATE_PREVIOUS_VALUES, 
 					locationTagId, locationId);
 			
-			if(displayAndUpdatePreviousValues.equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) // Currently only used for the PSF
+			if(displayAndUpdatePreviousValues != null && displayAndUpdatePreviousValues.equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) // Currently only used for the PSF
 			{
 				FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 
