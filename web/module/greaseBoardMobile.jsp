@@ -30,7 +30,7 @@
         <div data-role="content">
             <div id="listErrorResultDiv"></div>
             <div style="margin: 0 auto;text-align: center;">
-                <a href="#" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">OK</a>
+                <a href="#" data-inline="true" onClick="startTimer()" data-role="button" data-theme="b" style="width: 150px;">OK</a>
             </div>
         </div>
     </div>
