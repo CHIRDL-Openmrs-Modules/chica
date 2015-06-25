@@ -26,7 +26,7 @@ function parseAvailableJITs(responseXML) {
             var locationTagId = $(this).find("locationTagId").text();
             
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
-        	var action = "action=getPatientJITs&formInstances=" + formInstance;
+        	var action = "action=getPatientJITs&formInstances=" + formInstance  + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
         	tabList += '<li><a href="#tabs-' + count + '" title="' + formName + '">' + formName + '</a></li>';
         	divList += '<div id="tabs-' + count + '" style="float:left;height:100%"><object type="application/pdf" class="recommended-forms" data="' + url + action + 
@@ -272,7 +272,6 @@ $(function() {
 	
 	var tabDivHeight = $(window).height() * 0.95 - 135;
 	$("#formTabDialogContainer").css({"height":tabDivHeight});
-	var divHeight = $(window).height() * 0.81;
     $("#tabs").css({"height":tabDivHeight});
     $("#formTabDialogContainer").css("background", "#cc9966");
     $(".recommended-forms").css({"height":tabDivHeight});
