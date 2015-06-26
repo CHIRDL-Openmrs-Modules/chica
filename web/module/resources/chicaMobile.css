@@ -44,7 +44,7 @@ a[data-role="button"] {
     display: none;
 }
 
-@media screen and ( max-device-height: 2000px ){
+@media screen and ( max-device-height: 2100px ){
     .ui-btn-text, body, .ui-btn-inner, .ui-checkbox label, .ui-controlgroup-label,  .ui-controlgroup .ui-checkbox label, .ui-controlgroup .ui-radio label, .ui-radio label, .ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
         font-size: 1.1em;
     }

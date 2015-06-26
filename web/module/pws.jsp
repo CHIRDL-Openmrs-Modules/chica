@@ -1143,7 +1143,7 @@
                         <span>Submitting...</span>
                     </div>
                 </div>
-                <div id="formTabDialog" title="Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                <div id="formTabDialog" title="CHICA Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
                     <div id="formTabDialogContainer" style="overflow-x: hidden;overflow-y: hidden;">
 	                    <div id="formLoading">
 	                       <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
@@ -1160,7 +1160,7 @@
 	                    </div>
 	                </div>
                 </div>
-                <div id="forcePrintDialog" title="Other Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                <div id="forcePrintDialog" title="Other CHICA Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
                     <div class="pws-force-print-content">
 			             <div class="force-print-forms-loading">
 			                 <span id="formsLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
