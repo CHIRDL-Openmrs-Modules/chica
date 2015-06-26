@@ -105,8 +105,7 @@ public class KiteQueryThread implements Runnable
 		{
 		}
 
-		
-		String response1 = null;
+		String response = null;
 		String queryString = queryPrefix + "|" + mrn + "\n";
 
 		KiteMessageHandler serverTest = new KiteMessageHandler(host, port,
@@ -116,7 +115,7 @@ public class KiteQueryThread implements Runnable
 		{
 			serverTest.openSocket();
 			serverTest.sendMessage(queryString);
-			response1 = serverTest.getMessage();
+			response = serverTest.getMessage();
 
 		} catch (Exception e)
 		{
@@ -133,6 +132,6 @@ public class KiteQueryThread implements Runnable
 			serverTest.closeSocket();
 		}
 
-		return response1;
+		return response;
 	}
 }
