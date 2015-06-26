@@ -15,7 +15,6 @@ package org.openmrs.module.chica;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,19 +24,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
-import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
-import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationRegistryQuery;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -55,7 +49,7 @@ public class VaccineFollowUp extends AbstractTask {
 	private static final String PROPERTY_KEY_CONCEPT = "concept";
 	private static final String FOLLOWUP_CONCEPT_TWO_WEEK = "2wk_HPV";
 	private static final String FOLLOWUP_CONCEPT_FOUR_MONTH = "4mo_HPV";
-	private String HPV_VACCINE_NAME = "HPV, unspecified formulation";
+	private static final String HPV_VACCINE_NAME = "HPV, unspecified formulation";
 	
 	@Override
 	public void initialize(TaskDefinition config) {
@@ -86,7 +80,7 @@ public class VaccineFollowUp extends AbstractTask {
 		try {
 
 				if (conceptProperty == null || conceptProperty.trim().equals("")) {
-					log.error("HPV study: Task property '" + PROPERTY_KEY_CONCEPT + "' does not exist for this patient for this task. ");
+					log.error("HPV study: Task property '" + PROPERTY_KEY_CONCEPT + " is not present in the property list for this task");
 					return;
 				}
 				
@@ -126,7 +120,7 @@ public class VaccineFollowUp extends AbstractTask {
 						enrollmentStartDateTime, enrollmentStopDateTime);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
-		log.info("HPV study: " + encounters == null ? "0 " : encounters.size()
+		log.info("HPV study: Follow-up task found " + encounters == null ? "0 " : encounters.size()
 				+ " encounters found for date: "
 				+ sdf.format(enrollmentStartDateTime));
 
@@ -167,7 +161,7 @@ public class VaccineFollowUp extends AbstractTask {
 				 */
 
 				if (queryResponse == null) {
-					log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availablility, parse errors, or no patient matches. MRN: " + identifier);
+					log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availablility.");
 					continue;
 				}
 
@@ -186,19 +180,14 @@ public class VaccineFollowUp extends AbstractTask {
 						.getImmunizationPrevious();
 
 				if (prevImmunizations == null){
-					log.info("HPV Study: There are no previous vacciniations in CHIRP patient: " + identifier);
+					log.info("HPV Study: There are no historical vaccinations in CHIRP for patient: " + identifier);
 					continue;
 				}
 
 
 				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
-				if (HpvHistory == null) {
-					log.info("HPV Study: There are no previous vacciniations in CHIRP for vaccine: " 
-							+ HPV_VACCINE_NAME + " patient: "
-							+ identifier);
-				}
-				hpvDoses = HpvHistory.size();
-
+				hpvDoses = HpvHistory == null ?  0 : HpvHistory.size();
+				
 				Obs obs = new Obs();
 				obs.setValueNumeric(hpvDoses.doubleValue());
 				obs.setEncounter(encounter);
