@@ -103,7 +103,6 @@ public class VaccineFollowUp extends AbstractTask {
 
 	private Integer followUpRequery(Concept enrollmentConcept, Concept followUpConcept,  int lookupIntervalInDays) {
 
-
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
 
@@ -113,7 +112,6 @@ public class VaccineFollowUp extends AbstractTask {
 		Date enrollmentStopDateTime = DateUtil.getEndOfDay(c.getTime());
 		Date startOfToday = DateUtil.getStartOfDay(new Date()); 
 		Date endOfToday = DateUtil.getEndOfDay(new Date());
-
 
 		List<Encounter> encounters = chicaService
 				.getEncountersForEnrolledPatients(enrollmentConcept,
@@ -208,7 +206,6 @@ public class VaccineFollowUp extends AbstractTask {
 			}
 
 		}
-
 
 		return null;
 
