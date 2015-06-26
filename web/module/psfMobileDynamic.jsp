@@ -838,7 +838,7 @@
 <input id="NoBP" name="NoBP" type="hidden" value="N"/>
 <input id="NoHearing" name="NoHearing" type="hidden" value="N"/>
 <input id="NoVision" name="NoVision" type="hidden" value="N"/>
-<input id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" type="hidden" value="N"/>
+<input id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" type="hidden" value="no diet and exercise given"/>
 </form>
 </body>
 </html>
