@@ -59,6 +59,9 @@ public class TabletNotification {
     	this.subStatements = subStatements;
     }
     
+    /**
+     * @param subStatement The subStatement to add
+     */
     public void addSubStatement(String subStatement) {
     	if (subStatements == null) {
     		subStatements = new ArrayList<String>();

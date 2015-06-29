@@ -21,7 +21,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
-
+/**
+ * Controller for handling the display of any notifications to the MA when finished with patients.
+ *
+ * @author Steve McKee
+ */
 public class MobileFormsCompletionNotificationController extends SimpleFormController {
 	
 	private static final String STAFF_NOTIFICATION = "Staff_notification";
