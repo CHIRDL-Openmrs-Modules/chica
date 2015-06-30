@@ -159,7 +159,7 @@ public class VaccineFollowUp extends AbstractTask {
 				 */
 
 				if (queryResponse == null) {
-					log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availablility.");
+					log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
 					continue;
 				}
 

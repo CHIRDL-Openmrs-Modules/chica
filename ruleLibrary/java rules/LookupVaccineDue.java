@@ -16,6 +16,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.ImmunizationForecast;
 import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.ImmunizationQueryOutput;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class LookupVaccineDue implements Rule
 {
@@ -71,7 +72,7 @@ public class LookupVaccineDue implements Rule
 
 		if (parameters != null){
 
-			vaccineName = (String) parameters.get("param1");
+			vaccineName = (String) parameters.get(ChirdlUtilConstants.PARAMETER_1);
 
 			if (vaccineName == null || vaccineName.trim().equalsIgnoreCase("")){
 
