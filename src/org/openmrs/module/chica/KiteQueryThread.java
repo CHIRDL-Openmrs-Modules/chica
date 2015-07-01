@@ -104,12 +104,21 @@ public class KiteQueryThread implements Runnable
 			throws QueryKiteException
 			{
 		AdministrationService adminService = Context.getAdministrationService();
+<<<<<<< HEAD
 		String configFile = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE);   
 		String password = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_PASSWORD);
 
 		Properties props = null; 
 		if(configFile == null){
 			log.error("Could not find MRF query config file. Please set global property " + GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE); 
+=======
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		
+		String host = adminService.getGlobalProperty("chica.kiteHost");
+		if (host == null)
+		{
+			log.error("Could not query kite. No host provided.");
+>>>>>>> branch 'master' of https://github.com/CHIRDL-Openmrs-Modules/chica
 			return null;
 		}
 

@@ -26,10 +26,10 @@ function parseAvailableJITs(responseXML) {
             var locationTagId = $(this).find("locationTagId").text();
             
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
-        	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
+        	var action = "action=getPatientJITs&formInstances=" + formInstance  + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
         	tabList += '<li><a href="#tabs-' + count + '" title="' + formName + '">' + formName + '</a></li>';
-        	divList += '<div id="tabs-' + count + '" style="float:left;"><object type="application/pdf" class="recommended-forms" data="' + url + action + 
+        	divList += '<div id="tabs-' + count + '" style="float:left;height:100%"><object type="application/pdf" class="recommended-forms" data="' + url + action + 
             	'"><span style="color: #000;font-size:14px;">It appears your Web browser is not configured to display PDF files. ' +
             	'<a href="http://get.adobe.com/reader/" target="_blank"><font style="color: #0000FF;text-decoration: none; border-bottom: 1px solid #0000FF;">Click here to download the Adobe PDF Reader.</font></a>  ' + 
             	'Please restart your browser once the installation is complete.</span></object></div>';
@@ -50,10 +50,6 @@ function parseAvailableJITs(responseXML) {
         	}).addClass("ui-tabs-vertical ui-helper-clearfix");
             $("#tabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
             $('#tabs').show();
-            var divHeight = $("#formTabDialogContainer").height();
-            $(".recommended-forms").css({"height":divHeight});
-            $("#tabs").css({"height":divHeight});
-            $("#formTabDialogContainer").css("background", "#cc9966");
         }
     }
 }
@@ -263,10 +259,6 @@ $(function() {
           effect: "fade",
           duration: 500
         },
-//        resize: function(e,ui) {
-//        	var divHeight = $("#formTabDialogContainer").height();
-//            $(".recommended-forms").css({"height":divHeight - 45});
-//        },
         resizable: false,
         buttons: [
           {
@@ -277,6 +269,12 @@ $(function() {
           }
         ]
     });
+	
+	var tabDivHeight = $(window).height() * 0.95 - 135;
+	$("#formTabDialogContainer").css({"height":tabDivHeight});
+    $("#tabs").css({"height":tabDivHeight});
+    $("#formTabDialogContainer").css("background", "#cc9966");
+    $(".recommended-forms").css({"height":tabDivHeight});
 	
 	$("#forcePrintButton").click(function(event) {
 		$("#forcePrintDialog").dialog("open");
@@ -319,11 +317,6 @@ $(function() {
           effect: "fade",
           duration: 500
         },
-//        resize: function(e,ui) {
-//        	var divHeight = $(".pws-force-print-content").height();
-//    		// Update the height of the select
-//    		$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
-//        },
         resizable: false,
         buttons: [
           {

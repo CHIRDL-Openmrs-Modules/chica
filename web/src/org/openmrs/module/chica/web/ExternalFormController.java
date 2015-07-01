@@ -298,6 +298,12 @@ public class ExternalFormController extends SimpleFormController {
 	    return new ModelAndView(new RedirectView(formPage), map);
     }
     
+    /**
+     * Finds a patient in the system based on MRN.
+     * 
+     * @param mrn The patient's medical record number.
+     * @return A Patient in the system with the provided MRN or null if one cannot be found.
+     */
     private Patient getPatientByMRN(String mrn) {
     	PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> types = new ArrayList<PatientIdentifierType>();
@@ -330,6 +336,17 @@ public class ExternalFormController extends SimpleFormController {
 	    return null;
     }
     
+    /**
+     * Retrieves the most recent encounter within the past two days that contains the provided start state but 
+     * not the end state for the provided form and patient.
+     * 
+     * @param patient Patient object
+     * @param backportsService ChirdlUtilBackportsService object
+     * @param startStateId The start state identifier
+     * @param endStateId The end state identifier
+     * @param formId The form identifier
+     * @return Encounter object or null if one is not found.
+     */
     private Encounter getRecentEncounter(Patient patient, ChirdlUtilBackportsService backportsService, Integer startStateId, 
                                          Integer endStateId, Integer formId) {
     	// Get last encounter with last day
@@ -368,6 +385,16 @@ public class ExternalFormController extends SimpleFormController {
 		return null;
     }
     
+    /**
+     * Gets the form instance information from the data provided
+     * 
+     * @param encounterId The encounter identifier
+     * @param formId The form identifier
+     * @param startStateId The start state identifier
+     * @param endStateId The end state identifier
+     * @param backportsService ChirdlUtilBackportsService object
+     * @return FormInstanceTag object or null if form information cannot be found.
+     */
     private FormInstanceTag getFormInstanceInfo(Integer encounterId, Integer formId, Integer startStateId, 
                                                 Integer endStateId, ChirdlUtilBackportsService backportsService) {
     	Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<Integer, List<PatientState>>();

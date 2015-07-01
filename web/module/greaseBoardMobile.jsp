@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.timer.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
@@ -29,7 +30,7 @@
         <div data-role="content">
             <div id="listErrorResultDiv"></div>
             <div style="margin: 0 auto;text-align: center;">
-                <a href="#" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">OK</a>
+                <a href="#" data-inline="true" onClick="startTimer()" data-role="button" data-theme="b" style="width: 150px;">OK</a>
             </div>
         </div>
     </div>

@@ -1,4 +1,3 @@
-var timer = null;
 var patientListFail = 0;
 var refreshPeriod = 30000;
 $(function() {
@@ -622,15 +621,6 @@ function startTimer(period) {
 	} else {
 		refreshPeriod = period * 1000;
 	}
-//	
-//    timer = $.timer(function () {
-//        populateList();
-//    });
-//
-//    timer.set({
-//        time: refreshPeriod,
-//        autostart: true
-//    });
     
     // This delay allows the wait cursor to display when loading the patient
 	// list.
@@ -778,7 +768,6 @@ function handlePatientListAjaxError(xhr, textStatus, error) {
 	        error = "The server took too long to retrieve the patient list.";
 	    }
 	    
-	    timer.pause();
 	    $("#listErrorResultDiv").html("<p>" + error + "  Click OK to try again.</p>");
 	    $("#listErrorDialog").dialog("open");
 	}
