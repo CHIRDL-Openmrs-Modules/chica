@@ -76,7 +76,7 @@ public class KiteQueryThread implements Runnable
 	{
 		AdministrationService adminService = Context.getAdministrationService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
-
+		
 		String host = adminService.getGlobalProperty("chica.kiteHost");
 		if (host == null)
 		{
