@@ -7,6 +7,7 @@ import java.util.List;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -23,6 +24,7 @@ import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
+import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -160,4 +162,22 @@ public interface ChicaDAO {
 	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
 	
 	public List<Encounter> getEncountersForEnrolledPatients(Concept concept, Date startDateTime, Date endDateTime);
+	
+	/**
+	 * Retrieve the patient's study subject ID based on patient and study.  This will create a new StudySubject for the patient 
+	 * if one cannot be found.
+	 * 
+	 * @param patient The patient used to find or create a Subject.
+	 * @param study The study.
+	 * @return A StudySubject or null if the patient or Study is null.
+	 */
+	public StudySubject getStudySubject(Patient patient, Study study);
+	
+	/**
+	 * Retrieve a Study by title.
+	 * 
+	 * @param studyTitle The title of the study.
+	 * @return Study object with the provided title or null if one is not found with the provided title.
+	 */
+	public Study getStudyByTitle(String studyTitle);
 }

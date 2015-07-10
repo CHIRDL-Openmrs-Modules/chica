@@ -57,6 +57,7 @@ import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
+import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
@@ -1070,5 +1071,19 @@ public class ChicaServiceImpl implements ChicaService
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
     	}
+
+		/**
+		 * @see org.openmrs.module.chica.service.ChicaService#getStudySubject(org.openmrs.Patient, org.openmrs.module.chica.hibernateBeans.Study)
+		 */
+        public StudySubject getStudySubject(Patient patient, Study study) {
+	        return getChicaDAO().getStudySubject(patient, study);
+        }
+
+		/**
+		 * @see org.openmrs.module.chica.service.ChicaService#getStudyByTitle(java.lang.String)
+		 */
+        public Study getStudyByTitle(String studyTitle) {
+	        return getChicaDAO().getStudyByTitle(studyTitle);
+        }
 
 }
