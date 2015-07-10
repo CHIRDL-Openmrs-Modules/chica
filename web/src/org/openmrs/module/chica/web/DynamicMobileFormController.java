@@ -36,6 +36,17 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class DynamicMobileFormController extends SimpleFormController {
 	
+	private static final String PARAM_ERROR_MESSAGE = "errorMessage";
+	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
+	private static final String PARAM_LOCATION_ID = "locationId";
+	private static final String PARAM_FORM_INSTANCE_ID = "formInstanceId";
+	private static final String PARAM_FORM_ID = "formId";
+	private static final String PARAM_FORM_INSTANCE = "formInstance";
+	private static final String PARAM_PATIENT = "patient";
+	private static final String PARAM_PATIENT_ID = "patientId";
+	private static final String PARAM_LANGUAGE = "language";
+	private static final String PARAM_SESSION_ID = "sessionId";
+	private static final String PARAM_ENCOUNTER_ID = "encounterId";
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -54,30 +65,30 @@ public class DynamicMobileFormController extends SimpleFormController {
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		String encounterIdStr = request.getParameter("encounterId");
+		String encounterIdStr = request.getParameter(PARAM_ENCOUNTER_ID);
 		Integer encounterId = Integer.parseInt(encounterIdStr);
-		map.put("encounterId", encounterIdStr);
+		map.put(PARAM_ENCOUNTER_ID, encounterIdStr);
 		
-		String sessionIdStr = request.getParameter("sessionId");
-		map.put("sessionId", sessionIdStr);
+		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
+		map.put(PARAM_SESSION_ID, sessionIdStr);
 		
-		String language = request.getParameter("language");
-		map.put("language", language);
+		String language = request.getParameter(PARAM_LANGUAGE);
+		map.put(PARAM_LANGUAGE, language);
 		
-		String patientIdStr = request.getParameter("patientId");
+		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
-		map.put("patient", patient);
+		map.put(PARAM_PATIENT, patient);
 		
-		String formInstance = request.getParameter("formInstance");
+		String formInstance = request.getParameter(PARAM_FORM_INSTANCE);
 		FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 		Integer locationId = formInstTag.getLocationId();
 		Integer formId = formInstTag.getFormId();
 		Integer formInstanceId = formInstTag.getFormInstanceId();
-		map.put("formId", formId);
-		map.put("formInstanceId", formInstanceId);
-		map.put("locationId", locationId);
-		map.put("locationTagId", formInstTag.getLocationTagId());
-		map.put("formInstance", formInstance);
+		map.put(PARAM_FORM_ID, formId);
+		map.put(PARAM_FORM_INSTANCE_ID, formInstanceId);
+		map.put(PARAM_LOCATION_ID, locationId);
+		map.put(PARAM_LOCATION_TAG_ID, formInstTag.getLocationTagId());
+		map.put(PARAM_FORM_INSTANCE, formInstance);
 		
 		//Run this to show the form
 		try {
@@ -87,7 +98,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 				"Error retrieving data to display a form. Please contact support with the following information: Form ID: " + 
 				formId + " Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
 			log.error(message);
-			map.put("errorMessage", message);
+			map.put(PARAM_ERROR_MESSAGE, message);
 			return map;
 		}
 		
@@ -100,14 +111,18 @@ public class DynamicMobileFormController extends SimpleFormController {
 	@Override
 	protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object object,
 	                                             BindException errors) throws Exception {
-		String patientIdStr = request.getParameter("patientId");
+		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
 		Integer patientId = Integer.parseInt(patientIdStr);
-		Integer formId = Integer.parseInt(request.getParameter("formId"));
-		Integer formInstanceId = Integer.parseInt(request.getParameter("formInstanceId"));
-		Integer locationId = Integer.parseInt(request.getParameter("locationId"));
-		Integer locationTagId = Integer.parseInt(request.getParameter("locationTagId"));
-		Integer encounterId = Integer.parseInt(request.getParameter("encounterId"));
-		Integer sessionId = Integer.parseInt(request.getParameter("sessionId"));
+		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
+		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
+		String locationIdStr = request.getParameter(PARAM_LOCATION_ID);
+		Integer locationId = Integer.parseInt(locationIdStr);
+		String locationTagIdStr = request.getParameter(PARAM_LOCATION_TAG_ID);
+		Integer locationTagId = Integer.parseInt(locationTagIdStr);
+		String encounterIdStr = request.getParameter(PARAM_ENCOUNTER_ID);
+		Integer encounterId = Integer.parseInt(encounterIdStr);
+		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
+		Integer sessionId = Integer.parseInt(sessionIdStr);
 		
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		try {
@@ -135,9 +150,13 @@ public class DynamicMobileFormController extends SimpleFormController {
 		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("patientId", patientIdStr);
-		String language = request.getParameter("language");
-		map.put("language", language);
+		map.put(PARAM_PATIENT_ID, patientIdStr);
+		map.put(PARAM_LOCATION_ID, locationIdStr);
+		map.put(PARAM_LOCATION_TAG_ID, locationTagIdStr);
+		map.put(PARAM_ENCOUNTER_ID, encounterIdStr);
+		map.put(PARAM_SESSION_ID, sessionIdStr);
+		String language = request.getParameter(PARAM_LANGUAGE);
+		map.put(PARAM_LANGUAGE, language);
 		
 		String view = getSuccessView();
 		return new ModelAndView(new RedirectView(view), map);

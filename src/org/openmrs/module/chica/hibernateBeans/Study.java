@@ -153,4 +153,38 @@ public class Study implements java.io.Serializable {
 	{
 		this.purpose = purpose;
 	}
+	
+	/**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+    	StringBuffer buffer = new StringBuffer("Subject:\n");
+    	buffer.append("\tstudy_id: " + studyId + "\n");
+    	buffer.append("\tstart_date: " + startDate + "\n");
+    	buffer.append("\tend_date: " + endDate + "\n");
+    	buffer.append("\ttitle: " + title + "\n");
+    	buffer.append("\tinvestigators: " + investigators + "\n");
+    	buffer.append("\tstudy_concept_id: " + studyConceptId + "\n");
+    	buffer.append("\tstatus: " + status + "\n");
+    	buffer.append("\tpurpose: " + purpose + "\n");
+    	
+    	return buffer.toString();
+    }
+    
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        int hash = 1;
+        hash = hash * 17 + (studyId == null ? 0 : studyId.hashCode());
+        hash = hash * 31 + (startDate == null ? 0 : startDate.hashCode());
+        hash = hash * 46 + (endDate == null ? 0 : endDate.hashCode());
+        hash = hash * 54 + (title == null ? 0 : title.hashCode());
+        hash = hash * 67 + (investigators == null ? 0 : investigators.hashCode());
+        hash = hash * 85 + (studyConceptId == null ? 0 : studyConceptId.hashCode());
+        hash = hash * 92 + (status == null ? 0 : status.hashCode());
+        hash = hash * 105 + (purpose == null ? 0 : purpose.hashCode());
+        
+        return hash;
+    }
 }
