@@ -4,7 +4,7 @@ $(document).on("pagebeforeshow", "#finished_form", function() {
 
 
 /**
- * Timer to automatically submit the page after 5 minutes of inactivity.
+ * Timer to automatically submit the page after 15 minutes of inactivity.
  */
 function startSubmitTimer() {
     var timer = $.timer(function () {
@@ -12,7 +12,7 @@ function startSubmitTimer() {
     });
 
     timer.set({
-        time: 300000,
+        time: 900000,
         autostart: true
     });
 }

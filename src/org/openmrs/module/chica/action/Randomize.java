@@ -84,7 +84,7 @@ public class Randomize implements ProcessStateAction
 				}
 			} else
 			{
-				randomizer = new BasicRandomizer();
+				continue;
 			}
 
 			if (randomizer != null)
