@@ -118,7 +118,7 @@
 	<classpathentry kind="lib" path="lib-common/axis2/neethi-2.0.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/axis2/wsdl4j-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/axis2/XmlSchema-1.4.3.jar"/>
-	<classpathentry kind="lib" path="lib-common/logic-0.5.jar"/>
+	<classpathentry kind="lib" path="lib-common/logic-0.5.0.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-api-1.7.3.0-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/tests-openmrs-api-1.7.2.19959-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/web-openmrs-api-1.7.2.19959-dev.jar"/>
