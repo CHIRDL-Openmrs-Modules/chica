@@ -40,6 +40,7 @@
                 <prop key="/module/@MODULE_ID@/externalFormLoader.form">externalFormLoader</prop>
                 <prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
                 <prop key="/module/@MODULE_ID@/MCHATMobile.form">MCHATMobile</prop>
+                <prop key="/module/@MODULE_ID@/pwsIUHCerner.form">pwsIUHCerner</prop>
             </props>
         </property>
     </bean>
@@ -146,6 +147,11 @@
     <bean id="pws" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>pwsObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/pws</value></property>
+        <property name="successView"><value>finishFormsWeb.form</value></property>
+    </bean>
+    <bean id="pwsIUHCerner" class="@MODULE_PACKAGE@.web.MobileFormController">
+        <property name="commandName"><value>pwsIUHCernerObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/pwsIUHCerner</value></property>
         <property name="successView"><value>finishFormsWeb.form</value></property>
     </bean>
     <bean id="psfMobileTabs" class="@MODULE_PACKAGE@.web.MobileFormController">
