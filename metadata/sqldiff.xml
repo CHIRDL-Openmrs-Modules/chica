@@ -3642,7 +3642,27 @@ where action_name='REPRINT';
             ('ageMaxUnits', 'Maximum age units (years, months, days, weeks) for displaying form for force print');  
         </sql>  
     </diff>  
-     <diff>
+    <diff>
+        <version>1.6.8</version>
+        <author>Steve McKee</author>
+        <date>March 17, 2015</date>
+        <description>
+        Add new chica_subject table
+        </description>
+        <sql>
+        CREATE TABLE chica_study_subject (
+		  subject_id int(11) NOT NULL auto_increment,
+		  patient_id int(11) NOT NULL,
+		  study_id int(11) NOT NULL,
+		  PRIMARY KEY  (subject_id),
+		  KEY subject_fk_patient (patient_id),
+		  KEY subject_fk_study (study_id),
+		  CONSTRAINT subject_fk_patient FOREIGN KEY (patient_id) REFERENCES patient (patient_id),
+          CONSTRAINT subject_fk_study FOREIGN KEY (study_id) REFERENCES chica_study (study_id)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </sql>
+    </diff>
+    <diff>
         <version>1.6.8</version>
         <author>Meena Sheley</author>
         <date>May 22, 2015</date>
@@ -3656,7 +3676,7 @@ where action_name='REPRINT';
         <sql>
         </sql>
     </diff>
-    
+
 </sqldiff>
 
 

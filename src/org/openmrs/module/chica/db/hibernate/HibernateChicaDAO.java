@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
@@ -45,6 +46,7 @@ import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
+import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.hibernateBeans.Wtageinf;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -1110,4 +1112,50 @@ public class HibernateChicaDAO implements ChicaDAO
 
 		return criteria.list();
 	}
+
+	/**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudySubject(org.openmrs.Patient, org.openmrs.module.chica.hibernateBeans.Study)
+	 */
+    @SuppressWarnings("unchecked")
+    public StudySubject getStudySubject(Patient patient, Study study) {
+    	if (patient == null || study == null) {
+    		return null;
+    	}
+    	
+    	Session session = sessionFactory.getCurrentSession();
+    	Criteria criteria = session.createCriteria(StudySubject.class);
+    	criteria.add(Restrictions.eq("patient", patient));
+    	criteria.add(Restrictions.eq("study", study));
+
+		List<StudySubject> list = criteria.list();
+		if (list != null && list.size() > 0) {
+			return list.get(0);
+		}
+		
+		StudySubject subject = new StudySubject();
+		subject.setPatient(patient);
+		subject.setStudy(study);
+		session.saveOrUpdate(subject);
+		return subject;
+    }
+
+	/**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyByTitle(java.lang.String)
+	 */
+    @SuppressWarnings("unchecked")
+    public Study getStudyByTitle(String studyTitle) {
+		if (studyTitle == null) {
+    		return null;
+    	}
+		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Study.class);
+		criteria.add(Restrictions.eq("title", studyTitle));
+		
+		List<Study> list = criteria.list();
+		if (list != null && list.size() > 0) {
+			return list.get(0);
+		}
+		
+		return null;
+    }
 }
