@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.ConceptName;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
@@ -50,6 +52,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.QueryKiteException;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -57,6 +60,7 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -670,7 +674,7 @@ public class HL7SocketHandler extends
 		String carrierCode = null;
 		String printerLocation = null;
 		String insuranceName = null;
-		Message message;
+		Message message = null;
 		
 			try {
 				message = this.parser.parse(incomingMessageString);
@@ -735,6 +739,39 @@ public class HL7SocketHandler extends
 
 		chicaEncounter.setLocation(location);
 		chicaEncounter.setInsuranceSmsCode(null);
+		
+		//See if the message contains OBXs
+		Integer patientId = p.getPatientId();
+		try {
+			HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
+			ArrayList<Obs> allObs = obsHandler.getObs(message,p);
+			LogicService logicService = Context.getLogicService();
+			ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
+					.getLogicDataSource("RMRS");
+			
+			HashMap<Integer, HashMap<String, Set<Obs>>> patientObsMap = xmlDatasource.getObs();
+			HashMap<String, Set<Obs>> obsByConcept = patientObsMap.get(patientId);
+			
+			if (obsByConcept == null) {
+				obsByConcept = new HashMap<String, Set<Obs>>();
+				patientObsMap.put(patientId, obsByConcept);
+			}
+			
+			for (Obs currObs : allObs) {
+				String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
+				Set<Obs> obs = obsByConcept.get(currConceptName);
+				if (obs == null) {
+					obs = new HashSet<Obs>();
+					obsByConcept.put(currConceptName, obs);
+				}
+				obs.add(currObs);
+			}
+		}
+		catch (Exception e) {
+			log.error("Error processing hl7 OBXs.");
+			log.error(e.getMessage());
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+		}
 
 		// This code must come after the code that sets the encounter values
 		// because the states can't be created until the locationTagId and
@@ -1266,7 +1303,7 @@ public class HL7SocketHandler extends
 		PatientService patientService = Context.getPatientService();
 		String newMRN = null;
 		String existingMRN = null;
-	
+
 		try {
 
 			//Get the existing preferred, non-voided identifier for comparison  

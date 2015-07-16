@@ -202,7 +202,7 @@ public class HL7EncounterHandler25 extends
 			OBR obr = getOBR(message, 0);
 			timeStamp = null;
 			String sendingFacility = msh.getSendingFacility().getNamespaceID().getValue();
-			if ("ECW".equalsIgnoreCase(sendingFacility)) {
+			if ("ECW".equalsIgnoreCase(sendingFacility) || "HNA500".equalsIgnoreCase(sendingFacility)) {
 				if (message instanceof ORU_R01) {
 					if (obr != null)
 						timeStamp = obr.getObservationDateTime();
