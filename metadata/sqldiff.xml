@@ -3662,6 +3662,7 @@ where action_name='REPRINT';
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </sql>
     </diff>
+<<<<<<< HEAD
     <diff>
         <version>1.6.8</version>
         <author>Meena Sheley</author>
@@ -3676,6 +3677,8 @@ where action_name='REPRINT';
         <sql>
         </sql>
     </diff>
+=======
+>>>>>>> refs/remotes/origin/master
 
 </sqldiff>
 
