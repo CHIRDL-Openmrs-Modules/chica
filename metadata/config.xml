@@ -329,6 +329,12 @@
         <description>Encryption key used to decrypt information sent from the G3 application.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.queryMeds</property>
+        <defaultValue>true</defaultValue>
+        <description>Boolean indicator for querying for the medication list.
+        </description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

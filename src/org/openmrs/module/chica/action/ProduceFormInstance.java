@@ -11,11 +11,13 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.MedicationListLookup;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
@@ -114,7 +116,9 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 		FormService formService = Context.getFormService();
 		Form form = formService.getForm(formId);
 		long startTime = System.currentTimeMillis();
-		if(form.getName().equals("PWS")){
+		AdministrationService adminService = Context.getAdministrationService();
+		String queryMeds = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_QUERY_MEDS);
+		if(form.getName().equals("PWS") && ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(queryMeds)){
 			List<Medication> drugs = MedicationListLookup.getMedicationList(patientId);
 			EncounterService encounterService = Context.getService(EncounterService.class);
 			Encounter encounter = encounterService.getEncounter(encounterId);
