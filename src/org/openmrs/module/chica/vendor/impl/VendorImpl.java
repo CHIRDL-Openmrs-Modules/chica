@@ -13,9 +13,24 @@
  */
 package org.openmrs.module.chica.vendor.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.chica.vendor.Vendor;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 
 /**
@@ -23,6 +38,8 @@ import org.openmrs.module.chica.vendor.Vendor;
  * @author Steve McKee
  */
 public abstract class VendorImpl implements Vendor {
+	
+	private static Log log = LogFactory.getLog(VendorImpl.class);
 	
 	protected static final String PARAM_MRN = "mrn";
 	protected static final String PARAM_FORM_PAGE = "formPage";
@@ -46,20 +63,6 @@ public abstract class VendorImpl implements Vendor {
 		}
 		
 		this.request = request;
-	}
-	
-	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getUsername()
-	 */
-	public String getUsername() {
-		return request.getParameter(PARAM_USERNAME);
-	}
-	
-	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getPassword()
-	 */
-	public String getPassword() {
-		return request.getParameter(PARAM_PASSWORD);
 	}
 	
 	/**
@@ -102,5 +105,105 @@ public abstract class VendorImpl implements Vendor {
 	 */
 	public String getMrn() {
 		return request.getParameter(PARAM_MRN);
+	}
+	
+	/**
+	 * @see org.openmrs.module.chica.vendor.Vendor#getPassword()
+	 */
+	public String getPassword() {
+		String password = request.getParameter(PARAM_PASSWORD);
+		if (password == null || password.trim().length() == 0) {
+			log.error("No " + PARAM_PASSWORD + " parameter found in HTTP request.");
+			return null;
+		}
+		
+		String key = getEncryptionKey();
+		if (key == null) {
+			return password;
+		}
+		
+		return decryptValue(password, key);
+	}
+	
+	/**
+	 * @see org.openmrs.module.chica.vendor.Vendor#getUsername()
+	 */
+	public String getUsername() {
+		String username = request.getParameter(PARAM_USERNAME);
+		if (username == null || username.trim().length() == 0) {
+			log.error("No " + PARAM_USERNAME + " parameter found in HTTP request.");
+			return null;
+		}
+		
+		String key = getEncryptionKey();
+		if (key == null) {
+			return username;
+		}
+		
+		return decryptValue(username, key);
+	}
+	
+	/**
+	 * Abstract method that must be overridden to retrieve the encryption key to decrypt parameter values.
+	 * 
+	 * @return The encryption key or null if one is not found or required.
+	 */
+	public abstract String getEncryptionKey();
+	
+	/**
+	 * Decrypts an encrypted value with the provided key.
+	 * 
+	 * @param encryptedValue The value to decrypt
+	 * @param key The key used to decrypt the value
+	 * @return The decrypted value or null if it can't be decrypted
+	 */
+	private String decryptValue(String encryptedValue, String key) {
+		// Decrypt the password
+		Cipher cipher;
+        try {
+	        cipher = Cipher.getInstance(ChirdlUtilConstants.ENCRYPTION_AES);
+        }
+        catch (NoSuchAlgorithmException e) {
+	        log.error("Error creating " + ChirdlUtilConstants.ENCRYPTION_AES + " Cipher instance", e);
+	        return null;
+        }
+        catch (NoSuchPaddingException e) {
+	        log.error("Error creating " + ChirdlUtilConstants.ENCRYPTION_AES + " Cipher instance", e);
+	        return null;
+        }
+        
+		byte[] keyBytes;
+        try {
+	        keyBytes = key.getBytes(ChirdlUtilConstants.ENCODING_UTF8);
+        }
+        catch (UnsupportedEncodingException e) {
+	        log.error("Unsupported Encoding: " + ChirdlUtilConstants.ENCODING_UTF8, e);
+	        return null;
+        }
+        
+		keyBytes = Arrays.copyOf(keyBytes, 16);
+		Key secretKey = new SecretKeySpec(keyBytes, ChirdlUtilConstants.ENCRYPTION_AES);
+		try {
+	        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        }
+        catch (InvalidKeyException e) {
+	        log.error("Invalid Cipher Key", e);
+	        return null;
+        }
+		
+		String decrypted;
+        try {
+	        decrypted = new String(cipher.doFinal(Base64.decodeBase64(encryptedValue.getBytes())));
+        }
+        catch (IllegalBlockSizeException e) {
+	        log.error("Illegal Block Size", e);
+	        return null;
+        }
+        catch (BadPaddingException e) {
+	        log.error("Bad Padding", e);
+	        return null;
+        }
+        
+		return decrypted;
 	}
 }
