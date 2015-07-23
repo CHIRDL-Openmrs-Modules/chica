@@ -13,24 +13,12 @@
  */
 package org.openmrs.module.chica.vendor.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.chica.vendor.Vendor;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.Util;
 
 
 /**
@@ -122,7 +110,7 @@ public abstract class VendorImpl implements Vendor {
 			return password;
 		}
 		
-		return decryptValue(password, key);
+		return Util.decryptValue(password, true, key);
 	}
 	
 	/**
@@ -140,7 +128,7 @@ public abstract class VendorImpl implements Vendor {
 			return username;
 		}
 		
-		return decryptValue(username, key);
+		return Util.decryptValue(username, true, key);
 	}
 	
 	/**
@@ -149,61 +137,4 @@ public abstract class VendorImpl implements Vendor {
 	 * @return The encryption key or null if one is not found or required.
 	 */
 	public abstract String getEncryptionKey();
-	
-	/**
-	 * Decrypts an encrypted value with the provided key.
-	 * 
-	 * @param encryptedValue The value to decrypt
-	 * @param key The key used to decrypt the value
-	 * @return The decrypted value or null if it can't be decrypted
-	 */
-	private String decryptValue(String encryptedValue, String key) {
-		// Decrypt the password
-		Cipher cipher;
-        try {
-	        cipher = Cipher.getInstance(ChirdlUtilConstants.ENCRYPTION_AES);
-        }
-        catch (NoSuchAlgorithmException e) {
-	        log.error("Error creating " + ChirdlUtilConstants.ENCRYPTION_AES + " Cipher instance", e);
-	        return null;
-        }
-        catch (NoSuchPaddingException e) {
-	        log.error("Error creating " + ChirdlUtilConstants.ENCRYPTION_AES + " Cipher instance", e);
-	        return null;
-        }
-        
-		byte[] keyBytes;
-        try {
-	        keyBytes = key.getBytes(ChirdlUtilConstants.ENCODING_UTF8);
-        }
-        catch (UnsupportedEncodingException e) {
-	        log.error("Unsupported Encoding: " + ChirdlUtilConstants.ENCODING_UTF8, e);
-	        return null;
-        }
-        
-		keyBytes = Arrays.copyOf(keyBytes, 16);
-		Key secretKey = new SecretKeySpec(keyBytes, ChirdlUtilConstants.ENCRYPTION_AES);
-		try {
-	        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        }
-        catch (InvalidKeyException e) {
-	        log.error("Invalid Cipher Key", e);
-	        return null;
-        }
-		
-		String decrypted;
-        try {
-	        decrypted = new String(cipher.doFinal(Base64.decodeBase64(encryptedValue.getBytes())));
-        }
-        catch (IllegalBlockSizeException e) {
-	        log.error("Illegal Block Size", e);
-	        return null;
-        }
-        catch (BadPaddingException e) {
-	        log.error("Bad Padding", e);
-	        return null;
-        }
-        
-		return decrypted;
-	}
 }
