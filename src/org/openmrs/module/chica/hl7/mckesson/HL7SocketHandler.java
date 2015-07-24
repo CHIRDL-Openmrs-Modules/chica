@@ -13,14 +13,9 @@
  */
 package org.openmrs.module.chica.hl7.mckesson;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -54,18 +49,14 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chica.QueryKiteException;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25;
-import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -83,14 +74,11 @@ import org.openmrs.util.OpenmrsConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
-import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 
 /**
@@ -104,7 +92,7 @@ public class HL7SocketHandler extends
 
 	
 
-	protected final Log log = LogFactory.getLog(getClass());
+	protected static final Log log = LogFactory.getLog(HL7SocketHandler.class);
 	
 	private static final String GLOBAL_PROPERTY_FILTER_ON_PRIOR_CHECKIN = "chica.filterHL7RegistrationOnPriorCheckin";
 	private static final String GLOBAL_PROPERTY_PARSE_ERROR_DIRECTORY = "chica.mckessonParseErrorDirectory";
@@ -155,6 +143,7 @@ public class HL7SocketHandler extends
 		try {
 			PatientIdentifier patientIdentifier = hl7Patient
 					.getPatientIdentifier();
+			
 			if (patientIdentifier != null) {
 				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
@@ -170,11 +159,8 @@ public class HL7SocketHandler extends
 				
 				//Always query MRF and perform alias even if the patient already matched in CHICA.
 				parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
-				String response = QueryKite.mrfQuery(mrn, resultPatient, true);
+				QueryKite.mrfQuery(mrn, resultPatient, true);
 				parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
-				
-				
-
 				parameters.put(PROCESS_HL7_CHECKIN_END, new java.util.Date());
 
 			}
@@ -1540,69 +1526,64 @@ public class HL7SocketHandler extends
 		return null;
 	}
 	
+	/**
+	 * Pulls identifiers from message string, and merges the patients if needed
+	 * @param mrn
+	 * @param patient
+	 * @param messageString
+	 */
 	public static void mergeAliases(String mrn, Patient patient, String messageString){
-			
-			
-			//get identifiers and merge if necessary
-			PatientService patientService = Context.getPatientService();
-			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
-			
-			PipeParser pipeParser = new PipeParser();
+
+
+		PatientService patientService = Context.getPatientService();
+		HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
+		PipeParser pipeParser = new PipeParser();
+
+		try {
 			pipeParser.setValidationContext(new NoValidation());
 			String newMessageString = HL7ToObs.replaceVersion(messageString);
 			Message newMessage = null;
-			try {
-				newMessage = pipeParser.parse(newMessageString);
-			} catch (EncodingNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (HL7Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//convert message string to Message
+			newMessage = pipeParser.parse(newMessageString);
+
 			if (newMessage == null){
 				return;
 			}
-			
+
 			List<String> identifiers = patientHandler.getIdentiferStrings(newMessage);
 
 			for (String identifier : identifiers){
 
-				// don't look up the preferred patient's mrn
-				// so we don't merge a patient to themselves
-				if (Util.removeLeadingZeros(identifier).equals(
-						Util.removeLeadingZeros(mrn))) {
-					continue;
+				if (Util.removeLeadingZeros(identifier).equalsIgnoreCase(Util.removeLeadingZeros(mrn))){
+					return;
 				}
 
 				List<Patient> lookupPatients = patientService.getPatients(null,
 						Util.removeLeadingZeros(identifier), null, false);
 
 				if (lookupPatients != null && lookupPatients.size() > 0) {
-					Iterator<Patient> iter = lookupPatients.iterator();
-
-					while (iter.hasNext()) {
-						Patient currPatient = iter.next();
+				
+					for (Patient currentPatient : lookupPatients){
+						
 						// only merge different patients
 						if (!patient.getPatientId().equals(
-								currPatient.getPatientId())) {
+								currentPatient.getPatientId())) {
 							patientService.mergePatients(patient,
-									currPatient);
-						} else {
-							Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_GENERAL,
-									"Tried to merge patient: "
-											+ currPatient.getPatientId()
-											+ " with itself.", null,
-											new Date(), null);
-							chirdlutilbackportsService.saveError(error);
-						}
-					}
-				}
+									currentPatient);
 
+						}
+
+					}
+
+				}
 			}
-			
+		}catch (HL7Exception e) {
+			log.error("HL7 parsing error when merging aliases.",e );
+		}catch (Exception e){
+			log.error("Alias merge error.",e );
+		}
+
+
+
 	}
 	
 	

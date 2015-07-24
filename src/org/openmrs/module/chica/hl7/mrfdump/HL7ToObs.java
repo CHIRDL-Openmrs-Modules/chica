@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +34,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
@@ -50,6 +49,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class HL7ToObs {
 	
+	private static final String HL7_SEGMENT_MSH = "MSH";
 	protected final static Log log = LogFactory.getLog(HL7ToObs.class);
 	
 	public static void parseHL7ToObs(String hl7Message, Patient patient, String mrn,
@@ -60,9 +60,9 @@ public class HL7ToObs {
 			String line = null;
 			
 			// skip lines before hl7 message begins
-			while ((line = reader.readLine()) != null && !line.startsWith("MSH")) {
+			while ((line = reader.readLine()) != null && !line.startsWith(HL7_SEGMENT_MSH)) {
 				if (line.contains("FAILED")) {
-					Error error = new Error("Error", "Query Kite Connection", "MRF query returned FAILED for mrn: " + mrn,
+					Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION, "MRF query returned FAILED for mrn: " + mrn,
 					        null, new Date(), null);
 					chirdlutilbackportsService.saveError(error);
 					return;
@@ -76,7 +76,7 @@ public class HL7ToObs {
 			}
 			
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("MSH")) {
+				if (line.startsWith(HL7_SEGMENT_MSH)) {
 					writer.flush();
 					writer.close();
 					try {
@@ -134,7 +134,7 @@ public class HL7ToObs {
 			message = pipeParser.parse(newMessageString);
 		}
 		catch (Exception e) {
-			Error error = new Error("Error", "Hl7 Parsing", "Error parsing the MRF dump " + e.getMessage(), messageString,
+			Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_HL7_PARSING, "Error parsing the MRF dump " + e.getMessage(), messageString,
 			        new Date(), null);
 			chirdlutilbackportsService.saveError(error);
 			String mrfParseErrorDirectory = IOUtil.formatDirectoryName(adminService
@@ -203,6 +203,11 @@ public class HL7ToObs {
 		return message;
 	}
 	
+	/**
+	 * Replace with version 2.3
+	 * @param message
+	 * @return
+	 */
 	public static String replaceVersion(String message) {
 		StringBuffer newMessage = new StringBuffer();
 		BufferedReader reader = new BufferedReader(new StringReader(message));
@@ -246,18 +251,24 @@ public class HL7ToObs {
 		return newMessage.toString();
 	}
 	
-public static List<String> parseHL7Batch(String message){
+/*public static List<String> parseHL7Batch(String fullMessage){
 		
-		BufferedReader reader = new BufferedReader(new StringReader(message));
+	String[] messages = fullMessage.split(HL7_SEGMENT_MSH + "|");	
+	
+	for (String message : messages){
+		if (message.startsWith(HL7_SEGMENT_MSH)){
+			message.
+		}
+	}
+	BufferedReader reader = new BufferedReader(new StringReader(message));
 		String line = null;
 		List<String> parsedMessages = new ArrayList<String>();
-		
 		StringWriter output;
 		PrintWriter writer;
 		
 			try {
 				// skip lines before hl7 message begins
-				while ((line = reader.readLine()) != null && !line.startsWith("MSH")) {
+				while ((line = reader.readLine()) != null && !line.startsWith(HL7_SEGMENT_MSH)) {
 				}
 				
 				output = new StringWriter();
@@ -267,7 +278,7 @@ public static List<String> parseHL7Batch(String message){
 				}
 				
 				while ((line = reader.readLine()) != null) {
-					if (line.startsWith("MSH")) {
+					if (line.startsWith(HL7_SEGMENT_MSH)) {
 						writer.flush();
 						writer.close();
 						try {
@@ -295,7 +306,7 @@ public static List<String> parseHL7Batch(String message){
 			
 			return parsedMessages;
 		
-	}
+	}*/
 	
 	
 }

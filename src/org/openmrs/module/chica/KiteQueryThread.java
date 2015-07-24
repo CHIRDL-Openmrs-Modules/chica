@@ -22,6 +22,7 @@ import org.openmrs.module.chica.mrfservices.DumpServiceStub.GetDumpE;
 import org.openmrs.module.chica.mrfservices.DumpServiceStub.GetDumpResponseE;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.xmlBeans.StatsConfig;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
@@ -37,16 +38,12 @@ public class KiteQueryThread implements Runnable
 	private String mrn = null;
 	private QueryKiteException exception = null;
 	private String responseString = null;
-	private static final String GLOBAL_PROPERTY_MRF_QUERY_TIMEOUT = "chica.kiteTimeout";
-	private static final String GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE = "chica.mrfQueryConfigFile";
-	private static final String GLOBAL_PROPERTY_MRF_QUERY_PASSWORD = "chica.MRFQueryPassword";
 	private static final String MRF_PARAM_SYSTEM = "system";
 	private static final String MRF_PARAM_USER_ID = "id";
 	private static final String MRF_PARAM_PATIENT_IDENTIFIER_SYSTEM = "patient_identifier_system";
 	private static final String MRF_PARAM_CLASSES_TO_INCLUDE = "classes_to_include";
 	private static final String MRF_PARAM_CLASSES_TO_EXCLUDE = "classes_to_exclude";
 
-	private static final String MRF_PARAM_MRN = "mrn";
 
 	public KiteQueryThread(String mrn)
 	{
@@ -104,12 +101,12 @@ public class KiteQueryThread implements Runnable
 			throws QueryKiteException
 			{
 		AdministrationService adminService = Context.getAdministrationService();
-		String configFile = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE);   
-		String password = adminService.getGlobalProperty(GLOBAL_PROPERTY_MRF_QUERY_PASSWORD);
+		String configFile = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_CONFIG_FILE);   
+		String password = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_PASSWORD);
 
 		Properties props = null; 
 		if(configFile == null){
-			log.error("Could not find MRF query config file. Please set global property " + GLOBAL_PROPERTY_MRF_QUERY_CONFIG_FILE); 
+			log.error("Could not find MRF query config file. Please set global property " + ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_CONFIG_FILE); 
 		
 			return null;
 		}
