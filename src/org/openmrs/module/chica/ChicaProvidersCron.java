@@ -3,6 +3,7 @@
  */
 package org.openmrs.module.chica;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -12,6 +13,7 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.Person;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
@@ -68,6 +70,16 @@ public class ChicaProvidersCron extends AbstractTask
 			
 			List<User> doctors = userService.getUsers(null, roles, false);	// return non-voided providers
 			
+			// DWE CHICA-294 Create a list of Person objects to fix the provider retiring bug
+			List<Person> persons = new ArrayList<Person>();
+			for(User user : doctors)
+			{
+				if(user.getPerson() != null)
+				{
+					persons.add(user.getPerson());
+				}
+			}
+						
 			lastRunDate = GregorianCalendar.getInstance().getTime();
 			
 			Calendar threshold = GregorianCalendar.getInstance();
@@ -76,7 +88,7 @@ public class ChicaProvidersCron extends AbstractTask
 			
 			//List<Encounter> encounters = encounterService.getEncounters(null, null, thresholdDate, lastRunDate, null, null, false);
 			
-			List<Encounter> encounters = encounterService.getEncounters(null, null, thresholdDate, lastRunDate, null, null, doctors, false);
+			List<Encounter> encounters = encounterService.getEncounters(null, null, thresholdDate, lastRunDate, null, null, persons, false); // DWE CHICA-294 Changed persons parameter
 			if(encounters.size() == 0)
 			{
 				return;	// no encounters yet for any unvoided providers
