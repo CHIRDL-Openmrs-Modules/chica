@@ -689,11 +689,24 @@ public class HL7SocketHandler extends
 					appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getAppointmentTime(message);
 
-					planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-							.getInsurancePlan(message);
-
-					carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-							.getInsuranceCarrier(message);
+					// DWE CHICA-492 Parse insurance plan code from IN1-35 if this is IUH
+					if(locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					{
+						planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getInsuranceCompanyPlan(message);
+					}
+					else
+					{
+						planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getInsurancePlan(message);
+					}
+				
+					// DWE CHICA-492 Do not parse the carrier code if this is IUH
+					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					{
+						carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getInsuranceCarrier(message);
+					}
 
 					printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getPrinterLocation(message, incomingMessageString);
