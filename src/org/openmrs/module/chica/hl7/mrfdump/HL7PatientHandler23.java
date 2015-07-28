@@ -497,7 +497,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		String tNumber = "";
 		XTN[] telnumbers = pid.getPhoneNumberHome();
 
-		if (telnumbers.length == 0)
+		if (telnumbers.length == 0&&nk1!=null)
 		{
 			telnumbers = nk1.getPhoneNumber();
 		}

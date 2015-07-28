@@ -1,0 +1,93 @@
+/**
+ * 
+ */
+package org.openmrs.module.chica.hl7.iuHealthVitals;
+
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.hl7.mrfdump.PatientHandler;
+import org.openmrs.module.chica.hl7.mrfdump.HL7EncounterHandler23;
+import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
+import org.openmrs.scheduler.TaskDefinition;
+import org.openmrs.scheduler.tasks.AbstractTask;
+
+import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
+
+/**
+ * @author Tammy Dugan
+ */
+public class VitalsProcessor extends AbstractTask {
+	
+	private Log log = LogFactory.getLog(this.getClass());
+	
+	private VitalsHL7ListenerServer server = null;
+	
+	@Override
+	public void initialize(TaskDefinition config) {
+		this.log.info("Initializing VitalsHL7ListenerServer processor...");
+		super.initialize(config);
+		
+		String portString = this.taskDefinition.getProperty("port");
+		
+		try {
+			Integer port = null;
+			
+			try {
+				port = Integer.parseInt(portString);
+			}
+			catch (NumberFormatException e) {
+				this.log.error("Could not start VitalsHL7ListenerServer. Port " + portString + " could not be parsed");
+				return;
+			}
+			PipeParser parser = new PipeParser();
+			parser.setValidationContext(new NoValidation());
+			PatientHandler patientHandler = new PatientHandler();
+			HL7SocketHandler socketHandler = new HL7SocketHandler(parser, patientHandler, new HL7EncounterHandler23(),
+			        new HL7PatientHandler23());
+			
+			socketHandler.setPort(Integer.valueOf(portString));
+			this.server = new VitalsHL7ListenerServer(port, LowerLayerProtocol.makeLLP(), parser, patientHandler,
+			        socketHandler);
+			log.info("Starting VitalsHL7ListenerServer...");
+		}
+		catch (Exception e) {
+			log.error("Error starting VitalsHL7ListenerServer...");
+			this.log.error(e.getMessage());
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+		}
+		this.log.info("Finished initializing VitalsHL7ListenerServer processor.");
+	}
+	
+	@Override
+	public void execute() {
+		Context.openSession();
+		try {
+			this.server.start();
+		}
+		catch (Exception e) {
+			this.log.error(e.getMessage());
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+		}
+		finally {
+			Context.closeSession();
+		}
+	}
+	
+	@Override
+	public void shutdown() {
+		super.shutdown();
+		try {
+			if (this.server != null) {
+				this.server.stop();
+			}
+		}
+		catch (Exception e) {
+			this.log.error(e.getMessage());
+			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+		}
+	}
+}
