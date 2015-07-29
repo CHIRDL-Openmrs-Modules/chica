@@ -1,20 +1,26 @@
 package org.openmrs.module.chica.hl7.iuHealthVitals;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.openmrs.Concept;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.hl7.HL7Constants;
+import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
@@ -27,9 +33,11 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
+import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.sourcegen.SourceGenerator;
 import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * 
@@ -173,11 +181,25 @@ public class HL7SocketHandler implements Application {
 			if (patients != null && patients.size() > 0) {
 				patient = patients.get(0);
 			}
-			HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = new HashMap<Integer, HashMap<String, Set<Obs>>>();
 			
-			HL7ToObs.parseHL7ToObs(incomingMessageString, patient, mrn, regenObs);
+			ObsService obsService = Context.getObsService();
+			ArrayList<Obs> obsList = parseHL7ToObs(incomingMessageString, patient);
+			HashMap<String,String> conceptMapping = new HashMap<String,String>();
+			conceptMapping.put("Height CM", "HEIGHT");
+			ConceptService conceptService = Context.getConceptService();
+
+			for(Obs obs:obsList){
+				
+				String conceptName = obs.getConcept().getName().toString();
+				String mappedConceptName = conceptMapping.get(conceptName);
+				Concept mappedConcept = conceptService.getConceptByName(mappedConceptName);
+				obs.setConcept(mappedConcept);
+				LocationService locationService = Context.getLocationService();
+				Location location = locationService.getLocation("RIIUMG");
+				obs.setLocation(location);
+				obsService.saveObs(obs, null);
+			}
 			
-			//TODO save obs to database, map first
 			double duration = (new Date().getTime() - starttime.getTime()) / 1000.0;
 			logger.info("MESSAGE PROCESS TIME: " + duration + " sec");
 			
@@ -188,6 +210,39 @@ public class HL7SocketHandler implements Application {
 			error = true;
 		}
 		return error;
+	}
+	
+	private ArrayList<Obs> parseHL7ToObs(String messageString, Patient patient) {
+		ArrayList<Obs> allObs = null;
+		
+		if (messageString != null) {
+			messageString = messageString.trim();
+		}
+		
+		if (messageString == null || messageString.length() == 0) {
+			return allObs;
+		}
+		String newMessageString = messageString;
+		PipeParser pipeParser = new PipeParser();
+		pipeParser.setValidationContext(new NoValidation());
+		newMessageString = HL7ToObs.replaceVersion(newMessageString);
+		Message message = null;
+		try {
+			message = pipeParser.parse(newMessageString);
+		}
+		catch (Exception e) {
+			logger.error(e);
+			return allObs;
+		}
+		HL7ObsHandler23 obsHandler = new HL7ObsHandler23();
+		try {
+			allObs = obsHandler.getObs(message, patient);
+			return allObs;
+		}
+		catch (Exception e) {
+			logger.error(e);
+		}
+		return null;
 	}
 	
 	/**
