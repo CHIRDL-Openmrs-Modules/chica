@@ -34,7 +34,6 @@ import org.apache.log4j.Logger;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.module.chica.hl7.mrfdump.PatientHandler;
 
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -76,16 +75,16 @@ public class VitalsHL7ListenerServer extends ca.uhn.hl7v2.app.HL7Service {
 	 * Creates a new instance of VitalsHL7ListenerServer that listens on the given port. Exceptions are logged
 	 * using ca.uhn.hl7v2.Log;
 	 */
-	public VitalsHL7ListenerServer(int port, LowerLayerProtocol llp, Parser parser, PatientHandler patientHandler,
+	public VitalsHL7ListenerServer(int port, LowerLayerProtocol llp, Parser parser,
 	    HL7SocketHandler hl7SocketHandler) {
 		super(parser, llp);
 		this.port = port;
 		this.hl7SocketHandler = hl7SocketHandler;
 	}
 	
-	public VitalsHL7ListenerServer(int port, LowerLayerProtocol llp, PatientHandler patientHandler, HL7SocketHandler hl7SocketHandler,
+	public VitalsHL7ListenerServer(int port, LowerLayerProtocol llp, HL7SocketHandler hl7SocketHandler,
 	    Parser parser, String username, String password) {
-		this(port, llp, parser, patientHandler, hl7SocketHandler);
+		this(port, llp, parser, hl7SocketHandler);
 		authenticate(username, password);
 	}
 	

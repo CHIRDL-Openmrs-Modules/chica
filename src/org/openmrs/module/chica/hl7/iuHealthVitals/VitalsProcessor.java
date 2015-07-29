@@ -3,13 +3,9 @@
  */
 package org.openmrs.module.chica.hl7.iuHealthVitals;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hl7.mrfdump.PatientHandler;
-import org.openmrs.module.chica.hl7.mrfdump.HL7EncounterHandler23;
-import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -45,13 +41,9 @@ public class VitalsProcessor extends AbstractTask {
 			}
 			PipeParser parser = new PipeParser();
 			parser.setValidationContext(new NoValidation());
-			PatientHandler patientHandler = new PatientHandler();
-			HL7SocketHandler socketHandler = new HL7SocketHandler(parser, patientHandler, new HL7EncounterHandler23(),
-			        new HL7PatientHandler23());
-			
+			HL7SocketHandler socketHandler = new HL7SocketHandler(parser);
 			socketHandler.setPort(Integer.valueOf(portString));
-			this.server = new VitalsHL7ListenerServer(port, LowerLayerProtocol.makeLLP(), parser, patientHandler,
-			        socketHandler);
+			this.server = new VitalsHL7ListenerServer(port, LowerLayerProtocol.makeLLP(), parser, socketHandler);
 			log.info("Starting VitalsHL7ListenerServer...");
 		}
 		catch (Exception e) {

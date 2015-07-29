@@ -8,21 +8,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.hl7.HL7Constants;
+import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
-import org.openmrs.module.chica.hl7.mrfdump.PatientHandler;
-import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
-import org.openmrs.module.sockethl7listener.HL7PatientHandler;
-import org.openmrs.module.sockethl7listener.ZLR;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
@@ -31,11 +26,10 @@ import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.primitive.CommonTS;
-import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.model.v23.datatype.CX;
 import ca.uhn.hl7v2.sourcegen.SourceGenerator;
 import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * 
@@ -46,17 +40,11 @@ public class HL7SocketHandler implements Application {
 	
 	protected static final Logger logger = Logger.getLogger("SocketHandlerLogger");
 	
-	protected PatientHandler patientHandler; //setters
-	
 	private Integer port;
 	
 	private String host;
 	
 	private ca.uhn.hl7v2.parser.Parser parser = null;
-	
-	private HL7EncounterHandler hl7EncounterHandler = null; //getters
-	
-	private HL7PatientHandler hl7PatientHandler = null; //getters
 	
 	public HL7SocketHandler() {
 		
@@ -69,13 +57,9 @@ public class HL7SocketHandler implements Application {
 		
 	}
 	
-	public HL7SocketHandler(ca.uhn.hl7v2.parser.Parser parser, PatientHandler patientHandler,
-	    HL7EncounterHandler hl7EncounterHandler, HL7PatientHandler hl7PatientHandler) {
+	public HL7SocketHandler(ca.uhn.hl7v2.parser.Parser parser) {
 		
-		this.patientHandler = patientHandler;
 		this.parser = parser;
-		this.hl7EncounterHandler = hl7EncounterHandler;
-		this.hl7PatientHandler = hl7PatientHandler;
 	}
 	
 	/**
@@ -98,9 +82,7 @@ public class HL7SocketHandler implements Application {
 				String incomingMessageString = "";
 				
 				incomingMessageString = this.parser.encode(message);
-				message.addNonstandardSegment("ZLR");
-				ZLR zlr = new ZLR(message);
-				zlr.loadZLRSegment(incomingMessageString);
+				
 				Context.authenticate(adminService.getGlobalProperty("scheduler.username"),
 				    adminService.getGlobalProperty("scheduler.password"));
 				Context.addProxyPrivilege(HL7Constants.PRIV_ADD_HL7_IN_QUEUE);
@@ -112,7 +94,7 @@ public class HL7SocketHandler implements Application {
 				error = processMessageSegments(message, incomingMessageString);
 			}
 			try {
-				ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH( message);
+				ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
 				response = makeACK(msh);
 				fillDetails(response, error);
 			}
@@ -145,7 +127,7 @@ public class HL7SocketHandler implements Application {
 		finally {
 			if (response == null) {
 				try {
-					ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH( message);
+					ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
 					response = makeACK(msh);
 				}
 				catch (Exception e) {
@@ -165,40 +147,37 @@ public class HL7SocketHandler implements Application {
 		newMessageString = HL7ToObs.replaceVersion(newMessageString);
 		try {
 			message = parser.parse(newMessageString);
-		}catch(Exception e){
+		}
+		catch (Exception e) {
 			logger.error(e);
 		}
 		
 		boolean error = false;
 		Date starttime = new Date();
-		ZLR zlr = new ZLR(message);
 		
 		try {
 			
-			String institutionId = zlr.getOrderingFacilityIDNum();
-			LocationService locationService = Context.getLocationService();
+			HL7PatientHandler23 hl7PatientHandler = new HL7PatientHandler23();
 			
-			Location encounterLocation = locationService.getLocation(institutionId);
-
-			Date encounterDate = hl7EncounterHandler.getEncounterDate(message);
-			Patient hl7Patient = patientHandler.setPatientFromHL7(message, encounterDate, encounterLocation,
-			    hl7PatientHandler);
+			CX patId = hl7PatientHandler.getPID(message).getPatientIDInternalID(0);
+			
+			String mrn = hl7PatientHandler.getMRN(patId);
+			
+			//add the dash
+			if (mrn.indexOf("-") == -1) {
+				mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
+			}
 			PatientService patientService = Context.getPatientService();
-			List<Patient> patients = patientService
-					.getPatientsByIdentifier(mrn, false);
+			List<Patient> patients = patientService.getPatientsByIdentifier(mrn, false);
 			Patient patient = null;
-			Integer patientId = null;
-			if (patients != null && patients.size() > 0)
-			{
+			if (patients != null && patients.size() > 0) {
 				patient = patients.get(0);
-				patientId = patient.getPatientId();
 			}
 			HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = new HashMap<Integer, HashMap<String, Set<Obs>>>();
 			
 			HL7ToObs.parseHL7ToObs(incomingMessageString, patient, mrn, regenObs);
 			
 			//TODO save obs to database, map first
-			
 			double duration = (new Date().getTime() - starttime.getTime()) / 1000.0;
 			logger.info("MESSAGE PROCESS TIME: " + duration + " sec");
 			
