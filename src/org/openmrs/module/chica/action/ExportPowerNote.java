@@ -14,6 +14,9 @@
 package org.openmrs.module.chica.action;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,12 +28,14 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAttribute;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -105,13 +110,57 @@ public class ExportPowerNote implements ProcessStateAction {
 		
 		String message = createOutgoingHL7(encounterId, note, dataTypeAbbreviation, conceptName, resultStatusValue);
 		
-		System.out.println(message);
-		// TODO save this message to a file and send with MIRTH
+		writeHL7File(message);
 		
 		StateManager.endState(patientState);
 		
 		BaseStateActionHandler
 		        .changeState(patient, sessionId, currState, stateAction, parameters, locationTagId, locationId);
+	}
+	
+	/**
+	 * 
+	 * The file will be picked up by MIRTH and sent
+	 * 
+	 * @param mrn
+	 * @param outgoingMessage
+	 */
+	private void writeHL7File(String outgoingMessage) {
+		
+		AdministrationService adminService = Context.getAdministrationService();
+		
+		// save outgoingHL7 dump to a file
+		String outgoingHL7Directory = IOUtil.formatDirectoryName(adminService.getGlobalProperty("chica.outboundHl7Directory"));
+		if (outgoingHL7Directory != null&&outgoingMessage!=null&&outgoingMessage.length()>0) {
+			String filename = "r" + org.openmrs.module.chirdlutil.util.Util.archiveStamp()+".hl7";
+			
+			FileOutputStream outgoingHL7DumpFile = null;
+			try {
+				outgoingHL7DumpFile = new FileOutputStream(outgoingHL7Directory + "/" + filename);
+			}
+			catch (FileNotFoundException e1) {
+				log.error("Couldn't find file: " + outgoingHL7Directory + "/" + filename);
+			}
+			if (outgoingHL7DumpFile != null) {
+				try {
+					
+					ByteArrayInputStream outgoingHL7DumpInput = new ByteArrayInputStream(outgoingMessage.getBytes());
+					IOUtil.bufferedReadWrite(outgoingHL7DumpInput, outgoingHL7DumpFile);
+					outgoingHL7DumpFile.flush();
+					outgoingHL7DumpFile.close();
+				}
+				catch (Exception e) {
+					try {
+						outgoingHL7DumpFile.flush();
+						outgoingHL7DumpFile.close();
+					}
+					catch (Exception e1) {}
+					log.error("There was an error writing the dump file");
+					log.error(e.getMessage());
+					log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				}
+			}
+		}
 	}
 	
 	private String createOutgoingHL7(Integer encounterId, String note, String hl7Abbreviation, String conceptName,
