@@ -1,10 +1,12 @@
 package org.openmrs.module.chica.hl7.iuHealthVitals;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -23,6 +25,8 @@ import org.openmrs.hl7.HL7Constants;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
+import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -78,6 +82,42 @@ public class HL7SocketHandler implements Application {
 	 */
 	public boolean canProcess(Message message) {
 		return message != null && "ORU_R01".equals(message.getName());
+	}
+	
+	private void writeMessageToFile(String mrn, String incomingMessage) {
+		AdministrationService adminService = Context.getAdministrationService();
+		// save vitals dump to a file
+		String vitalsDirectory = IOUtil.formatDirectoryName(adminService.getGlobalProperty("chica.vitalsArchiveDirectory"));
+		if (vitalsDirectory != null) {
+			String filename = "r" + Util.archiveStamp() + "_" + mrn + ".hl7";
+			
+			FileOutputStream vitalsDumpFile = null;
+			try {
+				vitalsDumpFile = new FileOutputStream(vitalsDirectory + "/" + filename);
+			}
+			catch (FileNotFoundException e1) {
+				logger.error("Couldn't find file: " + vitalsDirectory + "/" + filename);
+			}
+			if (vitalsDumpFile != null) {
+				try {
+					
+					ByteArrayInputStream vitalsDumpInput = new ByteArrayInputStream(incomingMessage.getBytes());
+					IOUtil.bufferedReadWrite(vitalsDumpInput, vitalsDumpFile);
+					vitalsDumpFile.flush();
+					vitalsDumpFile.close();
+				}
+				catch (Exception e) {
+					try {
+						vitalsDumpFile.flush();
+						vitalsDumpFile.close();
+					}
+					catch (Exception e1) {}
+					logger.error("There was an error writing the vitals dump file");
+					logger.error(e.getMessage());
+					logger.error(Util.getStackTrace(e));
+				}
+			}
+		}
 	}
 	
 	public Message processMessage(Message message) throws ApplicationException {
@@ -153,7 +193,7 @@ public class HL7SocketHandler implements Application {
 		String newMessageString = incomingMessageString;
 		final String SOURCE = "IU Health Vitals";
 		
-		//convert hl7 to version 2.3 so it can be parsed like mrf dump messages
+		//convert hl7 to version 2.3 so it can be parsed like vitals dump messages
 		newMessageString = HL7ToObs.replaceVersion(newMessageString);
 		try {
 			message = parser.parse(newMessageString);
@@ -177,6 +217,9 @@ public class HL7SocketHandler implements Application {
 			if (mrn.indexOf("-") == -1) {
 				mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
 			}
+			
+			writeMessageToFile(mrn, newMessageString);
+			
 			PatientService patientService = Context.getPatientService();
 			List<Patient> patients = patientService.getPatientsByIdentifier(mrn, false);
 			Patient patient = null;
