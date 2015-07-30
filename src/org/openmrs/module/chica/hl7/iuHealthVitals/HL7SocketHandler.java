@@ -150,8 +150,10 @@ public class HL7SocketHandler implements Application {
 	
 	private boolean processMessageSegments(Message message, String incomingMessageString) throws HL7Exception {
 		
-		//convert hl7 to version 2.3 so it can be parsed like mrf dump messages
 		String newMessageString = incomingMessageString;
+		final String SOURCE = "IU Health Vitals";
+		
+		//convert hl7 to version 2.3 so it can be parsed like mrf dump messages
 		newMessageString = HL7ToObs.replaceVersion(newMessageString);
 		try {
 			message = parser.parse(newMessageString);
@@ -184,20 +186,22 @@ public class HL7SocketHandler implements Application {
 			
 			ObsService obsService = Context.getObsService();
 			ArrayList<Obs> obsList = parseHL7ToObs(incomingMessageString, patient);
-			HashMap<String,String> conceptMapping = new HashMap<String,String>();
-			conceptMapping.put("Height CM", "HEIGHT");
 			ConceptService conceptService = Context.getConceptService();
-
-			for(Obs obs:obsList){
+			
+			for (Obs obs : obsList) {
 				
 				String conceptName = obs.getConcept().getName().toString();
-				String mappedConceptName = conceptMapping.get(conceptName);
-				Concept mappedConcept = conceptService.getConceptByName(mappedConceptName);
-				obs.setConcept(mappedConcept);
-				LocationService locationService = Context.getLocationService();
-				Location location = locationService.getLocation("RIIUMG");
-				obs.setLocation(location);
-				obsService.saveObs(obs, null);
+				Concept mappedConcept = conceptService.getConceptByMapping(conceptName, SOURCE);
+				if (mappedConcept == null) {
+					logger.error("Could not map IU Health Cerner vitals concept: " + conceptName
+					        + ". Could not store vitals observation.");
+				} else {
+					obs.setConcept(mappedConcept);
+					LocationService locationService = Context.getLocationService();
+					Location location = locationService.getLocation("RIIUMG");
+					obs.setLocation(location);
+					obsService.saveObs(obs, null);
+				}
 			}
 			
 			double duration = (new Date().getTime() - starttime.getTime()) / 1000.0;
