@@ -444,6 +444,7 @@ public class HL7SocketHandler extends
 		AddCitizenship(currentPatient, hl7Patient, encounterDate);
 		AddRace(currentPatient, hl7Patient, encounterDate);
 		addMRN(currentPatient, hl7Patient, encounterDate);
+		addPatientAccountNumber(currentPatient, hl7Patient, encounterDate); // DWE CHICA-406
 		
 		Patient updatedPatient = null;
 		try {
@@ -1572,6 +1573,26 @@ public class HL7SocketHandler extends
 		return null;
 	}
 	
-	
+	/**
+	 * DWE CHICA-406
+	 * Updates Patient Account Number attribute from hl7 value.
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void addPatientAccountNumber(Patient currentPatient, Patient hl7Patient, Date encounterDate){
+		PersonAttribute currentAccountNumberAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_PATIENT_ACCOUNT_NUMBER);
+		PersonAttribute hl7AccountNumberAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_PATIENT_ACCOUNT_NUMBER);
+		
+		if (hl7AccountNumberAttr == null || hl7AccountNumberAttr.getValue() == null 
+				|| hl7AccountNumberAttr.getValue().trim().equals(EMPTY_STRING)){
+			return;
+		}
+		
+		if (currentAccountNumberAttr == null || currentAccountNumberAttr.getValue() == null
+			|| !currentAccountNumberAttr.getValue().equals(hl7AccountNumberAttr.getValue())){
+			currentPatient.addAttribute(hl7AccountNumberAttr);
+		}
+	}
 	
 }

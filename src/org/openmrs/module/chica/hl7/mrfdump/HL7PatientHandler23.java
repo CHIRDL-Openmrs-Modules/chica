@@ -534,4 +534,13 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	{
 		return null;
 	}
+	
+	/**
+	 * DWE CHICA-406
+	 * @param message
+	 */
+	public String getAccountNumber(Message message)
+	{
+		return null;
+	}
 }

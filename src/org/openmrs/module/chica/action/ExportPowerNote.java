@@ -24,11 +24,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.PersonAttribute;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -241,6 +243,15 @@ public class ExportPowerNote implements ProcessStateAction {
 			// dob
 			pid.getDateTimeOfBirth().getTime().setValue(dobStr);
 			pid.getSetIDPID().setValue("1");
+			
+			
+			// DWE CHICA-406
+			// Patient Account Number PID-18
+			PersonAttribute personAttribute = pat.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_PATIENT_ACCOUNT_NUMBER);
+			if(personAttribute != null && personAttribute.getValue() != null)
+			{
+				pid.getPatientAccountNumber().getIDNumber().setValue(personAttribute.getValue());
+			}
 			
 			return pid;
 			
