@@ -142,7 +142,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	}
 
 	//----MRN for chica messages has an explicit check digit
-	protected String getMRN(CX ident)
+	public String getMRN(CX ident)
 	{
 		String stIdent = null;
 
@@ -152,7 +152,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			stIdent = id.getValue();
 			ST checkDigitST = ident.getCheckDigit();
 
-			if (checkDigitST != null)
+			if (checkDigitST!=null&&checkDigitST.getValue() != null)
 			{
 				String checkDigit = checkDigitST.getValue();
 				stIdent += "-" + checkDigit;
@@ -162,7 +162,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return stIdent;
 	}
 	
-	protected PID getPID(Message message)
+	public PID getPID(Message message)
 	{
 		if (message instanceof ORU_R01)
 		{
@@ -497,7 +497,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		String tNumber = "";
 		XTN[] telnumbers = pid.getPhoneNumberHome();
 
-		if (telnumbers.length == 0)
+		if (telnumbers.length == 0&&nk1!=null)
 		{
 			telnumbers = nk1.getPhoneNumber();
 		}
