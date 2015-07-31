@@ -233,10 +233,10 @@ public class HL7SocketHandler implements Application {
 			
 			for (Obs obs : obsList) {
 				
-				String conceptName = obs.getConcept().getName().toString();
-				Concept mappedConcept = conceptService.getConceptByMapping(conceptName, SOURCE);
+				String conceptId = obs.getConcept().getConceptId().toString();
+				Concept mappedConcept = conceptService.getConceptByMapping(conceptId, SOURCE);
 				if (mappedConcept == null) {
-					logger.error("Could not map IU Health Cerner vitals concept: " + conceptName
+					logger.error("Could not map IU Health Cerner vitals concept: " + conceptId
 					        + ". Could not store vitals observation.");
 				} else {
 					obs.setConcept(mappedConcept);
