@@ -23,7 +23,6 @@ import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.chica.hl7.mckesson.HL7SocketHandler;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.mrfservices.DumpServiceStub;
 import org.openmrs.module.chica.mrfservices.DumpServiceStub.GetDumpE;
@@ -42,6 +41,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class QueryKite
 {
+	private static final String CHARACTER_ENCODING_UTF_8 = "UTF-8";
+
 	private static Log log = LogFactory.getLog(QueryKite.class);
 
 	private static final String MRF_PARAM_SYSTEM = "system";
@@ -94,84 +95,6 @@ public class QueryKite
 		}
 	}
 	
-	/*public static String aliasQuery(String mrn) throws  QueryKiteException
-	{
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		AdministrationService adminService = Context.getAdministrationService();
-		String response = null;
-		try
-		{
-			response = QueryKite.getMRFDump(mrn);
-
-		} catch (Exception e)
-		{
-			Error error = new Error("Error", ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION
-					, e.getMessage()
-					, Util.getStackTrace(e), new Date(), null);
-			chirdlutilbackportsService.saveError(error);
-			return null;
-		}
-
-		//For the alias query only, do not requery if the response was null.  This would take too long.
-		//A requery is performed later in a separate thread if no mrf dump exists already.
-
-		if (response != null)
-		{
-			// save alias query results to a file
-			String aliasDirectory = IOUtil.formatDirectoryName(adminService
-					.getGlobalProperty("chica.aliasArchiveDirectory"));
-
-			if (aliasDirectory != null)
-			{
-				String filename = "r" + Util.archiveStamp() + "_" + mrn + ".txt";
-
-				FileOutputStream aliasFile = null;
-
-				try
-				{
-					aliasFile = new FileOutputStream(aliasDirectory
-							+ filename);
-				} catch (FileNotFoundException e1)
-				{
-					log.error("Could not find alias file: " + aliasDirectory 
-							+ filename);
-				}
-				if (aliasFile != null)
-				{
-					try
-					{
-
-						ByteArrayInputStream aliasInput = new ByteArrayInputStream(
-								response.getBytes());
-						IOUtil.bufferedReadWrite(aliasInput, aliasFile);
-						aliasFile.flush();
-						aliasFile.close();
-					} catch (Exception e)
-					{
-						try
-						{
-							aliasFile.flush();
-							aliasFile.close();
-						} catch (Exception e1)
-						{
-						}
-						log.error("There was an error writing the dump file");
-						log.error(e.getMessage());
-						log.error(Util.getStackTrace(e));
-					}
-				}
-			}
-			
-			//parse hl7
-			//merge the aliases
-			//save obs
-			
-		}
-
-		return response;
-	}*/
-	
-
 		/**
 		 * Check if a mrf dump file exists already for that patient today.  
 		 * If no previous mrf dump exists, call the method that starts a new thread to
@@ -300,9 +223,12 @@ public class QueryKite
 							.getLogicDataSource("RMRS");
 
 					HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
+					HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);
+					log.info("Elapsed time for mrf parsing is "+
+							(System.currentTimeMillis()-startTime)/1000);
 					
 					//mrf dump has multiple messages.		
-					String[] messages = response.split("MSH");	
+					/*String[] messages = response.split("MSH");	
 					
 					for (String message : messages){
 						
@@ -312,14 +238,20 @@ public class QueryKite
 							log.info("Elapsed time for mrf parsing is "+
 									(System.currentTimeMillis()-startTime)/1000);
 						}
-					}
+					}*/
 
 				}
 				return response;
 			}
 		
+		/**
+		 * Query web service for MRF dump
+		 * @param mrn
+		 * @return
+		 * @throws QueryKiteException
+		 */
 		public static String getMRFDump(String mrn) throws QueryKiteException
-				{
+		{
 			AdministrationService adminService = Context.getAdministrationService();
 			String configFile = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_CONFIG_FILE);   
 			String password = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_PASSWORD);
@@ -364,23 +296,20 @@ public class QueryKite
 				responseString = response.getGetDumpResponse().getHl7();
 
 				//LOGGING
-				log.error(responseString);
-				byte[] utf8Bytes = responseString.getBytes("UTF-8");
+				System.out.println(responseString);
+				byte[] utf8Bytes = responseString.getBytes(CHARACTER_ENCODING_UTF_8);
 				log.info("Size: " + utf8Bytes.length);
 				log.info("query time: " + (stop - start));
 				log.info("Size: " + utf8Bytes.length);
 				log.info("query time: " + (stop - start));
 				String[] timings = response.getGetDumpResponse().getTiming();
 				for (String timing : timings){
-					System.out.println(timing);
 					log.info(timing);
 				}
 
 			} catch (Exception e){
 				log.error("Exception during MRF query", e);
 			}
-
-
 			return responseString;
 		}
 }

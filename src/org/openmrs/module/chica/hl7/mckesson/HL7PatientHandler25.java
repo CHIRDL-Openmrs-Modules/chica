@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jfree.util.Log;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAddress;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
@@ -247,60 +248,19 @@ public class HL7PatientHandler25 extends
 		return addresses;
 	}
 	
-private  Set<PatientIdentifier> getIdentifiers(String response){
-	
-	try {
-		
-		PipeParser pipeParser = new PipeParser();
-		pipeParser.setValidationContext(new NoValidation());
-		String newMessageString = HL7ToObs.replaceVersion(response);
-		Message newMessage = pipeParser.parse(newMessageString);
-		Message message = null;
-		Set<PatientIdentifier> identifiers = null;
-		
-		
-			String line = null;
-			try {
-				List<String> identifier = getIdentiferStrings(newMessage);
-			}
-			catch (Exception e) {
-				//error is logged in processMessage
-				//catch this error so other MSH's are processed
-			}
-			
-		} catch (EncodingNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (HL7Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	
-		return null;
-	}
 
-	public List<String> getIdentiferStrings(Message newMessage){
-		List<String> identifiers  = new ArrayList<String>();
+	public String getIdentiferString(Message newMessage){
+		String pid = null;
 		try {
-			
-			//Split the messages
-			//get pid-3-1 from each message
-			//add to list
+			//get pid-3-1 (mrn)
 			PipeParser pipeParser = new PipeParser();
 			pipeParser.setValidationContext(new NoValidation());
 			Terser terser = new Terser(newMessage);
-			String pid = terser.get("/.PID-3-1");
-			identifiers.add(pid);
-		} catch (EncodingNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (HL7Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return identifiers;
+			pid = terser.get("/.PID-3-1");
+		} catch (Exception e) {
+			Log.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
+		} 
+		return pid;
 	}
 	
 	
