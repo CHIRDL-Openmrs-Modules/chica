@@ -345,6 +345,11 @@
         <description>Encryption key used to decrypt information sent from the IU Health Cerner application.
         </description>
     </globalProperty>
+     <globalProperty>
+        <property>chica.vitalsArchiveDirectory</property>
+        <description>Directory to store IU Health Vitals files.
+        </description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
