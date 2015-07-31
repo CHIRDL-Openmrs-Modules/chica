@@ -23,7 +23,9 @@
        <form id="complete_form" method="POST" data-ajax="false">
            <c:choose>
            <c:when test="${empty (notifications)}">
-               <div align="left"><p>There are no more items to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
+               <div align="left"><p>There are no more items to complete for ${patient.givenName}&nbsp;${patient.familyName}.  Please click the "Finish" button.</p></div>
+               <br/>
+               <div align="left"><p>No hay m&#225;s datos para completar para ${patient.givenName}&nbsp;${patient.familyName}.  Por favor, haga clic en el bot&#243;n "Finish".</p></div>
                <br/>
            </c:when>
            <c:otherwise>

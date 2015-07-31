@@ -99,6 +99,11 @@
         </description>
     </globalProperty>
     <globalProperty>
+        <property>chica.outboundHl7Directory</property>
+        <description>Location to store constructed outbound hl7 messages to be sent by mirth
+        </description>
+    </globalProperty>
+    <globalProperty>
         <property>chica.pagerBaseURL</property>
         <defaultValue>http://www.ipnpaging.com/page.html</defaultValue>
         <description>Base URL of the pager service
