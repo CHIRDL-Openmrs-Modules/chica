@@ -233,8 +233,35 @@ public class HL7SocketHandler implements Application {
 			
 			for (Obs obs : obsList) {
 				
-				String conceptId = obs.getConcept().getConceptId().toString();
-				Concept mappedConcept = conceptService.getConceptByMapping(conceptId, SOURCE);
+				Integer conceptId = obs.getConcept().getConceptId();
+				
+				switch(conceptId){
+					case 635271: //WEIGHT (kg)
+						double kilograms = obs.getValueNumeric();
+						double pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
+								kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
+						obs.setValueNumeric(pounds);//weight in chica in pounds 
+						break;
+					case 635268: //height (cm)
+						double measurement = obs.getValueNumeric();
+						double inches = 
+							org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(measurement, 
+									org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CM);
+						obs.setValueNumeric(inches);//height in chica in pounds
+						break;
+					case 39822143: //Temp (Cel)
+						double tempC = obs.getValueNumeric();
+						double tempF = 
+							org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(tempC, 
+									org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
+						obs.setValueNumeric(tempF);//temperature in Fahrenheit
+						break;
+					default:
+						
+				}
+				
+				String conceptIdString = obs.getConcept().getConceptId().toString();
+				Concept mappedConcept = conceptService.getConceptByMapping(conceptIdString, SOURCE);
 				if (mappedConcept == null) {
 					logger.error("Could not map IU Health Cerner vitals concept: " + conceptId
 					        + ". Could not store vitals observation.");
