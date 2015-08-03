@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -96,11 +97,11 @@ public class VitalsHL7ListenerServer extends ca.uhn.hl7v2.app.HL7Service {
 		AdministrationService adminService = Context.getAdministrationService();
 		
 		if (username == null) {
-			username = adminService.getGlobalProperty("scheduler.username");
+			username = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME);
 		}
 		
 		if (password == null) {
-			password = adminService.getGlobalProperty("scheduler.password");
+			password = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD);
 		}
 		
 		try {

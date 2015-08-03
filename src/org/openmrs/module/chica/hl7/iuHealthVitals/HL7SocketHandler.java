@@ -25,6 +25,7 @@ import org.openmrs.hl7.HL7Constants;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
@@ -131,8 +132,8 @@ public class HL7SocketHandler implements Application {
 				
 				incomingMessageString = this.parser.encode(message);
 				
-				Context.authenticate(adminService.getGlobalProperty("scheduler.username"),
-				    adminService.getGlobalProperty("scheduler.password"));
+				Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+				    adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
 				Context.addProxyPrivilege(HL7Constants.PRIV_ADD_HL7_IN_QUEUE);
 				if (!Context.hasPrivilege(HL7Constants.PRIV_ADD_HL7_IN_QUEUE)) {
 					logger.error("You do not have HL7 add privilege!!");
