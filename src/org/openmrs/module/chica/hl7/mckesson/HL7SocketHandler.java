@@ -109,9 +109,6 @@ public class HL7SocketHandler extends
 	
 	private static final String CONCEPT_INSURANCE_NAME = "InsuranceName";
 	
-
-	private static final String ERROR_LEVEL_FATAL = "Fatal";
-	
 	private static final String PARAMETER_QUERY_ALIAS_START = "queryKiteAliasStart";
 	private static final String PARAMETER_QUERY_ALIAS_STOP = "queryKiteAliasEnd";
 	private static final String PARAMETER_SESSION = "session";
@@ -127,9 +124,6 @@ public class HL7SocketHandler extends
 	private static final String TRUE = "true";
 	private static final String EMPTY_STRING = "";
 	private static final String LEADING_ZERO = "0";
-
-
-	
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.sockethl7listener.HL7SocketHandler#findPatient(org.openmrs.Patient, java.util.Date, java.util.HashMap)
