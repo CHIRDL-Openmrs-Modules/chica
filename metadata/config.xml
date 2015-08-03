@@ -99,6 +99,11 @@
         </description>
     </globalProperty>
     <globalProperty>
+        <property>chica.outboundHl7Directory</property>
+        <description>Location to store constructed outbound hl7 messages to be sent by mirth
+        </description>
+    </globalProperty>
+    <globalProperty>
         <property>chica.pagerBaseURL</property>
         <defaultValue>http://www.ipnpaging.com/page.html</defaultValue>
         <description>Base URL of the pager service
@@ -327,6 +332,22 @@
     <globalProperty>
         <property>chica.g3EncryptionKey</property>
         <description>Encryption key used to decrypt information sent from the G3 application.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.queryMeds</property>
+        <defaultValue>true</defaultValue>
+        <description>Boolean indicator for querying for the medication list.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.iuHealthCernerEncryptionKey</property>
+        <description>Encryption key used to decrypt information sent from the IU Health Cerner application.
+        </description>
+    </globalProperty>
+     <globalProperty>
+        <property>chica.vitalsArchiveDirectory</property>
+        <description>Directory to store IU Health Vitals files.
         </description>
     </globalProperty>
     
