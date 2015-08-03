@@ -11,6 +11,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.module.chica.db.EncounterDAO;
@@ -94,8 +95,8 @@ public class HibernateEncounterDAO extends
 	public List<org.openmrs.Encounter> getEncounters(Patient patient,
 			Location location, Date fromDate, Date toDate,
 			Collection<Form> enteredViaForms,
-			Collection<EncounterType> encounterTypes, Collection<User> providers, boolean includeVoided)
-	{
+			Collection<EncounterType> encounterTypes, Collection<Person> providers, boolean includeVoided)
+	{ // DWE CHICA-294 Noticed this while working on CHICA-294. Changed Collection<User> to Collection<Person>
 		Collection<org.openmrs.Encounter> openMRSEncounters = super
 				.getEncounters(patient, location, fromDate, toDate,
 						enteredViaForms, encounterTypes, providers, includeVoided);
