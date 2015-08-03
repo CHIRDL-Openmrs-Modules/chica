@@ -12,7 +12,6 @@ import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
-import org.openmrs.User;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.module.chica.db.EncounterDAO;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
