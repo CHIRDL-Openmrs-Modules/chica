@@ -144,7 +144,7 @@ public class HL7SocketHandler implements Application {
 			}
 			try {
 				ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-				response = makeACK(msh);
+				response = makeACK(msh, error);
 				fillDetails(response, error);
 			}
 			catch (IOException e) {
@@ -320,75 +320,6 @@ public class HL7SocketHandler implements Application {
 		return null;
 	}
 	
-	/**
-	 * Creates an ACK message with the minimum required information from an inbound message.
-	 * Optional fields can be filled in afterwards, before the message is returned. Pleaase note
-	 * that MSH-10, the outbound message control ID, is also set using the class
-	 * <code>ca.uhn.hl7v2.util.MessageIDGenerator</code>. Also note that the ACK messages returned
-	 * is the same version as the version stated in the inbound MSH if there is a generic ACK for
-	 * that version, otherwise a version 2.4 ACK is returned. MSA-1 is set to AA by default.
-	 * 
-	 * @param inboundHeader the MSH segment if the inbound message
-	 * @throws IOException if there is a problem reading or writing the message ID file
-	 * @throws DataTypeException if there is a problem setting ACK values
-	 */
-	@SuppressWarnings("unchecked")
-	public static Message makeACK(Segment inboundHeader) throws HL7Exception, IOException {
-		if (!inboundHeader.getName().equals("MSH"))
-			throw new HL7Exception("Need an MSH segment to create a response ACK (got " + inboundHeader.getName() + ")");
-		
-		String version = "2.5";
-		
-		String ackClassName = SourceGenerator.getVersionPackageName(version) + "message.ACK";
-		
-		Message out = null;
-		try {
-			Class ackClass = Class.forName(ackClassName);
-			out = (Message) ackClass.newInstance();
-		}
-		catch (Exception e) {
-			throw new HL7Exception("Can't instantiate ACK of class " + ackClassName + ": " + e.getClass().getName());
-		}
-		Terser terser = new Terser(out);
-		
-		// populate outbound MSH using data from inbound message ...
-		Segment outHeader = (Segment) out.get("MSH");
-		fillResponseHeader(inboundHeader, outHeader);
-		
-		terser.set("/MSH-9", "ACK");
-		terser.set("/MSH-12", version);
-		terser.set("/MSA-1", "AA");
-		terser.set("/MSA-2", terser.get(inboundHeader, 10, 0, 1, 1));
-		
-		return out;
-	}
-	
-	/**
-	 * Populates certain required fields in a response message header, using information from the
-	 * corresponding inbound message. The current time is used for the message time field, and
-	 * <code>MessageIDGenerator</code> is used to create a unique message ID. Version and message
-	 * type fields are not populated.
-	 */
-	public static void fillResponseHeader(Segment inbound, Segment outbound) throws HL7Exception, IOException {
-		if (!inbound.getName().equals("MSH") || !outbound.getName().equals("MSH"))
-			throw new HL7Exception("Need MSH segments.  Got " + inbound.getName() + " and " + outbound.getName());
-		
-		// get MSH data from incoming message ...
-		String encChars = Terser.get(inbound, 2, 0, 1, 1);
-		String fieldSep = Terser.get(inbound, 1, 0, 1, 1);
-		String procID = Terser.get(inbound, 11, 0, 1, 1);
-		String sendingApp = Terser.get(inbound, 3, 0, 1, 1);
-		
-		// populate outbound MSH using data from inbound message ...
-		Terser.set(outbound, 2, 0, 1, 1, encChars);
-		Terser.set(outbound, 1, 0, 1, 1, fieldSep);
-		GregorianCalendar now = new GregorianCalendar();
-		now.setTime(new Date());
-		Terser.set(outbound, 7, 0, 1, 1, CommonTS.toHl7TSFormat(now));
-		Terser.set(outbound, 10, 0, 1, 1, MessageIDGenerator.getInstance().getNewID());
-		Terser.set(outbound, 11, 0, 1, 1, procID);
-		Terser.set(outbound, 3, 0, 1, 1, sendingApp);
-	}
 	
 	/**
 	 * @param port the port to set
@@ -397,28 +328,4 @@ public class HL7SocketHandler implements Application {
 		this.port = port;
 	}
 	
-	/**
-	 * Fills in the details of an Application Reject message, including response and error codes,
-	 * and a text error message. This is the method to override if you want to respond differently.
-	 */
-	public void fillDetails(Message ack, boolean error) throws ApplicationException {
-		try {
-			// populate MSA and ERR with generic error ...
-			if (error) {
-				Segment msa = (Segment) ack.get("MSA");
-				Terser.set(msa, 1, 0, 1, 1, "AA");
-				Terser.set(msa, 3, 0, 1, 1, "Unable to create or update patient in openmrs database.");
-			} else {
-				Segment msa = (Segment) ack.get("MSA");
-				Terser.set(msa, 1, 0, 1, 1, "AA");
-				Terser.set(msa, 3, 0, 1, 1, "Message created or updated Patient in openmrs database.");
-				// this is max length
-				
-			}
-		}
-		
-		catch (HL7Exception e) {
-			throw new ApplicationException("Error trying to create Application ACK message: " + e.getMessage());
-		}
-	}
 }
