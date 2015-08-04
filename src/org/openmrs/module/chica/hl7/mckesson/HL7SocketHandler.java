@@ -770,9 +770,20 @@ public class HL7SocketHandler extends
 				obsByConcept = new HashMap<String, Set<Obs>>();
 				patientObsMap.put(patientId, obsByConcept);
 			}
-			
+			final String SOURCE = "IU Health MRF Dump";
+			ConceptService conceptService = Context.getConceptService();
 			for (Obs currObs : allObs) {
 				String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
+
+				//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
+				if (locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG)) {
+					Concept concept = currObs.getConcept();
+					Concept mappedConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), SOURCE);
+					if (mappedConcept != null) {
+						currConceptName = mappedConcept.getName().getName();
+						currObs.setConcept(mappedConcept);
+					}
+				}
 				Set<Obs> obs = obsByConcept.get(currConceptName);
 				if (obs == null) {
 					obs = new HashSet<Obs>();
