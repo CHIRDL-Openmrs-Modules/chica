@@ -1,7 +1,5 @@
 package org.openmrs.module.chica.rule;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,10 +14,9 @@ import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
-public class getPreviousWeight implements Rule {
+public class temperatureDisplay implements Rule {
 	
 	/**
 	 * *
@@ -66,7 +63,7 @@ public class getPreviousWeight implements Rule {
 			return Result.emptyResult();
 		}
 		
-		String conceptName = "WEIGHT";
+		String conceptName = "TEMPERATURE CHICA";
 		Result ruleResults = null;
 		LogicCriteria conceptCriteria = new LogicCriteriaImpl(conceptName);
 		LogicCriteria fullCriteria = conceptCriteria;
@@ -76,65 +73,28 @@ public class getPreviousWeight implements Rule {
 			return Result.emptyResult();
 		}
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR,0);
-		calendar.set(Calendar.MINUTE,0);
-		calendar.set(Calendar.SECOND,0);
-			
-		Date today = calendar.getTime();
-		Result weightResult = null;
-		//find most recent result prior to today
-		for(Result ruleResult:ruleResults){
-			if(ruleResult.getResultDate().compareTo(today)<0){ //only look at dates before today
-				
-				if(weightResult == null){
-					weightResult=ruleResult;
-				}else if(ruleResult.getResultDate().compareTo(weightResult.getResultDate())>0){//keep track of the most recent value that is not today
-					weightResult=ruleResult;
-				}
-			}
-		}
-		
+		Result tempResult = ruleResults.get(0);
 		Patient patient = Context.getPatientService().getPatient(patientId);
-		if (patient == null||weightResult==null) {
+		if (patient == null || tempResult == null) {
 			return Result.emptyResult();
 		}
 		
-		double weight = weightResult.toNumber();
+		double temp = tempResult.toNumber();
 		Integer locationId = (Integer) parameters.get("locationId");
 		Location location = Context.getLocationService().getLocation(locationId);
 		
 		if(location != null && location.getName().equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)) {
 			// Convert to metric
-			double metricWeight = org.openmrs.module.chirdlutil.util.Util.convertUnitsToMetric(
-				weight, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
-			metricWeight = org.openmrs.module.chirdlutil.util.Util.round(metricWeight, 2);
-			Result newResult = new Result(metricWeight + " kg.");
-			newResult.setResultDate(weightResult.getResultDate());
+			double metricTemp = org.openmrs.module.chirdlutil.util.Util.convertUnitsToMetric(
+				temp, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_fAHRENHEIT);
+			metricTemp = org.openmrs.module.chirdlutil.util.Util.round(metricTemp, 1);
+			Result newResult = new Result(metricTemp + " C");
+			newResult.setResultDate(tempResult.getResultDate());
 			return newResult;
 		} else {
-			Date birthdate = patient.getBirthdate();
-			if (birthdate == null) {
-				return Result.emptyResult();
-			}
-			
-			long iPart;
-			double fPart;
-			iPart = (long) weight;
-			fPart = weight - iPart;
-			int ageMonths = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, null, Util.MONTH_ABBR);
-			if (ageMonths > 18) {
-				weight = org.openmrs.module.chirdlutil.util.Util.round(weight, 2);
-				Result newResult = new Result(weight + " lb.");
-				newResult.setResultDate(weightResult.getResultDate());
-				return newResult;
-			} else {
-				double ounces = fPart * 16;
-				int intOunces = (int) Math.round(org.openmrs.module.chirdlutil.util.Util.round(ounces, 0));
-				Result newResult = new Result(iPart + " lb. " + intOunces + " oz.");
-				newResult.setResultDate(weightResult.getResultDate());
-				return new Result(newResult);
-			}
+			Result newResult = new Result(temp + " F");
+			newResult.setResultDate(tempResult.getResultDate());
+			return newResult;
 		}
 	}
 }

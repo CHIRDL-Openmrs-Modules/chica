@@ -5,21 +5,21 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openmrs.Location;
-import org.openmrs.Patient;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
-import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class heightUnits implements Rule
 {
-	private LogicService logicService = Context.getLogicService();
+	private static final String IN = "in.";
+	private static final String CM = "cm.";
 
 	/**
 	 * *
@@ -70,10 +70,13 @@ public class heightUnits implements Rule
 		Location location = locationService.getLocation(locationId);
 		
 		if(location!= null){
-			//if this is Pecar, just return "cm." or "in." base on age
-			if(location.getName().equalsIgnoreCase("PEPS")){
+			//if this is Pecar or IU Health, just return "cm." or "in." base on age
+			String locationName = location.getName(); 
+			if(locationName.equalsIgnoreCase("PEPS")){
 				return cmOrInchesResult(parameters);
-			}else{
+			} else if (locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)) {
+				return new Result(CM);
+			} else {
 				//return "in."
 				return inchesResult();
 			}
@@ -98,10 +101,10 @@ public class heightUnits implements Rule
 
 					if (ageYears < 3)
 					{
-						units = "cm.";
+						units = CM;
 					} else
 					{
-						units = "in.";
+						units = IN;
 					}
 				}
 				return new Result(units);
@@ -111,6 +114,6 @@ public class heightUnits implements Rule
 	}
 	
 	private Result inchesResult(){
-		return new Result("in.");
+		return new Result(IN);
 	}
 }
