@@ -867,7 +867,7 @@ public class HL7SocketHandler extends
 				public int compare(PersonName n1, PersonName n2) {
 					Date date1 = n1.getDateCreated();
 					Date date2 = n2.getDateCreated();
-					return date1.compareTo(date2) > 0 ? 0 : 1;
+					return date2.compareTo(date1);
 				}
 			});
 
