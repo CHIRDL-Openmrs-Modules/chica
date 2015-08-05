@@ -105,7 +105,7 @@ public class ExportPowerNote implements ProcessStateAction {
 		Result result = dssService.runRule(patient, rule);
 		String note = result.toString();
 		String dataTypeAbbreviation = "TX";
-		String conceptName = "Power Note-CHICA";
+		String conceptName = "112358";//Code for Power Note-CHICA
 		String resultStatusValue = "F";
 		
 		String message = createOutgoingHL7(encounterId, note, dataTypeAbbreviation, conceptName, resultStatusValue);
