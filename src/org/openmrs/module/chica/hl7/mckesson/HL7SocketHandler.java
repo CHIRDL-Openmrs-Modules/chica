@@ -70,7 +70,6 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
-import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
@@ -940,7 +939,7 @@ public class HL7SocketHandler extends
 				public int compare(PersonName n1, PersonName n2) {
 					Date date1 = n1.getDateCreated();
 					Date date2 = n2.getDateCreated();
-					return date1.compareTo(date2) > 0 ? 0 : 1;
+					return date2.compareTo(date1);
 				}
 			});
 
