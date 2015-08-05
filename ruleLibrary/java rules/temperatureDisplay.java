@@ -86,7 +86,7 @@ public class temperatureDisplay implements Rule {
 		if(location != null && location.getName().equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)) {
 			// Convert to metric
 			double metricTemp = org.openmrs.module.chirdlutil.util.Util.convertUnitsToMetric(
-				temp, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_fAHRENHEIT);
+				temp, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_FAHRENHEIT);
 			metricTemp = org.openmrs.module.chirdlutil.util.Util.round(metricTemp, 1);
 			Result newResult = new Result(metricTemp + " C");
 			newResult.setResultDate(tempResult.getResultDate());

@@ -234,7 +234,7 @@ public class physicianNotePhysicalExam implements Rule {
     		noteBuffer.append(roundedResult.toString());
     		noteBuffer.append(" deg. F/");
     		double temp = result.toNumber();
-    		double metricTemp = Util.convertUnitsToMetric(temp, Util.MEASUREMENT_fAHRENHEIT);
+    		double metricTemp = Util.convertUnitsToMetric(temp, Util.MEASUREMENT_FAHRENHEIT);
     		metricTemp = Util.round(metricTemp, 1);
     		noteBuffer.append(metricTemp);
     		noteBuffer.append(" deg. C\n");
