@@ -70,6 +70,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
+import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
@@ -517,6 +518,7 @@ public class HL7SocketHandler extends
 		AdministrationService adminService = Context.getAdministrationService();
 		parameters.put(PROCESS_HL7_CHECKIN_START, new java.util.Date());
 		boolean filterDuplicateCheckin = false;
+		boolean processMessageError = false;
 		Context.openSession();
 		String filterDuplicateRegistrationStr = adminService.getGlobalProperty(GLOBAL_PROPERTY_FILTER_ON_PRIOR_CHECKIN);
 		if (filterDuplicateRegistrationStr != null && filterDuplicateRegistrationStr.equalsIgnoreCase(TRUE)){
@@ -593,16 +595,19 @@ public class HL7SocketHandler extends
 						}
 					}
 				}
+				
+				
 				try {
-					//Return an ACK response instead of defaulting to the HAPI error response.
+					processMessageError  = true;
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-					ackMessage = makeACK(inboundHeader);
-				} catch (Exception e2) {
-					logger.error("Error sending an ack response after a parsing exception. " +
-							e2.getMessage());
-					logger.error(org.openmrs.module.chirdlutil.util.Util
-							.getStackTrace(e2));
-					ackMessage = originalMessage;
+					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
+				}
+				catch (IOException e1) {
+					logger.error("Error creating ACK message." + e.getMessage());
+				}catch (HL7Exception e1) {
+					logger.error("Parser error constructing ACK.", e);
+				}catch (Exception e1){
+					logger.error("Exception processing inbound HL7 message.", e);
 				}
 				return ackMessage;
 			}
@@ -616,6 +621,7 @@ public class HL7SocketHandler extends
 			logger.error(org.openmrs.module.chirdlutil.util.Util
 					.getStackTrace(e));
 		}
+		
 
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
 			String printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
@@ -628,11 +634,16 @@ public class HL7SocketHandler extends
 					(filterDuplicateCheckin && priorCheckinExists(message))) {
 
 				try {
+					processMessageError = false;
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-					ackMessage = makeACK(inboundHeader);
-				} catch (Exception e) {
-					log.error("Exception creating ACK for registration.", e);
-					return originalMessage;
+					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
+				}
+				catch (IOException e) {
+					logger.error("Error creating ACK message." + e.getMessage());
+				}catch (HL7Exception e) {
+					logger.error("Parser error constructing ACK.", e);
+				}catch (Exception e){
+					logger.error("Exception processing inbound HL7 message.", e);
 				}
 				return ackMessage;
 			}

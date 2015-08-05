@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -33,15 +32,9 @@ import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.sourcegen.SourceGenerator;
-import ca.uhn.hl7v2.util.MessageIDGenerator;
-import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
@@ -124,9 +117,10 @@ public class HL7SocketHandler implements Application {
 	public Message processMessage(Message message) throws ApplicationException {
 		Message response = null;
 		AdministrationService adminService = Context.getAdministrationService();
+		boolean error = false;
 		try {
 			Context.openSession();
-			boolean error = false;
+			
 			if (canProcess(message)) {
 				String incomingMessageString = "";
 				
@@ -144,17 +138,14 @@ public class HL7SocketHandler implements Application {
 			}
 			try {
 				ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-				response = makeACK(msh, error);
-				fillDetails(response, error);
+				response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
 			}
 			catch (IOException e) {
 				logger.error("Error creating ACK message." + e.getMessage());
-			}
-			catch (ApplicationException e) {
-				logger.error("Error filling in the details of an Application Response or reject message:" + e);
-			}
-			catch (HL7Exception e) {
+			}catch (HL7Exception e) {
 				logger.error("Parser error constructing ACK.", e);
+			}catch (Exception e){
+				logger.error("Exception processing inbound vitals HL7 message.", e);
 			}
 			
 			Context.clearSession();
@@ -176,8 +167,9 @@ public class HL7SocketHandler implements Application {
 		finally {
 			if (response == null) {
 				try {
+					error = true;
 					ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-					response = makeACK(msh);
+					response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
 				}
 				catch (Exception e) {
 					logger.error("Could not send acknowledgement", e);
