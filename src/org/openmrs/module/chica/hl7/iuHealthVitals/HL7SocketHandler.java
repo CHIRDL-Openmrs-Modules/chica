@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -25,9 +26,17 @@ import org.openmrs.hl7.HL7Constants;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
+import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -53,6 +62,8 @@ public class HL7SocketHandler implements Application {
 	
 	protected static final Logger logger = Logger.getLogger("SocketHandlerLogger");
 	
+	private static final String STATE_PROCESS_VITALS = "Processed Vitals HL7";
+
 	private Integer port;
 	
 	private String host;
@@ -122,6 +133,7 @@ public class HL7SocketHandler implements Application {
 	}
 	
 	public Message processMessage(Message message) throws ApplicationException {
+		Date startTime = Calendar.getInstance().getTime();
 		Message response = null;
 		AdministrationService adminService = Context.getAdministrationService();
 		try {
@@ -140,7 +152,7 @@ public class HL7SocketHandler implements Application {
 					System.exit(0);
 				}
 				
-				error = processMessageSegments(message, incomingMessageString);
+				error = processMessageSegments(message, incomingMessageString,startTime);
 			}
 			try {
 				ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
@@ -189,11 +201,18 @@ public class HL7SocketHandler implements Application {
 		return response;
 	}
 	
-	private boolean processMessageSegments(Message message, String incomingMessageString) throws HL7Exception {
+	private boolean processMessageSegments(Message message, String incomingMessageString,Date startTime) throws HL7Exception {
 		
+		PatientState patientState = null;
 		String newMessageString = incomingMessageString;
 		final String SOURCE = "IU Health Vitals";
-		
+		Patient patient = null;
+		Integer locationId = null;
+		Integer locationTagId = null;
+		Integer sessionId = null;
+		State state = null;
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+
 		//convert hl7 to version 2.3 so it can be parsed like vitals dump messages
 		newMessageString = HL7ToObs.replaceVersion(newMessageString);
 		try {
@@ -223,11 +242,33 @@ public class HL7SocketHandler implements Application {
 			
 			PatientService patientService = Context.getPatientService();
 			List<Patient> patients = patientService.getPatientsByIdentifier(mrn, false);
-			Patient patient = null;
 			if (patients != null && patients.size() > 0) {
 				patient = patients.get(0);
 			}
 			
+			state = chirdlutilbackportsService.getStateByName(STATE_PROCESS_VITALS);
+			
+			org.openmrs.module.chica.hibernateBeans.Encounter encounter = getRecentEncounter(patient);
+			
+			if (encounter != null) {
+				Location location = encounter.getLocation();
+				if (location != null) {
+					locationId = location.getLocationId();
+					locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
+				}
+				
+				List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(encounter.getEncounterId());
+				if(sessions != null&&sessions.size()>0){
+					Session session = sessions.get(0);
+					sessionId = session.getSessionId();
+				}
+				
+				patientState = chirdlutilbackportsService.addPatientState(patient, state,
+					sessionId, locationTagId, locationId, null);
+				patientState.setStartTime(startTime);
+				chirdlutilbackportsService.updatePatientState(patientState);
+			}
+
 			ObsService obsService = Context.getObsService();
 			ArrayList<Obs> obsList = parseHL7ToObs(newMessageString, patient);
 			ConceptService conceptService = Context.getConceptService();
@@ -271,6 +312,7 @@ public class HL7SocketHandler implements Application {
 					LocationService locationService = Context.getLocationService();
 					Location location = locationService.getLocation("RIIUMG");
 					obs.setLocation(location);
+					obs.setEncounter(encounter);
 					obsService.saveObs(obs, null);
 				}
 			}
@@ -284,7 +326,32 @@ public class HL7SocketHandler implements Application {
 			logger.error("RuntimeException processing ORU_RO1", e);
 			error = true;
 		}
+		
+		if (patientState != null) {
+			StateManager.endState(patientState);
+			StateAction stateAction = state.getAction();
+			
+			BaseStateActionHandler.changeState(patient, sessionId, state, stateAction, null, locationTagId, locationId);
+		} else {
+			logger.error("Patient State is null for patient: " + patient);
+		}
 		return error;
+	}
+	
+	private org.openmrs.module.chica.hibernateBeans.Encounter getRecentEncounter(Patient patient){
+		EncounterService encounterService = Context.getService(EncounterService.class);
+    	// Get last encounter with last day
+		Calendar startCal = Calendar.getInstance();
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 2);
+		Date startDate = startCal.getTime();
+		Date endDate = Calendar.getInstance().getTime();
+		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startDate, endDate, null, 
+			null, null, false);
+		if (encounters == null || encounters.size() == 0) {
+			return null;
+		} else {
+			return (org.openmrs.module.chica.hibernateBeans.Encounter) encounters.get(0);
+		}
 	}
 	
 	private ArrayList<Obs> parseHL7ToObs(String messageString, Patient patient) {

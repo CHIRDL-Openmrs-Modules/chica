@@ -179,31 +179,6 @@ public class HL7SocketHandler extends
 	}
 
 	/**
-	 * Gets the location tag id from the encounter.
-	 * @param encounter
-	 * @return
-	 */
-	private Integer getLocationTagId(Encounter encounter) {
-		if (encounter != null) {
-			// lookup location tag id that matches printer location
-			if (encounter.getPrinterLocation() != null) {
-				Location location = encounter.getLocation();
-				Set<LocationTag> tags = location.getTags();
-
-				if (tags != null) {
-					for (LocationTag tag : tags) {
-						if (tag.getName().equalsIgnoreCase(
-								encounter.getPrinterLocation())) {
-							return tag.getLocationTagId();
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Gets the location id from encounter.
 	 * @param encounter
 	 * @return
@@ -805,7 +780,7 @@ public class HL7SocketHandler extends
 				.getStateByName(STATE_CLINIC_REGISTRATION);
 		PatientState patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		patientState.setStartTime(chicaEncounter.getEncounterDatetime());
 		patientState.setEndTime(chicaEncounter.getEncounterDatetime());
@@ -815,7 +790,7 @@ public class HL7SocketHandler extends
 				.getStateByName(STATE_HL7_CHECKIN);
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date processCheckinHL7Start = (Date) parameters
 				.get(PROCESS_HL7_CHECKIN_START);
@@ -828,7 +803,7 @@ public class HL7SocketHandler extends
 		state = chirdlutilbackportsService.getStateByName(STATE_QUERY_ALIAS);
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date queryKiteAliasStart = (Date) parameters.get(PARAMETER_QUERY_ALIAS_START);
 		if (queryKiteAliasStart == null){
