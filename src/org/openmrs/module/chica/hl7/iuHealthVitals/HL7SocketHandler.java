@@ -219,7 +219,7 @@ public class HL7SocketHandler implements Application {
 				mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
 			}
 			
-			writeMessageToFile(mrn, newMessageString);
+			writeMessageToFile(mrn, incomingMessageString);
 			
 			PatientService patientService = Context.getPatientService();
 			List<Patient> patients = patientService.getPatientsByIdentifier(mrn, false);
@@ -229,7 +229,7 @@ public class HL7SocketHandler implements Application {
 			}
 			
 			ObsService obsService = Context.getObsService();
-			ArrayList<Obs> obsList = parseHL7ToObs(incomingMessageString, patient);
+			ArrayList<Obs> obsList = parseHL7ToObs(newMessageString, patient);
 			ConceptService conceptService = Context.getConceptService();
 			
 			for (Obs obs : obsList) {
