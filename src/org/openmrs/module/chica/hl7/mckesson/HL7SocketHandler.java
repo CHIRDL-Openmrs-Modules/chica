@@ -569,7 +569,6 @@ public class HL7SocketHandler extends
 						}
 					}
 				}
-				
 				try {
 					processMessageError  = true;
 					//Return an ACK response instead of defaulting to the HAPI error response.
