@@ -84,7 +84,7 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                <c:out value="${Temperature}"/>&nbsp;F&nbsp;(<c:out value="${Temperature_Method}"/>)
+                                <c:out value="${Temperature}"/>&nbsp;&nbsp;(<c:out value="${Temperature_Method}"/>)
                             </c:otherwise>
                         </c:choose>
                     </div>

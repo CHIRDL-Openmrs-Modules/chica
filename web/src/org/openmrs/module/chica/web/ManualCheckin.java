@@ -37,6 +37,7 @@ import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientIdentifierException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.UserService;
@@ -53,7 +54,7 @@ import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
-import org.openmrs.patient.impl.LuhnIdentifierValidator;
+import org.openmrs.validator.PatientIdentifierValidator;
 
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
@@ -73,7 +74,6 @@ public class ManualCheckin
 		
 		PatientService patientService = Context.getPatientService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
 		
 		//set stations
 		User user = Context.getAuthenticatedUser();
@@ -99,9 +99,14 @@ public class ManualCheckin
 		}
 		
 		boolean valid = false;
-		
+		PatientIdentifierType identifierType = patientService
+				.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 		if (mrn != null && !mrn.isEmpty()){
-			valid = luhn.isValid(mrn);
+			try {
+				PatientIdentifierValidator.validateIdentifier(mrn, identifierType);
+				valid = true;
+			}  catch(PatientIdentifierException e) {
+			}
 		}
 		
 		if (!valid) {
@@ -114,8 +119,6 @@ public class ManualCheckin
 		// see if there is a patient that already has the mrn
 		if (mrn != null)
 		{
-			PatientIdentifierType identifierType = patientService
-					.getPatientIdentifierTypeByName("MRN_OTHER");
 			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 			identifierTypes.add(identifierType);
 			List<Patient> patients = patientService.getPatients(null, mrn,
@@ -435,10 +438,10 @@ public class ManualCheckin
 		}
 
 		String mrn = request.getParameter("manualCheckinMrn");
+		PatientIdentifierType identifierType = patientService
+				.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 		if (mrn != null)
 		{
-			PatientIdentifierType identifierType = patientService
-					.getPatientIdentifierTypeByName("MRN_OTHER");
 			PatientIdentifier pi = new PatientIdentifier();
 			mrn = Util.removeLeadingZeros(mrn);
 			if (!mrn.contains("-") && mrn.length() > 1) {
@@ -502,8 +505,13 @@ public class ManualCheckin
 		newEncounter.setEncounterType(encType);
 		
 		//checkin
-		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
-		boolean validIdentifier = luhn.isValid(checkinPatient.getPatientIdentifier().getIdentifier());
+		boolean validIdentifier = true;
+		try {
+			PatientIdentifierValidator.validateIdentifier(checkinPatient.getPatientIdentifier().getIdentifier(), identifierType);
+		}  catch(PatientIdentifierException e) {
+			validIdentifier = false;
+		}
+		
 		boolean checkinSuccess = false;
 		HashMap<String,Object> parameters = new HashMap<String,Object>();
 		if (validIdentifier){

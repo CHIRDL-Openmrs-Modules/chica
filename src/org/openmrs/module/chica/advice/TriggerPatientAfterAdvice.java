@@ -44,7 +44,6 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					
 					ThreadManager threadManager = ThreadManager.getInstance();
 					Location location = encounter.getLocation();
-					
 					//spawn the checkin thread
 					threadManager.execute(new CheckinPatient(encounter), location.getLocationId());
 					

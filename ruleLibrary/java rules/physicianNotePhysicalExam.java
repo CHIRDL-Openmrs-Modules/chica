@@ -37,6 +37,7 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.dss.service.DssService;
 
 
@@ -123,7 +124,12 @@ public class physicianNotePhysicalExam implements Rule {
 			rule.setParameters(map);
 			Result roundedResult = dssService.runRule(patient, rule);
     		noteBuffer.append(roundedResult.toString());
-    		noteBuffer.append(" in. (");
+    		noteBuffer.append(" in./");
+    		double height = heightResult.toNumber();
+    		double metricHeight = Util.convertUnitsToMetric(height, Util.MEASUREMENT_IN);
+    		metricHeight = Util.round(metricHeight, 1);
+    		noteBuffer.append(metricHeight);
+    		noteBuffer.append(" cm. (");
     		rule.setTokenName("percentile");
     		Result percentile = dssService.runRule(patient, rule);
     		noteBuffer.append(percentile.toString());
@@ -226,7 +232,12 @@ public class physicianNotePhysicalExam implements Rule {
 			rule.setParameters(map);
     		Result roundedResult = dssService.runRule(patient, rule);
     		noteBuffer.append(roundedResult.toString());
-    		noteBuffer.append(" deg. F\n");
+    		noteBuffer.append(" deg. F/");
+    		double temp = result.toNumber();
+    		double metricTemp = Util.convertUnitsToMetric(temp, Util.MEASUREMENT_FAHRENHEIT);
+    		metricTemp = Util.round(metricTemp, 1);
+    		noteBuffer.append(metricTemp);
+    		noteBuffer.append(" deg. C\n");
     	}
     	
     	result = context.read(patientId, obsDataSource, 

@@ -8,9 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.PatientIdentifierException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.patient.impl.LuhnIdentifierValidator;
+import org.openmrs.validator.PatientIdentifierValidator;
 
 public class ManualCheckinSSNMRN {
 	
@@ -33,7 +36,6 @@ public class ManualCheckinSSNMRN {
 		String mrn = request.getParameter(PARAM_MRN);
 		mrn = Util.removeLeadingZeros(mrn);
 		
-		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
 		boolean valid = false;
 		if (mrn != null && !mrn.contains("-") && mrn.length() > 1) {
 			mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
@@ -41,7 +43,13 @@ public class ManualCheckinSSNMRN {
 		
 		try {
 			if (mrn != null && mrn.length() > 0 && !mrn.endsWith("-")) {
-				valid = luhn.isValid(mrn);
+				PatientIdentifierType mrnIdent = 
+						Context.getPatientService().getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
+				try {
+					PatientIdentifierValidator.validateIdentifier(mrn, mrnIdent);
+					valid = true;
+				}  catch(PatientIdentifierException e) {
+				}
 			}
 		}
 		catch (Exception e) {

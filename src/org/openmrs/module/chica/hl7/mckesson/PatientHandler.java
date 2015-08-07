@@ -20,7 +20,6 @@ import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.patient.UnallowedIdentifierException;
 
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v25.segment.PV1;
 
 
 public class PatientHandler extends org.openmrs.module.sockethl7listener.PatientHandler

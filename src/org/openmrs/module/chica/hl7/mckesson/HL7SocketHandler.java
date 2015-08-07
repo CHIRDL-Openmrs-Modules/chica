@@ -179,31 +179,6 @@ public class HL7SocketHandler extends
 	}
 
 	/**
-	 * Gets the location tag id from the encounter.
-	 * @param encounter
-	 * @return
-	 */
-	private Integer getLocationTagId(Encounter encounter) {
-		if (encounter != null) {
-			// lookup location tag id that matches printer location
-			if (encounter.getPrinterLocation() != null) {
-				Location location = encounter.getLocation();
-				Set<LocationTag> tags = location.getTags();
-
-				if (tags != null) {
-					for (LocationTag tag : tags) {
-						if (tag.getName().equalsIgnoreCase(
-								encounter.getPrinterLocation())) {
-							return tag.getLocationTagId();
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Gets the location id from encounter.
 	 * @param encounter
 	 * @return
@@ -595,18 +570,17 @@ public class HL7SocketHandler extends
 					}
 				}
 				
-				
 				try {
 					processMessageError  = true;
+					//Return an ACK response instead of defaulting to the HAPI error response.
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
 					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
-				}
-				catch (IOException e1) {
-					logger.error("Error creating ACK message." + e.getMessage());
-				}catch (HL7Exception e1) {
-					logger.error("Parser error constructing ACK.", e);
-				}catch (Exception e1){
-					logger.error("Exception processing inbound HL7 message.", e);
+				} catch (Exception e2) {
+					logger.error("Error sending an ack response after a parsing exception. " +
+							e2.getMessage());
+					logger.error(org.openmrs.module.chirdlutil.util.Util
+							.getStackTrace(e2));
+					ackMessage = originalMessage;
 				}
 				return ackMessage;
 			}
@@ -620,7 +594,6 @@ public class HL7SocketHandler extends
 			logger.error(org.openmrs.module.chirdlutil.util.Util
 					.getStackTrace(e));
 		}
-		
 
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
 			String printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
@@ -636,13 +609,9 @@ public class HL7SocketHandler extends
 					processMessageError = false;
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
 					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
-				}
-				catch (IOException e) {
-					logger.error("Error creating ACK message." + e.getMessage());
-				}catch (HL7Exception e) {
-					logger.error("Parser error constructing ACK.", e);
-				}catch (Exception e){
-					logger.error("Exception processing inbound HL7 message.", e);
+				} catch (Exception e) {
+					log.error("Exception creating ACK for registration.", e);
+					return originalMessage;
 				}
 				return ackMessage;
 			}
@@ -815,7 +784,7 @@ public class HL7SocketHandler extends
 				.getStateByName(STATE_CLINIC_REGISTRATION);
 		PatientState patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		patientState.setStartTime(chicaEncounter.getEncounterDatetime());
 		patientState.setEndTime(chicaEncounter.getEncounterDatetime());
@@ -825,7 +794,7 @@ public class HL7SocketHandler extends
 				.getStateByName(STATE_HL7_CHECKIN);
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date processCheckinHL7Start = (Date) parameters
 				.get(PROCESS_HL7_CHECKIN_START);
@@ -838,7 +807,7 @@ public class HL7SocketHandler extends
 		state = chirdlutilbackportsService.getStateByName(STATE_QUERY_ALIAS);
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date queryKiteAliasStart = (Date) parameters.get(PARAMETER_QUERY_ALIAS_START);
 		if (queryKiteAliasStart == null){
