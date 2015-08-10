@@ -10,6 +10,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/externalFormLoader.js"></script>
+<title>CHICA ${formName}</title>
 </head>
 <body>
 
@@ -27,63 +28,63 @@
 	           </c:choose>
                <c:choose>
                    <c:when test="${missingUser eq 'true'}">
-                       <div><p>No user was provided for authentication.</p></div>
+                       <div><p>No CHICA user was provided for authentication.</p></div>
                    </c:when>
                    <c:when test="${missingPassword eq 'true'}">
-                       <div><p>No password was provided for authentication.</p></div>
+                       <div><p>No CHICA password was provided for authentication.</p></div>
                    </c:when>
                    <c:when test="${failedAuthentication eq 'true'}">
-                       <div><p>Invalid username/password provided.</p></div>
+                       <div><p>Invalid username/password provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingForm eq 'true'}">
-                       <div><p>A valid formName parameter was not provided.</p></div>
+                       <div><p>A valid formName parameter was not provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${invalidForm eq 'true'}">
-                       <div><p>A form with the name ${formName} cannot be found in the system.</p></div> 
+                       <div><p>A form with the name ${formName} cannot be found in the CHICA system.</p></div> 
                    </c:when>
                    <c:when test="${missingFormPage eq 'true'}">
-                       <div><p>A valid formPage parameter was not provided.</p></div>
+                       <div><p>A valid formPage parameter was not provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingMRN eq 'true'}">
-                       <div><p>A valid mrn parameter was not provided.</p></div>
+                       <div><p>A valid mrn parameter was not provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${invalidPatient eq 'true'}">
-                       <div><p>A patient with MRN ${mrn} cannot be found in the system.</p></div>
+                       <div><p>A patient with MRN ${mrn} cannot be found in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingEncounter eq 'true'}">
-                       <div><p>A valid encounter within the past 48 hours cannot be found for patient ${mrn}.</p></div>
+                       <div><p>A valid encounter within the past 48 hours cannot be found for patient ${mrn} in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingFormInstance eq 'true'}">
-                       <div><p>A valid instance of the form ${formname} cannot be found for patient ${mrn}.</p></div>
+                       <div><p>The form ${formname} does not exist or has already been submitted for patient ${mrn} in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingStartState eq 'true'}">
-                       <div><p>A valid startState parameter was not provided.</p></div>
+                       <div><p>A valid startState parameter was not provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingEndState eq 'true'}">
-                       <div><p>A valid endState parameter was not provided.</p></div>
+                       <div><p>A valid endState parameter was not provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${invalidStartState eq 'true'}">
-                       <div><p>A start state with name ${startState} cannot be found in the system.</p></div>
+                       <div><p>A start state with name ${startState} cannot be found in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${invalidEndState eq 'true'}">
-                       <div><p>An end state with name ${endState} cannot be found in the system.</p></div>
+                       <div><p>An end state with name ${endState} cannot be found in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingProviderId eq 'true'}">
-                       <div><p>A valid providerId parameter was not provided.</p></div>
+                       <div><p>A valid providerId parameter was not provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${invalidProviderId eq 'true'}">
-                       <div><p>A provider with providerId ${providerId} cannot be found in the system.</p></div>
+                       <div><p>A provider with providerId ${providerId} cannot be found in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingVendor eq 'true'}">
-                       <div><p>A valid vendor parameter was not provided.</p></div>
+                       <div><p>A valid vendor parameter was not provided to the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${invalidVendor eq 'true'}">
-                       <div><p>A vendor with name ${vendor} cannot be found in the system.</p></div>
+                       <div><p>A vendor with name ${vendor} cannot be found in the CHICA system.</p></div>
                    </c:when>
                </c:choose>
 	        </c:when>
 	        <c:otherwise>
-	           <div><p>Loading form ${formName} for ${mrn}.  Please wait...</p></div>
+	           <div><p>Loading ${formName} CHICA form for ${mrn}.  Please wait...</p></div>
 	        </c:otherwise>
         </c:choose>
         <br/>

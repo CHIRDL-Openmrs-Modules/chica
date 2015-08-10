@@ -1,32 +1,22 @@
+
 package org.openmrs.module.chica.rule;
 
-import java.text.SimpleDateFormat;
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
-import org.openmrs.ConceptName;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
-import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.LogicException;
-import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
-import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.ImmunizationForecast;
 import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chica.ImmunizationPrevious;
 import org.openmrs.module.chica.ImmunizationQueryOutput;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 
 public class LookupVaccineGiven implements Rule
 {
@@ -84,45 +74,39 @@ public class LookupVaccineGiven implements Rule
 		
 			int doses= 0;
 			String shortName = null;
+			String vaccineName = null;
+			HashMap<String, String> map = this.setupVISNameLookup();
 			
 			if (parameters != null){
 				
 				shortName = (String) parameters.get("param1");
-				if (shortName == null){
-					return new Result(0);
-				}
-			
-				HashMap<String, String> map = this.setupVISNameLookup();
-				String vaccineName = map.get(shortName);
-				
-				if (vaccineName == null){
-					return new Result(0);
+				if (shortName == null || (vaccineName = map.get(shortName) ) == null ){
+					return Result.emptyResult();
 				}
 				
 				ImmunizationQueryOutput immunizations = 
 					ImmunizationForecastLookup.getImmunizationList(patientId);
 				
 				if(immunizations != null){
-					//patient has immunization records
+					//patient has immunization records in list
 					HashMap<String,HashMap<Integer,ImmunizationPrevious>> prevImmunizations = 
 							immunizations.getImmunizationPrevious();	
-					if (prevImmunizations == null){
-						//Patient was matched,received a VXR, but no historical immunizations.
-						// (forcast only)
-						return new Result(0);
-					}
 					
-					HashMap<Integer,ImmunizationPrevious> vaccineDoses = prevImmunizations.get(vaccineName);
-					if(vaccineDoses != null ){
-							log.info("HPV Study: patient: # " + patientId + shortName 
-									+ " has had doses = " + vaccineDoses.size());
+					if (prevImmunizations != null){
+						HashMap<Integer,ImmunizationPrevious> vaccineDoses = prevImmunizations.get(vaccineName);
+						if(vaccineDoses != null ){
+							log.info("HPV Study: patient: # " + patientId + " , Vaccine: " + shortName 
+									+ " , doses = " + vaccineDoses.size());
 							 return new Result(vaccineDoses.size());
+						}
 					}
-						
+					log.info("HPV Study: patient: # " + patientId + " , Vaccine: " + shortName 
+									+ " , doses =  0") ;
+					return new Result(0);
 					
 				}
 		}
-		log.info("HPV Study: patient " + patientId + " has no immunization records.");
+		log.info("HPV Study: No records from CHIRP for patient id = " + patientId  );
 		return  Result.emptyResult();
 			
 	}
