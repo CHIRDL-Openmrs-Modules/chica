@@ -350,6 +350,12 @@
         <description>Directory to store IU Health Vitals files.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.vitalsDelay</property>
+        <defaultValue>5</defaultValue>
+        <description>Number of seconds to wait for IU Health vitals before creating PWS
+        </description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

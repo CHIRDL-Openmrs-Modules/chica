@@ -201,6 +201,54 @@ public class HL7SocketHandler implements Application {
 		return response;
 	}
 	
+	/**
+	 * This method is synchronized and static to make sure that the state checking happens
+	 * serially instead of concurrently
+	 * 
+	 * @param startTime
+	 * @param patient
+	 * @param state
+	 * @param sessionId
+	 * @param locationTagId
+	 * @param locationId
+	 * @param encounterId
+	 * @return
+	 */
+	private static synchronized PatientState checkProcessVitalsState(Date startTime, Patient patient, State state,
+	                                                                 Integer sessionId, Integer locationTagId,
+	                                                                 Integer locationId,Integer encounterId) {
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		PatientState patientState = null;
+		
+		//get patient states for the encounter and state
+		List<PatientState> patientStates = chirdlutilbackportsService.getPatientStateByEncounterState(encounterId, state.getStateId());
+		
+		if(patientStates != null&&patientStates.size()>0){
+			
+			patientState = patientStates.get(0);
+			
+			if(patientState.getEndTime() != null){
+				//open a vitals state since no open states exist
+				patientState = chirdlutilbackportsService.addPatientState(patient, state, sessionId, locationTagId,
+				    locationId, null);
+				patientState.setStartTime(startTime);
+				chirdlutilbackportsService.updatePatientState(patientState);
+			}else{
+				//a vitals state is still processing
+				return null;
+			}
+		}else{
+			//open a processing vitals state since none exist for this encounter
+			patientState = chirdlutilbackportsService.addPatientState(patient, state, sessionId, locationTagId,
+			    locationId, null);
+			patientState.setStartTime(startTime);
+			chirdlutilbackportsService.updatePatientState(patientState);
+		}
+		
+		
+		return patientState;
+	}
+	
 	private boolean processMessageSegments(Message message, String incomingMessageString,Date startTime) throws HL7Exception {
 		
 		PatientState patientState = null;
@@ -212,7 +260,8 @@ public class HL7SocketHandler implements Application {
 		Integer sessionId = null;
 		State state = null;
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-
+		AdministrationService adminService = Context.getAdministrationService();
+		
 		//convert hl7 to version 2.3 so it can be parsed like vitals dump messages
 		newMessageString = HL7ToObs.replaceVersion(newMessageString);
 		try {
@@ -263,10 +312,8 @@ public class HL7SocketHandler implements Application {
 					sessionId = session.getSessionId();
 				}
 				
-				patientState = chirdlutilbackportsService.addPatientState(patient, state,
-					sessionId, locationTagId, locationId, null);
-				patientState.setStartTime(startTime);
-				chirdlutilbackportsService.updatePatientState(patientState);
+				patientState = checkProcessVitalsState(startTime, patient, state, sessionId, locationTagId, locationId,
+				    encounter.getEncounterId());
 			}
 
 			ObsService obsService = Context.getObsService();
@@ -327,7 +374,31 @@ public class HL7SocketHandler implements Application {
 			error = true;
 		}
 		
+		//If a new process vitals state was created, wait 
+		//for a certain number of seconds to close the state
+		//and switch to the next state to create the PWS.
+		//This helps avoid making multiple PWSs
 		if (patientState != null) {
+			
+			String vitalsDelay =  adminService.getGlobalProperty("chica.vitalsDelay");
+			
+			if (vitalsDelay != null) {
+				Integer timeInSeconds = null;
+				try {
+					timeInSeconds = Integer.parseInt(vitalsDelay);
+					long millis = timeInSeconds * 1000;
+					try {
+						Thread.sleep(millis);
+					}
+					catch (InterruptedException e) {
+						logger.error("Error in thread sleep", e);
+					}
+				}
+				catch (NumberFormatException e1) {
+					logger.error("Could not parse chica.vitalsDelay: " + vitalsDelay, e1);
+				}
+				
+			}
 			StateManager.endState(patientState);
 			StateAction stateAction = state.getAction();
 			
