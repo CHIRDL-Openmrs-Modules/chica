@@ -16,7 +16,6 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -77,7 +76,6 @@ import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.openmrs.util.OpenmrsConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
@@ -487,11 +485,12 @@ public class HL7SocketHandler extends
 	 */
 	@Override
 	public Message processMessage(Message message,
-			HashMap<String, Object> parameters) throws ApplicationException {
+			HashMap<String, Object> parameters)  {
 		
 		AdministrationService adminService = Context.getAdministrationService();
 		parameters.put(PROCESS_HL7_CHECKIN_START, new java.util.Date());
 		boolean filterDuplicateCheckin = false;
+		boolean processMessageError = false;
 		Context.openSession();
 		String filterDuplicateRegistrationStr = adminService.getGlobalProperty(GLOBAL_PROPERTY_FILTER_ON_PRIOR_CHECKIN);
 		if (filterDuplicateRegistrationStr != null && filterDuplicateRegistrationStr.equalsIgnoreCase(TRUE)){
@@ -569,9 +568,10 @@ public class HL7SocketHandler extends
 					}
 				}
 				try {
+					processMessageError  = true;
 					//Return an ACK response instead of defaulting to the HAPI error response.
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-					ackMessage = makeACK(inboundHeader);
+					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
 				} catch (Exception e2) {
 					logger.error("Error sending an ack response after a parsing exception. " +
 							e2.getMessage());
@@ -603,8 +603,9 @@ public class HL7SocketHandler extends
 					(filterDuplicateCheckin && priorCheckinExists(message))) {
 
 				try {
+					processMessageError = false;
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-					ackMessage = makeACK(inboundHeader);
+					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
 				} catch (Exception e) {
 					log.error("Exception creating ACK for registration.", e);
 					return originalMessage;

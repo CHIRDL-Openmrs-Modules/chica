@@ -136,9 +136,10 @@ public class HL7SocketHandler implements Application {
 		Date startTime = Calendar.getInstance().getTime();
 		Message response = null;
 		AdministrationService adminService = Context.getAdministrationService();
+		boolean error = false;
 		try {
 			Context.openSession();
-			boolean error = false;
+			
 			if (canProcess(message)) {
 				String incomingMessageString = "";
 				
@@ -156,17 +157,14 @@ public class HL7SocketHandler implements Application {
 			}
 			try {
 				ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-				response = makeACK(msh);
-				fillDetails(response, error);
+				response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
 			}
 			catch (IOException e) {
 				logger.error("Error creating ACK message." + e.getMessage());
-			}
-			catch (ApplicationException e) {
-				logger.error("Error filling in the details of an Application Response or reject message:" + e);
-			}
-			catch (HL7Exception e) {
+			}catch (HL7Exception e) {
 				logger.error("Parser error constructing ACK.", e);
+			}catch (Exception e){
+				logger.error("Exception processing inbound vitals HL7 message.", e);
 			}
 			
 			Context.clearSession();
@@ -188,8 +186,9 @@ public class HL7SocketHandler implements Application {
 		finally {
 			if (response == null) {
 				try {
+					error = true;
 					ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-					response = makeACK(msh);
+					response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
 				}
 				catch (Exception e) {
 					logger.error("Could not send acknowledgement", e);
