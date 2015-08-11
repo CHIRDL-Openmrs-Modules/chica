@@ -3642,7 +3642,7 @@ where action_name='REPRINT';
             ('ageMaxUnits', 'Maximum age units (years, months, days, weeks) for displaying form for force print');  
         </sql>  
     </diff>  
-    </diff>
+    <diff>
 		<version>1.6.8</version>
         <author>Steve McKee</author>
         <date>March 17, 2015</date>
@@ -3695,8 +3695,8 @@ where action_name='REPRINT';
             from form a, chirdlutilbackports_form_attribute b, location_tag_map d ,location c where a.form_id=(select form_id from form where name='PSF' and retired=0) 
             and b.name='displayAndUpdatePreviousValues' and a.retired=0 and d.location_id=c.location_id and (c.name='PEPS' or c.name='FMPS' or c.name='PCPS' or c.name='BBPS' or c.name='TEPS') 
             group by d.location_tag_id,d.location_id;
-            
-    </sql>  
+         </sql>
+	</diff>  
 </sqldiff>
 
 
