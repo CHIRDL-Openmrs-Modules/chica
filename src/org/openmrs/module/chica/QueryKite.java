@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
@@ -58,13 +59,12 @@ public class QueryKite
 		AdministrationService adminService = Context.getAdministrationService();
 		// Set the default to 5 seconds.  We don't want it to last forever by setting it to 0.
 		Integer timeout = 5000;
-		try
-		{
+	
+		try {
 			timeout = Integer.parseInt( adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_TIMEOUT));
 			timeout = timeout * 1000; // convert seconds to
-			// milliseconds
-		} catch (NumberFormatException e)
-		{
+		} catch (Exception e){
+			log.error("Global property for MRF dump timeout is invalid or does not exist.", e);
 		}
 		
 		KiteQueryThread kiteQueryThread = new KiteQueryThread(mrn);
@@ -226,20 +226,6 @@ public class QueryKite
 					HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);
 					log.info("Elapsed time for mrf parsing is "+
 							(System.currentTimeMillis()-startTime)/1000);
-					
-					//mrf dump has multiple messages.		
-					/*String[] messages = response.split("MSH");	
-					
-					for (String message : messages){
-						
-						if (message.startsWith("MSH|")){
-							HL7ToObs.processMessage(message, patient, regenObs);
-							HL7SocketHandler.mergeAliases(mrn, patient, message);;
-							log.info("Elapsed time for mrf parsing is "+
-									(System.currentTimeMillis()-startTime)/1000);
-						}
-					}*/
-
 				}
 				return response;
 			}

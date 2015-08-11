@@ -318,97 +318,14 @@ public class HL7SocketHandler extends
 
 		return true;
 	}
-
-	/**
-	 * Parses the alias query response, and merges patients if needed.
-	 * @param mrn
-	 * @param preferredPatient
-	 */
-/*	private void processAliasString(String mrn, Patient preferredPatient) {
-		
-		String response = QueryKite.mrfQuery(mrn, preferredPatient, true);
-		long startTime = System.currentTimeMillis();
-		long startTime2 = System.currentTimeMillis();
-		
-		log.info("Starting mrf parsing");
-		LogicService logicService = Context.getLogicService();
-
-		ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
-				.getLogicDataSource("RMRS");
-		
-		HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
-		//mrf dump has multiple messages
-		List<String> messages = HL7ToObs.parseHL7Batch(response);
-		for (String messageString : messages){
-			HL7ToObs.processMessage(messageString, preferredPatient, regenObs);
-			//checkAliases(mrn, messageString);
-		}
-		
-		log.info("Elapsed time for mrf parsing is "+
-				(System.currentTimeMillis()-startTime)/1000);
-		
-
-		// query failed
-		if (response == null) {
-			return;
-		}
-
-		//mrf dump has multiple messages
-		List<String> messages = HL7ToObs.parseHL7Batch(response);
-
-		for (String message : messages){
-			
-			//get identifiers and merge if necessary
-			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
-			List<String> identifiers = patientHandler.getIdentiferStrings(response);
-
-			for (String identifier : identifiers){
-
-				// don't look up the preferred patient's mrn
-				// so we don't merge a patient to themselves
-				if (Util.removeLeadingZeros(identifier).equals(
-						Util.removeLeadingZeros(mrn))) {
-					continue;
-				}
-
-				List<Patient> lookupPatients = patientService.getPatients(null,
-						Util.removeLeadingZeros(identifier), null, false);
-
-				if (lookupPatients != null && lookupPatients.size() > 0) {
-					Iterator<Patient> iter = lookupPatients.iterator();
-
-					while (iter.hasNext()) {
-						Patient currPatient = iter.next();
-						// only merge different patients
-						if (!preferredPatient.getPatientId().equals(
-								currPatient.getPatientId())) {
-							patientService.mergePatients(preferredPatient,
-									currPatient);
-						} else {
-							Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_GENERAL,
-									"Tried to merge patient: "
-											+ currPatient.getPatientId()
-											+ " with itself.", null,
-											new Date(), null);
-							chirdlutilbackportsService.saveError(error);
-						}
-					}
-				}
-
-			}
-			
-			//parse the obs
-			
-		}
-
-	}*/
-
+	
 	/**
 	 * Update matched patient to values from hl7 message (non-Javadoc)
 	 * 
 	 * @see org.openmrs.module.sockethl7listener.HL7SocketHandler#updatePatient(org
 	 *      .openmrs.Patient, org.openmrs.Patient, java.util.Date)
 	 */
+	
 	@Override
 	protected Patient updatePatient(Patient matchPatient, Patient hl7Patient,
 			Date encounterDate) {
