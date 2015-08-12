@@ -3662,20 +3662,6 @@ where action_name='REPRINT';
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </sql>
     </diff>
-    <diff>
-        <version>1.6.9</version>
-        <author>Meena Sheley</author>
-        <date>May 22, 2015</date>
-        <description>
-        Remove the unused chica.kiteHost global property
-        delete from global_property where property = 'chica.kiteHost';
-        Remove the unused chica.kitePort global property
-        delete from global_property where property = 'chica.kitePort';
-        
-        </description>
-        <sql>
-        </sql>
-    </diff>
 </sqldiff>
 
 
