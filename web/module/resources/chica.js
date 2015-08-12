@@ -55,7 +55,7 @@ function queueText(text, lang, audioElement) {
         	remainingText = parseAndPlay(text, lastSpaceIndex, audioElement, lang);
         }
     } else {
-        audioElement.setAttribute('src', "http://translate.google.com/translate_tts?tl=" + lang + "&q=" + encodeURIComponent(text)); 
+        audioElement.setAttribute('src', "http://translate.google.com/translate_tts?client=t&tl=" + lang + "&q=" + encodeURIComponent(text)); 
         audioElement.play();
     }
 	
@@ -65,7 +65,7 @@ function queueText(text, lang, audioElement) {
 function parseAndPlay(text, index, audioElement, lang) {
 	var speak = text.substr(0, index + 1);
     var remainingText = text.substr(index + 1, text.length);
-    audioElement.setAttribute('src', "http://translate.google.com/translate_tts?tl=" + lang + "&q=" + encodeURIComponent(speak));
+    audioElement.setAttribute('src', "http://translate.google.com/translate_tts?client=t&tl=" + lang + "&q=" + encodeURIComponent(speak));
     audioElement.play();
     return remainingText;
 }
