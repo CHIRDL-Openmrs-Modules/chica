@@ -41,9 +41,7 @@
                 <b>Time:</b> <c:out value="${VisitTime}"/></div>
                                 
                 <%@ include file="pwsVitals.jsp" %>
-
-                <%@ include file="pwsPhysicalExam.jsp" %>
-                              
+                      
                 <div id="buttons">
                     <div class="buttonsData">
                         <a href="#" id="formPrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Recommended Handouts</a>
@@ -67,6 +65,7 @@
                 
                 <%@ include file="pwsQuestions.jsp" %>
                 
+                 
                 <div id="submitContainer">
                     <a href="#" id="submitButtonBottom" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Submit</a>
                 </div>
