@@ -286,8 +286,6 @@ public class QueryKite
 				byte[] utf8Bytes = responseString.getBytes(CHARACTER_ENCODING_UTF_8);
 				log.info("Size: " + utf8Bytes.length);
 				log.info("query time: " + (stop - start));
-				log.info("Size: " + utf8Bytes.length);
-				log.info("query time: " + (stop - start));
 				String[] timings = response.getGetDumpResponse().getTiming();
 				for (String timing : timings){
 					log.info(timing);

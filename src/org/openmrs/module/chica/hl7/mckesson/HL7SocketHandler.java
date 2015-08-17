@@ -1435,12 +1435,15 @@ public class HL7SocketHandler extends
 	}
 	
 	/**
-	 * Pulls identifiers from message string, and merges the patients if needed
+	 * MES  CHICA-358
+	 * Pulls identifiers from message string, searches for matching patients,
+	 * and merges existing patients if needed.
 	 * @param mrn
-	 * @param patient
-	 * @param messageString
+	 * @param patient - new patient
+	 * @param messageString - mrf dump hl7 string
+	 * @should merge existing patient into new patient
 	 */
-	public static void mergeAliases(String mrn, Patient patient, String messageString){
+	public static void mergeAliases(String mrn, Patient newPatient, String messageString){
 
 
 		PatientService patientService = Context.getPatientService();
@@ -1459,7 +1462,6 @@ public class HL7SocketHandler extends
 
 			String identifier = patientHandler.getIdentiferString(newMessage);
 
-
 			if (!identifier.contains(HYPHEN)){
 				identifier = new StringBuffer(identifier).insert(identifier.length()-1, HYPHEN).toString();
 			}
@@ -1467,31 +1469,20 @@ public class HL7SocketHandler extends
 				return;
 			}
 
-			List<Patient> lookupPatients = patientService.getPatients(null,
+			List<Patient> existingPatients = patientService.getPatients(null,
 					Util.removeLeadingZeros(identifier), null, false);
-
-			if (lookupPatients != null && lookupPatients.size() > 0) {
-
-				for (Patient currentPatient : lookupPatients){
-
-					// only merge different patients
-					if (!patient.getPatientId().equals(
-							currentPatient.getPatientId())) {
-						patientService.mergePatients(patient,
-								currentPatient);
-
-					}
-
+			
+			for (Patient existingPatient : existingPatients){
+				
+				if (!existingPatient.getId().equals(newPatient.getId())){
+					patientService.mergePatients(newPatient, existingPatient);
 				}
-
 			}
-
+		
 		}catch (Exception e){
-			log.error("Alias merge error for patient " + patient.getId(), e );
+			log.error("Alias merge error for patient " + newPatient.getId(), e );
 		}
 
 	}
-	
-	
 	
 }
