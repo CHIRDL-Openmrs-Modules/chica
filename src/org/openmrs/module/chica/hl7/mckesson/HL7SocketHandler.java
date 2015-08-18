@@ -151,22 +151,13 @@ public class HL7SocketHandler extends
 							encounterDate);
 				}
 				
-				//Always query MRF and perform alias even if the patient already matched in CHICA.
-				parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
-				QueryKite.mrfQuery(mrn, resultPatient, true);
-				parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
-				parameters.put(PROCESS_HL7_CHECKIN_END, new java.util.Date());
-
+			
 			}
 
 		} catch (RuntimeException e) {
 			logger.error("Exception during patient lookup. " + e.getMessage());
 			logger.error(org.openmrs.module.chirdlutil.util.Util
 					.getStackTrace(e));
-
-		} catch (QueryKiteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return resultPatient;
 
@@ -1443,7 +1434,7 @@ public class HL7SocketHandler extends
 	 * @param messageString - mrf dump hl7 string
 	 * @should merge existing patient into new patient
 	 */
-	public static void mergeAliases(String mrn, Patient newPatient, String messageString){
+	public static void checkAlias(String mrn, Patient newPatient, String messageString){
 
 
 		PatientService patientService = Context.getPatientService();

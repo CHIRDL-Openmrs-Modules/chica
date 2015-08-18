@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
@@ -111,6 +110,7 @@ public class QueryKite
 				AdministrationService adminService = Context.getAdministrationService();
 
 				String response = null;
+				boolean responseFromCache = false;
 				long startTime = System.currentTimeMillis();
 				long startTime2 = System.currentTimeMillis();
 				String mrfDirectory = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_ARCHIVE_DIRECTORY);
@@ -132,8 +132,8 @@ public class QueryKite
 								ByteArrayOutputStream output = new ByteArrayOutputStream();
 								org.openmrs.module.chirdlutil.util.IOUtil.bufferedReadWrite(input, output);
 								response = output.toString();
-								if (response.length() == 0) {
-									response = null;
+								if (response.length() > 0) {
+									responseFromCache = true;
 								}
 							}
 							catch (Exception e) {
@@ -147,8 +147,8 @@ public class QueryKite
 				startTime2 = System.currentTimeMillis();
 
 				//No cached data
-				if(response == null){
-
+				if(!responseFromCache){
+					
 					try
 					{
 						response = queryKite(mrn);
@@ -171,61 +171,58 @@ public class QueryKite
 			
 				if (response != null)
 				{
-					// save mrf dump to a file
+					// Only save file if dump is not from cache
+					if (!responseFromCache){
 					
-					
-						String filename = "r" + Util.archiveStamp() + "_"+mrn+".hl7";
-
-						FileOutputStream mrfDumpFile = null;
-						try
-						{
-							mrfDumpFile = new FileOutputStream(
-									mrfDirectory  + filename);
-						} catch (FileNotFoundException e1)
-						{
-							log.error("Couldn't find file: "+mrfDirectory + filename);
-						}
-						if (mrfDumpFile != null)
-						{
+							String filename = "r" + Util.archiveStamp() + "_"+mrn+".hl7";
+	
+							FileOutputStream mrfDumpFile = null;
 							try
 							{
-
-								ByteArrayInputStream mrfDumpInput = new ByteArrayInputStream(
-										response.getBytes());
-								IOUtil.bufferedReadWrite(mrfDumpInput, mrfDumpFile);
-								mrfDumpFile.flush();
-								mrfDumpFile.close();
-							} catch (Exception e)
+								mrfDumpFile = new FileOutputStream(
+										mrfDirectory  + filename);
+							} catch (FileNotFoundException e1)
+							{
+								log.error("Couldn't find file: "+mrfDirectory + filename);
+								}
+							if (mrfDumpFile != null)
 							{
 								try
 								{
+	
+									ByteArrayInputStream mrfDumpInput = new ByteArrayInputStream(
+											response.getBytes());
+									IOUtil.bufferedReadWrite(mrfDumpInput, mrfDumpFile);
 									mrfDumpFile.flush();
 									mrfDumpFile.close();
-								} catch (Exception e1)
+								} catch (Exception e)
 								{
+									try
+									{
+										mrfDumpFile.flush();
+										mrfDumpFile.close();
+									} catch (Exception e1)
+									{
+									}
+									log.error("There was an error writing the mrf dump file", e);
 								}
-								log.error("There was an error writing the dump file");
-								log.error(e.getMessage());
-								log.error(Util.getStackTrace(e));
 							}
 						}
-					
 					log.info("Elapsed time for writing hl7 file in mrfQuery "+
-							(System.currentTimeMillis()-startTime2)/1000);
+							(System.currentTimeMillis()-startTime2) + " ms");
 					log.info("Elapsed time for mrf Query is "+
-							(System.currentTimeMillis()-startTime)/1000);
+							(System.currentTimeMillis()-startTime) + " ms");
 
 					startTime = System.currentTimeMillis();
-					log.info("Starting mrf parsing");
 					LogicService logicService = Context.getLogicService();
 
 					ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
 							.getLogicDataSource("RMRS");
-
 					HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
 					HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);
+					
 					log.info("Elapsed time for mrf parsing is "+
-							(System.currentTimeMillis()-startTime)/1000);
+							(System.currentTimeMillis()-startTime) + " ms");
 				}
 				return response;
 			}

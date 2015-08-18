@@ -79,7 +79,7 @@ public class HL7ToObs {
 				if (line.startsWith(HL7_SEGMENT_MSH)) {
 					// start processing the new message
 					processMessage(output.toString(), patient, patientObsMap);
-					HL7SocketHandler.mergeAliases(mrn, patient, output.toString());
+					HL7SocketHandler.checkAlias(mrn, patient, output.toString());
 					writer.flush();
 					writer.close();
 					output = new StringWriter();
@@ -94,7 +94,7 @@ public class HL7ToObs {
 
 			// process last message
 			processMessage(output.toString(), patient, patientObsMap);
-			HL7SocketHandler.mergeAliases(mrn, patient, output.toString());
+			HL7SocketHandler.checkAlias(mrn, patient, output.toString());
 
 		} catch (Exception e) {
 			log.error(
