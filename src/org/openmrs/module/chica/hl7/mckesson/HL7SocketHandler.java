@@ -624,8 +624,8 @@ public class HL7SocketHandler extends
 				location.setName(locationString);
 				locationService.saveLocation(location);
 				log.warn("Location '" + locationString
-						+ "' does not exist in the Location table."
-						+ "a new location was created for '" + locationString
+						+ "' does not exist in the Location table. "
+						+ "A new location was created for '" + locationString
 						+ "'");
 			}
 		}
@@ -1273,7 +1273,7 @@ public class HL7SocketHandler extends
 			//Save the hl7 message and error
 			this.saveMessage(hl7message, patient, false, true);
 			Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants. ERROR_GENERAL,
-						"An HL7 registration message arrived for a patient that is already checkied in.  MRN =  "
+						"An HL7 registration message arrived for a patient that is already checked in.  MRN =  "
 								+ patient.getPatientIdentifier().getIdentifier(), null, new Date(), null);
 			chirdlutilbackportsService.saveError(error);
 
@@ -1444,7 +1444,7 @@ public class HL7SocketHandler extends
 				return;
 			}
 
-			String identifier = patientHandler.getIdentiferString(newMessage);
+			String identifier = patientHandler.getIdentifierString(newMessage);
 
 			if (!identifier.contains(HYPHEN)){
 				identifier = new StringBuffer(identifier).insert(identifier.length()-1, HYPHEN).toString();

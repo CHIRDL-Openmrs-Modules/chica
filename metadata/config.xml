@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.65.3</version>
+    <version>1.65.2</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -329,17 +329,17 @@
         <description>Encryption key used to decrypt information sent from the G3 application.
         </description>
     </globalProperty>
-         <globalProperty>
+     <globalProperty>
         <property>chica.mrfQueryConfigFile</property>
      	<description>MRF query web service configuration file location.
         </description>
     </globalProperty>
      <globalProperty>
-        <property>"chica.MRFQueryPassword"</property>
+        <property>chica.MRFQueryPassword</property>
      	<description>MRF query web service password.
         </description>
     </globalProperty>
-    
+   
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
     <servlet>

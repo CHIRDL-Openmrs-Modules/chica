@@ -49,7 +49,6 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class HL7ToObs {
 
-	private static final String HL7_SEGMENT_MSH = "MSH";
 	private static final String HL7_VERSION_2_3 = "2.3";
 	protected final static Log log = LogFactory.getLog(HL7ToObs.class);
 
@@ -62,7 +61,7 @@ public class HL7ToObs {
 			String line = null;
 
 			// skip lines before hl7 message begins
-			while ((line = reader.readLine()) != null && !line.startsWith(HL7_SEGMENT_MSH)) {}
+			while ((line = reader.readLine()) != null && !line.startsWith(ChirdlUtilConstants.HL7_SEGMENT_MESSAGE_HEADER_MSH)) {}
 
 			StringWriter output = new StringWriter();
 			PrintWriter writer = new PrintWriter(output);
@@ -76,7 +75,7 @@ public class HL7ToObs {
 
 			// Separate each hl7 message from the response string.
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith(HL7_SEGMENT_MSH)) {
+				if (line.startsWith(ChirdlUtilConstants.HL7_SEGMENT_MESSAGE_HEADER_MSH)) {
 					// start processing the new message
 					processMessage(output.toString(), patient, patientObsMap);
 					HL7SocketHandler.checkAlias(mrn, patient, output.toString());
@@ -137,7 +136,7 @@ public class HL7ToObs {
 			
 			if (mrfParseErrorDirectory != null) {
 				
-				String filename = "r" + Util.archiveStamp() + ".hl7";
+				String filename = "r" + Util.archiveStamp() + ChirdlUtilConstants.FILE_EXTENSION_HL7;
 				FileOutputStream outputFile = null;
 
 				try {

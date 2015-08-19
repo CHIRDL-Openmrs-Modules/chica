@@ -249,7 +249,7 @@ public class HL7PatientHandler25 extends
 	}
 	
 
-	public String getIdentiferString(Message newMessage){
+	public String getIdentifierString(Message newMessage){
 		String pid = null;
 		try {
 			//get pid-3-1 (mrn)
