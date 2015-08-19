@@ -155,9 +155,7 @@ public class HL7SocketHandler extends
 			}
 
 		} catch (RuntimeException e) {
-			logger.error("Exception during patient lookup. " + e.getMessage());
-			logger.error(org.openmrs.module.chirdlutil.util.Util
-					.getStackTrace(e));
+			log.error("Exception during patient lookup. ", e;
 		}
 		return resultPatient;
 
@@ -497,10 +495,7 @@ public class HL7SocketHandler extends
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
 					ackMessage = makeACK(inboundHeader);
 				} catch (Exception e2) {
-					logger.error("Error sending an ack response after a parsing exception. " +
-							e2.getMessage());
-					logger.error(org.openmrs.module.chirdlutil.util.Util
-							.getStackTrace(e2));
+					log.error("Error sending an ack response after a parsing exception. " , e2);
 					ackMessage = originalMessage;
 				}
 				return ackMessage;
@@ -511,9 +506,7 @@ public class HL7SocketHandler extends
 			incomingMessageString = this.parser.encode(message);
 			message.addNonstandardSegment(ZPV_SEGMENT);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.chirdlutil.util.Util
-					.getStackTrace(e));
+			log.error("Error adding Z segment", e);
 		}
 
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
@@ -630,7 +623,7 @@ public class HL7SocketHandler extends
 				location = new Location();
 				location.setName(locationString);
 				locationService.saveLocation(location);
-				logger.warn("Location '" + locationString
+				log.warn("Location '" + locationString
 						+ "' does not exist in the Location table."
 						+ "a new location was created for '" + locationString
 						+ "'");

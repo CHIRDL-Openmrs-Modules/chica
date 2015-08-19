@@ -47,7 +47,6 @@ public class KiteQueryThread implements Runnable
 			}
 		} catch (Exception e)
 		{
-
 		}finally{
 			Context.closeSession();
 		}
