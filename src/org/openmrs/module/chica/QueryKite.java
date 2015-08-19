@@ -104,128 +104,127 @@ public class QueryKite
 		 * @return
 		 * @throws QueryKiteException
 		 */
-		public static String mrfQuery(String mrn,Patient patient, boolean checkForCachedData) throws  QueryKiteException
-			{
-				ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-				AdministrationService adminService = Context.getAdministrationService();
+	public static String mrfQuery(String mrn,Patient patient, boolean checkForCachedData) throws  QueryKiteException
+	{
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		AdministrationService adminService = Context.getAdministrationService();
 
-				String response = null;
-				boolean responseFromCache = false;
-				long startTime = System.currentTimeMillis();
-				long startTime2 = System.currentTimeMillis();
-				String mrfDirectory = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_ARCHIVE_DIRECTORY);
-				if (mrfDirectory == null || mrfDirectory.trim().equals("")){
-					log.error("Mrf query archive directory is unknown.");
-					return null;
-				}
-				
-				//look to see if the mrf dump has already been found for today
-				if (checkForCachedData) {
-					
-						//only look for a file within the past day
-						File dir = new File(mrfDirectory);
-						FileFilterByDate filter = new FileFilterByDate(24 * 60 * 60 * 1000, "_" + mrn + ".hl7");
-						File[] matchingFiles = dir.listFiles(filter);
-						if (matchingFiles != null && matchingFiles.length > 0) {
-							try {
-								FileInputStream input = new FileInputStream(matchingFiles[0].getPath());
-								ByteArrayOutputStream output = new ByteArrayOutputStream();
-								org.openmrs.module.chirdlutil.util.IOUtil.bufferedReadWrite(input, output);
-								response = output.toString();
-								if (response.length() > 0) {
-									responseFromCache = true;
-								}
-							}
-							catch (Exception e) {
-								log.error("File: " + matchingFiles[0].getPath() + "not found", e);
-							}
-						}
-				} 
+		String response = null;
+		boolean responseFromCache = false;
+		long startTime = System.currentTimeMillis();
+		long startTime2 = System.currentTimeMillis();
+		String mrfDirectory = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_ARCHIVE_DIRECTORY);
+		if (mrfDirectory == null || mrfDirectory.trim().equals("")){
+			log.error("Mrf query archive directory is unknown.");
+			return null;
+		}
 
-				log.info("Elapsed time for checkForCachedData in mrfQuery "+
-						(System.currentTimeMillis()-startTime2)/1000);
-				startTime2 = System.currentTimeMillis();
+		//look to see if the mrf dump has already been found for today
+		if (checkForCachedData) {
 
-				//No cached data
-				if(!responseFromCache){
-					
-					try
-					{
-						response = queryKite(mrn);
-					} 
-					catch (Exception e)
-					{
-						Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION
-								, e.getMessage()
-								, Util.getStackTrace(e), new Date(), null);
-
-						chirdlutilbackportsService.saveError(error);
+			//only look for a file within the past day
+			File dir = new File(mrfDirectory);
+			FileFilterByDate filter = new FileFilterByDate(24 * 60 * 60 * 1000, "_" + mrn + ".hl7");
+			File[] matchingFiles = dir.listFiles(filter);
+			if (matchingFiles != null && matchingFiles.length > 0) {
+				try {
+					FileInputStream input = new FileInputStream(matchingFiles[0].getPath());
+					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					org.openmrs.module.chirdlutil.util.IOUtil.bufferedReadWrite(input, output);
+					response = output.toString();
+					if (response.length() > 0) {
+						responseFromCache = true;
 					}
 				}
-				
-				
-				log.info("Elapsed time for mrf query "+
-						(System.currentTimeMillis()-startTime2)/1000);
-				startTime2 = System.currentTimeMillis();
-
-			
-				if (response != null)
-				{
-					// Only save file if dump is not from cache
-					if (!responseFromCache){
-					
-							String filename = "r" + Util.archiveStamp() + "_"+mrn+".hl7";
-	
-							FileOutputStream mrfDumpFile = null;
-							try
-							{
-								mrfDumpFile = new FileOutputStream(
-										mrfDirectory  + filename);
-							} catch (FileNotFoundException e1)
-							{
-								log.error("Couldn't find file: "+mrfDirectory + filename);
-								}
-							if (mrfDumpFile != null)
-							{
-								try
-								{
-	
-									ByteArrayInputStream mrfDumpInput = new ByteArrayInputStream(
-											response.getBytes());
-									IOUtil.bufferedReadWrite(mrfDumpInput, mrfDumpFile);
-									mrfDumpFile.flush();
-									mrfDumpFile.close();
-								} catch (Exception e)
-								{
-									try
-									{
-										mrfDumpFile.flush();
-										mrfDumpFile.close();
-									} catch (Exception e1)
-									{
-									}
-									log.error("There was an error writing the mrf dump file", e);
-								}
-							}
-						}
-					log.info("Elapsed time for writing hl7 file in mrfQuery "+
-							(System.currentTimeMillis()-startTime2) + " ms");
-					log.info("Elapsed time for mrf Query is "+
-							(System.currentTimeMillis()-startTime) + " ms");
-
-					startTime = System.currentTimeMillis();
-					LogicService logicService = Context.getLogicService();
-
-					ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
-							.getLogicDataSource("RMRS");
-					HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
-					HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);
-					
-					log.info("Elapsed time for mrf parsing is "+
-							(System.currentTimeMillis()-startTime) + " ms");
+				catch (Exception e) {
+					log.error("File: " + matchingFiles[0].getPath() + "not found", e);
 				}
-				return response;
 			}
+		} 
+
+		log.info("Elapsed time for checkForCachedData in mrfQuery "+
+				(System.currentTimeMillis()-startTime2)/1000);
+		startTime2 = System.currentTimeMillis();
+
+		//No cached data
+		if(!responseFromCache){
+
+			try
+			{
+				response = queryKite(mrn);
+			} 
+			catch (Exception e)
+			{
+				Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION
+						, e.getMessage()
+						, Util.getStackTrace(e), new Date(), null);
+
+				chirdlutilbackportsService.saveError(error);
+			}
+		}
+
+
+		log.info("Elapsed time for mrf query "+
+				(System.currentTimeMillis()-startTime2)/1000);
+		startTime2 = System.currentTimeMillis();
+
+
+		if (response != null)
+		{
+			// Only save file if dump is not from cache
+			if (!responseFromCache){
+
+				String filename = "r" + Util.archiveStamp() + "_"+mrn+".hl7";
+
+				FileOutputStream mrfDumpFile = null;
+				try
+				{
+					mrfDumpFile = new FileOutputStream(
+							mrfDirectory  + filename);
+				} catch (FileNotFoundException e1)
+				{
+					log.error("Couldn't find file: "+mrfDirectory + filename);
+				}
+				if (mrfDumpFile != null)
+				{
+					try
+					{
+
+						ByteArrayInputStream mrfDumpInput = new ByteArrayInputStream(
+								response.getBytes());
+						IOUtil.bufferedReadWrite(mrfDumpInput, mrfDumpFile);
+						mrfDumpFile.flush();
+						mrfDumpFile.close();
+					} catch (Exception e)
+					{
+						try
+						{
+							mrfDumpFile.flush();
+							mrfDumpFile.close();
+						} catch (Exception e1)
+						{
+						}
+						log.error("There was an error writing the mrf dump file", e);
+					}
+				}
+			}
+			log.info("Elapsed time for writing hl7 file in mrfQuery "+
+					(System.currentTimeMillis()-startTime2) + " ms");
+			log.info("Elapsed time for mrf Query is "+
+					(System.currentTimeMillis()-startTime) + " ms");
+
+			startTime = System.currentTimeMillis();
+			LogicService logicService = Context.getLogicService();
+
+			ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
+					.getLogicDataSource("RMRS");
+			HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
+			HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);		
+			log.info("Elapsed time for mrf parsing is "+
+					(System.currentTimeMillis()-startTime) + " ms");
+		}
+		return response;
+	}
 		
 		/**
 		 * Query web service for MRF dump
