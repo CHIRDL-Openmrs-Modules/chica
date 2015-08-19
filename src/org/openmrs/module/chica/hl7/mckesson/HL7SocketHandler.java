@@ -155,7 +155,7 @@ public class HL7SocketHandler extends
 			}
 
 		} catch (RuntimeException e) {
-			log.error("Exception during patient lookup. ", e;
+			log.error("Exception during patient lookup. ", e);
 		}
 		return resultPatient;
 

@@ -119,7 +119,7 @@
 	<classpathentry kind="lib" path="lib-common/axis2/wsdl4j-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/axis2/XmlSchema-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/logic-0.5.0.1.jar"/>
-	<classpathentry kind="lib" path="lib-common/openmrs-api-1.7.3.0-dev.jar" sourcepath="/openmrs-1.7.x/src"/>
+	<classpathentry kind="lib" path="lib-common/openmrs-api-1.7.3.0-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/tests-openmrs-api-1.7.2.19959-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/web-openmrs-api-1.7.2.19959-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/itextpdf-5.1.2.jar"/>
@@ -137,9 +137,9 @@
 	<classpathentry kind="lib" path="/chirdlutilbackports/dist"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/rgccd-1.2.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.4.0.jar" sourcepath="/sockethl7listener/src"/>
+	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/dss-2.30.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/atd-2.2.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/chirdlutil-1.9.1.jar" sourcepath="/chirdlutil/src"/>
+	<classpathentry kind="lib" path="lib-common/chirdlutil-1.9.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
