@@ -41,6 +41,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class QueryKite
 {
+	private static final String ABBREVIATION_UNITS_MILLISECOND = " ms";
+
 	private static final String CHARACTER_ENCODING_UTF_8 = "UTF-8";
 
 	private static Log log = LogFactory.getLog(QueryKite.class);
@@ -72,24 +74,24 @@ public class QueryKite
 		try {
 			long startTime = System.currentTimeMillis();
 			thread.join(timeout);
-			log.info("Elapsed time for thread.join in queryKite "+
+			log.info("Elapsed time for thread.join in queryKite. "+
 				(System.currentTimeMillis()-startTime)/1000);
 			startTime = System.currentTimeMillis();
 			if (!thread.isAlive()) {
 				//check for an exception
 				if(kiteQueryThread.getException()!=null) {
-					log.error("Exception");
+					log.error("Kite Query Exception", kiteQueryThread.getException());
 					throw kiteQueryThread.getException();
 				}
 				//return the response if no exception
-				log.info("Success");
+				log.info("Kite Query Successful");
 				return kiteQueryThread.getResponse();
 			}
 			//the timeout was exceeded so return null
-			log.warn("Timeout exceeded.");
+			log.warn("Kite query timeout exceeded.");
 			return null;
 		} catch (InterruptedException e) {
-			log.warn("Kite Query thread interrupted", e);
+			log.warn("Kite query thread interrupted", e);
 			return null;
 		}
 	}
@@ -124,7 +126,7 @@ public class QueryKite
 
 			//only look for a file within the past day
 			File dir = new File(mrfDirectory);
-			FileFilterByDate filter = new FileFilterByDate(24 * 60 * 60 * 1000, "_" + mrn + ".hl7");
+			FileFilterByDate filter = new FileFilterByDate(24 * 60 * 60 * 1000, "_" + mrn + ChirdlUtilConstants.FILE_EXTENSION_HL7);
 			File[] matchingFiles = dir.listFiles(filter);
 			if (matchingFiles != null && matchingFiles.length > 0) {
 				try {
@@ -142,8 +144,8 @@ public class QueryKite
 			}
 		} 
 
-		log.info("Elapsed time for checkForCachedData in mrfQuery "+
-				(System.currentTimeMillis()-startTime2)/1000);
+		log.info("Elapsed time for checkForCachedData in mrfQuery: "+
+				(System.currentTimeMillis()-startTime2) + ABBREVIATION_UNITS_MILLISECOND);
 		startTime2 = System.currentTimeMillis();
 
 		//No cached data
@@ -164,8 +166,8 @@ public class QueryKite
 		}
 
 
-		log.info("Elapsed time for mrf query "+
-				(System.currentTimeMillis()-startTime2)/1000);
+		log.info("Elapsed time for mrf dump query: " +
+				(System.currentTimeMillis()-startTime2) + "ms");
 		startTime2 = System.currentTimeMillis();
 
 
@@ -174,7 +176,7 @@ public class QueryKite
 			// Only save file if dump is not from cache
 			if (!responseFromCache){
 
-				String filename = "r" + Util.archiveStamp() + "_"+mrn+".hl7";
+				String filename = "r" + Util.archiveStamp() + "_" + mrn + ChirdlUtilConstants.FILE_EXTENSION_HL7;
 
 				FileOutputStream mrfDumpFile = null;
 				try
@@ -183,7 +185,7 @@ public class QueryKite
 							mrfDirectory  + filename);
 				} catch (FileNotFoundException e1)
 				{
-					log.error("Couldn't find file: "+mrfDirectory + filename);
+					log.error("Couldn't find file: "+ mrfDirectory + filename);
 				}
 				if (mrfDumpFile != null)
 				{
@@ -204,14 +206,13 @@ public class QueryKite
 						} catch (Exception e1)
 						{
 						}
-						log.error("There was an error writing the mrf dump file", e);
+						log.error("There was an error writing the mrf dump file.", e);
 					}
 				}
 			}
-			log.info("Elapsed time for writing hl7 file in mrfQuery "+
-					(System.currentTimeMillis()-startTime2) + " ms");
-			log.info("Elapsed time for mrf Query is "+
-					(System.currentTimeMillis()-startTime) + " ms");
+			
+			log.info("Elapsed time for writing hl7 file in mrfQuery: "+
+					(System.currentTimeMillis()-startTime2) + ABBREVIATION_UNITS_MILLISECOND);
 
 			startTime = System.currentTimeMillis();
 			LogicService logicService = Context.getLogicService();
@@ -220,8 +221,9 @@ public class QueryKite
 					.getLogicDataSource("RMRS");
 			HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
 			HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);		
+			
 			log.info("Elapsed time for mrf parsing is "+
-					(System.currentTimeMillis()-startTime) + " ms");
+					(System.currentTimeMillis()-startTime) + ABBREVIATION_UNITS_MILLISECOND);
 		}
 		return response;
 	}
@@ -263,7 +265,6 @@ public class QueryKite
 				dump.setUser(login);
 
 				DumpServiceStub.EntityIdentifier patient = new DumpServiceStub.EntityIdentifier();
-				//patient.setId(props.getProperty(MRF_PARAM_MRN));
 				patient.setId(mrn);
 				patient.setSystem(props.getProperty(MRF_PARAM_PATIENT_IDENTIFIER_SYSTEM));
 				dump.setPatient(patient);
@@ -277,12 +278,11 @@ public class QueryKite
 				long stop = Calendar.getInstance().getTimeInMillis();
 				responseString = response.getGetDumpResponse().getHl7();
 
-				//LOGGING
-				System.out.println(responseString);
 				byte[] utf8Bytes = responseString.getBytes(CHARACTER_ENCODING_UTF_8);
 				log.info("Size: " + utf8Bytes.length);
-				log.info("query time: " + (stop - start));
+				log.info("MRF query response time: " + (stop - start));
 				String[] timings = response.getGetDumpResponse().getTiming();
+				log.info("Timings provided by mrf dump service:");
 				for (String timing : timings){
 					log.info(timing);
 				}
