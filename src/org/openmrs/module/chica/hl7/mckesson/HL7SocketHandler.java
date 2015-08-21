@@ -754,6 +754,22 @@ public class HL7SocketHandler extends
 				//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
 				if (locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG)) {
 					Concept concept = currObs.getConcept();
+					Integer conceptId = concept.getConceptId();
+					switch(conceptId){
+						case 39650704: //Birth Weight (kg)
+							double kilograms = currObs.getValueNumeric();
+							double pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
+									kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
+							currObs.setValueNumeric(pounds);//BIRTH WEIGHT in chica in pounds 
+							break;
+						case 685461504: //Newborn Weight by History (kg)
+							kilograms = currObs.getValueNumeric();
+							double grams = kilograms*1000;
+							currObs.setValueNumeric(grams);//WEIGHT NEWBORN BABY A in chica in grams 
+							break;
+						default:
+							
+					}
 					Concept mappedConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), SOURCE);
 					if (mappedConcept != null) {
 						currConceptName = mappedConcept.getName().getName();

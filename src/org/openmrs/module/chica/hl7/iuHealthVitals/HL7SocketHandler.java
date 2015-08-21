@@ -410,9 +410,11 @@ public class HL7SocketHandler implements Application {
 	
 	private org.openmrs.module.chica.hibernateBeans.Encounter getRecentEncounter(Patient patient){
 		EncounterService encounterService = Context.getService(EncounterService.class);
-    	// Get last encounter with last day
+    	// Get latest encounter today
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 2);
+		startCal.set(GregorianCalendar.HOUR, 0);
+		startCal.set(GregorianCalendar.MINUTE, 0);
+		startCal.set(GregorianCalendar.SECOND, 0);
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startDate, endDate, null, 
@@ -420,7 +422,7 @@ public class HL7SocketHandler implements Application {
 		if (encounters == null || encounters.size() == 0) {
 			return null;
 		} else {
-			return (org.openmrs.module.chica.hibernateBeans.Encounter) encounters.get(0);
+			return (org.openmrs.module.chica.hibernateBeans.Encounter) encounters.get(encounters.size()-1);
 		}
 	}
 	
