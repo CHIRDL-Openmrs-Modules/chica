@@ -235,8 +235,25 @@ public class ChicaServlet extends HttpServlet {
 			Integer formInstanceId = formInstance.getFormInstanceId();
 			Integer locationTagId = patientState.getLocationTagId();
 			
+			Form form = Context.getFormService().getForm(formId);
+			String formName = null;
+			
+			// Try to get a display name if one exists.
+			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, 
+				locationTagId, locationId);
+			if (fav != null && fav.getValue() != null && fav.getValue().trim().length() > 0) {
+				formName = fav.getValue();
+			} else {
+				formName = form.getName();
+			}
+			
+			// Only want the latest form instance.  The patient states are ordered by start/end time descending.
+			if (formInfoMap.get(formName) != null) {
+				continue;
+			}
+			
 			// Check to make sure the form is type PDF.
-			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, 
+			fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, 
 				locationTagId, locationId);
 			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
 				continue;
@@ -286,18 +303,6 @@ public class ChicaServlet extends HttpServlet {
 						" locationTagId: " + locationTagId + " " + mergeFile.getAbsolutePath());
 					continue;
 				}
-			}
-			
-			Form form = Context.getFormService().getForm(formId);
-			String formName = null;
-			
-			// Try to get a display name if one exists.
-			fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, 
-				locationTagId, locationId);
-			if (fav != null && fav.getValue() != null && fav.getValue().trim().length() > 0) {
-				formName = fav.getValue();
-			} else {
-				formName = form.getName();
 			}
 			
 			FormInstanceTag tag = new FormInstanceTag(locationId, formId, formInstanceId, locationTagId);
