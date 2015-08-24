@@ -49,6 +49,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
@@ -703,6 +704,7 @@ public class HL7SocketHandler extends
 
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
+		ObsService obsService = Context.getObsService();
 		encounter = encounterService.getEncounter(encounterId);
 		Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounter;
 
@@ -747,8 +749,13 @@ public class HL7SocketHandler extends
 				patientObsMap.put(patientId, obsByConcept);
 			}
 			final String SOURCE = "IU Health MRF Dump";
+			final String VITALS_SOURCE = "IU Health Vitals";
+
 			ConceptService conceptService = Context.getConceptService();
+			boolean savedToDB = false;
+			
 			for (Obs currObs : allObs) {
+				savedToDB = false;
 				String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
 
 				//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
@@ -767,6 +774,26 @@ public class HL7SocketHandler extends
 							double grams = kilograms*1000;
 							currObs.setValueNumeric(grams);//WEIGHT NEWBORN BABY A in chica in grams 
 							break;
+						case 635271: //WEIGHT (kg)
+							kilograms = currObs.getValueNumeric();
+							pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
+									kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
+							currObs.setValueNumeric(pounds);//weight in chica in pounds 
+							break;
+						case 635268: //height (cm)
+							double measurement = currObs.getValueNumeric();
+							double inches = 
+								org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(measurement, 
+										org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CM);
+							currObs.setValueNumeric(inches);//height in chica in pounds
+							break;
+						case 39822143: //Temp (Cel)
+							double tempC = currObs.getValueNumeric();
+							double tempF = 
+								org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(tempC, 
+										org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
+							currObs.setValueNumeric(tempF);//temperature in Fahrenheit
+							break;
 						default:
 							
 					}
@@ -775,13 +802,27 @@ public class HL7SocketHandler extends
 						currConceptName = mappedConcept.getName().getName();
 						currObs.setConcept(mappedConcept);
 					}
+					
+					//If this is a historical vital, save it to the database
+					Concept mappedVitalsConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), VITALS_SOURCE);
+					if(mappedVitalsConcept != null){
+						currObs.setConcept(mappedVitalsConcept);
+						currObs.setLocation(location);
+						currObs.setEncounter(encounter);
+						obsService.saveObs(currObs, null);
+						savedToDB = true;
+					}
+					
 				}
-				Set<Obs> obs = obsByConcept.get(currConceptName);
-				if (obs == null) {
-					obs = new HashSet<Obs>();
-					obsByConcept.put(currConceptName, obs);
+				//put the observation in memory if it was not saved to the database
+				if(!savedToDB){
+					Set<Obs> obs = obsByConcept.get(currConceptName);
+					if (obs == null) {
+						obs = new HashSet<Obs>();
+						obsByConcept.put(currConceptName, obs);
+					}
+					obs.add(currObs);
 				}
-				obs.add(currObs);
 			}
 		}
 		catch (Exception e) {
