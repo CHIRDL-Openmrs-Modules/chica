@@ -349,6 +349,12 @@
      	<description>Turn on/off performing the MRF Query
         </description>
     </globalProperty>
+     <globalProperty>
+        <property>chica.MRFQueryNamespace</property>
+     	<description>Namespace for MRF query service
+        </description>
+    </globalProperty>
+   
   
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
