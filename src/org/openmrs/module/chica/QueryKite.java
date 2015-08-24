@@ -239,6 +239,7 @@ public class QueryKite
 			AdministrationService adminService = Context.getAdministrationService();
 			String configFile = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_CONFIG_FILE);   
 			String password = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_PASSWORD);
+			String endpoint = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_TARGET_ENDPOINT);
 			String responseString = null;
 
 			Properties props = null; 
@@ -254,7 +255,7 @@ public class QueryKite
 
 			try{
 
-				DumpServiceStub service = new DumpServiceStub();
+				DumpServiceStub service = new DumpServiceStub(endpoint);
 				GetDumpE dumpE = new GetDumpE();
 				DumpServiceStub.GetDump dump = new DumpServiceStub.GetDump();
 				dumpE.setGetDump(dump);

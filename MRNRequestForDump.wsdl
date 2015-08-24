@@ -62,7 +62,7 @@
   </wsdl:binding>
   <wsdl:service name="DumpService">
     <wsdl:port binding="tns:DumpServiceSoapBinding" name="GetDump">
-      <soap:address location="https://172.31.80.31:8443/NHIN/services/MRNRequestForDump"/>
+      <soap:address location="https://134.68.31.212:8443/NHIN/services/MRNRequestForDump"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

@@ -24,6 +24,7 @@
         private java.util.HashMap faultMessageMap = new java.util.HashMap();
 
         private static int counter = 0;
+        private static String nameSpace = "http://www.regenstrief.org/services"; //default
 
         private static synchronized java.lang.String getUniqueSuffix(){
             // reset the counter if it is greater than 99999
@@ -49,7 +50,7 @@
                    __operation = new org.apache.axis2.description.OutInAxisOperation();
                 
 
-            __operation.setName(new javax.xml.namespace.QName("http://www.regenstrief.org/services", "getDump"));
+            __operation.setName(new javax.xml.namespace.QName(nameSpace, "getDump"));
 	    _service.addOperation(__operation);
 	    
 
@@ -103,7 +104,7 @@
      */
     public DumpServiceStub(org.apache.axis2.context.ConfigurationContext configurationContext) throws org.apache.axis2.AxisFault {
         
-                    this(configurationContext,"https://172.31.80.31:8443/NHIN/services/MRNRequestForDump" );
+                    this(configurationContext,"https://134.68.31.212:8443/NHIN/services/MRNRequestForDump" );
                 
     }
 
@@ -112,7 +113,7 @@
      */
     public DumpServiceStub() throws org.apache.axis2.AxisFault {
         
-                    this("https://172.31.80.31:8443/NHIN/services/MRNRequestForDump" );
+                    this("https://134.68.31.212:8443/NHIN/services/MRNRequestForDump" );
                 
     }
 
@@ -122,6 +123,16 @@
     public DumpServiceStub(java.lang.String targetEndpoint) throws org.apache.axis2.AxisFault {
         this(null,targetEndpoint);
     }
+    
+   /**
+     * Constructor taking the target endpoint, namespace, configuration context
+     */
+       public DumpServiceStub(org.apache.axis2.context.ConfigurationContext configurationContext, java.lang.String namespace, java.lang.String targetEndpoint) throws org.apache.axis2.AxisFault {
+    	this(configurationContext,targetEndpoint);
+    	this.nameSpace = namespace;
+        
+    }
+
 
 
 
@@ -147,7 +158,7 @@
               org.apache.axis2.context.MessageContext _messageContext = null;
               try{
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[0].getName());
-              _operationClient.getOptions().setAction("http://www.regenstrief.org/services/IDumpService/getDump");
+              _operationClient.getOptions().setAction(nameSpace + "/IDumpService/getDump");
               _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
               
@@ -166,7 +177,7 @@
                                                     
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                     getDump0,
-                                                    optimizeContent(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                                    optimizeContent(new javax.xml.namespace.QName(nameSpace,
                                                     "getDump")));
                                                 
         //adding SOAP soap_headers
@@ -261,7 +272,7 @@
                 throws java.rmi.RemoteException{
 
               org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[0].getName());
-             _operationClient.getOptions().setAction("http://www.regenstrief.org/services/IDumpService/getDump");
+             _operationClient.getOptions().setAction(nameSpace + "/IDumpService/getDump");
              _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
               
@@ -280,7 +291,7 @@
                                                     
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                     getDump0,
-                                                    optimizeContent(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                                    optimizeContent(new javax.xml.namespace.QName(nameSpace,
                                                     "getDump")));
                                                 
         // adding SOAP soap_headers
@@ -422,7 +433,7 @@
         }
         return false;
     }
-     //https://172.31.80.31:8443/NHIN/services/MRNRequestForDump
+     //https://134.68.31.212:8443/NHIN/services/MRNRequestForDump
         public static class EntityIdentifier
         implements org.apache.axis2.databinding.ADBBean{
         /* This type was generated from the piece of schema that had
@@ -433,7 +444,7 @@
             
 
         private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals("http://www.regenstrief.org/services")){
+            if(namespace.equals(nameSpace)){
                 return "ns1";
             }
             return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -586,7 +597,7 @@
                   if (serializeType){
                
 
-                   java.lang.String namespacePrefix = registerPrefix(xmlWriter,"http://www.regenstrief.org/services");
+                   java.lang.String namespacePrefix = registerPrefix(xmlWriter, nameSpace);
                    if ((namespacePrefix != null) && (namespacePrefix.trim().length() > 0)){
                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","type",
                            namespacePrefix+":EntityIdentifier",
@@ -936,7 +947,7 @@
             
 
         private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals("http://www.regenstrief.org/services")){
+            if(namespace.equals(nameSpace)){
                 return "ns1";
             }
             return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -1153,7 +1164,7 @@
                   if (serializeType){
                
 
-                   java.lang.String namespacePrefix = registerPrefix(xmlWriter,"http://www.regenstrief.org/services");
+                   java.lang.String namespacePrefix = registerPrefix(xmlWriter,nameSpace);
                    if ((namespacePrefix != null) && (namespacePrefix.trim().length() > 0)){
                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","type",
                            namespacePrefix+":getDumpResponse",
@@ -1167,7 +1178,7 @@
                
                    }
                 if (localHl7Tracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -1202,7 +1213,7 @@
                                    xmlWriter.writeEndElement();
                              } if (localTimingTracker){
                              if (localTiming!=null) {
-                                   namespace = "http://www.regenstrief.org/services";
+                                   namespace = nameSpace;
                                    boolean emptyNamespace = namespace == null || namespace.length() == 0;
                                    prefix =  emptyNamespace ? null : xmlWriter.getPrefix(namespace);
                                    for (int i = 0;i < localTiming.length;i++){
@@ -1406,7 +1417,7 @@
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
                  if (localHl7Tracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "hl7"));
                                  
                                         if (localHl7 != null){
@@ -1419,7 +1430,7 @@
                                   for (int i = 0;i < localTiming.length;i++){
                                       
                                          if (localTiming[i] != null){
-                                          elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                          elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                               "timing"));
                                           elementList.add(
                                           org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localTiming[i]));
@@ -1518,7 +1529,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","hl7").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"hl7").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -1536,7 +1547,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","timing").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"timing").equals(reader.getName())){
                                 
                                     
                                     
@@ -1559,7 +1570,7 @@
                                                     //two continuous end elements means we are exiting the xml structure
                                                     loopDone2 = true;
                                                 } else {
-                                                    if (new javax.xml.namespace.QName("http://www.regenstrief.org/services","timing").equals(reader.getName())){
+                                                    if (new javax.xml.namespace.QName(nameSpace,"timing").equals(reader.getName())){
                                                          list2.add(reader.getElementText());
                                                         
                                                     }else{
@@ -1610,7 +1621,7 @@
 
               
                   if (
-                  "http://www.regenstrief.org/services".equals(namespaceURI) &&
+                  nameSpace.equals(namespaceURI) &&
                   "EntityIdentifier".equals(typeName)){
                    
                             return  EntityIdentifier.Factory.parse(reader);
@@ -1620,7 +1631,7 @@
 
               
                   if (
-                  "http://www.regenstrief.org/services".equals(namespaceURI) &&
+                		  nameSpace.equals(namespaceURI) &&
                   "getDumpResponse".equals(typeName)){
                    
                             return  GetDumpResponse.Factory.parse(reader);
@@ -1630,7 +1641,7 @@
 
               
                   if (
-                  "http://www.regenstrief.org/services".equals(namespaceURI) &&
+                		  nameSpace.equals(namespaceURI) &&
                   "getDump".equals(typeName)){
                    
                             return  GetDump.Factory.parse(reader);
@@ -1648,14 +1659,14 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://www.regenstrief.org/services",
+                		nameSpace,
                 "getDump",
                 "ns1");
 
             
 
         private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals("http://www.regenstrief.org/services")){
+            if(namespace.equals(nameSpace)){
                 return "ns1";
             }
             return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -1958,7 +1969,7 @@
                 while(!reader.isEndElement()) {
                     if (reader.isStartElement() ){
                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","getDump").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"getDump").equals(reader.getName())){
                                 
                                                 object.setGetDump(GetDump.Factory.parse(reader));
                                             
@@ -2001,7 +2012,7 @@
             
 
         private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals("http://www.regenstrief.org/services")){
+            if(namespace.equals(nameSpace)){
                 return "ns1";
             }
             return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -2490,7 +2501,7 @@
                   if (serializeType){
                
 
-                   java.lang.String namespacePrefix = registerPrefix(xmlWriter,"http://www.regenstrief.org/services");
+                   java.lang.String namespacePrefix = registerPrefix(xmlWriter,nameSpace);
                    if ((namespacePrefix != null) && (namespacePrefix.trim().length() > 0)){
                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","type",
                            namespacePrefix+":getDump",
@@ -2507,10 +2518,10 @@
                                             if (localUser==null){
                                                  throw new org.apache.axis2.databinding.ADBException("user cannot be null!!");
                                             }
-                                           localUser.serialize(new javax.xml.namespace.QName("http://www.regenstrief.org/services","user"),
+                                           localUser.serialize(new javax.xml.namespace.QName(nameSpace,"user"),
                                                factory,xmlWriter);
                                         
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2544,7 +2555,7 @@
                                     
                                    xmlWriter.writeEndElement();
                               if (localRoleTracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2578,7 +2589,7 @@
                                     
                                    xmlWriter.writeEndElement();
                              } if (localPurposeTracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2615,10 +2626,10 @@
                                             if (localPatient==null){
                                                  throw new org.apache.axis2.databinding.ADBException("patient cannot be null!!");
                                             }
-                                           localPatient.serialize(new javax.xml.namespace.QName("http://www.regenstrief.org/services","patient"),
+                                           localPatient.serialize(new javax.xml.namespace.QName(nameSpace,"patient"),
                                                factory,xmlWriter);
                                          if (localMinDateTracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2652,7 +2663,7 @@
                                     
                                    xmlWriter.writeEndElement();
                              } if (localMaxDateTracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2686,7 +2697,7 @@
                                     
                                    xmlWriter.writeEndElement();
                              } if (localClassesToIncludeTracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2720,7 +2731,7 @@
                                     
                                    xmlWriter.writeEndElement();
                              } if (localClassesToExcludeTracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2754,7 +2765,7 @@
                                     
                                    xmlWriter.writeEndElement();
                              } if (localMinimalTracker){
-                                    namespace = "http://www.regenstrief.org/services";
+                                    namespace = nameSpace;
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
@@ -2950,7 +2961,7 @@
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
                 
-                            elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                            elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "user"));
                             
                             
@@ -2959,7 +2970,7 @@
                                     }
                                     elementList.add(localUser);
                                 
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "password"));
                                  
                                         if (localPassword != null){
@@ -2968,7 +2979,7 @@
                                            throw new org.apache.axis2.databinding.ADBException("password cannot be null!!");
                                         }
                                      if (localRoleTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "role"));
                                  
                                         if (localRole != null){
@@ -2977,7 +2988,7 @@
                                            throw new org.apache.axis2.databinding.ADBException("role cannot be null!!");
                                         }
                                     } if (localPurposeTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "purpose"));
                                  
                                         if (localPurpose != null){
@@ -2986,7 +2997,7 @@
                                            throw new org.apache.axis2.databinding.ADBException("purpose cannot be null!!");
                                         }
                                     }
-                            elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                            elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "patient"));
                             
                             
@@ -2995,7 +3006,7 @@
                                     }
                                     elementList.add(localPatient);
                                  if (localMinDateTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "minDate"));
                                  
                                         if (localMinDate != null){
@@ -3004,7 +3015,7 @@
                                            throw new org.apache.axis2.databinding.ADBException("minDate cannot be null!!");
                                         }
                                     } if (localMaxDateTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "maxDate"));
                                  
                                         if (localMaxDate != null){
@@ -3013,7 +3024,7 @@
                                            throw new org.apache.axis2.databinding.ADBException("maxDate cannot be null!!");
                                         }
                                     } if (localClassesToIncludeTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "classesToInclude"));
                                  
                                         if (localClassesToInclude != null){
@@ -3022,7 +3033,7 @@
                                            throw new org.apache.axis2.databinding.ADBException("classesToInclude cannot be null!!");
                                         }
                                     } if (localClassesToExcludeTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "classesToExclude"));
                                  
                                         if (localClassesToExclude != null){
@@ -3031,7 +3042,7 @@
                                            throw new org.apache.axis2.databinding.ADBException("classesToExclude cannot be null!!");
                                         }
                                     } if (localMinimalTracker){
-                                      elementList.add(new javax.xml.namespace.QName("http://www.regenstrief.org/services",
+                                      elementList.add(new javax.xml.namespace.QName(nameSpace,
                                                                       "minimal"));
                                  
                                         if (localMinimal != null){
@@ -3118,7 +3129,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","user").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"user").equals(reader.getName())){
                                 
                                                 object.setUser(EntityIdentifier.Factory.parse(reader));
                                               
@@ -3134,7 +3145,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","password").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"password").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3153,7 +3164,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","role").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"role").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3171,7 +3182,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","purpose").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"purpose").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3189,7 +3200,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","patient").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"patient").equals(reader.getName())){
                                 
                                                 object.setPatient(EntityIdentifier.Factory.parse(reader));
                                               
@@ -3205,7 +3216,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","minDate").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"minDate").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3223,7 +3234,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","maxDate").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"maxDate").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3241,7 +3252,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","classesToInclude").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"classesToInclude").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3259,7 +3270,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","classesToExclude").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"classesToExclude").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3277,7 +3288,7 @@
                                     
                                     while (!reader.isStartElement() && !reader.isEndElement()) reader.next();
                                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","minimal").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"minimal").equals(reader.getName())){
                                 
                                     java.lang.String content = reader.getElementText();
                                     
@@ -3320,14 +3331,14 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://www.regenstrief.org/services",
+                nameSpace,
                 "getDumpResponse",
                 "ns1");
 
             
 
         private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals("http://www.regenstrief.org/services")){
+            if(namespace.equals(nameSpace)){
                 return "ns1";
             }
             return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -3630,7 +3641,7 @@
                 while(!reader.isEndElement()) {
                     if (reader.isStartElement() ){
                 
-                                    if (reader.isStartElement() && new javax.xml.namespace.QName("http://www.regenstrief.org/services","getDumpResponse").equals(reader.getName())){
+                                    if (reader.isStartElement() && new javax.xml.namespace.QName(nameSpace,"getDumpResponse").equals(reader.getName())){
                                 
                                                 object.setGetDumpResponse(GetDumpResponse.Factory.parse(reader));
                                             
