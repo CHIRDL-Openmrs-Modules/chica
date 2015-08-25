@@ -826,9 +826,7 @@ public class HL7SocketHandler extends
 			}
 		}
 		catch (Exception e) {
-			log.error("Error processing hl7 OBXs.");
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error processing hl7 OBXs.",e);
 		}
 
 		// This code must come after the code that sets the encounter values
