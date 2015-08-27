@@ -8,9 +8,11 @@ import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.QueryKiteException;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -42,29 +44,30 @@ public class QueryKite implements ProcessStateAction
 		Integer locationId = patientState.getLocationId();
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		AdministrationService adminService = Context.getAdministrationService();
 		State currState = patientState.getState();
 		Integer sessionId = patientState.getSessionId();
-				
-		if (patient.getPatientIdentifier() == null)
-		{
-			log.error("Could not query kite. MRN is null.");
-		} else
-		{
-			try
+		String performMRFQuery = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PERFORM_MRF_QUERY);
+		
+		if (performMRFQuery != null && performMRFQuery.trim().equalsIgnoreCase("true")){
+			if (patient.getPatientIdentifier() == null)
 			{
-				org.openmrs.module.chica.QueryKite.mrfQuery(patient.getPatientIdentifier()
-						.getIdentifier(), patient,true);
-			}catch (QueryKiteException e){
-				Error ce = e.getError();
-				ce.setSessionId(sessionId);
-				chirdlutilbackportsService.saveError(ce);
-				
-			}catch (Exception e)
+				log.error("Could not query kite. MRN is null.");
+			} else
 			{
-				log.error("Error querying kite");
-				log.error(e.getMessage());
-				log.error(org.openmrs.module.chirdlutil.util.Util
-								.getStackTrace(e));
+				try
+				{
+					org.openmrs.module.chica.QueryKite.mrfQuery(patient.getPatientIdentifier()
+							.getIdentifier(), patient,true);
+				}catch (QueryKiteException e){
+					Error ce = e.getError();
+					ce.setSessionId(sessionId);
+					chirdlutilbackportsService.saveError(ce);
+
+				}catch (Exception e)
+				{
+					log.error("Error querying kite", e);
+				}
 			}
 		}
 		StateManager.endState(patientState);

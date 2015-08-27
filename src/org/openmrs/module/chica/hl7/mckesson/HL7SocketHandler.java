@@ -53,9 +53,8 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.chica.QueryKite;
-import org.openmrs.module.chica.QueryKiteException;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -81,6 +80,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 
 /**
@@ -94,7 +94,13 @@ public class HL7SocketHandler extends
 
 	
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final String VOID_REASON_MRN_CORRECTION = "MRN Correction";
+
+	private static final String VOID_REASON_MRN_LEADING_ZERO_CORRECTION = "MRN Leading Zero Correction";
+
+	private static final String HYPHEN = "-";
+
+	protected final static Log log = LogFactory.getLog(HL7SocketHandler.class);
 	
 	private static final String GLOBAL_PROPERTY_FILTER_ON_PRIOR_CHECKIN = "chica.filterHL7RegistrationOnPriorCheckin";
 	private static final String GLOBAL_PROPERTY_PARSE_ERROR_DIRECTORY = "chica.mckessonParseErrorDirectory";
@@ -105,21 +111,12 @@ public class HL7SocketHandler extends
 	
 	private static final String CONCEPT_INSURANCE_NAME = "InsuranceName";
 	
-	private static final String ERROR_LEVEL_ERROR = "Error";
-	private static final String ERROR_LEVEL_WARNING = "Warning";
-	private static final String ERROR_LEVEL_FATAL = "Fatal";
-	
 	private static final String PARAMETER_QUERY_ALIAS_START = "queryKiteAliasStart";
 	private static final String PARAMETER_QUERY_ALIAS_STOP = "queryKiteAliasEnd";
 	private static final String PARAMETER_SESSION = "session";
 	
 	private static final String PROCESS_HL7_CHECKIN_END = "processCheckinHL7End";
 	private static final String PROCESS_HL7_CHECKIN_START = "processCheckinHL7Start";
-	
-	private static final String ALIAS_FAILED = "FAILED";
-	private static final String ALIAS_UNKNOWN_PATIENT = "unknown_patient";
-	private static final String ALIAS_DONE = "DONE";
-	private static final String ALIAS_NONE = "NONE";
 	
 	private static final String HL7_MESSAGE_TYPE_A01 = "A01";
 	private static final String HL7_VERSION_2_5 = "2.5";
@@ -129,9 +126,6 @@ public class HL7SocketHandler extends
 	private static final String TRUE = "true";
 	private static final String EMPTY_STRING = "";
 	private static final String LEADING_ZERO = "0";
-
-
-	
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.sockethl7listener.HL7SocketHandler#findPatient(org.openmrs.Patient, java.util.Date, java.util.HashMap)
@@ -145,33 +139,25 @@ public class HL7SocketHandler extends
 		try {
 			PatientIdentifier patientIdentifier = hl7Patient
 					.getPatientIdentifier();
+			
 			if (patientIdentifier != null) {
 				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
 				Patient matchedPatient = findPatient(hl7Patient);
+				
 				if (matchedPatient == null) {
-					
-					resultPatient = createPatient(hl7Patient);
-					
-					//Merge alias medical record number patients
-					parameters.put(PARAMETER_QUERY_ALIAS_START, new java.util.Date());
-					processAliasString(mrn, resultPatient);
-					parameters.put(PARAMETER_QUERY_ALIAS_STOP, new java.util.Date());
-					
-				} else {
+					resultPatient = createPatient(hl7Patient);	
+				}
+				else {
 					resultPatient = updatePatient(matchedPatient, hl7Patient,
 							encounterDate);
 				}
-
-				parameters.put(PROCESS_HL7_CHECKIN_END, new java.util.Date());
-
+				
+			
 			}
 
 		} catch (RuntimeException e) {
-			logger.error("Exception during patient lookup. " + e.getMessage());
-			logger.error(org.openmrs.module.chirdlutil.util.Util
-					.getStackTrace(e));
-
+			log.error("Exception during patient lookup. ", e);
 		}
 		return resultPatient;
 
@@ -298,97 +284,14 @@ public class HL7SocketHandler extends
 
 		return true;
 	}
-
-	/**
-	 * Parses the alias query response, and merges patients if needed.
-	 * @param mrn
-	 * @param preferredPatient
-	 */
-	private void processAliasString(String mrn, Patient preferredPatient) {
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context
-				.getService(ChirdlUtilBackportsService.class);
-
-		PatientService patientService = Context.getPatientService();
-		String aliasString = null;
-		try {
-			aliasString = QueryKite.aliasQuery(mrn);
-		} catch (QueryKiteException e) {
-			Error ce = e.getError();
-			chirdlutilbackportsService.saveError(ce);
-
-		}
-
-		// alias query failed
-		if (aliasString == null) {
-			return;
-		}
-		String[] fields = PipeParser.split(aliasString, "|");
-		if (fields != null) {
-			int length = fields.length;
-
-			if (length >= 2) {
-				if (fields[1].equals(ALIAS_FAILED)) {
-					Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION,
-							"Alias query returned FAILED for mrn: " + mrn,
-							null, new Date(), null);
-					chirdlutilbackportsService.saveError(error);
-					return;
-				}
-				if (fields[1].equals(ALIAS_UNKNOWN_PATIENT)) {
-					Error error = new Error(ERROR_LEVEL_WARNING, ChirdlUtilConstants.ERROR_QUERY_KITE_CONNECTION,
-							"Alias query returned unknown_patient for mrn: "
-									+ mrn, null, new Date(), null);
-					chirdlutilbackportsService.saveError(error);
-					return;
-				}
-			}
-
-			for (int i = 1; i < length; i++) {
-				if (fields[i].contains(ALIAS_DONE)) {
-					break;
-				}
-
-				// don't look up the preferred patient's mrn
-				// so we don't merge a patient to themselves
-				if (Util.removeLeadingZeros(fields[i]).equals(
-						Util.removeLeadingZeros(mrn))
-						|| fields[i].equals(ALIAS_NONE)) {
-					continue;
-				}
-
-				List<Patient> lookupPatients = patientService.getPatients(null,
-						Util.removeLeadingZeros(fields[i]), null, false);
-
-				if (lookupPatients != null && lookupPatients.size() > 0) {
-					Iterator<Patient> iter = lookupPatients.iterator();
-
-					while (iter.hasNext()) {
-						Patient currPatient = iter.next();
-						// only merge different patients
-						if (!preferredPatient.getPatientId().equals(
-								currPatient.getPatientId())) {
-							patientService.mergePatients(preferredPatient,
-									currPatient);
-						} else {
-							Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_GENERAL,
-									"Tried to merge patient: "
-											+ currPatient.getPatientId()
-											+ " with itself.", null,
-									new Date(), null);
-							chirdlutilbackportsService.saveError(error);
-						}
-					}
-				}
-			}
-		}
-	}
-
+	
 	/**
 	 * Update matched patient to values from hl7 message (non-Javadoc)
 	 * 
 	 * @see org.openmrs.module.sockethl7listener.HL7SocketHandler#updatePatient(org
 	 *      .openmrs.Patient, org.openmrs.Patient, java.util.Date)
 	 */
+	
 	@Override
 	protected Patient updatePatient(Patient matchPatient, Patient hl7Patient,
 			Date encounterDate) {
@@ -523,7 +426,7 @@ public class HL7SocketHandler extends
 				message = this.parser.parse(incomingMessageString);
 			
 			} catch (Exception e) {
-				Error error = new Error(ERROR_LEVEL_FATAL, ChirdlUtilConstants.ERROR_HL7_PARSING,
+				Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_FATAL, ChirdlUtilConstants.ERROR_HL7_PARSING,
 						"Error parsing the McKesson checkin hl7 "
 								+ e.getMessage(),
 						org.openmrs.module.chirdlutil.util.Util
@@ -544,8 +447,7 @@ public class HL7SocketHandler extends
 						outputFile = new FileOutputStream(
 								mckessonParseErrorDirectory + "/" + filename);
 					} catch (FileNotFoundException e1) {
-						this.log.error("Could not find file: "
-								+ mckessonParseErrorDirectory + "/" + filename);
+						log.error("Could not find file: " + mckessonParseErrorDirectory + "/" + filename);
 					}
 					if (outputFile != null) {
 						try {
@@ -561,10 +463,9 @@ public class HL7SocketHandler extends
 								outputFile.close();
 							} catch (Exception e2) {
 							}
-							this.log
-									.error("There was an error writing the dump file");
-							this.log.error(e1.getMessage());
-							this.log.error(Util.getStackTrace(e));
+							log.error("There was an error writing the dump file");
+							log.error(e1.getMessage());
+							log.error(Util.getStackTrace(e));
 						}
 					}
 				}
@@ -574,10 +475,7 @@ public class HL7SocketHandler extends
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
 					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
 				} catch (Exception e2) {
-					logger.error("Error sending an ack response after a parsing exception. " +
-							e2.getMessage());
-					logger.error(org.openmrs.module.chirdlutil.util.Util
-							.getStackTrace(e2));
+					log.error("Error sending an ack response after a parsing exception. " , e2);
 					ackMessage = originalMessage;
 				}
 				return ackMessage;
@@ -588,9 +486,7 @@ public class HL7SocketHandler extends
 			incomingMessageString = this.parser.encode(message);
 			message.addNonstandardSegment(ZPV_SEGMENT);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.chirdlutil.util.Util
-					.getStackTrace(e));
+			log.error("Error adding Z segment", e);
 		}
 
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
@@ -722,9 +618,9 @@ public class HL7SocketHandler extends
 				location = new Location();
 				location.setName(locationString);
 				locationService.saveLocation(location);
-				logger.warn("Location '" + locationString
-						+ "' does not exist in the Location table."
-						+ "a new location was created for '" + locationString
+				log.warn("Location '" + locationString
+						+ "' does not exist in the Location table. "
+						+ "A new location was created for '" + locationString
 						+ "'");
 			}
 		}
@@ -1385,15 +1281,15 @@ public class HL7SocketHandler extends
 			//New MRNs will not have a leading zero. 
 			try {
 				if (Util.removeLeadingZeros(existingMRN.trim()).equals(Util.removeLeadingZeros(newMRN.trim()))){
-					existingPatientIdentifier.setVoidReason("MRN Leading Zero Correction");
-					Error error = new Error(ERROR_LEVEL_WARNING, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+					existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_LEADING_ZERO_CORRECTION);
+					Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_WARNING, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
 							"Leading Zero Correction." 
 									+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
 									"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
 					chirdlutilbackportsService.saveError(error);
 				} else {
-					existingPatientIdentifier.setVoidReason("MRN Correction");
-					Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+					existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_CORRECTION);
+					Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
 							"MRN correction required! Contact downstream data warehouse about possible corrupted data." 
 									+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
 									"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
@@ -1440,7 +1336,6 @@ public class HL7SocketHandler extends
 
 		boolean encounterFound = true;
 
-		PatientService patientService = Context.getPatientService();
 		org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
 		AdministrationService adminService = Context.getService(AdministrationService.class);
 		ChirdlUtilBackportsService chirdlutilbackportsService  = Context.getService(ChirdlUtilBackportsService.class);
@@ -1469,8 +1364,8 @@ public class HL7SocketHandler extends
 
 			//Save the hl7 message and error
 			this.saveMessage(hl7message, patient, false, true);
-			Error error = new Error(ERROR_LEVEL_ERROR, ChirdlUtilConstants. ERROR_GENERAL,
-						"An HL7 registration message arrived for a patient that is already checkied in.  MRN =  "
+			Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants. ERROR_GENERAL,
+						"An HL7 registration message arrived for a patient that is already checked in.  MRN =  "
 								+ patient.getPatientIdentifier().getIdentifier(), null, new Date(), null);
 			chirdlutilbackportsService.saveError(error);
 
@@ -1634,6 +1529,56 @@ public class HL7SocketHandler extends
 		if (currentAccountNumberAttr == null || currentAccountNumberAttr.getValue() == null
 			|| !currentAccountNumberAttr.getValue().equals(hl7AccountNumberAttr.getValue())){
 			currentPatient.addAttribute(hl7AccountNumberAttr);
+		}
+	}
+	
+	/**
+	 * MES  CHICA-358
+	 * Pulls identifiers from message string, searches for matching patients,
+	 * and merges existing patients if needed.
+	 * @param mrn
+	 * @param patient - new patient
+	 * @param messageString - mrf dump hl7 string
+	 * @should merge existing patient into new patient
+	 */
+	public static void checkAlias(String mrn, Patient newPatient, String messageString){
+
+
+		PatientService patientService = Context.getPatientService();
+		HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
+		PipeParser pipeParser = new PipeParser();
+
+		try {
+			pipeParser.setValidationContext(new NoValidation());
+			String newMessageString = HL7ToObs.replaceVersion(messageString);
+			Message newMessage = null;
+			newMessage = pipeParser.parse(newMessageString);
+
+			if (newMessage == null){
+				return;
+			}
+
+			String identifier = patientHandler.getIdentifierString(newMessage);
+
+			if (!identifier.contains(HYPHEN)){
+				identifier = new StringBuffer(identifier).insert(identifier.length()-1, HYPHEN).toString();
+			}
+			if (Util.removeLeadingZeros(identifier).equalsIgnoreCase(Util.removeLeadingZeros(mrn))){
+				return;
+			}
+
+			List<Patient> existingPatients = patientService.getPatients(null,
+					Util.removeLeadingZeros(identifier), null, false);
+			
+			for (Patient existingPatient : existingPatients){
+				
+				if (!existingPatient.getId().equals(newPatient.getId())){
+					patientService.mergePatients(newPatient, existingPatient);
+				}
+			}
+		
+		}catch (Exception e){
+			log.error("Alias merge error for patient " + newPatient.getId(), e );
 		}
 	}
 	
