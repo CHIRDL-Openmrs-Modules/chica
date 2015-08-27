@@ -10,16 +10,12 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chirdlutil.util.IOUtil;
 
 public class KiteMessageHandler
 {
-
-	private static final String HL7_START_OF_MESSAGE = "\u000b";
-	private static final String HL7_END_OF_MESSAGE = "\u001c";
 
 	protected final Log log = LogFactory.getLog(getClass());
 	
