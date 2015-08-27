@@ -101,6 +101,8 @@ body {
     text-align:center;
     float:left;
     color:red;
+    
+    font-size: small; /* Adding to correct an issue when zooming */
 }
 
 .vitalsNames {
@@ -117,6 +119,7 @@ body {
     height: 18px;
     margin-left:5px;
     text-align:left;
+    
 }
 
 #vitalsLegend {
@@ -130,6 +133,10 @@ body {
     text-align:center;
     font-size:0.8em;
     padding-top:2px;
+    
+    /* Adding to fix issues when zooming out 
+    margin-right: -1px;
+    margin-bottom: -1px; */
 }
 
 #exam {
@@ -329,12 +336,16 @@ body {
     border-bottom: 1px solid black;
     border-left: 1px solid black;
     margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .questionStem {
     padding:2px 5px 2px 5px;
     width:390px;
     height:65px;
+    
+    margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .answerContainer {
@@ -342,6 +353,9 @@ body {
     padding:2px;
     width:195px;
     height:88px;
+    
+    margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .answerCheckbox {
