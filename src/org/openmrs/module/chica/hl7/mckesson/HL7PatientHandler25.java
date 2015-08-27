@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.jfree.util.Log;
 import org.openmrs.PersonAddress;
 import org.openmrs.module.chirdlutil.util.Util;
 
@@ -21,6 +22,9 @@ import ca.uhn.hl7v2.model.v25.datatype.XAD;
 import ca.uhn.hl7v2.model.v25.datatype.XPN;
 import ca.uhn.hl7v2.model.v25.segment.NK1;
 import ca.uhn.hl7v2.model.v25.segment.PID;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * @author tmdugan
@@ -231,6 +235,21 @@ public class HL7PatientHandler25 extends
 			logger.warn("Unable to collect address from PID or NK1 for", e);
 		}
 		return addresses;
+	}
+	
+
+	public String getIdentifierString(Message newMessage){
+		String pid = null;
+		try {
+			//get pid-3-1 (mrn)
+			PipeParser pipeParser = new PipeParser();
+			pipeParser.setValidationContext(new NoValidation());
+			Terser terser = new Terser(newMessage);
+			pid = terser.get("/.PID-3-1");
+		} catch (Exception e) {
+			Log.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
+		} 
+		return pid;
 	}
 	
 	

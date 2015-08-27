@@ -1,16 +1,10 @@
 package org.openmrs.module.chica;
 
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 /**
  * @author tmdugan
@@ -21,14 +15,12 @@ public class KiteQueryThread implements Runnable
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private String mrn = null;
-	private String queryPrefix = null;
 	private QueryKiteException exception = null;
-	private String response = null;
+	private String responseString = null;
 
-	public KiteQueryThread(String mrn, String queryPrefix)
+	public KiteQueryThread(String mrn)
 	{
 		this.mrn = mrn;
-		this.queryPrefix = queryPrefix;
 	}
 
 	/*
@@ -42,20 +34,19 @@ public class KiteQueryThread implements Runnable
 		try
 		{
 			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService
-					.getGlobalProperty("scheduler.username"), adminService
-					.getGlobalProperty("scheduler.password"));
+			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
+				adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
 
 			try
 			{
-				this.response = queryKite(this.mrn, this.queryPrefix);
+				responseString = QueryKite.getMRFDump(this.mrn);
+			
 			} catch (QueryKiteException e)
 			{
 				this.exception = e;
 			}
 		} catch (Exception e)
 		{
-			
 		}finally{
 			Context.closeSession();
 		}
@@ -63,7 +54,7 @@ public class KiteQueryThread implements Runnable
 
 	public String getResponse()
 	{
-		return this.response;
+		return this.responseString;
 	}
 
 	public QueryKiteException getException()
@@ -71,64 +62,5 @@ public class KiteQueryThread implements Runnable
 		return this.exception;
 	}
 
-	private String queryKite(String mrn, String queryPrefix)
-			throws QueryKiteException
-	{
-		AdministrationService adminService = Context.getAdministrationService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
-		
-		String host = adminService.getGlobalProperty("chica.kiteHost");
-		if (host == null)
-		{
-			log.error("Could not query kite. No host provided.");
-			return null;
-		}
-		Integer port = null;
-		try
-		{
-			port = Integer.parseInt(adminService
-					.getGlobalProperty("chica.kitePort"));
-		} catch (NumberFormatException e)
-		{
-		}
-
-		Integer timeout = null;
-		try
-		{
-			timeout = Integer.parseInt(adminService
-					.getGlobalProperty("chica.kiteTimeout"));
-			timeout = timeout * 1000; // convert seconds to milliseconds
-		} catch (NumberFormatException e)
-		{
-		}
-
-		String response = null;
-		String queryString = queryPrefix + "|" + mrn + "\n";
-
-		KiteMessageHandler serverTest = new KiteMessageHandler(host, port,
-				timeout);
-
-		try
-		{
-			serverTest.openSocket();
-			serverTest.sendMessage(queryString);
-			response = serverTest.getMessage();
-
-		} catch (Exception e)
-		{
-			Error error = new Error("Error", "Query Kite Connection",
-					queryPrefix + ": " + e.getMessage(), Util.getStackTrace(e),
-					new Date(), null);
-			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-			chirdlutilbackportsService.saveError(error);
-			throw new QueryKiteException("Query Kite Connection timed out",
-					error);
-
-		} finally
-		{
-			serverTest.closeSocket();
-		}
-
-		return response;
-	}
+	
 }
