@@ -54,6 +54,9 @@ import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BadPdfFormatException;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfCopyFields;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
@@ -440,30 +443,61 @@ public class ChicaServlet extends HttpServlet {
 				throw new IOException(e);
 			}
 		} else {
-			int contentSize = 0;
-			for (int i = 0; i < filesToCombine.size(); i++) {
-	        	String filePath = filesToCombine.get(i);
-	            try {
-	            	contentSize += renamePdfFields(filePath, i).length;
-	            }
-	            catch (DocumentException e) {
-	            	log.error("Error handling PDF document: " + filePath, e);
-					throw new IOException(e);
-	            }
-	        }
-			
-			response.setContentLength(contentSize);
-			String filePath = null;
+			// DWE CHICA-500 Allow multiple PDFs to be selected/combined into 
+			// a single document for printing. If the document has an odd number of pages,
+			// a blank page will be added so that the next document will not be printed on the back of the 
+			// previous document when printing duplex
+			String filePath = "";
 			try {
-				PdfCopyFields copy = new PdfCopyFields(response.getOutputStream());
+				Document doc = new Document();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		        PdfCopy copy = new PdfCopy(doc, baos);
+		        doc.open();
+		        PdfReader reader = null;
+		        
 		        for (int i = 0; i < filesToCombine.size(); i++) {
 		        	filePath = filesToCombine.get(i);
-		        	PdfReader reader = new PdfReader(renamePdfFields(filePath, i));
-		            copy.addDocument(reader);
-		            reader.close();
+		        	reader = new PdfReader(renamePdfFields(filePath, i));
+		        	
+		        	// Loop over the pages in the document
+		            int numOfPages = reader.getNumberOfPages();
+		            
+		            for (int page = 1; page <= numOfPages; page++) {
+		            	try {		            		
+		            		// When forms are combined, we need to check to see if the view is landscape
+		            		// If it is, we need to rotate it otherwise Firefox will shrink the pages to fit in portrait
+		            		// which causes pages that should be printed in portrait to be shrunk as well
+		            		int rot = reader.getPageRotation(page);
+		            		if(rot == 90 || rot == 270)
+		            		{
+		            			PdfDictionary pageDict = reader.getPageN(page);
+			            		pageDict.put(PdfName.ROTATE, new PdfNumber(0));
+		            		}
+		            				            		
+		                copy.addPage(copy.getImportedPage(reader, page));
+		            	} catch (Exception e) {
+		            		log.error("Error adding page", e);
+		            	}
+		            }
+		            
+		            // Add blank page if the document has an odd number of pages
+		            if(numOfPages % 2 != 0)
+		            {
+		            	copy.addPage(reader.getPageSize(1), reader.getPageRotation(1));
+		            }
 		        }
 		        
+		        copy.freeReader(reader);
+	            reader.close();
+		        doc.close();
 		        copy.close();
+		       
+		        response.setContentLength(baos.size());
+		        response.getOutputStream().write(baos.toByteArray());
+		        
+		        baos.flush();
+		        baos.close();
+		        
 			} catch (BadPdfFormatException e) {
 				log.error("Bad PDF found: " + filePath, e);
 				throw new IOException(e);
