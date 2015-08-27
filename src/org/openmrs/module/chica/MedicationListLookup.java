@@ -124,8 +124,6 @@ public class MedicationListLookup {
 					//check for an exception
 					if (queryMedsThread.getException() != null) {
 						throw queryMedsThread.getException();
-					} else {
-						return;
 					}
 				} else {
 					//the timeout was exceeded so return null
