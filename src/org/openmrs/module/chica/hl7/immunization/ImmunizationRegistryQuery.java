@@ -144,7 +144,7 @@ public class ImmunizationRegistryQuery
 		ConceptService conceptService = Context.getConceptService();
 		ChicaService chicaService = Context.getService(org.openmrs.module.chica.service.ChicaService.class);	
 		ImmunizationForecastLookup.removeImmunizationList(patientId);
-		
+	
 		if (message instanceof VXR_V03) {
 			VXR_V03 vxr = (VXR_V03) message;
 			int numReps = vxr.getORCRXARXROBXNTEReps();

@@ -345,6 +345,7 @@ public class ManualCheckin
 		name.setGivenName(request.getParameter("manualCheckinFirstName"));
 		name.setMiddleName(request.getParameter("manualCheckinMiddleName"));
 		name.setFamilyName(request.getParameter("manualCheckinLastName"));
+		name.setPreferred(true);
 		name.setDateCreated(new Date());
 		checkinPatient.addName(name);
 		
@@ -356,6 +357,7 @@ public class ManualCheckin
 		address.setStateProvince(request.getParameter("manualCheckinState"));
 		address.setDateCreated(encounterDate);
 		address.setCreator(Context.getAuthenticatedUser());
+		address.setPreferred(true);
 		checkinPatient.addAddress(address);
 		
 		checkinPatient.setGender(request.getParameter("manualCheckinSex"));

@@ -95,7 +95,7 @@ public class QueryMeds implements  ChirdlRunnable {
 			
 		}
 		catch (Exception e) {
-			Error error = new Error("Error", "Query Medication List Connection", "mrn: "+mrn + " providerId: "+providerId+" locationId: "+locationId+" " + e.getMessage(), Util
+			Error error = new Error("Error", "Query Medication List Connection", "mrn: "+ mrn + " providerId: "+providerId +" locationId: "+ locationId, Util
 			        .getStackTrace(e), new Date(), null);
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			chirdlutilbackportsService.saveError(error);
