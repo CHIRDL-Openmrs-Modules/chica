@@ -101,6 +101,8 @@ body {
     text-align:center;
     float:left;
     color:red;
+    
+    font-size: small; /* Adding to correct an issue when zooming */
 }
 
 .vitalsNames {
@@ -329,12 +331,16 @@ body {
     border-bottom: 1px solid black;
     border-left: 1px solid black;
     margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .questionStem {
     padding:2px 5px 2px 5px;
     width:390px;
     height:65px;
+    
+    margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .answerContainer {
@@ -342,6 +348,9 @@ body {
     padding:2px;
     width:195px;
     height:88px;
+    
+    margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .answerCheckbox {
