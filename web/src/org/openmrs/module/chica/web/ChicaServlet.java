@@ -58,6 +58,7 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfSmartCopy;
 import com.itextpdf.text.pdf.PdfStamper;
 
 /**
@@ -450,7 +451,7 @@ public class ChicaServlet extends HttpServlet {
 			String filePath = "";
 			try {
 				Document doc = new Document();
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();				
 		        PdfCopy copy = new PdfCopy(doc, baos);
 		        doc.open();
 		        PdfReader reader = null;
@@ -473,7 +474,7 @@ public class ChicaServlet extends HttpServlet {
 		            			PdfDictionary pageDict = reader.getPageN(page);
 			            		pageDict.put(PdfName.ROTATE, new PdfNumber(0));
 		            		}
-		            				            		
+		            					            	
 		                copy.addPage(copy.getImportedPage(reader, page));
 		            	} catch (Exception e) {
 		            		log.error("Error adding page", e);
@@ -482,14 +483,14 @@ public class ChicaServlet extends HttpServlet {
 		            
 		            // Add blank page if the document has an odd number of pages
 		            if(numOfPages % 2 != 0)
-		            {
+		            {		            	
 		            	copy.addPage(reader.getPageSize(1), reader.getPageRotation(1));
 		            }
 		        }
-		        
+		        		        
 		        copy.freeReader(reader);
 	            reader.close();
-		        doc.close();
+		        doc.close();		        
 		        copy.close();
 		       
 		        response.setContentLength(baos.size());
