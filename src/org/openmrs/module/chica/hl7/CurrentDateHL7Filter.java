@@ -27,13 +27,32 @@ public class CurrentDateHL7Filter implements HL7Filter {
 			        .getAppointmentTime(message);
 			Date todaysDate = new Date();
 			
-			if(appointmentTime == null){
-				return false;
+			//process A04 messages
+			if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04) {
+				
+				//if there is no appointment time, process the A04
+				//it is a walkin
+				if (appointmentTime == null) {
+					return false;
+				}
+				
+				//if there is an appointment time and it is today,
+				//process the A04. If not, it is a preregistration and
+				//should be ignored
+				if (appointmentTime.getDate() == todaysDate.getDate() && appointmentTime.getMonth() == todaysDate.getMonth()
+				        && appointmentTime.getYear() == todaysDate.getYear()) {
+					return false;
+				}
 			}
 			
-			if (appointmentTime.getDate() == todaysDate.getDate() && appointmentTime.getMonth() == todaysDate.getMonth()
-			        && appointmentTime.getYear() == todaysDate.getYear()) {
-				return false;
+			//Only process A08's with a non-null appointment time
+			//and an appointment time that is today
+			//This will ignore updates on different days
+			if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A08) {
+				if (appointmentTime!=null&&appointmentTime.getDate() == todaysDate.getDate() && appointmentTime.getMonth() == todaysDate.getMonth()
+				        && appointmentTime.getYear() == todaysDate.getYear()) {
+					return false;
+				}
 			}
 		}
 		
