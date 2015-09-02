@@ -64,7 +64,7 @@ public class CurrentDateHL7Filter implements HL7Filter {
 				//process the A04. If not, it is a preregistration and
 				//should be ignored
 				if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&  appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH) 
-						&& appointment.get(Calendar.DAY_OF_WEEK) == today.get(Calendar.DAY_OF_WEEK)) {
+						&& appointment.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)) {
 					return false;
 				}
 			}
@@ -81,7 +81,7 @@ public class CurrentDateHL7Filter implements HL7Filter {
 				appointment.setTime(appointmentTime);
 				
 				if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&  appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH) 
-						&& appointment.get(Calendar.DAY_OF_WEEK) == today.get(Calendar.DAY_OF_WEEK)) {
+						&& appointment.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)) {
 					return false;
 				}
 			}
