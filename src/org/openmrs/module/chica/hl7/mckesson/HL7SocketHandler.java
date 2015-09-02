@@ -408,7 +408,8 @@ public class HL7SocketHandler extends
 		Message originalMessage = message;
 		// switch message version and type to values for default hl7 handlers
 		if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04 
-				|| message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01) {
+				|| message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01
+				|| message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A08) {
 			try {
 				if (message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01){
 					ca.uhn.hl7v2.model.v24.message.ADT_A01 adt = (ca.uhn.hl7v2.model.v24.message.ADT_A01) message;
@@ -418,6 +419,12 @@ public class HL7SocketHandler extends
 				
 				if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04){
 					ca.uhn.hl7v2.model.v22.message.ADT_A04 adt = (ca.uhn.hl7v2.model.v22.message.ADT_A04) message;
+					adt.getMSH().getVersionID().setValue(HL7_VERSION_2_5);
+					adt.getMSH().getMessageType().getTriggerEvent().setValue(HL7_MESSAGE_TYPE_A01);
+				}
+				
+				if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A08){
+					ca.uhn.hl7v2.model.v22.message.ADT_A08 adt = (ca.uhn.hl7v2.model.v22.message.ADT_A08) message;
 					adt.getMSH().getVersionID().setValue(HL7_VERSION_2_5);
 					adt.getMSH().getMessageType().getTriggerEvent().setValue(HL7_MESSAGE_TYPE_A01);
 				}
