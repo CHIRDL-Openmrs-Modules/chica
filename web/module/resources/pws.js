@@ -120,6 +120,7 @@ $(function() {
 	$("#problemButton").button();
 	$("#forcePrintButton").button();
 	$("#retryButton").button();
+	$("#notesButton").button();
 	
 	$('#tabs').hide();
 	
@@ -165,6 +166,47 @@ $(function() {
 	
 	$("#formPrintButton").click(function(event) {
 		$("#formTabDialog").dialog("open");
+		event.preventDefault();
+	});
+	
+	$("#notesDialog").dialog({
+    	open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+        autoOpen: false,
+        minHeight: 350,
+        minWidth: 450,
+        width: 950,
+        height: $(window).height() * 0.95,
+        modal: true,
+        resizable: false,
+        open : function(){
+        	$("#notesTabs").tabs({
+        		overflowTabs: true,
+        		heightStyle: "content",
+        		tabPadding: 23,
+        		containerPadding: 40
+        	}).addClass("ui-tabs-vertical ui-helper-clearfix");
+        	$("#notesTabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
+        },
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        hide: {
+          effect: "fade",
+          duration: 500
+        },
+        buttons: [
+           {
+        	 text:"Close",
+        	 click: function() {
+        	       $("#notesDialog").dialog("close");
+        	 }
+           }
+        ]
+    });
+	
+	$("#notesButton").click(function(event) {
+		$("#notesDialog").dialog("open");
 		event.preventDefault();
 	});
 	
@@ -327,7 +369,7 @@ $(function() {
           }
         ]
     });
-	
+ 
 	$("#tabList").tooltip();
 	$("#formTabDialog").dialog("open");
   });
