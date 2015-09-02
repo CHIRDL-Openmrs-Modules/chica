@@ -3,6 +3,7 @@
  */
 package org.openmrs.module.chica.hl7;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -44,8 +45,10 @@ public class CurrentDateHL7Filter implements HL7Filter {
 			
 			Date appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
 			        .getAppointmentTime(message);
-			Date todaysDate = new Date();
 			
+			Calendar appointment = Calendar.getInstance();
+			Calendar today = Calendar.getInstance();
+						
 			//process A04 messages
 			if (HL7_MESSAGE_TYPE_A04.equals(messageType)) {
 				
@@ -55,11 +58,13 @@ public class CurrentDateHL7Filter implements HL7Filter {
 					return false;
 				}
 				
+				appointment.setTime(appointmentTime);
+				
 				//if there is an appointment time and it is today,
 				//process the A04. If not, it is a preregistration and
 				//should be ignored
-				if (appointmentTime.getDate() == todaysDate.getDate() && appointmentTime.getMonth() == todaysDate.getMonth()
-				        && appointmentTime.getYear() == todaysDate.getYear()) {
+				if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&  appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH) 
+						&& appointment.get(Calendar.DAY_OF_WEEK) == today.get(Calendar.DAY_OF_WEEK)) {
 					return false;
 				}
 			}
@@ -68,8 +73,15 @@ public class CurrentDateHL7Filter implements HL7Filter {
 			//and an appointment time that is today
 			//This will ignore updates on different days
 			if (HL7_MESSAGE_TYPE_A08.equals(messageType)) {
-				if (appointmentTime!=null&&appointmentTime.getDate() == todaysDate.getDate() && appointmentTime.getMonth() == todaysDate.getMonth()
-				        && appointmentTime.getYear() == todaysDate.getYear()) {
+				if(appointmentTime == null)
+				{
+					return true;
+				}
+				
+				appointment.setTime(appointmentTime);
+				
+				if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&  appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH) 
+						&& appointment.get(Calendar.DAY_OF_WEEK) == today.get(Calendar.DAY_OF_WEEK)) {
 					return false;
 				}
 			}
