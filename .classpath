@@ -137,7 +137,7 @@
 	<classpathentry kind="lib" path="/chirdlutilbackports/dist"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/rgccd-1.2.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.4.0.jar" sourcepath="/sockethl7listener/src"/>
+	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/dss-2.30.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/atd-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutil-1.9.1.jar"/>
