@@ -344,14 +344,39 @@ public class HL7SocketHandler implements Application {
 									org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
 						obs.setValueNumeric(tempF);//temperature in Fahrenheit
 						break;
+						
+					case 948198: //Eye, Left Visual Acuity
+					case 948195: //Eye, Right Visual Acuity
+						Concept answer = obs.getValueCoded();
+						if (answer != null) {
+							String value = answer.getName().getName();
+							if (value != null) {
+								int index = value.indexOf("/");
+								if (index > -1) {
+									obs.setValueNumeric(Double.parseDouble(value.substring(index + 1).trim()));
+								}
+							}
+						}
+						break;
 					default:
 						
+				}
+				
+				Concept answerConcept = obs.getValueCoded();
+				//see if any answer concepts need mapped
+				if (answerConcept != null) {
+					
+					String answerConceptName = answerConcept.getName().getName();
+					Concept mappedConcept = conceptService.getConceptByMapping(answerConceptName, SOURCE);
+					if(mappedConcept != null){
+						obs.setValueCoded(mappedConcept);
+					}
 				}
 				
 				String conceptIdString = obs.getConcept().getConceptId().toString();
 				Concept mappedConcept = conceptService.getConceptByMapping(conceptIdString, SOURCE);
 				if (mappedConcept == null) {
-					logger.error("Could not map IU Health Cerner vitals concept: " + conceptId
+					logger.error("Could not map IU Health Cerner vitals concept: " + conceptIdString
 					        + ". Could not store vitals observation.");
 				} else {
 					obs.setConcept(mappedConcept);

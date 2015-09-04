@@ -706,6 +706,16 @@ public class HL7SocketHandler extends
 						currObs.setConcept(mappedConcept);
 					}
 					
+					Concept answerConcept = currObs.getValueCoded();
+					//see if any answer concepts need mapped
+					if (answerConcept != null) {
+						String answerConceptName = answerConcept.getName().getName();
+						Concept mappedVitalsConcept = conceptService.getConceptByMapping(answerConceptName, VITALS_SOURCE);
+						if(mappedVitalsConcept != null){
+							currObs.setValueCoded(mappedVitalsConcept);
+						}
+					}
+					
 					//If this is a historical vital, save it to the database
 					Concept mappedVitalsConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), VITALS_SOURCE);
 					if(mappedVitalsConcept != null){
