@@ -107,7 +107,7 @@
                             There are no recommended handouts for ${PatientName}.
                         </div>
                         <div id="formTabContainer">
-                            <div id="tabs"></div>
+                            <div id="tabs" ></div>
                         </div>
                     </div>
                 </div>
