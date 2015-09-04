@@ -30,16 +30,15 @@ Logic:
 
 If (mode = PRODUCE) then
 
-psfnote := call physicianNotePSFResults;
 physiciannote := call physicianNoteObs;
-call physicianNoteSaveToDisk with "psfnote","physiciannote";
+call physicianNoteSaveToDisk with "physiciannote";
 
 conclude True;
 endif
 
 ;;
 Action:
-write ("|| psfnote_value |||| physiciannote_value ||");
+write ("|| physiciannote_value ||");
 ;;
 Age_Min: 0 days;;
 Age_Max: 21 years;;
