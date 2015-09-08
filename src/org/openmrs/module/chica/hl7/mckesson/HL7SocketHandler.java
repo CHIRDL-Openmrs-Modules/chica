@@ -697,6 +697,18 @@ public class HL7SocketHandler extends
 										org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
 							currObs.setValueNumeric(tempF);//temperature in Fahrenheit
 							break;
+						case 948198: //Eye, Left Visual Acuity
+						case 948195: //Eye, Right Visual Acuity
+							String answer = currObs.getValueText();
+							
+							if (answer != null) {
+								int index = answer.indexOf("/");
+								if (index > -1) {
+									currObs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
+								}
+							}
+							
+							break;
 						default:
 							
 					}
@@ -706,9 +718,28 @@ public class HL7SocketHandler extends
 						currObs.setConcept(mappedConcept);
 					}
 					
+					Concept answerConcept = currObs.getValueCoded();
+					//see if any answer concepts need mapped
+					if (answerConcept != null) {
+						String answerConceptName = answerConcept.getName().getName();
+						Concept mappedVitalsConcept = conceptService.getConceptByMapping(answerConceptName, VITALS_SOURCE);
+						if(mappedVitalsConcept != null){
+							currObs.setValueCoded(mappedVitalsConcept);
+						}
+					}
+					
 					//If this is a historical vital, save it to the database
 					Concept mappedVitalsConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), VITALS_SOURCE);
 					if(mappedVitalsConcept != null){
+						if (currObs.getValueCoded()!=null&&currObs.getValueCoded().getConceptId() == 1) {
+							currObs.setValueCoded(null);
+							if (answerConcept != null) {
+								String answerConceptName = answerConcept.getName().getName();
+								currObs.setValueText(answerConceptName);
+								logger.error("Could not map IU Health Cerner vitals concept: " + answerConceptName
+								        + ". Could not store vitals observation.");
+							}
+						}
 						currObs.setConcept(mappedVitalsConcept);
 						currObs.setLocation(location);
 						currObs.setEncounter(encounter);

@@ -344,16 +344,49 @@ public class HL7SocketHandler implements Application {
 									org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
 						obs.setValueNumeric(tempF);//temperature in Fahrenheit
 						break;
+						
+					case 948198: //Eye, Left Visual Acuity
+					case 948195: //Eye, Right Visual Acuity
+						String answer = obs.getValueText();
+						
+						if (answer != null) {
+							int index = answer.indexOf("/");
+							if (index > -1) {
+								obs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
+							}
+						}
+						
+						break;
 					default:
 						
+				}
+				
+				Concept answerConcept = obs.getValueCoded();
+				//see if any answer concepts need mapped
+				if (answerConcept != null) {
+					
+					String answerConceptName = answerConcept.getName().getName();
+					Concept mappedConcept = conceptService.getConceptByMapping(answerConceptName, SOURCE);
+					if(mappedConcept != null){
+						obs.setValueCoded(mappedConcept);
+					}
 				}
 				
 				String conceptIdString = obs.getConcept().getConceptId().toString();
 				Concept mappedConcept = conceptService.getConceptByMapping(conceptIdString, SOURCE);
 				if (mappedConcept == null) {
-					logger.error("Could not map IU Health Cerner vitals concept: " + conceptId
+					logger.error("Could not map IU Health Cerner vitals concept: " + conceptIdString
 					        + ". Could not store vitals observation.");
 				} else {
+					if (obs.getValueCoded()!=null&&obs.getValueCoded().getConceptId() == 1) {
+						obs.setValueCoded(null);
+						if (answerConcept != null) {
+							String answerConceptName = answerConcept.getName().getName();
+							obs.setValueText(answerConceptName);
+							logger.error("Could not map IU Health Cerner vitals concept: " + answerConceptName
+							        + ". Could not store vitals observation.");
+						}
+					}
 					obs.setConcept(mappedConcept);
 					LocationService locationService = Context.getLocationService();
 					Location location = locationService.getLocation("RIIUMG");
