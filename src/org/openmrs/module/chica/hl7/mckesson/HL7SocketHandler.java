@@ -731,6 +731,15 @@ public class HL7SocketHandler extends
 					//If this is a historical vital, save it to the database
 					Concept mappedVitalsConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), VITALS_SOURCE);
 					if(mappedVitalsConcept != null){
+						if (currObs.getValueCoded()!=null&&currObs.getValueCoded().getConceptId() == 1) {
+							currObs.setValueCoded(null);
+							if (answerConcept != null) {
+								String answerConceptName = answerConcept.getName().getName();
+								currObs.setValueText(answerConceptName);
+								logger.error("Could not map IU Health Cerner vitals concept: " + answerConceptName
+								        + ". Could not store vitals observation.");
+							}
+						}
 						currObs.setConcept(mappedVitalsConcept);
 						currObs.setLocation(location);
 						currObs.setEncounter(encounter);

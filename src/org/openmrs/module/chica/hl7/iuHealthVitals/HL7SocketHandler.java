@@ -378,6 +378,15 @@ public class HL7SocketHandler implements Application {
 					logger.error("Could not map IU Health Cerner vitals concept: " + conceptIdString
 					        + ". Could not store vitals observation.");
 				} else {
+					if (obs.getValueCoded()!=null&&obs.getValueCoded().getConceptId() == 1) {
+						obs.setValueCoded(null);
+						if (answerConcept != null) {
+							String answerConceptName = answerConcept.getName().getName();
+							obs.setValueText(answerConceptName);
+							logger.error("Could not map IU Health Cerner vitals concept: " + answerConceptName
+							        + ". Could not store vitals observation.");
+						}
+					}
 					obs.setConcept(mappedConcept);
 					LocationService locationService = Context.getLocationService();
 					Location location = locationService.getLocation("RIIUMG");
