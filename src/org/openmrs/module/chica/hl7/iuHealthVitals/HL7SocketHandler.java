@@ -347,16 +347,15 @@ public class HL7SocketHandler implements Application {
 						
 					case 948198: //Eye, Left Visual Acuity
 					case 948195: //Eye, Right Visual Acuity
-						Concept answer = obs.getValueCoded();
+						String answer = obs.getValueText();
+						
 						if (answer != null) {
-							String value = answer.getName().getName();
-							if (value != null) {
-								int index = value.indexOf("/");
-								if (index > -1) {
-									obs.setValueNumeric(Double.parseDouble(value.substring(index + 1).trim()));
-								}
+							int index = answer.indexOf("/");
+							if (index > -1) {
+								obs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
 							}
 						}
+						
 						break;
 					default:
 						

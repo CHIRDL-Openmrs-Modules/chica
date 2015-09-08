@@ -697,6 +697,18 @@ public class HL7SocketHandler extends
 										org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
 							currObs.setValueNumeric(tempF);//temperature in Fahrenheit
 							break;
+						case 948198: //Eye, Left Visual Acuity
+						case 948195: //Eye, Right Visual Acuity
+							String answer = currObs.getValueText();
+							
+							if (answer != null) {
+								int index = answer.indexOf("/");
+								if (index > -1) {
+									currObs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
+								}
+							}
+							
+							break;
 						default:
 							
 					}
