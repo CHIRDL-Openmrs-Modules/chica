@@ -396,6 +396,8 @@ public class HL7SocketHandler implements Application {
 				}
 			}
 			
+			org.openmrs.module.chica.util.Util.calculatePercentiles(encounter.getEncounterId(), patient, locationTagId);
+			
 			double duration = (new Date().getTime() - starttime.getTime()) / 1000.0;
 			logger.info("MESSAGE PROCESS TIME: " + duration + " sec");
 			
@@ -445,7 +447,7 @@ public class HL7SocketHandler implements Application {
 		EncounterService encounterService = Context.getService(EncounterService.class);
     	// Get latest encounter today
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.HOUR, 0);
+		startCal.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		startCal.set(GregorianCalendar.MINUTE, 0);
 		startCal.set(GregorianCalendar.SECOND, 0);
 		Date startDate = startCal.getTime();
