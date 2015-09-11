@@ -672,11 +672,6 @@ public class HL7SocketHandler extends
 									kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
 							currObs.setValueNumeric(pounds);//BIRTH WEIGHT in chica in pounds 
 							break;
-						case 685461504: //Newborn Weight by History (kg)
-							kilograms = currObs.getValueNumeric();
-							double grams = kilograms*1000;
-							currObs.setValueNumeric(grams);//WEIGHT NEWBORN BABY A in chica in grams 
-							break;
 						case 635271: //WEIGHT (kg)
 							kilograms = currObs.getValueNumeric();
 							pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
