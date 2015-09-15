@@ -49,6 +49,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class HL7ToObs {
 
+	private static final String ESCAPE_SEQUENCE_AMPERSAND = "\\\\T\\\\";
 	private static final String HL7_VERSION_2_3 = "2.3";
 	protected final static Log log = LogFactory.getLog(HL7ToObs.class);
 
@@ -132,7 +133,8 @@ public class HL7ToObs {
 					"Error parsing the MRF dump " + e.getMessage(),
 					messageString, new Date(), null);
 			chirdlutilbackportsService.saveError(error);
-			String mrfParseErrorDirectory = IOUtil.formatDirectoryName(adminService.getGlobalProperty("chica.mrfParseErrorDirectory"));
+			String mrfParseErrorDirectory = 
+					IOUtil.formatDirectoryName(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_ERROR_DIRECTORY));
 			
 			if (mrfParseErrorDirectory != null) {
 				
@@ -140,9 +142,11 @@ public class HL7ToObs {
 				FileOutputStream outputFile = null;
 
 				try {
-					outputFile = new FileOutputStream(mrfParseErrorDirectory + "/" + filename);
+					outputFile = new FileOutputStream(mrfParseErrorDirectory 
+							+ ChirdlUtilConstants.GENERAL_INFO_FORWARD_SLASH + filename);
 				} catch (FileNotFoundException e1) {
-					log.error("Could not find file: " + mrfParseErrorDirectory + "/" + filename);
+					log.error("Could not find file: " + mrfParseErrorDirectory 
+							+ ChirdlUtilConstants.GENERAL_INFO_FORWARD_SLASH + filename);
 				}
 				if (outputFile != null) {
 					try {
@@ -195,6 +199,7 @@ public class HL7ToObs {
 
 	public static String renameDxAndComplaints(String message) {
 		message = message.replaceAll("DX & COMPLAINTS", "DX and COMPLAINTS");
+		message = message.replaceAll("Dx " + ESCAPE_SEQUENCE_AMPERSAND + " Complaints", "DX and COMPLAINTS");
 		return message;
 	}
 
