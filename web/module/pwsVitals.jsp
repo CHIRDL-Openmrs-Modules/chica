@@ -84,7 +84,10 @@
                                 &nbsp;
                             </c:when>
                             <c:otherwise>
-                                <c:out value="${Temperature}"/>&nbsp;&nbsp;(<c:out value="${Temperature_Method}"/>)
+                                <c:out value="${Temperature}"/>&nbsp;&nbsp;
+                                <c:if test="${not empty Temperature_Method}">
+                                    (<c:out value="${Temperature_Method}"/>)
+                                </c:if>
                             </c:otherwise>
                         </c:choose>
                     </div>
