@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +48,7 @@ import org.openmrs.module.chica.xmlBeans.growthcharts.ConceptYAxis;
 import org.openmrs.module.chica.xmlBeans.growthcharts.GrowthChart;
 import org.openmrs.module.chica.xmlBeans.growthcharts.GrowthChartConfig;
 import org.openmrs.module.chica.xmlBeans.growthcharts.GrowthCharts;
+import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -308,15 +308,15 @@ public class getGrowthChartFilename implements Rule {
 				
 				// We need to find the x axis value with same date as the y for IU Health historical data since it's all tied 
 				// to the same encounter.
-				yAxisDate = removeTime(yAxisDate);
+				yAxisDate = DateUtil.getDateTime(yAxisDate, 0, 0, 0, 0);
 				for (Obs matchingOb : matchingObs) {
-					Date xAxisObsDate = matchingOb.getObsDatetime();
-					if (xAxisObsDate == null) {
+					Date xAxisDate = matchingOb.getObsDatetime();
+					if (xAxisDate == null) {
 						continue;
 					}
 					
-					xAxisObsDate = removeTime(xAxisObsDate);
-					if (yAxisDate.compareTo(xAxisObsDate) == 0) {
+					xAxisDate = DateUtil.getDateTime(xAxisDate, 0, 0, 0, 0);
+					if (yAxisDate.compareTo(xAxisDate) == 0) {
 						xValue = Float.parseFloat(matchingOb.getValueNumeric().toString());
 						break;
 					}
@@ -453,14 +453,4 @@ public class getGrowthChartFilename implements Rule {
 		return (GrowthChartConfig)uctx.unmarshalDocument(
 			new FileInputStream(configFile), null);
 	}
-	
-	private Date removeTime(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
 }
