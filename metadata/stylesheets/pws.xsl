@@ -211,6 +211,7 @@
 					    border-bottom: 1px solid black;
 					    border-left: 1px solid black;
 					    margin-left:-1px;
+					    page-break-after: always;
 					}
 					
 					.questionStem {
@@ -243,6 +244,37 @@
 					.infoRightItem {
 						height: 15px;
 						width: 138px;
+					}
+					
+					#textNotesContainer{
+						float: left;					
+						padding: 0 0 10px 0;
+						
+						/*
+						border-top: 1px solid black;
+						border-bottom: 1px solid black;	
+						border-right: 1px solid black;
+						border-left: 1px solid black;
+						*/
+						
+						margin-left:-1px;
+						page-break-before: always;
+										
+					}
+					
+					#textNotesContainer div{
+						padding: 10px 0 0 5px;
+						
+						
+					}
+					
+					.notesTextArea {				
+					    border: 1px solid black;
+					    resize: none;
+					    width: 585px;
+					    height: 250px;
+					    margin-right:10px;
+					    border-bottom: 1px solid black;
 					}
 					
                 </style>
@@ -1493,6 +1525,19 @@
 		                        </xsl:otherwise>
 		                    </xsl:choose>
 		                </div>
+		                
+		                <div id="textNotesContainer">
+		                	<div id="historyAndPhysicalDiv">
+		                    	<b>History and Physical Note:</b><br />
+		                    	<textarea class="notesTextArea" id="historyAndPhysicalText" name="historyAndPhysicalText" readonly="readonly" disabled="disabled"><xsl:value-of select="Records/Record/Field[@id = 'historyAndPhysicalText']"/></textarea>
+		                   	
+		                    </div>
+		                    <div id="assessmentAndPlanDiv">
+		                    	<b>Assessment and Plan Note:</b><br />
+		                    	<textarea class="notesTextArea" id="assessmentAndPlanText" name="assessmentAndPlanText" readonly="readonly" disabled="disabled"><xsl:value-of select="Records/Record/Field[@id = 'assessmentAndPlanText']"/></textarea>
+		                    </div>	                	
+		                </div>
+		              		                
 		            </form>
 		        </div>
 		    </body>

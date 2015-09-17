@@ -199,11 +199,14 @@ $(function() {
            {
         	 text:"Close",
         	 click: function() {
-        	       $("#notesDialog").dialog("close");
+        		 validateTextNotes();     	       
         	 }
            }
         ]
     });
+	
+	// Append the notes dialog to the parent form so that it can be submitted
+	$('#notesDialog').parent().appendTo($("form:first"));
 	
 	$("#notesButton").click(function(event) {
 		$("#notesDialog").dialog("open");
@@ -373,3 +376,26 @@ $(function() {
 	$("#tabList").tooltip();
 	$("#formTabDialog").dialog("open");
   });
+
+function validateTextNotes()
+{
+	var invalidExp = /]]>/;
+	if($("#historyAndPhysicalText").val().search(invalidExp) > -1 || $("#assessmentAndPlanText").val().search(invalidExp) > -1)
+	{
+		$('<div id="errorMsg" title="Invalid Note">The CHICA Note cannot contain \"]]>\". Please remove the invalid characters before closing the CHICA Notes dialog.</div>').dialog({
+			modal: true,
+			height: "auto",
+			width: 300,
+			resizable: false,
+			buttons: {
+		        OK: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		});
+	}
+	else
+	{
+		$("#notesDialog").dialog("close");
+	}	
+}
