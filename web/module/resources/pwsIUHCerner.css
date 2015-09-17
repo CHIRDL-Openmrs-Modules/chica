@@ -122,3 +122,8 @@
     text-align:center;
     bottom: 0;
 }
+
+#notesButton{
+    /* Hide the Notes button for IUH*/
+    display: none;
+}
