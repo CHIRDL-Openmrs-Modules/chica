@@ -197,6 +197,7 @@ public class HL7ToObs {
 		}
 	}
 
+	//MES CHICA-358 - New MRF format uses escape sequence ampersand. 
 	public static String renameDxAndComplaints(String message) {
 		message = message.replaceAll("DX & COMPLAINTS", "DX and COMPLAINTS");
 		message = message.replaceAll("Dx " + ESCAPE_SEQUENCE_AMPERSAND + " Complaints", "DX and COMPLAINTS");
