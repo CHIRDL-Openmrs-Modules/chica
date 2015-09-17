@@ -737,7 +737,6 @@ public class HL7SocketHandler extends
 						}
 						currObs.setConcept(mappedVitalsConcept);
 						currObs.setLocation(location);
-						currObs.setEncounter(encounter);
 						obsService.saveObs(currObs, null);
 						savedToDB = true;
 					}
