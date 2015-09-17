@@ -15,6 +15,7 @@ package org.openmrs.module.chica.hl7.mrfdump;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -142,12 +143,11 @@ public class HL7ToObs {
 				FileOutputStream outputFile = null;
 
 				try {
-					outputFile = new FileOutputStream(mrfParseErrorDirectory 
-							+ ChirdlUtilConstants.GENERAL_INFO_FORWARD_SLASH + filename);
+					outputFile = new FileOutputStream(new File(mrfParseErrorDirectory,filename));
 				} catch (FileNotFoundException e1) {
-					log.error("Could not find file: " + mrfParseErrorDirectory 
-							+ ChirdlUtilConstants.GENERAL_INFO_FORWARD_SLASH + filename);
+					log.error("Could not find filename " + filename + " in directory " + mrfParseErrorDirectory );
 				}
+				
 				if (outputFile != null) {
 					try {
 						ByteArrayInputStream input = new ByteArrayInputStream(newMessageString.getBytes());
