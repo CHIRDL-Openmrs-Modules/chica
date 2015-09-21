@@ -329,5 +329,4 @@ $(function() {
     });
 	
 	$("#tabList").tooltip();
-	$("#formTabDialog").dialog("open");
   });
