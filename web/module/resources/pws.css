@@ -101,6 +101,8 @@ body {
     text-align:center;
     float:left;
     color:red;
+    
+    font-size: small; /* Adding to correct an issue when zooming */
 }
 
 .vitalsNames {
@@ -329,12 +331,16 @@ body {
     border-bottom: 1px solid black;
     border-left: 1px solid black;
     margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .questionStem {
     padding:2px 5px 2px 5px;
     width:390px;
     height:65px;
+    
+    margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .answerContainer {
@@ -342,6 +348,9 @@ body {
     padding:2px;
     width:195px;
     height:88px;
+    
+    margin-left:-1px;
+    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
 .answerCheckbox {
@@ -374,7 +383,7 @@ body {
 }
 
 .noTitle .ui-header a {
-    display: none;
+    display: none; 
 }
 
 .ui-dialog-shadow { 
@@ -432,9 +441,16 @@ a.icon-button span.ui-icon {
 
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { 
 	padding-bottom: 0; 
-	padding-right: .1em; 
+	
+	/* Adding border-right and changing padding-right
+	 from .1em to 10px along with div#tabs .ui-tabs-nav-li width
+	  will allow the selected tab to appear to flow into the pdf div */
+	border-right: thin none;
+	padding-right: 10px; 
+	
 	border-right-width: 1px; 
-	border-right-width: 1px; 
+	border-right-width: 1px;
+	width: 260px; 
 }
 
 .ui-tabs-vertical .ui-tabs-panel { 
@@ -448,6 +464,7 @@ a.icon-button span.ui-icon {
    max-width: 220px;
    overflow: hidden;
    text-overflow: ellipsis;
+   padding: 0px 0px 0px 0px; 
 }
 
 div#tabs {
@@ -464,22 +481,23 @@ div#tabs .ui-tabs-nav {
     left: 0px;
     top: 0px;
     bottom: 0px;
-    width: 250px;
-    padding: 5px 0px 5px 5px;
+    width: 260px;
+    padding: 0px 0px 0px 0px; 
 }
  
 div#tabs .ui-tabs-nav li {
     left: 0px;
-    width: 240px;
+    width: 250px; /* Allow the non-selected tabs to be smaller*/
     border-right: none;
     overflow: hidden;
     margin-bottom: 2px;
 }
  
 div#tabs .ui-tabs-nav li a {
-    float: right;
+    float: left; 
     width: 100%;
-    text-align: right;
+    text-align: left; 
+    vertical-align: middle;
 }
  
 div#tabs .ui-tabs-nav li.ui-tabs-selected {
@@ -487,7 +505,7 @@ div#tabs .ui-tabs-nav li.ui-tabs-selected {
     border-right: solid 1px #fff;
     background: none;
     background-color: #fff;
-    width: 250px;
+    width: 260px;
 }
 
 .ui-tabs .ui-tabs-nav {
@@ -497,4 +515,46 @@ div#tabs .ui-tabs-nav li.ui-tabs-selected {
     border-top-right-radius: 7px;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
+}
+
+/* */
+.tabsLeftCell {
+    vertical-align: middle;
+    width: 25px;
+    padding: 3px 0 0 0;
+    text-align: center;
+}
+
+.tabsRightCell{
+	float: left;
+	width: 215px;
+	text-align: left;
+	padding: 3px 0 0 0px;
+	vertical-align: middle;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor{
+    float:left;
+    padding: .5em 1em .5em 5px !important;
+    text-decoration:none
+}
+
+/* Adjust this so that the down arrow would be displayed on the vertical scroll bar*/
+.ui-tabs-panel{
+	position: relative !important;
+	height:97% !important;
+}
+
+.tabsTable{
+	border-spacing: 0px 0px 0px 0px;
+}
+
+div#tabs div{
+    float:left;
+    height:100%
+}
+
+.selectAllCell{
+	text-decoration: underline; 
+	cursor: pointer;
 }
