@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.chica.rule;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -249,7 +248,7 @@ public class informPresnet implements Rule {
 				log.error("Presnet POST URL failure: " + studyUrl + "?" + postData);
 			}
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			log.error("Exception occurred posting data to the Presnet web site", e);
 			log.error("Presnet POST URL failure: " + studyUrl + "?" + postData);
 		}
