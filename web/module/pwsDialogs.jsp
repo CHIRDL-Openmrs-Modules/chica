@@ -151,10 +151,12 @@
 								    <li><a href="#tabs-2">Assessment and Plan</a></li>								    
 								  </ul>
 								  <div id="tabs-1">
-								     <textarea id="historyAndPhysicalText" name="historyAndPhysicalText" class="notesTextArea" maxlength="5000" placeholder="History and Physical..."></textarea> 
+								     <textarea id="historyAndPhysicalText" name="historyAndPhysicalText" class="notesTextArea" maxlength="1000" placeholder="History and Physical..."></textarea> 							  	 
+								  	 <span class="textCount" id="historyAndPhysicalTextCount">0 of 1000 character max</span>
 								  </div>
-								  <div id="tabs-2">
-								     <textarea id="assessmentAndPlanText" name="assessmentAndPlanText" class="notesTextArea" maxlength="5000" placeholder="Assessment and Plan..."></textarea>
+								  <div id="tabs-2">								     
+								     <textarea id="assessmentAndPlanText" name="assessmentAndPlanText" class="notesTextArea" maxlength="1000" placeholder="Assessment and Plan..."></textarea>							     
+								     <span class="textCount" id="assessmentAndPlanTextCount">0 of 1000 character max</span>
 								  </div>								  
                             </div>                       
                         </div>

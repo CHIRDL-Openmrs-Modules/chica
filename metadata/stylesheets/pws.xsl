@@ -210,8 +210,7 @@
 					    padding-top:10px;
 					    border-bottom: 1px solid black;
 					    border-left: 1px solid black;
-					    margin-left:-1px;
-					    page-break-after: always;
+					    margin-left:-1px;					   					    
 					}
 					
 					.questionStem {
@@ -248,24 +247,16 @@
 					
 					#textNotesContainer{
 						float: left;					
-						padding: 0 0 10px 0;
-						
-						/*
+						padding: 0 0 10px 0;					
 						border-top: 1px solid black;
 						border-bottom: 1px solid black;	
 						border-right: 1px solid black;
-						border-left: 1px solid black;
-						*/
-						
-						margin-left:-1px;
-						page-break-before: always;
-										
+						border-left: 1px solid black;					
+						margin-left:-1px;															
 					}
 					
 					#textNotesContainer div{
-						padding: 10px 0 0 5px;
-						
-						
+						padding: 10px 0 0 5px;											
 					}
 					
 					.notesTextArea {				
@@ -277,11 +268,23 @@
 					    border-bottom: 1px solid black;
 					}
 					
+					.textNotesTable {
+						border-spacing: 0;
+					}
+					
+					.textNotesTable td{
+						padding: 0;
+					}
+										
+					@media print{
+						.textNotesTable{page-break-before: always;}
+					}
+					
                 </style>
             </head>
-            <body>
+            <body>      	
 		        <div id="formContainer">
-		            <form id="pwsForm" name="pwsForm" action="pws.form" method="post">
+		            <form id="pwsForm" name="pwsForm" action="pws.form" method="post">            
 		                <div id="titleContainer">
 		                    <div id="title">
 		                        <h3>CHICA Physician Encounter Form</h3>
@@ -1523,23 +1526,26 @@
 		                                </div>
 		                            </div>
 		                        </xsl:otherwise>
-		                    </xsl:choose>
+		                    </xsl:choose>		                    
 		                </div>
-		                
-		                <div id="textNotesContainer">
+		              		             	               	               	 
+		               <table class="textNotesTable" border="0" cellpadding="0" cellspacing="0">
+		               	<tr><td><div id="textNotesContainer">
 		                	<div id="historyAndPhysicalDiv">
 		                    	<b>History and Physical Note:</b><br />
-		                    	<textarea class="notesTextArea" id="historyAndPhysicalText" name="historyAndPhysicalText" readonly="readonly" disabled="disabled"><xsl:value-of select="Records/Record/Field[@id = 'historyAndPhysicalText']"/></textarea>
-		                   	
+		                    	<textarea class="notesTextArea" id="historyAndPhysicalText" name="historyAndPhysicalText" readonly="readonly" ><xsl:value-of select="Records/Record/Field[@id = 'historyAndPhysicalText']"/></textarea>		                   	
 		                    </div>
 		                    <div id="assessmentAndPlanDiv">
 		                    	<b>Assessment and Plan Note:</b><br />
-		                    	<textarea class="notesTextArea" id="assessmentAndPlanText" name="assessmentAndPlanText" readonly="readonly" disabled="disabled"><xsl:value-of select="Records/Record/Field[@id = 'assessmentAndPlanText']"/></textarea>
+		                    	<textarea class="notesTextArea" id="assessmentAndPlanText" name="assessmentAndPlanText" readonly="readonly" ><xsl:value-of select="Records/Record/Field[@id = 'assessmentAndPlanText']"/></textarea>
 		                    </div>	                	
-		                </div>
+		                </div></td></tr>
+		               </table>
 		              		                
 		            </form>
 		        </div>
+		        
+		         
 		    </body>
         </html>
         

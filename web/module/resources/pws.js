@@ -175,7 +175,7 @@ $(function() {
         minHeight: 350,
         minWidth: 450,
         width: 950,
-        height: $(window).height() * 0.95,
+        height: $(window).height() * 0.85,
         modal: true,
         resizable: false,
         open : function(){
@@ -204,6 +204,15 @@ $(function() {
            }
         ]
     });
+	
+	 $("#historyAndPhysicalText").keyup(function() {
+		 updateCount('historyAndPhysicalText');
+	    });
+	 
+	 $("#assessmentAndPlanText").keyup(function() {
+		 updateCount('assessmentAndPlanText');
+	    	
+	    });
 	
 	// Append the notes dialog to the parent form so that it can be submitted
 	$('#notesDialog').parent().appendTo($("form:first"));
@@ -376,6 +385,13 @@ $(function() {
 	$("#tabList").tooltip();
 	$("#formTabDialog").dialog("open");
   });
+
+function updateCount(objectId)
+{
+	var max = 1000;
+	var length = $("#" + objectId).val().length;
+	$("#" + objectId + "Count").html(length + " of " + max + " character max");
+}
 
 function validateTextNotes()
 {
