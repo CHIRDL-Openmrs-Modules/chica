@@ -1,4 +1,10 @@
 var loadedOptionalHandouts = false;
+var adobeSpanTag = '<span style="color: #000;font-size:14px;">It appears your Web browser is not configured to display PDF files. ' +
+            '<a href="http://get.adobe.com/reader/" target="_blank"><font style="color: #0000FF;text-decoration: none; border-bottom: 1px solid #0000FF;">Click here to download the Adobe PDF Reader.</font></a>  ' + 
+            'Please restart your browser once the installation is complete.</span>'; 
+
+var selectFormsDiv = '<div><h4>Please select one or more forms to combine. Then click the <a style="color: blue;" href="#" onclick="combineSelected(); return false;" title="Combine selected forms">Combine Selected Forms</a> tab to update the PDF with the combined forms.</h4></div>';
+
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
 	$("#formServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error occurred locating recommended forms: ' + error + '</span>');
@@ -14,9 +20,22 @@ function parseAvailableJITs(responseXML) {
     	var tabs = null;
 		tabs = $("#tabs");
     	
-        var tabList = '<ul id="tabList">';
-        var divList = "";
-        var count = 0;
+		// DWE CHICA-500
+		// Combine selected forms option
+		var tabList = '<ul id="tabList">';
+		var divList = '';
+		
+    	tabList += '<li><table class="tabsTable"><tr><td class="tabsLeftCell selectAllCell" onclick="selectAllForms();">All</td>' + 
+    	           '<td class="tabsRightCell selectAllCell">' +
+    	           '<a style="text-decoration: underline; cursor: pointer;" href="#tabs-0" onclick="combineSelected();" title="Combine selected forms">Combine Selected Forms</a></td></tr></table></li>';
+    	
+    	divList += '<div class="combineSelectedClass" id="tabs-0">' +
+    			   '<object id="combinedForms" type="application/pdf" class="recommended-forms" ' + 
+    	           ' data="">'; // Setting data to empty to make IE happy. If data attribute is not set, an "Access Denied" error will display.
+    	
+    	divList += adobeSpanTag + '</object></div>';	
+			
+        var count = 1; // Start count at 1 instead of 0. The first one will now be the "Combine selected forms" tab
         var formInstance = "";
         $(responseXML).find("availableJIT").each(function () {
         	var formName = $(this).find("formName").text();
@@ -26,18 +45,28 @@ function parseAvailableJITs(responseXML) {
             var locationTagId = $(this).find("locationTagId").text();
             
         	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
-        	var action = "action=getPatientJITs&formInstances=" + formInstance  + "#page=1&view=FitH,top&navpanes=0";
+        	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
         	var url = "/openmrs/moduleServlet/chica/chica?";
-        	tabList += '<li><a href="#tabs-' + count + '" title="' + formName + '">' + formName + '</a></li>';
-        	divList += '<div id="tabs-' + count + '" style="float:left;height:100%"><object type="application/pdf" class="recommended-forms" data="' + url + action + 
-            	'"><span style="color: #000;font-size:14px;">It appears your Web browser is not configured to display PDF files. ' +
-            	'<a href="http://get.adobe.com/reader/" target="_blank"><font style="color: #0000FF;text-decoration: none; border-bottom: 1px solid #0000FF;">Click here to download the Adobe PDF Reader.</font></a>  ' + 
-            	'Please restart your browser once the installation is complete.</span></object></div>';
-            
+        	tabList += '<li><table class="tabsTable"><tr><td class="tabsLeftCell"><input class="formsCheckbox" type="checkbox" onclick="resetCombinedForms()" id="' + formInstance + '" name="' + formInstance + '"></td><td class="tabsRightCell"><a href="#tabs-' + count + '" onclick="getJIT(\''+url+'\', \''+action+'\', \''+count+'\');" title="' + formName + '">' + formName + '</a></td></tr></table></li>';
+        	divList += '<div id="tabs-' + count + '"><object id="object_'+ count + '" type="application/pdf" class="recommended-forms"';   
+            	
+        	// DWE CHICA-500 Only set the data attribute for the first one
+        	// This will prevent the offsetParent script error in Firefox
+        	if(count == 1)
+        	{
+        		divList += ' data="' + url + action + '>';
+        	}
+        	else 
+        	{
+        		divList += ' data="">'; // Setting this to empty to make IE happy. If data attribute is not set, an "Access Denied" error will display.
+        	}
+        	
+        	divList += adobeSpanTag + '</object></div>';
+        	
             count++;
         });
         
-    	if (count == 0) {
+    	if (count == 1){
         	$("#noForms").show();
         } else {
         	tabList += "</ul>"
@@ -50,8 +79,73 @@ function parseAvailableJITs(responseXML) {
         	}).addClass("ui-tabs-vertical ui-helper-clearfix");
             $("#tabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
             $('#tabs').show();
+            $("#tabs").tabs( "option", "active", 1 ); // DWE CHICA-500 Show the first form by default and not the "Combine Selected Forms" tab           
         }
     }
+}
+
+// DWE CHICA-500
+function selectAllForms()
+{
+	var $cbs = $(".formsCheckbox:checkbox:enabled");
+	var checked = $cbs.filter(":first").prop("checked");
+	$(".formsCheckbox").each(function(){ this.checked = !checked});
+	
+	resetCombinedForms();
+}
+
+// DWE CHICA-500
+function resetCombinedForms()
+{
+	// If the user is viewing the "Combine selected forms" tab already, 
+	// we need to clear the display so the user will know that the area needs to be refreshed before printing
+	if($(".combineSelectedClass").is(':visible'))
+	{
+		$(".combineSelectedClass").html(selectFormsDiv);
+	}
+}
+
+//DWE CHICA-500
+function getJIT(url, action, count)
+{
+	if($("#object_" + count).attr("data").length === 0) // Get the form only if we don't already have it
+	{
+		var divList = '<object id="object_'+ count + '" type="application/pdf" class="recommended-forms" data="'+ url + action + '">' + adobeSpanTag + '</object></div>';
+		
+		$("#tabs-"+count).html(divList); // Setting the inner html of the div seems to be the best solution for all browsers instead of setting the data attribute. 
+	}
+}
+
+//DWE CHICA-500
+function combineSelected()
+{
+	var url = "/openmrs/moduleServlet/chica/chica?";
+	var action = "action=getPatientJITs&formInstances=";
+	var pageOptions = "#page=1&view=FitH,top&navpanes=0";
+	
+	// Gets all of the currently selected checkboxes
+	var count = 0;
+	var formInstances = "";
+	$('.formsCheckbox:checkbox').each(function(){ 
+		
+		if(this.checked)
+		{
+			formInstances += this.id + ",";
+			count++;
+		}
+	});
+	
+	if(count > 0)
+	{
+		divList = '<object id="combinedForms" type="application/pdf" class="recommended-forms" data="'+ url + action + formInstances + pageOptions + '">' + adobeSpanTag + '</object>';
+	}
+	else
+	{
+		divList = selectFormsDiv;
+	}
+	
+	// Set the inner html so that the PDF will be refreshed
+	$(".combineSelectedClass").html(divList);
 }
 
 function getSelected(opt) {
@@ -273,7 +367,7 @@ $(function() {
 	var tabDivHeight = $(window).height() * 0.95 - 135;
 	$("#formTabDialogContainer").css({"height":tabDivHeight});
     $("#tabs").css({"height":tabDivHeight});
-    $("#formTabDialogContainer").css("background", "#cc9966");
+    $("#formTabDialogContainer").css("background", "#f4f0ec"); 
     $(".recommended-forms").css({"height":tabDivHeight});
 	
 	$("#forcePrintButton").click(function(event) {
