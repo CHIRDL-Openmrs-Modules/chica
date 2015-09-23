@@ -15,6 +15,7 @@ package org.openmrs.module.chica.hl7.mrfdump;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,6 +50,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class HL7ToObs {
 
+	private static final String ESCAPE_SEQUENCE_AMPERSAND = "\\\\T\\\\";
 	private static final String HL7_VERSION_2_3 = "2.3";
 	protected final static Log log = LogFactory.getLog(HL7ToObs.class);
 
@@ -132,7 +134,8 @@ public class HL7ToObs {
 					"Error parsing the MRF dump " + e.getMessage(),
 					messageString, new Date(), null);
 			chirdlutilbackportsService.saveError(error);
-			String mrfParseErrorDirectory = IOUtil.formatDirectoryName(adminService.getGlobalProperty("chica.mrfParseErrorDirectory"));
+			String mrfParseErrorDirectory = 
+					IOUtil.formatDirectoryName(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_ERROR_DIRECTORY));
 			
 			if (mrfParseErrorDirectory != null) {
 				
@@ -140,10 +143,11 @@ public class HL7ToObs {
 				FileOutputStream outputFile = null;
 
 				try {
-					outputFile = new FileOutputStream(mrfParseErrorDirectory + "/" + filename);
+					outputFile = new FileOutputStream(new File(mrfParseErrorDirectory,filename));
 				} catch (FileNotFoundException e1) {
-					log.error("Could not find file: " + mrfParseErrorDirectory + "/" + filename);
+					log.error("Could not find filename " + filename + " in directory " + mrfParseErrorDirectory );
 				}
+				
 				if (outputFile != null) {
 					try {
 						ByteArrayInputStream input = new ByteArrayInputStream(newMessageString.getBytes());
@@ -193,8 +197,10 @@ public class HL7ToObs {
 		}
 	}
 
+	//MES CHICA-358 - New MRF format uses escape sequence ampersand. 
 	public static String renameDxAndComplaints(String message) {
 		message = message.replaceAll("DX & COMPLAINTS", "DX and COMPLAINTS");
+		message = message.replaceAll("Dx " + ESCAPE_SEQUENCE_AMPERSAND + " Complaints", "DX and COMPLAINTS");
 		return message;
 	}
 
