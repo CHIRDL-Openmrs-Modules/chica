@@ -263,7 +263,7 @@
 					    border: 1px solid black;
 					    resize: none;
 					    width: 585px;					   					    
-					    min-height: 250px;					    
+					    height: 250px;					    
 					    margin-right:10px;
 					    border-bottom: 1px solid black;
 					}
