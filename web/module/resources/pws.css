@@ -383,7 +383,7 @@ body {
 }
 
 .noTitle .ui-header a {
-    display: none;
+    display: none; 
 }
 
 .ui-dialog-shadow { 
@@ -447,10 +447,8 @@ a.icon-button span.ui-icon {
     will allow the selected tab to appear to flow into the pdf div */
     border-right: thin none;
 	padding-right: 10px; 
-	
-	border-right-width: 1px; 
-	border-right-width: 1px; 
-	width: 260px;
+	border-right-width: 1px;
+	width: 260px; 
 }
 
 .ui-tabs-vertical .ui-tabs-panel { 
@@ -464,7 +462,7 @@ a.icon-button span.ui-icon {
    max-width: 220px;
    overflow: hidden;
    text-overflow: ellipsis;
-   padding: 0px 0px 0px 0px;
+   padding: 0px 0px 0px 0px; 
 }
 
 div#tabs {
@@ -482,21 +480,21 @@ div#tabs .ui-tabs-nav {
     top: 0px;
     bottom: 0px;
     width: 260px;
-    padding: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px; 
 }
  
 div#tabs .ui-tabs-nav li {
     left: 0px;
-    width: 250px;
+    width: 250px; /* Allow the non-selected tabs to be smaller*/
     border-right: none;
     overflow: hidden;
     margin-bottom: 2px;
 }
  
 div#tabs .ui-tabs-nav li a {
-    float: left;
+    float: left; 
     width: 100%;
-    text-align: left;
+    text-align: left; 
     vertical-align: middle;
 }
  
@@ -517,6 +515,47 @@ div#tabs .ui-tabs-nav li.ui-tabs-selected {
     border-bottom-right-radius: 0px;
 }
 
+/* */
+.tabsLeftCell {
+    vertical-align: middle;
+    width: 25px;
+    padding: 3px 0 0 0;
+    text-align: center;
+}
+
+.tabsRightCell{
+	float: left;
+	width: 215px;
+	text-align: left;
+	padding: 3px 0 0 0px;
+	vertical-align: middle;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor{
+    float:left;
+    padding: .5em 1em .5em 5px !important;
+    text-decoration:none
+}
+
+/* Adjust this so that the down arrow would be displayed on the vertical scroll bar*/
+.ui-tabs-panel{
+	position: relative !important;
+	height:97% !important;
+}
+
+.tabsTable{
+	border-spacing: 0px 0px 0px 0px;
+}
+
+div#tabs div{
+    float:left;
+    height:100%
+}
+
+.selectAllCell{
+	text-decoration: underline; 
+	cursor: pointer;
+}
 
 /*
 ********** CHICA Notes dialog css

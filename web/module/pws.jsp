@@ -1030,7 +1030,7 @@
                 <div id="submitContainer">
                     <a href="#" id="submitButtonBottom" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Submit</a>
                 </div>
-                
+      
                 <%@ include file="pwsDialogs.jsp" %>
                 
                 <input type=hidden id= "Choice1" name="Choice1"/>
