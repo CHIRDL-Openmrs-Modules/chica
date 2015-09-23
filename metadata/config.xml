@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.65.2</version>
+    <version>1.65.3</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -23,7 +23,7 @@
         <require_module version="2.2.0">org.openmrs.module.atd</require_module>
         <require_module version="1.4.0">org.openmrs.module.sockethl7listener</require_module>
         <require_module version="1.2.0">org.openmrs.module.rgccd</require_module>
-        <require_module version="1.9.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="1.9.2">org.openmrs.module.chirdlutil</require_module>
         <require_module version="2.3.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
