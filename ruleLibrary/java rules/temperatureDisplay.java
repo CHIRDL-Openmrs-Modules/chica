@@ -65,8 +65,19 @@ public class temperatureDisplay implements Rule {
 		
 		String conceptName = "TEMPERATURE CHICA";
 		Result ruleResults = null;
+		Integer encounterId = (Integer) parameters.get("encounterId");
 		LogicCriteria conceptCriteria = new LogicCriteriaImpl(conceptName);
-		LogicCriteria fullCriteria = conceptCriteria;
+		LogicCriteria fullCriteria = null;
+		if(encounterId != null)
+		{
+			LogicCriteria encounterCriteria = 
+				new LogicCriteriaImpl("encounterId").equalTo(encounterId.intValue());
+			
+			fullCriteria = conceptCriteria.and(encounterCriteria);
+		}else
+		{
+			fullCriteria = conceptCriteria;
+		}
 		
 		ruleResults = context.read(patientId, context.getLogicDataSource("obs"), fullCriteria);
 		if (ruleResults == null || ruleResults.size() == 0) {
