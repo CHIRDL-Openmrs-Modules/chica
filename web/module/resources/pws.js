@@ -477,7 +477,7 @@ $(function() {
 //DWE CLINREQ-90
 function updateCount(objectId)
 {
-	var max = 1000;
+	var max = 62000;
 	var length = $("#" + objectId).val().length;
 	$("#" + objectId + "Count").html(length + " of " + max + " character max");
 }
