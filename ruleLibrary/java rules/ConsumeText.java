@@ -81,7 +81,7 @@ public class ConsumeText implements Rule
 		Integer locationTagId = null;
 		PatientService patientService = Context.getPatientService();
 		Patient patient = patientService.getPatient(patientId);
-		//Integer formFieldId = null; // This doesn't exist in this branch, but will be needed with the Prod_Release_1.0 branch
+		Integer formFieldId = null;
 		String fieldName = null;
 
 		if (parameters != null)
@@ -99,7 +99,7 @@ public class ConsumeText implements Rule
 			}
 			encounterId = (Integer) parameters.get("encounterId");
 			fieldName = (String) parameters.get("fieldName");
-			//formFieldId = (Integer)parameters.get("formFieldId"); // This doesn't exist in this branch, but will be needed with the Prod_Release_1.0 branch
+			formFieldId = (Integer)parameters.get("formFieldId");
 		}
 
 		LogicCriteria formIdCriteria = new LogicCriteriaImpl(Operator.EQUALS, new OperandObject(formInstance));
@@ -116,10 +116,10 @@ public class ConsumeText implements Rule
 		Concept currConcept = conceptService.getConceptByName(conceptName);
 
 		// This doesn't exist in this branch, but will be needed with the Prod_Release_1.0 branch
-		//org.openmrs.module.chica.util.Util.voidObsForConcept(currConcept, encounterId, formFieldId);
+		org.openmrs.module.chica.util.Util.voidObsForConcept(currConcept, encounterId, formFieldId);
 
 		Obs obs = org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, currConcept, encounterId, ruleResult.toString(), formInstance,
-				ruleId,locationTagId);//, formFieldId);
+				ruleId,locationTagId, formFieldId);
 
 		if (obs == null) {
 			return Result.emptyResult();
