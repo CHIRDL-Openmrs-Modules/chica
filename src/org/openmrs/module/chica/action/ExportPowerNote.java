@@ -250,7 +250,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			
 		}
 		catch (Exception e) {
-			log.error("Exception contructing export message MSH segment. EncounterId: " + enc.getEncounterId(), e);
+			log.error("Exception constructing export message MSH segment. EncounterId: " + enc.getEncounterId(), e);
 		}
 		
 		return msh;
