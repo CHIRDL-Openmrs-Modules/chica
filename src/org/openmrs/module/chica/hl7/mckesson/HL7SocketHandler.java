@@ -665,6 +665,8 @@ public class HL7SocketHandler extends
 				if (locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG)) {
 					Concept concept = currObs.getConcept();
 					Integer conceptId = concept.getConceptId();
+					
+					//convert units for historical data
 					switch(conceptId){
 						case 39650704: //Birth Weight (kg)
 							double kilograms = currObs.getValueNumeric();
@@ -672,41 +674,12 @@ public class HL7SocketHandler extends
 									kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
 							currObs.setValueNumeric(pounds);//BIRTH WEIGHT in chica in pounds 
 							break;
-						case 635271: //WEIGHT (kg)
-							kilograms = currObs.getValueNumeric();
-							pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
-									kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
-							currObs.setValueNumeric(pounds);//weight in chica in pounds 
-							break;
-						case 635268: //height (cm)
-							double measurement = currObs.getValueNumeric();
-							double inches = 
-								org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(measurement, 
-										org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CM);
-							currObs.setValueNumeric(inches);//height in chica in pounds
-							break;
-						case 39822143: //Temp (Cel)
-							double tempC = currObs.getValueNumeric();
-							double tempF = 
-								org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(tempC, 
-										org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
-							currObs.setValueNumeric(tempF);//temperature in Fahrenheit
-							break;
-						case 948198: //Eye, Left Visual Acuity
-						case 948195: //Eye, Right Visual Acuity
-							String answer = currObs.getValueText();
-							
-							if (answer != null) {
-								int index = answer.indexOf("/");
-								if (index > -1) {
-									currObs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
-								}
-							}
-							
-							break;
 						default:
-							
 					}
+					
+					//convert units for historical vitals data
+					org.openmrs.module.chica.hl7.iuHealthVitals.HL7SocketHandler.convertIUHealthVitalsUnits(conceptId,currObs);
+					
 					Concept mappedConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), SOURCE);
 					if (mappedConcept != null) {
 						currConceptName = mappedConcept.getName().getName();

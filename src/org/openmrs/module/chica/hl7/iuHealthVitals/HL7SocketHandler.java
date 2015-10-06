@@ -323,43 +323,7 @@ public class HL7SocketHandler implements Application {
 				
 				Integer conceptId = obs.getConcept().getConceptId();
 				
-				switch(conceptId){
-					case 635271: //WEIGHT (kg)
-						double kilograms = obs.getValueNumeric();
-						double pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
-								kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
-						obs.setValueNumeric(pounds);//weight in chica in pounds 
-						break;
-					case 635268: //height (cm)
-						double measurement = obs.getValueNumeric();
-						double inches = 
-							org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(measurement, 
-									org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CM);
-						obs.setValueNumeric(inches);//height in chica in pounds
-						break;
-					case 39822143: //Temp (Cel)
-						double tempC = obs.getValueNumeric();
-						double tempF = 
-							org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(tempC, 
-									org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
-						obs.setValueNumeric(tempF);//temperature in Fahrenheit
-						break;
-						
-					case 948198: //Eye, Left Visual Acuity
-					case 948195: //Eye, Right Visual Acuity
-						String answer = obs.getValueText();
-						
-						if (answer != null) {
-							int index = answer.indexOf("/");
-							if (index > -1) {
-								obs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
-							}
-						}
-						
-						break;
-					default:
-						
-				}
+				convertIUHealthVitalsUnits(conceptId,obs);
 				
 				Concept answerConcept = obs.getValueCoded();
 				//see if any answer concepts need mapped
@@ -593,6 +557,46 @@ public class HL7SocketHandler implements Application {
 		
 		catch (HL7Exception e) {
 			throw new ApplicationException("Error trying to create Application ACK message: " + e.getMessage());
+		}
+	}
+	
+	public static void convertIUHealthVitalsUnits(Integer conceptId, Obs obs){
+		switch(conceptId){
+			case 635271: //WEIGHT (kg)
+				double kilograms = obs.getValueNumeric();
+				double pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
+						kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
+				obs.setValueNumeric(pounds);//weight in chica in pounds 
+				break;
+			case 635268: //height (cm)
+				double measurement = obs.getValueNumeric();
+				double inches = 
+					org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(measurement, 
+							org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CM);
+				obs.setValueNumeric(inches);//height in chica in pounds
+				break;
+			case 39822143: //Temp (Cel)
+				double tempC = obs.getValueNumeric();
+				double tempF = 
+					org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(tempC, 
+							org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS);
+				obs.setValueNumeric(tempF);//temperature in Fahrenheit
+				break;
+				
+			case 948198: //Eye, Left Visual Acuity
+			case 948195: //Eye, Right Visual Acuity
+				String answer = obs.getValueText();
+				
+				if (answer != null) {
+					int index = answer.indexOf("/");
+					if (index > -1) {
+						obs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
+					}
+				}
+				
+				break;
+			default:
+				
 		}
 	}
 }
