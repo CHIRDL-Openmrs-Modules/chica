@@ -446,7 +446,7 @@ public class HL7SocketHandler extends
 						.formatDirectoryName(adminService
 								.getGlobalProperty(GLOBAL_PROPERTY_PARSE_ERROR_DIRECTORY));
 				if (mckessonParseErrorDirectory != null) {
-					String filename = "r" + Util.archiveStamp() + ".hl7";
+					String filename = "r" + Util.archiveStamp() + ChirdlUtilConstants.FILE_EXTENSION_HL7;
 
 					FileOutputStream outputFile = null;
 

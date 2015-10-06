@@ -132,7 +132,7 @@ public class ExportPowerNote implements ProcessStateAction {
 		// save outgoingHL7 dump to a file
 		String outgoingHL7Directory = IOUtil.formatDirectoryName(adminService.getGlobalProperty("chica.outboundHl7Directory"));
 		if (outgoingHL7Directory != null&&outgoingMessage!=null&&outgoingMessage.length()>0) {
-			String filename = "r" + org.openmrs.module.chirdlutil.util.Util.archiveStamp()+".hl7";
+			String filename = "r" + org.openmrs.module.chirdlutil.util.Util.archiveStamp()+ ChirdlUtilConstants.FILE_EXTENSION_HL7;
 			
 			FileOutputStream outgoingHL7DumpFile = null;
 			try {

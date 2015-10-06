@@ -101,7 +101,7 @@ public class HL7SocketHandler implements Application {
 		// save vitals dump to a file
 		String vitalsDirectory = IOUtil.formatDirectoryName(adminService.getGlobalProperty("chica.vitalsArchiveDirectory"));
 		if (vitalsDirectory != null) {
-			String filename = "r" + Util.archiveStamp() + "_" + mrn + ".hl7";
+			String filename = "r" + Util.archiveStamp() + "_" + mrn + ChirdlUtilConstants.FILE_EXTENSION_HL7;
 			
 			FileOutputStream vitalsDumpFile = null;
 			try {
