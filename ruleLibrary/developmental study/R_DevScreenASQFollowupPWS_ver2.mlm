@@ -103,7 +103,7 @@ write ("Care plan given");
 write("");	
 write ("Ref to ASK 1-800-964-4746");
 write ("Evaluation shows no delay-->");
-write("Discard care plan");
+write("Discarded care plan");
 
 ;;
 Age_Min: 2          months     ;;

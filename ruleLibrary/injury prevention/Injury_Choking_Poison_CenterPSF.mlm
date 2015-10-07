@@ -52,7 +52,7 @@ endif;
 endif
 ;;
 Action:
-write ("Have you attached the Poison Center phone number to the phone in || firstname ||'s home?");
+write ("Have you entered the Poison Center phone number into the phone used in || firstname ||'s home?");
 write ("¿Ha puesto el numero del Centro de veneno al lado del teléfono de la casa de || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 6 months;;
