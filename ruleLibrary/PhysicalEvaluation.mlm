@@ -28,9 +28,9 @@ Box6:=read {box6 from Parameters};
 If (mode = PRODUCE) then
 allergies := read Last {MEDICATION ALLERGIES from CHICA};
 asthma := read Last {AsthmaStatus from CHICA};
-corrected := read Last {Corrected Vision from CHICA};
-visionR := read Last {VISIONR from CHICA};
-visionL := read Last {VISIONL from CHICA};
+corrected := read Last {Corrected Vision from CHICA} Where it Occurred Within Past 12 Months;
+visionR := read Last {VISIONR from CHICA} Where it Occurred Within Past 12 Months;
+visionL := read Last {VISIONL from CHICA} Where it Occurred Within Past 12 Months;
 ears := read {Ears/Hearing_Exam from CHICA} Where it Occurred Within Past 12 Months;
 nose := read {Nose/Throat_Exam from CHICA} Where it Occurred Within Past 12 Months;
 general := read {General_Exam from CHICA} Where it Occurred Within Past 12 Months;
@@ -41,6 +41,11 @@ abdomen := read {Abdomen_Exam from CHICA} Where it Occurred Within Past 12 Month
 genitalia := read {ExtGenitalia_Exam from CHICA} Where it Occurred Within Past 12 Months;
 skin := read {Skin_Exam from CHICA} Where it Occurred Within Past 12 Months;
 neuro := read {Neuro_Exam from CHICA} Where it Occurred Within Past 12 Months;
+pulse := read Last {PULSE from CHICA};
+BPD := read Last {DIASTOLIC_BP from CHICA};
+BPS := read Last {SYSTOLIC_BP from CHICA};
+Weight := read Last {WEIGHT from CHICA};
+Height := read Last {HEIGHT from CHICA};
 endif
 ;;
 Priority:		;;
@@ -91,6 +96,9 @@ If NOT(visionL = null) then
  roundedVisionL := call integerResult with "visionL";
 endif;
 
+finalUnformattedResult:= call mostRecentResult With "allergies_object","asthma_object","corrected_object","visionR_object","visionL_object","ears_object","nose_object","general_object","nodes_object","heart_object","lungs_object","abdomen_object","genitalia_object","skin_object","neuro_object","pulse_object","BPD_object","BPS_object","Weight_object","Height_object";
+finalResult := call fullDateFormat With "finalUnformattedResult";
+
 conclude true;
 
 endif
@@ -120,6 +128,10 @@ write ("|| noCorrectedSel ||") At Sel_Corrected_No;
 write ("|| yesCorrectedSel ||") At Sel_Corrected_Yes;
 write ("|| roundedVisionR ||") At Vision_R;
 write ("|| roundedVisionL ||") At Vision_L;
+//display the most recent exam/vitals value date
+//instead of today's date
+write ("|| finalResult_date ||") At today_Date;
+write ("|| finalResult_date ||") At today_Date_2;
 ;;
 Age_Min: 0 years;;
 Age_Max: 21 years;;
