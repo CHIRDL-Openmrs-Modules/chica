@@ -94,7 +94,7 @@ endif
 ;;
 Action:
 call CHOOSE_ASQ_JIT;
-write ("Please fill out the attached form about || firstname ||'s development.");
+write ("Please fill out the ASQ form about || firstname ||'s development.");
 write ("Por favor llene el formulario adherido acerca del desarrollo de || firstname ||.") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 9          months     ;;

@@ -97,11 +97,11 @@ call CREATE_JIT with "Developmental_Care_Plan";
 write ("|| firstname || has been previously diagnosed with developmental delay. || he/she || should continue to receive developmental services.  Please confirm the following:");
 
 write ("Patient still delayed-->");	
-write ("Attached care plan given");
+write ("Care plan given");
 write("");	
 write ("Ref to ASK 1-800-964-4746");
 write ("Patient no longer delayed-->");
-write("Discard attached care plan");
+write("Discard care plan");
 ;;
 Age_Min: 2          months     ;;
 Age_Max: 66         months     ;;

@@ -93,7 +93,7 @@ endif
 ;;
 Action:
 call CREATE_JIT with "ASTHMA_JIT","Insurance_value";
-write ("|| firstname || reported || Symptom || this month.  This may mean poor compliance, a non-asthma diagnosis, or the need for (another) controller med.  (see attached ASTHMA ACTION PLAN)  Please assess:");
+write ("|| firstname || reported || Symptom || this month.  This may mean poor compliance, a non-asthma diagnosis, or the need for (another) controller med.  (see ASTHMA ACTION PLAN)  Please assess:");
 write ("Poor adherence ----->                             ");
 write ("Advise/refer to asthma educ                       ");
 write ("Doc 2nd controller in note");

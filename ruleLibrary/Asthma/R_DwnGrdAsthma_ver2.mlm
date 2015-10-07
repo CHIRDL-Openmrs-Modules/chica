@@ -80,7 +80,7 @@ endif
 ;;
 Action:
 call CREATE_JIT with "ASTHMA_JIT","Insurance_value";
-write ("In the last 3 mos, || firstname ||'s medical record shows no symptoms that suggest persistent asthma.  (see attached ASTHMA ACTION PLAN)  Should || hisher || asthma be downgraded to intermittent?");                                                                                                                                                                                                                                                         
+write ("In the last 3 mos, || firstname ||'s medical record shows no symptoms that suggest persistent asthma.  (see ASTHMA ACTION PLAN)  Should || hisher || asthma be downgraded to intermittent?");                                                                                                                                                                                                                                                         
 write ("Yes, it's intermittent --------->                 ");
 write ("Albuterol prn prescribed                          ");
 write ("No, it's persistent ------------->                ");

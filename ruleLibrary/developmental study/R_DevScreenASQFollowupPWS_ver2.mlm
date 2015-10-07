@@ -99,11 +99,11 @@ call CREATE_JIT with "Developmental_Care_Plan";
 
 write ("|| firstname || had a concerning ASQ at a previous visit. || heshe || should have been referred for a developmental evaluation and developmental services.  Please confirm the following:");
 write ("Evaluation confirms delay-->");	
-write ("Attached care plan given");
+write ("Care plan given");
 write("");	
 write ("Ref to ASK 1-800-964-4746");
 write ("Evaluation shows no delay-->");
-write("Discard attached care plan");
+write("Discard care plan");
 
 ;;
 Age_Min: 2          months     ;;

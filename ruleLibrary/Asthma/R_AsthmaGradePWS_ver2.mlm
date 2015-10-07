@@ -86,7 +86,7 @@ endif
 ;;
 Action:
 call CREATE_JIT with "ASTHMA_JIT","Insurance_value";
-write ("|| firstname || reportedly has asthma or symptoms suggesting asthma.  Please evaluate and/or treat (see attached ASTHMA ACTION PLAN):");                                                                                                                                                                                                                                                                                                                   
+write ("|| firstname || reportedly has asthma or symptoms suggesting asthma.  Please evaluate and/or treat (see ASTHMA ACTION PLAN):");                                                                                                                                                                                                                                                                                                                   
 write ("Daytime Sx >2x/wk ----->                       ");
 write ("Persistent --> Rx");
 write ("Nighttime Sx >2x/mo --->                       ");
