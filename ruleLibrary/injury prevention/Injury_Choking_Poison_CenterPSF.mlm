@@ -53,7 +53,7 @@ endif
 ;;
 Action:
 write ("Have you entered the Poison Center phone number into the phone used in || firstname ||'s home?");
-write ("¿Ha puesto el numero del Centro de veneno al lado del teléfono de la casa de || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                                            
+write ("¿Ha guardado el numero del Centro de veneno en el teléfono usado en la casa de || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 6 months;;
 Age_Max: 6 years;;
