@@ -55,6 +55,7 @@ Logic:
 If (mode = PRODUCE) then
 
 If NOT(allergies = null) AND NOT(allergies = "NONE") then || yesAllergySel || = "X";
+If NOT(allergies = null) AND (allergies = "NONE") then || noAllergySel || = "X";
 If NOT(asthma = null) AND NOT(asthma = "None") AND NOT(asthma = "NoSymptoms") then || asthmaSel || = "X";
 If NOT(corrected = "yes") then || noCorrectedSel || = "X";
 If (corrected = "yes") then || yesCorrectedSel || = "X";
@@ -134,6 +135,9 @@ endif
 ;;
 Action:
 
+write ("in.") At Height_Unit; 
+write ("lbs") At Weight_Unit; 
+write ("bpm") At Pulse_Unit; 
 write ("|| height_formatted ||") At Height;
 write ("|| Weight_formatted ||") At Weight;
 write ("|| BPS_formatted ||") At BPS;
@@ -142,6 +146,7 @@ write ("|| pulse_formatted ||") At Pulse;
 write ("|| Gender ||") At sex;
 write ("|| Gender ||") At sex2;
 write ("|| yesAllergySel ||") At Sel_Allergie_Yes;
+write ("|| noAllergySel ||") At Sel_Allergie_No;
 write ("|| yesAllergySel ||") At Sel_Allergie_Medicine;
 write ("|| maleSel ||") At Sel_Male;
 write ("|| femaleSel ||") At Sel_Female;
