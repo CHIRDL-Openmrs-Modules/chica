@@ -41,11 +41,12 @@ abdomen := read {Abdomen_Exam from CHICA} Where it Occurred Within Past 12 Month
 genitalia := read {ExtGenitalia_Exam from CHICA} Where it Occurred Within Past 12 Months;
 skin := read {Skin_Exam from CHICA} Where it Occurred Within Past 12 Months;
 neuro := read {Neuro_Exam from CHICA} Where it Occurred Within Past 12 Months;
-pulse := read Last {PULSE from CHICA};
-BPD := read Last {DIASTOLIC_BP from CHICA};
-BPS := read Last {SYSTOLIC_BP from CHICA};
-Weight := read Last {WEIGHT from CHICA};
-Height := read Last {HEIGHT from CHICA};
+pulse := read Last {PULSE CHICA from CHICA} Where it Occurred Within Past 12 Months;
+BPD := read Last {DIASTOLIC_BP from CHICA} Where it Occurred Within Past 12 Months;
+BPS := read Last {SYSTOLIC_BP from CHICA} Where it Occurred Within Past 12 Months;
+Weight := read Last {WEIGHT from CHICA} Where it Occurred Within Past 12 Months;
+Height := read Last {HEIGHT from CHICA} Where it Occurred Within Past 12 Months;
+
 endif
 ;;
 Priority:		;;
@@ -99,12 +100,24 @@ endif;
 finalUnformattedResult:= call mostRecentResult With "allergies_object","asthma_object","corrected_object","visionR_object","visionL_object","ears_object","nose_object","general_object","nodes_object","heart_object","lungs_object","abdomen_object","genitalia_object","skin_object","neuro_object","pulse_object","BPD_object","BPS_object","Weight_object","Height_object";
 finalResult := call fullDateFormat With "finalUnformattedResult";
 
+BPD_formatted := call integerResult with "BPD_value";
+BPS_formatted := call integerResult with "BPS_value";
+pulse_formatted := call integerResult with "pulse_value";
+height_formatted  := call roundOnePlace with "Height_value";
+Weight_formatted  := call roundTwoPlace with "Weight_value";
+
 conclude true;
 
 endif
 
 ;;
 Action:
+
+write ("|| height_formatted ||") At Height;
+write ("|| Weight_formatted ||") At Weight;
+write ("|| BPS_formatted ||") At BPS;
+write ("|| BPD_formatted ||") At BPD;
+write ("|| pulse_formatted ||") At Pulse;
 write ("|| Gender ||") At sex;
 write ("|| Gender ||") At sex2;
 write ("|| yesAllergySel ||") At Sel_Allergie_Yes;
