@@ -124,7 +124,7 @@ call CREATE_JIT with "Evaluating ADHD Toolkit";
 call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
 endif;
 
-write ("|| firstname || has a record of ADHD or other hyperkinetic disorder. Vanderbilts at least annually are recommended (attached). CPT 96110");                                                                                                                                                                                                                                                                                                                   
+write ("|| firstname || has a record of ADHD or other hyperkinetic disorder. Vanderbilts at least annually are recommended. CPT 96110");                                                                                                                                                                                                                                                                                                                   
 write ("Has ADHD");
 write ("On medication");
 write ("Parent Vanderbilt and scan now                   ");
