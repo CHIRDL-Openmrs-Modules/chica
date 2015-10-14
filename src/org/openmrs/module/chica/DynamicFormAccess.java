@@ -58,6 +58,7 @@ import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -1070,12 +1071,12 @@ public class DynamicFormAccess {
 				FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 
 				String scanDirectory = IOUtil.formatDirectoryName(
-						org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId, org.openmrs.module.chirdlutil.util.XMLUtil.DEFAULT_EXPORT_DIRECTORY, 
+						org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId, XMLUtil.DEFAULT_EXPORT_DIRECTORY, 
 								locationTagId, locationId));
 
 				if (scanDirectory == null) 
 				{
-					log.info("No " + org.openmrs.module.chirdlutil.util.XMLUtil.DEFAULT_EXPORT_DIRECTORY + " found for Form: " + formId + " Location ID: " + locationId + 
+					log.info("No " + XMLUtil.DEFAULT_EXPORT_DIRECTORY + " found for Form: " + formId + " Location ID: " + locationId + 
 							" Location Tag ID: " + locationTagId + ".");
 					return new ArrayList<Field>();
 				}
@@ -1085,7 +1086,7 @@ public class DynamicFormAccess {
 				{
 					try
 					{
-						Records records = (Records) org.openmrs.module.chirdlutil.util.XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
+						Records records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
 						Map<String, Field> fieldMap = new HashMap<String, Field>();
 						List<Field> currentFields = records.getRecord().getFields();
 
