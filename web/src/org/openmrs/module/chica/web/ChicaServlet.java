@@ -573,6 +573,24 @@ public class ChicaServlet extends HttpServlet {
 		
 		if (patient == null) {
 			String message = "No valid patient could be located.";
+			
+			// DWE CHICA-576 Add some additional logging
+			if(patientIdString != null)
+			{
+				message += " patientId: " + patientIdString;
+			}
+			if(request.getParameter(PARAM_SESSION_ID) != null)
+			{
+				message += " sessionId: " + request.getParameter(PARAM_SESSION_ID);
+			}
+			if(request.getParameter(PARAM_LOCATION_ID) != null)
+			{
+				message += " locationId: " + request.getParameter(PARAM_LOCATION_ID);
+			}
+			if(request.getParameter(PARAM_LOCATION_TAG_ID) != null)
+			{
+				message += " locationTagId: " + request.getParameter(PARAM_LOCATION_TAG_ID);
+			}
 			log.error(message);
 			throw new IllegalArgumentException(message);
 		}
@@ -1045,7 +1063,20 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			locationId = Integer.parseInt(locationIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Invalid argument locationId: " + locationIdStr);
+			// DWE CHICA-576 Add some additional logging
+			StringBuilder errorMsg = new StringBuilder();
+			errorMsg.append("Invalid argument locationId: " + locationIdStr);
+			if(formId != null)
+			{
+				errorMsg.append(" formId: ")
+				.append(formId);
+			}
+			if(locationTagIdStr != null)
+			{
+				errorMsg.append(" locationTagId: ")
+				.append(locationTagIdStr);
+			}
+			log.error(errorMsg.toString());
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
 			response.getWriter().write("Invalid argument locationId: " + locationIdStr);
 			return;
