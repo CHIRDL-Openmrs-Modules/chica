@@ -63,51 +63,12 @@ public class percentileDisplay implements Rule
 	public Result eval(LogicContext context, Integer patientId,
 			Map<String, Object> parameters) throws LogicException
 	{
-		PatientService patientService = Context.getPatientService();
-		Patient patient = patientService.getPatient(patientId);
-		
 		if(parameters!=null)
 		{
 			Result ruleResult = (Result) parameters.get("param0");
-			String conceptName = (String) parameters.get("concept");
 			if(ruleResult != null)
 			{
-				Calculator calculator = new Calculator();
-				String type = null;
-				String measurementUnits = null;
-				
-				if(conceptName == null)
-				{
-					type = "bmi";
-				}else if(conceptName.equalsIgnoreCase("HEIGHT"))
-				{
-					type = "length";
-					measurementUnits = org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN;
-				}else if(conceptName.equalsIgnoreCase("WEIGHT"))
-				{
-					type = "weight";
-					measurementUnits = org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB;
-				}else if(conceptName.equalsIgnoreCase("HC"))
-				{
-					type = "hc";
-				}
-				
-				if (type != null)
-				{
-					Double result = ruleResult.toNumber();
-
-					if (result != null)
-					{
-						String percentile = calculator
-								.calculatePercentileAsString(result, patient
-										.getGender(), patient.getBirthdate(),
-										type, measurementUnits);
-						if (percentile != null)
-						{
-							return new Result("(" + percentile + "%)");
-						}
-					}
-				}
+				return new Result("(" + ruleResult + "%)");
 			}
 		}
 		return Result.emptyResult();
