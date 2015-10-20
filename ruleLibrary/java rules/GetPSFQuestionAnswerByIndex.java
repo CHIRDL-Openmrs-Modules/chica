@@ -13,13 +13,10 @@
  */
 package org.openmrs.module.chica.rule;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
 import org.openmrs.logic.Rule;
@@ -27,43 +24,66 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.PSFQuestionAnswer;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 
 /**
- * Rule used to populate the PSF questions and answers.
+ * Retrieves a question or answer from the psf question/answer pair PSFQuestionAnswer object by a one-based index.
  * 
  * @author Steve McKee
  */
-public class GetPSFQuestionsAnswers implements Rule {
+public class GetPSFQuestionAnswerByIndex implements Rule {
 	
-	private static final String PSF = "PSF";
-
+	private static final String QUESTION = "question";
+	private static final String ANSWER = "answer";
+	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
-		Integer encounterId = (Integer)parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-		if (encounterId == null) {
+		Result results = (Result)parameters.get(ChirdlUtilConstants.PARAMETER_1);
+		if (results == null || results.size() == 0) {
 			return Result.emptyResult();
 		}
 		
-		List<PSFQuestionAnswer> psfResults = getQuestionsAnswers(patientId, encounterId);
-		if (psfResults.size() == 0) {
+		String indexStr = (String)parameters.get(ChirdlUtilConstants.PARAMETER_2);
+		if (indexStr == null || indexStr.trim().length() == 0) {
 			return Result.emptyResult();
 		}
 		
-		Result results = new Result();
-		for (int i = 0; i < psfResults.size(); i++) {
-			PSFQuestionAnswer psfResult = psfResults.get(i);
-			Result questAnswerResult = new Result();
-			questAnswerResult.setResultObject(psfResult);
-			results.add(questAnswerResult);
+		int index = 0;
+		try {
+			index = Integer.parseInt(indexStr);
+		} catch (NumberFormatException e) {
+			return Result.emptyResult();
 		}
 		
-		return results;
+		// Convert to zero-based
+		index--;
+		
+		if (index > results.size() - 1) {
+			return Result.emptyResult();
+		}
+		
+		Result result = results.get(index);
+		if (result == null) {
+			return Result.emptyResult();
+		}
+		
+		Object resultObj = result.getResultObject();
+		if ((resultObj == null) || !(resultObj instanceof PSFQuestionAnswer)) {
+			return Result.emptyResult();
+		}
+		
+		PSFQuestionAnswer psfQuestAnswer = (PSFQuestionAnswer)resultObj;
+		String value = (String)parameters.get(ChirdlUtilConstants.PARAMETER_3);
+		if (QUESTION.equalsIgnoreCase(value)) {
+			return new Result(psfQuestAnswer.getQuestion());
+		} else if (ANSWER.equalsIgnoreCase(value)) {
+			return new Result(psfQuestAnswer.getAnswer());
+		}
+		
+		return Result.emptyResult();
 	}
 	
 	/**
@@ -92,30 +112,5 @@ public class GetPSFQuestionsAnswers implements Rule {
 	 */
 	public int getTTL() {
 		return 0;
-	}
-	
-	/**
-	 * Retrieves the PSF questions and answers for the current patient and encounter.
-	 * 
-	 * @param patientId The patient ID used to find the PSF questions and answers.
-	 * @param encounterId The encounter ID used to find the PSF questions and answers.
-	 * @return List of PSFQuestionAnswer objects containing the PSF questions and answers.
-	 */
-	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId, Integer encounterId) {
-		ATDService atdService = Context.getService(ATDService.class);
-		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, PSF);
-		if (stats == null || stats.size() == 0) {
-			return new ArrayList<PSFQuestionAnswer>();
-		}
-		
-		for (Statistics stat : stats) {
-			Integer formInstanceId = stat.getFormInstanceId();
-			Integer locationId = stat.getLocationId();
-			if (formInstanceId != null && locationId != null) {
-				return Context.getService(ATDService.class).getPSFQuestionAnswers(formInstanceId, locationId, patientId);
-			}
-		}
-		
-		return new ArrayList<PSFQuestionAnswer>();
 	}
 }
