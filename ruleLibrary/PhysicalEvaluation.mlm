@@ -101,8 +101,8 @@ endif;
 finalUnformattedResult:= call mostRecentResult With "allergies_object","asthma_object","corrected_object","visionR_object","visionL_object","ears_object","nose_object","general_object","nodes_object","heart_object","lungs_object","abdomen_object","genitalia_object","skin_object","neuro_object","pulse_object","BPD_object","BPS_object","Weight_object","Height_object";
 
 if NOT (finalUnformattedResult = null) then
-	finalResult := call fullDateFormat With "finalUnformattedResult";
-	If NOT (finalResult = null) then || finalResultDate || = "finalResult_date";
+	finalResult := call fullDateFormat With "finalUnformattedResult_object";
+	If NOT (finalResult = null) then || finalResultDate || = "|| finalResult ||";
 	If (finalResult = null) then || finalResultDate || = "";
 endif;
 
