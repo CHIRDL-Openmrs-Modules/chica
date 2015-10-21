@@ -25,7 +25,11 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	//checkSession();
+	
+	var showVitals = window.parent.shouldShowVitalsButton();
+	if (!showVitals) {
+		$(".vitalsButton").hide();
+	}
 }
 
 function submitEmptyForm() {
@@ -60,7 +64,7 @@ function setLanguage(patientName, birthdate) {
     $("#additionalQuestions").text(additionalQuestions);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $("#vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
 }
 
 function changePage(newPageNum) {

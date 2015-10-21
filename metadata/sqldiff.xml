@@ -3665,6 +3665,38 @@ where action_name='REPRINT';
     <diff>
         <version>1.6.9</version>
         <author>David Ely</author>
+        <date>July 28, 2015</date>
+        <description>
+            CHICA-492 Add new chica_insurance_category records
+        </description>
+        <sql>
+            INSERT INTO `chica_insurance_category` (sms_code, category, sms_ins_name, mckesson_ins_name, star_carrier_code, star_plan_code, ins_code, ecw_ins_name) 
+            VALUES ('null', 'Commercial', null, null, null, null, 'A', null),
+            ('null', 'Commercial', null, null, null, null, 'B', null),
+            ('null', 'Commercial', null, null, null, null, 'G', null),
+            ('null', 'Commercial', null, null, null, null, 'H', null),
+            ('null', 'Special Payer', null, null, null, null, 'J', null),
+            ('null', 'Medicaid', null, null, null, null, 'K', null),
+            ('null', 'Self Pay', null, null, null, null, 'P', null),
+            ('null', 'Other', null, null, null, null, 'Q', null),
+            ('null', 'Special Payer', null, null, null, null, 'S', null);           
+        </sql>
+    </diff>     
+    <diff>
+        <version>1.7.0</version>
+        <author>David Ely</author>
+        <date>July 29, 2015</date>
+        <description>
+            CHICA-406 Add new person_attribute_type record to store the patient account number
+        </description>
+        <sql>
+            INSERT INTO `person_attribute_type` (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
+            VALUES ('Patient Account Number', 'Patient Account Number', 'java.lang.String', 1, 1, NOW(), UUID());  
+        </sql>
+    </diff>
+	<diff>
+        <version>1.7.1</version>
+        <author>David Ely</author>
         <date>May 22, 2015</date>
         <description>
         Add HL7 export status for PSF and PWS image not found
@@ -3673,10 +3705,10 @@ where action_name='REPRINT';
         INSERT INTO `chica_hl7_export_status` 
         VALUES (301, 'PSF_Image_not_found', 'PSF Tiff image not found', now()), 
         (302, 'PWS_Image_not_found', 'PWS Tiff image not found', now());
-        </sql>
-    </diff>     
+		</sql>
+    </diff>
     <diff>  
-        <version>1.7.0</version>  
+        <version>1.7.2</version>  
         <author>David Ely</author>  
         <date>June 16, 2015</date>  
         <description>  
@@ -3696,7 +3728,7 @@ where action_name='REPRINT';
             and b.name='displayAndUpdatePreviousValues' and a.retired=0 and d.location_id=c.location_id and (c.name='PEPS' or c.name='FMPS' or c.name='PCPS' or c.name='BBPS' or c.name='TEPS') 
             group by d.location_tag_id,d.location_id;
          </sql>
-	</diff>  
+	</diff>
 </sqldiff>
 
 

@@ -1,12 +1,13 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <!DOCTYPE html>
-<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobile.form" />
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobileDynamic.form" />
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/psfMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
@@ -17,48 +18,6 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 
-<style>
-
-/*specify a height for the header so we can line-up the elements, the default is 40px*/
-#additionalForms_page .ui-header {
-    height : 0px;
-}
-
-/*set the content to be full-width and height except it doesn't overlap the header or footer*/
-#additionalForms_page .ui-content {
-    position : fixed;
-    top      : 0px;
-    right    : 0;
-    bottom   : 0px;
-    left     : 0;
-    width    : 100%;
-    height   : 100%;
-}
-
-/*absolutely position the footer to the bottom of the page*/
-#additionalForms_page .ui-footer {
-    height   : 0px;
-}
-
-#formFrame {
-    position : fixed;
-    top      : 0px;
-    right    : 0;
-    bottom   : 0px;
-    left     : 0;
-    width    : 100%;
-    height   : 100%;
-}
-
-#loading_form_dialog .ui-dialog-contain {
-    width: 200px;
-    max-width: 200px;
-    margin: 10% auto 15px auto;
-    padding: 0;
-    position: relative;
-}
-
-</style>
 </head>
 <c:set var="search" value="'" />
 <c:set var="replace" value="\\'" />
@@ -79,355 +38,10 @@
         </div>
     </div>
 </c:if>
-<div data-role="page" id="confirm_page" data-theme="b">
-    <div data-role="header" class="single-line-header" >
-        <h1>Pre-Screener:</h1>
-        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="confirmLangButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a id="confirmVitalsButton" data-role="button" href="#vitals_page" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="fade">Vitals</a>
-    </div>
 
-    <div data-role="content" >
-        <strong><span id="parentText">Parents: Thank you for answering these questions about your child.  The answers will help your doctor provide better quality of care.  If your child is age 12 or older, he/she should answer the questions privately.  Answers are confidential, but if you prefer not to answer that is allowed.  You may want to talk about these questions with your doctor.</span></strong>
-        <div><br/></div>
-        <hr/>
-        <strong><span id="instructions"><p>1) Please return the device back to the front desk if the patient information listed is incorrect.</p><p>2) Please confirm this form is for:<br/>Name: ${patient.givenName}&nbsp;${patient.familyName}<br/>Date of Birth: ${patient.birthdate}</p></span></strong>
-        <div id="deny_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Confirm</h1>
-            </div>
-            <div data-role="content">
-                <span>If you are sure the incorrect patient is displayed, Press 'OK' and return the device to the receptionist.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="${pageContext.request.contextPath}/module/chica/greaseBoardMobile.form" data-inline="true" data-theme="b" data-role="button" rel="external" style="width: 150px;">OK</a>
-                    <a href="#confirm_page" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancel</a>
-                </div>
-            </div>
-        </div>
-        
-        <div id="deny_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Confirmar</h1>
-            </div>
-            <div data-role="content">
-                <span>Si est&#225; seguro de que el paciente incorrecta aparece, pulse 'Aceptar' y devolver el dispositivo a la recepcionista.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="${pageContext.request.contextPath}/module/chica/greaseBoardMobile.form" data-inline="true" data-theme="b" data-role="button" rel="external" style="width: 150px;">Acceptar</a>
-                    <a href="#confirm_page" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancelar</a>
-                </div>
-            </div>
-        </div>
-    </div><!-- /content -->
-    
-    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a id="confirmButton" href="#" data-role="button" data-theme="b" onclick="backToQuestions()" style="width: 150px;">Confirm</a>
-        <a id="denyButton" href="#" data-role="button" data-theme="b" style="width: 150px;">Deny</a>
-    </div>
-    
-</div><!-- /page one -->
+<%@ include file="psfMobilePages.jsp" %>
 
-<div id="server_error_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <div id="errorResultDiv"></div>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" style="width: 150px;">OK</a>
-        </div>
-    </div>
-</div>
-
-<div id="server_error_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <div id="errorResultDiv_sp"></div>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" style="width: 150px;">Acceptar</a>
-        </div>
-    </div>
-</div>
-
-<div id="loading_form_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="content">
-        <div style="margin: 0 auto;text-align: center;">
-            Loading Form...
-        </div>
-    </div>
-</div>
-
-<div id="finished_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Finished</h1>
-    </div>
-    <div data-role="content">
-        <span>Thank you for filling out the form.  The MA/nurse will collect the device from you.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#vitals_page" data-role="button" data-inline="true" data-theme="b" data-transition="fade" style="width: 150px;">OK</a>
-        </div>
-    </div>
-</div>
-
-<div id="finished_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Acabado</h1>
-    </div>
-    <div data-role="content">
-        <span>Gracias por rellenar el formulario. La MA/enfermera recoger&#225; el aparato de usted.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#vitals_page" data-role="button" data-inline="true" data-theme="b" data-transition="fade" style="width: 150px;">Aceptar</a>
-        </div>
-    </div>
-</div>
-
-<div data-role="page" id="form_completed_page" data-theme="b">
-    <div data-role="header" >
-        <h1>Pre-screening Form Completed</h1>
-    </div>
-    <div data-role="content" style="margin: 0 auto;text-align: center;" >
-        <strong><span>The Pre-screening form has already been completed and successfully submitted.  It cannot be accessed again.</span></strong>
-    </div>
-    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="${pageContext.request.contextPath}/module/chica/greaseBoardMobile.form" data-inline="true" data-theme="b" data-role="button" rel="external" style="width: 150px;">Patient List</a>
-    </div>
-</div>
-
-<div id="quit_confirm_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Confirm Quit</h1>
-    </div>
-    <div data-role="content">
-        <span>Are you sure you want to quit?</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#quit_dialog" data-role="button" data-rel="dialog" data-inline="true" data-theme="b" style="width: 150px;">Yes</a>
-            <a href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" style="width: 150px;">No</a>
-        </div>
-    </div>
-</div>
-
-<div id="quit_confirm_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Confirmar Salir</h1>
-    </div>
-    <div data-role="content">
-        <span>&#191;Est&#225; seguro de que desea salir?</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#quit_dialog_sp" data-role="button" data-rel="dialog" data-inline="true" data-theme="b" style="width: 150px;">Si</a>
-            <a href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b" style="width: 150px;">No</a>
-        </div>
-    </div>
-</div>
-
-<div id="quit_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Finished</h1>
-    </div>
-    <div data-role="content">
-        <span>Thank you for filling out the form.  The nurse will collect the device from you.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#vitals_page" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">OK</a>
-        </div>
-    </div>
-</div>
-
-<div id="quit_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Acabado</h1>
-    </div>
-    <div data-role="content">
-        <span>Gracias por rellenar el formulario. La enfermera recoger&#225; el aparato de usted.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#vitals_page" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Aceptar</a>
-        </div>
-    </div>
-</div>
-
-<div id="load_error_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <span>An error occurred loading the questions.  Click 'OK' to try again.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="" data-role="button" data-inline="true" data-theme="b" onclick="loadQuestions()" style="width: 150px;">OK</a>
-        </div>
-    </div>
-</div>
-
-<div id="load_error_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <span>Se ha producido un error al cargar las preguntas. Haga clic en 'Aceptar' para intentarlo de nuevo.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="" data-role="button" data-inline="true" data-theme="b" onclick="loadQuestions()" style="width: 150px;">Aceptar</a>
-        </div>
-    </div>
-</div>
-
-<div id="save_error_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <span>An error occurred saving the questions.  Click 'OK' to try again.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="" data-role="button" data-inline="true" data-theme="b" onclick="saveQuestions()" style="width: 150px;">OK</a>
-        </div>
-    </div>
-</div>
-
-<div id="save_error_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <span>Se ha producido un error al guardar las preguntas. Haga clic en 'Aceptar' para intentarlo de nuevo.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="" data-role="button" data-inline="true" data-theme="b" onclick="saveQuestions()" style="width: 150px;">Aceptar</a>
-        </div>
-    </div>
-</div>
-
-<div id="forms_error_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <span>An error occurred loading the next form.  Click 'OK' to try again.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="" data-role="button" data-inline="true" data-theme="b" onclick="attemptLoadForms()" style="width: 150px;">OK</a>
-        </div>
-    </div>
-</div>
-
-<div id="forms_error_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Error</h1>
-    </div>
-    <div data-role="content">
-        <span>Se ha producido un error al cargar la siguiente forma. Haga clic en 'Aceptar' para intentarlo de nuevo.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="" data-role="button" data-inline="true" data-theme="b" onclick="attemptLoadForms()" style="width: 150px;">Aceptar</a>
-        </div>
-    </div>
-</div>
-
-<div id="question_page" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" >
-        <h1>Pre-Screener:</h1>
-        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1Button" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="openVitalsConfirm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
-    </div>
-    <div data-role="content">
-        <div id="content_1"></div>
-        <div id="quit_to_vitals_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Vitals</h1>
-            </div>
-            <div data-role="content">
-                <span>All answers on this page will be submitted before proceeding to the Vitals page.  Are you sure you want to continue?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">Yes</a>
-                    <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
-        </div>
-        <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Not Completed</h1>
-            </div>
-            <div data-role="content">
-                <span>There are unanswered questions on this page.  Are you sure you want to continue to the next page?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href=""  onclick="saveDynamicQuestions(true);" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Yes</a>
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
-        </div>
-        <div id="finish_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Error</h1>
-            </div>
-            <div data-role="content">
-                <span>There was an error submitting the form.  Please press 'OK' to try again.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="saveDynamicQuestions(true)" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptSaveQuestions()" style="width: 150px;">Next</a>
-        <!-- <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="confirmQuit()" style="width: 150px;">Quit</a> -->
-    </div>
-</div>
-<div id="question_page_sp" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" >
-        <h1>Pre-Screener:</h1>
-        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1SPButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${NewLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="openVitalsConfirmSpanish()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
-    </div>
-    <div data-role="content">
-        <div id="content_1_sp"></div>
-        <div id="quit_to_vitals_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Vitales</h1>
-            </div>
-            <div data-role="content">
-                <span>Todas las respuestas en esta p&#225;gina se presentar&#225;n antes de proceder a la p&#225;gina vitales.  &#191;Est&#225; seguro que desea continuar?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">Si</a>
-                    <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
-        </div>
-        <div id="not_finished_final_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>No Completado</h1>
-            </div>
-            <div data-role="content">
-                <span>Hay preguntas sin respuesta en esta p&#225;gina. &#191;Est&#225; seguro de que desea continuar a la siguiente p&#225;gina?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="saveDynamicQuestions(true)" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Si</a>
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
-        </div>
-        <div id="finish_error_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Error</h1>
-            </div>
-            <div data-role="content">
-                <span>Hubo un error al enviar el formulario. Por favor, pulse 'OK' para intentarlo de nuevo.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="saveDynamicQuestions(true)" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-theme="b" onclick="attemptSaveQuestions()" style="width: 150px;">Proximo</a>
-        <!-- <a href="#" data-role="button" data-theme="b" onclick="confirmQuit()" style="width: 150px;">Dejar de</a> -->
-    </div>
-</div>
-
-<div id="additionalForms_page" data-role="page" data-theme="b">
-    <div data-role="header"></div>
-    <div id="content_frame" data-role="content">
-        <iframe id="formFrame" src="" seamless></iframe>
-    </div>
-    <div data-role="footer"></div>
-</div>
-
-<div id="blockUIMessage" data-role="page">
-
-</div>
+<%@ include file="psfMobileDialogs.jsp" %>
 
 <div id="vitals_page" data-role="page" data-theme="b">
     <div id="vitals_header" data-role="header" >
@@ -777,18 +391,6 @@
                 </div>
             </div>
         </div>
-        <a id='lnkSubmitError' href="#submitErrorDialog" data-rel="popup" data-transition="pop" data-position-to="window" style='display:none;'></a>
-        <div id="submitErrorDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Error</h1>
-            </div>
-            <div data-role="content">
-                <div id="submitErrorDiv"></div>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a id="submitErrorButton" data-rel="back" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
-                </div>
-            </div>
-        </div>
         <div id="confirm_submit_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Confirm</h1>
@@ -840,6 +442,8 @@
 <input id="NoHearing" name="NoHearing" type="hidden" value="N"/>
 <input id="NoVision" name="NoVision" type="hidden" value="N"/>
 <input id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" type="hidden" value="no diet and exercise given"/>
+
+<input id="showVitals" name="showVitals" type="hidden" value="true"/>
 </form>
 </body>
 </html>

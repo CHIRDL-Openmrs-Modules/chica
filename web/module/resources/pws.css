@@ -119,6 +119,7 @@ body {
     height: 18px;
     margin-left:5px;
     text-align:left;
+    
 }
 
 #vitalsLegend {
@@ -132,6 +133,10 @@ body {
     text-align:center;
     font-size:0.8em;
     padding-top:2px;
+    
+    /* Adding to fix issues when zooming out 
+    margin-right: -1px;
+    margin-bottom: -1px; */
 }
 
 #exam {

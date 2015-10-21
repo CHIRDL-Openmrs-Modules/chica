@@ -639,4 +639,29 @@ public class Util {
 		}
 		
 	}
+    
+    /**
+	 * Gets the location tag id from the encounter.
+	 * @param encounter
+	 * @return
+	 */
+	public static Integer getLocationTagId(Encounter encounter) {
+		if (encounter != null) {
+			// lookup location tag id that matches printer location
+			if (encounter.getPrinterLocation() != null) {
+				Location location = encounter.getLocation();
+				Set<LocationTag> tags = location.getTags();
+
+				if (tags != null) {
+					for (LocationTag tag : tags) {
+						if (tag.getName().equalsIgnoreCase(
+								encounter.getPrinterLocation())) {
+							return tag.getLocationTagId();
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
 }
