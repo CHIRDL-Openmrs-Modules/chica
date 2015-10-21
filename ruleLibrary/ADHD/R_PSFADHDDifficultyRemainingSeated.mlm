@@ -34,6 +34,8 @@ admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 
 axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 RecentlyAsked := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
+hosp_icd10_dx:= read {HOSP ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
 endif
 ;;
 Priority: 269;;
@@ -51,7 +53,11 @@ If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints)  OR ('
 If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints)  OR ('314.2' is in hosp_icd_dx)  OR ('314.2' is in admit_icd_dx)  OR ('314.2' is in axis_discharge_dx) then conclude False;
 If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints)  OR ('314.8' is in hosp_icd_dx)  OR ('314.8' is in admit_icd_dx)  OR ('314.8' is in axis_discharge_dx) then conclude False;
 If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints)  OR ('314.9' is in hosp_icd_dx)  OR ('314.9' is in admit_icd_dx)  OR ('314.9' is in axis_discharge_dx) then conclude False;
-
+If ('F90.0' is in clinic_billing_dx) OR ('F90.0' is in dx_and_complaints)  OR ('F90.0' is in hosp_icd10_dx)  OR ('F90.0' is in admit_icd10_dx)  OR ('F90.0' is in axis_discharge_dx) then conclude False;
+If ('F90.1' is in clinic_billing_dx) OR ('F90.1' is in dx_and_complaints)  OR ('F90.1' is in hosp_icd10_dx)  OR ('F90.1' is in admit_icd10_dx)  OR ('F90.1' is in axis_discharge_dx) then conclude False;
+If ('F90.2' is in clinic_billing_dx) OR ('F90.2' is in dx_and_complaints)  OR ('F90.2' is in hosp_icd10_dx)  OR ('F90.2' is in admit_icd10_dx)  OR ('F90.2' is in axis_discharge_dx) then conclude False;
+If ('F90.8' is in clinic_billing_dx) OR ('F90.8' is in dx_and_complaints)  OR ('F90.8' is in hosp_icd10_dx)  OR ('F90.8' is in admit_icd10_dx)  OR ('F90.8' is in axis_discharge_dx) then conclude False;
+If ('F90.9' is in clinic_billing_dx) OR ('F90.9' is in dx_and_complaints)  OR ('F90.9' is in hosp_icd10_dx)  OR ('F90.9' is in admit_icd10_dx)  OR ('F90.9' is in axis_discharge_dx) then conclude False;
 If (CurrentStatus = yes) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) then conclude False;
 If ('Difficulty_Remaining_Seated' is in RecentlyAsked) OR ('no_Difficulty_remaining_seated' is in RecentlyAsked) then conclude False;
 Else conclude true;

@@ -15,7 +15,10 @@ package org.openmrs.module.chica.vendor.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.chica.vendor.Vendor;
+import org.openmrs.module.chirdlutil.util.Util;
 
 
 /**
@@ -23,6 +26,8 @@ import org.openmrs.module.chica.vendor.Vendor;
  * @author Steve McKee
  */
 public abstract class VendorImpl implements Vendor {
+	
+	private static Log log = LogFactory.getLog(VendorImpl.class);
 	
 	protected static final String PARAM_MRN = "mrn";
 	protected static final String PARAM_FORM_PAGE = "formPage";
@@ -46,20 +51,6 @@ public abstract class VendorImpl implements Vendor {
 		}
 		
 		this.request = request;
-	}
-	
-	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getUsername()
-	 */
-	public String getUsername() {
-		return request.getParameter(PARAM_USERNAME);
-	}
-	
-	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getPassword()
-	 */
-	public String getPassword() {
-		return request.getParameter(PARAM_PASSWORD);
 	}
 	
 	/**
@@ -103,4 +94,47 @@ public abstract class VendorImpl implements Vendor {
 	public String getMrn() {
 		return request.getParameter(PARAM_MRN);
 	}
+	
+	/**
+	 * @see org.openmrs.module.chica.vendor.Vendor#getPassword()
+	 */
+	public String getPassword() {
+		String password = request.getParameter(PARAM_PASSWORD);
+		if (password == null || password.trim().length() == 0) {
+			log.error("No " + PARAM_PASSWORD + " parameter found in HTTP request.");
+			return null;
+		}
+		
+		String key = getEncryptionKey();
+		if (key == null) {
+			return password;
+		}
+		
+		return Util.decryptValue(password, true, key);
+	}
+	
+	/**
+	 * @see org.openmrs.module.chica.vendor.Vendor#getUsername()
+	 */
+	public String getUsername() {
+		String username = request.getParameter(PARAM_USERNAME);
+		if (username == null || username.trim().length() == 0) {
+			log.error("No " + PARAM_USERNAME + " parameter found in HTTP request.");
+			return null;
+		}
+		
+		String key = getEncryptionKey();
+		if (key == null) {
+			return username;
+		}
+		
+		return Util.decryptValue(username, true, key);
+	}
+	
+	/**
+	 * Abstract method that must be overridden to retrieve the encryption key to decrypt parameter values.
+	 * 
+	 * @return The encryption key or null if one is not found or required.
+	 */
+	public abstract String getEncryptionKey();
 }

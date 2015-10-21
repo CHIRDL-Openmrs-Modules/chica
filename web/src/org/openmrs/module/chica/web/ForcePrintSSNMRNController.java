@@ -10,9 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.PatientIdentifierException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.patient.impl.LuhnIdentifierValidator;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.validator.PatientIdentifierValidator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -50,16 +53,22 @@ public class ForcePrintSSNMRNController extends SimpleFormController {
 	                                org.springframework.validation.BindException errors) throws Exception {
 		String mrn = request.getParameter("mrnLookup");
 		
-		LuhnIdentifierValidator luhn = new LuhnIdentifierValidator();
 		boolean valid = false;
 		if (mrn != null && !mrn.contains("-") && mrn.length() > 1) {
 			mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
 			
 		}
 		
+		PatientService patientService = Context.getPatientService();
 		try {
 			if (mrn != null && mrn.length() > 0 && !mrn.endsWith("-")) {
-				valid = luhn.isValid(mrn);
+				try {
+					PatientIdentifierType identifierType = patientService
+							.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
+					PatientIdentifierValidator.validateIdentifier(mrn, identifierType);
+					valid = true;
+				}  catch(PatientIdentifierException e) {
+				}
 			}
 		}
 		catch (Exception e) {
@@ -69,7 +78,6 @@ public class ForcePrintSSNMRNController extends SimpleFormController {
 		if (valid) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("mrnLookup", mrn);
-			PatientService patientService = Context.getPatientService();
 			List<Patient> patients = patientService.getPatients(null, mrn, null, true);
 			
 			Integer patientId = null;
