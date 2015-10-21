@@ -202,7 +202,7 @@ public class HL7EncounterHandler25 extends
 			OBR obr = getOBR(message, 0);
 			timeStamp = null;
 			String sendingFacility = msh.getSendingFacility().getNamespaceID().getValue();
-			if ("ECW".equalsIgnoreCase(sendingFacility)) {
+			if ("ECW".equalsIgnoreCase(sendingFacility) || "HNA500".equalsIgnoreCase(sendingFacility)) {
 				if (message instanceof ORU_R01) {
 					if (obr != null)
 						timeStamp = obr.getObservationDateTime();
@@ -237,5 +237,18 @@ public class HL7EncounterHandler25 extends
 
 		return datetime;
 
+	}
+	
+	/**
+	 * DWE CHICA-492
+	 * 
+	 * Get insurance plan code from IN1-35 for IUH Cerner integration
+	 * @param message
+	 * @return insurance plan code
+	 */
+	public String getInsuranceCompanyPlan(Message message)
+	{
+		IN1 in1 = getIN1(message);
+		return in1.getCompanyPlanCode().getValue();
 	}
 }
