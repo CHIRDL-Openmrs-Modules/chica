@@ -46,6 +46,7 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.Base64;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.FileDateComparator;
 import org.openmrs.module.chirdlutil.util.FileListFilter;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -363,7 +364,7 @@ public class HL7Exporter extends AbstractTask {
 		if (pi != null)
 			mrn = pi.getIdentifier();
 		String filename = org.openmrs.module.chirdlutil.util.Util.archiveStamp() + "_" + mrn + ack
-				+ ".hl7";
+				+ ChirdlUtilConstants.FILE_EXTENSION_HL7;
 
 		String archiveDir = IOUtil.formatDirectoryName(adminService
 				.getGlobalProperty("chica.outboundHl7ArchiveDirectory"));

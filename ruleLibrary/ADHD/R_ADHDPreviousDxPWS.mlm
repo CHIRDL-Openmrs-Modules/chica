@@ -9,7 +9,7 @@ Maintenance:
  Validation: ;;
 Library:
 	Purpose:		PWS promt to alert MD of previous ADHD Dx and put into maintainence mode.;;
- Explanation: If an ICD-9 Dx of ADHD exists in RMRS, alert the MD and assure f/u with Vanderbilts.;                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Explanation: If an ICD-9 OR ICD-10 Dx of ADHD exists in RMRS, alert the MD and assure f/u with Vanderbilts.;                                                                                                                                                                                                                                                                                                                                                                    ;;
  Keywords: ADHD PWS Vanderbilt                                                  ;;
  Citations:                                                                                    ;;
  Links:                                             ;;
@@ -33,6 +33,8 @@ dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within 
 hosp_icd_dx:= read {HOSP ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
 admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
 axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd10_dx:= read {HOSP ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
 
 CurrentStatus := read last {CHICA_ADHD_DX from CHICA} Where it Occurred Within Past 365 Days ;    
 ParentVanderbilt := read exist {ParentAssessmentScale from CHICA}; 
@@ -61,6 +63,11 @@ If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints)  OR ('
 If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints)  OR ('314.2' is in hosp_icd_dx)  OR ('314.2' is in admit_icd_dx)  OR ('314.2' is in axis_discharge_dx) then conclude True;
 If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints)  OR ('314.8' is in hosp_icd_dx)  OR ('314.8' is in admit_icd_dx)  OR ('314.8' is in axis_discharge_dx) then conclude True;
 If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints)  OR ('314.9' is in hosp_icd_dx)  OR ('314.9' is in admit_icd_dx)  OR ('314.9' is in axis_discharge_dx) then conclude True;
+If ('F90.0' is in clinic_billing_dx) OR ('F90.0' is in dx_and_complaints)  OR ('F90.0' is in hosp_icd10_dx)  OR ('F90.0' is in admit_icd10_dx)  OR ('F90.0' is in axis_discharge_dx) then conclude True;
+If ('F90.1' is in clinic_billing_dx) OR ('F90.1' is in dx_and_complaints)  OR ('F90.1' is in hosp_icd10_dx)  OR ('F90.1' is in admit_icd10_dx)  OR ('F90.1' is in axis_discharge_dx) then conclude True;
+If ('F90.2' is in clinic_billing_dx) OR ('F90.2' is in dx_and_complaints)  OR ('F90.2' is in hosp_icd10_dx)  OR ('F90.2' is in admit_icd10_dx)  OR ('F90.2' is in axis_discharge_dx) then conclude True;
+If ('F90.8' is in clinic_billing_dx) OR ('F90.8' is in dx_and_complaints)  OR ('F90.8' is in hosp_icd10_dx)  OR ('F90.8' is in admit_icd10_dx)  OR ('F90.8' is in axis_discharge_dx) then conclude True;
+If ('F90.9' is in clinic_billing_dx) OR ('F90.9' is in dx_and_complaints)  OR ('F90.9' is in hosp_icd10_dx)  OR ('F90.9' is in admit_icd10_dx)  OR ('F90.9' is in axis_discharge_dx) then conclude True;
 conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 endif
@@ -124,7 +131,7 @@ call CREATE_JIT with "Evaluating ADHD Toolkit";
 call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
 endif;
 
-write ("|| firstname || has a record of ADHD or other hyperkinetic disorder. Vanderbilts at least annually are recommended (attached). CPT 96110");                                                                                                                                                                                                                                                                                                                   
+write ("|| firstname || has a record of ADHD or other hyperkinetic disorder. Vanderbilts at least annually are recommended. CPT 96110");                                                                                                                                                                                                                                                                                                                   
 write ("Has ADHD");
 write ("On medication");
 write ("Parent Vanderbilt and scan now                   ");

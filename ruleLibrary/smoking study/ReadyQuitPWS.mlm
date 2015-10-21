@@ -82,7 +82,7 @@ endif
 ;;
 Action:
 call CREATE_JIT with "Smoking_JIT_Ready_To_Quit";
-write ("|| firstname || is reportedly exposed to tobacco smoke. The smoker is ready to quit. Please counsel (Give attached handout)");
+write ("|| firstname || is reportedly exposed to tobacco smoke. The smoker is ready to quit. Please counsel (Give handout)");
 write ("Smoke cessatn prog 630-7653");
 write ("Set quit date");
 write ("JIT hand out given");

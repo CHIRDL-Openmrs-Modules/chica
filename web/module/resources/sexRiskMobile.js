@@ -27,6 +27,11 @@ function init(patientName, birthdate, formInst, language, gender) {
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
 	
+	var showVitals = window.parent.shouldShowVitalsButton();
+	if (!showVitals) {
+		$(".vitalsButton").hide();
+	}
+	
 	this.gender = gender;
 	
 	$("#question_2_container").hide();
@@ -82,7 +87,7 @@ function setLanguage(patientName, birthdate) {
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#additionalQuestions").text(additionalQuestions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $("#vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
 }
 
 function setLanguageFromForm(patientName, birthdate) {
