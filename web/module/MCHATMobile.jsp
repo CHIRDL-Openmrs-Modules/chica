@@ -44,7 +44,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
 				</div>
 				
 				<div data-role="content">
@@ -63,7 +63,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
 				</div>
 				
 				<div id="content_1" data-role="content">
@@ -139,7 +139,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
 				</div>
 				
 				<div id="content_2" data-role="content">
@@ -216,7 +216,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage3Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
 				</div>
 				
 				<div id="content_3" data-role="content">
@@ -293,7 +293,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
 				</div>
 				
 				<div id="content_4" data-role="content">
@@ -370,7 +370,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
 				</div>
 				
 				<div id="content_5" data-role="content">
@@ -446,7 +446,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
 				</div>
 				
 				<div id="content_1_sp" data-role="content">
@@ -522,7 +522,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
 				</div>
 				
 				<div id="content_2_sp" data-role="content">
@@ -599,7 +599,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage3SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
 				</div>
 				
 				<div id="content_3_sp" data-role="content">
@@ -676,7 +676,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage4SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
 				</div>
 				
 				<div id="content_4_sp" data-role="content">
@@ -753,7 +753,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage5SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-					<a id="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
+					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
 				</div>
 				
 				<div id="content_5_sp" data-role="content">

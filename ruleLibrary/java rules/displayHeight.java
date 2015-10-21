@@ -30,17 +30,15 @@ import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.LogicException;
-import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class displayHeight implements Rule
 {
-	private LogicService logicService = Context.getLogicService();
-
 	/**
 	 * *
 	 * 
@@ -123,15 +121,15 @@ public class displayHeight implements Rule
 
 		if (ruleResult != null&&ruleResult.size()>0)
 		{
-			ATDService atdService = Context.getService(ATDService.class);
 			ruleResult = ruleResult.get(0);
 			Integer locationId = (Integer) parameters.get("locationId");
 			LocationService locationService = Context.getLocationService();
 			Location location = locationService.getLocation(locationId);
 			
 			if(location!= null){
-				//if this is Pecar, just return inches or cm based on age
-				if(location.getName().equalsIgnoreCase("PEPS")){
+				//if this is Pecar or IU Health, just return inches or cm based on age
+				String locationName = location.getName();
+				if(locationName.equalsIgnoreCase("PEPS") || locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)){
 					return inchesOrCmResult(ruleResult,
 							parameters,patient);
 				}else{

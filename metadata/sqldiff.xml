@@ -3662,6 +3662,39 @@ where action_name='REPRINT';
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         </sql>
     </diff>
+
+    <diff>
+        <version>1.6.9</version>
+        <author>David Ely</author>
+        <date>July 28, 2015</date>
+        <description>
+            CHICA-492 Add new chica_insurance_category records
+        </description>
+        <sql>
+            INSERT INTO `chica_insurance_category` (sms_code, category, sms_ins_name, mckesson_ins_name, star_carrier_code, star_plan_code, ins_code, ecw_ins_name) 
+            VALUES ('null', 'Commercial', null, null, null, null, 'A', null),
+            ('null', 'Commercial', null, null, null, null, 'B', null),
+            ('null', 'Commercial', null, null, null, null, 'G', null),
+            ('null', 'Commercial', null, null, null, null, 'H', null),
+            ('null', 'Special Payer', null, null, null, null, 'J', null),
+            ('null', 'Medicaid', null, null, null, null, 'K', null),
+            ('null', 'Self Pay', null, null, null, null, 'P', null),
+            ('null', 'Other', null, null, null, null, 'Q', null),
+            ('null', 'Special Payer', null, null, null, null, 'S', null);           
+        </sql>
+    </diff>
+    <diff>
+        <version>1.7.0</version>
+        <author>David Ely</author>
+        <date>July 29, 2015</date>
+        <description>
+            CHICA-406 Add new person_attribute_type record to store the patient account number
+        </description>
+        <sql>
+            INSERT INTO `person_attribute_type` (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
+            VALUES ('Patient Account Number', 'Patient Account Number', 'java.lang.String', 1, 1, NOW(), UUID());  
+        </sql>
+    </diff>
 </sqldiff>
 
 

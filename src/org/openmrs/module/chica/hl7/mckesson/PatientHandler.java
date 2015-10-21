@@ -134,4 +134,17 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 			}
 		}
 	}
+	
+	/**
+	 * DWE CHICA-406
+	 * Set the account number using the value that was parsed from PID-18
+	 */
+	@Override
+	protected void setAccountNumber(Message message, Patient hl7Patient,
+			Date encounterDate, HL7PatientHandler hl7PatientHandler)
+	{
+		
+		String accountNumber = hl7PatientHandler.getAccountNumber(message);
+		addAttribute(hl7Patient,  ChirdlUtilConstants.PERSON_ATTRIBUTE_PATIENT_ACCOUNT_NUMBER, accountNumber, encounterDate);
+	}
 }

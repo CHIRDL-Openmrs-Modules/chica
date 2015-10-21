@@ -495,7 +495,12 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 								obsConcept.setDatatype(conceptDatatype);
 							}
 						}
-						allObs.add(obs);
+						
+						if(obs.getObsDatetime()==null){
+							//do not add obs without a date
+						}else{
+							allObs.add(obs);
+						}
 					}
 				}
 			}

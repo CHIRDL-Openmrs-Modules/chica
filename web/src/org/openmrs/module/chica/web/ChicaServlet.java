@@ -237,8 +237,25 @@ public class ChicaServlet extends HttpServlet {
 			Integer formInstanceId = formInstance.getFormInstanceId();
 			Integer locationTagId = patientState.getLocationTagId();
 			
+			Form form = Context.getFormService().getForm(formId);
+			String formName = null;
+			
+			// Try to get a display name if one exists.
+			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, 
+				locationTagId, locationId);
+			if (fav != null && fav.getValue() != null && fav.getValue().trim().length() > 0) {
+				formName = fav.getValue();
+			} else {
+				formName = form.getName();
+			}
+			
+			// Only want the latest form instance.  The patient states are ordered by start/end time descending.
+			if (formInfoMap.get(formName) != null) {
+				continue;
+			}
+			
 			// Check to make sure the form is type PDF.
-			FormAttributeValue fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, 
+			fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, 
 				locationTagId, locationId);
 			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
 				continue;
@@ -288,18 +305,6 @@ public class ChicaServlet extends HttpServlet {
 						" locationTagId: " + locationTagId + " " + mergeFile.getAbsolutePath());
 					continue;
 				}
-			}
-			
-			Form form = Context.getFormService().getForm(formId);
-			String formName = null;
-			
-			// Try to get a display name if one exists.
-			fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, 
-				locationTagId, locationId);
-			if (fav != null && fav.getValue() != null && fav.getValue().trim().length() > 0) {
-				formName = fav.getValue();
-			} else {
-				formName = form.getName();
 			}
 			
 			FormInstanceTag tag = new FormInstanceTag(locationId, formId, formInstanceId, locationTagId);
@@ -568,6 +573,24 @@ public class ChicaServlet extends HttpServlet {
 		
 		if (patient == null) {
 			String message = "No valid patient could be located.";
+			
+			// DWE CHICA-576 Add some additional logging
+			if(patientIdString != null)
+			{
+				message += " patientId: " + patientIdString;
+			}
+			if(request.getParameter(PARAM_SESSION_ID) != null)
+			{
+				message += " sessionId: " + request.getParameter(PARAM_SESSION_ID);
+			}
+			if(request.getParameter(PARAM_LOCATION_ID) != null)
+			{
+				message += " locationId: " + request.getParameter(PARAM_LOCATION_ID);
+			}
+			if(request.getParameter(PARAM_LOCATION_TAG_ID) != null)
+			{
+				message += " locationTagId: " + request.getParameter(PARAM_LOCATION_TAG_ID);
+			}
 			log.error(message);
 			throw new IllegalArgumentException(message);
 		}
@@ -1040,7 +1063,20 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			locationId = Integer.parseInt(locationIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Invalid argument locationId: " + locationIdStr);
+			// DWE CHICA-576 Add some additional logging
+			StringBuilder errorMsg = new StringBuilder();
+			errorMsg.append("Invalid argument locationId: " + locationIdStr);
+			if(formId != null)
+			{
+				errorMsg.append(" formId: ")
+				.append(formId);
+			}
+			if(locationTagIdStr != null)
+			{
+				errorMsg.append(" locationTagId: ")
+				.append(locationTagIdStr);
+			}
+			log.error(errorMsg.toString());
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
 			response.getWriter().write("Invalid argument locationId: " + locationIdStr);
 			return;

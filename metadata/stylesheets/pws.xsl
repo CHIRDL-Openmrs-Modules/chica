@@ -366,7 +366,7 @@
 		                                &#160;
 		                            </xsl:when>
 		                            <xsl:otherwise>
-		                                <xsl:value-of select="Records/Record/Field[@id = 'Temperature']"/>&#160;F&#160;(<xsl:value-of select="Records/Record/Field[@id = 'Temperature_Method']"/>)
+		                                <xsl:value-of select="Records/Record/Field[@id = 'Temperature']"/>&#160;(<xsl:value-of select="Records/Record/Field[@id = 'Temperature_Method']"/>)
 		                            </xsl:otherwise>
 		                        </xsl:choose>
 		                    </div>
