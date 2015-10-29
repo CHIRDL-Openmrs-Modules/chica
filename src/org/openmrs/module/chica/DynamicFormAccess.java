@@ -1082,7 +1082,7 @@ public class DynamicFormAccess {
 				}
 
 				File file = new File(scanDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20);
-				if (file.exists()) 
+				if (file.exists() && file.length() > 0) 
 				{
 					try
 					{
@@ -1124,7 +1124,7 @@ public class DynamicFormAccess {
 					}
 					catch(IOException ioe)
 					{
-						log.error(ioe.getMessage());
+						log.error(ioe.getMessage() + "(length = " + file.length() + ")");
 						log.error(Util.getStackTrace(ioe));
 						return new ArrayList<Field>();
 					}
