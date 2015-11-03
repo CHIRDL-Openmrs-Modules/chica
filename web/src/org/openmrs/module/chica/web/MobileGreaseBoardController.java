@@ -80,7 +80,8 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		map.put("patientId", patientId);
 		map.put("encounterId", encounterId);
 		map.put("sessionId", sessionId);
-		map.put("formInstance", locationIdStr + "_" + locationTagId.toString() + "_" + formIdStr + "_" + formInstanceIdStr);
+		map.put("formInstance", locationIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationTagId.toString() + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
+			formIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceIdStr);
 		return new ModelAndView(new RedirectView(nextPage), map);
 	}
 	
