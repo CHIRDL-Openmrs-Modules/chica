@@ -167,15 +167,16 @@ function parsePatientList(responseXML) {
         content = content + '<form id="submitForm" method="POST" data-ajax="false"><input type="hidden" name="patientId" id="patientId" value="" /><input type="hidden" name="encounterId" id="encounterId" value="" /><input type="hidden" name="sessionId" id="sessionId" value="" />';
         $(responseXML).find("patient").each(function () {
             var patientId = $(this).find("id").text();
+            var encounterId = $(this).find("encounterId").text();
             var formLoop = 0;
             var formInstanceNode = $(this).find("formInstance");
             if (formInstanceNode !== null) {
                 var formId = $(formInstanceNode).find("formId").text();
                 var formInstanceId = $(formInstanceNode).find("formInstanceId").text();
                 var locationId = $(formInstanceNode).find("locationId").text();
-                content = content + '<input type="hidden" name="' + patientId + '_formId" value="' + formId + '" />';
-                content = content + '<input type="hidden" name="' + patientId + '_formInstanceId" value="' + formInstanceId + '" />';
-                content = content + '<input type="hidden" name="' + patientId + '_locationId" value="' + locationId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_' + encounterId + '_formId" value="' + formId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_' + encounterId + '_formInstanceId" value="' + formInstanceId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_' + encounterId + '_locationId" value="' + locationId + '" />';
             }
         });
 
