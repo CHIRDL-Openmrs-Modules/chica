@@ -14,6 +14,7 @@ import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.util.PatientRow;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -51,16 +52,18 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		String encounterId = request.getParameter("encounterId");
 		String sessionId = request.getParameter("sessionId");
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-		String formId = patientId + "_formId";
-		String formIdStr = request.getParameter(formId);
+		String key = patientId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + encounterId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE;
+		String formIdKey = key + "formId";
+		String formIdStr = request.getParameter(formIdKey);
+		Integer formId = Integer.parseInt(formIdStr);
 		
-		String formInstanceId = patientId + "_formInstanceId";
-		String formInstanceIdStr = request.getParameter(formInstanceId);
+		String formInstanceIdKey = key + "formInstanceId";
+		String formInstanceIdStr = request.getParameter(formInstanceIdKey);
 		
-		String locationId = patientId + "_locationId";
-		String locationIdStr = request.getParameter(locationId);
+		String locationIdKey = key + "locationId";
+		String locationIdStr = request.getParameter(locationIdKey);
 		
-		FormInstance formInstance = new FormInstance(Integer.parseInt(locationIdStr), Integer.parseInt(formIdStr), 
+		FormInstance formInstance = new FormInstance(Integer.parseInt(locationIdStr), formId, 
 			Integer.parseInt(formInstanceIdStr));
 		List<PatientState> patientStates = backportsService.getPatientStatesByFormInstance(formInstance, false);
 		Integer locationTagId = null;
@@ -73,11 +76,12 @@ public class MobileGreaseBoardController extends SimpleFormController {
 			}
 		}
 		
-		String nextPage = Util.getFormUrl(Integer.parseInt(formIdStr));
+		String nextPage = Util.getFormUrl(formId);
 		map.put("patientId", patientId);
 		map.put("encounterId", encounterId);
 		map.put("sessionId", sessionId);
-		map.put("formInstance", locationIdStr + "_" + locationTagId.toString() + "_" + formIdStr + "_" + formInstanceIdStr);
+		map.put("formInstance", locationIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationTagId.toString() + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
+			formIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceIdStr);
 		return new ModelAndView(new RedirectView(nextPage), map);
 	}
 	
