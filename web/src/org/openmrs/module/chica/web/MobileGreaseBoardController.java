@@ -52,15 +52,15 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		String encounterId = request.getParameter("encounterId");
 		String sessionId = request.getParameter("sessionId");
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-		String key = patientId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + encounterId;
-		String formIdKey = key + "_formId";
+		String key = patientId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + encounterId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE;
+		String formIdKey = key + "formId";
 		String formIdStr = request.getParameter(formIdKey);
 		Integer formId = Integer.parseInt(formIdStr);
 		
-		String formInstanceIdKey = key + "_formInstanceId";
+		String formInstanceIdKey = key + "formInstanceId";
 		String formInstanceIdStr = request.getParameter(formInstanceIdKey);
 		
-		String locationIdKey = key + "_locationId";
+		String locationIdKey = key + "locationId";
 		String locationIdStr = request.getParameter(locationIdKey);
 		
 		FormInstance formInstance = new FormInstance(Integer.parseInt(locationIdStr), formId, 
