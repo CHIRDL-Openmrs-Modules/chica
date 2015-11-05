@@ -322,13 +322,7 @@
                 <input type="checkbox" id="SickVisit" name="SickVisit" value="Y"/><label for="SickVisit">Sick Visit</label>
             </div>
             <div class="ui-block-b">
-                <input type="checkbox" id="RefuseToComplete" name="RefuseToComplete" value="Y"/><label for="RefuseToComplete">Patient refused to complete form</label>
-            </div>
-            <div class="ui-block-a">
-                <input type="checkbox" id="TwoIDsChecked" name="TwoIDsChecked" value="Y"/><label for="TwoIDsChecked">Two IDs checked</label>
-            </div>
-            <div class="ui-block-b">
-                <input type="checkbox" id="LeftWithoutTreatment" name="LeftWithoutTreatment" value="Y"/><label for="LeftWithoutTreatment">Patient left without treatment</label>
+                <input type="checkbox" id="MATwoIDsChecked" name="MATwoIDsChecked" value="Y" ${MATwoIDsChecked == "Y" ? 'checked' : '' }/><label for="MATwoIDsChecked">Two IDs checked</label>
             </div>
         </div>
         <div id="validation_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
