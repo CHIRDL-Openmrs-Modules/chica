@@ -206,6 +206,25 @@ function getAvailableJits() {
 	});
 }
 
+(function( $ ){
+
+    $.fn.uncheckableRadio = function() {
+
+        return this.each(function() {
+            $(this).mousedown(function() {
+                $(this).data("wasChecked", this.checked);
+            });
+
+            $(this).click(function() {
+                if ($(this).data("wasChecked"))
+                    this.checked = false;
+            });
+        });
+
+    };
+
+})( jQuery );
+
 $(function() {
 	$("button, input:submit, input:button").button();
 	$("#submitButtonTop").button();
@@ -423,4 +442,5 @@ $(function() {
     });
 	
 	$("#tabList").tooltip();
+	$(".uncheckableRadioButton").uncheckableRadio();
   });

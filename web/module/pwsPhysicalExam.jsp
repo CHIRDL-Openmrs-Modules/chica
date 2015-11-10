@@ -22,10 +22,10 @@
                             General:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_General" value="N"/><br/>
+                            <input type="radio" name="Entry_General" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_General" value="A"/><br/>
+                            <input type="radio" name="Entry_General" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${HeadExamA}"/><br/>
