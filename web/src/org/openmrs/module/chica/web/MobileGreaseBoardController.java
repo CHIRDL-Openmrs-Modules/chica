@@ -29,6 +29,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class MobileGreaseBoardController extends SimpleFormController {
 	
 	private Log log = LogFactory.getLog(this.getClass());
+	private static final String SELECTION_ERROR = "An error occurred while selecting a patient from the list.</br>Please enter the passcode and try again.";
 
 	/*
 	 * (non-Javadoc)
@@ -51,17 +52,33 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		String patientId = request.getParameter("patientId");
 		String encounterId = request.getParameter("encounterId");
 		String sessionId = request.getParameter("sessionId");
+		
+		// DWE CHICA-488 Make sure we have values for patientId, encounterId, and sessionId
+		if(patientId == null || patientId.isEmpty() 
+				|| encounterId == null || encounterId.isEmpty() 
+				|| sessionId == null || sessionId.isEmpty())
+		{
+			log.error("Error processing form submission (patientId: " + patientId + " encounterId: " + encounterId + " sessionId: " + sessionId + ").");
+			map.put("errorMessage", SELECTION_ERROR);
+			return new ModelAndView(new RedirectView(getSuccessView()), map);
+		}
+				
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		String key = patientId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + encounterId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE;
 		String formIdKey = key + "formId";
 		String formIdStr = request.getParameter(formIdKey);
-		Integer formId = Integer.parseInt(formIdStr);
+		
+		
 		
 		String formInstanceIdKey = key + "formInstanceId";
 		String formInstanceIdStr = request.getParameter(formInstanceIdKey);
 		
 		String locationIdKey = key + "locationId";
 		String locationIdStr = request.getParameter(locationIdKey);
+		
+		// DWE CHICA-488 Catch NumberFormatException
+		try{
+				Integer formId = Integer.parseInt(formIdStr);
 		
 		FormInstance formInstance = new FormInstance(Integer.parseInt(locationIdStr), formId, 
 			Integer.parseInt(formInstanceIdStr));
@@ -83,6 +100,11 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		map.put("formInstance", locationIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationTagId.toString() + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
 			formIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceIdStr);
 		return new ModelAndView(new RedirectView(nextPage), map);
+		}catch(NumberFormatException nfe){
+			log.error("Error processing form submission (patientId: " + patientId + " formIdStr: " + formIdStr + " formInstanceIdStr: " + formInstanceIdStr + " locationIdStr: " + locationIdStr + ").", nfe);
+			map.put("errorMessage", SELECTION_ERROR);
+			return new ModelAndView(new RedirectView(getSuccessView()), map);
+		}
 	}
 	
 	@Override
@@ -93,6 +115,14 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
+		
+		// DWE CHICA-488
+		if(request.getParameter("errorMessage") != null)
+		{
+			map.put("errorMessage", request.getParameter("errorMessage"));
+			return map;
+		}
+				
 		try {
 			ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
 			String result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, null);
