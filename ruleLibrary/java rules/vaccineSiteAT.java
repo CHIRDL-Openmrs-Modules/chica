@@ -87,6 +87,7 @@ public class vaccineSiteAT implements Rule {
 		Integer encounterId = null;
 		Integer ruleId = null;
 		Integer locationTagId = null;
+		Integer formFieldId = null;
 		
 		if (parameters != null) {
 			formInstance = (FormInstance) parameters.get("formInstance");
@@ -102,6 +103,7 @@ public class vaccineSiteAT implements Rule {
 			encounterId = (Integer) parameters.get("encounterId");
 			locationTagId = (Integer) parameters.get("locationTagId");
 			ruleId = (Integer) parameters.get("ruleId");
+			formFieldId = (Integer)parameters.get("formFieldId"); // DWE CHICA-437
 		}
 
 		if (formInstance == null) {
@@ -136,7 +138,7 @@ public class vaccineSiteAT implements Rule {
 						patient, conceptService
 								.getConceptByName(conceptName),
 						encounterId, enteredValue, formInstance, ruleId,
-						locationTagId);
+						locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 
 				ChirdlUtilBackportsService service = Context
 						.getService(ChirdlUtilBackportsService.class);

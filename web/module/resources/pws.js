@@ -27,15 +27,15 @@ function parseAvailableJITs(responseXML) {
 		
     	tabList += '<li><table class="tabsTable"><tr><td class="tabsLeftCell selectAllCell" onclick="selectAllForms();">All</td>' + 
     	           '<td class="tabsRightCell selectAllCell">' +
-    	           '<a style="text-decoration: underline; cursor: pointer;" href="#tabs-0" onclick="combineSelected();" title="Combine selected forms">Combine Selected Forms</a></td></tr></table></li>';
+    	           '<a style="text-decoration: underline; cursor: pointer;" href="#tabs-2" onclick="combineSelected();" title="Combine selected forms">Combine Selected Forms</a></td></tr></table></li>';
     	
-    	divList += '<div class="combineSelectedClass" id="tabs-0">' +
+    	divList += '<div class="combineSelectedClass" id="tabs-2">' +
     			   '<object id="combinedForms" type="application/pdf" class="recommended-forms" ' + 
     	           ' data="">'; // Setting data to empty to make IE happy. If data attribute is not set, an "Access Denied" error will display.
     	
     	divList += adobeSpanTag + '</object></div>';	
 			
-        var count = 1; // Start count at 1 instead of 0. The first one will now be the "Combine selected forms" tab
+        var count = 3; // Start count at 3 instead of 0. The first two will now be for the tabs on the CHICA Notes dialog and the third will be the "Combine selected forms" tab
         var formInstance = "";
         $(responseXML).find("availableJIT").each(function () {
         	var formName = $(this).find("formName").text();
@@ -52,21 +52,15 @@ function parseAvailableJITs(responseXML) {
             	
         	// DWE CHICA-500 Only set the data attribute for the first one
         	// This will prevent the offsetParent script error in Firefox
-        	if(count == 1)
-        	{
-        		divList += ' data="' + url + action + '>';
-        	}
-        	else 
-        	{
-        		divList += ' data="">'; // Setting this to empty to make IE happy. If data attribute is not set, an "Access Denied" error will display.
-        	}
-        	
+        	// DWE CLINREQ-90 Now set them all to empty since we are no longer opening the dialog 
+        	// when the PWS is initially displayed
+        	divList += ' data="">'; // Setting this to empty to make IE happy. If data attribute is not set, an "Access Denied" error will display.
         	divList += adobeSpanTag + '</object></div>';
         	
             count++;
         });
         
-    	if (count == 1){
+    	if (count == 3){
         	$("#noForms").show();
         } else {
         	tabList += "</ul>"
@@ -214,6 +208,7 @@ $(function() {
 	$("#problemButton").button();
 	$("#forcePrintButton").button();
 	$("#retryButton").button();
+	$("#notesButton").button();
 	
 	$('#tabs').hide();
 	
@@ -259,6 +254,59 @@ $(function() {
 	
 	$("#formPrintButton").click(function(event) {
 		$("#formTabDialog").dialog("open");
+		event.preventDefault();
+	});
+	
+	$("#notesDialog").dialog({
+    	open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+        autoOpen: false,
+        minHeight: 350,
+        minWidth: 450,
+        width: 950,
+        height: $(window).height() * 0.85,
+        modal: true,
+        resizable: false,
+        open : function(){
+        	$("#notesTabs").tabs({
+        		overflowTabs: true,
+        		heightStyle: "content",
+        		tabPadding: 23,
+        		containerPadding: 40
+        	}).addClass("ui-tabs-vertical ui-helper-clearfix");
+        	$("#notesTabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
+        },
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        hide: {
+          effect: "fade",
+          duration: 500
+        },
+        buttons: [
+           {
+        	 text:"Close",
+        	 click: function() {
+        		 validateTextNotes();     	       
+        	 }
+           }
+        ]
+    });
+	
+	 $("#historyAndPhysicalText").keyup(function() {
+		 updateCount('historyAndPhysicalText');
+	    });
+	 
+	 $("#assessmentAndPlanText").keyup(function() {
+		 updateCount('assessmentAndPlanText');
+	    	
+	    });
+	
+	// Append the notes dialog to the parent form so that it can be submitted
+	$('#notesDialog').parent().appendTo($("form:first"));
+	
+	$("#notesButton").click(function(event) {
+		$("#notesDialog").dialog("open");
 		event.preventDefault();
 	});
 	
@@ -332,6 +380,7 @@ $(function() {
     		$(".recommended-forms").show();
     		$(".ui-dialog").addClass("ui-dialog-shadow"); 
     		$("#formTabDialog").scrollTop(0);
+    		displayFirstJIT();
     	},
     	beforeClose: function() { 
     		$(".recommended-forms").hide();
@@ -421,6 +470,45 @@ $(function() {
           }
         ]
     });
-	
+ 
 	$("#tabList").tooltip();
   });
+
+//DWE CLINREQ-90
+function updateCount(objectId)
+{
+	var max = 62000;
+	var length = $("#" + objectId).val().length;
+	$("#" + objectId + "Count").html(length + " of " + max + " character max");
+}
+
+//DWE CLINREQ-90
+function validateTextNotes()
+{
+	var invalidExp = /]]>/;
+	if($("#historyAndPhysicalText").val().search(invalidExp) > -1 || $("#assessmentAndPlanText").val().search(invalidExp) > -1)
+	{
+		$('<div id="errorMsg" title="Invalid Note">The CHICA Note cannot contain \"]]>\". Please remove the invalid characters before closing the CHICA Notes dialog.</div>').dialog({
+			modal: true,
+			height: "auto",
+			width: 300,
+			resizable: false,
+			buttons: {
+		        OK: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		});
+	}
+	else
+	{
+		$("#notesDialog").dialog("close");
+	}	
+}
+
+// DWE CLINREQ-90
+function displayFirstJIT()
+{
+	// tabs-3 is the first JIT now that we have to avoid conflicts with the CHICA Notes dialog
+	$("[href='#tabs-3']").trigger("click");
+}
