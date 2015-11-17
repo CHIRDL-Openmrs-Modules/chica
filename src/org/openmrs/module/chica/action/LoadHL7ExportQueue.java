@@ -53,13 +53,15 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
 	{
-		//lookup the patient again to avoid lazy initialization errors
+		
 		PatientService patientService = Context.getPatientService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);	
 		FormService formService = Context.getFormService();
 		
+		//lookup the patient again to avoid lazy initialization errors
 		Integer patientId = patient.getPatientId();
 		patient = patientService.getPatient(patientId);
+		
 		Integer locationTagId = patientState.getLocationTagId();
 		Integer locationId = patientState.getLocationId();
 		State currState = patientState.getState();
@@ -67,18 +69,9 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 		Session session = chirdlutilbackportsService.getSession(sessionId);
 		Integer encounterId = session.getEncounterId();
 		
-
-		Set<String> params = parameters.keySet();
-		for (String param : params){
-			System.out.println("parameter name = " + param);
-			Object value = parameters.get(param);
-			if (value != null) System.out.println(value.toString());
-		}
-		
-		
 		try {
 			
-			if (patientState.getState().getName().equals(ChirdlUtilConstants.STATE_EXPORT_VITALS)){
+			if (currState.getName().equals(ChirdlUtilConstants.STATE_EXPORT_VITALS)){
 				
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
@@ -89,14 +82,13 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 							locationId);
 					return;
 				}
-				
 				saveExport(encounterId, sessionId, conceptMapLocationTagAttrValue );
-				return;
+				return;	
 				
 			}
 			
 			//export the observations scanned from PWS 
-			if (patientState.getState().getName().equals(ChirdlUtilConstants.STATE_EXPORT_POC)) {
+			if (currState.getName().equals(ChirdlUtilConstants.STATE_EXPORT_POC)) {
 				
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
@@ -108,9 +100,8 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 							locationId);
 					return;
 				};
-				
 				saveExport(encounterId, sessionId, conceptMapLocationTagAttrValue );
-				
+	
 				//Do not return yet, because a PWS may need to be exported next.
 				
 			}
@@ -124,6 +115,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 					chirdlutilbackportsService.getFormAttributeValue(formId, FORM_ATTRIBUTE_EXPORTABLE, locationTagId, locationId);
 			
 			if (exportAttrValue == null){
+				//do not export
 				return;
 			}
 			
