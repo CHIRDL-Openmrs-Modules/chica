@@ -38,6 +38,7 @@ public class physicianNoteSaveToDisk implements Rule {
 		String pe = (String)parameters.get("param1");
 		String psfNote = (String)parameters.get("param2");
 		String physicianNote = (String)parameters.get("param3");
+		String textNote = (String)parameters.get("param4");
 		StringBuffer buffer = new StringBuffer();
 		if (pe != null) {
 			buffer.append(pe);
@@ -49,6 +50,10 @@ public class physicianNoteSaveToDisk implements Rule {
 		
 		if (physicianNote != null) {
 			buffer.append(physicianNote);
+		}
+		
+		if(textNote != null){
+			buffer.append(textNote);
 		}
 		
 		String text = buffer.toString();
