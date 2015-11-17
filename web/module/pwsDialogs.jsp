@@ -107,7 +107,7 @@
                             There are no recommended handouts for ${PatientName}.
                         </div>
                         <div id="formTabContainer">
-                            <div id="tabs" ></div>
+                            <div id="tabs" style="width: 100%;height: 100%;overflow-x: hidden;overflow-y: auto;"></div>
                         </div>
                     </div>
                 </div>
@@ -139,5 +139,26 @@
                          <input type="hidden" value="${sessionId}" id="sessionId" />
                          <input type="hidden" value="${locationId}" id="locationId" />
                          <input type="hidden" value="${locationTagId}" id="locationTagId" />
+                    </div>
+                </div>
+                
+                <div id="notesDialog" title="CHICA Notes" class="ui-dialog-titlebar ui-widget-header" >
+                    <div id="notesDialogContainer">                   
+                        <div id="notesTabContainer">
+                            <div id="notesTabs" >
+                                  <ul id="notesTabList">
+								    <li><a href="#tabs-0">History and Physical</a></li>
+								    <li><a href="#tabs-1">Assessment and Plan</a></li>								    
+								  </ul>
+								  <div id="tabs-0">
+								     <textarea id="historyAndPhysicalText" name="historyAndPhysicalText" class="notesTextArea" maxlength="62000" placeholder="History and Physical..."></textarea> 							  	 
+								  	 <span class="textCount" id="historyAndPhysicalTextCount">0 of 62000 character max</span>
+								  </div>
+								  <div id="tabs-1">								     
+								     <textarea id="assessmentAndPlanText" name="assessmentAndPlanText" class="notesTextArea" maxlength="62000" placeholder="Assessment and Plan..."></textarea>							     
+								     <span class="textCount" id="assessmentAndPlanTextCount">0 of 62000 character max</span>
+								  </div>								  
+                            </div>                       
+                        </div>
                     </div>
                 </div>

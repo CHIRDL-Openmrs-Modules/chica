@@ -339,7 +339,7 @@
                                                   <tr>
                                                       <td>
                                                           <xsl:choose>
-                                                            <xsl:when test="Records/Record/Field[@id = 'Oral']/Value = 'Oral Temp Type'">
+                                                            <xsl:when test="Records/Record/Field[@id = 'TemperatureType']/Value = 'Oral Temp Type'">
                                                                 <input name="Oral" type="checkbox" value="Oral" checked="checked"
                                                                     onclick="return false" onkeydown="return false"/>
                                                             </xsl:when>
@@ -348,7 +348,7 @@
                                                             </xsl:otherwise>
                                                           </xsl:choose>Oral
                                                           <xsl:choose>
-                                                              <xsl:when test="Records/Record/Field[@id = 'Rectal']/Value = 'Rectal Temp Type'">
+                                                              <xsl:when test="Records/Record/Field[@id = 'TemperatureType']/Value = 'Rectal Temp Type'">
                                                                   <input name="Rectal" type="checkbox" value="Rectal" checked="checked"
                                                                       onclick="return false" onkeydown="return false"/>
                                                               </xsl:when>
@@ -357,7 +357,7 @@
                                                               </xsl:otherwise>
                                                           </xsl:choose>Rectal
                                                           <xsl:choose>
-                                                              <xsl:when test="Records/Record/Field[@id = 'Axillary']/Value = 'Axillary Temp Type'">
+                                                              <xsl:when test="Records/Record/Field[@id = 'TemperatureType']/Value = 'Axillary Temp Type'">
                                                                   <input name="Axillary" type="checkbox" value="Axillary" checked="checked"
                                                                       onclick="return false" onkeydown="return false"/>
                                                               </xsl:when>

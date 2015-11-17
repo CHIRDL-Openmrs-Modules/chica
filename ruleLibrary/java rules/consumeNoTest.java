@@ -3,6 +3,7 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
+import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
@@ -76,6 +77,7 @@ public class consumeNoTest implements Rule
 		Integer encounterId = null;
 		Integer ruleId = null;
 		Integer locationTagId = null;
+		Integer formFieldId = null; 
 
 		if (parameters != null)
 		{
@@ -91,6 +93,7 @@ public class consumeNoTest implements Rule
 			encounterId = (Integer) parameters.get("encounterId");
 			locationTagId = (Integer) parameters.get("locationTagId");
 			ruleId = (Integer) parameters.get("ruleId");
+			formFieldId = (Integer)parameters.get("formFieldId"); // DWE CHICA-437
 		}
 
 		if (formInstance == null)
@@ -120,10 +123,13 @@ public class consumeNoTest implements Rule
 				answer = "yes";
 			}
 			
+			// DWE CHICA-430 Allow the checkbox to be unchecked by voiding the obs for this concept
+			Concept concept = conceptService.getConceptByName(conceptName);
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, formFieldId); // DWE CHICA-437 Added formFieldId
 			
 			if(answer != null){
 				org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, conceptService.getConceptByName(conceptName),
-						encounterId, answer,formInstance,ruleId,locationTagId);
+						encounterId, answer,formInstance,ruleId,locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 			}
 		}
 		

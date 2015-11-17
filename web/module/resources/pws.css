@@ -14,7 +14,7 @@ body {
 
 #formContainer {
     width:800px;
-    height:1045px;
+    height:1109px; /* Changed 1045 -> 1109 */
     margin:0 auto;
     border: 1px solid black;
     background-color:#F5FBEF;
@@ -29,7 +29,7 @@ body {
 
 @-moz-document url-prefix() {
     #formContainer {
-        height:1039px;
+        height:1109px; /* Changed 1039 -> 1109 */
     }
 }
 
@@ -145,7 +145,7 @@ body {
     width:545px;
     height:330px;
     margin-top:-220px;
-    padding:2px 2px 2px 5px;
+    padding:22px 2px 22px 5px; /* Changed 2 2 2 5 -> 22 2 22 5 */
 }
 
 @-moz-document url-prefix() {
@@ -157,7 +157,7 @@ body {
 
 #buttons {
     width:270px;
-    height:83px;
+    height:123px; /* Changed 83 -> 123 */
     border-bottom: 1px solid black;
     float:left;
     margin-top:31px;
@@ -167,7 +167,7 @@ body {
 @-moz-document url-prefix() {
     #buttons {
         margin-top:43px;
-        height:82px;
+        height:122px; /* Changed 82 -> 122 */
     }
 }
 
@@ -448,12 +448,10 @@ a.icon-button span.ui-icon {
 	padding-bottom: 0; 
 	
 	/* Adding border-right and changing padding-right
-	 from .1em to 10px along with div#tabs .ui-tabs-nav-li width
-	  will allow the selected tab to appear to flow into the pdf div */
-	border-right: thin none;
+    from .1em to 10px along with div#tabs .ui-tabs-nav-li width
+    will allow the selected tab to appear to flow into the pdf div */
+    border-right: thin none;
 	padding-right: 10px; 
-	
-	border-right-width: 1px; 
 	border-right-width: 1px;
 	width: 260px; 
 }
@@ -562,4 +560,94 @@ div#tabs div{
 .selectAllCell{
 	text-decoration: underline; 
 	cursor: pointer;
+}
+
+/*
+********** CHICA Notes dialog css
+*/
+#notesDialogContainer {
+    width:100%;
+    height:99%;
+    padding-bottom:3px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+#notesTabContainer{
+	height: 100%;
+	width: 100%;
+	overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+div#notesTabs {
+    position: relative;
+    padding-left: 250px;
+    height: 97%;
+    width: 70%;
+}
+ 
+div#notesTabs > div {
+	float: left;
+    min-height: 300px;
+    height: 97%;
+}
+
+div#notesTabs .ui-tabs-nav {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 260px;
+    padding: 0px 0px 0px 0px;
+}
+ 
+div#notesTabs .ui-tabs-nav li {
+    left: 0px;
+    width: 250px;
+    border-right: none;
+    overflow: hidden;
+    margin-bottom: 2px;
+}
+ 
+div#notesTabs .ui-tabs-nav li a {
+    float: left;
+    width: 100%;
+    text-align: left;
+    vertical-align: middle;
+}
+ 
+div#notesTabs .ui-tabs-nav li.ui-tabs-selected {
+    border: none;
+    border-right: solid 1px #fff;
+    background: none;
+    background-color: #fff;
+    width: 260px;
+}
+
+.notesTextArea{
+	width: 100%;
+	height: 94%;
+	padding: 5px 5px 5px 5px;
+	/*overflow: hidden; We need to be able to scroll */ 
+	resize: none;
+	-webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+div#notesTabs .ui-tabs-vertical .ui-tabs-panel { 
+    /*padding: 1em; */
+    float: left; 
+    width: 100%;
+}
+
+div#notesTabs .ui-tabs-panel{
+	height: 94%;
+	width: 94%;
+}
+
+.textCount{
+	font-size: .75em;
+	color:#000000;
 }
