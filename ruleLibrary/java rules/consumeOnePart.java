@@ -77,6 +77,7 @@ public class consumeOnePart implements Rule
 		Integer encounterId = null;
 		Integer ruleId = null;
 		Integer locationTagId = null;
+		Integer formFieldId = null;
 
 		if (parameters != null)
 		{
@@ -92,6 +93,7 @@ public class consumeOnePart implements Rule
 			
 			encounterId = (Integer) parameters.get("encounterId");
 			locationTagId = (Integer) parameters.get("locationTagId");
+			formFieldId = (Integer)parameters.get("formFieldId"); // DWE CHICA-437
 		}
 
 		if (formInstance == null)
@@ -114,10 +116,10 @@ public class consumeOnePart implements Rule
 				ruleResult.toString().length()>0)
 		{
 			Concept concept = conceptService.getConceptByName(conceptName);
-			org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId);
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId, formFieldId); // DWE CHICA-437 Added formFieldId
 			org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept,
 					encounterId, ruleResult.toString(),formInstance,
-					ruleId,locationTagId);
+					ruleId,locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 		}
 		
 		return Result.emptyResult();

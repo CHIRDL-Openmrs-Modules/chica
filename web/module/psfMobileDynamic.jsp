@@ -92,7 +92,16 @@
                       </c:choose>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
-                      <span style="line-height: 50px;"><input type="number" id="height" name="height"/></span>
+                      <span style="line-height: 50px;">
+                      <c:choose>
+                        <c:when test="${HeightP == '' && HeightS == ''}">
+                            <input type="number" id="height" name="height" step="any" value=""/>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="number" id="height" name="height" step="any" value="${HeightP == '' ? 0 : HeightP}.${HeightS == '' ? 0 : HeightS}"/>
+                        </c:otherwise>
+                      </c:choose>
+                      </span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;padding-left:10px;">
                       <strong><span style="line-height: 50px;">${HeightSUnits}</span></strong>
@@ -108,7 +117,16 @@
                       </c:choose>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
-                      <span style="line-height: 50px;"><input type="number" id="weight" name="weight"/></span>
+                      <span style="line-height: 50px;">
+                      <c:choose>
+                        <c:when test="${WeightP == '' && WeightS == ''}">
+                            <input type="number" id="weight" name="weight" step="any" value=""/>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="number" id="weight" name="weight" step="any" value="${WeightP == '' ? 0 : WeightP}.${WeightS == '' ? 0 : WeightS}"/>
+                        </c:otherwise>
+                      </c:choose>
+                      </span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;padding-left:10px;">
                       <c:choose>
@@ -131,7 +149,16 @@
                       </c:choose>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
-                      <span style="line-height: 50px;"><input type="number" id="hc" name="hc"/></span>
+                      <span style="line-height: 50px;">
+                      <c:choose>
+                        <c:when test="${HCP == '' && HCS == ''}">
+                            <input type="number" id="hc" name="hc" step="any" value=""/>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="number" id="hc" name="hc" step="any" value="${HCP == '' ? 0 : HCP}.${HCS == '' ? 0 : HCS}"/>
+                        </c:otherwise>
+                      </c:choose>
+                      </span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;padding-left:10px;">
                       <strong><span style="line-height: 50px;">cm.</span></strong>
@@ -147,30 +174,39 @@
                       </c:choose>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
-                      <span style="line-height: 50px;"><input type="number" id="BPS" name="BPS"/></span>
+                      <span style="line-height: 50px;"><input type="number" id="BPS" name="BPS" value="${BPS}"/></span>
                   </div>
                   <div class="ui-block-c" style="height: 50px;padding-left:10px;width: 15px;">
                       <span style="line-height: 50px;"><c:out value="/"/></span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;padding-left:10px;">
-                      <span style="line-height: 50px;"><input type="number" id="BPD" name="BPD"/></span>
+                      <span style="line-height: 50px;"><input type="number" id="BPD" name="BPD" value="${BPD}"/></span>
                   </div>
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
                       <strong><span style="line-height: 50px;">Temp:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
-                      <span style="line-height: 50px;"><input type="number" id="temp" name="temp"/></span>
+                      <span style="line-height: 50px;">
+                      <c:choose>
+                        <c:when test="${TempP == '' && TempS == ''}">
+                            <input type="number" id="temp" name="temp" step="any" value=""/>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="number" id="temp" name="temp" step="any" value="${TempP == '' ? 0 : TempP}.${TempS == '' ? 0 : TempS}"/>
+                        </c:otherwise>
+                      </c:choose>
+                      </span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;padding-left:10px;">
                       <strong><span style="line-height: 50px;">deg. F</span></strong>
                   </div>
                   <div class="ui-block-a" style="text-align: center;margin-bottom: 10px;margin-top: 10px;width: 100%;">
                       <fieldset data-role="controlgroup" data-type="horizontal" style="margin: auto;">
-                            <input type="radio" name="Oral" id="Temperature_Method_Oral" value="Oral Temp Type" data-theme="c" />
+                            <input type="radio" name="TemperatureType" id="Temperature_Method_Oral" value="Oral Temp Type" data-theme="c" ${TemperatureType == 'Oral Temp Type' ? 'checked' : ''}/>
                             <label for="Temperature_Method_Oral">Oral</label>
-                            <input type="radio" name="Rectal" id="Temperature_Method_Rectal" value="Rectal Temp Type" data-theme="c" />
+                            <input type="radio" name="TemperatureType" id="Temperature_Method_Rectal" value="Rectal Temp Type" data-theme="c" ${TemperatureType == 'Rectal Temp Type' ? 'checked' : ''}/>
                             <label for="Temperature_Method_Rectal">Rectal</label>
-                            <input type="radio" name="Axillary" id="Temperature_Method_Axillary" value="Axillary Temp Type" data-theme="c" />
+                            <input type="radio" name="TemperatureType" id="Temperature_Method_Axillary" value="Axillary Temp Type" data-theme="c" ${TemperatureType == 'Axillary Temp Type' ? 'checked' : ''}/>
                             <label for="Temperature_Method_Axillary">Axillary</label>
                         </fieldset>
                   </div>
@@ -178,7 +214,7 @@
                       <strong><span style="line-height: 50px;">Pulse:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;">
-                      <span style="line-height: 50px;"><input type="number" id="Pulse" name="Pulse"/></span>
+                      <span style="line-height: 50px;"><input type="number" id="Pulse" name="Pulse" value="${Pulse}"/></span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;padding-left:10px;">
                       <strong><span style="line-height: 50px;">/min.</span></strong>
@@ -187,7 +223,7 @@
                       <strong><span style="line-height: 50px;">RR:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;p;">
-                      <span style="line-height: 50px;"><input type="number" id="RR" name="RR"/></span>
+                      <span style="line-height: 50px;"><input type="number" id="RR" name="RR" value="${RR}"/></span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;">
                       <span style="line-height: 50px;"></span>
@@ -196,7 +232,7 @@
                       <strong><span style="line-height: 50px;">Pulse Ox:</span></strong>
                   </div>
                   <div class="ui-block-b" style="height: 50px;margin-bottom: 8px;">
-                      <span style="line-height: 50px;"><input type="number" id="PulseOx" name="PulseOx"/></span>
+                      <span style="line-height: 50px;"><input type="number" id="PulseOx" name="PulseOx" value="${PulseOx}"/></span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;padding-left:10px;">
                       <strong><span style="line-height: 50px;">%</span></strong>
@@ -209,13 +245,13 @@
                       <strong><span>Uncooperative/Unable to Screen:</span></strong>
                   </div>
                   <div class="ui-block-a" style="height: 50px;margin-bottom: 20px;">
-                      <span><input type="checkbox" id="NoVision" name="NoVision" value="Y" style="vertical-align: top; margin: 0px;"/><label for="NoVision">Vision</label></span>
+                      <span><input type="checkbox" id="NoVision" name="NoVision" value="Y" style="vertical-align: top; margin: 0px;" ${NoVision == "Y" ? 'checked' : ''}/><label for="NoVision">Vision</label></span>
                   </div>
                   <div class="ui-block-b" style="height: 50px;margin-bottom: 20px;">
-                      <span><input type="checkbox" id="NoHearing" name="NoHearing" value="Y" style="vertical-align: top; margin: 0px;"/><label for="NoHearing">Hearing</label></span>
+                      <span><input type="checkbox" id="NoHearing" name="NoHearing" value="Y" style="vertical-align: top; margin: 0px;" ${NoHearing == "Y" ? 'checked' : ''}/><label for="NoHearing">Hearing</label></span>
                   </div>
                   <div class="ui-block-c" style="height: 50px;margin-bottom: 20px;">
-                      <span><input type="checkbox" id="NoBP" name="NoBP" value="Y" style="vertical-align: top; margin: 0px;"/><label for="NoBP">BP</label></span>
+                      <span><input type="checkbox" id="NoBP" name="NoBP" value="Y" style="vertical-align: top; margin: 0px;" ${NoBP == "Y" ? 'checked' : ''}/><label for="NoBP">BP</label></span>
                   </div>
                   <div class="ui-block-a" style="text-align: center;width: 5%"></div>
                   <div class="ui-block-b" style="height: 50px;text-align: center;width: 85%;">
@@ -231,7 +267,7 @@
                             </c:choose>
                         </div>
                         <div class="ui-block-b" style="height: 50px;width: 50%;padding-left: 10px;margin-bottom: 10px;">
-                            <span><input type="number" id="VisionL" name="VisionL"/></span>
+                            <span><input type="number" id="VisionL" name="VisionL" value="${VisionL}"/></span>
                         </div>
                       </div>
                   </div>
@@ -250,14 +286,14 @@
                             </c:choose>
                         </div>
                         <div class="ui-block-b" style="height: 50px;width: 50%;padding-left: 10px;margin-bottom: 10px;">
-                            <span><input type="number" id="VisionR" name="VisionR"/></span>
+                            <span><input type="number" id="VisionR" name="VisionR" value="${VisionR}"/></span>
                         </div>
                       </div>
                   </div>
                   <div class="ui-block-c" style="text-align: center;height: 50px;width: 10%"></div>
                   <div class="ui-block-a" style="text-align: center;height: 50px;margin-bottom: 20px;width: 20%"></div>
                   <div class="ui-block-b" style="text-align: center;height: 50px;margin-bottom: 20px;width: 60%">
-                      <span><input type="checkbox" id="Vision_Corrected" name="Vision_Corrected" value="Y" style="vertical-align: top; margin: 0px;"/><label for="Vision_Corrected">Vision Corrected?</label></span>
+                      <span><input type="checkbox" id="Vision_Corrected" name="Vision_Corrected" value="Y" style="vertical-align: top; margin: 0px;" ${Vision_Corrected == "Y" ? 'checked' : ''}/><label for="Vision_Corrected">Vision Corrected?</label></span>
                   </div>
                   <div class="ui-block-c" style="text-align: center;height: 50px;margin-bottom: 20px;width: 20%"></div>
                   <div class="ui-block-a" style="height: 60px;width: 100%;padding-top:10px;">
@@ -275,9 +311,9 @@
                           <div class="ui-block-b" style="width: 50%;height: 50px;display: table">
                               <div data-role="fieldcontain" style="display: table-cell;">
                                 <fieldset data-role="controlgroup" data-type="horizontal">
-                                    <input type="radio" name="HearL" id="HearL_pass" value="P" data-theme="c" />
+                                    <input type="radio" name="HearL" id="HearL_pass" value="P" data-theme="c" ${HearL == "P" ? 'checked' : '' }/>
                                     <label for="HearL_pass">P</label>
-                                    <input type="radio" name="HearL" id="HearL_fail" value="F" data-theme="c" />
+                                    <input type="radio" name="HearL" id="HearL_fail" value="F" data-theme="c" ${HearL == "F" ? 'checked' : '' }/>
                                     <label for="HearL_fail">F</label>
                                 </fieldset>
                               </div>
@@ -299,9 +335,9 @@
                           <div class="ui-block-b" style="width: 50%;height: 50px;display: table">
                               <div data-role="fieldcontain" style="display: table-cell;">
                                 <fieldset data-role="controlgroup" data-type="horizontal">
-                                    <input type="radio" name="HearR" id="HearR_pass" value="P" data-theme="c" />
+                                    <input type="radio" name="HearR" id="HearR_pass" value="P" data-theme="c" ${HearR == "P" ? 'checked' : '' }/>
                                     <label for="HearR_pass">P</label>
-                                    <input type="radio" name="HearR" id="HearR_fail" value="F" data-theme="c" />
+                                    <input type="radio" name="HearR" id="HearR_fail" value="F" data-theme="c" ${HearR == "F" ? 'checked' : '' }/>
                                     <label for="HearR_fail">F</label>
                                 </fieldset>
                               </div>
@@ -312,14 +348,14 @@
                   <div class="ui-block-b" style="text-align: center;height: 25px;margin-bottom: 0px;width: 86%"></div>
                   <div class="ui-block-a" style="text-align: center;height: 60px;margin-bottom: 0px;width: 14%"></div>
                   <div class="ui-block-b" style="text-align: center;height: 60px;margin-bottom: 0px;width: 86%;">
-                      <span><input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" style="vertical-align: top; margin: 0px;"/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label></span>
+                      <span><input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" style="vertical-align: top; margin: 0px;" ${Handout_Reviewed_by_MA == "diet and exercise" ? 'checked' : '' }/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given<label></span>
                   </div>
                </div>
             </div>
         </div>
         <div class="ui-grid-a">
             <div class="ui-block-a">
-                <input type="checkbox" id="SickVisit" name="SickVisit" value="Y"/><label for="SickVisit">Sick Visit</label>
+                <input type="checkbox" id="SickVisit" name="SickVisit" value="Y" ${SickVisit == "Y" ? 'checked' : '' }/><label for="SickVisit">Sick Visit</label>
             </div>
             <div class="ui-block-b">
                 <input type="checkbox" id="MATwoIDsChecked" name="MATwoIDsChecked" value="Y" ${MATwoIDsChecked == "Y" ? 'checked' : '' }/><label for="MATwoIDsChecked">Two IDs checked</label>
@@ -374,6 +410,32 @@
         <a data-theme="b" data-role="button" onclick="finishVitals()" rel="external" data-ajax="false" style="width: 150px;">Submit</a>
     </div>
 </div>
+<input id="HeightP" name="HeightP" type="hidden"/>
+<input id="HeightS" name="HeightS" type="hidden"/>
+<input id="WeightP" name="WeightP" type="hidden"/>
+<input id="WeightS" name="WeightS" type="hidden"/>
+<input id="TempP" name="TempP" type="hidden"/>
+<input id="TempS" name="TempS" type="hidden"/>
+<input id="HCP" name="HCP" type="hidden"/>
+<input id="HCS" name="HCS" type="hidden"/>
+<input id="patientId" name="patientId" type="hidden" value="${patient.patientId}"/>
+<input id="encounterId" name="encounterId" type="hidden" value="${encounterId}"/>
+<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
+<input id="formId" name="formId" type="hidden" value="${formId}"/>
+<input id="formInstanceId" name="formInstanceId" type="hidden" value="${formInstanceId}"/>
+<input id="locationId" name="locationId" type="hidden" value="${locationId}"/>
+<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
+<input id="maxElements" name="maxElements" type="hidden" value="5"/>
+<input id="language" name="language" type="hidden" value="${language}"/>
+<input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
+
+<!-- DWE CHICA-430 Add hidden input to allow these parameters to be included when the checkboxes are unchecked -->
+<input id="Vision_Corrected" name="Vision_Corrected" type="hidden" value="N"/>
+<input id="SickVisit" name="SickVisit" type="hidden" value="N"/>
+<input id="NoBP" name="NoBP" type="hidden" value="N"/>
+<input id="NoHearing" name="NoHearing" type="hidden" value="N"/>
+<input id="NoVision" name="NoVision" type="hidden" value="N"/>
+<input id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" type="hidden" value="no diet and exercise given"/>
 
 <input id="showVitals" name="showVitals" type="hidden" value="true"/>
 </form>
