@@ -87,7 +87,8 @@ public class consumeImmunizationGiven implements Rule
 		Integer locationTagId = null;
 		Obs obs = null;
 		Encounter encounter = null;
-
+		Integer formFieldId = null;
+		
 		if (parameters != null)
 		{
 			formInstance = (FormInstance) parameters.get("formInstance");
@@ -106,7 +107,7 @@ public class consumeImmunizationGiven implements Rule
 			
 			locationTagId = (Integer) parameters.get("locationTagId");
 			ruleId = (Integer) parameters.get("ruleId");
-			
+			formFieldId = (Integer)parameters.get("formFieldId"); // DWE CHICA-437
 		}
 
 		if (formInstance == null)
@@ -147,7 +148,7 @@ public class consumeImmunizationGiven implements Rule
 				//	.saveObs(patient, null, getTTL(), conceptAnswer, encounter.getEncounterDatetime());
 				obs = org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, 
 						conceptService.getConceptByName(conceptName),
-					encounterId, conceptAnswer,formInstance,ruleId,locationTagId);
+					encounterId, conceptAnswer,formInstance,ruleId,locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 				
 				
 			}
