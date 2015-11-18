@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -653,6 +654,13 @@ public class HL7SocketHandler extends
 			}
 			final String SOURCE = "IU Health MRF Dump";
 			final String VITALS_SOURCE = "IU Health Vitals";
+			
+			Map<Integer,Concept> mrfConceptMapping = new HashMap<Integer, Concept>();
+			Map<Integer,Concept> vitalsConceptMapping = new HashMap<Integer, Concept>();
+			Map<String,Concept> vitalsConceptByNameMapping = new HashMap<String, Concept>();
+			Set<Integer> mrfConceptSet = new HashSet<Integer>();
+			Set<Integer> vitalsConceptSet = new HashSet<Integer>();
+			Set<String> vitalsConceptByNameSet = new HashSet<String>();
 
 			ConceptService conceptService = Context.getConceptService();
 			boolean savedToDB = false;
@@ -680,7 +688,17 @@ public class HL7SocketHandler extends
 					//convert units for historical vitals data
 					org.openmrs.module.chica.hl7.iuHealthVitals.HL7SocketHandler.convertIUHealthVitalsUnits(conceptId,currObs);
 					
-					Concept mappedConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), SOURCE);
+					// check to see if we've already looked up a mapping for this concept
+					Concept mappedConcept = mrfConceptMapping.get(conceptId);
+					if (mappedConcept == null) {
+						// check to see if we've already searched this one before
+						if (!mrfConceptSet.contains(conceptId)) {
+							mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), SOURCE);
+							mrfConceptSet.add(conceptId);
+							mrfConceptMapping.put(conceptId, mappedConcept);
+						}
+					}
+					
 					if (mappedConcept != null) {
 						currConceptName = mappedConcept.getName().getName();
 						currObs.setConcept(mappedConcept);
@@ -690,14 +708,32 @@ public class HL7SocketHandler extends
 					//see if any answer concepts need mapped
 					if (answerConcept != null) {
 						String answerConceptName = answerConcept.getName().getName();
-						Concept mappedVitalsConcept = conceptService.getConceptByMapping(answerConceptName, VITALS_SOURCE);
+						Concept mappedVitalsConcept = vitalsConceptByNameMapping.get(answerConceptName);
+						if (mappedVitalsConcept == null) {
+							// check to see if we've already searched this one before
+							if (!vitalsConceptByNameSet.contains(answerConceptName)) {
+								mappedVitalsConcept = conceptService.getConceptByMapping(answerConceptName, VITALS_SOURCE);
+								vitalsConceptByNameSet.add(answerConceptName);
+								vitalsConceptByNameMapping.put(answerConceptName, mappedVitalsConcept);
+							}
+						}
+						
 						if(mappedVitalsConcept != null){
 							currObs.setValueCoded(mappedVitalsConcept);
 						}
 					}
 					
 					//If this is a historical vital, save it to the database
-					Concept mappedVitalsConcept = conceptService.getConceptByMapping(concept.getConceptId().toString(), VITALS_SOURCE);
+					Concept mappedVitalsConcept = vitalsConceptMapping.get(conceptId);
+					if (mappedVitalsConcept == null) {
+						// check to see if we've already searched this one before
+						if (!vitalsConceptSet.contains(conceptId)) {
+							mappedVitalsConcept = conceptService.getConceptByMapping(conceptId.toString(), VITALS_SOURCE);
+							vitalsConceptSet.add(conceptId);
+							vitalsConceptMapping.put(conceptId, mappedVitalsConcept);
+						}
+					}
+					
 					if(mappedVitalsConcept != null){
 						if (currObs.getValueCoded()!=null&&currObs.getValueCoded().getConceptId() == 1) {
 							currObs.setValueCoded(null);
