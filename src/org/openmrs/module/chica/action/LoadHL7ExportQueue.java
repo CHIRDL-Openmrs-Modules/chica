@@ -40,7 +40,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 	private static final String VITALS_CONCEPT_MAP_LOCATION = "VitalsConceptMapLocation";
 	private static final String TIFF_CONCEPT_MAP_LOCATION = "TiffConceptMapLocation";
 	private static final String POC_CONCEPT_MAP_LOCATION = "POCConceptMapLocation";
-	private static final String FORM_ATTRIBUTE_EXPORTABLE = null;
+	private static final String FORM_ATTRIBUTE_EXPORTABLE = "exportForm";
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)
