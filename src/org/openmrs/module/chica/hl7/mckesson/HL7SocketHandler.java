@@ -761,6 +761,13 @@ public class HL7SocketHandler extends
 					obs.add(currObs);
 				}
 			}
+			
+			mrfConceptMapping.clear();
+			vitalsConceptMapping.clear();
+			vitalsConceptByNameMapping.clear();
+			mrfConceptSet.clear();
+			vitalsConceptSet.clear();
+			vitalsConceptByNameSet.clear();
 		}
 		catch (Exception e) {
 			log.error("Error processing hl7 OBXs.",e);
