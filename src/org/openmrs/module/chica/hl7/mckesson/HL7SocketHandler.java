@@ -664,6 +664,7 @@ public class HL7SocketHandler extends
 
 			ConceptService conceptService = Context.getConceptService();
 			boolean savedToDB = false;
+			List<Obs> dbObs = new ArrayList<Obs>();
 			
 			for (Obs currObs : allObs) {
 				savedToDB = false;
@@ -746,7 +747,8 @@ public class HL7SocketHandler extends
 						}
 						currObs.setConcept(mappedVitalsConcept);
 						currObs.setLocation(location);
-						obsService.saveObs(currObs, null);
+						//obsService.saveObs(currObs, null);
+						dbObs.add(currObs);
 						savedToDB = true;
 					}
 					
@@ -761,6 +763,9 @@ public class HL7SocketHandler extends
 					obs.add(currObs);
 				}
 			}
+			
+			// save the obs to the database
+			chirdlutilbackportsService.saveObs(dbObs);
 			
 			mrfConceptMapping.clear();
 			vitalsConceptMapping.clear();
