@@ -53,9 +53,12 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);	
 		FormService formService = Context.getFormService();
 		
-		//lookup the patient again to avoid lazy initialization errors
+		//Lookup the patient again to avoid lazy initialization errors
 		Integer patientId = patient.getPatientId();
 		patient = patientService.getPatient(patientId);
+		//Lookup the form to avoid lazy initialization errors
+		Integer formId = patientState.getFormId();
+		Form form = formService.getForm(formId);
 		
 		Integer locationTagId = patientState.getLocationTagId();
 		Integer locationId = patientState.getLocationId();
@@ -65,47 +68,51 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 		Integer encounterId = session.getEncounterId();
 		
 		try {
-			
-			if (currState.getName().equals(ChirdlUtilConstants.STATE_EXPORT_VITALS)){
+			String currStateName = currState.getName();
+			if (currStateName != null && currStateName.equals(ChirdlUtilConstants.STATE_EXPORT_VITALS)){
 				
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
 					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, VITALS_CONCEPT_MAP_LOCATION, locationId);
 				if (conceptMapLocationTagAttrValue == null) {
-					Log.error("Location tag attribute for vitals concept map location is null. " + 
-							"Check location tag attribute " + VITALS_CONCEPT_MAP_LOCATION + " for location: " +
-							locationId);
+					Log.error("Location tag attribute for location map location for location id = " + locationId + " is null.");
 					return;
 				}
-				saveExport(encounterId, sessionId, conceptMapLocationTagAttrValue );
+				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
 				return;	
 				
 			}
 			
-			//export the observations scanned from PWS 
-			if (currState.getName().equals(ChirdlUtilConstants.STATE_EXPORT_POC)) {
+			//Export the observations scanned from PWS 
+			if (currStateName != null && currStateName.equals(ChirdlUtilConstants.STATE_EXPORT_POC)) {
 				
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
 						chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, POC_CONCEPT_MAP_LOCATION, 
 							locationId);
 				if (conceptMapLocationTagAttrValue == null) {
-					Log.error("Location tag attribute for POC observation concept map location is null. " + 
-							"Check location tag attribute " + POC_CONCEPT_MAP_LOCATION + " for location: " +
-							locationId);
+					Log.error("Location tag attribute for location of POC observation concept map for location id = " + locationId + " is null.");
 					return;
 				};
-				saveExport(encounterId, sessionId, conceptMapLocationTagAttrValue );
+				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
 	
-				//Do not return yet, because a PWS may need to be exported next.
+				//Do not return yet, because both observations AND scanned PWS forms are exported.
 				
 			}
 			
 			//Export form image (PWS or JIT)
-			Integer formId = patientState.getFormId();
-			Form form = formService.getForm(formId);
 			
-			//Check form attribute to determine if form should be exported
+			/*  CHICA-597 MES 
+			 * Check form attribute to determine if a form should be exported.
+			 * 	We will no longer check medium of electronic versus paper. The form attribute, that defines
+			 * need for export, can be configured by location.
+			 * For the time when any clinics have both paper and electronic PWS, we will set PWS as an exportable form. 
+			 * The paper PWS will get exported, and we will still get exporter errors for electronic forms temporarily.
+			 * The PWS export errors from the Operations Dashboard have been disabled.  
+			 * When each clinic moves completely to ePWS, we will set the form attribute for those locations
+			 * to disable exporting the PWS.
+			 */
+			
 			FormAttributeValue exportAttrValue = 
 					chirdlutilbackportsService.getFormAttributeValue(formId, FORM_ATTRIBUTE_EXPORTABLE, locationTagId, locationId);
 			
@@ -123,13 +130,11 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 						chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, form.getName() + TIFF_CONCEPT_MAP_LOCATION, 
 								locationId);
 				if (tiffLocationTagConceptMapLocation == null){
-					Log.error("Location tag attribute for tiff concept map location is null. " + 
-							"Check location tag attribute " + form.getName() + TIFF_CONCEPT_MAP_LOCATION + " for location: " +
-							locationId);
+					Log.error("Location tag attribute for location of tiff concept map for location id = " + locationId + " is null.");
 					return;
 				}
 				
-				saveExport(encounterId, sessionId, tiffLocationTagConceptMapLocation );
+				addExportToQueue(encounterId, sessionId, tiffLocationTagConceptMapLocation );
 			}
 	
 			
@@ -147,7 +152,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 		//deliberately empty because processAction changes the state
 	}
 	
-	private void saveExport(Integer encounterId, Integer sessionId, LocationTagAttributeValue tagValue) {
+	private void addExportToQueue(Integer encounterId, Integer sessionId, LocationTagAttributeValue tagValue) {
 		
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		String conceptMapLocation = tagValue.getValue();
