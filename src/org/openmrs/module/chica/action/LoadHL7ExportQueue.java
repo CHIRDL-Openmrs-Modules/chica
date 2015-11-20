@@ -74,8 +74,9 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
 					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, VITALS_CONCEPT_MAP_LOCATION, locationId);
-				if (conceptMapLocationTagAttrValue == null) {
-					Log.error("Location tag attribute for location map location for location id = " + locationId + " is null.");
+				if (conceptMapLocationTagAttrValue == null || conceptMapLocationTagAttrValue.getValue() == null
+						|| conceptMapLocationTagAttrValue.getValue().trim().equals("")) {
+					Log.error("Location tag attribute for location map location for location id = " + locationId + " is null or empty.");
 					return;
 				}
 				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
@@ -90,8 +91,9 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
 						chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, POC_CONCEPT_MAP_LOCATION, 
 							locationId);
-				if (conceptMapLocationTagAttrValue == null) {
-					Log.error("Location tag attribute for location of POC observation concept map for location id = " + locationId + " is null.");
+				if (conceptMapLocationTagAttrValue == null || conceptMapLocationTagAttrValue.getValue() == null
+						|| conceptMapLocationTagAttrValue.getValue().trim().equals("")) {
+					Log.error("Location tag attribute for location of POC observation concept map for location id = " + locationId + " is null or empty.");
 					return;
 				};
 				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
@@ -116,7 +118,8 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 			FormAttributeValue exportAttrValue = 
 					chirdlutilbackportsService.getFormAttributeValue(formId, FORM_ATTRIBUTE_EXPORTABLE, locationTagId, locationId);
 			
-			if (exportAttrValue == null){
+			if (exportAttrValue == null || exportAttrValue.getValue() == null 
+					|| exportAttrValue.getValue().trim().equals("")){
 				//do not export
 				return;
 			}
@@ -129,8 +132,9 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 				LocationTagAttributeValue  tiffLocationTagConceptMapLocation = 
 						chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, form.getName() + TIFF_CONCEPT_MAP_LOCATION, 
 								locationId);
-				if (tiffLocationTagConceptMapLocation == null){
-					Log.error("Location tag attribute for location of tiff concept map for location id = " + locationId + " is null.");
+				if (tiffLocationTagConceptMapLocation == null || tiffLocationTagConceptMapLocation.getValue() == null
+						|| tiffLocationTagConceptMapLocation.getValue().trim().equals("")){
+					Log.error("Location tag attribute for location of tiff concept map for location id = " + locationId + " is null or empty.");
 					return;
 				}
 				
