@@ -3729,6 +3729,20 @@ where action_name='REPRINT';
             group by d.location_tag_id,d.location_id;
          </sql>
 	</diff>
+	<diff>
+        <version>1.7.3</version>
+        <author>Steve McKee</author>
+        <date>November 24, 2015</date>
+        <description>
+        Added new HL7ProcessRegistrationObs state
+        </description>
+        <sql>
+        INSERT INTO chirdlutilbackports_state
+        (`name`, `description`)
+        VALUES
+         ('HL7ProcessRegistrationObs', 'State used to track the load of observations from the registration message');
+        </sql>
+    </diff>
 </sqldiff>
 
 

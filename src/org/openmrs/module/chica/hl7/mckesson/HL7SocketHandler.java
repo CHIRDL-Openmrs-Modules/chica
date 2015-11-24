@@ -22,10 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -35,7 +33,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.ConceptName;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
@@ -50,17 +47,14 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -608,7 +602,6 @@ public class HL7SocketHandler extends
 
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
-		ObsService obsService = Context.getObsService();
 		encounter = encounterService.getEncounter(encounterId);
 		Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounter;
 
@@ -637,141 +630,7 @@ public class HL7SocketHandler extends
 		chicaEncounter.setInsuranceSmsCode(null);
 		
 		//See if the message contains OBXs
-		Integer patientId = p.getPatientId();
-		try {
-			HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
-			ArrayList<Obs> allObs = obsHandler.getObs(message,p);
-			LogicService logicService = Context.getLogicService();
-			ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
-					.getLogicDataSource("RMRS");
-			
-			HashMap<Integer, HashMap<String, Set<Obs>>> patientObsMap = xmlDatasource.getObs();
-			HashMap<String, Set<Obs>> obsByConcept = patientObsMap.get(patientId);
-			
-			if (obsByConcept == null) {
-				obsByConcept = new HashMap<String, Set<Obs>>();
-				patientObsMap.put(patientId, obsByConcept);
-			}
-			final String SOURCE = "IU Health MRF Dump";
-			final String VITALS_SOURCE = "IU Health Vitals";
-			
-			Map<Integer,Concept> mrfConceptMapping = new HashMap<Integer, Concept>();
-			Map<Integer,Concept> vitalsConceptMapping = new HashMap<Integer, Concept>();
-			Map<String,Concept> vitalsConceptByNameMapping = new HashMap<String, Concept>();
-			Set<Integer> mrfConceptSet = new HashSet<Integer>();
-			Set<Integer> vitalsConceptSet = new HashSet<Integer>();
-			Set<String> vitalsConceptByNameSet = new HashSet<String>();
-
-			ConceptService conceptService = Context.getConceptService();
-			boolean savedToDB = false;
-			
-			for (Obs currObs : allObs) {
-				savedToDB = false;
-				String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
-
-				//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
-				if (locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG)) {
-					Concept concept = currObs.getConcept();
-					Integer conceptId = concept.getConceptId();
-					
-					//convert units for historical data
-					switch(conceptId){
-						case 39650704: //Birth Weight (kg)
-							double kilograms = currObs.getValueNumeric();
-							double pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(
-									kilograms, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
-							currObs.setValueNumeric(pounds);//BIRTH WEIGHT in chica in pounds 
-							break;
-						default:
-					}
-					
-					//convert units for historical vitals data
-					org.openmrs.module.chica.hl7.iuHealthVitals.HL7SocketHandler.convertIUHealthVitalsUnits(conceptId,currObs);
-					
-					// check to see if we've already looked up a mapping for this concept
-					Concept mappedConcept = mrfConceptMapping.get(conceptId);
-					if (mappedConcept == null) {
-						// check to see if we've already searched this one before
-						if (!mrfConceptSet.contains(conceptId)) {
-							mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), SOURCE);
-							mrfConceptSet.add(conceptId);
-							mrfConceptMapping.put(conceptId, mappedConcept);
-						}
-					}
-					
-					if (mappedConcept != null) {
-						currConceptName = mappedConcept.getName().getName();
-						currObs.setConcept(mappedConcept);
-					}
-					
-					Concept answerConcept = currObs.getValueCoded();
-					//see if any answer concepts need mapped
-					if (answerConcept != null) {
-						String answerConceptName = answerConcept.getName().getName();
-						Concept mappedVitalsConcept = vitalsConceptByNameMapping.get(answerConceptName);
-						if (mappedVitalsConcept == null) {
-							// check to see if we've already searched this one before
-							if (!vitalsConceptByNameSet.contains(answerConceptName)) {
-								mappedVitalsConcept = conceptService.getConceptByMapping(answerConceptName, VITALS_SOURCE);
-								vitalsConceptByNameSet.add(answerConceptName);
-								vitalsConceptByNameMapping.put(answerConceptName, mappedVitalsConcept);
-							}
-						}
-						
-						if(mappedVitalsConcept != null){
-							currObs.setValueCoded(mappedVitalsConcept);
-						}
-					}
-					
-					//If this is a historical vital, save it to the database
-					Concept mappedVitalsConcept = vitalsConceptMapping.get(conceptId);
-					if (mappedVitalsConcept == null) {
-						// check to see if we've already searched this one before
-						if (!vitalsConceptSet.contains(conceptId)) {
-							mappedVitalsConcept = conceptService.getConceptByMapping(conceptId.toString(), VITALS_SOURCE);
-							vitalsConceptSet.add(conceptId);
-							vitalsConceptMapping.put(conceptId, mappedVitalsConcept);
-						}
-					}
-					
-					if(mappedVitalsConcept != null){
-						if (currObs.getValueCoded()!=null&&currObs.getValueCoded().getConceptId() == 1) {
-							currObs.setValueCoded(null);
-							if (answerConcept != null) {
-								String answerConceptName = answerConcept.getName().getName();
-								currObs.setValueText(answerConceptName);
-								logger.error("Could not map IU Health Cerner vitals concept: " + answerConceptName
-								        + ". Could not store vitals observation.");
-							}
-						}
-						currObs.setConcept(mappedVitalsConcept);
-						currObs.setLocation(location);
-						obsService.saveObs(currObs, null);
-						savedToDB = true;
-					}
-					
-				}
-				//put the observation in memory if it was not saved to the database
-				if(!savedToDB){
-					Set<Obs> obs = obsByConcept.get(currConceptName);
-					if (obs == null) {
-						obs = new HashSet<Obs>();
-						obsByConcept.put(currConceptName, obs);
-					}
-					obs.add(currObs);
-				}
-			}
-			
-			mrfConceptMapping.clear();
-			vitalsConceptMapping.clear();
-			vitalsConceptByNameMapping.clear();
-			mrfConceptSet.clear();
-			vitalsConceptSet.clear();
-			vitalsConceptByNameSet.clear();
-		}
-		catch (Exception e) {
-			log.error("Error processing hl7 OBXs.",e);
-		}
+		saveHL7Obs(p, message, location, chicaEncounter, getSession(parameters));
 
 		// This code must come after the code that sets the encounter values
 		// because the states can't be created until the locationTagId and
@@ -1630,4 +1489,20 @@ public class HL7SocketHandler extends
 		}
 	}
 	
+	/**
+	 * Stores the observations from the HL7 message to applicable data sources on a separate thread.
+	 * 
+	 * @param patient The patient to whom the observations will be attached
+	 * @param message The HL7 message
+	 * @param location The location of the encounter
+	 * @param encounter The patient encounter
+	 * @param session The patient session
+	 */
+	private void saveHL7Obs(Patient patient, Message message, Location location, 
+	                        org.openmrs.module.chica.hibernateBeans.Encounter encounter, Session session) {
+		Runnable hl7ObsRunnable = new HL7StoreObsRunnable(patient.getPatientId(), location.getLocationId(), 
+			encounter.getEncounterId(), session.getSessionId(), message);
+		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
+		hl7ObsThread.start();
+	}
 }
