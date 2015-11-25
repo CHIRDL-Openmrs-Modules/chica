@@ -128,7 +128,6 @@ public class HL7StoreObsRunnable implements Runnable {
 				.addPatientState(patient, state, sessionId, org.openmrs.module.chica.util.Util.getLocationTagId(encounter),
 						location.getLocationId(), null);
 		patientState.setStartTime(new Date());
-		patientState.setEndTime(new Date());
 		patientState = backportsService.updatePatientState(patientState);
 		Integer patientId = patient.getPatientId();
 		HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
