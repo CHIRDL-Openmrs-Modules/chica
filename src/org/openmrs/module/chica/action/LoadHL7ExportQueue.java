@@ -118,8 +118,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 			FormAttributeValue exportAttrValue = 
 					chirdlutilbackportsService.getFormAttributeValue(formId, FORM_ATTRIBUTE_EXPORTABLE, locationTagId, locationId);
 			
-			if (exportAttrValue == null || exportAttrValue.getValue() == null 
-					|| exportAttrValue.getValue().trim().equals("")){
+			if (exportAttrValue == null || exportAttrValue.getValue() == null ){
 				//do not export
 				return;
 			}
