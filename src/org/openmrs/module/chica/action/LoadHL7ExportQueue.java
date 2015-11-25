@@ -68,8 +68,12 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 		Integer encounterId = session.getEncounterId();
 		
 		try {
+			
+			if (currState == null){
+				return;
+			}
 			String currStateName = currState.getName();
-			if (currStateName != null && currStateName.equals(ChirdlUtilConstants.STATE_EXPORT_VITALS)){
+			if (ChirdlUtilConstants.STATE_EXPORT_VITALS.equals(currStateName)){
 				
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
@@ -85,7 +89,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 			}
 			
 			//Export the observations scanned from PWS 
-			if (currStateName != null && currStateName.equals(ChirdlUtilConstants.STATE_EXPORT_POC)) {
+			if (ChirdlUtilConstants.STATE_EXPORT_POC.equals(currStateName)) {
 				
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
@@ -118,14 +122,12 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 			FormAttributeValue exportAttrValue = 
 					chirdlutilbackportsService.getFormAttributeValue(formId, FORM_ATTRIBUTE_EXPORTABLE, locationTagId, locationId);
 			
-			if (exportAttrValue == null || exportAttrValue.getValue() == null ){
+			if (exportAttrValue == null ){
 				//do not export
 				return;
 			}
 			
-			String exportable = exportAttrValue.getValue();
-			
-			if (exportable!= null && exportable.trim().equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)){						
+			if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equals(exportAttrValue.getValue())){						
 				
 				//Concept map files will be eliminated in a future update
 				LocationTagAttributeValue  tiffLocationTagConceptMapLocation = 
@@ -139,8 +141,6 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 				
 				addExportToQueue(encounterId, sessionId, tiffLocationTagConceptMapLocation );
 			}
-	
-			
 			
 		} finally{
 			
