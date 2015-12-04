@@ -242,7 +242,7 @@ public class informPresnet implements Rule {
 		String postData = data.toString() + studyParams;
 		String result = null;
 		try {
-			result = HttpUtil.post(studyUrl, postData, connectionTimeout, readTimeout);
+			result = HttpUtil.postSecure("TLSv1.2", "in-peds-presnet.ads.iu.edu", studyUrl, postData, connectionTimeout, 443);
 			if (result == null || !result.contains("Successful")) {
 				log.error("Post to the Presnet web site was unsuccessful: " + result);
 				log.error("Presnet POST URL failure: " + studyUrl + "?" + postData);
