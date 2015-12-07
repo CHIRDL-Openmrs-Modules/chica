@@ -3769,6 +3769,22 @@ where action_name='REPRINT';
     		WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'PWS_reprint');
          </sql>
 	</diff>
+	<diff>  
+        <version>1.7.5</version>  
+        <author>David Ely</author>  
+        <date>December 7, 2015</date>  
+        <description>  
+        CHICA-612 Add new location attribute to allow the PDF version of the PWS to be enabled
+        </description>  
+        <sql>  
+            INSERT INTO chirdlutilbackports_location_attribute (name, description)
+			VALUES ('isPDFVersionOfPWSEnabled', 'Indicates if the PDF version of the PWS is printed');
+        
+			INSERT INTO chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+			SELECT a.location_id, '', (SELECT location_attribute_id FROM chirdlutilbackports_location_attribute WHERE name='isPDFVersionOfPWSEnabled')
+			FROM location a;
+         </sql>
+	</diff>
 </sqldiff>
 
 
