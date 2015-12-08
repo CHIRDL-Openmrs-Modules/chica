@@ -3759,6 +3759,48 @@ where action_name='REPRINT';
 			FROM location a;
          </sql>
 	</diff>
+	<diff>  
+        <version>1.7.5</version>  
+        <author>David Ely</author>  
+        <date>December 8, 2015</date>  
+        <description>  
+        CHICA-612 Add new state and state mapping to allow the PWS to be created then create the PDF version
+        </description>  
+        <sql>  
+        INSERT INTO chirdlutilbackports_state_action(action_name, action_description, action_class)
+        VALUES('PWS_post_create', 'Runs rules after the PWS has been created','org.openmrs.module.chica.action.PWSPostCreate');
+
+        INSERT INTO chirdlutilbackports_state(name,state_action_id)
+        SELECT 'PWS_post_create', state_action_id from chirdlutilbackports_state_action where action_name='PWS_post_create';
+
+        INSERT INTO chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
+        VALUES ((select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
+        ,(select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION')
+        ,(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+
+      	INSERT INTO chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
+        VALUES ((select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
+        ,(select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION')
+        ,(select program_id from chirdlutilbackports_program where name = 'chica_iuh_cerner'));
+        
+		UPDATE chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
+		WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PWS')
+		AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_electronic');
+    
+        UPDATE chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
+        WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'PWS_reprint')
+        AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_electronic');
+        
+        UPDATE chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
+        WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'PWS_create')
+        AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_iuh_cerner');
+    
+        UPDATE chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
+        WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'PWS_reprint')
+        AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_iuh_cerner');
+
+         </sql>
+	</diff>
 </sqldiff>
 
 
