@@ -292,7 +292,7 @@ public class QueryKite
 				
 				//set classes to exclude/include
 				request.setClassesToExclude(props.getProperty(MRF_PARAM_CLASSES_TO_EXCLUDE));
-				request.setClassesToExclude(props.getProperty(MRF_PARAM_CLASSES_TO_INCLUDE));
+				request.setClassesToInclude(props.getProperty(MRF_PARAM_CLASSES_TO_INCLUDE));
 
 				// Make the web service call
 				URL url;
