@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.logic.result.Result;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
@@ -51,17 +52,14 @@ public class PWSPostCreate implements ProcessStateAction
 			parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
 
 			// Check age restrictions and set parameters
-			// Remove from the list of rules to run if age restrictions are not met
-			for (int i = rules.size() - 1; i >= 0; i--) {
-				Rule foundRule = rules.get(i);
-				if (foundRule.checkAgeRestrictions(patient)) {
-					foundRule.setParameters(parameters);
-				} else {
-					rules.remove(i);
+			for (Rule currRule : rules)
+			{
+				if (currRule.checkAgeRestrictions(patient))
+				{
+					currRule.setParameters(parameters);			
+					dssService.runRule(patient, currRule);
 				}
 			}
-
-			dssService.runRules(patient, rules);
 		}
 		catch(Exception e)
 		{
