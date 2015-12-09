@@ -45,12 +45,7 @@ public class PWSPostCreate implements ProcessStateAction
 			rule.setRuleType(PWS_POST_CREATE);
 			List<Rule> rules = dssService.getRules(rule, true, false, null);
 			if (rules == null || rules.size() == 0) {
-				StateManager.endState(patientState);
-				BaseStateActionHandler.changeState(patientState.getPatient(), patientState
-						.getSessionId(), patientState.getState(),
-						patientState.getState().getAction(), parameters,
-						patientState.getLocationTagId(),
-						patientState.getLocationId());
+				return;
 			}
 
 			parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);

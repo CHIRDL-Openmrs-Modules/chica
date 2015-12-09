@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
 import org.openmrs.api.FormService;
@@ -26,6 +27,7 @@ import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
+import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -118,20 +120,23 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						this.log.error(Util.getStackTrace(e));
 					}			
 
-					Record record = records.getRecord();
-					if (record == null) {
-						return Result.emptyResult();
-					}
+					if(records != null)
+					{
+						Record record = records.getRecord();
+						if (record == null) {
+							return Result.emptyResult();
+						}
 
-					// Get the <field> elements found within the file
-					List<Field> currentFieldsInFile = record.getFields();
-					if (currentFieldsInFile == null) {
-						return Result.emptyResult();
-					}
+						// Get the <field> elements found within the file
+						List<Field> currentFieldsInFile = record.getFields();
+						if (currentFieldsInFile == null) {
+							return Result.emptyResult();
+						}
 
-					List<String> currentFieldNames = getFieldNamesCurrentFormDefinition();
+						List<String> currentFieldNames = getFieldNamesCurrentFormDefinition();
 
-					return new Result(createFieldValueString(currentFieldsInFile, currentFieldNames));							
+						return new Result(createFieldValueString(currentFieldsInFile, currentFieldNames));
+					}									
 				}
 			}
 		}
@@ -207,6 +212,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 
 	/**
 	 * Creates a list of fields for the current form definition of the PWS_PDF
+	 * Currently only used to get Merge and Prioritized Merge
 	 * @return
 	 */
 	private List<String> getFieldNamesCurrentFormDefinition()
@@ -214,7 +220,14 @@ public class GetPWSFieldValuesFromXML implements Rule{
 		List<String> currentFieldNames = new ArrayList<String>();
 		FormService formService = Context.getFormService();
 		Form form = formService.getForm(PWS_PDF);
-		List<FormField> currentFormFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, formService.getAllFieldTypes(), true);
+		DynamicFormAccess formAccess = new DynamicFormAccess();
+		FieldType mergeType = formAccess.getFieldType("Merge Field");
+		FieldType priorMergeType = formAccess.getFieldType("Prioritized Merge Field");
+		List<FieldType> fieldTypes = new ArrayList<FieldType>();
+		fieldTypes.add(mergeType);
+		fieldTypes.add(priorMergeType);
+		
+		List<FormField> currentFormFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, fieldTypes, true);
 
 		for(FormField formField : currentFormFields)
 		{
