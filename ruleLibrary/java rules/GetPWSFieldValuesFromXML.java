@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,126 +44,188 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	private static final String PWS_PDF = "PWS_PDF";
 	private static final String RESULT_DELIM = "^^";
 	private static final String AT_CHAR = "@";
-	private static final Set<String> PERCENTILE_FIELDS = new HashSet<String>(Arrays.asList(
-		     new String[] {"HeightP", "WeightP", "BMIP", "HCP"}));
-	
+	private static final String HEIGHTP_FIELD = "HeightP";
+	private static final String WEIGHTP_FIELD = "WeightP";
+	private static final String BMIP_FIELD = "BMIP";
+	private static final String HCP_FIELD = "HCP";
+	private static final String WEIGHTKG_FIELD = "WeightKG";
+	private static final String HC_FIELD = "HC";
+	private static final String PULSEOX_FIELD = "PulseOx";
+	private static final String BPP_FIELD = "BPP";
+	private static final String TEMPERATURE_METHOD_FIELD = "Temperature_Method";
+
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		FormService fs =Context.getFormService();
 		Form form = fs.getForm(PWS);
-		
+
 		if(form != null)
 		{
 			Integer encounterId = (Integer)parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 			if (encounterId == null) {
 				return Result.emptyResult();
 			}
-			
+
 			ATDService atdService = Context.getService(ATDService.class);
-			
+
 			// Get the list in ascending order so that we have the most recent PWS
 			// This would be an issue since we receive vitals after the PSF has been submitted
 			List<Statistics> stats = atdService.getAllStatsByEncounterForm(encounterId, PWS, SORT_DESC);
 			if (stats == null || stats.size() == 0) {
 				return Result.emptyResult();
 			}
-			
+
 			for (Statistics stat : stats) {
 				Integer formInstanceId = stat.getFormInstanceId();
 				Integer locationId = stat.getLocationId();
 				Integer locationTagId = stat.getLocationTagId();
 				if (formInstanceId != null && locationId != null && locationTagId != null) {
 					FormInstance formInstance = new FormInstance(locationId, form.getFormId(), formInstanceId);
-				
-					String pendingMergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-					        .getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId))
-					        + ChirdlUtilConstants.FILE_PENDING + File.separator;
-					
-					if (pendingMergeDirectory == null || pendingMergeDirectory.length() == 0) {
+
+					String mergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
+							.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId));
+
+					if (mergeDirectory == null || mergeDirectory.length() == 0) {
 						log.info("No " + ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY + " found for Form: " + formInstance.getFormId() + " Location ID: " + locationId + 
-								" Location Tag ID: " + locationTagId + ".  No scan XML file will be created.");
+								" Location Tag ID: " + locationTagId + ".");
 						return Result.emptyResult();
 					}
 
-					File file = new File(pendingMergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+					File file = new File(mergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+					if(!file.exists())
+					{
+						// Check the pending directory
+						String pendingDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
+								.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId)) 
+								+ ChirdlUtilConstants.FILE_PENDING + File.separator;
+						file = new File(pendingDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+
+						if(!file.exists()) // File was not found in the pending directory either, return empty result
+						{
+							return Result.emptyResult();
+						}
+					}
 
 					// Read the xml
 					Records records = null;
-					if (file.exists()) {
-						try {
-							records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
-						}
-						catch (IOException e) {
-							this.log.error(e.getMessage());
-							this.log.error(Util.getStackTrace(e));
-						}			
-					} else {
-						Record record = new Record();
-						records = new Records(record);				
+					try {
+						records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
 					}
-					
+					catch (IOException e) {
+						this.log.error(e.getMessage());
+						this.log.error(Util.getStackTrace(e));
+					}			
+
 					Record record = records.getRecord();
 					if (record == null) {
 						return Result.emptyResult();
 					}
-					
+
 					// Get the <field> elements found within the file
 					List<Field> currentFieldsInFile = record.getFields();
 					if (currentFieldsInFile == null) {
 						return Result.emptyResult();
 					}
-					
-					// Create a list of fields for the current form definition
-					FormService formService = Context.getFormService();
-					form = formService.getForm(PWS_PDF);
-					List<FormField> currentFormFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, formService.getAllFieldTypes(), true);
-					
-					List<String> currentFieldNames = new ArrayList<String>();
-					for(FormField formField : currentFormFields)
-					{
-						org.openmrs.Field field = formField.getField();
-						if(field != null)
-						{
-							currentFieldNames.add(field.getName());
-						}
-					}
-					
-					// Add the value and the field name to the return string only if it is found in the list of currentFieldNames
-					StringBuilder builder = new StringBuilder();
-					for(int i = 0; i < currentFieldsInFile.size(); i++)
-					{
-						Field field = currentFieldsInFile.get(i);
-						if(currentFieldNames.contains(field.getId()))
-						{
-							if(builder.toString().length() > 0 && i < currentFieldsInFile.size() -1)
-							{
-								builder.append(RESULT_DELIM);
-							}
-							
-							if(PERCENTILE_FIELDS.contains(field.getId()))
-							{
-								builder.append("(")
-								.append(field.getValue())
-								.append("%)");
-							}
-							else
-							{
-								builder.append(field.getValue());
-							}
-							
-							builder.append(AT_CHAR);
-							builder.append(field.getId());		
-						}
-					}
-					
-					return new Result(builder.toString());
+
+					List<String> currentFieldNames = getFieldNamesCurrentFormDefinition();
+
+					return new Result(createFieldValueString(currentFieldsInFile, currentFieldNames));							
 				}
 			}
 		}
-		
-		return Result.emptyResult();
+
+		return Result.emptyResult();	
+	}
+
+	/**
+	 * Creates the string of field names and values formatted as "value@fieldName^^value@fieldName"
+	 * The value and field name are only added to the string if it is found in the current form definition,
+	 * otherwise it is skipped
+	 * 
+	 * @param currentFieldsInFile
+	 * @param currentFieldNames
+	 * @return string formatted as "value@fieldName^^value@fieldName"
+	 */
+	private String createFieldValueString(List<Field> currentFieldsInFile, List<String> currentFieldNames)
+	{
+		// Add the value and the field name to the return string only if it is found in the list of currentFieldNames
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < currentFieldsInFile.size(); i++)
+		{
+			Field field = currentFieldsInFile.get(i);
+			if(currentFieldNames.contains(field.getId()))
+			{
+				if(builder.toString().length() > 0 && i < currentFieldsInFile.size() -1)
+				{
+					builder.append(RESULT_DELIM);
+				}
+
+				if(field.getValue() != null && field.getValue().length() > 0)
+				{
+					switch(field.getId())
+					{
+					case HEIGHTP_FIELD:
+					case WEIGHTP_FIELD:
+					case BMIP_FIELD:
+					case HCP_FIELD:
+						// The fields in the cases above will all use this formatting								
+						builder.append(" (").append(field.getValue()).append("%)");								
+						break;
+					case WEIGHTKG_FIELD:								
+						builder.append(field.getValue()).append(" kg.");									
+						break;
+					case HC_FIELD:							
+						builder.append(field.getValue()).append(" cm.");			
+						break;
+					case PULSEOX_FIELD:									
+						builder.append(field.getValue()).append("%");								
+						break;
+					case TEMPERATURE_METHOD_FIELD:
+					case BPP_FIELD:
+						// Temperature method and BPP just need parenthesis 
+						builder.append(" (").append(field.getValue()).append(")");
+						break;
+					default:
+						builder.append(field.getValue());
+						break;
+					}
+				}
+				else
+				{
+					builder.append("");
+				}
+
+				builder.append(AT_CHAR);
+				builder.append(field.getId());		
+			}
+		}
+
+		return builder.toString();
+	}
+
+	/**
+	 * Creates a list of fields for the current form definition of the PWS_PDF
+	 * @return
+	 */
+	private List<String> getFieldNamesCurrentFormDefinition()
+	{
+		List<String> currentFieldNames = new ArrayList<String>();
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(PWS_PDF);
+		List<FormField> currentFormFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, formService.getAllFieldTypes(), true);
+
+		for(FormField formField : currentFormFields)
+		{
+			org.openmrs.Field field = formField.getField();
+			if(field != null)
+			{
+				currentFieldNames.add(field.getName());
+			}
+		}
+
+		return currentFieldNames;
 	}
 
 	/**
@@ -173,21 +234,21 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	public Datatype getDefaultDatatype() {
 		return Datatype.TEXT;
 	}
-	
+
 	/**
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
 	public String[] getDependencies() {
 		return new String[]{};
 	}
-	
+
 	/**
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
 	public Set<RuleParameterInfo> getParameterList() {
 		return new HashSet<RuleParameterInfo>();
 	}
-	
+
 	/**
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
