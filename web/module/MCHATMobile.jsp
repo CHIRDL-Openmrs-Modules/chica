@@ -16,7 +16,7 @@
 		<script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 		<script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 		<script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
-		<title>M-CHAT</title>
+		<title>Infant Sleep Questionaire</title>
 	</head>
 	<c:set var="search" value="'" />
 	<c:set var="replace" value="\\'" />
@@ -41,7 +41,7 @@
 			
 			<div id="instruction_page" data-role="page" data-theme="b">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
@@ -60,72 +60,82 @@
 			
 			<div id="question_page_1" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
 				</div>
 				
 				<div id="content_1" data-role="content">
-					<c:set var="quest1" value='Does your child enjoy being swung, bounced on your knee, etc.?' />
+					<h3>Going to bed/to sleep:</h3>
+					<c:set var="quest1" value='How long does it usually take to settle your baby off to sleep on average?' />
 					<input id="Question_1"  name="Question_1" type="hidden" value="${quest1}" />
 					<strong>${quest1}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest1}")'></a>
-					<div data-role="fieldcontain" style="margin-top:0px;">
-						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_1" id="Choice_1_Yes" value="passed" data-theme="c" />
-							<label for="Choice_1_Yes">Yes</label>
-							<input type="radio" name="Choice_1" id="Choice_1_No" value="failed" data-theme="c" />
-							<label for="Choice_1_No">No</label>
+					<div data-role="fieldcontain" data-mini="true" style="margin-top:0px;">
+						<fieldset data-role="controlgroup" >
+							<input type="radio" name="ISQQuestionEntry_1" id="ISQ9QuestionEntry_1_" value="0" data-theme="b" />
+	            <label for="ISQQuestionEntry_1_NAO">Not At All</label>
+							<input type="radio" name="Choice_1" id="Choice_1_10_to_20" value="10_to_20_minutes" data-theme="c" />
+							<label for="Choice_1_10_to_20">10 to 20 minutes</label>
+							<input type="radio" name="Choice_1" id="Choice_1_20_to_30" value="20_to_30_minutes" data-theme="c" />
+							<label for="Choice_1_20_to_30">20 to 30 minutes</label>
+							<input type="radio" name="Choice_1" id="Choice_1_30_to_40" value="30_to_40_minutes" data-theme="c" />
+							<label for="Choice_1_30_to_40">30 to 40 minutes</label>
+							<input type="radio" name="Choice_1" id="Choice_1_40_to_50" value="40_to_50_minutes" data-theme="c" />
+							<label for="Choice_1_40_to_50">40 to 50 minutes</label>
+							<input type="radio" name="Choice_1" id="Choice_1_50_to_60" value="50_to_60_minutes" data-theme="c" />
+							<label for="Choice_1_50_to_60">50 to 60 minutes</label>
+							<input type="radio" name="Choice_1" id="Choice_1hr_or_longer" value="one_hour_or_longer" data-theme="c" />
+							<label for="Choice_1hr_or_longer">one hour or longer</label>
 						</fieldset>
 					</div>
-					<br />
-					<c:set var="quest2" value='Does your child take an interest in other children?' />
-					<input id="Question_2"  name="Question_2" type="hidden" value="${quest2}" />
+					<c:set var="quest2" value='How many times a week do you have problems settling him/her on average?' />
+					<input id="Question_2"  name="Question_2" type="hidden" value="${quest1}" />
 					<strong>${quest2}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest2}")'></a>
-					<div data-role="fieldcontain" style="margin-top:0px;">
-						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_2" id="Choice_2_Yes" value="passed" data-theme="c" />
-							<label for="Choice_2_Yes">Yes</label>
-							<input type="radio" name="Choice_2" id="Choice_2_No" value="failed" data-theme="c" />
-							<label for="Choice_2_No">No</label>
+					<div data-role="fieldcontain" data-mini="true" style="margin-top:0px;">
+						<fieldset data-role="controlgroup" >
+							<input type="radio" name="Choice_4" id="Choice_4_less_than_once_per_week" value="less_than_once_per_week" data-theme="c" />
+							<label for="Choice_4_less_than_once_per_week">Problems less than once a week</label>
+							<input type="radio" name="Choice_2" id="Choice_2_one_night_per_week" value="one_night_per_week" data-theme="c" />
+							<label for="Choice_2_one_night_per_week">Problems 1 night a week</label>
+							<input type="radio" name="Choice_2" id="Choice_2_two_nights_per_week" value="two_nights_per_week" data-theme="c" />
+							<label for="Choice_2_two_nights_per_week">Problems 2 nights a week</label>
+							<input type="radio" name="Choice_2" id="Choice_2_three_nights_per_week" value="three_nights_per_week" data-theme="c" />
+							<label for="Choice_2_three_nights_per_week">Problems 3 nights a week</label>
+							<input type="radio" name="Choice_2" id="Choice_2_four_nights_per_week" value="four_nights_per_week" data-theme="c" />
+							<label for="Choice_2_four_nights_per_week">Problems 4 nights a week</label>
+							<input type="radio" name="Choice_2" id="Choice_2_five_nights_per_week" value="five_nights_per_week" data-theme="c" />
+							<label for="Choice_2_five_nights_per_week">Problems 5 nights a week</label>
+							<input type="radio" name="Choice_2" id="Choice_2_six_nights_per_week" value="six_nights_per_week" data-theme="c" />
+							<label for="Choice_2_six_nights_per_week">Problems 6 nights a week</label>
+							<input type="radio" name="Choice_2" id="Choice_2_every_night" value="every_night_per_week" data-theme="c" />
+							<label for="Choice_2_every_night">Problems every night of the week</label>
 						</fieldset>
 					</div>
-					<br />
-					<c:set var="quest3" value='Does your child like climbing on things, such as up stairs?' />
+					<c:set var="quest3" value='How long has the settling problem been going on?' />
 					<input id="Question_3"  name="Question_3" type="hidden" value="${quest3}" />
 					<strong>${quest3}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest3}")'></a>
-					<div data-role="fieldcontain" style="margin-top:0px;">
-						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_3" id="Choice_3_Yes" value="passed" data-theme="c" />
-							<label for="Choice_3_Yes">Yes</label>
-							<input type="radio" name="Choice_3" id="Choice_3_No" value="failed" data-theme="c" />
-							<label for="Choice_3_No">No</label>
+					<div data-role="fieldcontain" data-mini="true" style="margin-top:0px;">
+						<fieldset data-role="controlgroup" >
+							<input type="radio" name="Choice_3" id="Choice_3_less_than_one_month" value="less_than_one_month" data-theme="c" />
+							<label for="Choice_3_less_than_one_month">Less than one month</label>
+							<input type="radio" name="Choice_3" id="Choice_3_one_month" value="one_month" data-theme="c" />
+							<label for="Choice_3_one_month">one month</label>
+							<input type="radio" name="Choice_3" id="Choice_3_two_months" value="two_months" data-theme="c" />
+							<label for="Choice_3_two_months">two months</label>
+							<input type="radio" name="Choice_3" id="Choice_3_three_months" value="three_months" data-theme="c" />
+							<label for="Choice_3_three_months">three months</label>
+							<input type="radio" name="Choice_3" id="Choice_3_four_months" value="four_months" data-theme="c" />
+							<label for="Choice_3_four_months">four months</label>
+							<input type="radio" name="Choice_3" id="Choice_3_five_months" value="five_months" data-theme="c" />
+							<label for="Choice_3_five_months">five months</label>
+							<input type="radio" name="Choice_3" id="Choice_3_six_months" value="six_months" data-theme="c" />
+							<label for="Choice_3_six_months">six months</label>
+							<input type="radio" name="Choice_3" id="Choice_3_six_months_or_more" value="six_months_or_more" data-theme="c" />
+							<label for="Choice_3_six_months_or_more">six months or more</label>
 						</fieldset>
 					</div>
 					<br />
-					<c:set var="quest4" value='Does your child enjoy playing peek-a-boo/hide-and-seek?' />
-					<input id="Question_4"  name="Question_4" type="hidden" value="${quest4}" />
-					<strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest4}")'></a>
-					<div data-role="fieldcontain" style="margin-top:0px;">
-						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_4" id="Choice_4_Yes" value="passed" data-theme="c" />
-							<label for="Choice_4_Yes">Yes</label>
-							<input type="radio" name="Choice_4" id="Choice_4_No" value="failed" data-theme="c" />
-							<label for="Choice_4_No">No</label>
-						</fieldset>
-					</div>
-					<br />
-					<c:set var="quest5" value='Does your child ever pretend, for example, to talk on the phone or take care of a doll or pretend other things?' />
-					<input id="Question_5"  name="Question_5" type="hidden" value="${quest5}" />
-					<strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest5}")'></a>
-					<div data-role="fieldcontain" style="margin-top:0px;">
-						<fieldset data-role="controlgroup" data-type="horizontal">
-							<input type="radio" name="Choice_5" id="Choice_5_Yes" value="passed" data-theme="c" />
-							<label for="Choice_5_Yes">Yes</label>
-							<input type="radio" name="Choice_5" id="Choice_5_No" value="failed" data-theme="c" />
-							<label for="Choice_5_No">No</label>
-						</fieldset>
-					</div>
 					<div style="float:right;"><br /><span style="float:right; font-size:50%;">${copyright}</span></div>
 				</div>
 				
@@ -136,7 +146,7 @@
 			
 			<div id="question_page_2" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
@@ -213,7 +223,7 @@
 			
 			<div id="question_page_3" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage3Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
@@ -290,7 +300,7 @@
 			
 			<div id="question_page_4" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
@@ -367,7 +377,7 @@
 			
 			<div id="question_page_5" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitals</a>
@@ -443,7 +453,7 @@
 			
 			<div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
@@ -519,7 +529,7 @@
 			
 			<div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
@@ -550,7 +560,7 @@
 						</fieldset>
 					</div>
 					<br />
-					<c:set var="quest8_2_sp" value='&iquest;Puede su ni&ntilde;o (a) jugar bien con jugetes peque&ntilde;os (como carros o cubos) sin llevÃ¡rselos a la boca, manipularlos o dejarlos caer)?' />
+					<c:set var="quest8_2_sp" value='&iquest;Puede su ni&ntilde;o (a) jugar bien con jugetes peque&ntilde;os (como carros o cubos) sin llevárselos a la boca, manipularlos o dejarlos caer)?' />
 					<input id="Question_8_2"  name="Question_8_2" type="hidden" value="${quest8_2_sp}" />
 					<strong>${quest8_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest8_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
@@ -596,7 +606,7 @@
 			
 			<div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage3SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
@@ -673,7 +683,7 @@
 			
 			<div id="question_page_4_sp" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage4SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
@@ -750,7 +760,7 @@
 			
 			<div id="question_page_5_sp" data-role="page" data-theme="b" type="question_page">
 				<div data-role="header">
-					<h1>M-CHAT:</h1>
+					<h1>Infant Sleep Questionaire::</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage5SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
 					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Vitales</a>
