@@ -148,9 +148,9 @@ public class PhysicianNoteTextNote implements Rule
 					new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
 			if (textNote != null && !textNote.isEmpty() && equalEncounters(encounterId, textNote)) {
 				noteBuffer.append(conceptName.toUpperCase());
-				noteBuffer.append(":\n");
-				noteBuffer.append(replaceSpecialCharacters(textNote.toString(), parameters));
 				noteBuffer.append("\n");
+				noteBuffer.append(replaceSpecialCharacters(textNote.toString(), parameters));
+				noteBuffer.append("\n\n");
 			}
 		}
 		
