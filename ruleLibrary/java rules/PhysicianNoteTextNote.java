@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -29,11 +30,6 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
  */
 public class PhysicianNoteTextNote implements Rule
 {
-	public static final String HISTORY_PHYSICAL_NOTE = "History and Physical Note";
-	public static final String ASSESSMENT_PLAN_NOTE = "Assessment and Plan Note";
-	
-	public static final String[] TEXT_NOTES_CONCEPTS = {HISTORY_PHYSICAL_NOTE,ASSESSMENT_PLAN_NOTE};
-	
 	/*
 	 * Enumeration of characters that must be replaced before sending them in HL7 or XML
 	 * If we need to add more message formats, they can be added here as well
@@ -146,9 +142,8 @@ public class PhysicianNoteTextNote implements Rule
 		}
 
 		Integer encounterId = encounter.getEncounterId();
-		
-		for(String conceptName : TEXT_NOTES_CONCEPTS)
-		{
+		String conceptName = parameters.get("param1") != null ? parameters.get("param1").toString() : "";
+		if(!conceptName.isEmpty()){
 			Result textNote = context.read(patientId, obsDataSource, 
 					new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
 			if (textNote != null && !textNote.isEmpty() && equalEncounters(encounterId, textNote)) {
