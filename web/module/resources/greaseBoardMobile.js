@@ -38,6 +38,17 @@ $(document).on("pageshow", "#passcode_page", function(){
 	    }
     });
 	
+	$("#error_dialog").popup({
+        afterclose: function( event, ui ) {
+	    	$("#passcode").focus();
+	    }
+    });
+	
+	if($("#span_errorMessage").text().length > 0)
+	{
+		 $("#error_dialog").popup("open", { transition: "pop"});
+	}
+	
 	$("#goButton").focus(function() {
 		  $("#goButton").click();
 	});
