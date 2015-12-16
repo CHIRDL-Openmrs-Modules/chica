@@ -54,17 +54,28 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		String key = patientId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + encounterId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE;
 		String formIdKey = key + "formId";
-		String formIdStr = request.getParameter(formIdKey);
-		Integer formId = Integer.parseInt(formIdStr);
-		
 		String formInstanceIdKey = key + "formInstanceId";
-		String formInstanceIdStr = request.getParameter(formInstanceIdKey);
-		
 		String locationIdKey = key + "locationId";
+		
+		String formIdStr = request.getParameter(formIdKey);
+		String formInstanceIdStr = request.getParameter(formInstanceIdKey);
 		String locationIdStr = request.getParameter(locationIdKey);
 		
-		FormInstance formInstance = new FormInstance(Integer.parseInt(locationIdStr), formId, 
-			Integer.parseInt(formInstanceIdStr));
+		Integer formId = null;
+		Integer locationId = null;
+		Integer formInstanceId = null;
+		
+		try {
+			formId = Integer.parseInt(formIdStr);
+			locationId = Integer.parseInt(locationIdStr);
+			formInstanceId = Integer.parseInt(formInstanceIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Required identifier is missing - formId: " + formIdStr + " locationId: " + locationId + 
+				" formInstanceId: " + formInstanceId);
+			return new ModelAndView(new RedirectView(getSuccessView()), map);
+		}
+		
+		FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
 		List<PatientState> patientStates = backportsService.getPatientStatesByFormInstance(formInstance, false);
 		Integer locationTagId = null;
 		if (patientStates != null && patientStates.size() > 0) {
