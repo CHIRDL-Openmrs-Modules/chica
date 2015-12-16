@@ -115,6 +115,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("currentUser", user.getUsername());
 		
 		// DWE CHICA-488
 		if(request.getParameter("errorMessage") != null)
@@ -132,7 +133,6 @@ public class MobileGreaseBoardController extends SimpleFormController {
 			}
 			
 			map.put("patientRows", rows);
-			map.put("currentUser", user.getUsername());
 		}
 		catch (UnexpectedRollbackException ex) {
 			//ignore this exception since it happens with an APIAuthenticationException
