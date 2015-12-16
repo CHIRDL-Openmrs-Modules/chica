@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openmrs.Concept;
@@ -32,6 +34,7 @@ import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -258,6 +261,8 @@ public class HL7SocketHandler implements Application {
 		Integer locationTagId = null;
 		Integer sessionId = null;
 		State state = null;
+		String locationName = "";
+		Integer encounterId = null;
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		AdministrationService adminService = Context.getAdministrationService();
 		
@@ -300,7 +305,9 @@ public class HL7SocketHandler implements Application {
 			
 			if (encounter != null) {
 				Location location = encounter.getLocation();
+				encounterId = encounter.getEncounterId();
 				if (location != null) {
+					locationName = location.getName();
 					locationId = location.getLocationId();
 					locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
 				}
@@ -400,7 +407,15 @@ public class HL7SocketHandler implements Application {
 			StateManager.endState(patientState);
 			StateAction stateAction = state.getAction();
 			
-			BaseStateActionHandler.changeState(patient, sessionId, state, stateAction, null, locationTagId, locationId);
+			// DWE CHICA-612 Adding parameters so that the PWS_PDF can be created when receiving vitals
+			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("sessionId", sessionId);
+			parameters.put("locationTagId", locationTagId);
+			parameters.put("locationId", locationId);
+			parameters.put("location", locationName);
+			parameters.put("encounterId", encounterId);			
+			
+			BaseStateActionHandler.changeState(patient, sessionId, state, stateAction, parameters, locationTagId, locationId);
 		} else {
 			logger.error("Patient State is null for patient: " + patient);
 		}

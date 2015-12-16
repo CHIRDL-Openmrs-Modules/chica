@@ -78,28 +78,28 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		
 		// DWE CHICA-488 Catch NumberFormatException
 		try{
-				Integer formId = Integer.parseInt(formIdStr);
+			Integer formId = Integer.parseInt(formIdStr);
 		
-		FormInstance formInstance = new FormInstance(Integer.parseInt(locationIdStr), formId, 
-			Integer.parseInt(formInstanceIdStr));
-		List<PatientState> patientStates = backportsService.getPatientStatesByFormInstance(formInstance, false);
-		Integer locationTagId = null;
-		if (patientStates != null && patientStates.size() > 0) {
-			for (PatientState patientState : patientStates) {
-				locationTagId = patientState.getLocationTagId();
-				if (locationTagId != null) {
-					break;
+			FormInstance formInstance = new FormInstance(Integer.parseInt(locationIdStr), formId, 
+				Integer.parseInt(formInstanceIdStr));
+			List<PatientState> patientStates = backportsService.getPatientStatesByFormInstance(formInstance, false);
+			Integer locationTagId = null;
+			if (patientStates != null && patientStates.size() > 0) {
+				for (PatientState patientState : patientStates) {
+					locationTagId = patientState.getLocationTagId();
+					if (locationTagId != null) {
+						break;
+					}
 				}
 			}
-		}
-		
-		String nextPage = Util.getFormUrl(formId);
-		map.put("patientId", patientId);
-		map.put("encounterId", encounterId);
-		map.put("sessionId", sessionId);
-		map.put("formInstance", locationIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationTagId.toString() + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
-			formIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceIdStr);
-		return new ModelAndView(new RedirectView(nextPage), map);
+			
+			String nextPage = Util.getFormUrl(formId);
+			map.put("patientId", patientId);
+			map.put("encounterId", encounterId);
+			map.put("sessionId", sessionId);
+			map.put("formInstance", locationIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationTagId.toString() + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
+				formIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceIdStr);
+			return new ModelAndView(new RedirectView(nextPage), map);
 		}catch(NumberFormatException nfe){
 			log.error("Error processing form submission (patientId: " + patientId + " formIdStr: " + formIdStr + " formInstanceIdStr: " + formInstanceIdStr + " locationIdStr: " + locationIdStr + ").", nfe);
 			map.put("errorMessage", SELECTION_ERROR);
@@ -148,3 +148,4 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		return map;
 	}
 }
+

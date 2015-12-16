@@ -33,14 +33,15 @@ If (mode = PRODUCE) then
 pe := call physicianNotePhysicalExam;
 psfnote := call physicianNotePSFResults;
 physiciannote := call physicianNoteObs;
-call physicianNoteSaveToDisk with "pe","psfnote","physiciannote";
+textNote := call PhysicianNoteTextNote;
+call physicianNoteSaveToDisk with "pe","psfnote","physiciannote","textNote";
 
 conclude True;
 endif
 
 ;;
 Action:
-write ("|| pe |||| psfnote_value |||| physiciannote_value ||");
+write ("|| pe |||| psfnote_value |||| physiciannote_value |||| textNote ||");
 ;;
 Age_Min: 0 days;;
 Age_Max: 21 years;;

@@ -1,4 +1,5 @@
 var patientListFail = 0;
+var timeOutVar;
 
 $(document).on("pagecreate", "#patient_list_page", function(){
 	
@@ -57,10 +58,11 @@ function startTimer() {
     // This delay allows the wait cursor to display when loading the patient list.
 	patientListFail = 0;
 	$("#listError").popup("close");
-    setTimeout("populateList()", 1);
+	timeOutVar = setTimeout("populateList()", 1);
 }
 
 function finishForm(patientId, encounterId, sessionId) {
+	clearTimeout(timeOutVar);
 	$("#loadingDialog").popup("open", { transition: "pop"});
 	//$.mobile.loading("show");
     $("#patientId").val(patientId);
@@ -108,7 +110,7 @@ function populateList() {
         "success": function (xml) {
         	patientListFail = 0;
             parsePatientList(xml);
-            setTimeout("populateList()", 30000);
+            timeOutVar = setTimeout("populateList()", 30000);
         }
     });
 }
@@ -117,7 +119,7 @@ function handlePatientListAjaxError(xhr, textStatus, error) {
 	patientListFail++;
 	if (patientListFail < 4) {
 		// try populating again before informing user.
-		setTimeout("populateList()", 1);
+		timeOutVar = setTimeout("populateList()", 1);
 	} else {
 	    var error = "An error occurred on the server.";
 	    if (textStatus === "timeout") {
