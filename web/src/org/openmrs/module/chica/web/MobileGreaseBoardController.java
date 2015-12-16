@@ -70,8 +70,8 @@ public class MobileGreaseBoardController extends SimpleFormController {
 			locationId = Integer.parseInt(locationIdStr);
 			formInstanceId = Integer.parseInt(formInstanceIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Required identifier is missing - formId: " + formIdStr + " locationId: " + locationId + 
-				" formInstanceId: " + formInstanceId);
+			log.error("Required identifier is missing - formId: " + formIdStr + " locationId: " + locationIdStr + 
+				" formInstanceId: " + formInstanceIdStr);
 			return new ModelAndView(new RedirectView(getSuccessView()), map);
 		}
 		
