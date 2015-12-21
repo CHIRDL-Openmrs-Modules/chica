@@ -125,10 +125,6 @@
              <div class="force-print-form-loading">
                 <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
              </div>
-             <input type="hidden" value="${patientId}" id="patientId" />
-             <input type="hidden" value="${sessionId}" id="sessionId" />
-             <input type="hidden" value="${locationId}" id="locationId" />
-             <input type="hidden" value="${locationTagId}" id="locationTagId" />
         </div>
     </div>
     <form id="loadForm" method="POST">
