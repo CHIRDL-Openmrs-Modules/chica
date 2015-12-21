@@ -116,27 +116,19 @@
                                                       </tr>
                                                       <tr>
                                                           <td style="text-align: right;">
-                                                              <input name="patientLeft" type="checkbox"
-                                                                  value="patientLeft" onclick="return false"
-                                                                  onkeydown="return false"/>
-                                                          </td>
-                                                          <td colspan="2" style="white-space: nowrap;">Patient left
-                                                              without treatment</td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td style="text-align: right;">
-                                                              <input name="patientRefused" type="checkbox"
-                                                                  value="patientRefused" onclick="return false"
-                                                                  onkeydown="return false"/>
-                                                          </td>
-                                                          <td colspan="2" style="white-space: nowrap;">Patient refused
-                                                              to complete form</td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td style="text-align: right;">
-                                                              <input name="twoIdsChecked" type="checkbox"
-                                                                  value="twoIdsChecked" onclick="return false"
-                                                                  onkeydown="return false"/>
+	                                                          <xsl:choose>
+	                                                              <xsl:when
+	                                                                  test="Records/Record/Field[@id = 'MATwoIDsChecked']/Value = 'Y'">
+	                                                                  <input name="twoIdsChecked" type="checkbox"
+	                                                                      value="twoIdsChecked" checked="checked"
+	                                                                      onclick="return false" onkeydown="return false"/>
+	                                                              </xsl:when>
+	                                                              <xsl:otherwise>
+	                                                                  <input name="twoIdsChecked" type="checkbox"
+	                                                                      value="twoIdsChecked" onclick="return false"
+	                                                                      onkeydown="return false"/>
+	                                                              </xsl:otherwise>
+	                                                          </xsl:choose>
                                                           </td>
                                                           <td colspan="2" style="white-space: nowrap;">Two IDs
                                                               checked</td>
