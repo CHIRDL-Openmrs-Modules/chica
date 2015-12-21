@@ -21,14 +21,18 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
@@ -87,6 +91,10 @@ public class ExternalFormController extends SimpleFormController {
 	private static final String PARAM_VAL_TRUE = "true";
 	private static final String PARAM_HAS_ERRORS = "hasErrors";
 	private static final String PARAM_VENDOR = "vendor";
+	private static final String PARAM_SHOW_HANDOUTS = "showHandouts";
+	private static final String PARAM_LOCATION_ID = "locationId";
+	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
+	private static final String PARAM_PATIENT_NAME = "patientName";
 	//private static final String PERSON_ATTR_TYPE_PROVIDER_ID = "Provider ID";
 	
 	/**
@@ -270,11 +278,50 @@ public class ExternalFormController extends SimpleFormController {
 //			return new ModelAndView(view, map);
 //		}
 		
+		map.put(PARAM_PATIENT_ID, patient.getPatientId());
+		
 		Encounter encounter = getRecentEncounter(
 			patient, backportsService, startState.getStateId(), endState.getStateId(), form.getFormId());
 		if (encounter == null) {
 			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
 			map.put(PARAM_MISSING_ENCOUNTER, PARAM_VAL_TRUE);
+			
+			// Check to see if the patient has at least one encounter to display the Handouts button on the page.
+			encounter = getLastEncounter(patient);
+			if (encounter != null) {
+				Location location = encounter.getLocation();
+				if (location != null) {
+					map.put(PARAM_LOCATION_ID, location.getLocationId());
+				} else {
+					return new ModelAndView(view, map);
+				}
+				
+				Set<LocationTag> tags = location.getTags();
+				if (tags != null && tags.size() > 0) {
+					LocationTag tag = tags.iterator().next();
+					map.put(PARAM_LOCATION_TAG_ID, tag.getLocationTagId());
+				} else {
+					return new ModelAndView(view, map);
+				}
+				
+				List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
+				if (sessions != null && sessions.size() > 0) {
+					map.put(PARAM_SESSION_ID, sessions.get(0).getSessionId());
+				} else {
+					return new ModelAndView(view, map);
+				}
+				
+				PersonName personName = patient.getPersonName();
+				if (personName != null && personName.getGivenName() != null && personName.getFamilyName() != null) {
+					map.put(PARAM_PATIENT_NAME, personName.getGivenName() + " " + personName.getFamilyName());
+				} else {
+					// Default to MRN if a name cannot be found.
+					map.put(PARAM_PATIENT_NAME, mrn);
+				}
+				
+				map.put(PARAM_SHOW_HANDOUTS, PARAM_VAL_TRUE);
+			}
+			
 			return new ModelAndView(view, map);
 		}
 		
@@ -292,7 +339,6 @@ public class ExternalFormController extends SimpleFormController {
 		}
 		
 		map.put(PARAM_ENCOUNTER_ID, encounter.getEncounterId());
-		map.put(PARAM_PATIENT_ID, patient.getPatientId());
 		map.put(PARAM_FORM_INSTANCE, tag.toString());
     	
 	    return new ModelAndView(new RedirectView(formPage), map);
@@ -383,6 +429,21 @@ public class ExternalFormController extends SimpleFormController {
 		}
 		
 		return null;
+    }
+    
+    /**
+     * Retrieves the last encounter for a patient or null if one does not exist.
+     * 
+     * @param patient The patient used to find the encounter.
+     * @return Encounter object or null if one does not exist.
+     */
+    private Encounter getLastEncounter(Patient patient) {
+    	List<Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient);
+    	if (encounters == null || encounters.size() == 0) {
+    		return null;
+    	}
+    	
+    	return encounters.get(encounters.size() - 1);
     }
     
     /**
