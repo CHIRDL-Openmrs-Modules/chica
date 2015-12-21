@@ -83,7 +83,7 @@ public class CheckProcessedVitalsState implements Rule{
 				}
 			}
 			else{
-				new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
+				return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
 			}
 		}
 		
