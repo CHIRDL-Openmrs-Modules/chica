@@ -286,42 +286,7 @@ public class ExternalFormController extends SimpleFormController {
 			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
 			map.put(PARAM_MISSING_ENCOUNTER, PARAM_VAL_TRUE);
 			
-			// Check to see if the patient has at least one encounter to display the Handouts button on the page.
-			encounter = getLastEncounter(patient);
-			if (encounter != null) {
-				Location location = encounter.getLocation();
-				if (location != null) {
-					map.put(PARAM_LOCATION_ID, location.getLocationId());
-				} else {
-					return new ModelAndView(view, map);
-				}
-				
-				Set<LocationTag> tags = location.getTags();
-				if (tags != null && tags.size() > 0) {
-					LocationTag tag = tags.iterator().next();
-					map.put(PARAM_LOCATION_TAG_ID, tag.getLocationTagId());
-				} else {
-					return new ModelAndView(view, map);
-				}
-				
-				List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
-				if (sessions != null && sessions.size() > 0) {
-					map.put(PARAM_SESSION_ID, sessions.get(0).getSessionId());
-				} else {
-					return new ModelAndView(view, map);
-				}
-				
-				PersonName personName = patient.getPersonName();
-				if (personName != null && personName.getGivenName() != null && personName.getFamilyName() != null) {
-					map.put(PARAM_PATIENT_NAME, personName.getGivenName() + " " + personName.getFamilyName());
-				} else {
-					// Default to MRN if a name cannot be found.
-					map.put(PARAM_PATIENT_NAME, mrn);
-				}
-				
-				map.put(PARAM_SHOW_HANDOUTS, PARAM_VAL_TRUE);
-			}
-			
+			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
 			return new ModelAndView(view, map);
 		}
 		
@@ -330,6 +295,8 @@ public class ExternalFormController extends SimpleFormController {
 		if (tag == null) {
 			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
 			map.put(PARAM_MISSING_FORM_INSTANCE, PARAM_VAL_TRUE);
+			
+			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
 			return new ModelAndView(view, map);
 		}
 		
@@ -503,5 +470,56 @@ public class ExternalFormController extends SimpleFormController {
 		}
     	
     	return null;
+    }
+    
+    /**
+     * Adds information to the map that will determine whether or not the user will be able to force print handouts on the JSP.
+     * 
+     * @param backportsService Service used to access data logic
+     * @param patient The patient for the request
+     * @param encounter The patient's encounter.  If null, an attempt will be made to find a valid encounter for the patient.
+     * @param mrn The patient's medical record number.
+     * @param map The HTTP map that will be returned to the client.
+     */
+    private void addHandoutsInfo(ChirdlUtilBackportsService backportsService, Patient patient, Encounter encounter, String mrn, 
+                                 Map<String, Object> map) {
+    	if (encounter == null) {
+	    	// Check to see if the patient has at least one encounter to display the Handouts button on the page.
+			encounter = getLastEncounter(patient);
+    	}
+    	
+		if (encounter != null) {
+			Location location = encounter.getLocation();
+			if (location != null) {
+				map.put(PARAM_LOCATION_ID, location.getLocationId());
+			} else {
+				return;
+			}
+			
+			Set<LocationTag> tags = location.getTags();
+			if (tags != null && tags.size() > 0) {
+				LocationTag tag = tags.iterator().next();
+				map.put(PARAM_LOCATION_TAG_ID, tag.getLocationTagId());
+			} else {
+				return;
+			}
+			
+			List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
+			if (sessions != null && sessions.size() > 0) {
+				map.put(PARAM_SESSION_ID, sessions.get(0).getSessionId());
+			} else {
+				return;
+			}
+			
+			PersonName personName = patient.getPersonName();
+			if (personName != null && personName.getGivenName() != null && personName.getFamilyName() != null) {
+				map.put(PARAM_PATIENT_NAME, personName.getGivenName() + " " + personName.getFamilyName());
+			} else {
+				// Default to MRN if a name cannot be found.
+				map.put(PARAM_PATIENT_NAME, mrn);
+			}
+			
+			map.put(PARAM_SHOW_HANDOUTS, PARAM_VAL_TRUE);
+		}
     }
 }
