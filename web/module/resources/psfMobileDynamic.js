@@ -634,9 +634,11 @@ function setLanguageFromForm(patientName, birthdate) {
 	    if (english) {
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_Yes", "#QuestionEntry_" + i + "_Yes");
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_No", "#QuestionEntry_" + i + "_No");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_NA", "#QuestionEntry_" + i + "_NA");
 	    } else {
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_Yes", "#QuestionEntry_" + i + "_2_Yes");
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_No", "#QuestionEntry_" + i + "_2_No");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_NA", "#QuestionEntry_" + i + "_2_NA");
 	    }
     }
     
