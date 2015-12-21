@@ -74,7 +74,13 @@ public class CheckProcessedVitalsState implements Rule{
 			List<PatientState> patientStates = chirdlutilbackportsService.getPatientStateByEncounterState(encounterId, state.getStateId());
 			
 			if (patientStates != null && patientStates.size() > 0) {
-				return new Result(ChirdlUtilConstants.GENERAL_INFO_TRUE);
+				PatientState patientState = patientStates.get(0);
+				if(patientState != null && patientState.getEndTime() != null){
+					return new Result(ChirdlUtilConstants.GENERAL_INFO_TRUE);
+				}
+				else{
+					return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
+				}
 			}
 			else{
 				new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
