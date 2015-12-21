@@ -10,11 +10,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Calendar;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.xml.soap.Detail;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,9 +29,6 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
-import org.openmrs.module.chica.mrfservices.DumpServiceStub;
-import org.openmrs.module.chica.mrfservices.DumpServiceStub.GetDumpE;
-import org.openmrs.module.chica.mrfservices.DumpServiceStub.GetDumpResponseE;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.FileFilterByDate;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -34,6 +36,11 @@ import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.regenstrief.services.DumpService;
+import org.regenstrief.services.EntityIdentifier;
+import org.regenstrief.services.GetDump;
+import org.regenstrief.services.GetDumpResponse;
+import org.regenstrief.services.IDumpService;
 
 /**
  * @author tmdugan
@@ -68,7 +75,9 @@ public class QueryKite
 			log.error("Global property for MRF dump timeout is invalid or does not exist.", e);
 		}
 		
-		KiteQueryThread kiteQueryThread = new KiteQueryThread(mrn);
+		
+		final KiteQueryThread kiteQueryThread = new KiteQueryThread(mrn);
+		
 		Thread thread = new Thread(kiteQueryThread);
 		thread.start();
 		try {
@@ -240,58 +249,78 @@ public class QueryKite
 			String configFile = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_CONFIG_FILE);   
 			String password = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_PASSWORD);
 			String endpoint = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_TARGET_ENDPOINT);
-			String namespace = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_NAMESPACE);
-			String responseString = null;
-
-			Properties props = null; 
-			if(configFile == null){
-				log.error("Could not find MRF query config file. Please set global property " + ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_CONFIG_FILE); 
+			
+			if (password == null || password.trim().equals("")) {
+				log.error("MRF query password is unknown. Please make sure global property is set for " + ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_PASSWORD);
 				return null;
 			}
-
+			if (endpoint == null || endpoint.trim().equals("")) {
+				log.error("MRF query URL is unknown. Please make sure global property is set for " + ChirdlUtilConstants.GLOBAL_PROP_MRF_TARGET_ENDPOINT);
+				return null;
+			}
+			if(configFile == null || endpoint.trim().equals("")){
+				log.error("MRF query configuration filename is unknown. Please set global property " + ChirdlUtilConstants.GLOBAL_PROP_MRF_QUERY_CONFIG_FILE); 
+				return null;
+			}
+			
+			Properties props = null; 
 			props = IOUtil.getProps(configFile);
 			if (props == null) {
 				return null;
 			}
-
+			
+			String responseString = null;
 			try{
 
-				DumpServiceStub service = new DumpServiceStub(null,namespace,endpoint);
-				GetDumpE dumpE = new GetDumpE();
-				DumpServiceStub.GetDump dump = new DumpServiceStub.GetDump();
-				dumpE.setGetDump(dump);
+				GetDump request = new GetDump();
+
+				//Set the patient
+				EntityIdentifier patientIdentifier = new EntityIdentifier();
+				patientIdentifier.setId(mrn);
+				patientIdentifier.setSystem(props.getProperty(MRF_PARAM_PATIENT_IDENTIFIER_SYSTEM));
+				request.setPatient(patientIdentifier);
+
+				//Set the User
+				EntityIdentifier userIdentifier = new EntityIdentifier();
+				userIdentifier.setId(props.getProperty(MRF_PARAM_USER_ID));
+				userIdentifier.setSystem(props.getProperty(MRF_PARAM_SYSTEM));
+
+				request.setUser(userIdentifier);
+
+				//set password
+				request.setPassword(password);
 				
-				DumpServiceStub.EntityIdentifier login = new DumpServiceStub.EntityIdentifier();
-				login.setId(props.getProperty(MRF_PARAM_USER_ID));
-				login.setSystem(props.getProperty(MRF_PARAM_SYSTEM));
-				dump.setUser(login);
+				//set classes to exclude/include
+				request.setClassesToExclude(props.getProperty(MRF_PARAM_CLASSES_TO_EXCLUDE));
+				request.setClassesToInclude(props.getProperty(MRF_PARAM_CLASSES_TO_INCLUDE));
 
-				DumpServiceStub.EntityIdentifier patient = new DumpServiceStub.EntityIdentifier();
-				patient.setId(mrn);
-				patient.setSystem(props.getProperty(MRF_PARAM_PATIENT_IDENTIFIER_SYSTEM));
-				dump.setPatient(patient);
-				dump.setPassword(password);
-				dump.setClassesToExclude(props.getProperty(MRF_PARAM_CLASSES_TO_EXCLUDE));
-				dump.setClassesToInclude(props.getProperty(MRF_PARAM_CLASSES_TO_INCLUDE));
+				// Make the web service call
+				URL url;
 
-				long start = Calendar.getInstance().getTimeInMillis();
-				GetDumpResponseE response = service.getDump(dumpE);
-
-				long stop = Calendar.getInstance().getTimeInMillis();
-				responseString = response.getGetDumpResponse().getHl7();
-
-				byte[] utf8Bytes = responseString.getBytes(CHARACTER_ENCODING_UTF_8);
-				log.info("Size: " + utf8Bytes.length);
-				log.info("MRF query response time: " + (stop - start));
-				String[] timings = response.getGetDumpResponse().getTiming();
-				log.info("Timings provided by mrf dump service:");
-				for (String timing : timings){
-					log.info(timing);
+				url = new URL(endpoint); 
+				DumpService service = new DumpService(url);
+				IDumpService idumpService = service.getGetDump();
+				GetDumpResponse response = null;
+				if (idumpService != null  ){
+					response = idumpService.getDump(request);
+					if (response != null){
+						responseString = response.getHl7();
+					}	
 				}
 
-			} catch (Exception e){
-				log.error("Exception during MRF query", e);
+			} catch (MalformedURLException e) {
+				log.error("URL for MRF dump  is not valid: " + endpoint, e);
+				throw new QueryKiteException(e);
+			} catch (SOAPFaultException e) {
+				log.error("SOAP Fault Exception", e);
+				throw new QueryKiteException(e);
+			} catch(Exception e){
+				log.error("MRF dump query exception.", e);
+				throw new QueryKiteException(e);
 			}
+				
 			return responseString;
+
 		}
+
 }
