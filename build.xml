@@ -106,15 +106,10 @@
          <arg value="src/org/openmrs/module/chica/xmlBeans/*.xsd"/>
       </java>
    </target>
-   <target name="generate-client">
-      <path id="axis2classpath">
-         <fileset dir="lib-common">
-            <include name="**/*.jar"/>
-         </fileset>
-      </path>
-      <taskdef name="axis2-wsdl2java" classname="org.apache.axis2.tool.ant.AntCodegenTask"
-               classpathref="axis2classpath"/>
-      <axis2-wsdl2java wsdlfilename="MRNRequestForDump.wsdl" output="."
-                       packageName="org.openmrs.module.chica.mrfservices"/>
-   </target>
+   	<target name="generate-client" > 
+			<mkdir dir="build" />
+		    <exec executable="${java.home}/../bin/wsimport"> 
+		        <arg line="-verbose -d build -s ${basedir}/src  ${basedir}/MRNRequestForDump.wsdl"/> 
+		    </exec> 
+	</target>
 </project>

@@ -5,20 +5,21 @@ package org.openmrs.module.chica.action;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
+import org.jfree.util.Log;
+import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
@@ -34,155 +35,113 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class LoadHL7ExportQueue implements ProcessStateAction
 {
 
+	private static final String EMPTY_STRING = "";
+	private static final int EXPORT_STATUS_PENDING = 1;
+	private static final String VITALS_CONCEPT_MAP_LOCATION = "VitalsConceptMapLocation";
+	private static final String TIFF_CONCEPT_MAP_LOCATION = "TiffConceptMapLocation";
+	private static final String POC_CONCEPT_MAP_LOCATION = "POCConceptMapLocation";
+	private static final String FORM_ATTRIBUTE_EXPORTABLE = "exportForm";
+
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)
 	 */
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
 	{
-		//lookup the patient again to avoid lazy initialization errors
+		
 		PatientService patientService = Context.getPatientService();
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);		Integer patientId = patient.getPatientId();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);	
+		FormService formService = Context.getFormService();
+		
+		//Lookup the patient again to avoid lazy initialization errors
+		Integer patientId = patient.getPatientId();
 		patient = patientService.getPatient(patientId);
+		//Lookup the form to avoid lazy initialization errors
+		Integer formId = patientState.getFormId();
+		Form form = formService.getForm(formId);
 		
 		Integer locationTagId = patientState.getLocationTagId();
 		Integer locationId = patientState.getLocationId();
-		
-		
-		
-		ChicaService chicaService = Context
-				.getService(ChicaService.class);
 		State currState = patientState.getState();
 		Integer sessionId = patientState.getSessionId();
-		
 		Session session = chirdlutilbackportsService.getSession(sessionId);
 		Integer encounterId = session.getEncounterId();
 		
 		try {
-			if (patientState.getState().getName().equals("Export POC")) {
-				//TODO:add encounter to queue
-				ChicaHL7Export pocExport = new ChicaHL7Export();
-				pocExport.setDateInserted(new Date());
-				pocExport.setEncounterId(encounterId);
-				pocExport.setSessionId(sessionId);
-				pocExport.setVoided(false);
-				pocExport.setStatus(1);
-				ChicaHL7ExportMap POCmap = new ChicaHL7ExportMap();
-				LocationTagAttributeValue  POCTagValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, "POCConceptMapLocation", 
-						locationId);
-				if (POCTagValue != null && !POCTagValue.equals("")) {
-					POCTagValue.getValue();
-					ChicaHL7Export insertedExport = chicaService.insertEncounterToHL7ExportQueue(pocExport);
-					POCmap.setValue(String.valueOf(POCTagValue.getLocationTagAttributeValueId()));
-					POCmap.setHl7ExportQueueId(insertedExport.getQueueId());
-					POCmap.setDateInserted(new Date());
-					POCmap.setVoided(false);
-					chicaService.saveHL7ExportMap(POCmap);
-				}
-				
-				LocationTagAttributeValue  psftiffTagValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, "PSFTiffConceptMapLocation", 
-						locationId);
-				psftiffTagValue.getValue();
-				
-				if (psftiffTagValue != null && !psftiffTagValue.equals("")){
-					// Find the form instance for the PSF for the encounter to see if it was populated using paper or not.  
-					// If it was populated through some medium other than paper, there will be no tiff to export.
-					boolean paperImage = true;
-					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(
-						"PSF", encounterId);
-					FormInstance formInstance = null;
-					if (patientStates != null) {
-						Iterator<PatientState> psIterator = patientStates.iterator();
-						while (psIterator.hasNext()) {
-							formInstance = psIterator.next().getFormInstance();
-							if (formInstance != null) {
-								break;
-							}
-						}
-					}
-					if (formInstance != null) {
-						Integer formId = formInstance.getFormId();
-						Integer formInstanceId = formInstance.getFormInstanceId();
-						Integer formLocationId = formInstance.getLocationId();
-						FormInstanceAttributeValue fiav = chirdlutilbackportsService.getFormInstanceAttributeValue(
-							formId, formInstanceId, formLocationId, "medium");
-						if (fiav != null && !"paper".equalsIgnoreCase(fiav.getValue())) {
-							paperImage = false;
-						}
-					}
-					
-					if (paperImage) {
-						ChicaHL7ExportMap psftiffMap = new ChicaHL7ExportMap();
-						ChicaHL7Export exportpsf = new ChicaHL7Export();
-						exportpsf.setDateInserted(new Date());
-						exportpsf.setEncounterId(encounterId);
-						exportpsf.setSessionId(sessionId);
-						exportpsf.setVoided(false);
-						exportpsf.setStatus(1);
-						ChicaHL7Export insertedExport = chicaService.insertEncounterToHL7ExportQueue(exportpsf);
-						psftiffMap.setValue(String.valueOf(psftiffTagValue.getLocationTagAttributeValueId()));
-						psftiffMap.setHl7ExportQueueId(insertedExport.getQueueId());
-						psftiffMap.setDateInserted(new Date());
-						psftiffMap.setVoided(false);
-						chicaService.saveHL7ExportMap(psftiffMap);
-					}
-					
-				}
-				
-				ChicaHL7ExportMap pwstiffMap = new ChicaHL7ExportMap();
-				LocationTagAttributeValue  pwstiffTagValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, "PWSTiffConceptMapLocation", 
-						locationId);
-				pwstiffTagValue.getValue();
-				
-				if (pwstiffTagValue != null && !pwstiffTagValue.equals("")){
-					ChicaHL7Export exportpws = new ChicaHL7Export();
-					exportpws.setDateInserted(new Date());
-					exportpws.setEncounterId(encounterId);
-					exportpws.setSessionId(sessionId);
-					exportpws.setVoided(false);
-					exportpws.setStatus(1);
-					ChicaHL7Export insertedExport = chicaService.insertEncounterToHL7ExportQueue(exportpws);
-					pwstiffMap.setValue(String.valueOf(pwstiffTagValue.getLocationTagAttributeValueId()));
-					pwstiffMap.setHl7ExportQueueId(insertedExport.getQueueId());
-					pwstiffMap.setDateInserted(new Date());
-					pwstiffMap.setVoided(false);
-					chicaService.saveHL7ExportMap(pwstiffMap);
-					
-				}
-				
 			
+			if (currState == null){
+				return;
+			}
+			String currStateName = currState.getName();
+			if (ChirdlUtilConstants.STATE_EXPORT_VITALS.equals(currStateName)){
 				
+				//Concept map files will be eliminated in a future update
+				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
+					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, VITALS_CONCEPT_MAP_LOCATION, locationId);
+				if (conceptMapLocationTagAttrValue == null || conceptMapLocationTagAttrValue.getValue() == null
+						|| conceptMapLocationTagAttrValue.getValue().trim().equals("")) {
+					Log.error("Location tag attribute for location map location for location id = " + locationId + " is null or empty.");
+					return;
+				}
+				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
+				return;	
 				
 			}
-			if (patientState.getState().getName().equals("Export Vitals")){
+			
+			//Export the observations scanned from PWS 
+			if (ChirdlUtilConstants.STATE_EXPORT_POC.equals(currStateName)) {
 				
+				//Concept map files will be eliminated in a future update
+				LocationTagAttributeValue  conceptMapLocationTagAttrValue = 
+						chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, POC_CONCEPT_MAP_LOCATION, 
+							locationId);
+				if (conceptMapLocationTagAttrValue == null || conceptMapLocationTagAttrValue.getValue() == null
+						|| conceptMapLocationTagAttrValue.getValue().trim().equals("")) {
+					Log.error("Location tag attribute for location of POC observation concept map for location id = " + locationId + " is null or empty.");
+					return;
+				};
+				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
+	
+				//Do not return yet, because both observations AND scanned PWS forms are exported.
 				
-				ChicaHL7ExportMap vitalsMap = new ChicaHL7ExportMap();
-				LocationTagAttributeValue  tagValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, "VitalsConceptMapLocation", 
-						locationId);
-				if (tagValue != null && !tagValue.equals("")){
-					//TODO:add encounter to queue
-					ChicaHL7Export vitalsExport = new ChicaHL7Export();
-					vitalsExport.setDateInserted(new Date());
-					vitalsExport.setEncounterId(encounterId);
-					vitalsExport.setSessionId(sessionId);
-					vitalsExport.setVoided(false);
-					vitalsExport.setStatus(1);
-					ChicaHL7Export insertedExport = chicaService.insertEncounterToHL7ExportQueue(vitalsExport);
-					tagValue.getValue();
-					vitalsMap.setValue(String.valueOf(tagValue.getLocationTagAttributeValueId()));
-					vitalsMap.setHl7ExportQueueId(insertedExport.getQueueId());
-					vitalsMap.setDateInserted(new Date());
-					vitalsMap.setVoided(false);
-					chicaService.saveHL7ExportMap(vitalsMap);
-					
+			}
+			
+			//Export form image (PWS or JIT)
+			
+			/*  CHICA-597 MES 
+			 * Check form attribute to determine if a form should be exported.
+			 * 	We will no longer check medium of electronic versus paper. The form attribute, that defines
+			 * need for export, can be configured by location.
+			 * For the time when any clinics have both paper and electronic PWS, we will set PWS as an exportable form. 
+			 * The paper PWS will get exported, and we will still get exporter errors for electronic forms temporarily.
+			 * The PWS export errors from the Operations Dashboard have been disabled.  
+			 * When each clinic moves completely to ePWS, we will set the form attribute for those locations
+			 * to disable exporting the PWS.
+			 */
+			
+			FormAttributeValue exportAttrValue = 
+					chirdlutilbackportsService.getFormAttributeValue(formId, FORM_ATTRIBUTE_EXPORTABLE, locationTagId, locationId);
+			
+			if (exportAttrValue == null ){
+				//do not export
+				return;
+			}
+			
+			if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equals(exportAttrValue.getValue())){						
+				
+				//Concept map files will be eliminated in a future update
+				LocationTagAttributeValue  tiffLocationTagConceptMapLocation = 
+						chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, form.getName() + TIFF_CONCEPT_MAP_LOCATION, 
+								locationId);
+				if (tiffLocationTagConceptMapLocation == null || tiffLocationTagConceptMapLocation.getValue() == null
+						|| tiffLocationTagConceptMapLocation.getValue().trim().equals("")){
+					Log.error("Location tag attribute for location of tiff concept map for location id = " + locationId + " is null or empty.");
+					return;
 				}
 				
+				addExportToQueue(encounterId, sessionId, tiffLocationTagConceptMapLocation );
 			}
+			
 		} finally{
 			
 		StateManager.endState(patientState);
@@ -194,6 +153,30 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 	public void changeState(PatientState patientState,
 			HashMap<String, Object> parameters) {
 		//deliberately empty because processAction changes the state
+	}
+	
+	private void addExportToQueue(Integer encounterId, Integer sessionId, LocationTagAttributeValue tagValue) {
+		
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		String conceptMapLocation = tagValue.getValue();
+		
+		if (conceptMapLocation != null && !conceptMapLocation.equals(EMPTY_STRING)){
+			ChicaHL7Export export = new ChicaHL7Export();
+			export.setDateInserted(new Date());
+			export.setEncounterId(encounterId);
+			export.setSessionId(sessionId);
+			export.setVoided(false);
+			export.setStatus(EXPORT_STATUS_PENDING);
+			chicaService.saveChicaHL7Export(export);
+			ChicaHL7ExportMap tiffMap = new ChicaHL7ExportMap();
+			ChicaHL7Export insertedExport = chicaService.insertEncounterToHL7ExportQueue(export);
+			tiffMap.setValue(String.valueOf(tagValue.getLocationTagAttributeValueId()));
+			tiffMap.setHl7ExportQueueId(insertedExport.getQueueId());
+			tiffMap.setDateInserted(new Date());
+			tiffMap.setVoided(false);
+			chicaService.saveHL7ExportMap(tiffMap);
+		}
+
 	}
 
 }
