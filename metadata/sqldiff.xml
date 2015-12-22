@@ -3670,6 +3670,11 @@ where action_name='REPRINT';
             CHICA-492 Add new chica_insurance_category records
         </description>
         <sql>
+        
+            ALTER TABLE chica_insurance_category ADD ecw_ins_name mediumtext;
+
+            ALTER TABLE chica_insurance_category MODIFY INSURANCE_ID int(11) NOT NULL AUTO_INCREMENT;
+            
             INSERT INTO `chica_insurance_category` (sms_code, category, sms_ins_name, mckesson_ins_name, star_carrier_code, star_plan_code, ins_code, ecw_ins_name) 
             VALUES ('null', 'Commercial', null, null, null, null, 'A', null),
             ('null', 'Commercial', null, null, null, null, 'B', null),
