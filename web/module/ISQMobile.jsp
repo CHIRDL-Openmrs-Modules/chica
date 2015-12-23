@@ -340,25 +340,6 @@
                 <label for="ISQQuestionEntry_7_6OM">6 months or more</label>
             </fieldset>
         </div>
-        
-        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
-    </div>
-    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Next</a>
-        <!-- <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="confirmQuit()" style="width: 150px;">Quit</a> -->
-    </div>
-</div>
-
-<div id="question_page_5" data-role="page" data-theme="b" type="question_page">
-    <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
-        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
-    </div>
-    <div id="content_5" data-role="content">
-   		 <h3>Sleeping in parent&rsquos bed:</h3>
         <c:set var="quest8" value='How often do you end up taking your baby into your bed because he/she is updset and won&rsquo;t sleep'/>
         <input id="ISQQuestion_8" name="ISQQuestion_8" type="hidden" value="${quest8}"/>
         <strong>${quest8}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest8}")'></a>
@@ -382,6 +363,26 @@
                 <label for="ISQQuestionEntry_8_EN">Every night of the week</label>
             </fieldset>
         </div>
+        
+        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Next</a>
+        <!-- <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="confirmQuit()" style="width: 150px;">Quit</a> -->
+    </div>
+</div>
+
+<div id="question_page_5" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>Infant Sleep Questionaire:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+    </div>
+    <div id="content_5" data-role="content">
+   		 <h3>Sleeping in parent&rsquos bed:</h3>
+        
          <div><hr/><br/></div>
         <c:set var="quest9" value='How long has the problem been going on?'/>
         <input id="ISQQuestion_9" name="ISQQuestion_9" type="hidden" value="${quest9}"/>
@@ -404,6 +405,21 @@
                 <label for="ISQQuestionEntry_9_6MOM">6 months or more</label>
             </fieldset>
         </div>
+         <c:set var="quest10" value='Do you think that your baby has sleeping difficulties?'/>
+        <input id="ISQQuestion_10" name="ISQQuestion_9" type="hidden" value="${quest10}"/>
+        <strong>${quest10}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest10}")'></a>
+        <div data-role="fieldcontain" style="margin-top:0px;">
+            <fieldset data-role="controlgroup" data-type="vertical">
+                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_10_NO" value="0" data-theme="b" />
+                <label for="ISQQuestionEntry_10_NO">No</label>
+                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_10_MILD" value="1" data-theme="b" />
+                <label for="ISQQuestionEntry_10_MILD">Yes, mild</label>
+                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_10_MOD" value="2" data-theme="b" />
+                <label for="ISQQuestionEntry_10_MOD">Yes, moderate</label>
+                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_20_SEVERE" value="3" data-theme="b" />
+                <label for="ISQQuestionEntry_20_SEVERE">Yes, severe</label>
+            </fieldset>
+        </div>
         
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
@@ -424,21 +440,7 @@
     <div id="content_6" data-role="content">
         <h3>"Your views":</h3>
         <div><hr/><br/></div>
-        <c:set var="quest10" value='Do you think that your baby has sleeping difficulties?'/>
-        <input id="ISQQuestion_10" name="ISQQuestion_9" type="hidden" value="${quest10}"/>
-        <strong>${quest10}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest10}")'></a>
-        <div data-role="fieldcontain" style="margin-top:0px;">
-            <fieldset data-role="controlgroup" data-type="vertical">
-                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_10_NO" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_10_NO">No</label>
-                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_10_MILD" value="1" data-theme="b" />
-                <label for="ISQQuestionEntry_10_MILD">Yes, mild</label>
-                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_10_MOD" value="2" data-theme="b" />
-                <label for="ISQQuestionEntry_10_MOD">Yes, moderate</label>
-                <input type="radio" name="ISQQuestionEntry_10" id="ISQQuestionEntry_20_SEVERE" value="3" data-theme="b" />
-                <label for="ISQQuestionEntry_20_SEVERE">Yes, severe</label>
-            </fieldset>
-        </div>
+       
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
         <div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
@@ -483,13 +485,14 @@
 
 <div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>PHQ-9:</h1>
+        <h1>CUESTIONARIO SOBRE EL SUEÑO INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
     <div id="content_1_sp" data-role="content">
         <strong><span>Durante las &#250;ltimas 2 semanas, &#191;qu&#233; tan seguido le han afectado cualquiera de los siguientes problemas?</span></strong>
+        <strong><span>&iquest;Cuánto tiempo en promedio tarda generalmente su bebé en disponerse a dormir? (marque solo una casilla</span></strong>
         <div><hr/><br/></div>
         <c:set var="quest1_2" value='Poco inter&#233;s o placer en hacer las cosas'/>
         <input id="ISQQuestion_1_2" name="ISQQuestion_1_2" type="hidden" value="${quest1_2}"/>

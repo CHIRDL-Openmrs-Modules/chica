@@ -48,14 +48,14 @@ function setLanguageField() {
 function setLanguage(patientName, birthdate) {
 	english = !english;
     var langButtonText = "Español";
-    var additionalQuestions = "The following are some additional questions about infant sleep.";
-    var instructions = '<p>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</p>';
+    var additionalQuestions = "Here are a number of questions about your baby's sleeping habits.";
+    var instructions = '<p>Please base your answers on what you have noticied over the last MONTH.</p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
     if (!english) {
         langButtonText = "English";
-        additionalQuestions = "Las preguntas siguientes son adicionales acerca de la depresión.";
-        instructions = '<p>Durante las últimas 2 semanas, ¿qué tan seguido le han afectado cualquiera de los siguientes problemas?</p>';
+        additionalQuestions = "A continuación encontrará una serie de preguntas sobre los hábitos de sueño de su bebé.";
+        instructions = '<p>Base sus respuestas en lo que haya observado durante el último MES.</p>';
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
     }
