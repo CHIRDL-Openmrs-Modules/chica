@@ -651,3 +651,7 @@ div#notesTabs .ui-tabs-panel{
 	font-size: .75em;
 	color:#000000;
 }
+
+.awaitingVitalsClass{
+	color:red;
+}

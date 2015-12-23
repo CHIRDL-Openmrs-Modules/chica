@@ -4,9 +4,23 @@
                     </div>
                     <div class="vitalsNames">
                         <b>Vital Signs:</b>
-                    </div>
-                    <div class="vitalsValues">
-                        &nbsp;&nbsp;
+                    </div>                  
+                    <c:choose>
+                            <c:when test="${empty VitalsProcessed}">
+                                <c:set var="vitalsProcessedFlag" value="" />
+                                <c:set var="vitalsProcessedClass" value=""/>
+                            </c:when>
+                            <c:when test="${VitalsProcessed == 'true'}">
+                               <c:set var="vitalsProcessedFlag" value="vitals received" />
+                               <c:set var="vitalsProcessedClass" value=""/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="vitalsProcessedFlag" value="awaiting vitals" />
+                                <c:set var="vitalsProcessedClass" value="awaitingVitalsClass"/>
+                            </c:otherwise>
+                        </c:choose>   
+                    <div class="vitalsValues ${vitalsProcessedClass}">
+                        <c:out value="${vitalsProcessedFlag}" />
                     </div>
                     <div class="flagCell">
                         <b><c:out value="${HeightA}"/></b><br/>

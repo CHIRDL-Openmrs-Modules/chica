@@ -6,7 +6,9 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -411,7 +413,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			ADT_A01 adt = (ADT_A01) message;
 			
 			int numObs = adt.getOBXReps();
-			
+			Map<String,ConceptDatatype> conceptDataTypeMap = new HashMap<String,ConceptDatatype>();
 			for (int j = 0; j < numObs; j++) {
 				Obs obs = hl7SocketHandler.CreateObservation(null, false, message, 0, j, existingLoc, patient);
 				
@@ -420,22 +422,22 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 				//infer the type from the data
 				if (obsConcept.getDatatype() == null) {
 					if (obs.getValueCoded() != null) {
-						ConceptDatatype conceptDatatype = conceptService.getConceptDatatypeByName("Coded");
+						ConceptDatatype conceptDatatype = getConceptDatatype("Coded", conceptDataTypeMap, conceptService);
 						obsConcept.setDatatype(conceptDatatype);
 					}
 					
 					if (obs.getValueNumeric() != null) {
-						ConceptDatatype conceptDatatype = conceptService.getConceptDatatypeByName("Numeric");
+						ConceptDatatype conceptDatatype = getConceptDatatype("Numeric", conceptDataTypeMap, conceptService);
 						obsConcept.setDatatype(conceptDatatype);
 					}
 					
 					if (obs.getValueDatetime() != null) {
-						ConceptDatatype conceptDatatype = conceptService.getConceptDatatypeByName("Datetime");
+						ConceptDatatype conceptDatatype = getConceptDatatype("Datetime", conceptDataTypeMap, conceptService);
 						obsConcept.setDatatype(conceptDatatype);
 					}
 					
 					if (obs.getValueText() != null) {
-						ConceptDatatype conceptDatatype = conceptService.getConceptDatatypeByName("Text");
+						ConceptDatatype conceptDatatype = getConceptDatatype("Text", conceptDataTypeMap, conceptService);
 						obsConcept.setDatatype(conceptDatatype);
 					}
 				}
@@ -445,9 +447,31 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 					allObs.add(obs);
 				}
 			}
+			
+			conceptDataTypeMap.clear();
 		}
 		
 		return allObs;
+	}
+	
+	/**
+	 * Convenience method for retrieving a concept data type.
+	 * 
+	 * @param datatype The requested data type.
+	 * @param conceptDataTypeMap Map used to stored previously queried data types.
+	 * @param conceptService Concept Service used to retrieve the data types.
+	 * @return ConceptDatatype object or null if one cannot be found.
+	 */
+	private ConceptDatatype getConceptDatatype(String datatype, Map<String,ConceptDatatype> conceptDataTypeMap,
+	                                           ConceptService conceptService) {
+		ConceptDatatype conceptDatatype = conceptDataTypeMap.get(datatype);
+		if (conceptDatatype != null) {
+			return conceptDatatype;
+		}
+		
+		conceptDatatype = conceptService.getConceptDatatypeByName(datatype);
+		conceptDataTypeMap.put(datatype, conceptDatatype);
+		return conceptDatatype;
 	}
 
 	/* (non-Javadoc)

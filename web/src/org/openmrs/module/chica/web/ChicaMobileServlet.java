@@ -175,7 +175,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			try {
 				sessionId = Integer.parseInt(sessionIdStr);
 			} catch(NumberFormatException e) {
-				log.error("Error parsing patientId: " + sessionIdStr, e);
+				log.error("Error parsing sessionId: " + sessionIdStr, e);
 			}
 		}
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -204,7 +204,33 @@ public class ChicaMobileServlet extends HttpServlet {
 			}
 				
 			if (result == null) {
+				PatientRowLoop:
 				for (PatientRow row : rows) {
+					
+					// DWE CHICA-488 Make sure we have a valid formId, formInstanceId, and locationId
+					// for each of the form instances before adding this patient to the greaseBoard
+					Set<FormInstance> formInstances = row.getFormInstances();
+					if(formInstances != null)
+					{
+						for(FormInstance formInstance : formInstances)
+						{
+							if(formInstance.getFormId() == null || formInstance.getFormInstanceId() == null || formInstance.getLocationId() == null)
+							{
+								log.error("Error getting forms for patientId: " + row.getPatientId() + " formId: " 
+										+ formInstance.getFormId() 
+										+ " formInstanceId: " + formInstance.getFormInstanceId() 
+										+ " locationId: " + formInstance.getLocationId() 
+										+ ". The patient will not be added to the mobile greaseBoard.");
+								continue PatientRowLoop;
+							}
+						}
+					}
+					else
+					{
+						log.error("Error getting forms for patientId: " + row.getPatientId() + ". The patient will not be added to the mobile greaseBoard.");
+						continue;
+					}
+					
 					printWriter.write(XML_PATIENT_START);
 					ServletUtil.writeTag(XML_ID, row.getPatientId(), printWriter);
 					ServletUtil.writeTag(XML_MRN, row.getMrn(), printWriter);
@@ -222,7 +248,7 @@ public class ChicaMobileServlet extends HttpServlet {
 					ServletUtil.writeTag(XML_ENCOUNTER_ID, row.getEncounter().getEncounterId(), printWriter);
 					ServletUtil.writeTag(XML_REPRINT_STATUS, row.isReprintStatus(), printWriter);
 					printWriter.write(XML_FORM_INSTANCES_START);
-					Set<FormInstance> formInstances = row.getFormInstances();
+					
 					if (formInstances != null) {
 						for (FormInstance formInstance : formInstances) {
 							printWriter.write(XML_FORM_INSTANCE_START);
