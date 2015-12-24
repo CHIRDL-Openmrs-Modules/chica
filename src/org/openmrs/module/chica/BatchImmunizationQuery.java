@@ -32,6 +32,7 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationRegistryQuery;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -50,12 +51,16 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 	private TaskDefinition taskConfig;
 	private String conceptProperty; //String containing concept name
-	private static final String PROPERTY_KEY_CONCEPT = "concept";
+	private static final String PROPERTY_KEY_ENROLLMENT_CONCEPT = "enrollment_concept";
+	private static final String PROPERTY_KEY_FOLLOWUP_CONCEPT = "followup_concept";
 	private String startDateProperty;
 	private String stopDateProperty;
-	private static final String FOLLOWUP_CONCEPT_TWO_WEEK = "2wk_HPV";
-	private static final String FOLLOWUP_CONCEPT_FOUR_MONTH = "4mo_HPV";
-	private static final String HPV_VACCINE_NAME = "HPV, unspecified formulation";
+	private String followupConceptProperty;
+	private static final String CHIRP_STATUS_CONCEPT = "CHIRP_Status";
+
+	private static final String HPV_VACCINE_NAME = "HPV";
+	private Concept statusConcept;
+	
 	
 	@Override
 	public void initialize(TaskDefinition config) {
@@ -66,12 +71,13 @@ public class BatchImmunizationQuery extends AbstractTask {
 		try {
 			
 			log.info("Initializing vaccine follow-up scheduled task.");
-		    conceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_CONCEPT);
+		    conceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_ENROLLMENT_CONCEPT);
 		    startDateProperty = this.taskConfig.getProperty(PROPERTY_START_DATE);
 		    stopDateProperty = this.taskConfig.getProperty(PROPERTY_STOP_DATE);
+		    followupConceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_FOLLOWUP_CONCEPT);
 		    
 		    if (conceptProperty == null || conceptProperty.trim().equals("")) {
-				log.error("Batch immunication query task property '" + PROPERTY_KEY_CONCEPT + " is not present in the property list for this task");
+				log.error("Batch immunication query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + " is not present in the property list for this task");
 				shutdown();
 			}
 		    if (startDateProperty == null || startDateProperty.trim().equals("")) {
@@ -80,6 +86,10 @@ public class BatchImmunizationQuery extends AbstractTask {
 			}
 		    if (stopDateProperty == null || stopDateProperty.trim().equals("")) {
 				log.error("Batch immunication query task property " + PROPERTY_STOP_DATE + " is not present in the property list for this task");
+				shutdown();
+			}
+		    if (followupConceptProperty == null || followupConceptProperty.trim().equals("")) {
+				log.error("Batch immunication query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + " is not present in the property list for this task");
 				shutdown();
 			}
 		    
@@ -95,19 +105,23 @@ public class BatchImmunizationQuery extends AbstractTask {
 		Context.openSession();
 
 		ConceptService conceptService = Context.getConceptService();
-		Concept twoWeekIntervalConcept = conceptService.getConceptByName(FOLLOWUP_CONCEPT_TWO_WEEK);
-		Concept fourMonthIntervalConcept = conceptService.getConceptByName(FOLLOWUP_CONCEPT_FOUR_MONTH);
+	
 
 		try {
 
 				Concept enrollmentConcept = conceptService.getConceptByName(conceptProperty);
 				if (enrollmentConcept == null) {
-					log.error ("HPV study:  Task property '" + PROPERTY_KEY_CONCEPT + "' is not a valid concept");
+					log.error ("HPV study:  Task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not a valid concept");
 					return;
 				}
+				Concept followUpConcept = conceptService.getConceptByName(followupConceptProperty);
+				if (followUpConcept == null) {
+					log.error ("HPV study:  Task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not a valid concept");
+					return;
+				}
+				statusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
 				
-				followUpRequery(enrollmentConcept, twoWeekIntervalConcept, 14 );
-				followUpRequery(enrollmentConcept, fourMonthIntervalConcept , 120);
+				queryChirp(enrollmentConcept, followUpConcept);
 				
 		} catch (Exception e) {
 			log.error("HPV study: Exception during vaccine follow-up check.", e);
@@ -117,7 +131,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 	}
 
 
-	private Integer followUpRequery(Concept enrollmentConcept, Concept followUpConcept,  int lookupIntervalInDays) {
+	private Integer queryChirp(Concept enrollmentConcept, Concept followUpConcept) {
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
@@ -125,7 +139,6 @@ public class BatchImmunizationQuery extends AbstractTask {
 		Date startDate = DateUtil.parseYmd(startDateProperty);
 		Date stopDate = DateUtil.parseYmd(stopDateProperty);
 		
-
 		List<Encounter> encounters = chicaService
 				.getEncountersForEnrolledPatients(enrollmentConcept,
 						startDate, stopDate);
@@ -133,8 +146,10 @@ public class BatchImmunizationQuery extends AbstractTask {
 		//if encounter count is null set count to 0
 		// add count to info log
 		
+		int size = (encounters == null ? 0 : encounters.size());
+		
 		log.info("Number of HPV enrollment encounters for encounters starting " + startDateProperty 
-				+ " through " + stopDateProperty + ".: " );
+				+ " through " + stopDateProperty + " : " + size);
 
 		for (Encounter encounter : encounters) {
 
@@ -153,15 +168,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 				
 				List<Concept> concepts = new ArrayList<Concept>();
 				concepts.add(followUpConcept);
+				
+				List<org.openmrs.Encounter> encounterList  = new ArrayList<org.openmrs.Encounter>();
+				encounterList.add(encounter);
 
-				List<Obs> obsList = obsService.getObservations(
-						patients, null, concepts, null, null, null, null, null, null,
-						startDate, 
-						stopDate,
-						false);
-
-				// If this observation already exists for today, do not query CHIRP again.
-				if (obsList.size() > 0) {
+				Integer alreadyExisting = obsService.getObservationCount(patients, encounterList, concepts, null, null, null, null, null, null, false);
+				
+				// If this observation already exists for this encounter
+				if (alreadyExisting > 0) {
 					continue;
 				}
 
@@ -171,8 +185,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 				 * as CHIRP availability, parse errors, no patient match, etc.
 				 * It also handles saving the observations for these CHIRP issues.
 				 */
-
+				
 				if (queryResponse == null) {
+					//If null response due to CHIRP availability, then stop.
+					List<Concept> statusConcepts = new ArrayList<Concept>();
+					concepts.add(statusConcept);
+					List<Obs> statusObs = obsService.getObservations(patients, encounterList, statusConcepts, null, null, null, null, null, null, null, null, false);
+					//get latest?  If latest = ImmunizationRegistryQuery.CHIRP_NOT_AVAILABLE, stop completely.  We do not want to bombard CHIRP with queries if they are offline.
+					
 					log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
 					continue;
 				}
@@ -196,21 +216,24 @@ public class BatchImmunizationQuery extends AbstractTask {
 					continue;
 				}
 
-
+				Integer count = 0;
 				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
-				hpvDoses = HpvHistory == null ?  0 : HpvHistory.size();
+				for(ImmunizationPrevious value : HpvHistory.values()){
+					if (value.getDate().before(encounter.getEncounterDatetime())){
+						count++;
+					}
+				}
 				
 				Obs obs = new Obs();
-				obs.setValueNumeric(hpvDoses.doubleValue());
+				obs.setValueNumeric(count.doubleValue());
 				obs.setEncounter(encounter);
 				obs.setPerson(encounter.getPatient());
 				obs.setConcept(followUpConcept);
 				obs.setObsDatetime(new Date());
 				obsService.saveObs(obs, null);
 
-				log.info("Follow-up check for time period " + lookupIntervalInDays
-						+ " days. Patient: " + identifier
-						+ " HPV doses: " + hpvDoses.toString());																				
+				log.info("Follow-up HPV count at encounter for patient: " + identifier
+						+ " HPV doses: " + count);																				
 
 			} catch (Exception e) {
 				log.error(" HPV Study exception for encounter = "
