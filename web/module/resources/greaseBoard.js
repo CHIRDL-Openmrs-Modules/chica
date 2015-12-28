@@ -19,6 +19,16 @@ $(function() {
     	yearRange: "-21:+0"
     });
     
+    $("#createFormsButton").button();
+    $("#createFormsButton").click(function() {
+    	var selectedForms = forcePrint_getSelectedForms();
+    	if (selectedForms.length == 0) {
+    		$("#noForcePrintsDialog").dialog("open");
+    	} else {
+    		
+    	}
+    });
+    
     $("#checkinButton, #viewEncountersButton, #printHandoutsButton, #selectPagerButton, #viewBadScans").button({
         icons: {
             primary: "ui-icon-newwin"
@@ -69,7 +79,7 @@ $(function() {
         close: function(event, ui) { 
         	event.preventDefault();
             $(".force-print-form-container").hide();
-            $('.force-print-forms').val("selectform").selectmenu("refresh");
+            $('#force-print-form-list').selectable("refresh");
         },
         autoOpen: false,
         modal: true,
@@ -414,6 +424,28 @@ $(function() {
             form.submit();
           },
           "No": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+    
+    $("#noForcePrintsDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+          },
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
             $(this).dialog("close");
           }
         }
@@ -826,7 +858,7 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#patientName").val("");
         	var mrn = $("#printHandoutsMrnLookup").val();
         	$("#mrn").val(mrn);
-        	$(".force-print-patient-name").html("<p>Please choose a form for #" + mrn + ".</p>");
+        	$(".force-print-patient-name").html("<p>Please choose form(s) for #" + mrn + ".</p>");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#printHandoutsMRNDialog").dialog("close");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
@@ -1104,7 +1136,7 @@ function confirmation(optionsSelect, formName) {
 		$("#locationTagId").val(locationTagId);
 		$("#patientName").val(patientName);
 		$("#forcePrintDialog").dialog("open");
-		$(".force-print-patient-name").html("<p>Please choose a form for " + patientName + ".</p>");
+		$(".force-print-patient-name").html("<p>Please choose form(s) for " + patientName + ".</p>");
         event.preventDefault();
 	} else if(optionsSelect[selectedIndex].text == 'ADHD WU'){
         $("#adhdWorkupDialog").data("form", formName).dialog("open");
@@ -1336,5 +1368,5 @@ function closePagerDialog() {
 function updateForcePrintDimensions() {
 	var divHeight = $(".greaseBoard-force-print-content").height();
     // Update the height of the select
-    $(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
+    $("#force-print-form-list").selectable().css({"max-height":(divHeight * 0.75) + "px"});
 }

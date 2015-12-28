@@ -36,10 +36,11 @@ $(document).ready(function () {
 	             <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
 	         </div>
 	         <div class="force-print-forms-container">
-	             <p>Please choose a form for ${patientName}.</p>
-	             <fieldset class="force-print-fieldset">
+	             <p>Please choose form(s) for ${patientName}.</p>
+	             <!-- <fieldset class="force-print-fieldset">
 	                 <select class="force-print-forms"></select>
-	             </fieldset>
+	             </fieldset> -->
+	             <ol id="force-print-form-list"></ol>
 	         </div>
 	         <div class="force-print-form-container">
 	            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="return forcePrint_formLoaded();">

@@ -97,6 +97,7 @@ a.force-print-icon-button {
 
 .force-print-patient-name {
 	color: #FFFFFF;
+	height: 5%;
 }
 
 .force-print-form-container {
@@ -108,4 +109,42 @@ a.force-print-icon-button {
 
 .ui-selectmenu-menu li { 
 	max-width: 270px;
+}
+
+#force-print-form-list .ui-selecting { 
+	background: #81F781; 
+	color: black;
+}
+
+#force-print-form-list .ui-selected { 
+	background: #81F781; 
+	color: black; 
+}
+
+#force-print-form-list { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 100%;
+	height: 100%; 
+}
+
+#force-print-form-list li { 
+	margin: 3px; 
+	padding: 0.4em;  
+	height: 18px; 
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.force-print-form-list-container {
+	overflow-y:auto;
+	height: 80%;
+	width: 99%;
+}
+
+.force-print-create-button-panel {
+	height: 15%;
+	padding-top: 0.4em;
 }

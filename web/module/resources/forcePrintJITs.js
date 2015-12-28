@@ -14,6 +14,18 @@ $(document).ready(function () {
 	$(".force-print-form-loading").hide();
 	$(".force-print-forms-loading").show();
 	$(".force-print-button-panel").show();
+	
+//	$( "#force-print-form-list" ).selectable({
+//      stop: function() {
+//    	  selectedForms = new Array();
+//        $( ".ui-selected", this ).each(function() {
+//        	var id = this.id;
+//        	selectedForms.push(id);
+//          //var index = $( "#force-print-form-list li" ).index( this );
+//        });
+//        alert(selectedForms);
+//      }
+//    });
 });
 
 function forcePrint_checkForChromeSafari() {
@@ -72,18 +84,20 @@ function forcePrint_parseAvailableForms(responseXML) {
 	options.push("<option value='selectform'>Please select a form...</option>");
     if (responseXML === null) {
     	$(".force-print-forms-loading").hide();
-    	$(".force-print-forms").selectmenu();
+    	//$(".force-print-forms").selectmenu();
+    	$("#force-print-form-list").selectable();
     	$(".force-print-forms-container").show();
     } else {
     	$(responseXML).find("forcePrintJIT").each(function () {
         	var formName = $(this).find("displayName").text();
             var formId = $(this).find("formId").text();
             
-            options.push("<option value='" + formId + "'>" + formName + "</option>");
+            //options.push("<option value='" + formId + "'>" + formName + "</option>");
+            $('<li id="' + formId + '" title="' + formName + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
         });
     }
     
-    $(".force-print-forms").append(options.join("")).selectmenu({
+    /*$(".force-print-forms").append(options.join("")).selectmenu({
 		  select: function( event, ui ) {
 			  var formId = $(".force-print-forms").val();
 			  if (formId == "selectform") {
@@ -92,14 +106,23 @@ function forcePrint_parseAvailableForms(responseXML) {
 				forcePrint_loadForm();
 			  }
 		  }
-		}).selectmenu("menuWidget").css({"max-height":($(window).height() * 0.60) + "px"});
-    $(".force-print-forms").css({"max-width":"325px"});
+		}).selectmenu("menuWidget").css({"max-height":($(window).height() * 0.60) + "px"});*/
+    $(".force-print-form-list").css({"max-width":"325px"});
 
   	$(".force-print-forms-loading").hide();
   	$(".force-print-forms-container").show();
-  	$('.force-print-forms').val("selectform").selectmenu("refresh");
-  	var divHeight = $(".force-print-forms").parent().parent().parent().height();
-  	$(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
+  	$('#force-print-form-list').selectable("refresh");
+  	$("#force-print-form-list li").tooltip({position: {
+        my: "center",
+        at: "right+175",
+        track: false,
+        using: function(position, feedback) {
+            $(this).css(position);                   
+        }
+    }
+});
+  	var divHeight = $(".force-print-forms-list").parent().parent().parent().height();
+  	$(".force-print-form-list").selectable().css({"max-height":(divHeight * 0.60) + "px"});
 }
 
 function forcePrint_loadForm() {
@@ -147,5 +170,15 @@ function forcePrint_loadForm() {
 }
 
 function forcePrint_removeForms() {
-	$(".force-print-forms").find("option").remove();
+	$("#force-print-form-list").find("li").remove();
+}
+
+function forcePrint_getSelectedForms() {
+	var selectedForms = new Array();
+	$(".ui-selected", "#force-print-form-list").each(function() {
+    	var id = this.id;
+    	selectedForms.push(id);
+    });
+	
+	return selectedForms;
 }
