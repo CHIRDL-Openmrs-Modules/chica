@@ -278,15 +278,13 @@ label {
               </div>
               <div class="force-print-forms-container">
                   <div class="force-print-patient-name">Please choose form(s) for ${patientName}.</div>
-                  <!-- <fieldset class="force-print-fieldset">
-                     <select class="force-print-forms"></select>
-                 </fieldset> -->
-                 <div class="force-print-form-list-container">
-                    <ol id="force-print-form-list"></ol>
-                 </div>
-                 <div class="force-print-create-button-panel">
-                    <a href="#" id="createFormsButton" class="force-print-icon-button ui-state-default ui-corner-all">Create</a>
-                 </div>
+                  <div class="force-print-multiple-select">Ctrl+click to select multiple forms</div>
+                  <div class="force-print-form-list-container">
+                     <ol id="force-print-form-list"></ol>
+                  </div>
+                  <div class="force-print-create-button-panel">
+                     <a href="#" id="createFormsButton" class="force-print-icon-button ui-state-default ui-corner-all">Create</a>
+                  </div>
               </div>
               <div class="force-print-form-container">
                  <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">

@@ -29,12 +29,12 @@
     text-align: center;
     margin: 0 auto;
     color: #000;
-    height: 98%;
+    height: 96%;
     width: 330px;
     background: #cc9966;
     float: left;
     border-radius: 7px;
-    padding-top: 10px;
+    padding-top: 0px;
 }
 
 .force-print-form-loading {
@@ -97,7 +97,13 @@ a.force-print-icon-button {
 
 .force-print-patient-name {
 	color: #FFFFFF;
-	height: 5%;
+	height: 7%;
+}
+
+.force-print-multiple-select {
+	color: #FFFFFF;
+	font-size: 0.6em;
+	margin-top: 4px;
 }
 
 .force-print-form-container {
@@ -140,7 +146,7 @@ a.force-print-icon-button {
 
 .force-print-form-list-container {
 	overflow-y:auto;
-	height: 80%;
+	height: 75%;
 	width: 99%;
 }
 

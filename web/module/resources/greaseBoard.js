@@ -25,7 +25,7 @@ $(function() {
     	if (selectedForms.length == 0) {
     		$("#noForcePrintsDialog").dialog("open");
     	} else {
-    		
+    		forcePrint_loadForm();
     	}
     });
     
@@ -65,6 +65,7 @@ $(function() {
             forcePrint_loadForms();
             $(".ui-dialog").addClass("ui-dialog-shadow");
             updateForcePrintDimensions();
+            $(".force-print-form-list-container").scrollTop(0);
         },
         beforeClose: function(event, ui) { 
         	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
@@ -79,7 +80,7 @@ $(function() {
         close: function(event, ui) { 
         	event.preventDefault();
             $(".force-print-form-container").hide();
-            $('#force-print-form-list').selectable("refresh");
+            $("#force-print-form-list").selectable("refresh");
         },
         autoOpen: false,
         modal: true,

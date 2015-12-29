@@ -15,17 +15,7 @@ $(document).ready(function () {
 	$(".force-print-forms-loading").show();
 	$(".force-print-button-panel").show();
 	
-//	$( "#force-print-form-list" ).selectable({
-//      stop: function() {
-//    	  selectedForms = new Array();
-//        $( ".ui-selected", this ).each(function() {
-//        	var id = this.id;
-//        	selectedForms.push(id);
-//          //var index = $( "#force-print-form-list li" ).index( this );
-//        });
-//        alert(selectedForms);
-//      }
-//    });
+	$("#force-print-form-list li").tooltip();
 });
 
 function forcePrint_checkForChromeSafari() {
@@ -112,15 +102,15 @@ function forcePrint_parseAvailableForms(responseXML) {
   	$(".force-print-forms-loading").hide();
   	$(".force-print-forms-container").show();
   	$('#force-print-form-list').selectable("refresh");
-  	$("#force-print-form-list li").tooltip({position: {
-        my: "center",
-        at: "right+175",
-        track: false,
-        using: function(position, feedback) {
-            $(this).css(position);                   
-        }
-    }
-});
+//  	$("#force-print-form-list li").tooltip({position: {
+//	        my: "center",
+//	        at: "right+175",
+//	        track: false,
+//	        using: function(position, feedback) {
+//	            $(this).css(position);                   
+//	        }
+//  		}
+//  	});
   	var divHeight = $(".force-print-forms-list").parent().parent().parent().height();
   	$(".force-print-form-list").selectable().css({"max-height":(divHeight * 0.60) + "px"});
 }
@@ -134,16 +124,16 @@ function forcePrint_loadForm() {
 	var sessionId = $("#sessionId").val();
 	var locationId = $("#locationId").val();
 	var locationTagId = $("#locationTagId").val();
-	var formId = $(".force-print-forms").val();
+	var formIds = forcePrint_getSelectedForms().toString();
 	var randomNumber = Math.floor((Math.random() * 10000) + 1); 
 	var action = "";
 	if (patientId === "") {
-		action = "action=forcePrintForm&mrn=" + mrn + "&sessionId=" + sessionId + "&locationId=" + 
-			locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
+		action = "action=forcePrintForms&mrn=" + mrn + "&sessionId=" + sessionId + "&locationId=" + 
+			locationId + "&locationTagId=" + locationTagId + "&formIds=" + formIds + "&randomNumber=" + randomNumber + 
 			"#view=fit&navpanes=0";
 	} else {
-		action = "action=forcePrintForm&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
-			locationId + "&locationTagId=" + locationTagId + "&formId=" + formId + "&randomNumber=" + randomNumber + 
+		action = "action=forcePrintForms&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
+			locationId + "&locationTagId=" + locationTagId + "&formIds=" + formIds + "&randomNumber=" + randomNumber + 
 			"#view=fit&navpanes=0";
 	}
 	
