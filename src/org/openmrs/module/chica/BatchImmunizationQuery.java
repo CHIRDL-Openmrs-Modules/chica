@@ -16,10 +16,12 @@ package org.openmrs.module.chica;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -43,14 +45,14 @@ import org.openmrs.scheduler.tasks.AbstractTask;
  */
 public class BatchImmunizationQuery extends AbstractTask {
 
+	private static final String CHIRP_NOT_AVAILABLE = "CHIRP_not_available";
 	private static final String PROPERTY_STOP_DATE = "Stop_Date";
-
 	private static final String PROPERTY_START_DATE = "Start_Date";
 
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private TaskDefinition taskConfig;
-	private String conceptProperty; //String containing concept name
+	private String enrollmentConceptProperty; //String containing concept name
 	private static final String PROPERTY_KEY_ENROLLMENT_CONCEPT = "enrollment_concept";
 	private static final String PROPERTY_KEY_FOLLOWUP_CONCEPT = "followup_concept";
 	private String startDateProperty;
@@ -71,25 +73,25 @@ public class BatchImmunizationQuery extends AbstractTask {
 		try {
 			
 			log.info("Initializing vaccine follow-up scheduled task.");
-		    conceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_ENROLLMENT_CONCEPT);
+			enrollmentConceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_ENROLLMENT_CONCEPT);
 		    startDateProperty = this.taskConfig.getProperty(PROPERTY_START_DATE);
 		    stopDateProperty = this.taskConfig.getProperty(PROPERTY_STOP_DATE);
 		    followupConceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_FOLLOWUP_CONCEPT);
 		    
-		    if (conceptProperty == null || conceptProperty.trim().equals("")) {
-				log.error("Batch immunication query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + " is not present in the property list for this task");
+		    if (StringUtils.isBlank(enrollmentConceptProperty)) {
+				log.error("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + " is not present in the property list for this task");
 				shutdown();
 			}
-		    if (startDateProperty == null || startDateProperty.trim().equals("")) {
-				log.error("Batch immunication query task property " + PROPERTY_START_DATE + " is not present in the property list for this task");
+		    if (StringUtils.isBlank(startDateProperty)) {
+				log.error("Batch immunization query task property " + PROPERTY_START_DATE + " is not present in the property list for this task");
 				shutdown();
 			}
-		    if (stopDateProperty == null || stopDateProperty.trim().equals("")) {
-				log.error("Batch immunication query task property " + PROPERTY_STOP_DATE + " is not present in the property list for this task");
+		    if (StringUtils.isBlank(stopDateProperty)) {
+				log.error("Batch immunization query task property " + PROPERTY_STOP_DATE + " is not present in the property list for this task");
 				shutdown();
 			}
-		    if (followupConceptProperty == null || followupConceptProperty.trim().equals("")) {
-				log.error("Batch immunication query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + " is not present in the property list for this task");
+		    if (StringUtils.isBlank(followupConceptProperty)) {
+				log.error("Batch immunization query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + " is not present in the property list for this task");
 				shutdown();
 			}
 		    
@@ -109,7 +111,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 		try {
 
-				Concept enrollmentConcept = conceptService.getConceptByName(conceptProperty);
+				Concept enrollmentConcept = conceptService.getConceptByName(enrollmentConceptProperty);
 				if (enrollmentConcept == null) {
 					log.error ("HPV study:  Task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not a valid concept");
 					return;
@@ -155,27 +157,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 			try {
 
-				/* 
-				 * CHIRP may not have been available earlier in the day, so a requery
-				 * task can be performed later in the day.
-				 * If follow-up observations exist already for today,
-				 * do not query for this encounter again. 
-				 */
-				String identifier = encounter.getPatient().getPatientIdentifier().toString();
-
-				List<Person> patients = new ArrayList<Person>();
-				patients.add(encounter.getPatient());
-				
-				List<Concept> concepts = new ArrayList<Concept>();
-				concepts.add(followUpConcept);
-				
-				List<org.openmrs.Encounter> encounterList  = new ArrayList<org.openmrs.Encounter>();
-				encounterList.add(encounter);
-
-				Integer alreadyExisting = obsService.getObservationCount(patients, encounterList, concepts, null, null, null, null, null, null, false);
+				//Do not query chirp if this obs already exists for the encounter.
+			
+				Integer obsCount = obsService.getObservationCount(Collections.singletonList((Person) encounter.getPatient()), 
+						Collections.singletonList((org.openmrs.Encounter) encounter), 
+						Collections.singletonList(followUpConcept), null, null, null, null, null, null, false);
 				
 				// If this observation already exists for this encounter
-				if (alreadyExisting > 0) {
+				if (obsCount > 0) {
 					continue;
 				}
 
@@ -187,27 +176,37 @@ public class BatchImmunizationQuery extends AbstractTask {
 				 */
 				
 				if (queryResponse == null) {
-					//If null response due to CHIRP availability, then stop.
-					List<Concept> statusConcepts = new ArrayList<Concept>();
-					concepts.add(statusConcept);
-					List<Obs> statusObs = obsService.getObservations(patients, encounterList, statusConcepts, null, null, null, null, null, null, null, null, false);
-					//get latest?  If latest = ImmunizationRegistryQuery.CHIRP_NOT_AVAILABLE, stop completely.  We do not want to bombard CHIRP with queries if they are offline.
+					//If null response is due to CHIRP availability, then stop. CHIRP might be down during off hours
+					ConceptService conceptService = Context.getConceptService();
+					Concept statusConcept = conceptService .getConceptByName(CHIRP_STATUS_CONCEPT);
+					Date now = new Date();
+					Integer mostRecentCount = 1;
+					List<Obs> latestChirpAvailabilityObs = obsService.getObservations(Collections.singletonList((Person)encounter.getPatient()), 
+							Collections.singletonList((org.openmrs.Encounter) encounter), 
+							Collections.singletonList(statusConcept), 
+							null, null, null, null, mostRecentCount, null, DateUtil.getStartOfDay(now), now, false);
+					if (latestChirpAvailabilityObs != null ) {
+						Obs status = latestChirpAvailabilityObs.get(0);
+						if (CHIRP_NOT_AVAILABLE.equals(status.getConcept().getName())){
+							log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
+							shutdown();
+						}
+					}
 					
-					log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
 					continue;
 				}
 
 				ImmunizationQueryOutput immunizations = ImmunizationForecastLookup
 						.getImmunizationList(encounter.getPatientId());
-
+				
+				String identifier = encounter.getPatient().getPatientIdentifier().toString();
 				if (immunizations == null) {
 					log.info("HPV Study: Vaccine requery found no immunizations in CHIRP for patient: " + identifier);
 					continue;
 				}
 
 				// patient has immunization records
-				Integer hpvDoses = 0;
-
+				
 				HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
 						.getImmunizationPrevious();
 
