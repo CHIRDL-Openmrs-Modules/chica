@@ -25,7 +25,38 @@ $(function() {
     	if (selectedForms.length == 0) {
     		$("#noForcePrintsDialog").dialog("open");
     	} else {
-    		forcePrint_loadForm();
+    		var pdfCount = 0;
+    		var teleformCount = 0;
+    		var index;
+    		var teleformForms = "";
+    		var outputTypes = forcePrint_getSelectedFormsOutputTypes();
+    		for (index = 0; index < outputTypes.length; index++) {
+    			var outputType = outputTypes[index][0];
+    			outputType = outputType.toLowerCase();
+    			var pdfPos = outputType.indexOf("pdf");
+    			var teleformPos = outputType.indexOf("teleformxml");
+    			if (pdfPos >= 0) {
+    				pdfCount++;
+    			}
+    			
+    			if (teleformPos >= 0) {
+    				teleformCount++;
+    				if (teleformForms.length > 0) {
+    					teleformForms += ", ";
+    				}
+    				
+    				teleformForms += outputTypes[index][1];
+    			}
+    		}
+    		
+    		if (pdfCount > 0 && teleformCount > 0) {
+    			var message = "<p>The following form(s) will be automatically sent to the printer and will not be displayed here: " + 
+    				teleformForms + "</p>";
+    			$("#multipleOutputTypesResultDiv").html(message);
+    			$("#multipleOutputTypesDialog").dialog("open");
+    		} else {
+    			forcePrint_loadForm();
+    		}
     	}
     });
     
@@ -450,6 +481,34 @@ $(function() {
             $(this).dialog("close");
           }
         }
+    });
+    
+    $("#multipleOutputTypesDialog").dialog({
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+        },
+        close: function() { 
+        	forcePrint_loadForm();
+        },
+        autoOpen: false,
+        modal: true,
+        resizable: false,
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        hide: {
+          effect: "fade",
+          duration: 500
+        },
+        buttons: [
+          {
+	          text:"OK",
+	          click: function() {
+	        	  $(this).dialog("close");
+	          }
+          }
+        ]
     });
     
     $("#forcePrintButton").click(function(event) {

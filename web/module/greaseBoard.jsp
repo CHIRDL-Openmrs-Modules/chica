@@ -636,6 +636,9 @@ label {
             <div style="color:#000000;"><p><b>Please select at least one form to create.</b></p></div>
         </div>
     </div>
+    <div id="multipleOutputTypesDialog" title="Forms" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+        <div id="multipleOutputTypesResultDiv" style="color:black;"></div>
+    </div>
     <input type="hidden" id="badScans" />
 </body>
 </html>

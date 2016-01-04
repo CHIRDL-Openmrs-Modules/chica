@@ -70,47 +70,25 @@ function forcePrint_handleGetAvailableFormsError(xhr, textStatus, error) {
 
 function forcePrint_parseAvailableForms(responseXML) {
 	// no matches returned
-	var options = [];
-	options.push("<option value='selectform'>Please select a form...</option>");
     if (responseXML === null) {
     	$(".force-print-forms-loading").hide();
-    	//$(".force-print-forms").selectmenu();
     	$("#force-print-form-list").selectable();
     	$(".force-print-forms-container").show();
     } else {
     	$(responseXML).find("forcePrintJIT").each(function () {
         	var formName = $(this).find("displayName").text();
             var formId = $(this).find("formId").text();
-            
-            //options.push("<option value='" + formId + "'>" + formName + "</option>");
-            $('<li id="' + formId + '" title="' + formName + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+            var outputType = $(this).find("outputType").text();
+            $('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
         });
     }
     
-    /*$(".force-print-forms").append(options.join("")).selectmenu({
-		  select: function( event, ui ) {
-			  var formId = $(".force-print-forms").val();
-			  if (formId == "selectform") {
-				  // A valid form was not selected
-			  } else {
-				forcePrint_loadForm();
-			  }
-		  }
-		}).selectmenu("menuWidget").css({"max-height":($(window).height() * 0.60) + "px"});*/
     $(".force-print-form-list").css({"max-width":"325px"});
 
   	$(".force-print-forms-loading").hide();
   	$(".force-print-forms-container").show();
   	$('#force-print-form-list').selectable("refresh");
-//  	$("#force-print-form-list li").tooltip({position: {
-//	        my: "center",
-//	        at: "right+175",
-//	        track: false,
-//	        using: function(position, feedback) {
-//	            $(this).css(position);                   
-//	        }
-//  		}
-//  	});
+
   	var divHeight = $(".force-print-forms-list").parent().parent().parent().height();
   	$(".force-print-form-list").selectable().css({"max-height":(divHeight * 0.60) + "px"});
 }
@@ -171,4 +149,18 @@ function forcePrint_getSelectedForms() {
     });
 	
 	return selectedForms;
+}
+
+function forcePrint_getSelectedFormsOutputTypes() {
+	var outputTypes = new Array();
+	$(".ui-selected", "#force-print-form-list").each(function() {
+		var formArray = new Array();
+    	var outputType = $(this).attr("outputType");
+    	var formName = $(this).attr("title");
+    	formArray.push(outputType);
+    	formArray.push(formName);
+    	outputTypes.push(formArray);
+    });
+	
+	return outputTypes;
 }

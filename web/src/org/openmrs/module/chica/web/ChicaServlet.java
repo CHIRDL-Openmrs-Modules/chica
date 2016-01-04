@@ -126,6 +126,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_BAD_SCANS_END = "</badScans>";
 	private static final String XML_URL_START = "<url>";
 	private static final String XML_URL_END = "</url>";
+	private static final String XML_OUTPUT_TYPE_START = "<outputType>";
+	private static final String XML_OUTPUT_TYPE_END = "</outputType>";
 	
 	private static final String CONTENT_DISPOSITION_PDF = "inline;filename=patientJITS.pdf";
 	
@@ -390,11 +392,11 @@ public class ChicaServlet extends HttpServlet {
 			File pdfDir = new File(mergeDirectory, ChirdlUtilConstants.FILE_PDF);
 			File mergeFile = new File(pdfDir, locationId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + 
 				ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceId + ChirdlUtilConstants.FILE_EXTENSION_PDF);
-			if (!mergeFile.exists()) {
+			if (!mergeFile.exists() || mergeFile.length() == 0) {
 				mergeFile = new File(pdfDir, ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationId + 
 					ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
 					formInstanceId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + ChirdlUtilConstants.FILE_EXTENSION_PDF);
-				if (!mergeFile.exists()) {
+				if (!mergeFile.exists() || mergeFile.length() == 0) {
 					continue;
 				}
 			}
@@ -403,6 +405,11 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		if (filesToCombine.size() == 0) {
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+			response.setHeader(
+				ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+			PrintWriter pw = response.getWriter();
+			pw.write("<p>An error occurred locating the file to display.</p>");
 			return;
 		} 
 		
@@ -683,6 +690,7 @@ public class ChicaServlet extends HttpServlet {
 		FormAttribute ageMinUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MIN_UNITS);
 		FormAttribute ageMaxUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS);
 		FormAttribute displayNameAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME);
+		FormAttribute outputTypeAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE);
 		
 		Map<Integer, String> formAttrValAgeMinMap = getFormAttributeValues(chirdlutilbackportsService, ageMinAttr.getFormAttributeId(), 
 			locationId, locationTagId);
@@ -766,10 +774,26 @@ public class ChicaServlet extends HttpServlet {
 			}
 		}
 		
+		String defaultOutputType = Context.getAdministrationService().getGlobalProperty(
+			ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
+		if (defaultOutputType == null) {
+			defaultOutputType = "";
+		}
+		
 		for (FormDisplay formDisplay: printableJits) {
 			pw.write(XML_FORCE_PRINT_JIT_START);
 			ServletUtil.writeTag(XML_FORM_ID, formDisplay.getFormId(), pw);
 			ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(formDisplay.getDisplayName()), pw);
+			FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
+				outputTypeAttr, locationTagId, locationId);
+			pw.write(XML_OUTPUT_TYPE_START);
+			if (outputType != null && outputType.getValue() != null && !outputType.getValue().isEmpty()) {
+				pw.write(outputType.getValue());
+			} else {
+				pw.write(defaultOutputType);
+			}
+			
+			pw.write(XML_OUTPUT_TYPE_END);
 			pw.write(XML_FORCE_PRINT_JIT_END);
 		}
 		
