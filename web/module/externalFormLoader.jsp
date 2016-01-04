@@ -4,12 +4,14 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/externalFormLoader.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/externalFormLoader.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
 <title>CHICA ${formName}</title>
 </head>
 <body>
@@ -55,7 +57,7 @@
                        <div><p>A valid encounter within the past 72 hours cannot be found for patient ${mrn} in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingFormInstance eq 'true'}">
-                       <div><p>The form ${formname} does not exist or has already been submitted for patient ${mrn} in the CHICA system.</p></div>
+                       <div><p>The form ${formName} does not exist or has already been submitted for patient ${mrn} in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingStartState eq 'true'}">
                        <div><p>A valid startState parameter was not provided to the CHICA system.</p></div>
@@ -89,8 +91,41 @@
         </c:choose>
         <br/>
         <c:if test="${hasErrors eq 'true'}">
+	        <c:if test="${showHandouts eq 'true'}">
+	           <div id="buttons">
+		           <div class="buttonsData">
+	                   <a href="#" id="forcePrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Handouts</a>
+	               </div>
+               </div>
+	        </c:if>
 	        <div>Please close this window at your convenience.</div>
         </c:if>
+    </div>
+    <div id="forcePrintDialog" title="CHICA Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+        <div class="forms-force-print-content">
+             <div class="force-print-forms-loading">
+                 <span id="formsLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
+             </div>
+             <div class="force-print-forms-server-error">
+                 <div class="force-print-forms-server-error-text ui-state-error"></div>
+                 <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
+             </div>
+             <div class="force-print-forms-container">
+                 <div class="force-print-patient-name">Please choose a form for ${patientName}.</div>
+                 <fieldset class="force-print-fieldset">
+                     <select class="force-print-forms"></select>
+                 </fieldset>
+             </div>
+             <div class="force-print-form-container">
+                <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
+                   <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
+                   <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+                </object>
+             </div>
+             <div class="force-print-form-loading">
+                <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
+             </div>
+        </div>
     </div>
     <form id="loadForm" method="POST">
         <input id="formName" name="formName" type="hidden" value="${formName}"/>
@@ -102,6 +137,9 @@
         <input id="sessionId" name="endState" type="hidden" value="${sessionId}"/>
         <input id="providerId" name="providerId" type="hidden" value="${providerId}"/>
         <input id="vendor" name="vendor" type="hidden" value="${providerId}"/>
+        <input id="patientId" name="patientId" type="hidden" value="${patientId}"/>
+        <input id="locationId" name="locationId" type="hidden" value="${locationId}"/>
+        <input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
     </form>
 </div>
 
