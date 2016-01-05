@@ -8,6 +8,151 @@ $(document).ready(function () {
 		event.preventDefault();
 	});
 	
+    $("#force-print-create-forms-button").button();
+    $("#force-print-create-forms-button").click(function() {
+    	var selectedForms = forcePrint_getSelectedForms();
+    	if (selectedForms.length == 0) {
+    		$(".force-print-form-container").hide();
+    		$("#force-print-no-force-prints-dialog").dialog("open");
+    	} else {
+    		var pdfCount = 0;
+    		var teleformCount = 0;
+    		var index;
+    		var teleformForms = "";
+    		var outputTypes = forcePrint_getSelectedFormsOutputTypes();
+    		for (index = 0; index < outputTypes.length; index++) {
+    			var outputType = outputTypes[index][0];
+    			outputType = outputType.toLowerCase();
+    			var pdfPos = outputType.indexOf("pdf");
+    			var teleformPos = outputType.indexOf("teleformxml");
+    			if (pdfPos >= 0) {
+    				pdfCount++;
+    			}
+    			
+    			if (teleformPos >= 0) {
+    				teleformCount++;
+    				if (teleformForms.length > 0) {
+    					teleformForms += ", ";
+    				}
+    				
+    				teleformForms += outputTypes[index][1];
+    			}
+    		}
+    		
+    		if (pdfCount > 0 && teleformCount > 0) {
+    			$(".force-print-form-container").hide();
+    			var message = "<p>The following form(s) will be automatically sent to the printer and will not be displayed here: " + 
+    				teleformForms + "</p>";
+    			$("#force-print-multiple-output-types-result-div").html(message);
+    			$("#force-print-multiple-output-types-dialog").dialog("open");
+    		} else {
+    			forcePrint_loadForm();
+    		}
+    	}
+    });
+    
+    $("#force-print-dialog").dialog({
+        open: function() { 
+        	$(".force-print-form-container").hide();
+            forcePrint_removeForms();
+            forcePrint_loadForms();
+            $(".ui-dialog").addClass("ui-dialog-shadow");
+            updateForcePrintDimensions();
+            $(".force-print-form-list-container").scrollTop(0);
+        },
+        beforeClose: function(event, ui) { 
+        	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
+        	$(".force-print-form-container").hide();
+        	var obj = $(".force-print-form-object");
+        	var container = obj.parent();
+        	var newobj = obj.clone();
+        	obj.remove();
+        	newobj.attr("data", "");
+        	container.append(newobj);
+        },
+        close: function(event, ui) { 
+        	event.preventDefault();
+            $(".force-print-form-container").hide();
+            $("#force-print-form-list").selectable("refresh");
+        },
+        autoOpen: false,
+        modal: true,
+        minHeight: 350,
+        minWidth: 950,
+        width: 950,
+        height: $(window).height() * 0.90,
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        hide: {
+          effect: "fade",
+          duration: 500
+        },
+//        resize: function(e,ui) {
+//            updateForcePrintDimensions();
+//        },
+        resizable: false,
+        buttons: [
+          {
+	          text:"Close",
+	          click: function() {
+	        	  $("#force-print-dialog").dialog("close");
+	          }
+          }
+        ]
+    });
+    
+    $("#force-print-no-force-prints-dialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+          },
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+    
+    $("#force-print-multiple-output-types-dialog").dialog({
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+        },
+        close: function() { 
+        	forcePrint_loadForm();
+        },
+        autoOpen: false,
+        modal: true,
+        resizable: false,
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        hide: {
+          effect: "fade",
+          duration: 500
+        },
+        buttons: [
+          {
+	          text:"OK",
+	          click: function() {
+	        	  $(this).dialog("close");
+	          }
+          }
+        ]
+    });
+	
 	$(".force-print-forms-server-error").hide();
 	$(".force-print-forms-container").hide();
 	$(".force-print-form-container").hide();
@@ -25,12 +170,14 @@ function forcePrint_checkForChromeSafari() {
 }
 
 function forcePrint_formLoaded() {
-	var obj = $(".force-print-form-object");
-	if (obj != null) {
-		var url = obj.attr("data");
-		if (url != null && url.length > 0) {
-			$(".force-print-form-loading").hide();
-			$(".force-print-form-container").show();
+	if ($("#force-print-multiple-output-types-dialog").dialog("isOpen") === false && $("#force-print-no-force-prints-dialog").dialog("isOpen") === false) {
+		var obj = $(".force-print-form-object");
+		if (obj != null) {
+			var url = obj.attr("data");
+			if (url != null && url.length > 0) {
+				$(".force-print-form-loading").hide();
+				$(".force-print-form-container").show();
+			}
 		}
 	}
 }
@@ -169,4 +316,10 @@ function forcePrint_getSelectedFormsOutputTypes() {
     });
 	
 	return outputTypes;
+}
+
+function updateForcePrintDimensions() {
+	var divHeight = $(".force-print-content").height();
+    // Update the height of the select
+    $("#force-print-form-list").selectable().css({"max-height":(divHeight * 0.75) + "px"});
 }

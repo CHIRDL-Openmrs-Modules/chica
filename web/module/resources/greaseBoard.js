@@ -19,47 +19,6 @@ $(function() {
     	yearRange: "-21:+0"
     });
     
-    $("#createFormsButton").button();
-    $("#createFormsButton").click(function() {
-    	var selectedForms = forcePrint_getSelectedForms();
-    	if (selectedForms.length == 0) {
-    		$("#noForcePrintsDialog").dialog("open");
-    	} else {
-    		var pdfCount = 0;
-    		var teleformCount = 0;
-    		var index;
-    		var teleformForms = "";
-    		var outputTypes = forcePrint_getSelectedFormsOutputTypes();
-    		for (index = 0; index < outputTypes.length; index++) {
-    			var outputType = outputTypes[index][0];
-    			outputType = outputType.toLowerCase();
-    			var pdfPos = outputType.indexOf("pdf");
-    			var teleformPos = outputType.indexOf("teleformxml");
-    			if (pdfPos >= 0) {
-    				pdfCount++;
-    			}
-    			
-    			if (teleformPos >= 0) {
-    				teleformCount++;
-    				if (teleformForms.length > 0) {
-    					teleformForms += ", ";
-    				}
-    				
-    				teleformForms += outputTypes[index][1];
-    			}
-    		}
-    		
-    		if (pdfCount > 0 && teleformCount > 0) {
-    			var message = "<p>The following form(s) will be automatically sent to the printer and will not be displayed here: " + 
-    				teleformForms + "</p>";
-    			$("#multipleOutputTypesResultDiv").html(message);
-    			$("#multipleOutputTypesDialog").dialog("open");
-    		} else {
-    			forcePrint_loadForm();
-    		}
-    	}
-    });
-    
     $("#checkinButton, #viewEncountersButton, #printHandoutsButton, #selectPagerButton, #viewBadScans").button({
         icons: {
             primary: "ui-icon-newwin"
@@ -88,58 +47,6 @@ $(function() {
     
     $("#viewBadScans").click(function() {
     	displayBadScans("/openmrs",$("#badScans").val())
-    });
-    
-    $("#forcePrintDialog").dialog({
-        open: function() { 
-        	$(".force-print-form-container").hide();
-            forcePrint_removeForms();
-            forcePrint_loadForms();
-            $(".ui-dialog").addClass("ui-dialog-shadow");
-            updateForcePrintDimensions();
-            $(".force-print-form-list-container").scrollTop(0);
-        },
-        beforeClose: function(event, ui) { 
-        	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
-        	$(".force-print-form-container").hide();
-        	var obj = $(".force-print-form-object");
-        	var container = obj.parent();
-        	var newobj = obj.clone();
-        	obj.remove();
-        	newobj.attr("data", "");
-        	container.append(newobj);
-        },
-        close: function(event, ui) { 
-        	event.preventDefault();
-            $(".force-print-form-container").hide();
-            $("#force-print-form-list").selectable("refresh");
-        },
-        autoOpen: false,
-        modal: true,
-        minHeight: 350,
-        minWidth: 950,
-        width: 950,
-        height: $(window).height() * 0.90,
-        show: {
-          effect: "fade",
-          duration: 500
-        },
-        hide: {
-          effect: "fade",
-          duration: 500
-        },
-//        resize: function(e,ui) {
-//            updateForcePrintDimensions();
-//        },
-        resizable: false,
-        buttons: [
-          {
-	          text:"Close",
-	          click: function() {
-	        	  $("#forcePrintDialog").dialog("close");
-	          }
-          }
-        ]
     });
     
     $("#listErrorDialog").dialog({
@@ -462,58 +369,8 @@ $(function() {
         }
     });
     
-    $("#noForcePrintsDialog").dialog({
-        resizable: false,
-        modal: true,
-        autoOpen: false,
-        open: function() { 
-            $(".ui-dialog").addClass("ui-dialog-shadow"); 
-          },
-        show: {
-            effect: "fade",
-            duration: 500
-          },
-          hide: {
-            effect: "fade",
-            duration: 500
-          },
-        buttons: {
-          "Close": function() {
-            $(this).dialog("close");
-          }
-        }
-    });
-    
-    $("#multipleOutputTypesDialog").dialog({
-        open: function() { 
-            $(".ui-dialog").addClass("ui-dialog-shadow"); 
-        },
-        close: function() { 
-        	forcePrint_loadForm();
-        },
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        show: {
-          effect: "fade",
-          duration: 500
-        },
-        hide: {
-          effect: "fade",
-          duration: 500
-        },
-        buttons: [
-          {
-	          text:"OK",
-	          click: function() {
-	        	  $(this).dialog("close");
-	          }
-          }
-        ]
-    });
-    
     $("#forcePrintButton").click(function(event) {
-        $("#forcePrintDialog").dialog("open");
+        $("#force-print-dialog").dialog("open");
         event.preventDefault();
     });
     
@@ -923,7 +780,7 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#printHandoutsMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#printHandoutsMRNDialog").dialog("close");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
-        	$("#forcePrintDialog").dialog("open");
+        	$("#force-print-dialog").dialog("open");
         } else {
         	$("#printHandoutsMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
             $("#printHandoutsMrnError").show("highlight", 750);
@@ -1196,7 +1053,7 @@ function confirmation(optionsSelect, formName) {
 		$("#locationId").val(locationId);
 		$("#locationTagId").val(locationTagId);
 		$("#patientName").val(patientName);
-		$("#forcePrintDialog").dialog("open");
+		$("#force-print-dialog").dialog("open");
 		$(".force-print-patient-name").html("<p>Please choose form(s) for " + patientName + ".</p>");
         event.preventDefault();
 	} else if(optionsSelect[selectedIndex].text == 'ADHD WU'){
@@ -1424,10 +1281,4 @@ function parsePagerResult(responseXML) {
 
 function closePagerDialog() {
 	$("#pagerDialog").dialog("close");
-}
-
-function updateForcePrintDimensions() {
-	var divHeight = $(".greaseBoard-force-print-content").height();
-    // Update the height of the select
-    $("#force-print-form-list").selectable().css({"max-height":(divHeight * 0.75) + "px"});
 }

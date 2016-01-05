@@ -420,6 +420,7 @@ a.icon-button span.ui-icon {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    overflow-y: hidden;
 }
 
 .ui-tabs-vertical { 

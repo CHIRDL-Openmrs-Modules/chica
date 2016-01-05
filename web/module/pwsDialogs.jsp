@@ -111,37 +111,6 @@
                         </div>
                     </div>
                 </div>
-                <div id="forcePrintDialog" title="Other CHICA Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div class="pws-force-print-content">
-                         <div class="force-print-forms-loading">
-                             <span id="formsLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
-                         </div>
-                         <div class="force-print-forms-server-error">
-                             <div class="force-print-forms-server-error-text ui-state-error"></div>
-                             <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
-                         </div>
-                         <div class="force-print-forms-container">
-                             <div class="force-print-patient-name">Please choose a form for ${PatientName}.</div>
-                             <fieldset class="force-print-fieldset">
-                                 <select class="force-print-forms"></select>
-                             </fieldset>
-                         </div>
-                         <div class="force-print-form-container">
-                            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
-                               <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
-                               <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-                            </object>
-                         </div>
-                         <div class="force-print-form-loading">
-                            <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
-                         </div>
-                         <input type="hidden" value="${patientId}" id="patientId" />
-                         <input type="hidden" value="${sessionId}" id="sessionId" />
-                         <input type="hidden" value="${locationId}" id="locationId" />
-                         <input type="hidden" value="${locationTagId}" id="locationTagId" />
-                    </div>
-                </div>
-                
                 <div id="notesDialog" title="CHICA Notes" class="ui-dialog-titlebar ui-widget-header" >
                     <div id="notesDialogContainer">                   
                         <div id="notesTabContainer">
@@ -162,3 +131,4 @@
                         </div>
                     </div>
                 </div>
+                <%@ include file="forcePrintJITs.jsp" %>

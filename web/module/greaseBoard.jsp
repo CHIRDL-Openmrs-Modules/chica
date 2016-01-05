@@ -267,44 +267,6 @@ label {
             </tr>
         </table>
     </div>
-    <div id="forcePrintDialog" title="Available Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-         <div class="greaseBoard-force-print-content">
-              <div class="force-print-forms-loading">
-                  <span id="formsLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
-              </div>
-              <div class="force-print-forms-server-error">
-                  <div class="force-print-forms-server-error-text ui-state-error"></div>
-                  <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
-              </div>
-              <div class="force-print-forms-container">
-                  <div class="force-print-patient-name">Please choose form(s) for ${patientName}.</div>
-                  <div class="force-print-multiple-select">Ctrl+click to select multiple forms</div>
-                  <div class="force-print-form-list-container">
-                     <ol id="force-print-form-list"></ol>
-                  </div>
-                  <div class="force-print-create-button-panel">
-                     <a href="#" id="createFormsButton" class="force-print-icon-button ui-state-default ui-corner-all">Create</a>
-                  </div>
-              </div>
-              <div class="force-print-form-container">
-                 <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
-                    <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
-                    <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-                 </object>
-              </div>
-              <div class="force-print-form-loading">
-                 <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
-              </div>
-              <form>
-                  <input type="hidden" id="patientId" />
-                  <input type="hidden" id="sessionId" />
-                  <input type="hidden" id="locationId" />
-                  <input type="hidden" id="locationTagId" />
-                  <input type="hidden" id="mrn" />
-                  <input type="hidden" id="patientName" />
-              </form>
-         </div>
-     </div>
      <div id="listErrorDialog" title="Patient List Error" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
         <div id="listErrorResultDiv" style="color:black;"></div>
     </div>
@@ -631,15 +593,8 @@ label {
             <div style="color:#000000;"><p><b>Are you sure you want to initiate an ADHD Workup?</b></p></div>
         </div>
     </div>
-    <div id="noForcePrintsDialog" title="No Selection" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-        <div style="margin: 0 auto;text-align: center;">
-            <div style="color:#000000;"><p><b>Please select at least one form to create.</b></p></div>
-        </div>
-    </div>
-    <div id="multipleOutputTypesDialog" title="Forms" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-        <div id="multipleOutputTypesResultDiv" style="color:black;"></div>
-    </div>
     <input type="hidden" id="badScans" />
+    <%@ include file="forcePrintJITs.jsp" %>
 </body>
 </html>
 
