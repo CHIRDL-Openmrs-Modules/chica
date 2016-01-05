@@ -25,8 +25,14 @@ function forcePrint_checkForChromeSafari() {
 }
 
 function forcePrint_formLoaded() {
-	$(".force-print-form-loading").hide();
-	$(".force-print-form-container").show();
+	var obj = $(".force-print-form-object");
+	if (obj != null) {
+		var url = obj.attr("data");
+		if (url != null && url.length > 0) {
+			$(".force-print-form-loading").hide();
+			$(".force-print-form-container").show();
+		}
+	}
 }
 
 function forcePrint_loadForms() {

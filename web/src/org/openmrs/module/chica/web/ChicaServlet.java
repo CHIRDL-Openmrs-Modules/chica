@@ -1017,7 +1017,17 @@ public class ChicaServlet extends HttpServlet {
 				formInstanceTags.append(pdfListItem);
 			}
 			
-			locatePatientJITs(response, formInstanceTags.toString());
+			try {
+				locatePatientJITs(response, formInstanceTags.toString());
+			} catch (Exception e) {
+				log.error("Error locating JITS: " + formInstanceTags.toString(), e);
+				response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+				response.setHeader(
+					ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+				PrintWriter pw = response.getWriter();
+				pw.write("<p>An error occurred locating the file to display.</p>");
+				return;
+			}
 		} else {
 			StringBuffer messageBuffer = new StringBuffer();
 			if (!teleformList.isEmpty()) {
@@ -1188,7 +1198,7 @@ public class ChicaServlet extends HttpServlet {
 			}
 		}
 		
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
 		if (!errorList.isEmpty()) {
 			response.getWriter().write("There were errors encountered processing form(s).");
 		}

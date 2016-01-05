@@ -92,6 +92,7 @@ $(function() {
     
     $("#forcePrintDialog").dialog({
         open: function() { 
+        	$(".force-print-form-container").hide();
             forcePrint_removeForms();
             forcePrint_loadForms();
             $(".ui-dialog").addClass("ui-dialog-shadow");
