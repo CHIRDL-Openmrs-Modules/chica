@@ -108,7 +108,11 @@ $(document).ready(function () {
         modal: true,
         autoOpen: false,
         open: function() { 
-            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $(".ui-dialog").addClass("ui-dialog-shadow");
+            $("#force-print-form-list").selectable("disable");
+          },
+        close: function() { 
+        	$("#force-print-form-list").selectable("enable");
           },
         show: {
             effect: "fade",
@@ -120,6 +124,7 @@ $(document).ready(function () {
           },
         buttons: {
           "Close": function() {
+        	$("#force-print-form-list").selectable("enable");
             $(this).dialog("close");
           }
         }
@@ -128,8 +133,10 @@ $(document).ready(function () {
     $("#force-print-multiple-output-types-dialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $("#force-print-form-list").selectable("disable");
         },
         close: function() { 
+        	$("#force-print-form-list").selectable("enable");
         	forcePrint_loadForm();
         },
         autoOpen: false,
@@ -147,6 +154,7 @@ $(document).ready(function () {
           {
 	          text:"OK",
 	          click: function() {
+	        	  $("#force-print-form-list").selectable("enable");
 	        	  $(this).dialog("close");
 	          }
           }
