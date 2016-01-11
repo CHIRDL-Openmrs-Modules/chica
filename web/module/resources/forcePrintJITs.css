@@ -92,12 +92,15 @@ a.force-print-icon-button {
 .force-print-patient-name {
 	color: #FFFFFF;
 	height: 7%;
+	min-height: 40px;
 }
 
 .force-print-multiple-select {
 	color: #FFFFFF;
 	font-size: 0.6em;
 	margin-top: 4px;
+	height: 10px;
+	min-height: 10px;
 }
 
 .force-print-form-container {
@@ -146,5 +149,6 @@ a.force-print-icon-button {
 
 .force-print-create-button-panel {
 	height: 15%;
+	min-height: 40px;
 	padding-top: 0.4em;
 }

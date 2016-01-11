@@ -1,5 +1,7 @@
 var isChromeSafari = false;
+var previousForcePrintSelection = -1;
 $(document).ready(function () {
+	$(".force-print-no-forms").hide();
 	isChromeSafari = forcePrint_checkForChromeSafari();
 
 	$(".force-print-retry-button").button();
@@ -11,8 +13,7 @@ $(document).ready(function () {
     $("#force-print-create-forms-button").button();
     $("#force-print-create-forms-button").click(function() {
     	var selectedForms = forcePrint_getSelectedForms();
-    	if (selectedForms.length == 0) {
-    		$(".force-print-form-container").hide();
+    	if (selectedForms.length === 0) {
     		$("#force-print-no-force-prints-dialog").dialog("open");
     	} else {
     		var pdfCount = 0;
@@ -53,11 +54,11 @@ $(document).ready(function () {
     
     $("#force-print-dialog").dialog({
         open: function() { 
+        	previousForcePrintSelection = -1;
         	$(".force-print-form-container").hide();
             forcePrint_removeForms();
             forcePrint_loadForms();
             $(".ui-dialog").addClass("ui-dialog-shadow");
-            updateForcePrintDimensions();
             $(".force-print-form-list-container").scrollTop(0);
         },
         beforeClose: function(event, ui) { 
@@ -108,6 +109,7 @@ $(document).ready(function () {
         modal: true,
         autoOpen: false,
         open: function() { 
+        	$(".force-print-form-container").hide();
             $(".ui-dialog").addClass("ui-dialog-shadow");
             $("#force-print-form-list").selectable("disable");
           },
@@ -230,13 +232,17 @@ function forcePrint_handleGetAvailableFormsError(xhr, textStatus, error) {
 }
 
 function forcePrint_parseAvailableForms(responseXML) {
+	var foundForms = false;
 	// no matches returned
     if (responseXML === null) {
     	$(".force-print-forms-loading").hide();
     	$("#force-print-form-list").selectable();
-    	$(".force-print-forms-container").show();
+    	$(".force-print-forms-container").hide();
+    	$(".force-print-form-container").hide();
+    	$(".force-print-no-forms").show();
     } else {
     	$(responseXML).find("forcePrintJIT").each(function () {
+    		foundForms = true;
         	var formName = $(this).find("displayName").text();
             var formId = $(this).find("formId").text();
             var outputType = $(this).find("outputType").text();
@@ -247,11 +253,25 @@ function forcePrint_parseAvailableForms(responseXML) {
     $(".force-print-form-list").css({"max-width":"325px"});
 
   	$(".force-print-forms-loading").hide();
-  	$(".force-print-forms-container").show();
-  	$('#force-print-form-list').selectable("refresh");
+  	if (foundForms) {
+  		$(".force-print-forms-container").show();
+  	} else {
+  		$(".force-print-forms-container").hide();
+  		$(".force-print-no-forms").show();
+  	}
+  	$("#force-print-form-list").selectable({
+  	  selecting: function(e, ui) { // on select
+          var curr = $(ui.selecting.tagName, e.target).index(ui.selecting); // get selecting item index
+          if(e.shiftKey && previousForcePrintSelection > -1) { // if shift key was pressed and there is previous - select them all
+              $(ui.selecting.tagName, e.target).slice(Math.min(previousForcePrintSelection, curr), 1 + Math.max(previousForcePrintSelection, curr)).addClass('ui-selected');
+              previousForcePrintSelection = -1; // and reset prev
+          } else {
+        	  previousForcePrintSelection = curr; // othervise just save prev
+          }
+        }
+  	});
 
-  	var divHeight = $(".force-print-forms-list").parent().parent().parent().height();
-  	$(".force-print-form-list").selectable().css({"max-height":(divHeight * 0.60) + "px"});
+  	updateForcePrintDimensions();
 }
 
 function forcePrint_loadForm() {
@@ -327,7 +347,21 @@ function forcePrint_getSelectedFormsOutputTypes() {
 }
 
 function updateForcePrintDimensions() {
+//	var divHeight = $(".force-print-content").height();
+//    // Update the height of the select
+//    $("#force-print-form-list").selectable().css({"max-height":(divHeight * 0.75) + "px"});
+	
 	var divHeight = $(".force-print-content").height();
+	var instructHeight = $(".force-print-multiple-select").height();
+	var nameHeight = $(".force-print-patient-name").height();
+	var listHeight = $("#force-print-form-list").height();
+	var buttonHeight = $(".force-print-create-button-panel").height();
+	var newDivHeight = divHeight - nameHeight - instructHeight - buttonHeight - 30;
+	
     // Update the height of the select
-    $("#force-print-form-list").selectable().css({"max-height":(divHeight * 0.75) + "px"});
+	$(".force-print-form-list-container").css({"height":(newDivHeight) + "px"});
+    $("#force-print-form-list").selectable().css({"height":(newDivHeight - 10) + "px"});
+    $("force-print-forms-container").css({"height":"100%"});
+    divHeight = $(".force-print-forms-container").height();
+    $(".force-print-create-button-panel").css({"height":(divHeight - instructHeight - nameHeight - newDivHeight - 30) + "px"});
 }

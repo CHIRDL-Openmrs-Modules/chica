@@ -1,9 +1,7 @@
-var loadedOptionalHandouts = false;
-var adobeSpanTag = '<span style="color: #000;font-size:14px;">It appears your Web browser is not configured to display PDF files. ' +
-            '<a href="http://get.adobe.com/reader/" target="_blank"><font style="color: #0000FF;text-decoration: none; border-bottom: 1px solid #0000FF;">Click here to download the Adobe PDF Reader.</font></a>  ' + 
-            'Please restart your browser once the installation is complete.</span>'; 
-
-var selectFormsDiv = '<div><h4>Please select one or more forms to combine. Then click the <a style="color: blue;" href="#" onclick="combineSelected(); return false;" title="Combine selected forms">Combine Selected Forms</a> tab to update the PDF with the combined forms.</h4></div>';
+var chicaServletUrl = "/openmrs/moduleServlet/chica/chica?";
+var recommendedHandoutsAction = "action=getPatientJITs&formInstances=";
+var pageOptions = "#page=1&view=FitH,top&navpanes=0";
+var previousRecommendedHandoutSelection = -1;
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -14,29 +12,11 @@ function handleGetAvailableJITsError(xhr, textStatus, error) {
 function parseAvailableJITs(responseXML) {
     // no matches returned
     if (responseXML === null) {
+    	$("#recommendedHandoutsFormList").selectable();
     	$("#loading").hide();
         return false;
-    } else {
-    	var tabs = null;
-		tabs = $("#tabs");
-    	
-		// DWE CHICA-500
-		// Combine selected forms option
-		var tabList = '<ul id="tabList">';
-		var divList = '';
-		
-    	tabList += '<li><table class="tabsTable"><tr><td class="tabsLeftCell selectAllCell" onclick="selectAllForms();">All</td>' + 
-    	           '<td class="tabsRightCell selectAllCell">' +
-    	           '<a style="text-decoration: underline; cursor: pointer;" href="#tabs-2" onclick="combineSelected();" title="Combine selected forms">Combine Selected Forms</a></td></tr></table></li>';
-    	
-    	divList += '<div class="combineSelectedClass" id="tabs-2">' +
-    			   '<object id="combinedForms" type="application/pdf" class="recommended-forms" ' + 
-    	           ' data="">'; // Setting data to empty to make IE happy. If data attribute is not set, an "Access Denied" error will display.
-    	
-    	divList += adobeSpanTag + '</object></div>';	
-			
-        var count = 3; // Start count at 3 instead of 0. The first two will now be for the tabs on the CHICA Notes dialog and the third will be the "Combine selected forms" tab
-        var formInstance = "";
+    } else {	
+        var count = 0;
         $(responseXML).find("availableJIT").each(function () {
         	var formName = $(this).find("formName").text();
             var formId = $(this).find("formId").text();
@@ -44,102 +24,33 @@ function parseAvailableJITs(responseXML) {
             var locationId = $(this).find("locationId").text();
             var locationTagId = $(this).find("locationTagId").text();
             
-        	formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
-        	var action = "action=getPatientJITs&formInstances=" + formInstance + "#page=1&view=FitH,top&navpanes=0";
-        	var url = "/openmrs/moduleServlet/chica/chica?";
-        	tabList += '<li><table class="tabsTable"><tr><td class="tabsLeftCell"><input class="formsCheckbox" type="checkbox" onclick="resetCombinedForms()" id="' + formInstance + '" name="' + formInstance + '"></td><td class="tabsRightCell"><a href="#tabs-' + count + '" onclick="getJIT(\''+url+'\', \''+action+'\', \''+count+'\');" title="' + formName + '">' + formName + '</a></td></tr></table></li>';
-        	divList += '<div id="tabs-' + count + '"><object id="object_'+ count + '" type="application/pdf" class="recommended-forms"';   
-            	
-        	// DWE CHICA-500 Only set the data attribute for the first one
-        	// This will prevent the offsetParent script error in Firefox
-        	// DWE CLINREQ-90 Now set them all to empty since we are no longer opening the dialog 
-        	// when the PWS is initially displayed
-        	divList += ' data="">'; // Setting this to empty to make IE happy. If data attribute is not set, an "Access Denied" error will display.
-        	divList += adobeSpanTag + '</object></div>';
-        	
+        	var formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
             count++;
+            
+            $('<li id="' + formInstance + '" title="' + formName + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#recommendedHandoutsFormList'));
         });
         
-    	if (count == 3){
+    	if (count == 0){
+    		$("#recommendedHandoutsContainer").hide();
         	$("#noForms").show();
-        } else {
-        	tabList += "</ul>"
-        	tabs.html(tabList + divList);
-        	$("#tabs").tabs({
-        		overflowTabs: true,
-        		heightStyle: "content",
-        		tabPadding: 23,
-        		containerPadding: 40
-        	}).addClass("ui-tabs-vertical ui-helper-clearfix");
-            $("#tabs li").removeClass("ui-corner-top").addClass( "ui-corner-left");
-            $('#tabs').show();
-            $("#tabs").tabs( "option", "active", 1 ); // DWE CHICA-500 Show the first form by default and not the "Combine Selected Forms" tab           
         }
+    	
+    	$('#recommendedHandoutsFormList').selectable();
     }
 }
 
-// DWE CHICA-500
-function selectAllForms()
-{
-	var $cbs = $(".formsCheckbox:checkbox:enabled");
-	var checked = $cbs.filter(":first").prop("checked");
-	$(".formsCheckbox").each(function(){ this.checked = !checked});
-	
-	resetCombinedForms();
-}
-
-// DWE CHICA-500
-function resetCombinedForms()
-{
-	// If the user is viewing the "Combine selected forms" tab already, 
-	// we need to clear the display so the user will know that the area needs to be refreshed before printing
-	if($(".combineSelectedClass").is(':visible'))
-	{
-		$(".combineSelectedClass").html(selectFormsDiv);
-	}
-}
-
 //DWE CHICA-500
-function getJIT(url, action, count)
+function combineSelected(selectedForms)
 {
-	if($("#object_" + count).attr("data").length === 0) // Get the form only if we don't already have it
-	{
-		var divList = '<object id="object_'+ count + '" type="application/pdf" class="recommended-forms" data="'+ url + action + '">' + adobeSpanTag + '</object></div>';
-		
-		$("#tabs-"+count).html(divList); // Setting the inner html of the div seems to be the best solution for all browsers instead of setting the data attribute. 
-	}
-}
-
-//DWE CHICA-500
-function combineSelected()
-{
-	var url = "/openmrs/moduleServlet/chica/chica?";
-	var action = "action=getPatientJITs&formInstances=";
-	var pageOptions = "#page=1&view=FitH,top&navpanes=0";
+	var obj = $(".recommendedHandoutObject");
+	var container = obj.parent();
+	var newUrl = chicaServletUrl + recommendedHandoutsAction + selectedForms.toString() + pageOptions;
+	var newobj = obj.clone();
+	obj.remove();
+	newobj.attr("data", newUrl);
+	$(".recommendedHandoutContainer").show();
 	
-	// Gets all of the currently selected checkboxes
-	var count = 0;
-	var formInstances = "";
-	$('.formsCheckbox:checkbox').each(function(){ 
-		
-		if(this.checked)
-		{
-			formInstances += this.id + ",";
-			count++;
-		}
-	});
-	
-	if(count > 0)
-	{
-		divList = '<object id="combinedForms" type="application/pdf" class="recommended-forms" data="'+ url + action + formInstances + pageOptions + '">' + adobeSpanTag + '</object>';
-	}
-	else
-	{
-		divList = selectFormsDiv;
-	}
-	
-	// Set the inner html so that the PDF will be refreshed
-	$(".combineSelectedClass").html(divList);
+	container.append(newobj);
 }
 
 function getSelected(opt) {
@@ -178,7 +89,6 @@ function getAvailableJits() {
 	$("#noForms").hide();
 	var encounterId = $("#encounterId").val();
 	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
-	var url = "/openmrs/moduleServlet/chica/chica";
 	$.ajax({
 	  beforeSend: function(){
 		  $("#formServerError").hide();
@@ -191,7 +101,7 @@ function getAvailableJits() {
 	  "dataType": "xml",
 	  "data": action,
 	  "type": "POST",
-	  "url": url,
+	  "url": chicaServletUrl,
 	  "timeout": 30000, // optional if you want to handle timeouts (which you should)
 	  "error": handleGetAvailableJITsError, // this sets up jQuery to give me errors
 	  "success": function (xml) {
@@ -209,8 +119,6 @@ $(function() {
 	$("#forcePrintButton").button();
 	$("#retryButton").button();
 	$("#notesButton").button();
-	
-	$('#tabs').hide();
 	
 	getAvailableJits();
 	
@@ -253,7 +161,7 @@ $(function() {
 	});
 	
 	$("#formPrintButton").click(function(event) {
-		$("#formTabDialog").dialog("open");
+		$("#formSelectionDialog").dialog("open");
 		event.preventDefault();
 	});
 	
@@ -374,26 +282,32 @@ $(function() {
           }
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	
-	$("#formTabDialog").dialog({
+	$("#formSelectionDialog").dialog({
     	open: function() { 
-    		$("#tabs").show();
-    		$(".recommended-forms").show();
+    		$(".recommendedHandoutContainer").hide();
     		$(".ui-dialog").addClass("ui-dialog-shadow"); 
-    		$("#formTabDialog").scrollTop(0);
+    		$("#formSelectionDialog").scrollTop(0);
+    		updateRecommendedHandoutDimensions();
     		displayFirstJIT();
     	},
     	beforeClose: function() { 
-    		$(".recommended-forms").hide();
+    		$(".recommendedHandoutContainer").hide();
+        	var obj = $(".recommendedHandoutObject");
+        	var container = obj.parent();
+        	var newobj = obj.clone();
+        	obj.remove();
+        	newobj.attr("data", "");
+        	container.append(newobj);
     	},
     	close: function() { 
-    		$("#tabs").hide();
+    		$('#recommendedHandoutsFormList .ui-selected').removeClass('ui-selected')
     	},
         autoOpen: false,
         modal: true,
         minHeight: 350,
-        minWidth: 450,
+        minWidth: 950,
         width: 950,
-        height: $(window).height() * 0.95,
+        height: $(window).height() * 0.90,
         show: {
           effect: "fade",
           duration: 500
@@ -407,24 +321,54 @@ $(function() {
           {
 	          text:"Close",
 	          click: function() {
-	        	  $("#formTabDialog").dialog("close");
+	        	  $("#formSelectionDialog").dialog("close");
 	          }
           }
         ]
     });
 	
-	var tabDivHeight = $(window).height() * 0.95 - 135;
-	$("#formTabDialogContainer").css({"height":tabDivHeight});
-    $("#tabs").css({"height":tabDivHeight});
-    $("#formTabDialogContainer").css("background", "#f4f0ec"); 
-    $(".recommended-forms").css({"height":tabDivHeight});
+	$("#noSelectedFormsDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow");
+            $("#recommendedHandoutsFormList").selectable("disable");
+          },
+        close: function() { 
+        	$("#recommendedHandoutsFormList").selectable("enable");
+        	var selectedForms = getSelectedForms();
+        	if (selectedForms.length === 1) {
+        		$(".recommendedHandoutContainer").show();
+        	}
+          },
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+        	$("#recommendedHandoutsFormList").selectable("enable");
+            $(this).dialog("close");
+            var selectedForms = getSelectedForms();
+        	if (selectedForms.length === 1) {
+        		$(".recommendedHandoutContainer").show();
+        	}
+          }
+        }
+    });
+	
+    $("#formSelectionDialogContainer").css("background", "#f4f0ec"); 
 	
 	$("#forcePrintButton").click(function(event) {
 		$("#force-print-dialog").dialog("open");
 		event.preventDefault();
 	});
 	
-	$("#tabList").tooltip();
 	$.fn.uncheckableRadio = function() {
 
         return this.each(function() {
@@ -443,6 +387,62 @@ $(function() {
 	$(".uncheckableRadioButton").uncheckableRadio();
 	var patientName = $("#patientNameForcePrint").val();
 	$(".force-print-patient-name").html("<p>Please choose form(s) for " + patientName + ".</p>");
+	
+	$("#recommendedHandoutsSelectAllButton").button();
+	$("#recommendedHandoutsSelectAllButton").click(function() {
+		$("#recommendedHandoutsFormList li").not(".ui-selected").addClass("ui-selected");
+		var selectedForms = getSelectedForms();
+    	if (selectedForms.length > 1) {
+    		$(".recommendedHandoutContainer").hide();
+    	} else if (selectedForms.length == 1) {
+    		combineSelected(selectedForms);
+    	}
+    });
+	
+	$("#recommendedHandoutsCombineButton").button();
+    $("#recommendedHandoutsCombineButton").click(function() {
+    	var selectedForms = getSelectedForms();
+    	if (selectedForms.length < 2) {
+    		$(".recommendedHandoutContainer").hide();
+    		$("#noSelectedFormsDialog").dialog("open");
+    	} else {
+    		combineSelected(selectedForms);
+    	}
+    });
+    
+    $("#recommendedHandoutsFormList").selectable({
+	  stop: function() {
+		var selectedForms = new Array();
+	    $(".ui-selected", this ).each(function() {
+	    	var id = this.id;
+	    	selectedForms.push(id);
+	    });
+	    
+	    if (selectedForms.length === 1) {
+	    	var formInstance = selectedForms[0];
+	    	var obj = $(".recommendedHandoutObject");
+	    	var container = obj.parent();
+	    	var newUrl = chicaServletUrl + recommendedHandoutsAction + formInstance + pageOptions;
+	    	var newobj = obj.clone();
+	    	obj.remove();
+	    	newobj.attr("data", newUrl);
+	    	$(".recommendedHandoutContainer").show();
+	    	
+	    	container.append(newobj);
+	    } else {
+	    	$(".recommendedHandoutContainer").hide();
+	    }
+	  },
+	  selecting: function(e, ui) { // on select
+        var curr = $(ui.selecting.tagName, e.target).index(ui.selecting); // get selecting item index
+        if(e.shiftKey && previousRecommendedHandoutSelection > -1) { // if shift key was pressed and there is previous - select them all
+            $(ui.selecting.tagName, e.target).slice(Math.min(previousRecommendedHandoutSelection, curr), 1 + Math.max(previousRecommendedHandoutSelection, curr)).addClass('ui-selected');
+            previousRecommendedHandoutSelection = -1; // and reset prev
+        } else {
+        	previousRecommendedHandoutSelection = curr; // othervise just save prev
+        }
+      }
+	});
   });
  
 
@@ -481,6 +481,71 @@ function validateTextNotes()
 // DWE CLINREQ-90
 function displayFirstJIT()
 {
-	// tabs-3 is the first JIT now that we have to avoid conflicts with the CHICA Notes dialog
-	$("[href='#tabs-3']").trigger("click");
+    var count = 0;
+    var formInstance = null;
+    $("#recommendedHandoutsFormList li").each(function() {
+    	if (count === 0) {
+    		$(this).addClass("ui-selected");
+    		formInstance = this.id;
+    		previousRecommendedHandoutSelection = count;
+    	}
+    	
+    	count++;
+    });
+    
+    if (count === 1) {
+    	$(".recommendedHandoutsCombineButtonPanel").hide();
+    } else if (count > 1) {
+    	$(".recommendedHandoutsCombineButtonPanel").show();
+    }
+    
+    if (formInstance != null) {
+		var obj = $(".recommendedHandoutObject");
+		var container = obj.parent();
+		var newUrl = chicaServletUrl + recommendedHandoutsAction + formInstance + pageOptions;
+		var newobj = obj.clone();
+		obj.remove();
+		newobj.attr("data", newUrl);
+		$(".recommendedHandoutContainer").show();;
+		
+		container.append(newobj);
+    }
+}
+
+function formLoaded() {
+	var obj = $(".recommendedHandoutObject");
+	if (obj != null) {
+		var url = obj.attr("data");
+		if (url != null && url.length > 0) {
+			$(".formLoading").hide();
+			$(".recommendedHandoutContainer").show();
+		}
+	}
+}
+
+function getSelectedForms() {
+	var selectedForms = new Array();
+	$(".ui-selected", "#recommendedHandoutsFormList").each(function() {
+    	var id = this.id;
+    	selectedForms.push(id);
+    });
+	
+	return selectedForms;
+}
+
+function updateRecommendedHandoutDimensions() {
+	var divHeight = $("#formSelectionDialogContainer").height();
+	var instructHeight = $(".recommendedHandoutsMultiselect").height();
+	var listHeight = $("#recommendedHandoutsFormList").height();
+	var newDivHeight = divHeight * 0.75;
+	if ((newDivHeight > listHeight) && (listHeight != 0)) {
+		newDivHeight = listHeight;
+	}
+	
+    // Update the height of the select
+    $("#recommendedHandoutsFormList").selectable().css({"height":(newDivHeight) + "px"});
+    $(".recommendedHandoutsFormListContainer").css({"height":(newDivHeight + 10) + "px"});
+    $("#recommendedHandoutsContainer").css({"height":"100%"});
+    divHeight = $("#recommendedHandoutsContainer").height();
+    $("#recommendedHandoutsCombineButtonPanel").css({"height":(divHeight - instructHeight - (newDivHeight + 10)) + "px"});
 }
