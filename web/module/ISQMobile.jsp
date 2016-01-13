@@ -39,7 +39,7 @@
 </c:if>
 <div data-role="page" id="instruction_page" data-theme="b">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -123,7 +123,7 @@
 <c:set var="copyright" value=''/>
 <div id="question_page_1" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -160,7 +160,7 @@
 
 <div id="question_page_2" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -200,7 +200,7 @@
 
 <div id="question_page_3" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -238,7 +238,7 @@
 
 <div id="question_page_4" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -278,7 +278,7 @@
 
 <div id="question_page_5" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -314,7 +314,7 @@
 
 <div id="question_page_6" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -352,7 +352,7 @@
 
 <div id="question_page_7" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -390,7 +390,7 @@
 
 <div id="question_page_8" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -430,7 +430,7 @@
 
 <div id="question_page_9" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -468,7 +468,7 @@
 
 <div id="question_page_10" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>Infant Sleep Questionaire:</h1>
+        <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
