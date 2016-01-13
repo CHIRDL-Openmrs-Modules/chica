@@ -129,7 +129,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div id="content_1" data-role="content">
-        <div><h3>Going to bed/to sleep:</h3><hr/></div>
+        <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
         <c:set var="quest1" value='How long does it usually take to settle your baby off to sleep on average?'/>
         <input id="ISQQuestion_1" name="ISQQuestion_1" type="hidden" value="${quest1}"/>
 	    <strong>${quest1}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest1}")'></a>
@@ -166,7 +166,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div id="content_2" data-role="content">
-    <div><h3>Going to bed/to sleep:</h3><hr/></div>
+    <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
     <c:set var="quest2" value='How many times a week do you have problems settling him/her on average?'/>
         <input id="ISQQuestion_2" name="ISQQuestion_2" type="hidden" value="${quest2}"/>
 	    <strong>${quest2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest2}")'></a>
@@ -206,7 +206,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div id="content_3" data-role="content">
-    <div><h3>Going to bed/to sleep:</h3><hr/></div>
+    <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
     <c:set var="quest3" value='How long has the settling problem been going on?'/>
         <input id="ISQQuestion_3" name="ISQQuestion_3" type="hidden" value="${quest3}"/>
         <strong>${quest3}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest3}")'></a>
@@ -291,11 +291,11 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_5" id="ISQQuestionEntry_5_DNW" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_5_DNW">does not wake</label>
+                <label for="ISQQuestionEntry_5_DNW">Does not wake</label>
                 <input type="radio" name="ISQQuestionEntry_5" id="ISQQuestionEntry_5_1PN" value="1" data-theme="b" />
-                <label for="ISQQuestionEntry_5_1PN">once a night</label>
+                <label for="ISQQuestionEntry_5_1PN">Once a night</label>
                 <input type="radio" name="ISQQuestionEntry_5" id="ISQQuestionEntry_5_2PN" value="2" data-theme="b" />
-                <label for="ISQQuestionEntry_5_2PN">twice a night</label>
+                <label for="ISQQuestionEntry_5_2PN">Twice a night</label>
                 <input type="radio" name="ISQQuestionEntry_5" id="ISQQuestionEntry_5_3PN" value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_5_3PN">3 times a night</label>
                 <input type="radio" name="ISQQuestionEntry_5" id="ISQQuestionEntry_5_4PN" value="4" data-theme="b" />
@@ -327,7 +327,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_6" id="ISQQuestionEntry_6_LT10" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_6_LT10">less than 10 minutes</label>
+                <label for="ISQQuestionEntry_6_LT10">Less than 10 minutes</label>
                 <input type="radio" name="ISQQuestionEntry_6" id="ISQQuestionEntry_6_10_20" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_6_10_20">10 to 20 minutes</label>
                 <input type="radio" name="ISQQuestionEntry_6" id="ISQQuestionEntry_6_20_30" value="2" data-theme="b" />
