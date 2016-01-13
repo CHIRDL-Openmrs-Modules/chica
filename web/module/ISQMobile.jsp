@@ -129,7 +129,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div id="content_1" data-role="content">
-        <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
+        <div><h3>Going to bed/to sleep:</h3><hr/></div>
         <c:set var="quest1" value='How long does it usually take to settle your baby off to sleep on average?'/>
         <input id="ISQQuestion_1" name="ISQQuestion_1" type="hidden" value="${quest1}"/>
 	    <strong>${quest1}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest1}")'></a>
@@ -151,8 +151,23 @@
                 <label for="ISQQuestionEntry_1_1HRORLONGER">1 hour or longer</label>
 	        </fieldset>
 	    </div>
-	    <br/>
-	    <c:set var="quest2" value='How many times a week do you have problems settling him/her on average?'/>
+        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Next</a>
+    </div>
+</div>
+
+<div id="question_page_2" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>Infant Sleep Questionaire:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+    </div>
+    <div id="content_2" data-role="content">
+    <div><h3>Going to bed/to sleep:</h3><hr/></div>
+    <c:set var="quest2" value='How many times a week do you have problems settling him/her on average?'/>
         <input id="ISQQuestion_2" name="ISQQuestion_2" type="hidden" value="${quest2}"/>
 	    <strong>${quest2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -175,23 +190,24 @@
                 <label for="ISQQuestionEntry_2_EN">Problems every night of the week</label>
             </fieldset>
         </div>
-        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Next</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Next</a>
     </div>
 </div>
 
-<div id="question_page_2" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_3" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>Infant Sleep Questionaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
-    <div id="content_2" data-role="content">
-        <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
-        <c:set var="quest3" value='How long has the settling problem been going on?'/>
+    <div id="content_3" data-role="content">
+    <div><h3>Going to bed/to sleep:</h3><hr/></div>
+    <c:set var="quest3" value='How long has the settling problem been going on?'/>
         <input id="ISQQuestion_3" name="ISQQuestion_3" type="hidden" value="${quest3}"/>
         <strong>${quest3}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest3}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -212,9 +228,24 @@
                 <label for="ISQQuestionEntry_3_6MOM">6 months or more</label>
             </fieldset>
         </div>
-        <br/>
-        <h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/>
-        <c:set var="quest4" value='How many nights per week does you baby wake on average?'/>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Next</a>
+    </div>
+</div>
+
+<div id="question_page_4" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>Infant Sleep Questionaire:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+    </div>
+    <div id="content_4" data-role="content">
+    <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
+    <c:set var="quest4" value='How many nights per week does you baby wake on average?'/>
         <input id="ISQQuestion_4" name="ISQQuestion_4" type="hidden" value="${quest4}"/>
         <strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest4}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -237,24 +268,24 @@
                 <label for="ISQQuestionEntry_4_EN">Every night of the week</label>
             </fieldset>
         </div>
-        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Previous</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Next</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Next</a>
     </div>
 </div>
 
-<div id="question_page_3" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_5" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>Infant Sleep Questionaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage3Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
-    <div id="content_3" data-role="content">
-        <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
-        <c:set var="quest5" value='How many times does your baby wake each night and need resettling on average?'/>
+    <div id="content_5" data-role="content">
+    <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
+    <c:set var="quest5" value='How many times does your baby wake each night and need resettling on average?'/>
         <input id="ISQQuestion_5" name="ISQQuestion_5" type="hidden" value="${quest5}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -273,8 +304,24 @@
                 <label for="ISQQuestionEntry_5_5NOM">5 or more times a night</label>
             </fieldset>
         </div>
-        <br/>
-        <c:set var="quest6" value='If your baby wakes, how long does it take for your baby to go back to sleep on average?'/>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Next</a>
+    </div>
+</div>
+
+<div id="question_page_6" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>Infant Sleep Questionaire:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+    </div>
+    <div id="content_6" data-role="content">
+    <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
+    <c:set var="quest6" value='If your baby wakes, how long does it take for your baby to go back to sleep on average?'/>
         <input id="ISQQuestion_6" name="ISQQuestion_6" type="hidden" value="${quest6}"/>
         <strong>${quest6}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -295,23 +342,23 @@
                 <label for="ISQQuestionEntry_6_1HOL">1 hour or longer</label>
             </fieldset>
         </div>
-        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Next</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Next</a>
     </div>
 </div>
 
-<div id="question_page_4" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_7" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>Infant Sleep Questionaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
-    <div id="content_4" data-role="content">
-        <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
+    <div id="content_7" data-role="content">
+    <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
         <c:set var="quest7" value='How long has the waking problem been going on?'/>
         <input id="ISQQuestion_7" name="ISQQuestion_7" type="hidden" value="${quest7}"/>
         <strong>${quest7}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest7}")'></a>
@@ -333,9 +380,24 @@
                 <label for="ISQQuestionEntry_7_6MOM">6 months or more</label>
             </fieldset>
         </div>
-        </br>
-        <h3>Sleeping in parents&#39; bed:</h3><hr/>
-        <c:set var="quest8" value='How often do you end up taking your baby into your bed because he/she is upset and won&rsquo;t sleep?'/>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Next</a>
+    </div>
+</div>
+
+<div id="question_page_8" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>Infant Sleep Questionaire:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+    </div>
+    <div id="content_8" data-role="content">
+    <div><h3>Sleeping in parents&#39; bed:</h3><hr/><br/></div>
+    <c:set var="quest8" value='How often do you end up taking your baby into your bed because he/she is upset and won&rsquo;t sleep?'/>
         <input id="ISQQuestion_8" name="ISQQuestion_8" type="hidden" value="${quest8}"/>
         <strong>${quest8}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest8}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -358,25 +420,24 @@
                 <label for="ISQQuestionEntry_8_EN">Every night of the week</label>
             </fieldset>
         </div>
-        
-        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Next</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Next</a>
     </div>
 </div>
 
-<div id="question_page_5" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_9" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>Infant Sleep Questionaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
-    <div id="content_5" data-role="content">
-         <div><h3>Sleeping in parent&#39;s bed:</h3><hr/><br/></div>
-        <c:set var="quest9" value='How long has the problem been going on?'/>
+    <div id="content_9" data-role="content">
+    <div><h3>Sleeping in parents&#39; bed:</h3><hr/><br/></div>
+    <c:set var="quest9" value='How long has the problem been going on?'/>
         <input id="ISQQuestion_9" name="ISQQuestion_9" type="hidden" value="${quest9}"/>
         <strong>${quest9}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest9}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -397,9 +458,24 @@
                 <label for="ISQQuestionEntry_9_6MOM">6 months or more</label>
             </fieldset>
         </div>
-        </br>
-        <h3>Your views:</h3><hr/>
-         <c:set var="quest10" value='Do you think that your baby has sleeping difficulties?'/>
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Next</a>
+    </div>
+</div>
+
+<div id="question_page_10" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>Infant Sleep Questionaire:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+    </div>
+    <div id="content_10" data-role="content">
+    <div><h3>Your views:</h3><hr/><br/></div>
+    <c:set var="quest10" value='Do you think that your baby has sleeping difficulties?'/>
         <input id="ISQQuestion_10" name="ISQQuestion_9" type="hidden" value="${quest10}"/>
         <strong>${quest10}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest10}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -414,9 +490,8 @@
                 <label for="ISQQuestionEntry_10_SEVERE">Yes, severe</label>
             </fieldset>
         </div>
-        
-        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
-        <div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    	<div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Not Completed</h1>
             </div>
@@ -452,11 +527,11 @@
         </div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
+       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
         <a  href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Finish</a>
     </div>
 </div>
-
+    
 <div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
@@ -487,7 +562,22 @@
                 <label for="ISQQuestionEntry_1_2_1HRORLONGER">1 hora o más</label>
             </fieldset>
         </div>
-        <br/>
+        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>      
+    </div>
+</div> 
+
+<div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+    </div>
+    <div id="content_2_sp" data-role="content">
+        <div><h3>Acostarlo/ponerlo a dormir</h3><hr/><br/></div>
         <c:set var="quest2_2" value='&iquest;Cu&aacute;ntas veces a la semana en promedio tiene problemas para ponerlo a dormir? (marque una sola casilla)'/>
         <input id="ISQQuestion_2_2" name="ISQQuestion_2_2" type="hidden" value="${quest2_2}"/>
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest2_2}")'></a>
@@ -514,18 +604,19 @@
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>      
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Proximo</a>   
     </div>
 </div>
 
-<div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
-    <div id="content_2_sp" data-role="content">
+    <div id="content_3_sp" data-role="content">
         <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
         <c:set var="quest3_2" value='&iquest;Por cu&aacute;nto tiempo ha persistido el problema de ponerlo a dormir?'/>
         <input id="ISQQuestion_3_2" name="ISQQuestion_3_2" type="hidden" value="${quest3_2}"/>
@@ -548,8 +639,23 @@
                 <label for="ISQQuestionEntry_3_2_6MOM">6 meses o m&aacute;s</label>
             </fieldset>
         </div>
-        <br/>
-        <h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/>
+        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Proximo</a>   
+    </div>
+</div> 
+
+<div id="question_page_4_sp" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+    </div>
+    <div id="content_4_sp" data-role="content">
+        <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
         <c:set var="quest4_2" value='&iquest;Cu&aacute;ntas veces a la semana su beb&eacute; se despierta en promedio? (marque una sola casilla)'/>
         <input id="ISQQuestion_4_2" name="ISQQuestion_4_2" type="hidden" value="${quest4_2}"/>
         <strong>${quest4_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest4_2}")'></a>
@@ -576,19 +682,19 @@
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Anterior</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Proximo</a>   
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Proximo</a>   
     </div>
-</div>
+</div> 
 
-<div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_5_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage3SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
-    <div id="content_3_sp" data-role="content">
+    <div id="content_5_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
         <c:set var="quest5_2" value='&iquest;Cu&aacute;ntas veces se despierta su beb&eacute; en la noche y necesita volver a ponerlo a dormir? (marque una sola casilla)'/>
         <input id="ISQQuestion_5_2" name="ISQQuestion_5_2" type="hidden" value="${quest5_2}"/>
@@ -609,7 +715,23 @@
                 <label for="ISQQuestionEntry_5_2_5NOM">Cinco o m&aacute;s veces en la noche</label>
             </fieldset>
         </div>
-        <br/>
+        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Proximo</a>   
+    </div>
+</div> 
+
+<div id="question_page_6_sp" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+    </div>
+    <div id="content_6_sp" data-role="content">
+        <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
         <c:set var="quest6_2" value='Si su beb&eacute; se despierta &iquest;cu&aacute;nto tiempo en promedio le toma volverse a dormir? (marque una sola casilla)'/>
         <input id="ISQQuestion_6_2" name="ISQQuestion_6_2" type="hidden" value="${quest6_2}"/>
         <strong>${quest6_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest6_2}")'></a>
@@ -634,19 +756,19 @@
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Anterior</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Proximo</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Proximo</a>   
     </div>
-</div>
+</div> 
 
-<div id="question_page_4_sp" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_7_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage4SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
-    <div id="content_4_sp" data-role="content">
+    <div id="content_7_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
         <c:set var="quest7_2" value='&iquest;Por cu&aacute;nto tiempo ha persistido el problema de despertarse?'/>
         <input id="ISQQuestion_7_2" name="ISQQuestion_7_2" type="hidden" value="${quest7_2}"/>
@@ -669,8 +791,23 @@
                 <label for="ISQQuestionEntry_7_2_6MOM">6 meses o m&aacute;s</label>
             </fieldset>
         </div>
-        <br/>
-        <h3>Dormir en la cama de los padres:</h3><hr/>
+        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Proximo</a>   
+    </div>
+</div> 
+
+<div id="question_page_8_sp" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+    </div>
+    <div id="content_8_sp" data-role="content">
+        <div><h3>Dormir en la cama de los padres:</h3><hr/><br/></div>
         <c:set var="quest8_2" value='&iquest;Cu&aacute;ntas veces termina llev&aacute;ndose al beb&eacute; a su cama porque est&aacute; molesto y no se duerme? (marque una sola casilla)'/>
         <input id="ISQQuestion_8_2" name="ISQQuestion_8_2" type="hidden" value="${quest8_2}"/>
         <strong>${quest8_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest8_2}")'></a>
@@ -697,19 +834,19 @@
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Anterior</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Proximo</a>       
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Proximo</a>   
     </div>
-</div>
+</div> 
 
-<div id="question_page_5_sp" data-role="page" data-theme="b" type="question_page">
+<div id="question_page_9_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage5SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
-    <div id="content_5_sp" data-role="content">
+    <div id="content_9_sp" data-role="content">
         <div><h3>Dormir en la cama de los padres:</h3><hr/><br/></div>
         <c:set var="quest9_2" value='&iquest;Por cu&aacute;nto tiempo ha persistido el problema?'/>
         <input id="ISQQuestion_9_2" name="ISQQuestion_9_2" type="hidden" value="${quest9_2}"/>
@@ -732,9 +869,24 @@
                 <label for="ISQQuestionEntry_9_2_6MOM">6 meses o m&aacute;s</label>
             </fieldset>
         </div>
-        </br>
-        <h3>Su opini&oacute;n</h3><hr/>
-         <c:set var="quest10" value='&iquest;Considera que el beb&eacute; tiene dificultad para dormir?'/>
+        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Proximo</a>   
+    </div>
+</div> 
+
+<div id="question_page_10_sp" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+    </div>
+    <div id="content_10_sp" data-role="content">
+        <div><h3>Su opini&oacute;n</h3><hr/><br/></div>
+        <c:set var="quest10" value='&iquest;Considera que el beb&eacute; tiene dificultad para dormir?'/>
         <input id="ISQQuestion_10_2" name="ISQQuestion_10_2" type="hidden" value="${quest10}"/>
         <strong>${quest10}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest10}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -784,12 +936,13 @@
                 </div>
             </div>
         </div>
+        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Anterior</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Anterior</a>
         <a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Acabado</a>
     </div>
-</div>
+</div>    
 
 <div id="empty_page" data-role="page" data-theme="b">
 </div>
