@@ -49,7 +49,7 @@ function setLanguage(patientName, birthdate) {
 	english = !english;
     var langButtonText = "Español";
     var additionalQuestions = "Here are a number of questions about your baby's sleeping habits.";
-    var instructions = '<p>Please base your answers on what you have noticied over the last MONTH.</p>';
+    var instructions = '<p>Please base your answers on what you have noticed over the last MONTH.</p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
     if (!english) {
