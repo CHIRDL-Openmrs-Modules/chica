@@ -1131,7 +1131,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		if (formIdsStr == null) {
 			log.error("Invalid argument formId: " + formIdsStr);
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
 			response.getWriter().write("Invalid argument formId: " + formIdsStr);
 			return;
 		}

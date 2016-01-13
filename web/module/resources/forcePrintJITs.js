@@ -1,6 +1,7 @@
 var isChromeSafari = false;
 var previousForcePrintSelection = -1;
-$(document).ready(function () {
+var hasUpdatedForcePrintDimensions = false;
+$(function() {
 	$(".force-print-no-forms").hide();
 	isChromeSafari = forcePrint_checkForChromeSafari();
 
@@ -74,7 +75,6 @@ $(document).ready(function () {
         close: function(event, ui) { 
         	event.preventDefault();
             $(".force-print-form-container").hide();
-            $("#force-print-form-list").selectable("refresh");
         },
         autoOpen: false,
         modal: true,
@@ -90,9 +90,6 @@ $(document).ready(function () {
           effect: "fade",
           duration: 500
         },
-//        resize: function(e,ui) {
-//            updateForcePrintDimensions();
-//        },
         resizable: false,
         buttons: [
           {
@@ -271,7 +268,9 @@ function forcePrint_parseAvailableForms(responseXML) {
         }
   	});
 
-  	updateForcePrintDimensions();
+  	if (!hasUpdatedForcePrintDimensions) {
+  		updateForcePrintDimensions();
+  	}
 }
 
 function forcePrint_loadForm() {
@@ -347,10 +346,6 @@ function forcePrint_getSelectedFormsOutputTypes() {
 }
 
 function updateForcePrintDimensions() {
-//	var divHeight = $(".force-print-content").height();
-//    // Update the height of the select
-//    $("#force-print-form-list").selectable().css({"max-height":(divHeight * 0.75) + "px"});
-	
 	var divHeight = $(".force-print-content").height();
 	var instructHeight = $(".force-print-multiple-select").height();
 	var nameHeight = $(".force-print-patient-name").height();
@@ -364,4 +359,5 @@ function updateForcePrintDimensions() {
     $("force-print-forms-container").css({"height":"100%"});
     divHeight = $(".force-print-forms-container").height();
     $(".force-print-create-button-panel").css({"height":(divHeight - instructHeight - nameHeight - newDivHeight - 30) + "px"});
+    hasUpdatedForcePrintDimensions = true;
 }

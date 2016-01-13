@@ -593,8 +593,8 @@ label {
             <div style="color:#000000;"><p><b>Are you sure you want to initiate an ADHD Workup?</b></p></div>
         </div>
     </div>
-    <input type="hidden" id="badScans" />
     <%@ include file="forcePrintJITs.jsp" %>
+    <input type="hidden" id="badScans" />
 </body>
 </html>
 

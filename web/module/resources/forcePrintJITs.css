@@ -74,13 +74,6 @@
 	height: 400px;
 }
 
-a.force-print-icon-button {
-    padding: 0 0 .4em 5px;
-    text-decoration: none;
-    position: relative;
-    height: 25px;
-}
-
 .force-print-black-text {
 	color: #000;
 }
@@ -134,8 +127,7 @@ a.force-print-icon-button {
 
 #force-print-form-list li { 
 	margin: 3px; 
-	padding: 0.4em;  
-	height: 18px; 
+	padding: 0.4em;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;

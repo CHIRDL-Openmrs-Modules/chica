@@ -17,7 +17,7 @@
                 <ol id="force-print-form-list"></ol>
              </div>
              <div class="force-print-create-button-panel">
-                <a href="#" id="force-print-create-forms-button" class="force-print-icon-button ui-state-default ui-corner-all">Create</a>
+                <a href="#" id="force-print-create-forms-button" class="ui-state-default ui-corner-all">Create</a>
              </div>
          </div>
          <div class="force-print-form-container">

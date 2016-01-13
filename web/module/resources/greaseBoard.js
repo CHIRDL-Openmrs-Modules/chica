@@ -369,11 +369,6 @@ $(function() {
         }
     });
     
-    $("#forcePrintButton").click(function(event) {
-        $("#force-print-dialog").dialog("open");
-        event.preventDefault();
-    });
-    
     var cell = document.getElementById("badScansCell");
     setInterval("Timer()", 500);
     x=1;
@@ -1055,7 +1050,6 @@ function confirmation(optionsSelect, formName) {
 		$("#patientName").val(patientName);
 		$("#force-print-dialog").dialog("open");
 		$(".force-print-patient-name").html("<p>Please choose form(s) for " + patientName + ".</p>");
-        event.preventDefault();
 	} else if(optionsSelect[selectedIndex].text == 'ADHD WU'){
         $("#adhdWorkupDialog").data("form", formName).dialog("open");
     } else {
