@@ -177,7 +177,8 @@ function forcePrint_checkForChromeSafari() {
 }
 
 function forcePrint_formLoaded() {
-	if ($("#force-print-multiple-output-types-dialog").dialog("isOpen") === false && $("#force-print-no-force-prints-dialog").dialog("isOpen") === false) {
+	if ($("#force-print-multiple-output-types-dialog").hasClass("ui-dialog-content") && $("#force-print-no-force-prints-dialog").hasClass("ui-dialog-content") && 
+			$("#force-print-multiple-output-types-dialog").dialog("isOpen") === false && $("#force-print-no-force-prints-dialog").dialog("isOpen") === false) {
 		var obj = $(".force-print-form-object");
 		if (obj != null) {
 			var url = obj.attr("data");
@@ -313,7 +314,7 @@ function forcePrint_loadForm() {
 	if (isChromeSafari) {
 		setTimeout(forcePrint_formLoaded, 3000);
 	} else {
-		setTimeout(forcePrint_formLoaded, 10000);
+		setTimeout(forcePrint_formLoaded, 5000);
 	}
 }
 
