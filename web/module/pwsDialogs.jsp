@@ -94,8 +94,8 @@
                         <span>Submitting...</span>
                     </div>
                 </div>
-                <div id="formTabDialog" title="CHICA Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div id="formTabDialogContainer" style="overflow-x: hidden;overflow-y: hidden;">
+                <div id="formSelectionDialog" title="CHICA Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                    <div id="formSelectionDialogContainer">
                         <div id="formLoading">
                            <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
                         </div>
@@ -106,42 +106,24 @@
                         <div id="noForms">
                             There are no recommended handouts for ${PatientName}.
                         </div>
-                        <div id="formTabContainer">
-                            <div id="tabs" style="width: 100%;height: 100%;overflow-x: hidden;overflow-y: auto;"></div>
+                        <div id="recommendedHandoutsContainer">
+                            <div class="recommendedHandoutsMultiselect">Ctrl+click to select multiple forms</div>
+				            <div class="recommendedHandoutsFormListContainer">
+				               <ol id="recommendedHandoutsFormList"></ol>
+				            </div>
+				            <div class="recommendedHandoutsCombineButtonPanel">
+				            <a href="#" id="recommendedHandoutsSelectAllButton" class="force-print-icon-button ui-state-default ui-corner-all">Select All</a>
+	                           <a href="#" id="recommendedHandoutsCombineButton" class="force-print-icon-button ui-state-default ui-corner-all">Combine Forms</a>
+	                        </div>
                         </div>
+			            <div class="recommendedHandoutContainer">
+				           <object class="recommendedHandoutObject" data="" onreadystatechange="return formLoaded();" onload="formLoaded();" type="application/pdf">
+				              <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
+				              <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+				           </object>
+				        </div>
                     </div>
                 </div>
-                <div id="forcePrintDialog" title="Other CHICA Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div class="pws-force-print-content">
-                         <div class="force-print-forms-loading">
-                             <span id="formsLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
-                         </div>
-                         <div class="force-print-forms-server-error">
-                             <div class="force-print-forms-server-error-text ui-state-error"></div>
-                             <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
-                         </div>
-                         <div class="force-print-forms-container">
-                             <div class="force-print-patient-name">Please choose a form for ${PatientName}.</div>
-                             <fieldset class="force-print-fieldset">
-                                 <select class="force-print-forms"></select>
-                             </fieldset>
-                         </div>
-                         <div class="force-print-form-container">
-                            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
-                               <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
-                               <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-                            </object>
-                         </div>
-                         <div class="force-print-form-loading">
-                            <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
-                         </div>
-                         <input type="hidden" value="${patientId}" id="patientId" />
-                         <input type="hidden" value="${sessionId}" id="sessionId" />
-                         <input type="hidden" value="${locationId}" id="locationId" />
-                         <input type="hidden" value="${locationTagId}" id="locationTagId" />
-                    </div>
-                </div>
-                
                 <div id="notesDialog" title="CHICA Notes" class="ui-dialog-titlebar ui-widget-header" >
                     <div id="notesDialogContainer">                   
                         <div id="notesTabContainer">
@@ -162,3 +144,9 @@
                         </div>
                     </div>
                 </div>
+                <div id="noSelectedFormsDialog" title="No Selection" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+				    <div style="margin: 0 auto;text-align: center;">
+				        <div style="color:#000000;"><p><b>Please select at least two forms to combine.</b></p></div>
+				    </div>
+				</div>
+                <%@ include file="forcePrintJITs.jsp" %>
