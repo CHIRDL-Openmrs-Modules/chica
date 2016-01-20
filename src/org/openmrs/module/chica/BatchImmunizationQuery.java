@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.ConceptName;
 import org.openmrs.Obs;
 import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
@@ -48,20 +49,19 @@ public class BatchImmunizationQuery extends AbstractTask {
 	private static final String CHIRP_NOT_AVAILABLE = "CHIRP_not_available";
 	private static final String PROPERTY_STOP_DATE = "Stop_Date";
 	private static final String PROPERTY_START_DATE = "Start_Date";
-
+	private static final String PROPERTY_KEY_ENROLLMENT_CONCEPT = "enrollment_concept";
+	private static final String PROPERTY_KEY_FOLLOWUP_CONCEPT = "followup_concept";
+	private static final String CHIRP_STATUS_CONCEPT = "CHIRP_Status";
+	private static final String HPV_VACCINE_NAME = "HPV, unspecified formulation";
+	
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private TaskDefinition taskConfig;
 	private String enrollmentConceptProperty; //String containing concept name
-	private static final String PROPERTY_KEY_ENROLLMENT_CONCEPT = "enrollment_concept";
-	private static final String PROPERTY_KEY_FOLLOWUP_CONCEPT = "followup_concept";
 	private String startDateProperty;
 	private String stopDateProperty;
 	private String followupConceptProperty;
-	private static final String CHIRP_STATUS_CONCEPT = "CHIRP_Status";
-
-	private static final String HPV_VACCINE_NAME = "HPV";
-	private Concept statusConcept;
+	private Concept chirpStatusConcept;
 	
 	
 	@Override
@@ -121,13 +121,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 					log.error ("HPV study:  Task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not a valid concept");
 					return;
 				}
-				statusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
+				chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
 				
 				queryChirp(enrollmentConcept, followUpConcept);
 				
 		} catch (Exception e) {
 			log.error("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
+			ImmunizationForecastLookup.clearimmunizationLists();
 			Context.closeSession();
 		}
 	}
@@ -137,32 +138,29 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
+		ConceptService conceptService = Context.getConceptService();
 
 		Date startDate = DateUtil.parseYmd(startDateProperty);
 		Date stopDate = DateUtil.parseYmd(stopDateProperty);
-		
+
 		List<Encounter> encounters = chicaService
 				.getEncountersForEnrolledPatients(enrollmentConcept,
 						startDate, stopDate);
 
-		//if encounter count is null set count to 0
-		// add count to info log
-		
-		int size = (encounters == null ? 0 : encounters.size());
-		
-		log.info("Number of HPV enrollment encounters for encounters starting " + startDateProperty 
-				+ " through " + stopDateProperty + " : " + size);
+		Integer numberOfEncounters = encounters == null ? 0 : encounters.size();
+		log.info("Number of HPV enrollment encounters from " + startDateProperty 
+				+ " through " + stopDateProperty + " : " + numberOfEncounters);
 
 		for (Encounter encounter : encounters) {
 
-			try {
 
+			try {
 				//Do not query chirp if this obs already exists for the encounter.
-			
+
 				Integer obsCount = obsService.getObservationCount(Collections.singletonList((Person) encounter.getPatient()), 
 						Collections.singletonList((org.openmrs.Encounter) encounter), 
 						Collections.singletonList(followUpConcept), null, null, null, null, null, null, false);
-				
+
 				// If this observation already exists for this encounter
 				if (obsCount > 0) {
 					continue;
@@ -170,35 +168,43 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 				String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 
-				/* The method queryCHIRP() returns null for any issues with query such
+				/* The method queryCHIRP() returns null for any issues such
 				 * as CHIRP availability, parse errors, no patient match, etc.
-				 * It also handles saving the observations for these CHIRP issues.
+				 * If the null response is due to CHIRP availability, then stop and restart later. 
+				 * CHIRP might be down during off hours.
 				 */
-				
+
 				if (queryResponse == null) {
-					//If null response is due to CHIRP availability, then stop. CHIRP might be down during off hours
-					ConceptService conceptService = Context.getConceptService();
-					Concept statusConcept = conceptService .getConceptByName(CHIRP_STATUS_CONCEPT);
+
+					//Check the latest CHIRP status observation today
 					Date now = new Date();
 					Integer mostRecentCount = 1;
-					List<Obs> latestChirpAvailabilityObs = obsService.getObservations(Collections.singletonList((Person)encounter.getPatient()), 
+					List<Obs> latestChirpStatusObs = obsService.getObservations(
+							Collections.singletonList((Person)encounter.getPatient()), 
 							Collections.singletonList((org.openmrs.Encounter) encounter), 
-							Collections.singletonList(statusConcept), 
+							Collections.singletonList(chirpStatusConcept), 
 							null, null, null, null, mostRecentCount, null, DateUtil.getStartOfDay(now), now, false);
-					if (latestChirpAvailabilityObs != null ) {
-						Obs status = latestChirpAvailabilityObs.get(0);
-						if (CHIRP_NOT_AVAILABLE.equals(status.getConcept().getName())){
+					if (latestChirpStatusObs != null ) {
+						Obs status = latestChirpStatusObs.get(0);
+						Concept valueCoded = null;
+						String conceptName = null;
+						ConceptName name = null;
+						if (status != null && status.getValueCoded() != null &&  (name = valueCoded.getName()) != null) {
+							conceptName = valueCoded.getName().toString();		
+						}
+						
+						if (CHIRP_NOT_AVAILABLE.equals(conceptName)){
 							log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
-							shutdown();
+							return null;
 						}
 					}
-					
+
 					continue;
 				}
 
 				ImmunizationQueryOutput immunizations = ImmunizationForecastLookup
 						.getImmunizationList(encounter.getPatientId());
-				
+
 				String identifier = encounter.getPatient().getPatientIdentifier().toString();
 				if (immunizations == null) {
 					log.info("HPV Study: Vaccine requery found no immunizations in CHIRP for patient: " + identifier);
@@ -206,7 +212,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 				}
 
 				// patient has immunization records
-				
+
 				HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
 						.getImmunizationPrevious();
 
@@ -217,12 +223,15 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 				Integer count = 0;
 				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
+				if (HpvHistory == null){
+					continue; 
+				}
 				for(ImmunizationPrevious value : HpvHistory.values()){
-					if (value.getDate().before(encounter.getEncounterDatetime())){
+					if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
 						count++;
 					}
 				}
-				
+
 				Obs obs = new Obs();
 				obs.setValueNumeric(count.doubleValue());
 				obs.setEncounter(encounter);
@@ -232,23 +241,19 @@ public class BatchImmunizationQuery extends AbstractTask {
 				obsService.saveObs(obs, null);
 
 				log.info("Follow-up HPV count at encounter for patient: " + identifier
-						+ " HPV doses: " + count);																				
+						+ " HPV doses: " + count);	
 
-			} catch (Exception e) {
-				log.error(" HPV Study exception for encounter = "
-						+ encounter.getId() + " patient: "
-						+ encounter.getPatientId());
-				continue;
+			}catch(Exception e){
+				log.info("HPV Study: Exception during vaccine count requery.", e);
 			}
-
 		}
 
-		return null;
-
+		return numberOfEncounters;
 	}
 
 	@Override
 	public void shutdown() {
+		ImmunizationForecastLookup.clearimmunizationLists();
 		super.shutdown();
 		log.info("HPV study: Shutting down hpv follow-up scheduled task.");
 	}
