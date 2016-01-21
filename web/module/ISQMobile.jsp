@@ -173,7 +173,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_LT1PW" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_2_LT1PW">Less than once a week</label>
+                <label for="ISQQuestionEntry_2_LT1PW">Problems less than once a week</label>
                 <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_1PW" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_2_1PW">Problems 1 night a week</label>
                 <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2PW" value="2" data-theme="b" />
@@ -212,19 +212,21 @@
         <strong>${quest3}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest3}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
-                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_LT1M" value="0" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_NA" value="0" data-theme="b" />
+                <label for="ISQQuestionEntry_3_NA">Not applicable/no settling problem</label>
+                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_3_LT1M">Less than 1 month</label>
-                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_1M" value="1" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_1M" value="2" data-theme="b" />
                 <label for="ISQQuestionEntry_3_1M">1 month</label>
-                <input type="radio" name="ISQQuestionEntry_3" id=ISQQuestionEntry_3_2M value="2" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3" id=ISQQuestionEntry_3_2M value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2M">2 months</label>
-                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_3M" value="3" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_3M" value="4" data-theme="b" />
                 <label for="ISQQuestionEntry_3_3M">3 months</label>
-                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_4M" value="4" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_4M" value="5" data-theme="b" />
                 <label for="ISQQuestionEntry_3_4M">4 months</label>
-                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_5M" value="5" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_5M" value="6" data-theme="b" />
                 <label for="ISQQuestionEntry_3_5M">5 months</label>
-                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_6MOM" value="6" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_6MOM" value="7" data-theme="b" />
                 <label for="ISQQuestionEntry_3_6MOM">6 months or more</label>
             </fieldset>
         </div>
@@ -364,19 +366,21 @@
         <strong>${quest7}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest7}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
-                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_LT1M" value="0" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_NA" value="0" data-theme="b" />
+                <label for="ISQQuestionEntry_7_NA">Not applicable/no waking problem</label>
+                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_7_LT1M">Less than 1 month</label>
-                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_1M" value="1" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_1M" value="2" data-theme="b" />
                 <label for="ISQQuestionEntry_7_1M">1 month</label>
-                <input type="radio" name="ISQQuestionEntry_7" id=ISQQuestionEntry_7_2M value="2" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7" id=ISQQuestionEntry_7_2M value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2M">2 months</label>
-                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_3M" value="3" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_3M" value="4" data-theme="b" />
                 <label for="ISQQuestionEntry_7_3M">3 months</label>
-                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_4M" value="4" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_4M" value="5" data-theme="b" />
                 <label for="ISQQuestionEntry_7_4M">4 months</label>
-                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_5M" value="5" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_5M" value="6" data-theme="b" />
                 <label for="ISQQuestionEntry_7_5M">5 months</label>
-                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_6MOM" value="6" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_6MOM" value="7" data-theme="b" />
                 <label for="ISQQuestionEntry_7_6MOM">6 months or more</label>
             </fieldset>
         </div>
@@ -442,19 +446,21 @@
         <strong>${quest9}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest9}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
-                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_LT1M" value="0" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_NA" value="0" data-theme="b" />
+                <label for="ISQQuestionEntry_9_NA">Not applicable/there is no problem</label>
+                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_9_LT1M">Less than 1 month</label>
-                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_1M" value="1" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_1M" value="2" data-theme="b" />
                 <label for="ISQQuestionEntry_9_1M">1 month</label>
-                <input type="radio" name="ISQQuestionEntry_9" id=ISQQuestionEntry_9_2M value="2" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9" id=ISQQuestionEntry_9_2M value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2M">2 months</label>
-                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_3M" value="3" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_3M" value="4" data-theme="b" />
                 <label for="ISQQuestionEntry_9_3M">3 months</label>
-                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_4M" value="4" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_4M" value="5" data-theme="b" />
                 <label for="ISQQuestionEntry_9_4M">4 months</label>
-                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_5M" value="5" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_5M" value="6" data-theme="b" />
                 <label for="ISQQuestionEntry_9_5M">5 months</label>
-                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_6MOM" value="6" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_6MOM" value="7" data-theme="b" />
                 <label for="ISQQuestionEntry_9_6MOM">6 months or more</label>
             </fieldset>
         </div>
@@ -585,19 +591,19 @@
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_LT1PW" value="0" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_LT1PW">Problemas menos de una vez a la semana</label>
-                <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2_1PW" value="1" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_1PW" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_1PW">Problemas 1 noche a la semana</label>
-                <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2_2PW" value="2" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_2PW" value="2" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_2PW">Problemas 2 noche a la semana</label>
-                <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2_3PW" value="3" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_3PW" value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_3PW">Problemas 3 noche a la semana</label>
-                <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2_4PW" value="4" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_4PW" value="4" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_4PW">Problemas 4 noche a la semana</label>
-                <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2_5PW" value="5" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_5PW" value="5" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_5PW">Problemas 5 noche a la semana</label>
-                <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2_6PW" value="6" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_6PW" value="6" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_6PW">Problemas 6 noche a la semana</label>
-                <input type="radio" name="ISQQuestionEntry_2" id="ISQQuestionEntry_2_2_EN" value="7" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_2_2" id="ISQQuestionEntry_2_2_EN" value="7" data-theme="b" />
                 <label for="ISQQuestionEntry_2_2_EN">Problemas todas las noches de la semana</label>
             </fieldset>
         </div>
@@ -623,19 +629,21 @@
         <strong>${quest3_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest3_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
-                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_LT1M" value="0" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_NA" value="0" data-theme="b" />
+                <label for="ISQQuestionEntry_3_2_NA">No aplica</label>
+                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_LT1M">menos de 1 mes</label>
-                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_1M" value="1" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_1M" value="2" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_1M">1 mes</label>
-                <input type="radio" name="ISQQuestionEntry_3_2" id=ISQQuestionEntry_3_2_2M value="2" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3_2" id=ISQQuestionEntry_3_2_2M value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_2M">2 meses</label>
-                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_3M" value="3" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_3M" value="4" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_3M">3 meses</label>
-                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_4M" value="4" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_4M" value="5" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_4M">4 meses</label>
-                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_5M" value="5" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_5M" value="6" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_5M">5 meses</label>
-                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_6MOM" value="6" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_6MOM" value="7" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_6MOM">6 meses o m&aacute;s</label>
             </fieldset>
         </div>
@@ -775,19 +783,21 @@
         <strong>${quest7_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest7_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
-                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_LT1M" value="0" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_NA" value="0" data-theme="b" />
+                <label for="ISQQuestionEntry_7_2_NA">No aplica</label>
+                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_LT1M">menos de 1 mes</label>
-                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_1M" value="1" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_1M" value="2" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_1M">1 mes</label>
-                <input type="radio" name="ISQQuestionEntry_7_2" id=ISQQuestionEntry_7_2_2M value="2" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7_2" id=ISQQuestionEntry_7_2_2M value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_2M">2 meses</label>
-                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_3M" value="3" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_3M" value="4" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_3M">3 meses</label>
-                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_4M" value="4" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_4M" value="5" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_4M">4 meses</label>
-                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_5M" value="5" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_5M" value="6" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_5M">5 meses</label>
-                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_6MOM" value="6" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_6MOM" value="7" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_6MOM">6 meses o m&aacute;s</label>
             </fieldset>
         </div>
@@ -853,19 +863,21 @@
         <strong>${quest9_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest9_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
-                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_LT1M" value="0" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_NA" value="0" data-theme="b" />
+                <label for="ISQQuestionEntry_9_2_NA">No aplica</label>
+                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_LT1M">menos de 1 mes</label>
-                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_1M" value="1" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_1M" value="2" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_1M">1 mes</label>
-                <input type="radio" name="ISQQuestionEntry_9_2" id=ISQQuestionEntry_9_2_2M value="2" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9_2" id=ISQQuestionEntry_9_2_2M value="3" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_2M">2 meses</label>
-                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_3M" value="3" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_3M" value="4" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_3M">3 meses</label>
-                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_4M" value="4" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_4M" value="5" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_4M">4 meses</label>
-                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_5M" value="5" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_5M" value="6" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_5M">5 meses</label>
-                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_6MOM" value="6" data-theme="b" />
+                <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_6MOM" value="7" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_6MOM">6 meses o m&aacute;s</label>
             </fieldset>
         </div>

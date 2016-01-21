@@ -123,9 +123,9 @@ function calculateScore() {
 		
 		// Determine ISQResearch
 		// Here is the criteria 
-		// (Question2Value >=5 OR Question4Value >=5) AND (Question3Value >=2 OR Question7Value >=2)
+		// (Question2Value >=5 OR Question4Value >=5) AND (Question3Value >=3 OR Question7Value >=3)
 		// AND (Question1Value >=3 OR Question5Value >=3 OR Question6Value >= 2 OR Question8Value >=3)
-		if((answers[1] >=5 || answers[3] >=5) && (answers[2] >=2 || answers[6] >=2) && (answers[0] >=3 || answers[4] >=3 || answers[5] >= 2 || answers[7] >=3)){
+		if((answers[1] >=5 || answers[3] >=5) && (answers[2] >=3 || answers[6] >=3) && (answers[0] >=3 || answers[4] >=3 || answers[5] >= 2 || answers[7] >=3)){
 			$("#ISQResearch").val(1);
 		}
 		else{
