@@ -19,7 +19,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -47,6 +49,8 @@ import org.openmrs.scheduler.tasks.AbstractTask;
 public class BatchImmunizationQuery extends AbstractTask {
 
 	private static final String CHIRP_NOT_AVAILABLE = "CHIRP_not_available";
+	private static final String CHIRP_LOGIN_FAILED = "CHIRP_login_failed";
+	
 	private static final String PROPERTY_STOP_DATE = "Stop_Date";
 	private static final String PROPERTY_START_DATE = "Start_Date";
 	private static final String PROPERTY_KEY_ENROLLMENT_CONCEPT = "enrollment_concept";
@@ -138,8 +142,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
-		ConceptService conceptService = Context.getConceptService();
-
+		
 		Date startDate = DateUtil.parseYmd(startDateProperty);
 		Date stopDate = DateUtil.parseYmd(stopDateProperty);
 
@@ -152,7 +155,6 @@ public class BatchImmunizationQuery extends AbstractTask {
 				+ " through " + stopDateProperty + " : " + numberOfEncounters);
 
 		for (Encounter encounter : encounters) {
-
 
 			try {
 				//Do not query chirp if this obs already exists for the encounter.
@@ -168,15 +170,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 				String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 
-				/* The method queryCHIRP() returns null for any issues such
-				 * as CHIRP availability, parse errors, no patient match, etc.
-				 * If the null response is due to CHIRP availability, then stop and restart later. 
-				 * CHIRP might be down during off hours.
+				
+				/* Check the latest CHIRP status observation today for this requery.  
+				 * We do not want to send anymore immunization queries to CHIRP
+				 * if it is not available.  Try again at the next repeat interval for the task.
 				 */
-
+				
 				if (queryResponse == null) {
 
-					//Check the latest CHIRP status observation today
 					Date now = new Date();
 					Integer mostRecentCount = 1;
 					List<Obs> latestChirpStatusObs = obsService.getObservations(
@@ -184,21 +185,17 @@ public class BatchImmunizationQuery extends AbstractTask {
 							Collections.singletonList((org.openmrs.Encounter) encounter), 
 							Collections.singletonList(chirpStatusConcept), 
 							null, null, null, null, mostRecentCount, null, DateUtil.getStartOfDay(now), now, false);
-					if (latestChirpStatusObs != null ) {
-						Obs status = latestChirpStatusObs.get(0);
-						Concept valueCoded = null;
-						String conceptName = null;
-						ConceptName name = null;
-						if (status != null && status.getValueCoded() != null &&  (name = valueCoded.getName()) != null) {
-							conceptName = valueCoded.getName().toString();		
-						}
-						
-						if (CHIRP_NOT_AVAILABLE.equals(conceptName)){
-							log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
-							return null;
+					
+					Iterator<Obs> iter = latestChirpStatusObs.iterator();
+					if (iter.hasNext()){
+						Obs chirpStatusObs = iter.next();
+							if (CHIRP_NOT_AVAILABLE.equals(chirpStatusObs.getValueAsString(new Locale("en_US")))||
+									CHIRP_LOGIN_FAILED.equals(chirpStatusObs.getValueAsString(new Locale("en_US")))){
+								log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
+								return null;
 						}
 					}
-
+					
 					continue;
 				}
 
