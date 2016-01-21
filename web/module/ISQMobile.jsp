@@ -630,7 +630,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_NA" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_3_2_NA">No aplica</label>
+                <label for="ISQQuestionEntry_3_2_NA">No aplica/No hay problema para calmarlo</label>
                 <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_3_2_LT1M">menos de 1 mes</label>
                 <input type="radio" name="ISQQuestionEntry_3_2" id="ISQQuestionEntry_3_2_1M" value="2" data-theme="b" />
@@ -784,7 +784,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_NA" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_7_2_NA">No aplica</label>
+                <label for="ISQQuestionEntry_7_2_NA">No aplica/No hay problema de despertarse</label>
                 <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_7_2_LT1M">menos de 1 mes</label>
                 <input type="radio" name="ISQQuestionEntry_7_2" id="ISQQuestionEntry_7_2_1M" value="2" data-theme="b" />
@@ -864,7 +864,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_NA" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_9_2_NA">No aplica</label>
+                <label for="ISQQuestionEntry_9_2_NA">No aplica/No hay problema</label>
                 <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_9_2_LT1M">menos de 1 mes</label>
                 <input type="radio" name="ISQQuestionEntry_9_2" id="ISQQuestionEntry_9_2_1M" value="2" data-theme="b" />
