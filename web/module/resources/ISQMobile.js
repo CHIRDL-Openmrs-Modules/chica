@@ -49,7 +49,7 @@ function setLanguage(patientName, birthdate) {
 	english = !english;
     var langButtonText = "Español";
     var additionalQuestions = "Here are a number of questions about your baby's sleeping habits.";
-    var instructions = '<p>Please base your answers on what you have noticied over the last MONTH.</p>';
+    var instructions = '<p>Please base your answers on what you have noticed over the last MONTH.</p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
     if (!english) {
@@ -78,80 +78,73 @@ function changePage(newPageNum) {
 
 function calculateScore() {
 	var score = 0;
-	var valueFound = false;
-	for (var i = 1; i < 10; i++) {
-	    if (english) {
-	    	//value = $("input:radio[name=ISQQuestionEntry_" + i + "]").val();
-	    	$("input[name=ISQQuestionEntry_" + i + "]:checked").each(function() {
-	    		valueFound = true;
-	    		var value = parseInt($(this).val())
-	            score = score + value;
-	        });
-	    } else {
-	    	//value = $("input:radio[name=ISQQuestionEntry_" + i + "_2]").val();
-	    	$("input[name=ISQQuestionEntry_" + i + "_2]:checked").each(function() {
-	    		valueFound = true;
-	    		var value = parseInt($(this).val())
-	            score = score + value;
-	        });
+	
+	// Keep track of each answer so that we can determine the value
+	// for scoring and ISQResearch
+	var answers = [0,0,0,0,0,0,0,0,0,0];
+	var scorableAnswers = [1,2,4,5,6,8]; // Do not include question 3, 7, 9, and 10 in the total score
+	
+	for (var i = 1; i < 11; i++) {
+	    if (english) {	
+	    	answers[i -1] = parseInt($("input[name=ISQQuestionEntry_" + i + "]:checked").val());
+	    	
+	    } else {	
+	    	answers[i -1] = parseInt($("input[name=ISQQuestionEntry_" + i + "_2]:checked").val());
 	    }
     }
 	
-	if (valueFound) {
+	// Determine ISQScore
+	for(var i = 0; i < scorableAnswers.length; i++){
+		var value = answers[scorableAnswers[i]-1];
+		score += value;
+	}
+	
 		$("#ISQScore").val(score);
 		
-		if (score > 0 && score < 10) {
-			$("#ISQInterpretation").val("mild");
-		} else if (score > 9 && score < 20) {
-			$("#ISQInterpretation").val("moderate");
-		} else if (score > 19) {
-			$("#ISQInterpretation").val("severe");
+		// Determine ISQProb
+		if(score >= 6)
+		{
+			$("#ISQProb").val(1);
 		}
-	}
+		else
+		{
+			$("#ISQProb").val(0);
+		}
+		
+		// Determine ISQSevere
+		if(score >= 12)
+		{
+			$("#ISQSevere").val(1);
+		}
+		else
+		{
+			$("#ISQSevere").val(0);
+		}
+		
+		// Determine ISQResearch
+		// Here is the criteria 
+		// (Question2Value >=5 OR Question4Value >=5) AND (Question3Value >=3 OR Question7Value >=3)
+		// AND (Question1Value >=3 OR Question5Value >=3 OR Question6Value >= 2 OR Question8Value >=3)
+		if((answers[1] >=5 || answers[3] >=5) && (answers[2] >=3 || answers[6] >=3) && (answers[0] >=3 || answers[4] >=3 || answers[5] >= 2 || answers[7] >=3)){
+			$("#ISQResearch").val(1);
+		}
+		else{
+			$("#ISQResearch").val(0);
+		}
 }
 
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
-    // Transfer the answers for the 4 choice questions
-    for (var i = 1; i < 10; i++) {
+    // Transfer the answers for the 10 questions
+    for (var i = 1; i < 11; i++) {
     	if (english) {
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_2_NAO", "#ISQQuestionEntry_" + i + "_NAO");
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_2_SD", "#ISQQuestionEntry_" + i + "_SD");
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_2_MTHD", "#ISQQuestionEntry_" + i + "_MTHD");
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_2_NED", "#ISQQuestionEntry_" + i + "_NED");
+	    	setQuestionCheckboxes("ISQQuestionEntry_" + i + "_2", "ISQQuestionEntry_" + i);
 	    } else {
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_NAO", "#ISQQuestionEntry_" + i + "_2_NAO");
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_SD", "#ISQQuestionEntry_" + i + "_2_SD");
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_MTHD", "#ISQQuestionEntry_" + i + "_2_MTHD");
-	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_NED", "#ISQQuestionEntry_" + i + "_2_NED");
+	    	setQuestionCheckboxes("ISQQuestionEntry_" + i, "ISQQuestionEntry_" + i + "_2");
 	    }
     }
-    
-//    // Transfer answers for Yes/No Questions
-//    for (var i = 10; i < 14; i++) {
-//	    if (english) {
-//	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_2_Yes", "#ISQQuestionEntry_" + i + "_Yes");
-//	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_2_No", "#ISQQuestionEntry_" + i + "_No");
-//	    } else {
-//	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_Yes", "#ISQQuestionEntry_" + i + "_2_Yes");
-//	    	setQuestionCheckboxes("#ISQQuestionEntry_" + i + "_No", "#ISQQuestionEntry_" + i + "_2_No");
-//	    }
-//    }
-    
-    // Transfer answers for follow up question
-    if (english) {
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_2_NDAA", "#ISQQuestionEntry_10_NDAA");
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_2_SD", "#ISQQuestionEntry_10_SD");
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_2_VD", "#ISQQuestionEntry_10_VD");
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_2_ED", "#ISQQuestionEntry_10_ED");
-    } else {
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_NDAA", "#ISQQuestionEntry_10_2_NDAA");
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_SD", "#ISQQuestionEntry_10_2_SD");
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_VD", "#ISQQuestionEntry_10_2_VD");
-    	setQuestionCheckboxes("#ISQQuestionEntry_10_ED", "#ISQQuestionEntry_10_2_ED");
-    }
-    
+        
     changePage(1);
 }
 
@@ -176,7 +169,6 @@ function attemptFinishForm() {
 
 function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
-	//$.mobile.changePage("#empty_page");
 	$("#finish_error_dialog").popup("close");
 	$("#finish_error_dialog_sp").popup("close");
 	$("#not_finished_final_dialog").popup("close");
@@ -209,12 +201,17 @@ function handleFinishFormError() {
 	}
 }
 
-function setQuestionCheckboxes(initialCheckBoxId, newCheckBoxId) {
-	if ($(initialCheckBoxId).is(":checked")) {
-		$(newCheckBoxId).prop("checked", true);
-		$(initialCheckBoxId).prop("checked", false);
-		$(newCheckBoxId).checkboxradio('refresh');
-		$(initialCheckBoxId).checkboxradio('refresh');
+function setQuestionCheckboxes(initialName, newName) {
+	// Determine if any of the radio buttons in the group are selected
+	// If so, select the English/Spanish version
+	if($("input[name='" + initialName + "']").is(':checked')) {
+		var selectedValue = $("input[name='" + initialName + "']:checked").val();
+		
+		// Select the radio button by name and value
+		$("input[name='" + newName + "'][value='" + selectedValue + "']").prop("checked",true);
+		$("input[name='" + initialName + "'][value='" + selectedValue + "']").prop("checked",false);
+		$("input[name='" + newName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
+		$("input[name='" + initialName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
 	}
 }
 
@@ -225,8 +222,8 @@ function areAllQuestionsAnswered() {
 	}
 	
 	var questionName = "ISQQuestionEntry_";
-	for (var i = 1; i < 10; i++) {
-		if (!$("input[name='" + questionName + i + spanishChar + "']:checked").val()) {
+	for (var i = 1; i < 11; i++) {
+		if(!$("input[name='" + questionName + i + spanishChar + "']").is(':checked')){
 		   return false;
 		}
 	}
