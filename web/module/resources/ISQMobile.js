@@ -1,6 +1,5 @@
 var english = false;
 var formInstance = null;
-var finishAttempts = 0;
 
 $(document).on("pageinit", function() {
     // Initialize all pages because radio button reset will not work properly.
@@ -78,27 +77,37 @@ function changePage(newPageNum) {
 
 function calculateScore() {
 	var score = 0;
+	var valueFound = false;
 	
 	// Keep track of each answer so that we can determine the value
 	// for scoring and ISQResearch
-	var answers = [0,0,0,0,0,0,0,0,0,0];
+	var answers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
 	var scorableAnswers = [1,2,4,5,6,8]; // Do not include question 3, 7, 9, and 10 in the total score
 	
 	for (var i = 1; i < 11; i++) {
 	    if (english) {	
-	    	answers[i -1] = parseInt($("input[name=ISQQuestionEntry_" + i + "]:checked").val());
-	    	
-	    } else {	
-	    	answers[i -1] = parseInt($("input[name=ISQQuestionEntry_" + i + "_2]:checked").val());
+	    	if($("input[name=ISQQuestionEntry_" + i + "]").is(':checked')){
+	    		answers[i -1] = parseInt($("input[name=ISQQuestionEntry_" + i + "]:checked").val());
+	    	}
+	    } else {
+	    	if($("input[name=ISQQuestionEntry_" + i + "_2]").is(':checked')){
+	    		answers[i -1] = parseInt($("input[name=ISQQuestionEntry_" + i + "_2]:checked").val());
+	    	}	
 	    }
     }
 	
 	// Determine ISQScore
 	for(var i = 0; i < scorableAnswers.length; i++){
 		var value = answers[scorableAnswers[i]-1];
-		score += value;
+		if(value > -1) // Check to see if the question was answered before adding it to the score
+		{
+			score += value;
+			valueFound = true;
+		}
 	}
 	
+	if(valueFound)
+	{
 		$("#ISQScore").val(score);
 		
 		// Determine ISQProb
@@ -131,6 +140,7 @@ function calculateScore() {
 		else{
 			$("#ISQResearch").val(0);
 		}
+	}
 }
 
 function setLanguageFromForm(patientName, birthdate) {
@@ -149,16 +159,9 @@ function setLanguageFromForm(patientName, birthdate) {
 }
 
 function attemptFinishForm() {
-	finishAttempts++;
 	if (areAllQuestionsAnswered()) {
 		finishForm();
-	} else if (finishAttempts == 1) {
-    	if (english) {
-    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
-    	}
-	} else if (finishAttempts >= 2) {
+	}else {
 		if (english) {
     	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
     	} else {
