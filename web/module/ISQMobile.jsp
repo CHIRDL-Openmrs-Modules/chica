@@ -247,7 +247,7 @@
     </div>
     <div id="content_4" data-role="content">
     <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
-    <c:set var="quest4" value='How many nights per week does you baby wake on average?'/>
+    <c:set var="quest4" value='How many nights a week does your baby wake on average?'/>
         <input id="ISQQuestion_4" name="ISQQuestion_4" type="hidden" value="${quest4}"/>
         <strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest4}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -497,23 +497,12 @@
             </fieldset>
         </div>
     	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
-    	<div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Not Completed</h1>
-            </div>
-            <div data-role="content">
-                <span>This form is not complete.  Please complete before continuing.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Close</a>
-                </div>
-            </div>
-        </div>
         <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Not Completed</h1>
             </div>
             <div data-role="content">
-                <span>This form is still not complete.  Are you sure you want to continue?</span>
+                <span>This form is not complete. Are you sure you want to continue?</span>
                 <div style="margin: 0 auto;text-align: center;">
                     <a href=""  onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Yes</a>
                     <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
@@ -546,7 +535,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
     <div id="content_1_sp" data-role="content">
-        <div><h3>Acostarlo/ponerlo a dormir</h3><hr/><br/></div>
+        <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
         <c:set var="quest1_2" value='&iquest;Cu&aacute;nto tiempo en promedio tarda generalmente su beb&eacute; en disponerse a dormir? (marque solo una casilla)'/>
         <input id="ISQQuestion_1_2" name="ISQQuestion_1_2" type="hidden" value="${quest1_2}"/>
         <strong>${quest1_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest1_2}")'></a>
@@ -583,7 +572,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
     <div id="content_2_sp" data-role="content">
-        <div><h3>Acostarlo/ponerlo a dormir</h3><hr/><br/></div>
+        <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
         <c:set var="quest2_2" value='&iquest;Cu&aacute;ntas veces a la semana en promedio tiene problemas para ponerlo a dormir? (marque una sola casilla)'/>
         <input id="ISQQuestion_2_2" name="ISQQuestion_2_2" type="hidden" value="${quest2_2}"/>
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest2_2}")'></a>
@@ -914,17 +903,6 @@
             </fieldset>
         </div>
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
-        <div id="not_finished_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>No Completado</h1>
-            </div>
-            <div data-role="content">
-                <span>Esta forma no es completa. Por favor complete antes de continuar.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cerca</a>
-                </div>
-            </div>
-        </div>
         <div id="not_finished_final_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>No Completado</h1>
