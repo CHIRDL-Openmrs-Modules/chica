@@ -52,6 +52,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 	private static final String PROPERTY_START_DATE = "Start_Date";
 	private static final String PROPERTY_KEY_ENROLLMENT_CONCEPT = "enrollment_concept";
 	private static final String PROPERTY_KEY_FOLLOWUP_CONCEPT = "followup_concept";
+	private static final String PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS = "max_number_of_encounters";
 	private static final String CHIRP_STATUS_CONCEPT = "CHIRP_Status";
 	private static final String HPV_VACCINE_NAME = "HPV, unspecified formulation";
 	
@@ -59,10 +60,12 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 	private TaskDefinition taskConfig;
 	private String enrollmentConceptProperty; //String containing concept name
+	private String maxEncounterCountProperty;
 	private String startDateProperty;
 	private String stopDateProperty;
 	private String followupConceptProperty;
 	private Concept chirpStatusConcept;
+	private Integer maxEncounterCount = 0;
 	
 	
 	@Override
@@ -78,23 +81,23 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    startDateProperty = this.taskConfig.getProperty(PROPERTY_START_DATE);
 		    stopDateProperty = this.taskConfig.getProperty(PROPERTY_STOP_DATE);
 		    followupConceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_FOLLOWUP_CONCEPT);
+		    maxEncounterCountProperty = this.taskConfig.getProperty(PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS);
+		    //start and stop dates are not required
 		    
 		    if (StringUtils.isBlank(enrollmentConceptProperty)) {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not present in the property list for this task");
-				shutdown();
-			}
-		    if (StringUtils.isBlank(startDateProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_START_DATE + "' is not present in the property list for this task");
-				shutdown();
-			}
-		    if (StringUtils.isBlank(stopDateProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_STOP_DATE + "' is not present in the property list for this task");
 				shutdown();
 			}
 		    if (StringUtils.isBlank(followupConceptProperty)) {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not present in the property list for this task");
 				shutdown();
 			}
+		    if (StringUtils.isBlank(maxEncounterCountProperty)) {
+				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
+				shutdown();
+			}
+		    
+		    
 		    
 		   startExecuting();
 		    
@@ -124,13 +127,17 @@ public class BatchImmunizationQuery extends AbstractTask {
 				return;
 			}
 			chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
+			if (chirpStatusConcept == null){
+				log.error("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
+			}
+			
+			maxEncounterCount = Integer.valueOf(maxEncounterCountProperty.trim());
 
 			queryChirp(enrollmentConcept, followUpConcept);
 
 		} catch (Exception e) {
 			log.error("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
-			ImmunizationForecastLookup.clearimmunizationLists();
 			Context.closeSession();
 		}
 	}
@@ -139,10 +146,17 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
+		//Count the queries to CHIRP. This is not updated unless a query was performed.
 		int numberOfQueries = 0;
-
-		Date startDate = DateUtil.parseYmd(startDateProperty);
-		Date stopDate = DateUtil.parseYmd(stopDateProperty);
+		Date startDate = null;
+		Date stopDate = null;
+		
+		if (!StringUtils.isBlank(startDateProperty)) {
+			startDate = DateUtil.parseYmd(startDateProperty);
+		}
+	    if (!StringUtils.isBlank(stopDateProperty)) {
+	    	stopDate = DateUtil.parseYmd(stopDateProperty);
+		}
 
 		List<Encounter> encounters = chicaService
 				.getEncountersForEnrolledPatients(enrollmentConcept,
@@ -153,7 +167,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 		
 		Iterator<Encounter> encountersIterator = encounters.listIterator();
 		
-		while (encountersIterator.hasNext() && isExecuting()) {
+		while (encountersIterator.hasNext() && isExecuting() &&  numberOfQueries < maxEncounterCount) {
 			try {
 				//Do not query chirp if this obs already exists for the encounter.
 				Encounter encounter = encountersIterator.next();
@@ -168,6 +182,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 					continue;
 				}
 
+				
 				String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 
 				/* Check the latest CHIRP status observation today for this requery.  
@@ -184,12 +199,12 @@ public class BatchImmunizationQuery extends AbstractTask {
 							Collections.singletonList((org.openmrs.Encounter) encounter), 
 							Collections.singletonList(chirpStatusConcept), 
 							null, null, null, null, mostRecentCount, null, DateUtil.getStartOfDay(now), now, false);
-
+					
 					Iterator<Obs> iter = latestChirpStatusObs.iterator();
 					if (iter.hasNext()){
 						Obs chirpStatusObs = iter.next();
-						if (CHIRP_NOT_AVAILABLE.equals(chirpStatusObs.getValueAsString(new Locale("en_US")))||
-								CHIRP_LOGIN_FAILED.equals(chirpStatusObs.getValueAsString(new Locale("en_US")))){
+						if (CHIRP_NOT_AVAILABLE.equals(chirpStatusObs.getValueAsString(Locale.US))||
+								CHIRP_LOGIN_FAILED.equals(chirpStatusObs.getValueAsString(Locale.US))){
 							log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
 							return;
 						}
@@ -213,18 +228,18 @@ public class BatchImmunizationQuery extends AbstractTask {
 				HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
 						.getImmunizationPrevious();
 
-				if (prevImmunizations == null){
-					log.info("HPV Study: There are no historical vaccinations in CHIRP for patient: " + identifier +
+				if (prevImmunizations == null || prevImmunizations.get(HPV_VACCINE_NAME) == null){
+					log.info("HPV Study: There are no HPV vaccine records in CHIRP for patient: " + identifier +
 							" Since this patient was enrolled in the study, this patient " + 
 							"should have historical vaccination records.");
+					ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());			
 					continue;
 				}
 
-				Integer count = 0;
 				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
-				if (HpvHistory == null){
-					continue; 
-				}
+				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());	
+				
+				Integer count = 0;
 				for(ImmunizationPrevious value : HpvHistory.values()){
 					if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
 						count++;
@@ -255,7 +270,6 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 	@Override
 	public void shutdown() {
-		ImmunizationForecastLookup.clearimmunizationLists();
 		stopExecuting();
 		super.shutdown();
 		log.info("Shutting down BatchImmunizationQuery task.");
