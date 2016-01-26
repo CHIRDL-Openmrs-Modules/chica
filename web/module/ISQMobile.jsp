@@ -497,30 +497,11 @@
             </fieldset>
         </div>
     	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
-        <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Not Completed</h1>
-            </div>
-            <div data-role="content">
-                <span>This form is not complete. Are you sure you want to continue?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href=""  onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Yes</a>
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
+        
+        <%@ include file="mobileFinishDialogs.jsp" %>
+        
         </div>
-        <div id="finish_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Error</h1>
-            </div>
-            <div data-role="content">
-                <span>There was an error submitting the form.  Please press 'OK' to try again.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
-                </div>
-            </div>
-        </div>
-    </div>
+        
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
         <a  href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Finish</a>
@@ -903,30 +884,9 @@
             </fieldset>
         </div>
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
-        <div id="not_finished_final_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>No Completado</h1>
-            </div>
-            <div data-role="content">
-                <span>Esta forma no es completa. Est&aacute;s seguro de que quieres continuar?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Si</a>
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
-        </div>
-        <div id="finish_error_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Error</h1>
-            </div>
-            <div data-role="content">
-                <span>Hubo un error al enviar el formulario. Por favor, pulse 'OK' para intentarlo de nuevo.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
-                </div>
-            </div>
-        </div>
-        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+        
+        <%@ include file="mobileFinishDialogs_SP.jsp" %>
+        
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Anterior</a>
