@@ -5,8 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -18,10 +17,9 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class getPreviousWeight implements Rule {
-	
-	private Log log = LogFactory.getLog(this.getClass());
 	
 	/**
 	 * *
@@ -102,28 +100,41 @@ public class getPreviousWeight implements Rule {
 			return Result.emptyResult();
 		}
 		
-		Date birthdate = patient.getBirthdate();
-		if (birthdate == null) {
-			return Result.emptyResult();
-		}
-		
 		double weight = weightResult.toNumber();
-		long iPart;
-		double fPart;
-		iPart = (long) weight;
-		fPart = weight - iPart;
-		int ageMonths = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, null, Util.MONTH_ABBR);
-		if (ageMonths > 18) {
-			weight = org.openmrs.module.chirdlutil.util.Util.round(weight, 2);
-			Result newResult = new Result(weight + " lb.");
+		Integer locationId = (Integer) parameters.get("locationId");
+		Location location = Context.getLocationService().getLocation(locationId);
+		
+		if(location != null && location.getName().equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)) {
+			// Convert to metric
+			double metricWeight = org.openmrs.module.chirdlutil.util.Util.convertUnitsToMetric(
+				weight, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
+			metricWeight = org.openmrs.module.chirdlutil.util.Util.round(metricWeight, 2);
+			Result newResult = new Result(metricWeight + " kg.");
 			newResult.setResultDate(weightResult.getResultDate());
 			return newResult;
 		} else {
-			double ounces = fPart * 16;
-			int intOunces = (int) Math.round(org.openmrs.module.chirdlutil.util.Util.round(ounces, 0));
-			Result newResult = new Result(iPart + " lb. " + intOunces + " oz.");
-			newResult.setResultDate(weightResult.getResultDate());
-			return new Result(newResult);
+			Date birthdate = patient.getBirthdate();
+			if (birthdate == null) {
+				return Result.emptyResult();
+			}
+			
+			long iPart;
+			double fPart;
+			iPart = (long) weight;
+			fPart = weight - iPart;
+			int ageMonths = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate, null, Util.MONTH_ABBR);
+			if (ageMonths > 18) {
+				weight = org.openmrs.module.chirdlutil.util.Util.round(weight, 2);
+				Result newResult = new Result(weight + " lb.");
+				newResult.setResultDate(weightResult.getResultDate());
+				return newResult;
+			} else {
+				double ounces = fPart * 16;
+				int intOunces = (int) Math.round(org.openmrs.module.chirdlutil.util.Util.round(ounces, 0));
+				Result newResult = new Result(iPart + " lb. " + intOunces + " oz.");
+				newResult.setResultDate(weightResult.getResultDate());
+				return new Result(newResult);
+			}
 		}
 	}
 }

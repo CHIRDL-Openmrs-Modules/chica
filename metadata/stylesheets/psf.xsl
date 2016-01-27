@@ -116,27 +116,19 @@
                                                       </tr>
                                                       <tr>
                                                           <td style="text-align: right;">
-                                                              <input name="patientLeft" type="checkbox"
-                                                                  value="patientLeft" onclick="return false"
-                                                                  onkeydown="return false"/>
-                                                          </td>
-                                                          <td colspan="2" style="white-space: nowrap;">Patient left
-                                                              without treatment</td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td style="text-align: right;">
-                                                              <input name="patientRefused" type="checkbox"
-                                                                  value="patientRefused" onclick="return false"
-                                                                  onkeydown="return false"/>
-                                                          </td>
-                                                          <td colspan="2" style="white-space: nowrap;">Patient refused
-                                                              to complete form</td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td style="text-align: right;">
-                                                              <input name="twoIdsChecked" type="checkbox"
-                                                                  value="twoIdsChecked" onclick="return false"
-                                                                  onkeydown="return false"/>
+	                                                          <xsl:choose>
+	                                                              <xsl:when
+	                                                                  test="Records/Record/Field[@id = 'MATwoIDsChecked']/Value = 'Y'">
+	                                                                  <input name="twoIdsChecked" type="checkbox"
+	                                                                      value="twoIdsChecked" checked="checked"
+	                                                                      onclick="return false" onkeydown="return false"/>
+	                                                              </xsl:when>
+	                                                              <xsl:otherwise>
+	                                                                  <input name="twoIdsChecked" type="checkbox"
+	                                                                      value="twoIdsChecked" onclick="return false"
+	                                                                      onkeydown="return false"/>
+	                                                              </xsl:otherwise>
+	                                                          </xsl:choose>
                                                           </td>
                                                           <td colspan="2" style="white-space: nowrap;">Two IDs
                                                               checked</td>
@@ -347,7 +339,7 @@
                                                   <tr>
                                                       <td>
                                                           <xsl:choose>
-                                                            <xsl:when test="Records/Record/Field[@id = 'Oral']/Value = 'Oral Temp Type'">
+                                                            <xsl:when test="Records/Record/Field[@id = 'TemperatureType']/Value = 'Oral Temp Type'">
                                                                 <input name="Oral" type="checkbox" value="Oral" checked="checked"
                                                                     onclick="return false" onkeydown="return false"/>
                                                             </xsl:when>
@@ -356,7 +348,7 @@
                                                             </xsl:otherwise>
                                                           </xsl:choose>Oral
                                                           <xsl:choose>
-                                                              <xsl:when test="Records/Record/Field[@id = 'Rectal']/Value = 'Rectal Temp Type'">
+                                                              <xsl:when test="Records/Record/Field[@id = 'TemperatureType']/Value = 'Rectal Temp Type'">
                                                                   <input name="Rectal" type="checkbox" value="Rectal" checked="checked"
                                                                       onclick="return false" onkeydown="return false"/>
                                                               </xsl:when>
@@ -365,7 +357,7 @@
                                                               </xsl:otherwise>
                                                           </xsl:choose>Rectal
                                                           <xsl:choose>
-                                                              <xsl:when test="Records/Record/Field[@id = 'Axillary']/Value = 'Axillary Temp Type'">
+                                                              <xsl:when test="Records/Record/Field[@id = 'TemperatureType']/Value = 'Axillary Temp Type'">
                                                                   <input name="Axillary" type="checkbox" value="Axillary" checked="checked"
                                                                       onclick="return false" onkeydown="return false"/>
                                                               </xsl:when>

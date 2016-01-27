@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hl7.PrinterLocationHL7Filter;
+import org.openmrs.module.chica.hl7.CurrentDateHL7Filter;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.SimpleServer;
@@ -60,8 +61,10 @@ public class CheckinProcessor extends AbstractTask
 			parser.setValidationContext(new NoValidation());
 			PatientHandler patientHandler = new PatientHandler();
 			PrinterLocationHL7Filter printerLocationHL7Filter = new PrinterLocationHL7Filter();
+			CurrentDateHL7Filter currentDateHL7Filter = new CurrentDateHL7Filter();
 			ArrayList<HL7Filter> filters = new ArrayList<HL7Filter>();
 			filters.add(printerLocationHL7Filter);
+			filters.add(currentDateHL7Filter);
 			HL7SocketHandler socketHandler = new HL7SocketHandler(parser,
 					patientHandler, new HL7ObsHandler25(), new HL7EncounterHandler25(),
 					new HL7PatientHandler25(),filters);

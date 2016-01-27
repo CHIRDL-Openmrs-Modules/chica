@@ -71,7 +71,6 @@ import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.openmrs.util.OpenmrsConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
@@ -157,31 +156,6 @@ public class HL7SocketHandler extends
 		}
 		return resultPatient;
 
-	}
-
-	/**
-	 * Gets the location tag id from the encounter.
-	 * @param encounter
-	 * @return
-	 */
-	private Integer getLocationTagId(Encounter encounter) {
-		if (encounter != null) {
-			// lookup location tag id that matches printer location
-			if (encounter.getPrinterLocation() != null) {
-				Location location = encounter.getLocation();
-				Set<LocationTag> tags = location.getTags();
-
-				if (tags != null) {
-					for (LocationTag tag : tags) {
-						if (tag.getName().equalsIgnoreCase(
-								encounter.getPrinterLocation())) {
-							return tag.getLocationTagId();
-						}
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -342,6 +316,7 @@ public class HL7SocketHandler extends
 		AddCitizenship(currentPatient, hl7Patient, encounterDate);
 		AddRace(currentPatient, hl7Patient, encounterDate);
 		addMRN(currentPatient, hl7Patient, encounterDate);
+		addPatientAccountNumber(currentPatient, hl7Patient, encounterDate); // DWE CHICA-406
 		
 		Patient updatedPatient = null;
 		try {
@@ -409,11 +384,12 @@ public class HL7SocketHandler extends
 	 */
 	@Override
 	public Message processMessage(Message message,
-			HashMap<String, Object> parameters) throws ApplicationException {
+			HashMap<String, Object> parameters)  {
 		
 		AdministrationService adminService = Context.getAdministrationService();
 		parameters.put(PROCESS_HL7_CHECKIN_START, new java.util.Date());
 		boolean filterDuplicateCheckin = false;
+		boolean processMessageError = false;
 		Context.openSession();
 		String filterDuplicateRegistrationStr = adminService.getGlobalProperty(GLOBAL_PROPERTY_FILTER_ON_PRIOR_CHECKIN);
 		if (filterDuplicateRegistrationStr != null && filterDuplicateRegistrationStr.equalsIgnoreCase(TRUE)){
@@ -427,7 +403,8 @@ public class HL7SocketHandler extends
 		Message originalMessage = message;
 		// switch message version and type to values for default hl7 handlers
 		if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04 
-				|| message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01) {
+				|| message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01
+				|| message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A08) {
 			try {
 				if (message instanceof ca.uhn.hl7v2.model.v24.message.ADT_A01){
 					ca.uhn.hl7v2.model.v24.message.ADT_A01 adt = (ca.uhn.hl7v2.model.v24.message.ADT_A01) message;
@@ -437,6 +414,12 @@ public class HL7SocketHandler extends
 				
 				if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A04){
 					ca.uhn.hl7v2.model.v22.message.ADT_A04 adt = (ca.uhn.hl7v2.model.v22.message.ADT_A04) message;
+					adt.getMSH().getVersionID().setValue(HL7_VERSION_2_5);
+					adt.getMSH().getMessageType().getTriggerEvent().setValue(HL7_MESSAGE_TYPE_A01);
+				}
+				
+				if (message instanceof ca.uhn.hl7v2.model.v22.message.ADT_A08){
+					ca.uhn.hl7v2.model.v22.message.ADT_A08 adt = (ca.uhn.hl7v2.model.v22.message.ADT_A08) message;
 					adt.getMSH().getVersionID().setValue(HL7_VERSION_2_5);
 					adt.getMSH().getMessageType().getTriggerEvent().setValue(HL7_MESSAGE_TYPE_A01);
 				}
@@ -458,7 +441,7 @@ public class HL7SocketHandler extends
 						.formatDirectoryName(adminService
 								.getGlobalProperty(GLOBAL_PROPERTY_PARSE_ERROR_DIRECTORY));
 				if (mckessonParseErrorDirectory != null) {
-					String filename = "r" + Util.archiveStamp() + ".hl7";
+					String filename = "r" + Util.archiveStamp() + ChirdlUtilConstants.FILE_EXTENSION_HL7;
 
 					FileOutputStream outputFile = null;
 
@@ -489,9 +472,10 @@ public class HL7SocketHandler extends
 					}
 				}
 				try {
+					processMessageError  = true;
 					//Return an ACK response instead of defaulting to the HAPI error response.
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-					ackMessage = makeACK(inboundHeader);
+					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
 				} catch (Exception e2) {
 					log.error("Error sending an ack response after a parsing exception. " , e2);
 					ackMessage = originalMessage;
@@ -518,8 +502,9 @@ public class HL7SocketHandler extends
 					(filterDuplicateCheckin && priorCheckinExists(message))) {
 
 				try {
+					processMessageError = false;
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
-					ackMessage = makeACK(inboundHeader);
+					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
 				} catch (Exception e) {
 					log.error("Exception creating ACK for registration.", e);
 					return originalMessage;
@@ -565,7 +550,7 @@ public class HL7SocketHandler extends
 		String carrierCode = null;
 		String printerLocation = null;
 		String insuranceName = null;
-		Message message;
+		Message message = null;
 		
 			try {
 				message = this.parser.parse(incomingMessageString);
@@ -580,11 +565,24 @@ public class HL7SocketHandler extends
 					appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getAppointmentTime(message);
 
-					planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-							.getInsurancePlan(message);
-
-					carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-							.getInsuranceCarrier(message);
+					// DWE CHICA-492 Parse insurance plan code from IN1-35 if this is IUH
+					if(locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					{
+						planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getInsuranceCompanyPlan(message);
+					}
+					else
+					{
+						planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getInsurancePlan(message);
+					}
+				
+					// DWE CHICA-492 Do not parse the carrier code if this is IUH
+					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					{
+						carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getInsuranceCarrier(message);
+					}
 
 					printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getPrinterLocation(message, incomingMessageString);
@@ -630,6 +628,9 @@ public class HL7SocketHandler extends
 
 		chicaEncounter.setLocation(location);
 		chicaEncounter.setInsuranceSmsCode(null);
+		
+		//See if the message contains OBXs
+		saveHL7Obs(p, message, location, chicaEncounter, getSession(parameters));
 
 		// This code must come after the code that sets the encounter values
 		// because the states can't be created until the locationTagId and
@@ -638,7 +639,7 @@ public class HL7SocketHandler extends
 				.getStateByName(STATE_CLINIC_REGISTRATION);
 		PatientState patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		patientState.setStartTime(chicaEncounter.getEncounterDatetime());
 		patientState.setEndTime(chicaEncounter.getEncounterDatetime());
@@ -648,7 +649,7 @@ public class HL7SocketHandler extends
 				.getStateByName(STATE_HL7_CHECKIN);
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date processCheckinHL7Start = (Date) parameters
 				.get(PROCESS_HL7_CHECKIN_START);
@@ -661,7 +662,7 @@ public class HL7SocketHandler extends
 		state = chirdlutilbackportsService.getStateByName(STATE_QUERY_ALIAS);
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), getLocationTagId(chicaEncounter),
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
 						getLocationId(chicaEncounter), null);
 		Date queryKiteAliasStart = (Date) parameters.get(PARAMETER_QUERY_ALIAS_START);
 		if (queryKiteAliasStart == null){
@@ -1417,6 +1418,28 @@ public class HL7SocketHandler extends
 	}
 	
 	/**
+	 * DWE CHICA-406
+	 * Updates Patient Account Number attribute from hl7 value.
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void addPatientAccountNumber(Patient currentPatient, Patient hl7Patient, Date encounterDate){
+		PersonAttribute currentAccountNumberAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_PATIENT_ACCOUNT_NUMBER);
+		PersonAttribute hl7AccountNumberAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_PATIENT_ACCOUNT_NUMBER);
+		
+		if (hl7AccountNumberAttr == null || hl7AccountNumberAttr.getValue() == null 
+				|| hl7AccountNumberAttr.getValue().trim().equals(EMPTY_STRING)){
+			return;
+		}
+		
+		if (currentAccountNumberAttr == null || currentAccountNumberAttr.getValue() == null
+			|| !currentAccountNumberAttr.getValue().equals(hl7AccountNumberAttr.getValue())){
+			currentPatient.addAttribute(hl7AccountNumberAttr);
+		}
+	}
+	
+	/**
 	 * MES  CHICA-358
 	 * Pulls identifiers from message string, searches for matching patients,
 	 * and merges existing patients if needed.
@@ -1464,7 +1487,22 @@ public class HL7SocketHandler extends
 		}catch (Exception e){
 			log.error("Alias merge error for patient " + newPatient.getId(), e );
 		}
-
 	}
 	
+	/**
+	 * Stores the observations from the HL7 message to applicable data sources on a separate thread.
+	 * 
+	 * @param patient The patient to whom the observations will be attached
+	 * @param message The HL7 message
+	 * @param location The location of the encounter
+	 * @param encounter The patient encounter
+	 * @param session The patient session
+	 */
+	private void saveHL7Obs(Patient patient, Message message, Location location, 
+	                        org.openmrs.module.chica.hibernateBeans.Encounter encounter, Session session) {
+		Runnable hl7ObsRunnable = new HL7StoreObsRunnable(patient.getPatientId(), location.getLocationId(), 
+			encounter.getEncounterId(), session.getSessionId(), message);
+		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
+		hl7ObsThread.start();
+	}
 }

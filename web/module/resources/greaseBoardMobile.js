@@ -1,4 +1,5 @@
 var patientListFail = 0;
+var timeOutVar;
 
 $(document).on("pagecreate", "#patient_list_page", function(){
 	
@@ -37,6 +38,17 @@ $(document).on("pageshow", "#passcode_page", function(){
 	    }
     });
 	
+	$("#error_dialog").popup({
+        afterclose: function( event, ui ) {
+	    	$("#passcode").focus();
+	    }
+    });
+	
+	if($("#span_errorMessage").text().length > 0)
+	{
+		 $("#error_dialog").popup("open", { transition: "pop"});
+	}
+	
 	$("#goButton").focus(function() {
 		  $("#goButton").click();
 	});
@@ -46,10 +58,11 @@ function startTimer() {
     // This delay allows the wait cursor to display when loading the patient list.
 	patientListFail = 0;
 	$("#listError").popup("close");
-    setTimeout("populateList()", 1);
+	timeOutVar = setTimeout("populateList()", 1);
 }
 
 function finishForm(patientId, encounterId, sessionId) {
+	clearTimeout(timeOutVar);
 	$("#loadingDialog").popup("open", { transition: "pop"});
 	//$.mobile.loading("show");
     $("#patientId").val(patientId);
@@ -97,7 +110,7 @@ function populateList() {
         "success": function (xml) {
         	patientListFail = 0;
             parsePatientList(xml);
-            setTimeout("populateList()", 30000);
+            timeOutVar = setTimeout("populateList()", 30000);
         }
     });
 }
@@ -106,7 +119,7 @@ function handlePatientListAjaxError(xhr, textStatus, error) {
 	patientListFail++;
 	if (patientListFail < 4) {
 		// try populating again before informing user.
-		setTimeout("populateList()", 1);
+		timeOutVar = setTimeout("populateList()", 1);
 	} else {
 	    var error = "An error occurred on the server.";
 	    if (textStatus === "timeout") {
@@ -167,15 +180,16 @@ function parsePatientList(responseXML) {
         content = content + '<form id="submitForm" method="POST" data-ajax="false"><input type="hidden" name="patientId" id="patientId" value="" /><input type="hidden" name="encounterId" id="encounterId" value="" /><input type="hidden" name="sessionId" id="sessionId" value="" />';
         $(responseXML).find("patient").each(function () {
             var patientId = $(this).find("id").text();
+            var encounterId = $(this).find("encounterId").text();
             var formLoop = 0;
             var formInstanceNode = $(this).find("formInstance");
             if (formInstanceNode !== null) {
                 var formId = $(formInstanceNode).find("formId").text();
                 var formInstanceId = $(formInstanceNode).find("formInstanceId").text();
                 var locationId = $(formInstanceNode).find("locationId").text();
-                content = content + '<input type="hidden" name="' + patientId + '_formId" value="' + formId + '" />';
-                content = content + '<input type="hidden" name="' + patientId + '_formInstanceId" value="' + formInstanceId + '" />';
-                content = content + '<input type="hidden" name="' + patientId + '_locationId" value="' + locationId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_' + encounterId + '_formId" value="' + formId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_' + encounterId + '_formInstanceId" value="' + formInstanceId + '" />';
+                content = content + '<input type="hidden" name="' + patientId + '_' + encounterId + '_locationId" value="' + locationId + '" />';
             }
         });
 

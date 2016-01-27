@@ -181,6 +181,14 @@ public class DynamicMobileFormController extends SimpleFormController {
 		for (org.openmrs.module.atd.xmlBeans.Field field : fields) {
 			map.put(field.getId(), field.getValue());
 		}
+		
+		// DWE CHICA-430 Get existing values for "Export Field" types
+		Integer locationTagId = (Integer)map.get("locationTagId");
+		fields = formAccess.getExportElements(formId, formInstanceId, encounterId, locationTagId);
+		for (org.openmrs.module.atd.xmlBeans.Field field : fields) 
+		{
+			map.put(field.getId(), field.getValue());
+		}
 	}
 	
 	/**

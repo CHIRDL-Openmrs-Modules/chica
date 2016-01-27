@@ -17,10 +17,9 @@ $(document).ready(function () {
 });
 
 function forcePrint_checkForChromeSafari() {
-	var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-	var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
-	var isFirefox = /Mozilla/.test(navigator.userAgent);
-	return isChrome || isSafari || isFirefox;
+	var isChrome = /chrom(e|ium)/.test(navigator.userAgent.toLowerCase());
+	var isSafari = /safari/.test(navigator.userAgent.toLowerCase());
+	return isChrome || isSafari;
 }
 
 function forcePrint_formLoaded() {
@@ -141,7 +140,9 @@ function forcePrint_loadForm() {
 	
 	// Chrome/Safari doesn't fire the onload event for the object tag.
 	if (isChromeSafari) {
-		setTimeout(forcePrint_formLoaded, 2000);
+		setTimeout(forcePrint_formLoaded, 3000);
+	} else {
+		setTimeout(forcePrint_formLoaded, 10000);
 	}
 }
 

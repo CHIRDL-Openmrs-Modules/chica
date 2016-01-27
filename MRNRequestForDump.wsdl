@@ -1,11 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions
-  xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
-  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-  xmlns:tns="http://www.regenstrief.org/services"
-  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  name="CcdService" targetNamespace="http://www.regenstrief.org/services">
+<?xml version="1.0" encoding="windows-1252"?>
+<wsdl:definitions xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.regenstrief.org/services" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="CcdService" targetNamespace="http://www.regenstrief.org/services">
   <wsdl:types>
     <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.regenstrief.org/services">
       <xsd:element name="getDump" type="tns:getDump"/>
@@ -37,15 +31,18 @@
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="getDump">
-    <wsdl:part element="tns:getDump" name="parameters"></wsdl:part>
+    <wsdl:part element="tns:getDump" name="parameters"/>
   </wsdl:message>
   <wsdl:message name="getDumpResponse">
-    <wsdl:part element="tns:getDumpResponse" name="parameters"></wsdl:part>
+    <wsdl:part element="tns:getDumpResponse" name="parameters"/>
   </wsdl:message>
   <wsdl:portType name="IDumpService">
+   <jaxws:bindings xmlns:jaxws="http://java.sun.com/xml/ns/jaxws">
+    <jaxws:enableWrapperStyle>false</jaxws:enableWrapperStyle>
+  </jaxws:bindings>
     <wsdl:operation name="getDump">
-      <wsdl:input message="tns:getDump" name="getDump"></wsdl:input>
-      <wsdl:output message="tns:getDumpResponse" name="getDumpResponse"></wsdl:output>
+      <wsdl:input message="tns:getDump" name="getDump"/>
+      <wsdl:output message="tns:getDumpResponse" name="getDumpResponse"/>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="DumpServiceSoapBinding" type="tns:IDumpService">
@@ -62,7 +59,7 @@
   </wsdl:binding>
   <wsdl:service name="DumpService">
     <wsdl:port binding="tns:DumpServiceSoapBinding" name="GetDump">
-      <soap:address location="https://134.68.31.212:8443/NHIN/services/MRNRequestForDump"/>
+      <soap:address location="https://core.regenstrief.org/NHIN/services/MRNRequestForDump"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
