@@ -55,7 +55,7 @@ Logic:
 If (mode = PRODUCE) then
 
 If NOT(allergies = null) AND NOT(allergies = "NONE") then || yesAllergySel || = "X";
-If NOT(allergies = null) AND (allergies = "NONE") then || noAllergySel || = "X";
+If (allergies = "NONE") then || noAllergySel || = "X";
 If NOT(asthma = null) AND NOT(asthma = "None") AND NOT(asthma = "NoSymptoms") then || asthmaSel || = "X";
 If NOT(corrected = "yes") then || noCorrectedSel || = "X";
 If (corrected = "yes") then || yesCorrectedSel || = "X";
