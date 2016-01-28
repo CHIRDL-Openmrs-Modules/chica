@@ -1,6 +1,5 @@
 var english = false;
 var formInstance = null;
-var finishAttempts = 0;
 var numQuestions = 0;
 
 $(document).on("pageinit", function() {
@@ -57,8 +56,8 @@ function setLanguage(patientName, birthdate) {
     var vitalsButtonText = "Vitals";
     if (!english) {
         langButtonText = "English";
-        additionalQuestions = "";
-        instructions = '<p></p>';
+        additionalQuestions = "Esta es una lista de cosas que describen como se siente la gente. Leya cada frase y decida si es \"Casi nunca o nunca es cierto\" o \"Es cierto algunas veces\" o \"Casi siempre o siempre es cierto\" para su hijo.";
+        instructions = '<p>Elija la respuesta que parece describir a su hijo en <span style="text-decoration: underline;">los últimos 3 meses.</span></p>';
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
     }
