@@ -2,18 +2,19 @@
 <%@ page import="org.openmrs.module.chirdlutil.util.Util"%>
 <%@ page import="org.openmrs.Patient" %>
 <!DOCTYPE html>
-<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobile.form" />
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/SCAREDParentMobile.form" />
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/SCAREDParentMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/SCAREDMobile.js" charset="utf-8"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/SCAREDParentMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
@@ -22,7 +23,8 @@
 <c:set var="replace" value="\\'" />
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-<c:set var="formName" value="Screen for Child Anxiety Related Disorders (SCARED):"/>
+<c:set var="formName" value="Screen for Child Anxiety Related Disorders:"/>
+<c:set var="formName_sp" value="Des&oacute;rdenes Relacionados Con La Ansiedad En La Infancia:"/>
 <c:set var="option1" value="Not true or hardly ever true"/>
 <c:set var="option2" value="Sometimes true"/>
 <c:set var="option3" value="Very true or often true"/>
@@ -30,7 +32,7 @@
 <c:set var="option2_sp" value="Es cierto algunas veces"/>
 <c:set var="option3_sp" value="Casi siempre o siempre es cierto"/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
-<form id="SCAREDForm" method="POST" action="SCAREDMobile.form" method="post" enctype="multipart/form-data">
+<form id="SCAREDForm" method="POST" action="SCAREDParentMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
         <div data-role="header" data-theme="b">
@@ -46,7 +48,7 @@
 </c:if>
 <div data-role="page" id="instruction_page" data-theme="b">
     <div data-role="header" >
-        <h1>${formName}</h1>
+        <h1 id="formTitle">${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -197,7 +199,7 @@
     
 <div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>${formName}</h1>
+        <h1>${formName_sp}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
@@ -238,7 +240,7 @@
 
 <div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>${formName}</h1>
+        <h1>${formName_sp}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
@@ -280,7 +282,7 @@
 
 <div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>${formName}</h1>
+        <h1>${formName_sp}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>

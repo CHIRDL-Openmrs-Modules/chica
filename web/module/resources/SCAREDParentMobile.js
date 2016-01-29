@@ -54,12 +54,14 @@ function setLanguage(patientName, birthdate) {
     var instructions = '<p>Choose the response that seems to describe your child <span style="text-decoration: underline;">for the last 3 months.</span></p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
+    var formTitleText = "Screen for Child Anxiety Related Disorders:";
     if (!english) {
         langButtonText = "English";
-        additionalQuestions = "Esta es una lista de cosas que describen como se siente la gente. Leya cada frase y decida si es \"Casi nunca o nunca es cierto\" o \"Es cierto algunas veces\" o \"Casi siempre o siempre es cierto\" para su hijo.";
-        instructions = '<p>Elija la respuesta que parece describir a su hijo en <span style="text-decoration: underline;">los últimos 3 meses.</span></p>';
+        additionalQuestions = "\311sta es una lista de cosas que describen como se siente la gente. Lea cada frase y decida si es \"Casi nunca o nunca es cierto\" o \"Es cierto algunas veces\" o \"Casi siempre o siempre es cierto\" para su hijo.";
+        instructions = '<p>Elija la respuesta que parece describir a su hijo <span style="text-decoration: underline;">por los &uacute;ltimos 3 meses.</span></p>';
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
+        formTitleText = "Des\363rdenes Relacionados Con La Ansiedad En La Infancia:";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
@@ -67,6 +69,7 @@ function setLanguage(patientName, birthdate) {
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").text(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $("#formTitle").text(formTitleText);
 }
 
 function changePage(newPageNum) {
