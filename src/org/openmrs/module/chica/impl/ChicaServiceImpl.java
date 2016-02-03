@@ -1071,6 +1071,11 @@ public class ChicaServiceImpl implements ChicaService
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
     	}
+		
+		public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept concept, Concept excludeConcept,
+				Date startDateTime, Date endDateTime){
+			return getChicaDAO().getEncountersForEnrolledPatientsExcludingConcepts(concept, excludeConcept, startDateTime, endDateTime);
+		}
 
 		/**
 		 * @see org.openmrs.module.chica.service.ChicaService#getStudySubject(org.openmrs.Patient, org.openmrs.module.chica.hibernateBeans.Study)

@@ -163,6 +163,9 @@ public interface ChicaDAO {
 	
 	public List<Encounter> getEncountersForEnrolledPatients(Concept concept, Date startDateTime, Date endDateTime);
 	
+	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept concept, Concept excludeConcept,
+			Date startDateTime, Date endDateTime);
+	
 	/**
 	 * Retrieve the patient's study subject ID based on patient and study.  This will create a new StudySubject for the patient 
 	 * if one cannot be found.

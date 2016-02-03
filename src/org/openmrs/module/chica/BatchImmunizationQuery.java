@@ -86,18 +86,16 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    
 		    if (StringUtils.isBlank(enrollmentConceptProperty)) {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not present in the property list for this task");
-				shutdown();
+				return;
 			}
 		    if (StringUtils.isBlank(followupConceptProperty)) {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not present in the property list for this task");
-				shutdown();
+				return;
 			}
 		    if (StringUtils.isBlank(maxEncounterCountProperty)) {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
-				shutdown();
+				return;
 			}
-		    
-		    
 		    
 		   startExecuting();
 		    
@@ -126,15 +124,21 @@ public class BatchImmunizationQuery extends AbstractTask {
 				log.error ("HPV study:  Task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not a valid concept");
 				return;
 			}
+			
+			try {
+				maxEncounterCount = Integer.valueOf(maxEncounterCountProperty.trim());
+			} catch (NumberFormatException e) {
+				log.error("HPV Study: Task property 'max_number_of_encounters' could not be parsed as an Integer");
+				return;
+			}
+			
 			chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
 			if (chirpStatusConcept == null){
 				log.error("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
+				return;
 			}
 			
-			maxEncounterCount = Integer.valueOf(maxEncounterCountProperty.trim());
-
 			queryChirp(enrollmentConcept, followUpConcept);
-
 		} catch (Exception e) {
 			log.error("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
@@ -143,6 +147,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 	}
 
 	private void queryChirp(Concept enrollmentConcept, Concept followUpConcept) {
+		
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
@@ -159,30 +164,22 @@ public class BatchImmunizationQuery extends AbstractTask {
 		}
 
 		List<Encounter> encounters = chicaService
-				.getEncountersForEnrolledPatients(enrollmentConcept,
+				.getEncountersForEnrolledPatientsExcludingConcepts(enrollmentConcept, followUpConcept,
 						startDate, stopDate);
 		int  numberOfEncounters = encounters == null ? 0 : encounters.size();
-		log.info("Number of HPV enrollment encounters from " + startDateProperty 
-				+ " through " + stopDateProperty + " : " + numberOfEncounters );
+		
+		String startDatetext = (startDate != null) ? (" from " + startDateProperty): "";
+		String stopDateText = (stopDate != null) ? (" through " + stopDateProperty): "";
+		log.info("Number of HPV enrollment encounters" + startDatetext + stopDateText + " : " + numberOfEncounters );
+		log.info("Max number of HPV enrollment encounters to query = " + maxEncounterCount);
 		
 		Iterator<Encounter> encountersIterator = encounters.listIterator();
 		
-		while (encountersIterator.hasNext() && isExecuting() &&  numberOfQueries < maxEncounterCount) {
+		while ( isExecuting() && encountersIterator.hasNext() &&  numberOfQueries < maxEncounterCount) {
 			try {
 				//Do not query chirp if this obs already exists for the encounter.
 				Encounter encounter = encountersIterator.next();
-				Integer obsCount = obsService.getObservationCount(
-								Collections.singletonList((Person) encounter.getPatient()),
-								Collections.singletonList((org.openmrs.Encounter) encounter),
-								Collections.singletonList(followUpConcept),
-								null, null, null, null, null, null, false);
 
-				// If this observation already exists for this encounter
-				if (obsCount > 0) {
-					continue;
-				}
-
-				
 				String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 
 				/* Check the latest CHIRP status observation today for this requery.  
@@ -238,8 +235,8 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
 				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());	
-				
 				Integer count = 0;
+				
 				for(ImmunizationPrevious value : HpvHistory.values()){
 					if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
 						count++;

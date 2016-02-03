@@ -11,12 +11,26 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.CriteriaImpl;
+import org.hibernate.impl.SessionImpl;
+import org.hibernate.loader.criteria.CriteriaJoinWalker;
+import org.hibernate.loader.criteria.CriteriaQueryTranslator;
+import org.hibernate.persister.entity.OuterJoinLoadable;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
@@ -1105,13 +1119,77 @@ public class HibernateChicaDAO implements ChicaDAO
 	public List<Encounter> getEncountersForEnrolledPatients(Concept concept,
 			Date startDateTime, Date endDateTime){
 	
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class);
-		criteria.createAlias("obs", "obsv")
-			.add(Restrictions.eq("obsv.concept", concept));
-		criteria.add(Restrictions.between("encounterDatetime", startDateTime, endDateTime ));
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class);
+        criteria.createAlias("obs", "obsv")
+               .add(Restrictions.eq("obsv.concept", concept));
+        criteria.add(Restrictions.between("encounterDatetime", startDateTime, endDateTime ));
+
 
 		return criteria.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept concept, Concept excludeConcept,
+		Date startDateTime, Date endDateTime){
+		
+		String startDateRestriction = "";
+		String stopDateRestriction = "";
+		List<Encounter> encounters = null;
+		
+		
+	/*	Query query;
+		try {
+			String hql = "select distinct e from Encounter e " +
+						"  join e.obs o where o.encounter not in " + 
+							"(select distinct o2.encounter from Obs o2" + 
+							" where o2.concept = :conceptExclude and o2.voided = 0) " +
+							" and  o.concept = :conceptInclude " ;
+			
+			query = sessionFactory.getCurrentSession().createQuery(hql);
+			query.setParameter("conceptExclude", excludeConcept);
+			query.setParameter("conceptInclude", concept);
+			encounters = query.list();
+			
+		} catch (HibernateException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
+		
+		
+		
+		
+		Criteria criteria1 = null;
+		try {
+			DetachedCriteria exclusionCriteria= DetachedCriteria.forClass(Obs.class, "obsv")
+					.add(Restrictions.eq("obsv.concept", excludeConcept))
+					.add(Restrictions.eq("obsv.voided", false))
+					.setProjection(Projections.property("obsv.encounter"));
+
+			criteria1 = sessionFactory.getCurrentSession().createCriteria(Encounter.class, "en")
+					.createAlias("en.obs", "obsv2")
+					.add(Restrictions.eq("obsv2.concept", concept));
+			if (startDateTime != null ){
+				criteria1.add(Restrictions.ge("en.encounterDatetime", startDateTime));
+			}
+			if (endDateTime != null ){
+				criteria1.add(Restrictions.le("en.encounterDatetime", endDateTime));
+			}
+			criteria1.add(Property.forName("en.encounterId").notIn(exclusionCriteria));
+					
+			List<Encounter> e = criteria1.list();
+			return e;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		
+		return encounters;
+	}
+	
+
 
 	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudySubject(org.openmrs.Patient, org.openmrs.module.chica.hibernateBeans.Study)

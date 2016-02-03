@@ -2,7 +2,7 @@
 <%@ page import="org.openmrs.module.chirdlutil.util.Util"%>
 <%@ page import="org.openmrs.Patient" %>
 <!DOCTYPE html>
-<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobile.form" />
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/ISQMobile.form" />
 <html>
 <head>
 <meta charset="utf-8">
@@ -39,7 +39,7 @@
 </c:if>
 <div data-role="page" id="instruction_page" data-theme="b">
     <div data-role="header" >
-        <h1>Infant Sleep Questionnaire:</h1>
+        <h1 id="formTitle">Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -213,7 +213,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_NA" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_3_NA">Not applicable/no settling problem</label>
+                <label for="ISQQuestionEntry_3_NA">Not applicable/No settling problem</label>
                 <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_3_LT1M">Less than 1 month</label>
                 <input type="radio" name="ISQQuestionEntry_3" id="ISQQuestionEntry_3_1M" value="2" data-theme="b" />
@@ -367,7 +367,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_NA" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_7_NA">Not applicable/no waking problem</label>
+                <label for="ISQQuestionEntry_7_NA">Not applicable/No waking problem</label>
                 <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_7_LT1M">Less than 1 month</label>
                 <input type="radio" name="ISQQuestionEntry_7" id="ISQQuestionEntry_7_1M" value="2" data-theme="b" />
@@ -447,7 +447,7 @@
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_NA" value="0" data-theme="b" />
-                <label for="ISQQuestionEntry_9_NA">Not applicable/there is no problem</label>
+                <label for="ISQQuestionEntry_9_NA">Not applicable/There is no problem</label>
                 <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_LT1M" value="1" data-theme="b" />
                 <label for="ISQQuestionEntry_9_LT1M">Less than 1 month</label>
                 <input type="radio" name="ISQQuestionEntry_9" id="ISQQuestionEntry_9_1M" value="2" data-theme="b" />
@@ -517,7 +517,7 @@
     </div>
     <div id="content_1_sp" data-role="content">
         <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
-        <c:set var="quest1_2" value='&iquest;Cu&aacute;nto tiempo en promedio tarda generalmente su beb&eacute; en disponerse a dormir? (marque solo una casilla)'/>
+        <c:set var="quest1_2" value='&iquest;Cu&aacute;nto tiempo en promedio tarda generalmente su beb&eacute; en disponerse a dormir?'/>
         <input id="ISQQuestion_1_2" name="ISQQuestion_1_2" type="hidden" value="${quest1_2}"/>
         <strong>${quest1_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest1_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -554,7 +554,7 @@
     </div>
     <div id="content_2_sp" data-role="content">
         <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
-        <c:set var="quest2_2" value='&iquest;Cu&aacute;ntas veces a la semana en promedio tiene problemas para ponerlo a dormir? (marque una sola casilla)'/>
+        <c:set var="quest2_2" value='&iquest;Cu&aacute;ntas veces a la semana en promedio tiene problemas para ponerlo a dormir?'/>
         <input id="ISQQuestion_2_2" name="ISQQuestion_2_2" type="hidden" value="${quest2_2}"/>
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest2_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -634,7 +634,7 @@
     </div>
     <div id="content_4_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
-        <c:set var="quest4_2" value='&iquest;Cu&aacute;ntas veces a la semana su beb&eacute; se despierta en promedio? (marque una sola casilla)'/>
+        <c:set var="quest4_2" value='&iquest;Cu&aacute;ntas veces a la semana su beb&eacute; se despierta en promedio?'/>
         <input id="ISQQuestion_4_2" name="ISQQuestion_4_2" type="hidden" value="${quest4_2}"/>
         <strong>${quest4_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest4_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -674,7 +674,7 @@
     </div>
     <div id="content_5_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
-        <c:set var="quest5_2" value='&iquest;Cu&aacute;ntas veces se despierta su beb&eacute; en la noche y necesita volver a ponerlo a dormir? (marque una sola casilla)'/>
+        <c:set var="quest5_2" value='&iquest;Cu&aacute;ntas veces se despierta su beb&eacute; en la noche y necesita volver a ponerlo a dormir?'/>
         <input id="ISQQuestion_5_2" name="ISQQuestion_5_2" type="hidden" value="${quest5_2}"/>
         <strong>${quest5_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest5_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -710,7 +710,7 @@
     </div>
     <div id="content_6_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
-        <c:set var="quest6_2" value='Si su beb&eacute; se despierta &iquest;cu&aacute;nto tiempo en promedio le toma volverse a dormir? (marque una sola casilla)'/>
+        <c:set var="quest6_2" value='Si su beb&eacute; se despierta &iquest;cu&aacute;nto tiempo en promedio le toma volverse a dormir?'/>
         <input id="ISQQuestion_6_2" name="ISQQuestion_6_2" type="hidden" value="${quest6_2}"/>
         <strong>${quest6_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest6_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -788,7 +788,7 @@
     </div>
     <div id="content_8_sp" data-role="content">
         <div><h3>Dormir en la cama de los padres:</h3><hr/><br/></div>
-        <c:set var="quest8_2" value='&iquest;Cu&aacute;ntas veces termina llev&aacute;ndose al beb&eacute; a su cama porque est&aacute; molesto y no se duerme? (marque una sola casilla)'/>
+        <c:set var="quest8_2" value='&iquest;Cu&aacute;ntas veces termina llev&aacute;ndose al beb&eacute; a su cama porque est&aacute; molesto y no se duerme?'/>
         <input id="ISQQuestion_8_2" name="ISQQuestion_8_2" type="hidden" value="${quest8_2}"/>
         <strong>${quest8_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest8_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
