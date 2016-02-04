@@ -1058,7 +1058,6 @@ public class ChicaServiceImpl implements ChicaService
 			return getChicaDAO().getQuestionsScannedAnswered(formName, locationName);
 		}
         
-		
 		public Integer getMergeFieldCount(String form_name, String vaccine_name){
 			return getChicaDAO().getMergeFieldCount(form_name, vaccine_name);
 		}
@@ -1072,9 +1071,9 @@ public class ChicaServiceImpl implements ChicaService
 			return getChicaDAO().getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
     	}
 		
-		public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept concept, Concept excludeConcept,
+		public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
 				Date startDateTime, Date endDateTime){
-			return getChicaDAO().getEncountersForEnrolledPatientsExcludingConcepts(concept, excludeConcept, startDateTime, endDateTime);
+			return getChicaDAO().getEncountersForEnrolledPatientsExcludingConcepts(includeConcept, excludeConcept, startDateTime, endDateTime);
 		}
 
 		/**

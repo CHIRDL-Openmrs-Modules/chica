@@ -163,7 +163,7 @@ public interface ChicaDAO {
 	
 	public List<Encounter> getEncountersForEnrolledPatients(Concept concept, Date startDateTime, Date endDateTime);
 	
-	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept concept, Concept excludeConcept,
+	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
 			Date startDateTime, Date endDateTime);
 	
 	/**

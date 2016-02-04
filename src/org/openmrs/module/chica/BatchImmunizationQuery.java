@@ -66,6 +66,8 @@ public class BatchImmunizationQuery extends AbstractTask {
 	private String followupConceptProperty;
 	private Concept chirpStatusConcept;
 	private Integer maxEncounterCount = 0;
+	private Date startDate = null;
+	private Date stopDate = null;
 	
 	
 	@Override
@@ -95,6 +97,18 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    if (StringUtils.isBlank(maxEncounterCountProperty)) {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
 				return;
+			}
+		    
+		    try {
+				if (!StringUtils.isBlank(startDateProperty)) {
+					startDate = DateUtil.parseYmd(startDateProperty);
+				}
+				if (!StringUtils.isBlank(stopDateProperty)) {
+					stopDate = DateUtil.parseYmd(stopDateProperty);
+				}
+			} catch (RuntimeException e) {
+				log.info("Batch immunization query task property '" + PROPERTY_STOP_DATE + " and/or " +  "PROPERTY_START_DATE' are null, blank, or invalid format");
+				//ok to continue
 			}
 		    
 		   startExecuting();
@@ -139,6 +153,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 			}
 			
 			queryChirp(enrollmentConcept, followUpConcept);
+			
 		} catch (Exception e) {
 			log.error("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
@@ -153,15 +168,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 		ObsService obsService = Context.getObsService();
 		//Count the queries to CHIRP. This is not updated unless a query was performed.
 		int numberOfQueries = 0;
-		Date startDate = null;
-		Date stopDate = null;
 		
-		if (!StringUtils.isBlank(startDateProperty)) {
-			startDate = DateUtil.parseYmd(startDateProperty);
-		}
-	    if (!StringUtils.isBlank(stopDateProperty)) {
-	    	stopDate = DateUtil.parseYmd(stopDateProperty);
-		}
 
 		List<Encounter> encounters = chicaService
 				.getEncountersForEnrolledPatientsExcludingConcepts(enrollmentConcept, followUpConcept,
@@ -177,14 +184,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 		
 		while ( isExecuting() && encountersIterator.hasNext() &&  numberOfQueries < maxEncounterCount) {
 			try {
-				//Do not query chirp if this obs already exists for the encounter.
+				
 				Encounter encounter = encountersIterator.next();
 
 				String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 
 				/* Check the latest CHIRP status observation today for this requery.  
-				 * We do not want to send anymore immunization queries to CHIRP
-				 * if it is not available.  Try again at the next repeat interval for the task.
+				 * We do not want to send any more immunization queries to CHIRP
+				 * if CHIRP is not available.  
 				 */
 
 				if (queryResponse == null) {
@@ -215,8 +222,8 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 				String identifier = encounter.getPatient().getPatientIdentifier().toString();
 				if (immunizations == null) {
-					log.info("HPV Study: Vaccine requery found no immunizations in CHIRP for patient: " + identifier + 
-							" Since this patient was enrolled in the study, this patient should have an immunization record.");
+					log.info("HPV Study: No HPV vaccine records exist in CHIRP for patient (" + identifier +
+							"). This patient should have an immunization record.");
 					continue;
 				}
 
@@ -226,17 +233,16 @@ public class BatchImmunizationQuery extends AbstractTask {
 						.getImmunizationPrevious();
 
 				if (prevImmunizations == null || prevImmunizations.get(HPV_VACCINE_NAME) == null){
-					log.info("HPV Study: There are no HPV vaccine records in CHIRP for patient: " + identifier +
-							" Since this patient was enrolled in the study, this patient " + 
-							"should have historical vaccination records.");
+					log.info("HPV Study: No HPV vaccine records exist in CHIRP for patient (" + identifier +
+							"). This patient should have historical vaccination records.");
+					//clean-up
 					ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());			
 					continue;
 				}
 
 				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
-				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());	
+					
 				Integer count = 0;
-				
 				for(ImmunizationPrevious value : HpvHistory.values()){
 					if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
 						count++;
@@ -251,7 +257,8 @@ public class BatchImmunizationQuery extends AbstractTask {
 				obs.setObsDatetime(new Date());
 				obsService.saveObs(obs, null);
 				
-				
+				//clean-up
+				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());
 				numberOfQueries++;
 
 			}catch(Exception e){
@@ -259,8 +266,8 @@ public class BatchImmunizationQuery extends AbstractTask {
 			}
 		}
 		
-		log.info("Batch immunization query completed. Number of encounters = " + numberOfEncounters 
-				+ ". Number of CHIRP queries = " + numberOfQueries);
+		log.info("Batch immunization query completed. Number of encounters = " + numberOfEncounters + ".\r\n"
+				+ "Number of CHIRP queries performed = " + numberOfQueries);
 		
 		return;
 	}
