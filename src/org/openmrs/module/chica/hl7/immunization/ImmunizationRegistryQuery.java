@@ -73,8 +73,6 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class ImmunizationRegistryQuery
 {
-	private static final String CHICA_IMMUNIZATION_LOGGING_ENABLED = "chica.ImmunizationLoggingEnabled";
-
 	private static Log log = LogFactory.getLog(ImmunizationRegistryQuery.class);
 
 	private static org.openmrs.Encounter encounter = null;
@@ -96,7 +94,6 @@ public class ImmunizationRegistryQuery
 	private static String CHIRP_PARSING_ERROR = "CHIRP HL7 parsing error.";
 	private static String CHIRP_UPDATE_FAILED = "CHIRP is accessible, but the immunization update failed.";
 	private static String CHIRP_RESPONSE_INVALID = "CHIRP response was empty or invalid";
-	static boolean loggingEnabled = false;
 	
 	/**
 	 * 
@@ -110,7 +107,7 @@ public class ImmunizationRegistryQuery
 			Integer patientId) {
 
 		if (messageString == null) {
-			logInfo("immunization list is null for mrn: " + mrn
+			log.info("immunization list is null for mrn: " + mrn
 					+ " so immunization list could not be created");
 			return;
 		}
@@ -325,7 +322,7 @@ public class ImmunizationRegistryQuery
 												.parseInt(dataString));
 										}
 									} catch (NumberFormatException  e) {
-										logInfo("Invalid number format for Dose number: " + dataString);
+										log.info("Invalid number format for Dose number: " + dataString);
 										forecastedImmunization.setDose(0);
 									}
 									
@@ -364,7 +361,7 @@ public class ImmunizationRegistryQuery
 						//Find the mapped codes for the concept
 						List<ConceptMap> conceptMaps = chicaService.getConceptMapsByVaccine(vaccineConcept, GENERIC); 
 						if (conceptMaps == null || conceptMaps.size() == 0){
-							logInfo("ImmunizationForecast: No unspecified CVX code exists for concept: " 
+							log.info("ImmunizationForecast: No unspecified CVX code exists for concept: " 
 									+ vaccineConcept.getName().getName() + ",  CVX: " + forecastVaccineCode);
 						}
 						
@@ -373,13 +370,13 @@ public class ImmunizationRegistryQuery
 							
 							String unspecfiedCode = conceptMap.getSourceCode();
 							if (unspecfiedCode == null || unspecfiedCode.trim().equalsIgnoreCase("") ){
-								logInfo("ImmunizationForecast: Concept map exists, but no source_code defined.  Concept id: " 
+								log.info("ImmunizationForecast: Concept map exists, but no source_code defined.  Concept id: " 
 										+ conceptMap.getConcept().getConceptId());
 								continue;
 							}
 							Concept unspecifiedConcept = conceptService.getConceptByMapping(unspecfiedCode, SOURCE );
 							if (unspecifiedConcept == null || unspecifiedConcept.getName() == null ){
-								logInfo("ImmunizationForecast: There is no concept for CVX code: "
+								log.info("ImmunizationForecast: There is no concept for CVX code: "
 										+ unspecfiedCode);
 								continue;
 							}
@@ -459,24 +456,13 @@ public class ImmunizationRegistryQuery
 		String url = adminService.getGlobalProperty("chica.ImmunizationQueryURL");
 		Integer timeout = Integer.parseInt(adminService.getGlobalProperty("chica.immunizationListTimeout"));
 		String activateQuery = adminService.getGlobalProperty("chica.ImmunizationQueryActivated");
-		String enableLogging = adminService.getGlobalProperty(CHICA_IMMUNIZATION_LOGGING_ENABLED);
 		boolean OkToQuery = false;
-		boolean loggingEnabled = false;
 		if (activateQuery != null &&
 				 (activateQuery.equalsIgnoreCase("true") 
 						|| activateQuery.equalsIgnoreCase("yes") 
 						|| activateQuery.equalsIgnoreCase("T") 
 						|| activateQuery.equalsIgnoreCase("Y"))){
 			OkToQuery = true;
-
-		}
-		
-		if (enableLogging != null &&
-				 (enableLogging.equalsIgnoreCase("true") 
-						|| enableLogging.equalsIgnoreCase("yes") 
-						|| enableLogging.equalsIgnoreCase("T") 
-						|| enableLogging.equalsIgnoreCase("Y"))){
-			loggingEnabled = true;
 
 		}
 		
@@ -507,9 +493,9 @@ public class ImmunizationRegistryQuery
 			
 			ImmunizationQueryConstructor.saveFile(dir, vxqString, "vxq_1", encounter);
 			String data = getData(vxqString);
-			logInfo("Immunization: vxq = " +  vxqString);
+			log.info("Immunization: vxq = " +  vxqString);
 			if (!OkToQuery){
-				logInfo("Immunization: Activate query: " + OkToQuery);
+				log.info("Immunization: Activate query: " + OkToQuery);
 				return null;
 			}
 			
@@ -530,11 +516,9 @@ public class ImmunizationRegistryQuery
 			}
 			
 			// log post timing
-			if (loggingEnabled){
-				logInfo("Immunization:  Encounter = " + encounter.getEncounterId() + 
-						" CHIRP response time = " + queryTime);
-				logInfo("Immunization:  CHIRP response text = " + queryResponse);
-			}
+			log.info("Immunization:  Encounter = " + encounter.getEncounterId() + 
+					" CHIRP response time = " + queryTime);
+			log.info("Immunization:  CHIRP response text = " + queryResponse);
 			
 			//log errors
 			if (queryResponse == null ){
@@ -575,8 +559,8 @@ public class ImmunizationRegistryQuery
 				//Only send VXU if VXU update is enabled in global property
 				
 				String activateVXUToCreatePatient = adminService.getGlobalProperty("chica.activateVXUToCreatePatient");
-				logInfo(" Immunization: Create Patient VXU Activated = " + activateVXUToCreatePatient);
-				logInfo(" Immunization: Create Patient VXU String = " + vxuString);
+				log.info(" Immunization: Create Patient VXU Activated = " + activateVXUToCreatePatient);
+				log.info(" Immunization: Create Patient VXU String = " + vxuString);
 				if (activateVXUToCreatePatient != null && 
 					(activateVXUToCreatePatient.equalsIgnoreCase("true") 
 							|| activateVXUToCreatePatient.equalsIgnoreCase("yes") 
@@ -584,7 +568,7 @@ public class ImmunizationRegistryQuery
 							|| activateVXUToCreatePatient.equalsIgnoreCase("Y"))){
 					try {
 						queryResponse = HttpUtil.post(url, data,timeout,timeout);	
-						logInfo("Immunization: Create patient response = " +  queryResponse);
+						log.info("Immunization: Create patient response = " +  queryResponse);
 						if (queryResponse != null && queryResponse.contains("accepted")){
 							Util.saveObs(chicaPatient, statusConcept, encounterId, CREATED, new Date());
 						} else {
@@ -647,7 +631,7 @@ public class ImmunizationRegistryQuery
 				PatientMatching patientMatching = new PatientMatching();
 				Patient matchPatient = patientMatching.verifyPatientMatch(chicaPatient, chirpPatients);
 				if (matchPatient == null){
-					logInfo("Immunization: Patient not matched in CHIRP. Encounter id = " + encounterId);
+					log.info("Immunization: Patient not matched in CHIRP. Encounter id = " + encounterId);
 					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 				}
@@ -670,7 +654,7 @@ public class ImmunizationRegistryQuery
 				//Construct the 2nd vxq
 				
 				vxqString = constructor.updateVXQ(vxqString, matchPatient);
-				logInfo("Immunization: 2nd Vxq: " +  vxqString);
+				log.info("Immunization: 2nd Vxq: " +  vxqString);
 				ImmunizationQueryConstructor.saveFile(dir, vxqString, "vxq_2", encounter);
 					
 				//requery
@@ -679,7 +663,7 @@ public class ImmunizationRegistryQuery
 				queryStartTime = System.currentTimeMillis();
 				queryResponse = HttpUtil.post(url, data, timeout, timeout);	
 				
-				logInfo("Immunization: Requery CHIRP response time = " + encounter.getEncounterId()
+				log.info("Immunization: Requery CHIRP response time = " + encounter.getEncounterId()
 						+ ": " + (System.currentTimeMillis()-queryStartTime) + "msec");
 				
 				if (queryResponse == null || queryResponse.trim().equals("")
@@ -703,7 +687,7 @@ public class ImmunizationRegistryQuery
 					return null;
 				}
 				
-				logInfo("Immunization: CHIRP response after requery = " + queryResponse);
+				log.info("Immunization: CHIRP response after requery = " + queryResponse);
 				//VXX 2nd time after requery indicates no confirmed match
 				if (queryResponseMessage instanceof VXX_V02) {
 					ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxx_2", 
@@ -723,7 +707,7 @@ public class ImmunizationRegistryQuery
 				PatientMatching patientMatching = new PatientMatching();
 				Patient matchPatient = patientMatching.verifyPatientMatch(chicaPatient, chirpPatients);
 				if (matchPatient == null){
-					logInfo("Immunization: VXR Patient is not a match. Encounter id = " + encounterId);
+					log.info("Immunization: VXR Patient is not a match. Encounter id = " + encounterId);
 					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 				}
@@ -862,7 +846,7 @@ public class ImmunizationRegistryQuery
 		
 		if (queryResponse != null) {
 			if (queryResponse.indexOf("Dose number in series^LN||B") > 0){
-				logInfo("Immunization: Replaced invalid character in VXR");
+				log.info("Immunization: Replaced invalid character in VXR");
 				queryResponse = queryResponse
 				.replace("Dose number in series^LN||B", "Dose number in series^LN||1");
 			}
@@ -958,10 +942,4 @@ public class ImmunizationRegistryQuery
 		return chirpPatients;
 	}
 	
-	private static void logInfo( String text){
-		if (loggingEnabled){
-			log.info(text);
-		}
-		return;
-	}
 }

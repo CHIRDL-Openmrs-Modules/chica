@@ -53,6 +53,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 	private static final String PROPERTY_KEY_ENROLLMENT_CONCEPT = "enrollment_concept";
 	private static final String PROPERTY_KEY_FOLLOWUP_CONCEPT = "followup_concept";
 	private static final String PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS = "max_number_of_encounters";
+	private static final String PROPERTY_KEY_SLEEP_TIME_MS = "sleep_time_msec";
 	private static final String CHIRP_STATUS_CONCEPT = "CHIRP_Status";
 	private static final String HPV_VACCINE_NAME = "HPV, unspecified formulation";
 	
@@ -65,9 +66,11 @@ public class BatchImmunizationQuery extends AbstractTask {
 	private String stopDateProperty;
 	private String followupConceptProperty;
 	private Concept chirpStatusConcept;
+	private String sleepTimeProperty;
 	private Integer maxEncounterCount = 0;
 	private Date startDate = null;
 	private Date stopDate = null;
+	private Integer sleep = null;
 	
 	
 	@Override
@@ -84,8 +87,9 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    stopDateProperty = this.taskConfig.getProperty(PROPERTY_STOP_DATE);
 		    followupConceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_FOLLOWUP_CONCEPT);
 		    maxEncounterCountProperty = this.taskConfig.getProperty(PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS);
+		    sleepTimeProperty = this.taskConfig.getProperty(PROPERTY_KEY_SLEEP_TIME_MS);
 		    //start and stop dates are not required
-		    
+		    //StringUtils isBlank() and isNumeric() have null checking
 		    if (StringUtils.isBlank(enrollmentConceptProperty)) {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not present in the property list for this task");
 				return;
@@ -98,6 +102,9 @@ public class BatchImmunizationQuery extends AbstractTask {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
 				return;
 			}
+		    if (StringUtils.isNumeric(sleepTimeProperty)) {
+				sleep = Integer.valueOf(sleepTimeProperty);
+			}
 		    
 		    try {
 				if (!StringUtils.isBlank(startDateProperty)) {
@@ -107,7 +114,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 					stopDate = DateUtil.parseYmd(stopDateProperty);
 				}
 			} catch (RuntimeException e) {
-				log.info("Batch immunization query task property '" + PROPERTY_STOP_DATE + " and/or " +  "PROPERTY_START_DATE' are null, blank, or invalid format");
+				log.info("Batch immunization query task property '" + PROPERTY_STOP_DATE + " and/or " +  "PROPERTY_START_DATE' exist, but are either null, blank, or invalid format");
 				//ok to continue
 			}
 		    
@@ -147,6 +154,10 @@ public class BatchImmunizationQuery extends AbstractTask {
 			}
 			
 			chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
+			if (chirpStatusConcept == null){
+				log.error("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
+				return;
+			}
 			if (chirpStatusConcept == null){
 				log.error("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
 				return;
@@ -254,12 +265,13 @@ public class BatchImmunizationQuery extends AbstractTask {
 				obs.setEncounter(encounter);
 				obs.setPerson(encounter.getPatient());
 				obs.setConcept(followUpConcept);
-				obs.setObsDatetime(new Date());
+				obs.setObsDatetime(encounter.getEncounterDatetime());
 				obsService.saveObs(obs, null);
 				
 				//clean-up
 				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());
 				numberOfQueries++;
+				if (sleep != null) Thread.sleep(sleep);
 
 			}catch(Exception e){
 				log.info("HPV Study: Exception during vaccine count requery.", e);
