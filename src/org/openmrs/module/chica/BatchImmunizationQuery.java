@@ -102,7 +102,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
 				return;
 			}
-		    if (StringUtils.isNumeric(sleepTimeProperty)) {
+		    if (StringUtils.isNumeric(sleepTimeProperty) && !StringUtils.isWhitespace(sleepTimeProperty)) {
 				sleep = Integer.valueOf(sleepTimeProperty);
 			}
 		    
