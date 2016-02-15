@@ -4,12 +4,14 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/externalFormLoader.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/externalFormLoader.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
 <title>CHICA ${formName}</title>
 </head>
 <body>
@@ -55,7 +57,7 @@
                        <div><p>A valid encounter within the past 72 hours cannot be found for patient ${mrn} in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingFormInstance eq 'true'}">
-                       <div><p>The form ${formname} does not exist or has already been submitted for patient ${mrn} in the CHICA system.</p></div>
+                       <div><p>The form ${formName} does not exist or has already been submitted for patient ${mrn} in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingStartState eq 'true'}">
                        <div><p>A valid startState parameter was not provided to the CHICA system.</p></div>
@@ -89,6 +91,13 @@
         </c:choose>
         <br/>
         <c:if test="${hasErrors eq 'true'}">
+	        <c:if test="${showHandouts eq 'true'}">
+	           <div id="buttons">
+		           <div class="buttonsData">
+	                   <a href="#" id="forcePrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Handouts</a>
+	               </div>
+               </div>
+	        </c:if>
 	        <div>Please close this window at your convenience.</div>
         </c:if>
     </div>
@@ -102,8 +111,11 @@
         <input id="sessionId" name="endState" type="hidden" value="${sessionId}"/>
         <input id="providerId" name="providerId" type="hidden" value="${providerId}"/>
         <input id="vendor" name="vendor" type="hidden" value="${providerId}"/>
+        <input id="patientId" name="patientId" type="hidden" value="${patientId}"/>
+        <input id="locationId" name="locationId" type="hidden" value="${locationId}"/>
+        <input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
     </form>
 </div>
-
+<%@ include file="forcePrintJITs.jsp" %>
 </body>
 </html>

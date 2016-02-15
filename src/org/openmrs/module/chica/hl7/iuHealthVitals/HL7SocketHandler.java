@@ -65,8 +65,6 @@ public class HL7SocketHandler implements Application {
 	
 	protected static final Logger logger = Logger.getLogger("SocketHandlerLogger");
 	
-	private static final String STATE_PROCESS_VITALS = "Processed Vitals HL7";
-
 	private Integer port;
 	
 	private String host;
@@ -299,7 +297,7 @@ public class HL7SocketHandler implements Application {
 				patient = patients.get(0);
 			}
 			
-			state = chirdlutilbackportsService.getStateByName(STATE_PROCESS_VITALS);
+			state = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_PROCESS_VITALS);
 			
 			org.openmrs.module.chica.hibernateBeans.Encounter encounter = getRecentEncounter(patient);
 			
