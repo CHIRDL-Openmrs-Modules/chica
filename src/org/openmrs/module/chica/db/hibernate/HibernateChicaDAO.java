@@ -15,7 +15,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
@@ -1112,6 +1116,39 @@ public class HibernateChicaDAO implements ChicaDAO
 
 		return criteria.list();
 	}
+	
+	/** (non-Javadoc)
+	 * @see org.openmrs.module.chica.db.ChicaDAO#getEncountersForEnrolledPatientsExcludingConcepts(org.openmrs.Concept, org.openmrs.Concept, java.util.Date, java.util.Date)
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
+		Date startDateTime, Date endDateTime){
+		
+		Criteria criteria = null;
+		
+		DetachedCriteria exclusionCriteria= DetachedCriteria.forClass(Obs.class, "obsv")
+				.add(Restrictions.eq("obsv.concept", excludeConcept))
+				.add(Restrictions.eq("obsv.voided", false))
+				.setProjection(Projections.distinct(Projections.property("obsv.encounter")));
+		
+		
+		criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class, "en")
+				.createAlias("en.obs", "obsv2")
+				.add(Restrictions.eq("obsv2.concept", includeConcept));
+				if (startDateTime != null ){
+					criteria.add(Restrictions.ge("en.encounterDatetime", startDateTime));
+				}
+				if (endDateTime != null ){
+					criteria.add(Restrictions.le("en.encounterDatetime", endDateTime));
+				}
+				criteria.add(Property.forName("en.encounterId").notIn(exclusionCriteria))
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.addOrder(Order.asc("en.encounterDatetime"));
+				
+		return criteria.list();
+	}
+	
+
 
 	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudySubject(org.openmrs.Patient, org.openmrs.module.chica.hibernateBeans.Study)

@@ -78,7 +78,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String GET_PATIENT_JITS = "getPatientJITs";
 	private static final String GET_AVAILABLE_PATIENT_JITS = "getAvailablePatientJITs";
 	private static final String GET_FORCE_PRINT_FORMS = "getForcePrintForms";
-	private static final String FORCE_PRINT_FORM = "forcePrintForm";
+	private static final String FORCE_PRINT_FORMS = "forcePrintForms";
 	private static final String GET_GREASEBOARD_PATIENTS = "getGreaseboardPatients";
 	private static final String VERIFY_MRN = "verifyMRN";
 	private static final String GET_MANUAL_CHECKIN = "getManualCheckin";
@@ -88,7 +88,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
 	private static final String PARAM_SESSION_ID = "sessionId";
-	private static final String PARAM_FORM_ID = "formId";
+	private static final String PARAM_FORM_IDS = "formIds";
 	private static final String PARAM_LOCATION_ID = "locationId";
 	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
 	private static final String PARAM_FORM_INSTANCES = "formInstances";
@@ -126,6 +126,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_BAD_SCANS_END = "</badScans>";
 	private static final String XML_URL_START = "<url>";
 	private static final String XML_URL_END = "</url>";
+	private static final String XML_OUTPUT_TYPE_START = "<outputType>";
+	private static final String XML_OUTPUT_TYPE_END = "</outputType>";
 	
 	private static final String CONTENT_DISPOSITION_PDF = "inline;filename=patientJITS.pdf";
 	
@@ -148,7 +150,7 @@ public class ChicaServlet extends HttpServlet {
 		if (GET_PATIENT_JITS.equals(action)) {
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
 			response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
-		} else if (FORCE_PRINT_FORM.equals(action)) {
+		} else if (FORCE_PRINT_FORMS.equals(action)) {
 			getForcePrintFormHeader(request, response);
 		}
 	}
@@ -175,8 +177,8 @@ public class ChicaServlet extends HttpServlet {
 			getAvailablePatientJITs(request, response);
 		} else if (GET_FORCE_PRINT_FORMS.equals(action)) {
 			getForcePrintForms(request, response);
-		} else if (FORCE_PRINT_FORM.equals(action)) {
-			forcePrintForm(request, response);
+		} else if (FORCE_PRINT_FORMS.equals(action)) {
+			forcePrintForms(request, response);
 		} else if (GET_GREASEBOARD_PATIENTS.equals(action)) {
 			getGreaseboardPatients(request, response);
 		} else if (VERIFY_MRN.equals(action)) {
@@ -390,11 +392,11 @@ public class ChicaServlet extends HttpServlet {
 			File pdfDir = new File(mergeDirectory, ChirdlUtilConstants.FILE_PDF);
 			File mergeFile = new File(pdfDir, locationId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + 
 				ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceId + ChirdlUtilConstants.FILE_EXTENSION_PDF);
-			if (!mergeFile.exists()) {
+			if (!mergeFile.exists() || mergeFile.length() == 0) {
 				mergeFile = new File(pdfDir, ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationId + 
 					ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
 					formInstanceId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + ChirdlUtilConstants.FILE_EXTENSION_PDF);
-				if (!mergeFile.exists()) {
+				if (!mergeFile.exists() || mergeFile.length() == 0) {
 					continue;
 				}
 			}
@@ -403,6 +405,11 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		if (filesToCombine.size() == 0) {
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+			response.setHeader(
+				ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+			PrintWriter pw = response.getWriter();
+			pw.write("<p>An error occurred locating the file to display.</p>");
 			return;
 		} 
 		
@@ -683,6 +690,7 @@ public class ChicaServlet extends HttpServlet {
 		FormAttribute ageMinUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MIN_UNITS);
 		FormAttribute ageMaxUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS);
 		FormAttribute displayNameAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME);
+		FormAttribute outputTypeAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE);
 		
 		Map<Integer, String> formAttrValAgeMinMap = getFormAttributeValues(chirdlutilbackportsService, ageMinAttr.getFormAttributeId(), 
 			locationId, locationTagId);
@@ -766,10 +774,26 @@ public class ChicaServlet extends HttpServlet {
 			}
 		}
 		
+		String defaultOutputType = Context.getAdministrationService().getGlobalProperty(
+			ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
+		if (defaultOutputType == null) {
+			defaultOutputType = "";
+		}
+		
 		for (FormDisplay formDisplay: printableJits) {
 			pw.write(XML_FORCE_PRINT_JIT_START);
 			ServletUtil.writeTag(XML_FORM_ID, formDisplay.getFormId(), pw);
 			ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(formDisplay.getDisplayName()), pw);
+			FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
+				outputTypeAttr, locationTagId, locationId);
+			pw.write(XML_OUTPUT_TYPE_START);
+			if (outputType != null && outputType.getValue() != null && !outputType.getValue().isEmpty()) {
+				pw.write(outputType.getValue());
+			} else {
+				pw.write(defaultOutputType);
+			}
+			
+			pw.write(XML_OUTPUT_TYPE_END);
 			pw.write(XML_FORCE_PRINT_JIT_END);
 		}
 		
@@ -790,9 +814,9 @@ public class ChicaServlet extends HttpServlet {
 	 * @param response HttpServletResponse
 	 * @throws IOException
 	 */
-	private void forcePrintForm(HttpServletRequest request, HttpServletResponse response) throws IOException {	
+	private void forcePrintForms(HttpServletRequest request, HttpServletResponse response) throws IOException {	
 		String patientIdString = request.getParameter(PARAM_PATIENT_ID);
-		String formIdString = request.getParameter(PARAM_FORM_ID);
+		String formIdsString = request.getParameter(PARAM_FORM_IDS);
 		String sessionIdString = request.getParameter(PARAM_SESSION_ID);
 
 		Integer patientId = null;
@@ -907,74 +931,128 @@ public class ChicaServlet extends HttpServlet {
 		FormInstance formInstance = new FormInstance();
 		formInstance.setLocationId(locationId);
 		parameters.put(PARAM_FORM_INSTANCE, formInstance);
-		String formName = null;
-		Form form = null;
 
-		// print the form
-		Integer formId = null;
-		try {
-			if (formIdString != null) {
-				formId = Integer.parseInt(formIdString);
-			}
-		} catch (Exception e) {
-			String message = "Invalid formId parameter: " + formIdString;
+		if (formIdsString == null || formIdsString.trim().length() == 0) {
+			String message = "formIdsString is null or empty";
 			log.error(message);
 			throw new IllegalArgumentException(message);
 		}
 		
-		form = formService.getForm(formId);
-		if (form == null) {
-			String message = "No form found for formId: " + formIdString;
-			log.error(message);
-			throw new IllegalArgumentException(message);
-		}
-		
-		formName = form.getName();
-		parameters.put(ChirdlUtilConstants.PARAMETER_1, formName);
-		parameters.put(ChirdlUtilConstants.PARAMETER_2, ChirdlUtilConstants.FORM_INST_ATTR_VAL_FORCE_PRINT);
-		Result result = logicService.eval(patientId, ChirdlUtilConstants.RULE_CREATE_JIT, parameters);
-		
-		// Check the output type
-		FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
-			formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, locationTagId, locationId);
-		String outputType = null;
-		if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
-			outputType = Context.getAdministrationService().getGlobalProperty(
-				ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
-		} else {
-			String[] outputTypes = fav.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
-			outputType = outputTypes[0].trim();
-		}
-		
-		if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType) || 
-				ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_PDF.equalsIgnoreCase(outputType)) {
-			String formInstanceTag = result.toString();
-			locatePatientJITs(response, formInstanceTag);
-		} else if (ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_XML.equalsIgnoreCase(outputType)) {
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-			response.setHeader(
-				ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
-			PrintWriter pw = response.getWriter();
-			FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-				ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
-			if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
-				formName = attributeValue.getValue();
+		List<String> pdfList = new ArrayList<String>();
+		List<String> teleformList = new ArrayList<String>();
+		List<String> errorList = new ArrayList<String>();
+		String[] formIds = formIdsString.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+		for (String formIdStr : formIds) {
+			// print the form
+			formIdStr = formIdStr.trim();
+			Integer formId = null;
+			try {
+				formId = Integer.parseInt(formIdStr);
+			} catch (Exception e) {
+				String message = "Invalid formId parameter: " + formIdStr;
+				log.error(message);
+				continue;
 			}
 			
-			String resultMessage = formName + " successfully sent to the printer.";
-			response.setContentLength(resultMessage.getBytes().length);
-			pw.write(ChirdlUtilConstants.HTML_SPAN_START + resultMessage + ChirdlUtilConstants.HTML_SPAN_END);
+			Form form = formService.getForm(formId);
+			if (form == null) {
+				String message = "No form found for formId: " + formIdStr;
+				log.error(message);
+				continue;
+			}
+			
+			String formName = form.getName();
+			parameters.put(ChirdlUtilConstants.PARAMETER_1, formName);
+			parameters.put(ChirdlUtilConstants.PARAMETER_2, ChirdlUtilConstants.FORM_INST_ATTR_VAL_FORCE_PRINT);
+			Result result = logicService.eval(patientId, ChirdlUtilConstants.RULE_CREATE_JIT, parameters);
+			
+			// Check the output type
+			FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
+				formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, locationTagId, locationId);
+			String[] outputTypes = null;
+			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
+				outputTypes = new String[] {Context.getAdministrationService().getGlobalProperty(
+					ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE)};
+			} else {
+				outputTypes = fav.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+			}
+			
+			for (String outputType : outputTypes) {
+				outputType = outputType.trim();
+				if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType) || 
+						ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_PDF.equalsIgnoreCase(outputType)) {
+					String formInstanceTag = result.toString();
+					pdfList.add(formInstanceTag);
+				} else if (ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_XML.equalsIgnoreCase(outputType)) {
+					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
+						ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
+					if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
+						formName = attributeValue.getValue();
+					}
+					
+					teleformList.add(formName);
+				} else {
+					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
+						ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
+					if (attributeValue != null && attributeValue.getValue() != null && attributeValue.getValue().length() > 0) {
+						formName = attributeValue.getValue();
+					}
+					
+					String message = "Invalid outputType attribute '" + outputType + 
+							"' found for form: " + formName;
+					log.error(message);
+					errorList.add(formName);
+				}
+			}
+		}
+		
+		// Have to choose what to return (PDF vs. text).  We can only return one response.
+		if (!pdfList.isEmpty()) {
+			StringBuffer formInstanceTags = new StringBuffer();
+			for (String pdfListItem : pdfList) {
+				if (formInstanceTags.length() > 0) {
+					formInstanceTags.append(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+				}
+				
+				formInstanceTags.append(pdfListItem);
+			}
+			
+			try {
+				locatePatientJITs(response, formInstanceTags.toString());
+			} catch (Exception e) {
+				log.error("Error locating JITS: " + formInstanceTags.toString(), e);
+				response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+				response.setHeader(
+					ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+				PrintWriter pw = response.getWriter();
+				pw.write("<p>An error occurred locating the file to display.</p>");
+				return;
+			}
 		} else {
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-			response.setHeader(
-				ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
-			PrintWriter pw = response.getWriter();
-			String message = ChirdlUtilConstants.HTML_SPAN_START + "Invalid outputType attribute '" + outputType + 
-					"' found for form: " + formName + ChirdlUtilConstants.HTML_SPAN_END;
-			response.setContentLength(message.getBytes().length);
-			log.error(message);
-			pw.write(message);
-			return;
+			StringBuffer messageBuffer = new StringBuffer();
+			if (!teleformList.isEmpty()) {
+				if (teleformList.size() == 1) {
+					messageBuffer.append(teleformList.get(0) + " successfully sent to the printer.  ");
+				} else {
+					messageBuffer.append("Forms successfully sent to the printer: " + teleformList.toString() + ".  ");
+				}
+			} else if (!errorList.isEmpty()) {
+				if (errorList.size() == 1) {
+					messageBuffer.append("There was an error creating form: " + errorList.get(0) + ".");
+				} else {
+					messageBuffer.append("There was an error creating forms: " + errorList.toString() + ".");
+				}
+			}
+			
+			if (messageBuffer.length() > 0) {
+				response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+				response.setHeader(
+					ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+				PrintWriter pw = response.getWriter();
+				String resultMessage = messageBuffer.toString();
+				response.setContentLength(resultMessage.getBytes().length);
+				pw.write(ChirdlUtilConstants.HTML_SPAN_START + resultMessage + ChirdlUtilConstants.HTML_SPAN_END);
+			}
 		}
 	}
 	
@@ -1044,69 +1122,85 @@ public class ChicaServlet extends HttpServlet {
 	 * @throws IOException
 	 */
 	private void getForcePrintFormHeader(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String formIdStr = request.getParameter(PARAM_FORM_ID);
+		String formIdsStr = request.getParameter(PARAM_FORM_IDS);
 		String locationIdStr = request.getParameter(PARAM_LOCATION_ID);
 		String locationTagIdStr = request.getParameter(PARAM_LOCATION_TAG_ID);
 		Integer formId = null;
 		Integer locationId = null;
 		Integer locationTagId = null;
 		
-		try {
-			formId = Integer.parseInt(formIdStr);
-		} catch (NumberFormatException e) {
-			log.error("Invalid argument formId: " + formIdStr);
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-			response.getWriter().write("Invalid argument formId: " + formIdStr);
+		if (formIdsStr == null) {
+			log.error("Invalid argument formId: " + formIdsStr);
+			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+			response.getWriter().write("Invalid argument formId: " + formIdsStr);
 			return;
 		}
 		
-		try {
-			locationId = Integer.parseInt(locationIdStr);
-		} catch (NumberFormatException e) {
-			// DWE CHICA-576 Add some additional logging
-			StringBuilder errorMsg = new StringBuilder();
-			errorMsg.append("Invalid argument locationId: " + locationIdStr);
-			if(formId != null)
-			{
-				errorMsg.append(" formId: ")
-				.append(formId);
+		List<String> errorList = new ArrayList<String>();
+		String[] formIds = formIdsStr.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+		for (String formIdStr : formIds) {
+			try {
+				formId = Integer.parseInt(formIdStr);
+			} catch (NumberFormatException e) {
+				log.error("Invalid argument formId: " + formIdStr);
+				errorList.add(formIdStr);
+				continue;
 			}
-			if(locationTagIdStr != null)
-			{
-				errorMsg.append(" locationTagId: ")
-				.append(locationTagIdStr);
+			
+			try {
+				locationId = Integer.parseInt(locationIdStr);
+			} catch (NumberFormatException e) {
+				// DWE CHICA-576 Add some additional logging
+				StringBuilder errorMsg = new StringBuilder();
+				errorMsg.append("Invalid argument locationId: " + locationIdStr);
+				if(formId != null)
+				{
+					errorMsg.append(" formId: ")
+					.append(formId);
+				}
+				if(locationTagIdStr != null)
+				{
+					errorMsg.append(" locationTagId: ")
+					.append(locationTagIdStr);
+				}
+				log.error(errorMsg.toString());
+				errorList.add(formIdStr);
+				continue;
 			}
-			log.error(errorMsg.toString());
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-			response.getWriter().write("Invalid argument locationId: " + locationIdStr);
-			return;
+			
+			try {
+				locationTagId = Integer.parseInt(locationTagIdStr);
+			} catch (NumberFormatException e) {
+				log.error("Invalid argument locationTagId: " + locationTagIdStr);
+				errorList.add(formIdStr);
+				continue;
+			}
+			
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
+				formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, locationTagId, locationId);
+			String[] outputTypes = null;
+			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
+				outputTypes = new String[] {Context.getAdministrationService().getGlobalProperty(
+					ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE)};
+			} else {
+				outputTypes = fav.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+			}
+			
+			// if there's at least one PDF type, return PDF as the content type.
+			for (String outputType : outputTypes) {
+				outputType = outputType.trim();
+				if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType) || 
+						ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_PDF.equals(outputType)) {
+					response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
+					return;
+				}
+			}
 		}
 		
-		try {
-			locationTagId = Integer.parseInt(locationTagIdStr);
-		} catch (NumberFormatException e) {
-			log.error("Invalid argument locationTagId: " + locationTagIdStr);
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-			response.getWriter().write("Invalid argument locationTagId: " + locationTagIdStr);
-			return;
-		}
-		
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(
-			formId, ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE, locationTagId, locationId);
-		String outputType = null;
-		if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
-			outputType = Context.getAdministrationService().getGlobalProperty(
-				ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
-		} else {
-			String[] outputTypes = fav.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
-			outputType = outputTypes[0].trim();
-		}
-		
-		if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType)) {
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
-		} else {
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		if (!errorList.isEmpty()) {
+			response.getWriter().write("There were errors encountered processing form(s).");
 		}
 	}
 	

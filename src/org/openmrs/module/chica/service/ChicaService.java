@@ -22,6 +22,7 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
@@ -195,6 +196,9 @@ public interface ChicaService
 		FormInstance formInstance, int encounterId, Patient patient, Set<FormField> formFieldsToSave);
 	
 	public List<org.openmrs.module.chica.hibernateBeans.Encounter> getEncountersForEnrolledPatients(Concept concept,
+			Date startDateTime, Date endDateTime);
+	
+	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
 			Date startDateTime, Date endDateTime);
 	/**
 	 * Query the mrf dump to find the list of immunizations for the patient

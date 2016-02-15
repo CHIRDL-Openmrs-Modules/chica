@@ -1,17 +1,11 @@
 .force-print-content {
-    background-color: #F5FBEF;
-    width: 90%;
+    width: 100%;
+    height: 100%;
     display: block;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    padding: 20px;
-    box-shadow: 10px 10px 5px #2E2E2E;
-    -webkit-box-shadow: 10px 10px 5px #2E2E2E;
-    -moz-box-shadow: 10px 10px 5px #2E2E2E;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
+    overflow-y: hidden;
 }
 
 .force-print-forms-server-error { 
@@ -29,12 +23,12 @@
     text-align: center;
     margin: 0 auto;
     color: #000;
-    height: 98%;
+    height: 96%;
     width: 330px;
     background: #cc9966;
     float: left;
     border-radius: 7px;
-    padding-top: 10px;
+    padding-top: 0px;
 }
 
 .force-print-form-loading {
@@ -80,13 +74,6 @@
 	height: 400px;
 }
 
-a.force-print-icon-button {
-    padding: 0 0 .4em 5px;
-    text-decoration: none;
-    position: relative;
-    height: 25px;
-}
-
 .force-print-black-text {
 	color: #000;
 }
@@ -97,6 +84,16 @@ a.force-print-icon-button {
 
 .force-print-patient-name {
 	color: #FFFFFF;
+	height: 7%;
+	min-height: 40px;
+}
+
+.force-print-multiple-select {
+	color: #FFFFFF;
+	font-size: 0.7em;
+	margin-top: 4px;
+	height: 10px;
+	min-height: 10px;
 }
 
 .force-print-form-container {
@@ -108,4 +105,42 @@ a.force-print-icon-button {
 
 .ui-selectmenu-menu li { 
 	max-width: 270px;
+}
+
+#force-print-form-list .ui-selecting { 
+	background: #81F781; 
+	color: black;
+}
+
+#force-print-form-list .ui-selected { 
+	background: #81F781; 
+	color: black; 
+}
+
+#force-print-form-list { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 100%;
+	height: 100%; 
+}
+
+#force-print-form-list li { 
+	margin: 3px; 
+	padding: 0.4em;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.force-print-form-list-container {
+	overflow-y:auto;
+	height: 75%;
+	width: 99%;
+}
+
+.force-print-create-button-panel {
+	height: 15%;
+	min-height: 40px;
+	padding-top: 0.4em;
 }

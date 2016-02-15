@@ -3377,6 +3377,9 @@ VALUES
         Update action classes in state_action table.
         </description>
         <sql>
+        ALTER TABLE chica_statistics ADD COLUMN form_field_id int(11) DEFAULT NULL;
+        ALTER TABLE chica_statistics ADD CONSTRAINT chica_stats_fk_form_field FOREIGN KEY (form_field_id) REFERENCES form_field (form_field_id);
+            
     Insert into atd_statistics
 select * from chica_statistics;
 
