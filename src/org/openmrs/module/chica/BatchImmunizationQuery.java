@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
@@ -179,6 +180,9 @@ public class BatchImmunizationQuery extends AbstractTask {
 		ObsService obsService = Context.getObsService();
 		//Count the queries to CHIRP. This is not updated unless a query was performed.
 		int numberOfQueries = 0;
+		int numberOfFailedQueries = 0;
+		int errorCount  = 0;
+		String identifier = "";
 		
 
 		List<Encounter> encounters = chicaService
@@ -194,12 +198,13 @@ public class BatchImmunizationQuery extends AbstractTask {
 		Iterator<Encounter> encountersIterator = encounters.listIterator();
 		
 		while ( isExecuting() && encountersIterator.hasNext() &&  numberOfQueries < maxEncounterCount) {
+			
+			Encounter encounter = encountersIterator.next();
+			
 			try {
-				
-				Encounter encounter = encountersIterator.next();
 
 				String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
-
+				Integer count = 0;
 				/* Check the latest CHIRP status observation today for this requery.  
 				 * We do not want to send any more immunization queries to CHIRP
 				 * if CHIRP is not available.  
@@ -220,66 +225,71 @@ public class BatchImmunizationQuery extends AbstractTask {
 						Obs chirpStatusObs = iter.next();
 						if (CHIRP_NOT_AVAILABLE.equals(chirpStatusObs.getValueAsString(Locale.US))||
 								CHIRP_LOGIN_FAILED.equals(chirpStatusObs.getValueAsString(Locale.US))){
-							log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
+							log.info("HPV Study: Follow-up CHIRP query problems due to CHIRP availability. \r\n"
+									+ "Number of encounters = " + numberOfEncounters + ".\r\n"
+									+ "Number of CHIRP queries performed before CHIRP error = " + numberOfQueries + ".\r\n"
+									+ "Number of failed queries prior to CHIRP error = " + numberOfFailedQueries + ".\r\n"
+									+ "Error count prior to CHIRP error = " + errorCount);
 							return;
 						}
 					}
-
+					//Queries can fail due to CHIRP access, invalid CHIRP response, CHIRP could not find patient,
+					//parsing error, or patient not match to our database.
+					numberOfFailedQueries++;
 					continue;
 				}
 
 				ImmunizationQueryOutput immunizations = ImmunizationForecastLookup
 						.getImmunizationList(encounter.getPatientId());
 
-				String identifier = encounter.getPatient().getPatientIdentifier().toString();
-				if (immunizations == null) {
-					log.info("HPV Study: No HPV vaccine records exist in CHIRP for patient (" + identifier +
-							"). This patient should have an immunization record.");
-					continue;
-				}
-
-				// patient has immunization records
-
-				HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
-						.getImmunizationPrevious();
-
-				if (prevImmunizations == null || prevImmunizations.get(HPV_VACCINE_NAME) == null){
-					log.info("HPV Study: No HPV vaccine records exist in CHIRP for patient (" + identifier +
-							"). This patient should have historical vaccination records.");
-					//clean-up
-					ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());			
-					continue;
-				}
-
-				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
-					
-				Integer count = 0;
-				for(ImmunizationPrevious value : HpvHistory.values()){
-					if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
-						count++;
+				identifier = encounter.getPatient().getPatientIdentifier().toString();
+				
+				if (immunizations != null) {
+					HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
+							.getImmunizationPrevious();
+	
+					if (prevImmunizations != null){
+	
+						HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
+						
+						if (HpvHistory != null){
+						
+							for(ImmunizationPrevious value : HpvHistory.values()){
+								if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
+									count++;
+								}
+							}
+						}
 					}
 				}
 
+				Patient patient = new Patient();
+				patient = encounter.getPatient();
 				Obs obs = new Obs();
 				obs.setValueNumeric(count.doubleValue());
 				obs.setEncounter(encounter);
-				obs.setPerson(encounter.getPatient());
+				obs.setPerson(patient);
 				obs.setConcept(followUpConcept);
 				obs.setObsDatetime(encounter.getEncounterDatetime());
 				obsService.saveObs(obs, null);
-				
-				//clean-up
+				if (sleep != null) Thread.sleep(sleep);
+		
+			}catch (InterruptedException e){
+				log.info("Exception executing Thread.sleep. Sleep time = " +  sleep);
+			}catch(Exception e){
+				log.info("HPV Study: Exception during requery for patientId = " + encounter.getPatientId() +
+						" identifier = " + identifier, e);
+				errorCount++;
+			}finally{
 				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());
 				numberOfQueries++;
-				if (sleep != null) Thread.sleep(sleep);
-
-			}catch(Exception e){
-				log.info("HPV Study: Exception during vaccine count requery.", e);
 			}
 		}
 		
-		log.info("Batch immunization query completed. Number of encounters = " + numberOfEncounters + ".\r\n"
-				+ "Number of CHIRP queries performed = " + numberOfQueries);
+		log.info("Batch immunization query completed. \r\n Number of encounters = " + numberOfEncounters + ".\r\n"
+				+ "Number of CHIRP queries performed = " + numberOfQueries + ".\r\n"
+				+ "Number of failed queries = " + numberOfFailedQueries + ".\r\n"
+				+ "Error count = " + errorCount);
 		
 		return;
 	}
