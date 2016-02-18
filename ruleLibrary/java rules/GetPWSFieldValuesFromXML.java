@@ -55,6 +55,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	private static final String PULSEOX_FIELD = "PulseOx";
 	private static final String BPP_FIELD = "BPP";
 	private static final String TEMPERATURE_METHOD_FIELD = "Temperature_Method";
+	private static final String PREV_WEIGHT_DATE_FIELD = "PrevWeightDate";
 
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -162,7 +163,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			Field field = currentFieldsInFile.get(i);
 			if(currentFieldNames.contains(field.getId()))
 			{
-				if(builder.toString().length() > 0 && i < currentFieldsInFile.size() -1)
+				if(builder.toString().length() > 0 && i < currentFieldsInFile.size())
 				{
 					builder.append(RESULT_DELIM);
 				}
@@ -189,7 +190,9 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						break;
 					case TEMPERATURE_METHOD_FIELD:
 					case BPP_FIELD:
-						// Temperature method and BPP just need parenthesis 
+					case PREV_WEIGHT_DATE_FIELD:
+						// Temperature method and BPP just need parenthesis
+						// DWE CHICA-677 Added Previous Weight Date to this case
 						builder.append(" (").append(field.getValue()).append(")");
 						break;
 					default:
