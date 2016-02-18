@@ -41,7 +41,7 @@ public class CheckPSFWaitForElectronicSubmissionState implements Rule{
 		}
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		State state = chirdlutilbackportsService.getStateByName("PSF WAIT FOR ELECTRONIC SUBMISSION");
+		State state = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
 		if(state != null)
 		{
 			// Get patient states for the encounter and state
