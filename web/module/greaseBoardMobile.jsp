@@ -121,6 +121,18 @@
                 </div>
             </div>
         </div>
+        
+        <div id="error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+                <div data-role="header" data-theme="b">
+                    <h1>Error</h1>
+                </div>
+                <div data-role="content">
+                    <span id="span_errorMessage">${errorMessage}</span>
+                    <div style="margin: 0 auto;text-align: center;">
+                        <a href="#" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">OK</a>
+                    </div>
+                </div>
+            </div>
     </div><!-- /content -->
 </div><!-- /page two -->
 

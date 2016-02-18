@@ -554,6 +554,11 @@ function createQuestionData(value, questionNumber, spanishText, yesButtonName, i
     content = content + '<label for="QuestionEntry_' + questionNumber + spanishText + '_Yes">' + yesButtonName + '</label>';
     content = content + '<input type="radio" name="QuestionEntry_' + questionNumber + spanishText + '" id="QuestionEntry_' + questionNumber + spanishText + '_No" value="N" data-theme="c" />';
     content = content + '<label for="QuestionEntry_' + questionNumber + spanishText + '_No">No</label>';
+    
+    // CHICA-514 Adding NA as an available option, set the value to NoAnswer since this is what is checked in the controller
+    content = content + '<input type="radio" name="QuestionEntry_' + questionNumber + spanishText + '" id="QuestionEntry_' + questionNumber + spanishText + '_NA" value="NoAnswer" data-theme="c" />';
+    content = content + '<label for="QuestionEntry_' + questionNumber + spanishText + '_NA">N/A</label>';
+    
     content = content + '</fieldset></div>';
     return content;
 }
@@ -629,9 +634,11 @@ function setLanguageFromForm(patientName, birthdate) {
 	    if (english) {
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_Yes", "#QuestionEntry_" + i + "_Yes");
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_No", "#QuestionEntry_" + i + "_No");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_2_NA", "#QuestionEntry_" + i + "_NA");
 	    } else {
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_Yes", "#QuestionEntry_" + i + "_2_Yes");
 	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_No", "#QuestionEntry_" + i + "_2_No");
+	    	setQuestionCheckboxes("#QuestionEntry_" + i + "_NA", "#QuestionEntry_" + i + "_2_NA");
 	    }
     }
     

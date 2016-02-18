@@ -742,7 +742,7 @@ public class DynamicFormAccess {
 	 * @param fieldTypeName name of the field type
 	 * @return FieldType openmrs field type with the given name
 	 */
-	private FieldType getFieldType(String fieldTypeName) {
+	public FieldType getFieldType(String fieldTypeName) {
 		FormService formService = Context.getFormService();
 		List<FieldType> fieldTypes = formService.getAllFieldTypes();
 		Iterator<FieldType> iter = fieldTypes.iterator();

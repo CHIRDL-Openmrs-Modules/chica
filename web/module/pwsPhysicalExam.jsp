@@ -22,10 +22,10 @@
                             General:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_General" value="N"/><br/>
+                            <input type="radio" name="Entry_General" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_General" value="A"/><br/>
+                            <input type="radio" name="Entry_General" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${HeadExamA}"/><br/>
@@ -34,10 +34,10 @@
                             Head:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Head" value="N"/><br/>
+                            <input type="radio" name="Entry_Head" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Head" value="A"/><br/>
+                            <input type="radio" name="Entry_Head" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${SkinExamA}"/><br/>
@@ -46,10 +46,10 @@
                             Skin:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Skin" value="N"/><br/>
+                            <input type="radio" name="Entry_Skin" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Skin" value="A"/><br/>
+                            <input type="radio" name="Entry_Skin" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${EyesVisionExamA}"/><br/>
@@ -58,10 +58,10 @@
                             Eyes:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Eyes" value="N"/><br/>
+                            <input type="radio" name="Entry_Eyes" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Eyes" value="A"/><br/>
+                            <input type="radio" name="Entry_Eyes" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${EarsHearingExamA}"/><br/>
@@ -70,10 +70,10 @@
                             Ears:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Ears" value="N"/><br/>
+                            <input type="radio" name="Entry_Ears" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Ears" value="A"/><br/>
+                            <input type="radio" name="Entry_Ears" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${NoseThroatExamA}"/><br/>
@@ -82,10 +82,10 @@
                             Nose/Throat:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Nose" value="N"/><br/>
+                            <input type="radio" name="Entry_Nose" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Nose" value="A"/><br/>
+                            <input type="radio" name="Entry_Nose" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${TeethGumsExamA}"/><br/>
@@ -94,10 +94,10 @@
                             Teeth/Gums:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Teeth" value="N"/><br/>
+                            <input type="radio" name="Entry_Teeth" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Teeth" value="A"/><br/>
+                            <input type="radio" name="Entry_Teeth" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${NodesExamA}"/><br/>
@@ -106,10 +106,10 @@
                             Nodes:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Nodes" value="N"/><br/>
+                            <input type="radio" name="Entry_Nodes" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Nodes" value="A"/><br/>
+                            <input type="radio" name="Entry_Nodes" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${ChestLungsExamA}"/><br/>
@@ -118,10 +118,10 @@
                             Chest/Lungs:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Chest" value="N"/><br/>
+                            <input type="radio" name="Entry_Chest" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Chest" value="A"/><br/>
+                            <input type="radio" name="Entry_Chest" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${HeartPulsesExamA}"/><br/>
@@ -130,10 +130,10 @@
                             Heart/Pulses:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Heart" value="N"/><br/>
+                            <input type="radio" name="Entry_Heart" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Heart" value="A"/><br/>
+                            <input type="radio" name="Entry_Heart" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${AbdomenExamA}"/><br/>
@@ -142,10 +142,10 @@
                             Abdomen:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Abdomen" value="N"/><br/>
+                            <input type="radio" name="Entry_Abdomen" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Abdomen" value="A"/><br/>
+                            <input type="radio" name="Entry_Abdomen" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${ExtGenitaliaExamA}"/><br/>
@@ -154,10 +154,10 @@
                             Ext Genitalia:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_ExtGenitalia" value="N"/><br/>
+                            <input type="radio" name="Entry_ExtGenitalia" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_ExtGenitalia" value="A"/><br/>
+                            <input type="radio" name="Entry_ExtGenitalia" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${BackExamA}"/><br/>
@@ -166,10 +166,10 @@
                             Back:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Back" value="N"/><br/>
+                            <input type="radio" name="Entry_Back" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Back" value="A"/><br/>
+                            <input type="radio" name="Entry_Back" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${NeuroExamA}"/><br/>
@@ -178,10 +178,10 @@
                             Neuro:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Neuro" value="N"/><br/>
+                            <input type="radio" name="Entry_Neuro" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Neuro" value="A"/><br/>
+                            <input type="radio" name="Entry_Neuro" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div class="examFlag">
                             <c:out value="${ExtremitiesExamA}"/><br/>
@@ -190,10 +190,10 @@
                             Extremities:<br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Extremities" value="N"/><br/>
+                            <input type="radio" name="Entry_Extremities" class="uncheckableRadioButton" value="N"/><br/>
                         </div>
                         <div class="examHeader">
-                            <input type="radio" name="Entry_Extremities" value="A"/><br/>
+                            <input type="radio" name="Entry_Extremities" class="uncheckableRadioButton" value="A"/><br/>
                         </div>
                         <div id="examLegend">
                             <b><font style="color:red;">*</font> = Previously Abnormal</b>
