@@ -23,12 +23,14 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationRegistryQuery;
@@ -112,7 +114,6 @@ public class BatchImmunizationQuery extends AbstractTask {
 				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
 				return;
 			}
-		    
 		    if (StringUtils.isNumeric(sleepTimeProperty) && !StringUtils.isWhitespace(sleepTimeProperty)) {
 				sleep = Integer.valueOf(sleepTimeProperty);
 			}
@@ -198,7 +199,8 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
-		//Count the queries to CHIRP. This is not updated unless a query was performed.
+		
+		//Count the queries to CHIRP. This is not updated unlessa query was performed.
 		int numberOfQueries = 0;
 		int failureCount = 0;
 		int errorCount  = 0;
@@ -288,8 +290,9 @@ public class BatchImmunizationQuery extends AbstractTask {
 					}
 				}
 
-				Patient patient = new Patient();
-				patient = encounter.getPatient();
+				
+				Patient patient = encounter.getPatient();
+				Hibernate.initialize(patient);
 				Obs obs = new Obs();
 				obs.setValueNumeric(vaccineCount.doubleValue());
 				obs.setEncounter(encounter);
