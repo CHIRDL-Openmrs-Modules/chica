@@ -56,6 +56,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	private static final String BPP_FIELD = "BPP";
 	private static final String TEMPERATURE_METHOD_FIELD = "Temperature_Method";
 	private static final String PREV_WEIGHT_DATE_FIELD = "PrevWeightDate";
+	private static final int MAX_TRIES = 2;
 
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -97,18 +98,35 @@ public class GetPWSFieldValuesFromXML implements Rule{
 					}
 
 					File file = new File(mergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
-					if(!file.exists())
+					
+					// DWE CHICA-682 Added some additional logging 
+					// and made changes to try again if the file was 
+					// not found in either directory on the first try
+					int numTries = 1;
+					while (!file.exists() && numTries <= MAX_TRIES)
 					{
 						// Check the pending directory
 						String pendingDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
 								.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId)) 
 								+ ChirdlUtilConstants.FILE_PENDING + File.separator;
 						file = new File(pendingDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
-
-						if(!file.exists()) // File was not found in the pending directory either, return empty result
+						if(!file.exists()) // File was not found in the pending directory either, return empty result, if we've tried the max number of tries
 						{
-							return Result.emptyResult();
+							try{
+								// Wait and then look in the merge directory again
+								Thread.sleep(1000);
+								file = new File(mergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+							}
+							catch (InterruptedException e) {
+								log.error("Interrupted thread error", e);
+							}
+							
+							if(numTries == MAX_TRIES){
+								log.error("Unable to locate " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+								return Result.emptyResult();
+							}
 						}
+						numTries++;
 					}
 
 					// Read the xml
@@ -117,8 +135,19 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
 					}
 					catch (IOException e) {
-						this.log.error(e.getMessage());
-						this.log.error(Util.getStackTrace(e));
+						// Try again
+						try{
+							Thread.sleep(1000);
+							records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
+						}
+						catch (InterruptedException ie) {
+							log.error("Interrupted thread error", ie);
+						}
+						catch(IOException ioe){
+							log.error("Unable to read " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+							this.log.error(ioe.getMessage());
+							this.log.error(Util.getStackTrace(ioe));
+						}
 					}			
 
 					if(records != null)
