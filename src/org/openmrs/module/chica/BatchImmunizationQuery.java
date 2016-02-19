@@ -235,13 +235,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 				//If it is a chirp availablility issue, sleep and retry the query
 				while (queryResponse == null 
 						&& ( isChirpIssue(encounter, startQuery)) 
-						&& retries <= maxRetries){
+						&& retries < maxRetries){
 					
-					log.info("CHIRP not available, retry query in " + (retrySleep == null||retrySleep == 0 ? 0 :retrySleep/60000) + " min");
+					log.info("CHIRP not available, retry query in " + (retrySleep == null||retrySleep == 0 ? 0 :retrySleep/60000) + " min.");
 					if (retrySleep != null) {
 						Thread.sleep(retrySleep);
 					}
 					startQuery = new Date();
+					log.info("Requerying...");
 					queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 					retries++;
 				}
@@ -251,7 +252,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 					//Check if it is still a CHIRP issue but ran out of retries
 					if (isChirpIssue(encounter, startQuery)){
 						//Chirp problems, but reached max retry limit
-						log.info("CHIRP query problems due to CHIRP availability. PatientId = " + encounter.getPatientId() + ".\r\n" 
+						log.info("CHIRP query issues due to CHIRP availability. PatientId = " + encounter.getPatientId() + ".\r\n" 
 								+ "Number of encounters = " + numberOfEncounters + ".\r\n"
 								+ "Number of CHIRP queries performed before CHIRP error = " + numberOfQueries + ".\r\n"
 								+ "Number of failed queries = " + failureCount  + ".\r\n"
