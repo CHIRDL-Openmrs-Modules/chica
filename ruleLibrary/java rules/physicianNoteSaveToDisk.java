@@ -35,11 +35,16 @@ public class physicianNoteSaveToDisk implements Rule {
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
-		String pe = (String)parameters.get("param1");
-		String psfNote = (String)parameters.get("param2");
-		String physicianNote = (String)parameters.get("param3");
-		String textNote = (String)parameters.get("param4");
+		String historyAndPhysicalNote = (String)parameters.get("param1");
+		String pe = (String)parameters.get("param2");
+		String psfNote = (String)parameters.get("param3");
+		String physicianNote = (String)parameters.get("param4");
+		String assessmentAndPlanNote = (String)parameters.get("param5");
 		StringBuffer buffer = new StringBuffer();
+		if (historyAndPhysicalNote != null) {
+			buffer.append(historyAndPhysicalNote);
+		}
+		
 		if (pe != null) {
 			buffer.append(pe);
 		}
@@ -52,8 +57,8 @@ public class physicianNoteSaveToDisk implements Rule {
 			buffer.append(physicianNote);
 		}
 		
-		if(textNote != null){
-			buffer.append(textNote);
+		if(assessmentAndPlanNote != null){
+			buffer.append(assessmentAndPlanNote);
 		}
 		
 		String text = buffer.toString();
