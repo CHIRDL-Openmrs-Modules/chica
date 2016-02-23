@@ -21,7 +21,7 @@
              </div>
          </div>
          <div class="force-print-form-container">
-            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
+            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();" type="application/pdf">
                <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
                <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
             </object>
@@ -44,4 +44,7 @@
 </div>
 <div id="force-print-multiple-output-types-dialog" title="Forms" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
     <div id="force-print-multiple-output-types-result-div" style="color:black;"></div>
+</div>
+<div id="force-print-error-dialog" title="Error" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+    <div id="force-print-error-result-div" style="color:black;"></div>
 </div>
