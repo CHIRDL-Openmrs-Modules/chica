@@ -32,10 +32,12 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.impl.ConceptServiceImpl;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationRegistryQuery;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -103,15 +105,15 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    //start and stop dates are not required
 		    //StringUtils isBlank() and isNumeric() have null checking
 		    if (StringUtils.isBlank(enrollmentConceptProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not present in the property list for this task");
+				log.info("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not present in the property list for this task");
 				return;
 			}
 		    if (StringUtils.isBlank(followupConceptProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not present in the property list for this task");
+				log.info("Batch immunization query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not present in the property list for this task");
 				return;
 			}
 		    if (StringUtils.isBlank(maxEncounterCountProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
+				log.info("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
 				return;
 			}
 		    if (StringUtils.isNumeric(sleepTimeProperty) && !StringUtils.isWhitespace(sleepTimeProperty)) {
@@ -138,7 +140,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    
 		}catch(Exception e){
 			
-			log.error(taskDefinition.getName() + " failed during initialize", e);
+			log.info(taskDefinition.getName() + " failed during initialize", e);
 		}
 	}
 
@@ -150,48 +152,55 @@ public class BatchImmunizationQuery extends AbstractTask {
 		ConceptService conceptService = Context.getConceptService();
 
 		try {
+			if (isExecuting()){
+				Concept enrollmentConcept = conceptService.getConceptByName(enrollmentConceptProperty);
+				if (enrollmentConcept == null ) {
+					log.info ("HPV study:  Task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not a valid concept");
+					stopExecuting();
+					return;
+				}
+				Concept followUpConcept = conceptService.getConceptByName(followupConceptProperty);
+				if (followUpConcept == null) {
+					log.info ("HPV study:  Task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not a valid concept");
+					stopExecuting();
+					return;
+				}
 
-			Concept enrollmentConcept = conceptService.getConceptByName(enrollmentConceptProperty);
-			if (enrollmentConcept == null ) {
-				log.info ("HPV study:  Task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not a valid concept");
-				return;
+				try {
+
+					maxEncounterCount = Integer.valueOf(maxEncounterCountProperty.trim());
+				} catch (Exception e) {
+					log.info("HPV Study: Task property 'max_number_of_encounters' could not be parsed as an Integer");
+					stopExecuting();
+					return;
+				}
+
+				try {
+					maxRetries = Integer.valueOf(maxRetryCountProperty.trim());
+				} catch (Exception e) {
+					log.info("HPV Study: Task property 'max_retry_count' could not be parsed as an Integer");
+				}
+
+				chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
+				if (chirpStatusConcept == null){
+					log.info("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
+					stopExecuting();
+					return;
+				}
+				if (chirpStatusConcept == null){
+					log.info("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
+					stopExecuting();
+					return;
+				}
+
+				queryChirp(enrollmentConcept, followUpConcept);
 			}
-			Concept followUpConcept = conceptService.getConceptByName(followupConceptProperty);
-			if (followUpConcept == null) {
-				log.info ("HPV study:  Task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not a valid concept");
-				return;
-			}
-			
-			try {
-				maxEncounterCount = Integer.valueOf(maxEncounterCountProperty.trim());
-			} catch (NumberFormatException e) {
-				log.info("HPV Study: Task property 'max_number_of_encounters' could not be parsed as an Integer");
-				return;
-			}
-			
-			try {
-				maxRetries = Integer.valueOf(maxRetryCountProperty.trim());
-			} catch (NumberFormatException e) {
-				log.info("HPV Study: Task property 'max_retry_count' could not be parsed as an Integer");
-			}
-			
-			chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
-			if (chirpStatusConcept == null){
-				log.info("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
-				return;
-			}
-			if (chirpStatusConcept == null){
-				log.info("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
-				return;
-			}
-			
-			queryChirp(enrollmentConcept, followUpConcept);
-			
 		} catch (Exception e) {
-			log.error("HPV study: Exception during vaccine follow-up check.", e);
+			log.info("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
 			Context.closeSession();
 		}
+
 	}
 
 	private void queryChirp(Concept enrollmentConcept, Concept followUpConcept) {
@@ -237,6 +246,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 				//If it is a chirp availablility issue, sleep and retry the query
 				while (queryResponse == null 
 						&& ( isChirpIssue(encounter, startQuery)) 
+						&& maxRetries != null
 						&& retries < maxRetries){
 					
 					log.info("CHIRP not available, retry query in " + (retrySleep == null||retrySleep == 0 ? 0 :retrySleep/60000) + " min.");
@@ -259,6 +269,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 								+ "Number of CHIRP queries performed before CHIRP error = " + numberOfQueries + ".\r\n"
 								+ "Number of failed queries = " + failureCount  + ".\r\n"
 								+ "Number of retries = " + retries + ".\r\n");
+						stopExecuting();
 						return;
 					}
 					//Not a chirp issue, but possible problems such as patient matching and parsing errors
