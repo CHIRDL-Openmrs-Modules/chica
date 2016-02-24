@@ -148,10 +148,10 @@ public class BatchImmunizationQuery extends AbstractTask {
 	@Override
 	public void execute() {
 		Context.openSession();
-
 		ConceptService conceptService = Context.getConceptService();
 
 		try {
+			
 			if (isExecuting()){
 				Concept enrollmentConcept = conceptService.getConceptByName(enrollmentConceptProperty);
 				if (enrollmentConcept == null ) {
@@ -195,6 +195,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 				queryChirp(enrollmentConcept, followUpConcept);
 			}
+			
 		} catch (Exception e) {
 			log.info("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
@@ -267,7 +268,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 						log.info("CHIRP query issues due to CHIRP availability. PatientId = " + encounter.getPatientId() + ".\r\n" 
 								+ "Number of encounters = " + numberOfEncounters + ".\r\n"
 								+ "Number of CHIRP queries performed before CHIRP error = " + numberOfQueries + ".\r\n"
-								+ "Number of failed queries = " + failureCount  + ".\r\n"
+								+ "Number of failed requeries = " + failureCount  + ".\r\n"
 								+ "Number of retries = " + retries + ".\r\n");
 						stopExecuting();
 						return;
@@ -327,7 +328,6 @@ public class BatchImmunizationQuery extends AbstractTask {
 		
 		log.info("Batch immunization query completed. \r\n Number of encounters = " + numberOfEncounters + ".\r\n"
 				+ "Number of CHIRP queries performed = " + numberOfQueries + ".\r\n"
-				+ "Number of failed queries = " + failureCount + ".\r\n"
 				+ "Error count = " + errorCount);
 		
 		return;
