@@ -79,6 +79,11 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			// The query orders them by the most recent
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			State state = chirdlutilbackportsService.getStateByName(STATE_PWS_CREATE);
+			if(state == null){
+				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate " + STATE_PWS_CREATE + ".");
+				return Result.emptyResult();
+			}
+			
 			List<PatientState> states = Context.getService(ChirdlUtilBackportsService.class).getPatientStateByEncounterState(encounterId, state.getStateId());
 			if (states == null || states.size() == 0) {
 				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate patient state for encounterId: " + encounterId + ".");
