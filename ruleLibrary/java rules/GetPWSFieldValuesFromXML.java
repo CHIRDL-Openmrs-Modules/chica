@@ -33,6 +33,8 @@ import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 /**
@@ -41,7 +43,6 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class GetPWSFieldValuesFromXML implements Rule{
 
 	private Log log = LogFactory.getLog(GetPWSFieldValuesFromXML.class);
-	private static final String SORT_DESC = "DESC";
 	private static final String PWS = "PWS";
 	private static final String PWS_PDF = "PWS_PDF";
 	private static final String RESULT_DELIM = "^^";
@@ -57,6 +58,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	private static final String TEMPERATURE_METHOD_FIELD = "Temperature_Method";
 	private static final String PREV_WEIGHT_DATE_FIELD = "PrevWeightDate";
 	private static final int MAX_TRIES = 2;
+	private static final String STATE_PWS_CREATE = "PWS_create";
 
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -69,108 +71,118 @@ public class GetPWSFieldValuesFromXML implements Rule{
 		{
 			Integer encounterId = (Integer)parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 			if (encounterId == null) {
+				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate encounterId.");
 				return Result.emptyResult();
 			}
 
-			ATDService atdService = Context.getService(ATDService.class);
-
-			// Get the list in ascending order so that we have the most recent PWS
-			// This would be an issue since we receive vitals after the PSF has been submitted
-			List<Statistics> stats = atdService.getAllStatsByEncounterForm(encounterId, PWS, SORT_DESC);
-			if (stats == null || stats.size() == 0) {
+			// Get a list of patient states for the encounter and PWS_create
+			// The query orders them by the most recent
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			State state = chirdlutilbackportsService.getStateByName(STATE_PWS_CREATE);
+			List<PatientState> states = Context.getService(ChirdlUtilBackportsService.class).getPatientStateByEncounterState(encounterId, state.getStateId());
+			if (states == null || states.size() == 0) {
+				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate patient state for encounterId: " + encounterId + ".");
 				return Result.emptyResult();
 			}
 
-			for (Statistics stat : stats) {
-				Integer formInstanceId = stat.getFormInstanceId();
-				Integer locationId = stat.getLocationId();
-				Integer locationTagId = stat.getLocationTagId();
-				if (formInstanceId != null && locationId != null && locationTagId != null) {
-					FormInstance formInstance = new FormInstance(locationId, form.getFormId(), formInstanceId);
+			// Use the first one in the list in case of reprints 
+			// or vitals processing from IUH where there might be an outdated PWS
+			PatientState patientState = states.get(0); 
+			Integer formInstanceId = patientState.getFormInstanceId();
+			Integer locationId = patientState.getLocationId();
+			Integer locationTagId = patientState.getLocationTagId();
+			if (patientState.getEndTime() != null && formInstanceId != null && locationId != null && locationTagId != null) {
+				FormInstance formInstance = new FormInstance(locationId, form.getFormId(), formInstanceId);
 
-					String mergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-							.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId));
+				String mergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
+						.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId));
 
-					if (mergeDirectory == null || mergeDirectory.length() == 0) {
-						log.info("No " + ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY + " found for Form: " + formInstance.getFormId() + " Location ID: " + locationId + 
-								" Location Tag ID: " + locationTagId + ".");
+				if (mergeDirectory == null || mergeDirectory.length() == 0) {
+					log.error("No " + ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY + " found for Form: " + formInstance.getFormId() + " Location ID: " + locationId + 
+							" Location Tag ID: " + locationTagId + ".");
+					return Result.emptyResult();
+				}
+
+				File file = new File(mergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+
+				// DWE CHICA-682 Added some additional logging 
+				// and made changes to try again if the file was 
+				// not found in either directory on the first try
+				int numTries = 1;
+				while (!file.exists() && numTries <= MAX_TRIES)
+				{
+					// Check the pending directory
+					String pendingDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
+							.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId)) 
+							+ ChirdlUtilConstants.FILE_PENDING + File.separator;
+					file = new File(pendingDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+					if(!file.exists()) // File was not found in the pending directory either, return empty result, if we've tried the max number of tries
+					{
+						try{
+							// Wait and then look in the merge directory again
+							Thread.sleep(1000);
+							file = new File(mergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
+						}
+						catch (InterruptedException e) {
+							log.error("Interrupted thread error", e);
+						}
+
+						if(numTries == MAX_TRIES){
+							log.error("Unable to locate " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+							return Result.emptyResult();
+						}
+					}
+					numTries++;
+				}
+
+				// Read the xml
+				Records records = null;
+				try {
+					records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
+				}
+				catch (IOException e) {
+					// Try again
+					try{
+						Thread.sleep(1000);
+						records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
+					}
+					catch (InterruptedException ie) {
+						log.error("Interrupted thread error", ie);
+					}
+					catch(IOException ioe){
+						log.error("Unable to read " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						this.log.error(ioe.getMessage());
+						this.log.error(Util.getStackTrace(ioe));
+					}
+				}			
+
+				if(records != null)
+				{
+					Record record = records.getRecord();
+					if (record == null) {
+						this.log.error("Error while creating " + PWS_PDF + ". Unable to locate record in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
 						return Result.emptyResult();
 					}
 
-					File file = new File(mergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
-					
-					// DWE CHICA-682 Added some additional logging 
-					// and made changes to try again if the file was 
-					// not found in either directory on the first try
-					int numTries = 1;
-					while (!file.exists() && numTries <= MAX_TRIES)
-					{
-						// Check the pending directory
-						String pendingDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-								.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId)) 
-								+ ChirdlUtilConstants.FILE_PENDING + File.separator;
-						file = new File(pendingDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
-						if(!file.exists()) // File was not found in the pending directory either, return empty result, if we've tried the max number of tries
-						{
-							try{
-								// Wait and then look in the merge directory again
-								Thread.sleep(1000);
-								file = new File(mergeDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
-							}
-							catch (InterruptedException e) {
-								log.error("Interrupted thread error", e);
-							}
-							
-							if(numTries == MAX_TRIES){
-								log.error("Unable to locate " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
-								return Result.emptyResult();
-							}
-						}
-						numTries++;
+					// Get the <field> elements found within the file
+					List<Field> currentFieldsInFile = record.getFields();
+					if (currentFieldsInFile == null) {
+						this.log.error("Error while creating " + PWS_PDF + ". Unable to locate fields in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						return Result.emptyResult();
 					}
 
-					// Read the xml
-					Records records = null;
-					try {
-						records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
-					}
-					catch (IOException e) {
-						// Try again
-						try{
-							Thread.sleep(1000);
-							records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
-						}
-						catch (InterruptedException ie) {
-							log.error("Interrupted thread error", ie);
-						}
-						catch(IOException ioe){
-							log.error("Unable to read " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
-							this.log.error(ioe.getMessage());
-							this.log.error(Util.getStackTrace(ioe));
-						}
-					}			
+					List<String> currentFieldNames = getFieldNamesCurrentFormDefinition();
 
-					if(records != null)
-					{
-						Record record = records.getRecord();
-						if (record == null) {
-							return Result.emptyResult();
-						}
-
-						// Get the <field> elements found within the file
-						List<Field> currentFieldsInFile = record.getFields();
-						if (currentFieldsInFile == null) {
-							return Result.emptyResult();
-						}
-
-						List<String> currentFieldNames = getFieldNamesCurrentFormDefinition();
-
-						return new Result(createFieldValueString(currentFieldsInFile, currentFieldNames));
-					}									
-				}
+					return new Result(createFieldValueString(currentFieldsInFile, currentFieldNames));
+				}	
+			}
+			else{
+				this.log.error("Error while creating " + PWS_PDF + ". Unable to get form instance id from PatientState: " + patientState.getPatientStateId());
+				return Result.emptyResult();
 			}
 		}
 
+		this.log.error("Error while creating " + PWS_PDF + ".");
 		return Result.emptyResult();	
 	}
 
