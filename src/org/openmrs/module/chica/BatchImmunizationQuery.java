@@ -23,16 +23,21 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.impl.ConceptServiceImpl;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationRegistryQuery;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -54,23 +59,30 @@ public class BatchImmunizationQuery extends AbstractTask {
 	private static final String PROPERTY_KEY_FOLLOWUP_CONCEPT = "followup_concept";
 	private static final String PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS = "max_number_of_encounters";
 	private static final String PROPERTY_KEY_SLEEP_TIME_MS = "sleep_time_msec";
+	private static final String PROPERTY_KEY_RETRY_SLEEP_TIME_MIN = "retry_sleep_time_minutes";
 	private static final String CHIRP_STATUS_CONCEPT = "CHIRP_Status";
 	private static final String HPV_VACCINE_NAME = "HPV, unspecified formulation";
+	private static final String PROPERTY_KEY_MAX_RETRY = "max_retry_count";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private TaskDefinition taskConfig;
 	private String enrollmentConceptProperty; //String containing concept name
 	private String maxEncounterCountProperty;
+	private String maxRetryCountProperty;
 	private String startDateProperty;
 	private String stopDateProperty;
 	private String followupConceptProperty;
 	private Concept chirpStatusConcept;
 	private String sleepTimeProperty;
+	private String retrySleepTimeProperty;
 	private Integer maxEncounterCount = 0;
 	private Date startDate = null;
 	private Date stopDate = null;
 	private Integer sleep = null;
+	private Integer retrySleep = null;
+	private Integer maxRetries = 0;
+	
 	
 	
 	@Override
@@ -87,23 +99,29 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    stopDateProperty = this.taskConfig.getProperty(PROPERTY_STOP_DATE);
 		    followupConceptProperty = this.taskConfig.getProperty(PROPERTY_KEY_FOLLOWUP_CONCEPT);
 		    maxEncounterCountProperty = this.taskConfig.getProperty(PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS);
+		    maxRetryCountProperty = this.taskConfig.getProperty(PROPERTY_KEY_MAX_RETRY);
 		    sleepTimeProperty = this.taskConfig.getProperty(PROPERTY_KEY_SLEEP_TIME_MS);
+		    retrySleepTimeProperty = this.taskConfig.getProperty(PROPERTY_KEY_RETRY_SLEEP_TIME_MIN);
 		    //start and stop dates are not required
 		    //StringUtils isBlank() and isNumeric() have null checking
 		    if (StringUtils.isBlank(enrollmentConceptProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not present in the property list for this task");
+				log.info("Batch immunization query task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not present in the property list for this task");
 				return;
 			}
 		    if (StringUtils.isBlank(followupConceptProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not present in the property list for this task");
+				log.info("Batch immunization query task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not present in the property list for this task");
 				return;
 			}
 		    if (StringUtils.isBlank(maxEncounterCountProperty)) {
-				log.error("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
+				log.info("Batch immunization query task property '" + PROPERTY_KEY_MAX_NUMBER_OF_ENCOUNTERS + "' is not present in the property list for this task");
 				return;
 			}
 		    if (StringUtils.isNumeric(sleepTimeProperty) && !StringUtils.isWhitespace(sleepTimeProperty)) {
 				sleep = Integer.valueOf(sleepTimeProperty);
+			}
+		    if (StringUtils.isNumeric(retrySleepTimeProperty) && !StringUtils.isWhitespace(retrySleepTimeProperty)) {
+		    	retrySleep = Integer.valueOf(retrySleepTimeProperty);
+		    	retrySleep = retrySleep * 60000;
 			}
 		    
 		    try {
@@ -122,7 +140,7 @@ public class BatchImmunizationQuery extends AbstractTask {
 		    
 		}catch(Exception e){
 			
-			log.error(taskDefinition.getName() + " failed during initialize", e);
+			log.info(taskDefinition.getName() + " failed during initialize", e);
 		}
 	}
 
@@ -130,46 +148,60 @@ public class BatchImmunizationQuery extends AbstractTask {
 	@Override
 	public void execute() {
 		Context.openSession();
-
 		ConceptService conceptService = Context.getConceptService();
 
 		try {
+			
+			if (isExecuting()){
+				Concept enrollmentConcept = conceptService.getConceptByName(enrollmentConceptProperty);
+				if (enrollmentConcept == null ) {
+					log.info ("HPV study:  Task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not a valid concept");
+					stopExecuting();
+					return;
+				}
+				Concept followUpConcept = conceptService.getConceptByName(followupConceptProperty);
+				if (followUpConcept == null) {
+					log.info ("HPV study:  Task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not a valid concept");
+					stopExecuting();
+					return;
+				}
 
-			Concept enrollmentConcept = conceptService.getConceptByName(enrollmentConceptProperty);
-			if (enrollmentConcept == null ) {
-				log.error ("HPV study:  Task property '" + PROPERTY_KEY_ENROLLMENT_CONCEPT + "' is not a valid concept");
-				return;
+				try {
+
+					maxEncounterCount = Integer.valueOf(maxEncounterCountProperty.trim());
+				} catch (Exception e) {
+					log.info("HPV Study: Task property 'max_number_of_encounters' could not be parsed as an Integer");
+					stopExecuting();
+					return;
+				}
+
+				try {
+					maxRetries = Integer.valueOf(maxRetryCountProperty.trim());
+				} catch (Exception e) {
+					log.info("HPV Study: Task property 'max_retry_count' could not be parsed as an Integer");
+				}
+
+				chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
+				if (chirpStatusConcept == null){
+					log.info("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
+					stopExecuting();
+					return;
+				}
+				if (chirpStatusConcept == null){
+					log.info("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
+					stopExecuting();
+					return;
+				}
+
+				queryChirp(enrollmentConcept, followUpConcept);
 			}
-			Concept followUpConcept = conceptService.getConceptByName(followupConceptProperty);
-			if (followUpConcept == null) {
-				log.error ("HPV study:  Task property '" + PROPERTY_KEY_FOLLOWUP_CONCEPT + "' is not a valid concept");
-				return;
-			}
-			
-			try {
-				maxEncounterCount = Integer.valueOf(maxEncounterCountProperty.trim());
-			} catch (NumberFormatException e) {
-				log.error("HPV Study: Task property 'max_number_of_encounters' could not be parsed as an Integer");
-				return;
-			}
-			
-			chirpStatusConcept = conceptService.getConceptByName(CHIRP_STATUS_CONCEPT);
-			if (chirpStatusConcept == null){
-				log.error("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
-				return;
-			}
-			if (chirpStatusConcept == null){
-				log.error("HPV study: '"+ CHIRP_STATUS_CONCEPT + "'is not a valid concept.");
-				return;
-			}
-			
-			queryChirp(enrollmentConcept, followUpConcept);
 			
 		} catch (Exception e) {
-			log.error("HPV study: Exception during vaccine follow-up check.", e);
+			log.info("HPV study: Exception during vaccine follow-up check.", e);
 		} finally {
 			Context.closeSession();
 		}
+
 	}
 
 	private void queryChirp(Concept enrollmentConcept, Concept followUpConcept) {
@@ -177,8 +209,14 @@ public class BatchImmunizationQuery extends AbstractTask {
 
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		ObsService obsService = Context.getObsService();
-		//Count the queries to CHIRP. This is not updated unless a query was performed.
+		
+		//Count the queries to CHIRP. This is not updated unlessa query was performed.
 		int numberOfQueries = 0;
+		int failureCount = 0;
+		int errorCount  = 0;
+		int retries = 0;
+		
+		String identifier = "";
 		
 
 		List<Encounter> encounters = chicaService
@@ -194,94 +232,136 @@ public class BatchImmunizationQuery extends AbstractTask {
 		Iterator<Encounter> encountersIterator = encounters.listIterator();
 		
 		while ( isExecuting() && encountersIterator.hasNext() &&  numberOfQueries < maxEncounterCount) {
+			
+			Encounter encounter = encountersIterator.next();
+			
 			try {
-				
-				Encounter encounter = encountersIterator.next();
-
+				Integer vaccineCount = 0;
+				retries = 0;
+				Date startQuery = new Date();
 				String queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
 
-				/* Check the latest CHIRP status observation today for this requery.  
-				 * We do not want to send any more immunization queries to CHIRP
-				 * if CHIRP is not available.  
+				/* Queries can fail due to CHIRP access, invalid CHIRP response, CHIRP could not find patient,
+				 * parsing error, or patient not match to our database.
 				 */
-
-				if (queryResponse == null) {
-
-					Date now = new Date();
-					Integer mostRecentCount = 1;
-					List<Obs> latestChirpStatusObs = obsService.getObservations(
-							Collections.singletonList((Person)encounter.getPatient()), 
-							Collections.singletonList((org.openmrs.Encounter) encounter), 
-							Collections.singletonList(chirpStatusConcept), 
-							null, null, null, null, mostRecentCount, null, DateUtil.getStartOfDay(now), now, false);
+				//If it is a chirp availablility issue, sleep and retry the query
+				while (queryResponse == null 
+						&& ( isChirpIssue(encounter, startQuery)) 
+						&& maxRetries != null
+						&& retries < maxRetries){
 					
-					Iterator<Obs> iter = latestChirpStatusObs.iterator();
-					if (iter.hasNext()){
-						Obs chirpStatusObs = iter.next();
-						if (CHIRP_NOT_AVAILABLE.equals(chirpStatusObs.getValueAsString(Locale.US))||
-								CHIRP_LOGIN_FAILED.equals(chirpStatusObs.getValueAsString(Locale.US))){
-							log.error("HPV Study: Follow-up CHIRP query problems due to CHIRP availability.");
-							return;
-						}
+					log.info("CHIRP not available, retry query in " + (retrySleep == null||retrySleep == 0 ? 0 :retrySleep/60000) + " min.");
+					if (retrySleep != null) {
+						Thread.sleep(retrySleep);
 					}
-
+					startQuery = new Date();
+					log.info("Requerying...");
+					queryResponse = ImmunizationRegistryQuery.queryCHIRP(encounter);
+					retries++;
+				}
+				//Last retry was still null
+				if (queryResponse == null){
+					failureCount++;
+					//Check if it is still a CHIRP issue but ran out of retries
+					if (isChirpIssue(encounter, startQuery)){
+						//Chirp problems, but reached max retry limit
+						log.info("CHIRP query issues due to CHIRP availability. PatientId = " + encounter.getPatientId() + ".\r\n" 
+								+ "Number of encounters = " + numberOfEncounters + ".\r\n"
+								+ "Number of CHIRP queries performed before CHIRP error = " + numberOfQueries + ".\r\n"
+								+ "Number of failed requeries = " + failureCount  + ".\r\n"
+								+ "Number of retries = " + retries + ".\r\n");
+						stopExecuting();
+						return;
+					}
+					//Not a chirp issue, but possible problems such as patient matching and parsing errors
 					continue;
 				}
+
 
 				ImmunizationQueryOutput immunizations = ImmunizationForecastLookup
 						.getImmunizationList(encounter.getPatientId());
 
-				String identifier = encounter.getPatient().getPatientIdentifier().toString();
-				if (immunizations == null) {
-					log.info("HPV Study: No HPV vaccine records exist in CHIRP for patient (" + identifier +
-							"). This patient should have an immunization record.");
-					continue;
-				}
+				identifier = encounter.getPatient().getPatientIdentifier().toString();
 
-				// patient has immunization records
+				if (immunizations != null) {
+					HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
+							.getImmunizationPrevious();
 
-				HashMap<String, HashMap<Integer, ImmunizationPrevious>> prevImmunizations = immunizations
-						.getImmunizationPrevious();
+					if (prevImmunizations != null){
 
-				if (prevImmunizations == null || prevImmunizations.get(HPV_VACCINE_NAME) == null){
-					log.info("HPV Study: No HPV vaccine records exist in CHIRP for patient (" + identifier +
-							"). This patient should have historical vaccination records.");
-					//clean-up
-					ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());			
-					continue;
-				}
+						HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
 
-				HashMap<Integer, ImmunizationPrevious> HpvHistory = prevImmunizations.get(HPV_VACCINE_NAME);
-					
-				Integer count = 0;
-				for(ImmunizationPrevious value : HpvHistory.values()){
-					if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
-						count++;
+						if (HpvHistory != null){
+							
+							for(ImmunizationPrevious value : HpvHistory.values()){
+								if (value.getDate().before(DateUtil.getStartOfDay(encounter.getEncounterDatetime()))){
+									vaccineCount++;
+								}
+							}
+						}
 					}
 				}
 
+				
+				Patient patient = encounter.getPatient();
+				Hibernate.initialize(patient);
 				Obs obs = new Obs();
-				obs.setValueNumeric(count.doubleValue());
+				obs.setValueNumeric(vaccineCount.doubleValue());
 				obs.setEncounter(encounter);
-				obs.setPerson(encounter.getPatient());
+				obs.setPerson(patient);
 				obs.setConcept(followUpConcept);
 				obs.setObsDatetime(encounter.getEncounterDatetime());
 				obsService.saveObs(obs, null);
-				
-				//clean-up
-				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());
-				numberOfQueries++;
 				if (sleep != null) Thread.sleep(sleep);
 
+			}catch (InterruptedException e){
+				log.info("Exception executing Thread.sleep. Sleep time = " +  sleep);
 			}catch(Exception e){
-				log.info("HPV Study: Exception during vaccine count requery.", e);
+				log.info("HPV Study: Exception during requery for patientId = " + encounter.getPatientId() +
+						" identifier = " + identifier, e);
+				errorCount++;
+			}finally{
+				ImmunizationForecastLookup.removeImmunizationList(encounter.getPatientId());
+				numberOfQueries++;
 			}
 		}
 		
-		log.info("Batch immunization query completed. Number of encounters = " + numberOfEncounters + ".\r\n"
-				+ "Number of CHIRP queries performed = " + numberOfQueries);
+		log.info("Batch immunization query completed. \r\n Number of encounters = " + numberOfEncounters + ".\r\n"
+				+ "Number of CHIRP queries performed = " + numberOfQueries + ".\r\n"
+				+ "Error count = " + errorCount);
 		
 		return;
+	}
+	
+	/**
+	 * Check if the latest CHIRP status observation indicates CHIRP is not available.  
+	 * @param encounter
+	 * @param startQuery
+	 * @return
+	 */
+	private boolean isChirpIssue(Encounter encounter, Date startQuery){
+		 
+		ObsService obsService = Context.getObsService();
+		Date now = new Date();
+		Integer mostRecentCount = 1;
+		boolean isChirp = false;
+		List<Obs> latestChirpStatusObs = obsService.getObservations(
+				Collections.singletonList((Person)encounter.getPatient()), 
+				Collections.singletonList((org.openmrs.Encounter) encounter), 
+				Collections.singletonList(chirpStatusConcept), 
+				null, null, null, null, mostRecentCount, null, startQuery, now, false);
+		
+		Iterator<Obs> iter = latestChirpStatusObs.iterator();
+		if (iter.hasNext()){
+			Obs chirpStatusObs = iter.next();
+			if (CHIRP_NOT_AVAILABLE.equals(chirpStatusObs.getValueAsString(Locale.US))||
+					CHIRP_LOGIN_FAILED.equals(chirpStatusObs.getValueAsString(Locale.US))){
+				isChirp = true;
+			}
+			
+		}
+	
+		return isChirp;
 	}
 
 	@Override
