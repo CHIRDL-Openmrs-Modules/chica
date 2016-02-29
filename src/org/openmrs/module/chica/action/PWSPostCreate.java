@@ -13,6 +13,7 @@ import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
@@ -48,7 +49,13 @@ public class PWSPostCreate implements ProcessStateAction
 			if (rules == null || rules.size() == 0) {
 				return;
 			}
-
+			
+			// DWE CHICA-682 Add locationId, locationTagId, and sessionId to the parameters because they may not be there
+			// This could happen if "Print PWS" is selected from the drop-down on the GreaseBoard			
+			parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, patientState.getSessionId());
+			parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, patientState.getLocationId());
+			parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, patientState.getLocationTagId());
+			
 			parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
 
 			// Check age restrictions and set parameters
