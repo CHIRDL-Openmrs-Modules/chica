@@ -9,7 +9,7 @@ Maintenance:
 	Validation:	;;
 Library:
 	Purpose:		Assess whether patient has difficulty remaining seated.;;
-	Explanation:	            Kronenberger says this question has high sensitivity for ADHD                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	            Kronenberger says this question has high sensitivity for ADHD   ;;
 	Keywords:	ADHD attention Vanderbilt research;;
 	Citations:		Kronenberger;;
 	Links:		;;
@@ -43,9 +43,6 @@ Priority: 269;;
 Logic:
 If (mode = PRODUCE) then
 
-
-
-
 If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude False;
 If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude False;
 If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude False;
@@ -65,9 +62,14 @@ Else conclude true;
 endif
 
 If (mode = CONSUME) then
+SCAREDFive_created := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
+Age := call ChicaAgeRule with "years";
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_SX","Difficulty_Remaining_Seated";
+  If (SCAREDFive_created = "no") AND (Age > 5) then 
+        call CREATE_JIT with "SCARED_Parent_JIT_Mobile";
+  endif;
+  CALL storeObs With "CHICA_ADHD_SX","Difficulty_Remaining_Seated";
  endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_SX","no_Difficulty_remaining_seated";
@@ -78,7 +80,7 @@ endif
 ;;
 Action:
 write ("Does || firstname || OFTEN have difficulty remaining seated when asked to do so, that is causing problems at home or school?");
-write ("¿Tiene || firstname || muchas veces problemas de mantenerse sentado cuando se le pide, ocasionando problemas en casa o en la escuela?") At Spanish;                                                                                                                                                                                                                                                                            
+write ("¿Tiene || firstname || muchas veces problemas de mantenerse sentado cuando se le pide, ocasionando problemas en casa o en la escuela?") At Spanish; 
 ;;
 Age_Min: 5 years;;
 Age_Max: 12 years;;

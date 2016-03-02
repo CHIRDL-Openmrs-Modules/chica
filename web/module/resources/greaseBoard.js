@@ -49,56 +49,6 @@ $(function() {
     	displayBadScans("/openmrs",$("#badScans").val())
     });
     
-    $("#forcePrintDialog").dialog({
-        open: function() { 
-            forcePrint_removeForms();
-            forcePrint_loadForms();
-            $(".ui-dialog").addClass("ui-dialog-shadow");
-            updateForcePrintDimensions();
-        },
-        beforeClose: function(event, ui) { 
-        	// Have to do this nonsense to prevent Chrome and Firefox from sending an additional request  to the server for a PDF when the dialog is closed.
-        	$(".force-print-form-container").hide();
-        	var obj = $(".force-print-form-object");
-        	var container = obj.parent();
-        	var newobj = obj.clone();
-        	obj.remove();
-        	newobj.attr("data", "");
-        	container.append(newobj);
-        },
-        close: function(event, ui) { 
-        	event.preventDefault();
-            $(".force-print-form-container").hide();
-            $('.force-print-forms').val("selectform").selectmenu("refresh");
-        },
-        autoOpen: false,
-        modal: true,
-        minHeight: 350,
-        minWidth: 950,
-        width: 950,
-        height: $(window).height() * 0.90,
-        show: {
-          effect: "fade",
-          duration: 500
-        },
-        hide: {
-          effect: "fade",
-          duration: 500
-        },
-//        resize: function(e,ui) {
-//            updateForcePrintDimensions();
-//        },
-        resizable: false,
-        buttons: [
-          {
-	          text:"Close",
-	          click: function() {
-	        	  $("#forcePrintDialog").dialog("close");
-	          }
-          }
-        ]
-    });
-    
     $("#listErrorDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
@@ -417,11 +367,6 @@ $(function() {
             $(this).dialog("close");
           }
         }
-    });
-    
-    $("#forcePrintButton").click(function(event) {
-        $("#forcePrintDialog").dialog("open");
-        event.preventDefault();
     });
     
     var cell = document.getElementById("badScansCell");
@@ -826,11 +771,11 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#patientName").val("");
         	var mrn = $("#printHandoutsMrnLookup").val();
         	$("#mrn").val(mrn);
-        	$(".force-print-patient-name").html("<p>Please choose a form for #" + mrn + ".</p>");
+        	$(".force-print-patient-name").html("<p>Please choose form(s) for #" + mrn + ".</p>");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", {effect: "none" } );
         	$("#printHandoutsMRNDialog").dialog("close");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
-        	$("#forcePrintDialog").dialog("open");
+        	$("#force-print-dialog").dialog("open");
         } else {
         	$("#printHandoutsMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
             $("#printHandoutsMrnError").show("highlight", 750);
@@ -1103,9 +1048,8 @@ function confirmation(optionsSelect, formName) {
 		$("#locationId").val(locationId);
 		$("#locationTagId").val(locationTagId);
 		$("#patientName").val(patientName);
-		$("#forcePrintDialog").dialog("open");
-		$(".force-print-patient-name").html("<p>Please choose a form for " + patientName + ".</p>");
-        event.preventDefault();
+		$("#force-print-dialog").dialog("open");
+		$(".force-print-patient-name").html("<p>Please choose form(s) for " + patientName + ".</p>");
 	} else if(optionsSelect[selectedIndex].text == 'ADHD WU'){
         $("#adhdWorkupDialog").data("form", formName).dialog("open");
     } else {
@@ -1331,10 +1275,4 @@ function parsePagerResult(responseXML) {
 
 function closePagerDialog() {
 	$("#pagerDialog").dialog("close");
-}
-
-function updateForcePrintDimensions() {
-	var divHeight = $(".greaseBoard-force-print-content").height();
-    // Update the height of the select
-    $(".force-print-forms").selectmenu().selectmenu("menuWidget").css({"max-height":(divHeight * 0.60) + "px"});
 }

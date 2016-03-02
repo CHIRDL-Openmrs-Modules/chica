@@ -6,6 +6,7 @@ input[masktype=password] {
 .custom-button {
     height: 1.5em !important;
     width: 1.5em !important;
+    visibility: hidden; /* SJM CHICA-667: hide the audio button for mobile forms */
 }
 
 .custom-button .ui-btn-inner {

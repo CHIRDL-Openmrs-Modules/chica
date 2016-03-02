@@ -2459,6 +2459,9 @@ INSERT INTO patient_identifier_type
 select 'SSN', 'social security number',  1, 1, NOW(), 'org.openmrs.module.chica.hl7.SSNValidator', UUID() from 
 (select count(*) as cnt from patient_identifier_type where name='SSN') a
 where a.cnt=0;
+
+INSERT INTO patient_identifier_type (name, description, creator, date_created, uuid)
+values('Immunization Registry', 'State identifier for the CHIRP immunization registry.', 1, NOW(), UUID());
    
 INSERT INTO person_attribute_type
    (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
@@ -3037,6 +3040,19 @@ values ('unfilteredMedicationFile', 'Configuration file listing medications that
 
 	alter table chica_hl7_export_status
 			add date_created  datetime after description;
+			
+	update chica_hl7_export_status set name = 'pending_export', description = 'Inserted in table and pending export', date_created = now() where hl7_export_status_id = 1;
+	update chica_hl7_export_status set name = 'hl7_sent', description = 'Hl7 constructed and sent', date_created = now() where hl7_export_status_id = 2;
+	update chica_hl7_export_status set name = 'ACK_received', description = 'ACK received from sent message', date_created = now() where hl7_export_status_id = 3;
+	update chica_hl7_export_status set name = 'ACK_not_received', description = 'ACK not received from sent message', date_created = now() where hl7_export_status_id = 4;
+	update chica_hl7_export_status set name = 'no_obs', description = 'No observations to send', date_created = now() where hl7_export_status_id = 100;
+	insert into chica_hl7_export_status values (5, 'do_not_send', 'Do not send tiff images in hl7', now());
+	insert into chica_hl7_export_status values (200, 'concept_map_location_unknown', 'Concept map xml location not found in location_tag_attribute_table', now());
+	insert into chica_hl7_export_status values (300, 'Image_not_found', 'Tiff image not found', now());
+	insert into chica_hl7_export_status values (400, 'hl7_config_file_not_found', 'HL7 configuration file not found', now());
+	insert into chica_hl7_export_status values (500, 'no_hl7_config_properties', 'Unable to extract properties from hl7 config file', now());
+	insert into chica_hl7_export_status values (600, 'XML_parsing_error', 'Concept map file not found or unable to parse xml', now());
+	insert into chica_hl7_export_status values (999, 'Unknown', 'Status unknown', now());
 		
 	insert into chirdlutilbackports_state (name , state_action_id)
 values ('Export POC',  (select state_action_id from chirdlutilbackports_state_action
@@ -3377,6 +3393,9 @@ VALUES
         Update action classes in state_action table.
         </description>
         <sql>
+        ALTER TABLE chica_statistics ADD COLUMN form_field_id int(11) DEFAULT NULL;
+        ALTER TABLE chica_statistics ADD CONSTRAINT chica_stats_fk_form_field FOREIGN KEY (form_field_id) REFERENCES form_field (form_field_id);
+            
     Insert into atd_statistics
 select * from chica_statistics;
 
@@ -3405,7 +3424,7 @@ where action_name='REPRINT';
         <author>Steve McKee</author>
         <date>July 11, 2011</date>
         <description>
-        Move the FAX JIT action from the chica module to the atd module.
+        Move the FAX JIT action from the chica module to the atd module and update any missing state information.
         </description>
         <sql>
         update chirdlutilbackports_state_action
@@ -3425,6 +3444,43 @@ where action_name='REPRINT';
         delete from global_property where property = 'chica.outgoingFaxDirectory';
         
         delete from global_property where property = 'chica.outgoingFaxFrom';
+        
+        insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('PSF WAIT FOR ELECTRONIC SUBMISSION', 'Wait for electronic submission of the PSF form', 'org.openmrs.module.atd.action.WaitForElectronicSubmission');
+        insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('FINISH FORM', 'Finished with form', 'org.openmrs.module.atd.action.FinishForm');
+        insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('WAIT FOR ELECTRONIC SUBMISSION', 'Wait for electronic submission of a JIT', 'org.openmrs.module.atd.action.WaitForElectronicSubmission');
+        insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values('PRODUCE ELECTRONIC FORM INSTANCE','Create form for electronic consumption','org.openmrs.module.chica.action.ProduceElectronicFormInstance');
+        insert into chirdlutilbackports_program (name, description, version, start_state, end_state) values('chica_electronic', 'Program for electronic version of chica including all forms', '1.0', (select state_id from chirdlutilbackports_state where name = 'CHECKIN'), (select state_id from chirdlutilbackports_state where name = 'FINISHED'));
+        insert into chirdlutilbackports_state (name, state_action_id, form_name) values ('PSF_mobile_create',(select state_action_id from chirdlutilbackports_state_action where action_name = 'PRODUCE ELECTRONIC FORM INSTANCE'),'PSF');
+        insert into chirdlutilbackports_state (name, state_action_id) values('PWS WAIT FOR SUBMISSION', (select state_action_id from chirdlutilbackports_state_action where action_name = 'WAIT FOR SCAN'));
+        insert into chirdlutilbackports_state (name, state_action_id) values('JIT WAIT FOR SUBMISSION', (select state_action_id from chirdlutilbackports_state_action where action_name = 'WAIT FOR SCAN'));
+        insert into chirdlutilbackports_state (name, state_action_id) values ('PSF WAIT FOR ELECTRONIC SUBMISSION', (select state_action_id from chirdlutilbackports_state_action where action_name = 'WAIT FOR ELECTRONIC SUBMISSION'));
+        insert into chirdlutilbackports_state (name, state_action_id) values ('JIT_mobile_create', (select state_action_id from chirdlutilbackports_state_action where action_name = 'PRODUCE ELECTRONIC FORM INSTANCE'));
+        insert into chirdlutilbackports_state (name, state_action_id) values ('JIT WAIT FOR ELECTRONIC SUBMISSION', (select state_action_id from chirdlutilbackports_state_action where action_name = 'WAIT FOR ELECTRONIC SUBMISSION'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'CHECKIN'),(select state_id from chirdlutilbackports_state where name = 'QUERY KITE PSF'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'QUERY KITE PSF'),(select state_id from chirdlutilbackports_state where name = 'Randomize'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Randomize'),(select state_id from chirdlutilbackports_state where name = 'PSF_mobile_create'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PSF_mobile_create'),(select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PSF'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PSF'),(select state_id from chirdlutilbackports_state where name = 'PSF WAIT FOR ELECTRONIC SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PSF WAIT FOR ELECTRONIC SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'Export Vitals'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PSF_reprint'),(select state_id from chirdlutilbackports_state where name = 'PSF WAIT FOR ELECTRONIC SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Export Vitals'),(select state_id from chirdlutilbackports_state where name = 'QUERY KITE PWS'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'QUERY KITE PWS'),(select state_id from chirdlutilbackports_state where name = 'PWS_create'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_create'),(select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PWS'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PWS'),(select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_reprint'),(select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'PWS_process'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_process'),(select state_id from chirdlutilbackports_state where name = 'Export POC'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Export POC'),(select state_id from chirdlutilbackports_state where name = 'FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_create'),(select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'JIT_process'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_rescan'),(select state_id from chirdlutilbackports_state where name = 'JIT_process'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_process'),(select state_id from chirdlutilbackports_state where name = 'JIT_fax'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_fax'),(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_mobile_create'),(select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR ELECTRONIC SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR ELECTRONIC SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_wait_to_scan'),(select state_id from chirdlutilbackports_state where name = 'PWS_process'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_printed'),(select state_id from chirdlutilbackports_state where name = 'PWS_wait_to_scan'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
+        insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_rescan'),(select state_id from chirdlutilbackports_state where name = 'PWS_process'),(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
         </sql>
     </diff>
     <diff>
@@ -3543,11 +3599,17 @@ where action_name='REPRINT';
         <author>Steve McKee</author>
         <date>Feb 2, 2012</date>
         <description>
-        Add new error category for web services
+        Add new error category for web services and other missing categories
         </description>
         <sql>
         insert into chirdlutilbackports_error_category (name, description)
         values ('Web Service Error', 'Errors provided through web services');
+        
+        insert into chirdlutilbackports_error_category (name, description)
+        values ('GIS Clinic Address Used', 'Information logged when the clinic address is used for a GIS query');
+        
+        insert into chirdlutilbackports_error_category (name, description)
+        values ('medicalLegalPager', 'A page was sent because a medical legal patient was encountered.');
         </sql>
     </diff>
     <diff>
@@ -3589,7 +3651,7 @@ where action_name='REPRINT';
         <author>Steve McKee</author>
         <date>July 31, 2013</date>
         <description>
-        Add location tag attribute to filter printer stations on the Greaseboard.
+        Add location tag attribute to filter printer stations on the Greaseboard and other missing attributes.
         </description>
         <sql>
         INSERT INTO `chirdlutilbackports_location_tag_attribute`(name,description) 
@@ -3599,6 +3661,9 @@ where action_name='REPRINT';
         select a.location_id, CONCAT_WS('',(select value from chirdlutilbackports_location_tag_attribute_value where location_tag_id = b.location_tag_id AND location_tag_attribute_id = (select location_tag_attribute_id from chirdlutilbackports_location_tag_attribute where name='ActivePrinterLocation'))), (select location_tag_attribute_id from chirdlutilbackports_location_tag_attribute where name='ActivePrinterStation'), b.location_tag_id
         from location a, location_tag b, location_tag_map c
         where a.location_id = c.location_id AND c.location_tag_id = b.location_tag_id AND a.retired = 0 AND b.retired = 0;
+        
+        INSERT INTO `chirdlutilbackports_location_tag_attribute`(name,description) 
+        VALUES ( 'CheckinAgeLimit', 'Limit age limit for registration by HL7.');
         </sql>
     </diff>
     <diff>
@@ -3692,11 +3757,14 @@ where action_name='REPRINT';
         <author>David Ely</author>
         <date>July 29, 2015</date>
         <description>
-            CHICA-406 Add new person_attribute_type record to store the patient account number
+            CHICA-406 Add new person_attribute_type records to store the patient account number and next of kin
         </description>
         <sql>
             INSERT INTO `person_attribute_type` (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
             VALUES ('Patient Account Number', 'Patient Account Number', 'java.lang.String', 1, 1, NOW(), UUID());  
+            
+            insert into person_attribute_type (name, description, format, searchable, creator, date_created, uuid, sort_weight) 
+            values ('Next of Kin', 'Next of Kin', 'java.lang.String', 1, 1, NOW(), UUID(), 21);
         </sql>
     </diff>
 	<diff>
@@ -3732,6 +3800,11 @@ where action_name='REPRINT';
             from form a, chirdlutilbackports_form_attribute b, location_tag_map d ,location c where a.form_id=(select form_id from form where name='PSF' and retired=0) 
             and b.name='displayAndUpdatePreviousValues' and a.retired=0 and d.location_id=c.location_id and (c.name='PEPS' or c.name='FMPS' or c.name='PCPS' or c.name='BBPS' or c.name='TEPS') 
             group by d.location_tag_id,d.location_id;
+            
+            INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('exportForm', 'Indicates if a form should be exported upon scanning');
          </sql>
 	</diff>
 	<diff>
@@ -3793,7 +3866,11 @@ where action_name='REPRINT';
         UPDATE chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
         WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'PWS_reprint')
         AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_iuh_cerner');
-
+        
+        INSERT INTO chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
+        VALUES ((select state_id from chirdlutilbackports_state where name = 'PWS_post_create')
+        ,(select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION')
+        ,(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
          </sql>
 	</diff>
 </sqldiff>

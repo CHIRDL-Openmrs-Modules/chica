@@ -41,6 +41,8 @@
                 <prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
                 <prop key="/module/@MODULE_ID@/MCHATMobile.form">MCHATMobile</prop>
                 <prop key="/module/@MODULE_ID@/pwsIUHCerner.form">pwsIUHCerner</prop>
+                <prop key="/module/@MODULE_ID@/SCAREDParentMobile.form">SCAREDParentMobile</prop>
+                <prop key="/module/@MODULE_ID@/ISQMobile.form">ISQMobile</prop>
             </props>
         </property>
     </bean>
@@ -207,6 +209,16 @@
     <bean id="MCHATMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>MCHATMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/MCHATMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="SCAREDParentMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>SCAREDParentMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/SCAREDParentMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="ISQMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>ISQMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/ISQMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
     <bean parent="serviceContext">
