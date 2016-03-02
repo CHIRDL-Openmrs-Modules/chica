@@ -8,8 +8,8 @@ Maintenance:
 	Date:		2010-04-02T09:00:00-0400;;
 	Validation:	;;
 Library:
-	Purpose:		Assess whether patient has trouble paying attention.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
-	Explanation:	            Kronenberger says this question has high sensitivity for ADHD                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Purpose:		Assess whether patient has trouble paying attention.      ;;
+	Explanation:	            Kronenberger says this question has high sensitivity for ADHD  ;;
 	Keywords:	ADHD attention Vanderbilt research;;
 	Citations:		Kronenberger;;
 	Links:		;;
@@ -44,7 +44,6 @@ Logic:
 If (mode = PRODUCE) then
 
 
-
 If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude False;
 If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude False;
 If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude False;
@@ -65,10 +64,15 @@ Else conclude true;
 endif
 
 If (mode = CONSUME) then
+Age := call ChicaAgeRule with "years";
 
+SCAREDFive_created := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
 If  (Box1=true) then
+  If (SCAREDFive_created = "no") AND (Age > 5) then 
+        call CREATE_JIT with "SCARED_Parent_JIT_Mobile";
+  endif;
  CALL storeObs With "CHICA_ADHD_SX","Hard_time_paying_attention";
- endif;
+endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_SX","no_Hard_time_paying_attention";
 endif;

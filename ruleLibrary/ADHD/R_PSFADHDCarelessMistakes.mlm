@@ -8,8 +8,8 @@ Maintenance:
 	Date:		2010-04-02T09:00:00-0400;;
 	Validation:	;;
 Library:
-	Purpose:		Assess whether patient makes careless mistakes.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
-	Explanation:	            Kronenberger says this question has high sensitivity for ADHD                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Purpose:		Assess whether patient makes careless mistakes.;;
+	Explanation:	            Kronenberger says this question has high sensitivity for ADHD  ;;
 	Keywords:	ADHD attention Vanderbilt research;;
 	Citations:		Kronenberger;;
 	Links:		;;
@@ -45,7 +45,6 @@ Logic:
 If (mode = PRODUCE) then
 
 
-
 If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude False;
 If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude False;
 If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude False;
@@ -65,20 +64,24 @@ Else conclude true;
 endif
 
 If (mode = CONSUME) then
+SCAREDFive_created := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
+Age := call ChicaAgeRule with "years";
 
 If  (Box1=true) then
- CALL storeObs With "CHICA_ADHD_SX","Careless_mistakes";
- endif;
+  If (SCAREDFive_created = "no") AND (Age > 5) then 
+        call CREATE_JIT with "SCARED_Parent_JIT_Mobile";
+  endif;
+CALL storeObs With "CHICA_ADHD_SX","Careless_mistakes";
+endif;
 If  (Box2=true) then
  CALL storeObs With "CHICA_ADHD_SX","no_Careless_mistakes";
 endif;
-
 
 endif
 ;;
 Action:
 write ("Does || firstname || OFTEN make careless mistakes or not pay close attention to details, that is causing problems at home or school?");
-write ("¿Hace || firstname || con frecuencia errores por descuido o no pone él/ella atención a los detalles, ocasionando problemas en casa o en la escuela?") At Spanish;                                                                                                                                                                                                                                                                            
+write ("¿Hace || firstname || con frecuencia errores por descuido o no pone él/ella atención a los detalles, ocasionando problemas en casa o en la escuela?") At Spanish;   
 ;;
 Age_Min: 5 years;;
 Age_Max: 12 years;;
