@@ -55,6 +55,7 @@ public class HL7StoreObsRunnable implements Runnable {
 	private Integer encounterId;
 	private Integer sessionId;
 	private Message message;
+	private String printerLocation;
 	
 	/**
 	 * Constructor method
@@ -64,14 +65,16 @@ public class HL7StoreObsRunnable implements Runnable {
 	 * @param encounterId The encounter identifier
 	 * @param sessionid The session identifier
 	 * @param message The HL7 message
+	 * @param printerLocation The encounter printer location
 	 */
 	public HL7StoreObsRunnable(Integer patientId, Integer locationId, Integer encounterId, 
-	                           Integer sessionId, Message message) {
+	                           Integer sessionId, Message message, String printerLocation) {
 		this.patientId = patientId;
 		this.locationId = locationId;
 		this.encounterId = encounterId;
 		this.sessionId = sessionId;
 		this.message = message;
+		this.printerLocation = printerLocation;
 	}
 	
 	/**
@@ -103,6 +106,7 @@ public class HL7StoreObsRunnable implements Runnable {
 			}
 			
 			Encounter chicaEncounter = (Encounter) encounter;
+			chicaEncounter.setPrinterLocation(printerLocation);
 			storeHL7Obs(patient, location, chicaEncounter);
 		}
 		catch (Exception e) {
