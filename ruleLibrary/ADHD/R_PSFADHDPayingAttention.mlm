@@ -36,7 +36,7 @@ CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 RecentlyAsked := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
 hosp_icd10_dx:= read {HOSP ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
 admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
-adhd_symptoms:= read last {CHICA_ADHD_SX from RMRS} Where it Occurred Within Past 1 Day;
+adhd_symptoms:= read last {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 1 Day;
 endif
 ;;
 Priority: 282;;
