@@ -68,6 +68,11 @@ If (mode = CONSUME) then
 Age := call ChicaAgeRule with "years";
 
 If  (Box1=true) then
+
+  AnxietyInterventionSite := call LocationAttributeLookup With "isAnxietyInterventionLocation";
+
+  If (AnxietyInterventionSite = "true") then
+  
   SCAREDFive_created := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
   If (SCAREDFive_created = "no") AND (Age > 5) AND (adhd_symptoms = Difficulty_Remaining_Seated) then 
         call CREATE_JIT with "SCARED_Parent_JIT_Mobile";
@@ -75,6 +80,7 @@ If  (Box1=true) then
   SCAREDFive_created_again := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
   If (SCAREDFive_created_again = "no") AND (Age > 5) AND (adhd_symptoms = Hard_time_paying_attention) then 
         call CREATE_JIT with "SCARED_Parent_JIT_Mobile";
+  endif;
   endif;
 CALL storeObs With "CHICA_ADHD_SX","Careless_mistakes";
 endif;
