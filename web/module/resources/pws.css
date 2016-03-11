@@ -732,9 +732,3 @@ div#notesTabs .ui-tabs-panel{
     background-color:#F5FBEF;
     float: left;
 }
-
-/* CHICA-676 Hide various checkboxes on the ePWS*/
-.examExtraCheckbox{
-	display: none;
-}
-
