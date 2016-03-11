@@ -135,7 +135,7 @@
 <div id="question_page_1" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
         <h1>Pediatric Sleep Questionnaire:</h1>
-        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
