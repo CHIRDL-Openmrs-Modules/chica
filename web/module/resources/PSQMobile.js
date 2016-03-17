@@ -51,14 +51,14 @@ function setLanguage(patientName, birthdate) {
 	english = !english;
     var langButtonText = "Español";
     var additionalQuestions = "Here are a number of questions regarding the behavior of your child during sleep and wakefulness.";
-    var instructions = '<p>Las preguntas se refieren a la conducta de su hijo/a en general y no únicamente en los últimos días, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si él o ella no se encuentran bien estos últimos días por cualquier motivo.</p>';
+    var instructions = '<p>The questions apply to how your child acts in general, not necessarily during the past few days since these may not have been typical if your child has not been well. If you are not sure how to answer any question, please feel free to ask your husband or wife, child, or physician for help. When you see the word “usually” it means “more than half the time” or “on more than half the nights.”</p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
     var formTitleText = "PEDIATRIC SLEEP QUESTIONNAIRE:";
     if (!english) {
         langButtonText = "English";
-        additionalQuestions = "A continuación encontrará una serie de preguntas sobre los hábitos de sueño de su bebé.";
-        instructions = '<p>Las preguntas se refieren a la conducta de su hijo/a en general y no únicamente en los últimos días, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si él o ella no se encuentran bien estos últimos días por cualquier motivo.</p>';
+        additionalQuestions = "Por favor, conteste las preguntas del siguiente cuestionario acerca de la conducta de su hijo/a durante el sueño y también cuando está despierto/a.";
+        instructions = '<p>Por favor, conteste las preguntas del siguiente cuestionario acerca de la conducta de su hijo/a durante el sueño y también cuando está despierto/a. Las preguntas se refieren a la conducta de su hijo/a en general y no únicamente en los últimos días, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si él o ella no se encuentran bien estos últimos días por cualquier motivo. Si hay alguna pregunta que no sabe como contestar, por favor consulte con su mujer, su marido, su hijo/a o con su médico.  Cuando en alguna pregunta Vd lea “habitualmente”, quiere decir “más de la mitad de las veces” o “más de la mitad de las noches”.</p>';
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
         formTitleText = "CUESTIONARIO PEDIATRICO DE SUEÑO:";
@@ -81,79 +81,12 @@ function changePage(newPageNum) {
     $.mobile.changePage(newPage, { transition: "none", reverse: false });
 }
 
-function calculateScore() {
-	var score = 0;
-	var valueFound = false;
-	
-	// Keep track of each answer so that we can determine the value
-	// for scoring and PSQResearch
-	var answers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
-	var scorableAnswers = [1,2,4,5,6,8]; // Do not include question 3, 7, 9, and 10 in the total score
-	
-	for (var i = 1; i < 11; i++) {
-	    if (english) {	
-	    	if($("input[name=PSQQuestionEntry_" + i + "]").is(':checked')){
-	    		answers[i -1] = parseInt($("input[name=PSQQuestionEntry_" + i + "]:checked").val());
-	    	}
-	    } else {
-	    	if($("input[name=PSQQuestionEntry_" + i + "_2]").is(':checked')){
-	    		answers[i -1] = parseInt($("input[name=PSQQuestionEntry_" + i + "_2]:checked").val());
-	    	}	
-	    }
-    }
-	
-	// Determine PSQScore
-	for(var i = 0; i < scorableAnswers.length; i++){
-		var value = answers[scorableAnswers[i]-1];
-		if(value > -1) // Check to see if the question was answered before adding it to the score
-		{
-			score += value;
-			valueFound = true;
-		}
-	}
-	
-	if(valueFound)
-	{
-		$("#PSQScore").val(score);
-		
-		// Determine PSQProb
-		if(score >= 6)
-		{
-			$("#PSQProb").val(1);
-		}
-		else
-		{
-			$("#PSQProb").val(0);
-		}
-		
-		// Determine PSQSevere
-		if(score >= 12)
-		{
-			$("#PSQSevere").val(1);
-		}
-		else
-		{
-			$("#PSQSevere").val(0);
-		}
-		
-		// Determine PSQResearch
-		// Here is the criteria 
-		// (Question2Value >=5 OR Question4Value >=5) AND (Question3Value >=3 OR Question7Value >=3)
-		// AND (Question1Value >=3 OR Question5Value >=3 OR Question6Value >= 2 OR Question8Value >=3)
-		if((answers[1] >=5 || answers[3] >=5) && (answers[2] >=3 || answers[6] >=3) && (answers[0] >=3 || answers[4] >=3 || answers[5] >= 2 || answers[7] >=3)){
-			$("#PSQResearch").val(1);
-		}
-		else{
-			$("#PSQResearch").val(0);
-		}
-	}
-}
 
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
     // Transfer the answers for the 10 questions
-    for (var i = 1; i < 11; i++) {
+    for (var i = 1; i < 6; i++) {
     	if (english) {
 	    	setQuestionCheckboxes("PSQQuestionEntry_" + i + "_2", "PSQQuestionEntry_" + i);
 	    } else {
@@ -183,7 +116,6 @@ function finishForm() {
 	$("#not_finished_final_dialog").popup("close");
 	$("#not_finished_final_dialog_sp").popup("close");
 	setLanguageField();
-	calculateScore();
 	var submitForm = $("#PSQForm"); 
 	var token = getAuthenticationToken();
     $.ajax({
@@ -230,8 +162,9 @@ function areAllQuestionsAnswered() {
 		spanishChar = "";
 	}
 	
+
 	var questionName = "PSQQuestionEntry_";
-	for (var i = 1; i < 11; i++) {
+	for (var i = 1; i < 6; i++) {
 		if(!$("input[name='" + questionName + i + spanishChar + "']").is(':checked')){
 		   return false;
 		}
