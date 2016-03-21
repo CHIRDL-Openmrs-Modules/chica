@@ -630,7 +630,9 @@ public class HL7SocketHandler extends
 		chicaEncounter.setInsuranceSmsCode(null);
 		
 		//See if the message contains OBXs
-		saveHL7Obs(p, message, location, chicaEncounter, getSession(parameters));
+		if(getNumOBXSegments(message) > 0){ // DWE CHICA-635 Added check to make sure the message contains OBX segments before starting the new thread
+			saveHL7Obs(p, message, location, chicaEncounter, getSession(parameters));
+		}
 
 		// This code must come after the code that sets the encounter values
 		// because the states can't be created until the locationTagId and
@@ -1504,5 +1506,29 @@ public class HL7SocketHandler extends
 			encounter.getEncounterId(), session.getSessionId(), message);
 		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
 		hl7ObsThread.start();
+	}
+	
+	/**
+	 * DWE CHICA-635
+	 * Determine the number of OBX segments in the message
+	 * This method handles the default OBX that HAPI adds and excludes it from the count
+	 * 
+	 * @param message
+	 * @return
+	 */
+	private int getNumOBXSegments(Message message)
+	{
+		
+		int numReps = this.hl7ObsHandler.getReps(message);
+		if(numReps == 1) // Need to check to see if this is the OBX that HAPI adds by default
+		{
+			String obsValueType = this.hl7ObsHandler.getObsValueType(message, 0, 0);
+			if (obsValueType == null) 
+			{
+				numReps = 0;
+			}
+		}
+		
+		return numReps;
 	}
 }
