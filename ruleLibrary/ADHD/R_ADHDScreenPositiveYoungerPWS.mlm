@@ -46,7 +46,7 @@ admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Pa
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 endif
 ;;
-Priority: 235       ;;
+Priority: 236;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
