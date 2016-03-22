@@ -248,7 +248,6 @@ public class HL7SocketHandler implements Application {
 	private boolean processMessageSegments(Message message, String incomingMessageString,Date startTime) throws HL7Exception {
 		
 		PatientState patientState = null;
-		String newMessageString = incomingMessageString;
 		Patient patient = null;
 		Integer locationId = null;
 		Integer locationTagId = null;
@@ -257,15 +256,6 @@ public class HL7SocketHandler implements Application {
 		String locationName = "";
 		Integer encounterId = null;
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		
-		//convert hl7 to version 2.3 so it can be parsed like vitals dump messages
-		newMessageString = HL7ToObs.replaceVersion(newMessageString);
-		try {
-			message = parser.parse(newMessageString);
-		}
-		catch (Exception e) {
-			logger.error(e);
-		}
 		
 		boolean error = false;
 		Date starttime = new Date();
