@@ -29,12 +29,14 @@ If (mode = PRODUCE) then
 Depr_Concern := read Last {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 365 Days;
 endif
 ;;
-Priority:		226;;
+Priority: 227;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
 
-If (Depr_Concern = In_Treatment) then conclude False;If (Depr_Concern = Referred) OR (Depr_Concern = Suspected) then conclude True;Else conclude False;
+If (Depr_Concern = In_Treatment) then conclude False;
+If (Depr_Concern = Referred) OR (Depr_Concern = Suspected) then conclude True;
+Else conclude False;
 
 endif
 
