@@ -550,6 +550,7 @@ public class HL7SocketHandler extends
 		String carrierCode = null;
 		String printerLocation = null;
 		String insuranceName = null;
+		String visitNumber = null;
 		Message message = null;
 		
 			try {
@@ -589,6 +590,10 @@ public class HL7SocketHandler extends
 					
 					insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getInsuranceName(message);
+					
+					// DWE CHICA-633 Parse visit number from PV1-19
+					visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getVisitNumber(message);
 				}
 			} catch (EncodingNotSupportedException e) {
 				log.error("Encoding not supported when parsing incoming message.", e);
