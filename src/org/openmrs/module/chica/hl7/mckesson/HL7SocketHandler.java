@@ -636,7 +636,7 @@ public class HL7SocketHandler extends
 		
 		//See if the message contains OBXs
 		if(getNumOBXSegments(message) > 0){ // DWE CHICA-635 Added check to make sure the message contains OBX segments before starting the new thread
-			saveHL7Obs(p, message, location, chicaEncounter, getSession(parameters));
+			saveHL7Obs(p, message, location, chicaEncounter, getSession(parameters), printerLocation);
 		}
 
 		// This code must come after the code that sets the encounter values
@@ -1504,11 +1504,13 @@ public class HL7SocketHandler extends
 	 * @param location The location of the encounter
 	 * @param encounter The patient encounter
 	 * @param session The patient session
+	 * @param printerLocation The printer location for the encounter
 	 */
 	private void saveHL7Obs(Patient patient, Message message, Location location, 
-	                        org.openmrs.module.chica.hibernateBeans.Encounter encounter, Session session) {
+	                        org.openmrs.module.chica.hibernateBeans.Encounter encounter, Session session, 
+	                        String printerLocation) {
 		Runnable hl7ObsRunnable = new HL7StoreObsRunnable(patient.getPatientId(), location.getLocationId(), 
-			encounter.getEncounterId(), session.getSessionId(), message);
+			encounter.getEncounterId(), session.getSessionId(), message, printerLocation);
 		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
 		hl7ObsThread.start();
 	}

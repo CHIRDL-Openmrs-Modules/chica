@@ -35,7 +35,7 @@ screen := read {VENOUS BLOOD LEAD - QUALITATIVE} Where it Occurred Within Past 1
 rmrs_lead := read Exist {LEAD LEVEL-PEDS from RMRS} Where it Occurred Within Past 365 Days;
 endif
 ;;
-Priority:		238;;
+Priority: 240;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
