@@ -126,18 +126,7 @@ endif
 ;;
 Action:
 
-If(preferred_language = Spanish) then
-call CREATE_JIT with "Diagnosed Toolkit Spanish";
-endif;
-If(preferred_language = English) then
-call CREATE_JIT with "Diagnosed Toolkit";
-endif;
-If(preferred_language = null) then
-call CREATE_JIT with "Diagnosed Toolkit";
-call CREATE_JIT with "Diagnosed Toolkit Spanish";
-endif;
-
-call CREATE_JIT with "Medication_Handout_ADHD";
+call CREATE_JIT with "ADHD_Knowledge";
 
 write ("ADHD workup complete.  Parent Vanderbilt:  || ParentPrompt1 || COMORBIDITIES:  || ParentPrompt2 || || ParentPrompt3 || || ParentPrompt4 || and Teacher Vanderbilt:  || TeacherPrompt1 || COMORBIDITIES:  || TeacherPrompt2 || || TeacherPrompt3 || so please do the following. CPT 96110");                                                                                                                                                                                                                                                                                                                   
 write ("ADHD Diagnosed                       ");

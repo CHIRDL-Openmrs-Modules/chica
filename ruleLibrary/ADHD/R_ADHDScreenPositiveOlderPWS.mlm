@@ -45,7 +45,7 @@ admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Pa
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 endif
 ;;
-Priority: 234       ;;
+Priority: 235;;
  Evoke: ;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
@@ -135,16 +135,7 @@ If(TeacherVanderbilt = False)then
 call CREATE_JIT with "ADHD T";
 endif;
 
-If(preferred_language = Spanish) then
-call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
-endif;
-If(preferred_language = English) then
-call CREATE_JIT with "Evaluating ADHD Toolkit";
-endif;
-If(preferred_language = null) then
-call CREATE_JIT with "Evaluating ADHD Toolkit";
-call CREATE_JIT with "Evaluating ADHD Toolkit Spanish";
-endif;
+call CREATE_JIT with "ADHD_Knowledge";
 
 
 write ("Reportedly, || firstname || || prompttext1 || || prompttext2 || || prompttext3 || and these Sx may imply ADHD. Parent and teacher Vanderbilt scales suggested (CPT 96110)");                                                                                                                                                                                                                                                                                                                   
