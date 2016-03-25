@@ -36,7 +36,10 @@ CurrentStatus := read last {CHICA_ADHD_DX from CHICA} ;
 RecentlyAsked := read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 365 Days;
 hosp_icd10_dx:= read {HOSP ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
 admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
-adhd_symptoms:= read last {CHICA_ADHD_SX from RMRS} Where it Occurred Within Past 1 Day;
+endif
+
+If (mode = CONSUME) then
+adhd_symptoms:= read {CHICA_ADHD_SX from CHICA} Where it Occurred Within Past 1 Day;
 endif
 ;;
 Priority: 282;;
@@ -68,13 +71,17 @@ If (mode = CONSUME) then
 Age := call ChicaAgeRule with "years";
 
 If  (Box1=true) then
-SCAREDFive_created := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
-  If (SCAREDFive_created = "no") AND (Age > 5) AND (adhd_symptoms = Difficulty_Remaining_Seated) then 
+  AnxietyInterventionSite := call LocationAttributeLookup With "isAnxietyInterventionLocation";
+
+  If (AnxietyInterventionSite = "true") then
+  SCAREDFive_created := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
+  If (SCAREDFive_created = "no") AND (Age > 5) AND ('Difficulty_Remaining_Seated' is in adhd_symptoms) then 
         call CREATE_JIT with "SCARED_Parent_JIT_Mobile";
   endif;
   SCAREDFive_created_again := call hasJITBeenCreated with "SCARED_Parent_JIT_Mobile";
-  If (SCAREDFive_created_again = "no") AND (Age > 5) AND (adhd_symptoms = Careless_mistakes) then 
+  If (SCAREDFive_created_again = "no") AND (Age > 5) AND ('Careless_mistakes' is in adhd_symptoms) then 
         call CREATE_JIT with "SCARED_Parent_JIT_Mobile";
+  endif;
   endif;
  CALL storeObs With "CHICA_ADHD_SX","Hard_time_paying_attention";
 endif;

@@ -335,8 +335,7 @@
                 <label for="PSQQuestionEntry_5_2_DK">${option3_sp}</label>              
             </fieldset>
         </div>
-        <c:set var="quest6" value='¿Su hijo se queja de dolor de cabeza por las mañanas, cuando se
-despierta?'/>
+        <c:set var="quest6" value='¿Su hijo se queja de dolor de cabeza por las mañanas, cuando se despierta?'/>
         <input id="PSQQuestion_6_2" name="PSQQuestion_6_2" type="hidden" value="${quest6}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">

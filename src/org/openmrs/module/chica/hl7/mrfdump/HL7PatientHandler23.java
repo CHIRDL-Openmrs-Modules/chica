@@ -41,10 +41,8 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	//ignore mothers name for chica
 	public String getMothersName(Message message)
 	{
-		// ignore NK segment for chica messages
 		return null;
 	}
 
@@ -543,4 +541,11 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	{
 		return null;
 	}
+
+	/**
+	 * @see org.openmrs.module.sockethl7listener.HL7PatientHandler#getNextOfKin(ca.uhn.hl7v2.model.Message)
+	 */
+    public String getNextOfKin(Message arg0) {
+	    return null;
+    }
 }
