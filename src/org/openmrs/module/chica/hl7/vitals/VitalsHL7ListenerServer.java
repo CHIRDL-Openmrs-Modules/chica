@@ -24,7 +24,7 @@
  * this file under either the MPL or the GPL.
  */
 
-package org.openmrs.module.chica.hl7.iuHealthVitals;
+package org.openmrs.module.chica.hl7.vitals;
 
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
