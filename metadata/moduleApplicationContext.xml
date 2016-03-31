@@ -225,7 +225,6 @@
     <bean id="PSQMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>PSQMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/PSQMobile</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/ISQMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
     <bean parent="serviceContext">

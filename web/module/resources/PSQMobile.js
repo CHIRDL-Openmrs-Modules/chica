@@ -58,7 +58,7 @@ function setLanguage(patientName, birthdate) {
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "Por favor, conteste las preguntas del siguiente cuestionario acerca de la conducta de su hijo/a durante el sueño y también cuando está despierto/a.";
-        instructions = '<p>Por favor, conteste las preguntas del siguiente cuestionario acerca de la conducta de su hijo/a durante el sueño y también cuando está despierto/a. Las preguntas se refieren a la conducta de su hijo/a en general y no únicamente en los últimos días, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si él o ella no se encuentran bien estos últimos días por cualquier motivo. Si hay alguna pregunta que no sabe como contestar, por favor consulte con su mujer, su marido, su hijo/a o con su médico.  Cuando en alguna pregunta Vd lea “habitualmente”, quiere decir “más de la mitad de las veces” o “más de la mitad de las noches”.</p>';
+        instructions = '<p>Las preguntas se refieren a la conducta de su hijo/a en general y no únicamente en los últimos días, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si él o ella no se encuentran bien estos últimos días por cualquier motivo. Si hay alguna pregunta que no sabe como contestar, por favor consulte con su mujer, su marido, su hijo/a o con su médico.  Cuando en alguna pregunta Vd lea “habitualmente”, quiere decir “más de la mitad de las veces” o “más de la mitad de las noches”.</p>';
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
         formTitleText = "CUESTIONARIO PEDIATRICO DE SUEÑO:";
@@ -85,8 +85,8 @@ function changePage(newPageNum) {
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
-    // Transfer the answers for the 10 questions
-    for (var i = 1; i < 6; i++) {
+    // Transfer the answers for the questions
+    for (var i = 1; i <= numQuestions; i++) {
     	if (english) {
 	    	setQuestionCheckboxes("PSQQuestionEntry_" + i + "_2", "PSQQuestionEntry_" + i);
 	    } else {
@@ -164,7 +164,7 @@ function areAllQuestionsAnswered() {
 	
 
 	var questionName = "PSQQuestionEntry_";
-	for (var i = 1; i < 6; i++) {
+	for (var i = 1; i <= numQuestions; i++) {
 		if(!$("input[name='" + questionName + i + spanishChar + "']").is(':checked')){
 		   return false;
 		}

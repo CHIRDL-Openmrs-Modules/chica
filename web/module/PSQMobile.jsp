@@ -142,7 +142,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div id="content_1" data-role="content">
-        <c:set var="quest1" value='While sleeping, does your child have trouble breathing, or struggle to breath?'/>
+        <c:set var="quest1" value='While sleeping, does your child have trouble breathing, or struggle to breathe?'/>
         <input id="PSQQuestion_1" name="PSQQuestion_1" type="hidden" value="${quest1}"/>
         <strong>${quest1}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest1}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -155,6 +155,7 @@
                 <label for="PSQQuestionEntry_1_DK">${option3}</label>           
             </fieldset>
         </div>
+        
         <c:set var="quest2" value='Have you ever seen your child stop breathing during the night?'/>
         <input id="PSQQuestion_2" name="PSQQuestion_2" type="hidden" value="${quest2}"/>
         <strong>${quest2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest2}")'></a>
@@ -168,6 +169,7 @@
                 <label for="PSQQuestionEntry_2_DK">${option3}</label>           
             </fieldset>
         </div>
+        
         <c:set var="quest3" value='Have you ever seen your child wake up with a snorting sound?'/>
         <input id="PSQQuestion_3" name="PSQQuestion_3" type="hidden" value="${quest3}"/>
         <strong>${quest3}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest3}")'></a>
@@ -196,7 +198,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div id="content_2" data-role="content">
-        <c:set var="quest4" value='¿Does your child occasionally wet the bed?'/>
+        <c:set var="quest4" value='>Does your child occasionally wet the bed?'/>
         <input id="PSQQuestion_4" name="PSQQuestion_4" type="hidden" value="${quest4}"/>
         <strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest4}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -209,7 +211,7 @@
                 <label for="PSQQuestionEntry_4_DK">${option3}</label>         
             </fieldset>
         </div>
-        <c:set var="quest5" value='¿Does your child have a problem with sleepiness during the day?'/>
+        <c:set var="quest5" value='>Does your child have a problem with sleepiness during the day?'/>
         <input id="PSQQuestion_5" name="PSQQuestion_5" type="hidden" value="${quest5}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -222,7 +224,7 @@
                 <label for="PSQQuestionEntry_5_DK">${option3}</label>          
             </fieldset>
         </div>
-         <c:set var="quest6" value='¿Does your child wake up with headaches in the morning?'/>
+         <c:set var="quest6" value='>Does your child wake up with headaches in the morning?'/>
         <input id="PSQQuestion_6" name="PSQQuestion_6" type="hidden" value="${quest6}"/>
         <strong>${quest6}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -260,15 +262,16 @@
         <strong>${quest1_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest1_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="horizontal">
-                <input type="radio" name="PSQQuestionEntry_1_2_Y" id="PSQQuestionEntry_1_2_Y" value="yes" data-theme="c" />
+                <input type="radio" name="PSQQuestionEntry_1_2" id="PSQQuestionEntry_1_2_Y" value="yes" data-theme="c" />
                 <label for="PSQQuestionEntry_1_2_Y">${option1_sp}</label>
-                <input type="radio" name="PSQQuestionEntry_1_2_N" id="PSQQuestionEntry_1_2_N" value="no" data-theme="c" />
+                <input type="radio" name="PSQQuestionEntry_1_2" id="PSQQuestionEntry_1_2_N" value="no" data-theme="c" />
                 <label for="PSQQuestionEntry_1_2_N">${option2_sp}</label>
-                <input type="radio" name="PSQQuestionEntry_1_2_DK" id="PSQQuestionEntry_1_2_DK" value="don't know" data-theme="c" />
-                <label for="PSQQuestionEntry_1_2_DK">${option3_sp}</label>              
+                <input type="radio" name="PSQQuestionEntry_1_2" id="PSQQuestionEntry_1_2_DK" value="don't know" data-theme="c" />
+                <label for="PSQQuestionEntry_1_2_DK">${option3_sp}</label>               
             </fieldset>
         </div>
         <c:set var="quest2_2" value='¿Alguna vez ha visto a su hijo parar de respirar por la noche?'/>
+        <input id="PSQQuestion_2_2" name="PSQQuestion_2_2" type="hidden" value="${quest2_2}"/>
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest2_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="horizontal">
@@ -309,7 +312,7 @@
     </div>
     <div id="content_2_sp" data-role="content">       
         
-        <c:set var="quest4_2" value='¿Su hijo de vez en cuando moja la cama? '/>
+        <c:set var="quest4_2" value='¿Su hijo/a de vez en cuando moja la cama? '/>
         <input id="PSQQuestion_4_2" name="PSQQuestion_4_2" type="hidden" value="${quest4_2}"/>
         <strong>${quest4_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest4_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -322,7 +325,7 @@
                 <label for="PSQQuestionEntry_4_2_DK">${option3_sp}</label>                
             </fieldset>
         </div>
-        <c:set var="quest5" value='¿Su hijo se va durmiendo durante el día?'/>
+        <c:set var="quest5" value='¿Su hijo/a se va durmiendo durante el día?'/>
         <input id="PSQQuestion_5_2" name="PSQQuestion_5_2" type="hidden" value="${quest5}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -349,10 +352,11 @@
             </fieldset>
         </div>
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
+         <%@ include file="mobileFinishDialogs_SP.jsp" %>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Anterior</a>
-        <a  href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Finish</a>
+        <a  href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Acabado</a>
     </div>
 </div>
 
