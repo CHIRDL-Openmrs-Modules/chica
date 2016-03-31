@@ -2,6 +2,7 @@ var chicaServletUrl = "/openmrs/moduleServlet/chica/chica?";
 var recommendedHandoutsAction = "action=getPatientJITs&formInstances=";
 var pageOptions = "#page=1&view=FitH,top&navpanes=0";
 var previousRecommendedHandoutSelection = -1;
+var timeoutDialog = null;
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -443,6 +444,18 @@ $(function() {
         }
       }
 	});
+    
+    // Leave this at the very end of the function
+    $(document).ajaxStart(function() {
+    	if (timeoutDialog != null) {
+    		timeoutDialog.restartCounter();
+    	}
+	});
+    
+    if (timeoutDialog === null) {
+    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: 60, logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/login.htm', keep_alive_url: '/openmrs/moduleServlet/chica/chica?action=keepAlive', dialog_width: '400'});
+    	timeoutDialog = getTimeoutDialog();
+    }
   });
  
 
@@ -548,4 +561,9 @@ function updateRecommendedHandoutDimensions() {
     $("#recommendedHandoutsContainer").css({"height":"100%"});
     divHeight = $("#recommendedHandoutsContainer").height();
     $("#recommendedHandoutsCombineButtonPanel").css({"height":(divHeight - instructHeight - (newDivHeight + 10)) + "px"});
+}
+
+function displayTimeout() {
+	var timeout = $("#sessionTimeout").val();
+	alert("Session Timeout = " + timeout);
 }
