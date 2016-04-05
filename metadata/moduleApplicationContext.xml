@@ -43,6 +43,7 @@
                 <prop key="/module/@MODULE_ID@/pwsIUHCerner.form">pwsIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/SCAREDParentMobile.form">SCAREDParentMobile</prop>
                 <prop key="/module/@MODULE_ID@/ISQMobile.form">ISQMobile</prop>
+                <prop key="/module/@MODULE_ID@/sessionTimeout.form">sessionTimeout</prop>
             </props>
         </property>
     </bean>
@@ -220,6 +221,11 @@
         <property name="commandName"><value>ISQMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/ISQMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="sessionTimeout" class="@MODULE_PACKAGE@.web.NoActionController">
+        <property name="commandName"><value>sessionTimeoutObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/sessionTimeout</value></property>
+        <property name="successView"><value>sessionTimeout.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">

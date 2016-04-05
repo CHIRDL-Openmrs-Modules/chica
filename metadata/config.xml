@@ -381,6 +381,12 @@
      	<description>Namespace for MRF query service
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.sessionTimeoutWarning</property>
+        <defaultValue>180</defaultValue>
+        <description>Number of seconds remaining in the session before the session timeout warning dialog is displayed.
+        </description>
+    </globalProperty>
    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

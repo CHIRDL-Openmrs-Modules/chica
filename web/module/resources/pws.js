@@ -52,6 +52,9 @@ function combineSelected(selectedForms)
 	$(".recommendedHandoutContainer").show();
 	
 	container.append(newobj);
+	if (timeoutDialog != null) {
+		timeoutDialog.restartCounter();
+	}
 }
 
 function getSelected(opt) {
@@ -430,6 +433,9 @@ $(function() {
 	    	$(".recommendedHandoutContainer").show();
 	    	
 	    	container.append(newobj);
+	    	if (timeoutDialog != null) {
+	    		timeoutDialog.restartCounter();
+	    	}
 	    } else {
 	    	$(".recommendedHandoutContainer").hide();
 	    }
@@ -453,7 +459,7 @@ $(function() {
 	});
     
     if (timeoutDialog === null) {
-    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: 60, logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/login.htm', keep_alive_url: '/openmrs/moduleServlet/chica/chica?action=keepAlive', dialog_width: '400'});
+    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/module/chica/sessionTimeout.form', keep_alive_url: '/openmrs/moduleServlet/chica/chica?action=keepAlive', dialog_width: '400'});
     	timeoutDialog = getTimeoutDialog();
     }
   });
@@ -522,6 +528,9 @@ function displayFirstJIT()
 		$(".recommendedHandoutContainer").show();;
 		
 		container.append(newobj);
+		if (timeoutDialog != null) {
+    		timeoutDialog.restartCounter();
+    	}
     }
 }
 

@@ -154,9 +154,6 @@ String.prototype.format = function() {
       	  "type": "GET",
       	  "url": settings.keep_alive_url,
       	  "timeout": 30000, // optional if you want to handle timeouts (which you should)
-      	  "error": function (html) {
-      		self.signOut(false);
-          }, // this sets up jQuery to give me errors
       	  "success": function (html) {
       		if (html == "OK") {
                 if (settings.restart_on_yes) {
