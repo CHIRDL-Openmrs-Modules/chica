@@ -52,9 +52,7 @@ function combineSelected(selectedForms)
 	$(".recommendedHandoutContainer").show();
 	
 	container.append(newobj);
-	if (timeoutDialog != null) {
-		timeoutDialog.restartCounter();
-	}
+	restartSessionCounter();
 }
 
 function getSelected(opt) {
@@ -433,9 +431,7 @@ $(function() {
 	    	$(".recommendedHandoutContainer").show();
 	    	
 	    	container.append(newobj);
-	    	if (timeoutDialog != null) {
-	    		timeoutDialog.restartCounter();
-	    	}
+	    	restartSessionCounter();
 	    } else {
 	    	$(".recommendedHandoutContainer").hide();
 	    }
@@ -453,14 +449,21 @@ $(function() {
     
     // Leave this at the very end of the function
     $(document).ajaxStart(function() {
-    	if (timeoutDialog != null) {
-    		timeoutDialog.restartCounter();
-    	}
+    	restartSessionCounter();
 	});
     
     if (timeoutDialog === null) {
-    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/module/chica/sessionTimeout.form', keep_alive_url: '/openmrs/moduleServlet/chica/chica?action=keepAlive', dialog_width: '400'});
+    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/module/chica/sessionTimeout.form', 
+    		keep_alive_url: '/openmrs/moduleServlet/chica/chica?action=keepAlive', dialog_width: '400', title: 'Your CHICA session is about to expire'});
     	timeoutDialog = getTimeoutDialog();
+    	
+    	$(document).on("dialogopen", "#timeout-dialog", function() {
+    		$("object").hide();
+    	});
+    	
+    	$(document).on("dialogclose", "#timeout-dialog", function() {
+    		$("object").show();
+    	});
     }
   });
  
@@ -528,9 +531,7 @@ function displayFirstJIT()
 		$(".recommendedHandoutContainer").show();;
 		
 		container.append(newobj);
-		if (timeoutDialog != null) {
-    		timeoutDialog.restartCounter();
-    	}
+		restartSessionCounter();
     }
 }
 
@@ -572,7 +573,10 @@ function updateRecommendedHandoutDimensions() {
     $("#recommendedHandoutsCombineButtonPanel").css({"height":(divHeight - instructHeight - (newDivHeight + 10)) + "px"});
 }
 
-function displayTimeout() {
-	var timeout = $("#sessionTimeout").val();
-	alert("Session Timeout = " + timeout);
+function restartSessionCounter() {
+	if (timeoutDialog != null) {
+		timeoutDialog.restartCounter();
+	}
 }
+
+

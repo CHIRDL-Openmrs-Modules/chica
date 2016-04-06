@@ -89,6 +89,7 @@ String.prototype.format = function() {
         .dialog({
           open: function() { 
         	  $(".ui-dialog").addClass("ui-dialog-shadow");
+        	  $(this).dialog("widget").find('.ui-dialog-titlebar-close').remove();
           },
           modal: true,
           width: settings.dialog_width,
