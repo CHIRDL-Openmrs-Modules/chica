@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -32,8 +33,6 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -52,7 +51,6 @@ public class HL7StoreObsRunnable implements Runnable {
 	private Log log = LogFactory.getLog(this.getClass());
 	private Integer patientId;
 	private Integer locationId;
-	private Integer encounterId;
 	private Integer sessionId;
 	private Message message;
 	private String printerLocation;
@@ -62,16 +60,14 @@ public class HL7StoreObsRunnable implements Runnable {
 	 * 
 	 * @param patientId The patient identifier
 	 * @param locationId The location message
-	 * @param encounterId The encounter identifier
 	 * @param sessionid The session identifier
 	 * @param message The HL7 message
 	 * @param printerLocation The encounter printer location
 	 */
-	public HL7StoreObsRunnable(Integer patientId, Integer locationId, Integer encounterId, 
+	public HL7StoreObsRunnable(Integer patientId, Integer locationId,
 	                           Integer sessionId, Message message, String printerLocation) {
 		this.patientId = patientId;
 		this.locationId = locationId;
-		this.encounterId = encounterId;
 		this.sessionId = sessionId;
 		this.message = message;
 		this.printerLocation = printerLocation;
@@ -98,16 +94,15 @@ public class HL7StoreObsRunnable implements Runnable {
 				return;
 			}
 			
-			EncounterService encounterService = Context.getService(EncounterService.class);
-			org.openmrs.Encounter encounter = encounterService.getEncounter(encounterId);
-			if (encounter == null) {
-				log.error("Invalid encounter ID: " + encounterId);
+			// DWE CLINREQ-130 Get locationTagId
+			LocationTag locationTag = Context.getLocationService().getLocationTagByName(printerLocation);
+			if(locationTag == null)
+			{
+				log.error("Invalid printer location: " + printerLocation);
 				return;
 			}
 			
-			Encounter chicaEncounter = (Encounter) encounter;
-			chicaEncounter.setPrinterLocation(printerLocation);
-			storeHL7Obs(patient, location, chicaEncounter);
+			storeHL7Obs(patient, location, locationTag.getLocationTagId());
 		}
 		catch (Exception e) {
 			log.error("Error processing file", e);
@@ -122,15 +117,21 @@ public class HL7StoreObsRunnable implements Runnable {
 	 * 
 	 * @param patient The patient to whom the observations will be attached
 	 * @param location The location of the encounter
-	 * @param encounter The encounter for the patient
+	 * @param locationTagId - // DWE CLINREQ-130 Removed encounter parameter changed to locationTagId - see CAUTION below
+	 *  
+	 *  *********CAUTION: If an encounter object is needed in this thread in the future, use caution when calling setters on the object.
+	 *  Hibernate will save the changes to the database even if the save method is not called. This could cause issues since the
+	 *  encounter object is updated in a separate thread
+	 *  *************************************************************************************************************************
+	 *  
 	 * @throws Exception
 	 */
-	private void storeHL7Obs(Patient patient, Location location, Encounter encounter) throws Exception {
+	private void storeHL7Obs(Patient patient, Location location, Integer locationTagId) throws Exception { 
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State state = backportsService.getStateByName(ChirdlUtilConstants.STATE_HL7_PROCESS_REGISTRATION_OBS);
 		PatientState patientState = backportsService
-				.addPatientState(patient, state, sessionId, org.openmrs.module.chica.util.Util.getLocationTagId(encounter),
-						location.getLocationId(), null);
+				.addPatientState(patient, state, sessionId, locationTagId,
+						location.getLocationId(), null); // DWE CLINREQ-130 Changed this to use the location service to get the location tag
 		patientState.setStartTime(new Date());
 		patientState = backportsService.updatePatientState(patientState);
 		Integer patientId = patient.getPatientId();

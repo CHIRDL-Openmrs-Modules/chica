@@ -629,8 +629,10 @@ public class HL7SocketHandler extends
 		chicaEncounter.setLocation(location);
 		chicaEncounter.setInsuranceSmsCode(null);
 		
-		//See if the message contains OBXs
-		saveHL7Obs(p, message, location, chicaEncounter, getSession(parameters), printerLocation);
+		// DWE CLINREQ-130 Removed encounter parameter
+		// CAUTION: If an encounter object is needed in this thread in the future, 
+		// use caution when calling setters on the object.
+		saveHL7Obs(p, message, location, getSession(parameters), printerLocation); 
 
 		// This code must come after the code that sets the encounter values
 		// because the states can't be created until the locationTagId and
@@ -1495,15 +1497,13 @@ public class HL7SocketHandler extends
 	 * @param patient The patient to whom the observations will be attached
 	 * @param message The HL7 message
 	 * @param location The location of the encounter
-	 * @param encounter The patient encounter
 	 * @param session The patient session
 	 * @param printerLocation The printer location for the encounter
 	 */
-	private void saveHL7Obs(Patient patient, Message message, Location location, 
-	                        org.openmrs.module.chica.hibernateBeans.Encounter encounter, Session session, 
+	private void saveHL7Obs(Patient patient, Message message, Location location, Session session, 
 	                        String printerLocation) {
 		Runnable hl7ObsRunnable = new HL7StoreObsRunnable(patient.getPatientId(), location.getLocationId(), 
-			encounter.getEncounterId(), session.getSessionId(), message, printerLocation);
+			 session.getSessionId(), message, printerLocation);
 		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
 		hl7ObsThread.start();
 	}
