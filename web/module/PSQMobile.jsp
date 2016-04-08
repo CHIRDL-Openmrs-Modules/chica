@@ -9,6 +9,7 @@
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/PSQMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
@@ -22,7 +23,7 @@
 <c:set var="replace" value="\\'" />
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-<c:set var="formName" value="PEDIATRIC SLEEP QUESTIONNAIRE:"/>
+<c:set var="formName" value="PEDIATRIC SLEEP QUESTIONNAIRE"/>
 <c:set var="formName_sp" value="CUESTIONARIO PEDIATRICO DE SUE&#241O:"/>
 <c:set var="option1" value="Yes"/>
 <c:set var="option2" value="No"/>
@@ -47,7 +48,7 @@
 </c:if>
 <div data-role="page" id="instruction_page" data-theme="b">
     <div data-role="header" >
-        <h1 id="formTitle">${formName}</h1>
+         <h1 id="formTitle">${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')"></a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop"></a>
@@ -136,7 +137,7 @@
 <c:set var="copyright" value=''/>
 <div id="question_page_1" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>${formName}</h1>
+       	 <h1 id="formTitle1">${formName}</h1>
          <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
@@ -192,13 +193,13 @@
 
 <div id="question_page_2" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>${formName}</h1>
+       	<h1 id="formTitle2">${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
     </div>
     <div id="content_2" data-role="content">
-        <c:set var="quest4" value='>Does your child occasionally wet the bed?'/>
+        <c:set var="quest4" value='Does your child occasionally wet the bed?'/>
         <input id="PSQQuestion_4" name="PSQQuestion_4" type="hidden" value="${quest4}"/>
         <strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest4}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -211,7 +212,7 @@
                 <label for="PSQQuestionEntry_4_DK">${option3}</label>         
             </fieldset>
         </div>
-        <c:set var="quest5" value='>Does your child have a problem with sleepiness during the day?'/>
+        <c:set var="quest5" value='Does your child have a problem with sleepiness during the day?'/>
         <input id="PSQQuestion_5" name="PSQQuestion_5" type="hidden" value="${quest5}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -224,7 +225,7 @@
                 <label for="PSQQuestionEntry_5_DK">${option3}</label>          
             </fieldset>
         </div>
-         <c:set var="quest6" value='>Does your child wake up with headaches in the morning?'/>
+         <c:set var="quest6" value='Does your child wake up with headaches in the morning?'/>
         <input id="PSQQuestion_6" name="PSQQuestion_6" type="hidden" value="${quest6}"/>
         <strong>${quest6}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -251,7 +252,7 @@
     
 <div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>${formName_sp}</h1>
+         <h1 id="formTitle1_sp">${formName_sp}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
@@ -305,7 +306,7 @@
 
 <div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
     <div data-role="header" >
-        <h1>${formName_sp}</h1>
+        <h1 id="formTitle2_sp">${formName_sp}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>

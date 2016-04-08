@@ -54,7 +54,7 @@ function setLanguage(patientName, birthdate) {
     var instructions = '<p>The questions apply to how your child acts in general, not necessarily during the past few days since these may not have been typical if your child has not been well. If you are not sure how to answer any question, please feel free to ask your husband or wife, child, or physician for help. When you see the word “usually” it means “more than half the time” or “on more than half the nights.”</p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
-    var formTitleText = "PEDIATRIC SLEEP QUESTIONNAIRE:";
+    var formTitleText = "PEDIATRIC SLEEP QUESTIONNAIRE";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "Por favor, conteste las preguntas del siguiente cuestionario acerca de la conducta de su hijo/a durante el sueño y también cuando está despierto/a.";
