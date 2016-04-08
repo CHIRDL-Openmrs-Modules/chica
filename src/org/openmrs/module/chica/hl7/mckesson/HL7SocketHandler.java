@@ -55,6 +55,8 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlutilbackportsEncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlutilbackportsEncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -591,9 +593,53 @@ public class HL7SocketHandler extends
 					insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getInsuranceName(message);
 					
-					// DWE CHICA-633 Parse visit number from PV1-19
-					visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-							.getVisitNumber(message);
+					// DWE CHICA-633 Parse visit number from PV1-19 if this is not IUH
+					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					{
+						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getVisitNumber(message);
+						
+						// Store as encounter attribute
+						try
+						{
+							ChirdlutilbackportsEncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName("VisitNumber");
+							ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByEncounterAttribute(encounter.getEncounterId(), encounterAttribute);
+							
+							//ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService
+									//.getEncounterAttributeValueByEncounterAttributeName(encounter.getEncounterId(), "VisitNumber"); // TODO CHICA-633 Constant for VisitNumber
+							//encounterAttributeValue.setEncounterAttributeId(1); // TODO CHICA-633 Change this
+							
+							if(encounterAttributeValue == null) // Attribute value doesn't exist for this encounter, create a new one
+							{
+								encounterAttributeValue = new ChirdlutilbackportsEncounterAttributeValue();
+								encounterAttributeValue.setEncounterAttribute(encounterAttribute);
+								encounterAttributeValue.setEncounterId(encounter.getEncounterId());
+								encounterAttributeValue.setValueText(visitNumber);
+								encounterAttributeValue.setCreator(encounter.getCreator());
+								encounterAttributeValue.setDateCreated(encounter.getDateCreated());
+								encounterAttributeValue.setUuid(UUID.randomUUID().toString());
+								
+								chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+							}
+							else
+							{
+								// TODO CHICA-633 
+								// I can't think of a case where the visit number would change or need to be updated
+								// but adding testing code just to make sure it works
+								encounterAttributeValue.setValueText(visitNumber);
+								encounterAttributeValue.setChangedBy(encounter.getChangedBy());
+								encounterAttributeValue.setDateChanged(encounter.getDateChanged());
+								
+								chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+							}	
+						}
+						catch(Exception e)
+						{
+							// TODO CHICA-633 This isn't the correct logging
+							log.error("Error loading ChirdlutilbackportsEncounterAttributeValue (encounterId = " + encounterId + " encounterAttributeName = VisitNumber)");
+						}
+						
+					}
 				}
 			} catch (EncodingNotSupportedException e) {
 				log.error("Encoding not supported when parsing incoming message.", e);

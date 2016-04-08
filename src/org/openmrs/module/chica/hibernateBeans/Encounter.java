@@ -1,6 +1,11 @@
 package org.openmrs.module.chica.hibernateBeans;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.openmrs.FormField;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlutilbackportsEncounterAttributeValue;
 
 /**
  * Holds information to store in the encounter table
@@ -16,7 +21,7 @@ public class Encounter extends org.openmrs.Encounter implements
 	private String printerLocation = null;
 	private String insuranceCarrierCode = null;
 	private String insurancePlanCode = null;
-
+	
 	/**
 	 * 
 	 */
