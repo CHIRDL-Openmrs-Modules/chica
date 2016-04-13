@@ -76,7 +76,6 @@ public class ImmunizationRegistryQuery
 {
 	private static Log log = LogFactory.getLog(ImmunizationRegistryQuery.class);
 
-	private static org.openmrs.Encounter encounter = null;
 	private static String CHIRP_NOT_AVAILABLE = "CHIRP_not_available";
 	private static String NOT_IN_CHIRP = "not_in_chirp_registry";
 	private static String NOT_MATCHED = "CHIRP_match_not_found";
@@ -644,7 +643,7 @@ public class ImmunizationRegistryQuery
 				PatientIdentifier chirpIdentifier = matchPatient.getPatientIdentifier(immunIdentifierType);
 				PatientIdentifier chicaIdentifier = chicaPatient.getPatientIdentifier(immunIdentifierType);
 				
-				if (!chirpIdentifier.getIdentifier().equals(chicaIdentifier.getIdentifier())){
+				if (chicaIdentifier == null || !chirpIdentifier.getIdentifier().equals(chicaIdentifier.getIdentifier())){
 					//Match found..  Save identifier for patient that matches.
 					checkIdentifier(chicaPatient, chirpIdentifier);
 					
@@ -725,6 +724,7 @@ public class ImmunizationRegistryQuery
 				}
 				Util.saveObs(chicaPatient, statusConcept, encounterId, MATCHED,
 						new Date());
+				
 				/* CHICA-552 MSHELEY  Sometimes, if SIIS is not known and query uses MRN, CHIRP will return 
 				 * VXR with immediately (skipping VXX) that contains the SIIS identifier. 
 				 * Before saving, check if identifier exists already for different patient.
@@ -733,8 +733,8 @@ public class ImmunizationRegistryQuery
 				PatientIdentifier chirpIdentifier = matchPatient.getPatientIdentifier(immunIdentifierType);
 				PatientIdentifier chicaIdentifier = chicaPatient.getPatientIdentifier(immunIdentifierType);
 				
-				if (!chirpIdentifier.getIdentifier().equals(chicaIdentifier.getIdentifier())){
-					//Match found..  Save identifier for patient that matches.
+				if (chicaIdentifier == null || !chirpIdentifier.getIdentifier().equals(chicaIdentifier.getIdentifier())){
+					
 					checkIdentifier(chicaPatient, chirpIdentifier);
 					
 					//Do not save immunization registry ids as preferred
@@ -915,7 +915,6 @@ public class ImmunizationRegistryQuery
 		
 		//VXR only has one PID
 		PatientService patientService = Context.getPatientService();
-		PersonService personService = Context.getPersonService();
 		LocationService locationService = Context.getLocationService();
 		Set<Patient> chirpPatients = new HashSet<Patient>();
 		
@@ -996,7 +995,7 @@ public class ImmunizationRegistryQuery
 						/* Another patient already has this SIIS identifier. This id due to CHIRP changing identifiers."
 						 * Void the existing identifier, since it is no longer correct according to CHIRP.
 						 */
-						log.error("CHIRP SIIS identifier (" + identifier.getIdentifier() + ") for Patient " + chicaPatient.getPatientId()
+						log.info("CHIRP SIIS identifier (" + identifier.getIdentifier() + ") for Patient " + chicaPatient.getPatientId()
 								+ " already exists for Patient " +  matchingIdentifier.getPatient().getPatientId() );
 						matchingIdentifier.setVoided(true);
 						matchingIdentifier.setVoidReason("Conflicting immunization registry identifier");
