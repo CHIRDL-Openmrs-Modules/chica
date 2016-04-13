@@ -491,7 +491,6 @@ public class ImmunizationRegistryQuery
 				return null;
 			}
 			
-			ImmunizationQueryConstructor.saveFile(dir, vxqString, "vxq_1", encounter);
 			String data = getData(vxqString);
 			log.info("Immunization: vxq = " +  vxqString);
 			if (!OkToQuery){
@@ -544,23 +543,19 @@ public class ImmunizationRegistryQuery
 			if (queryResponse.indexOf("|QCK") > 0){
 				
 				
-				//save the obs and file
+				//save the obs
 				Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_IN_CHIRP, new Date());
-				ImmunizationQueryConstructor.saveFile(dir, queryResponse, "qck", encounter);
 				
 				//create the patient in chirp with VXU if VXU is activated.
 					
 				VXU_V04 vxu = new VXU_V04();
 				ImmunizationQueryConstructor.constructVXU(vxu,encounter); 
 				String vxuString = ImmunizationQueryConstructor.getVXUMessageString(vxu);
-				ImmunizationQueryConstructor.saveFile(dir, vxuString, "vxu", encounter);
 				data = getData(vxuString);
 				
 				//Only send VXU if VXU update is enabled in global property
 				
 				String activateVXUToCreatePatient = adminService.getGlobalProperty("chica.activateVXUToCreatePatient");
-				log.info(" Immunization: Create Patient VXU Activated = " + activateVXUToCreatePatient);
-				log.info(" Immunization: Create Patient VXU String = " + vxuString);
 				if (activateVXUToCreatePatient != null && 
 					(activateVXUToCreatePatient.equalsIgnoreCase("true") 
 							|| activateVXUToCreatePatient.equalsIgnoreCase("yes") 
@@ -576,7 +571,6 @@ public class ImmunizationRegistryQuery
 							logError(CHIRP_UPDATE_FAILED, 
 									 queryResponse, url, encounter.getPatientId());
 						}
-						ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxu_confirm", encounter);
 						
 					} catch (IOException e) {
 						logError(CHIRP_ERROR, 
@@ -623,7 +617,6 @@ public class ImmunizationRegistryQuery
 			
 			if (queryResponseMessage instanceof VXX_V02) {
 				
-				ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxx_1", encounter);
 				
 				//match check
 				
@@ -666,7 +659,6 @@ public class ImmunizationRegistryQuery
 				
 				vxqString = constructor.updateVXQ(vxqString, matchPatient);
 				log.info("Immunization: 2nd Vxq: " +  vxqString);
-				ImmunizationQueryConstructor.saveFile(dir, vxqString, "vxq_2", encounter);
 					
 				//requery
 				
@@ -701,8 +693,6 @@ public class ImmunizationRegistryQuery
 				log.info("Immunization: CHIRP response after requery = " + queryResponse);
 				//VXX 2nd time after requery indicates no confirmed match
 				if (queryResponseMessage instanceof VXX_V02) {
-					ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxx_2", 
-								encounter);
 					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 						
@@ -725,8 +715,8 @@ public class ImmunizationRegistryQuery
 				Util.saveObs(chicaPatient, statusConcept, encounterId, MATCHED,
 						new Date());
 				
-				/* CHICA-552 MSHELEY  Sometimes, if SIIS is not known and query uses MRN, CHIRP will return 
-				 * VXR with immediately (skipping VXX) that contains the SIIS identifier. 
+				/* CHICA-552 MSHELEY  If SIIS is not known, we send VXQ with MRN. 
+				 * Sometimes, CHIRP will return VXR with immediately (skipping VXX) that contains the SIIS identifier. 
 				 * Before saving, check if identifier exists already for different patient.
 				 */
 				PatientIdentifierType immunIdentifierType = patientService.getPatientIdentifierTypeByName(IMMUNIZATION_REGISTRY);
@@ -750,8 +740,6 @@ public class ImmunizationRegistryQuery
 					}
 				}
 				
-				ImmunizationQueryConstructor.saveFile(dir, queryResponse,
-						"vxr", encounter);
 				createImmunizationList(queryResponse, mrn, encounter
 						.getPatientId());
 				return queryResponse;
