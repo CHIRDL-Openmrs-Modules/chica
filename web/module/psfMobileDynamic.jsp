@@ -79,7 +79,7 @@
             </div>
         </div>
         <div class="ui-grid-a" style="padding-bottom: 0px;">
-            <div class="ui-block-a" style="width: 42%">
+            <!-- <div class="ui-block-a" style="width: 42%">
               <div class="ui-grid-c">
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
                       <c:choose>
@@ -351,16 +351,28 @@
                       <span><input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" style="vertical-align: top; margin: 0px;" ${Handout_Reviewed_by_MA == "diet and exercise" ? 'checked' : '' }/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label></span>
                   </div>
                </div>
-            </div>
+            </div>-->
         </div>
         <div class="ui-grid-a">
             <div class="ui-block-a">
                 <input type="checkbox" id="SickVisit" name="SickVisit" value="Y" ${SickVisit == "Y" ? 'checked' : '' }/><label for="SickVisit">Sick Visit</label>
             </div>
-            <div class="ui-block-b">
+        </div>
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
                 <input type="checkbox" id="MATwoIDsChecked" name="MATwoIDsChecked" value="Y" ${MATwoIDsChecked == "Y" ? 'checked' : '' }/><label for="MATwoIDsChecked">Two IDs checked</label>
             </div>
         </div>
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" ${Handout_Reviewed_by_MA == "diet and exercise" ? 'checked' : '' }/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label>
+            </div>
+        </div>
+        <!--<div class="ui-grid-b">
+            <div class="ui-block-a">
+                <input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" ${Handout_Reviewed_by_MA == "diet and exercise" ? 'checked' : '' }/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label>
+            </div>
+        </div> -->
         <div id="validation_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <div>
