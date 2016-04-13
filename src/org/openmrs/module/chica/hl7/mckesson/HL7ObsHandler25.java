@@ -499,7 +499,6 @@ public class HL7ObsHandler25 implements HL7ObsHandler
      * @see org.openmrs.module.sockethl7listener.HL7ObsHandler#getUnits(Message, int, int)
      * DWE CHICA-635
      */
-    @Override
     public String getUnits(Message message, int orderRep, int obxRep)
     {
     	OBX obx = getOBX(message, orderRep, obxRep);

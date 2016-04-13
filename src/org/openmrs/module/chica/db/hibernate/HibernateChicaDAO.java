@@ -257,14 +257,16 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public String getInsCategoryByCarrier(String carrierCode)
+	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category where star_carrier_code=?";
+			String sql = "select distinct category from chica_insurance_mapping where carrier_code=? and sending_application=? and sending_facility=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setString(0, carrierCode);
+			qry.setString(1, sendingFacility);
+			qry.setString(2, sendingApplication);
 			qry.addScalar("category");
 			return (String) qry.uniqueResult();
 		} catch (Exception e)
@@ -274,15 +276,17 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public String getInsCategoryByInsCode(String insCode)
+	public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category where ins_code=?";
+			String sql = "select distinct category from chica_insurance_mapping where ins_code=? and sending_application=? and sending_facility=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.addScalar("category");
 			qry.setString(0, insCode);
+			qry.setString(1, sendingFacility);
+			qry.setString(2, sendingApplication);
 			List<String> list = qry.list();
 			// if result is not unique, return null
 			if (list.size() == 1){
@@ -294,16 +298,18 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		return null;
 	}
-	
-	public String getInsCategoryByECWName(String ecwName)
+
+	public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category where ecw_ins_name=?";
+			String sql = "select distinct category from chica_insurance_mapping where ins_name=? and sending_application=? and sending_facility=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.addScalar("category");
-			qry.setString(0, ecwName);
+			qry.setString(0, insuranceName);
+			qry.setString(1, sendingFacility);
+			qry.setString(2, sendingApplication);
 
 			return (String) qry.uniqueResult();
 		} catch (Exception e)
@@ -312,30 +318,11 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		return null;
 	}
-
-	public String getInsCategoryBySMS(String smsCode)
-	{
-		try
-		{
-			String sql = "select distinct category from chica_insurance_category where sms_code=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.addScalar("category");
-			qry.setString(0, smsCode);
-
-			return (String) qry.uniqueResult();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
-
 	public List<String> getInsCategories()
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category " +
+			String sql = "select distinct category from chica_insurance_mapping " +
 			"where category is not null and category <> '' order by category";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
