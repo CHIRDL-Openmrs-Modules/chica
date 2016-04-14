@@ -599,7 +599,7 @@ public class HL7SocketHandler extends
 						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getVisitNumber(message);
 						
-						storeEncounterAttributeAsValueText(encounter, visitNumber, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER);
+						storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER, visitNumber);
 					}
 				}
 			} catch (EncodingNotSupportedException e) {
