@@ -1264,9 +1264,9 @@ public class HL7SocketHandler extends
 			}
 		
 			//Get all encounters for that patient from the start of the day
-			//CHICA-721 Only filter if location is at the same location.
+			//CHICA-721 Only filter if new registration location is the same as the first registration location.
 			//If a patient is registered at one clinic in error, and registered in another clinic afterward,
-			//allow that checkin, allow that checkin.
+			//allow that checkin.
 			Date startOfDay = DateUtils.truncate(new Date(), Calendar.DATE);
 			Location location = locationService.getLocation(locationString);
 			List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, location, startOfDay, null,
