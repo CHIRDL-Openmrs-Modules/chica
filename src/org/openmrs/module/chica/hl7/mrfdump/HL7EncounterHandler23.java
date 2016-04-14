@@ -271,8 +271,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		} 
 		catch (RuntimeException e)
 		{
-			logger.error("Unable to parse visit number from PV1-19. Message: "
-					+ e.getMessage());
+			logger.error("Unable to parse visit number from PV1-19.", e);
 		}
 
 		if (visitNumber != null)
@@ -283,7 +282,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 			} 
 			catch (RuntimeException e1)
 			{
-				logger.error("Visit number not available in PV1-19 segment.");
+				logger.error("Visit number not available in PV1-19 segment.", e1);
 			}
 		}
 		return null;

@@ -599,7 +599,14 @@ public class HL7SocketHandler extends
 						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getVisitNumber(message);
 						
-						storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER, visitNumber);
+						if(visitNumber != null && !visitNumber.isEmpty())
+						{
+							storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER, visitNumber);
+						}
+						else
+						{
+							log.error("Unable to parse visit number for encounterId: " + encounter.getEncounterId());
+						}		
 					}
 				}
 			} catch (EncodingNotSupportedException e) {
@@ -1562,7 +1569,7 @@ public class HL7SocketHandler extends
 		try
 		{
 			ChirdlutilbackportsEncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(attributeName);
-			ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByEncounterAttribute(encounter.getEncounterId(), encounterAttribute);
+			ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByAttribute(encounter.getEncounterId(), encounterAttribute);
 			
 			if(encounterAttributeValue == null) // Attribute value doesn't exist for this encounter, create a new one
 			{
