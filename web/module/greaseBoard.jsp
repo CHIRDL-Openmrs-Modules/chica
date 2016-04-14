@@ -231,22 +231,41 @@ label {
                 </td>
                 <td width="40%">
                     <table width="100%">
-                        <tr>
-                            <td align="right">
-                                <button id="checkinButton" class="icon-button-extra-large ui-state-default ui-corner-all">Check-in Patient</button>
-                            </td>
-                            <td align="left">
-                                <button id="viewEncountersButton" class="icon-button-extra-large ui-state-default ui-corner-all">View Encounters</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="right">
-                                <button id="printHandoutsButton" class="icon-button-extra-large ui-state-default ui-corner-all">Print Patient Handouts</button>
-                            </td>
-                            <td align="left">
-                                <button id="selectPagerButton" class="icon-button-extra-large-help ui-state-default ui-corner-all">"Get Help Now!"</button>
-                            </td>
-                        </tr>
+	                    <c:choose>
+	                        <c:when test="${showManualCheckin == 'true'}">
+		                        <tr>
+		                            <td align="right">
+		                                <button id="checkinButton" class="icon-button-extra-large ui-state-default ui-corner-all">Check-in Patient</button>
+		                            </td>
+		                            <td align="left">
+	                                    <button id="viewEncountersButton" class="icon-button-extra-large ui-state-default ui-corner-all">View Encounters</button>
+	                                </td>
+		                        </tr>
+		                        <tr>
+		                            <td align="right">
+		                                <button id="printHandoutsButton" class="icon-button-extra-large ui-state-default ui-corner-all">Print Patient Handouts</button>
+		                            </td>
+		                            <td align="left">
+		                                <button id="selectPagerButton" class="icon-button-extra-large-help ui-state-default ui-corner-all">"Get Help Now!"</button>
+		                            </td>
+		                        </tr>
+	                        </c:when>
+	                        <c:otherwise>
+	                           <tr>
+	                               <td align="right">
+                                        <button id="printHandoutsButton" class="icon-button-extra-large ui-state-default ui-corner-all">Print Patient Handouts</button>
+                                    </td>
+                                    <td align="left">
+                                        <button id="viewEncountersButton" class="icon-button-extra-large ui-state-default ui-corner-all">View Encounters</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" colspan="2">
+                                        <button id="selectPagerButton" class="icon-button-extra-large-help ui-state-default ui-corner-all">"Get Help Now!"</button>
+                                    </td>
+                                </tr>
+	                        </c:otherwise>
+	                    </c:choose>
                     </table>
                 </td>
                 <td width="30%">
