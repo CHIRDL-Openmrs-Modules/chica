@@ -167,39 +167,37 @@ public class CheckinPatient implements ChirdlRunnable
     	}
     	String category = null;
 
-    	//for McKesson Pecar messages
-    	if (carrierCode != null && carrierCode.length() > 0)
-    	{
-    		category = chicaService.getInsCategoryByCarrier(carrierCode,sendingApplication,sendingFacility);
-
-    	}
-
-    	if (category == null)
-    	{
-    		// for McKesson PCC messages
-    		if (planCode != null && planCode.length() > 0)
-    		{
-    			category = chicaService.getInsCategoryByInsCode(planCode,sendingApplication,sendingFacility);
-    		}
-    	}
-
-    	if (category == null)
-    	{
-    		// for SMS PCC messages
-    		if (smsCode != null && smsCode.length() > 0)
-    		{
-    			category = chicaService.getInsCategoryByInsCode(smsCode,sendingApplication,sendingFacility);
-    		}
-    	}
-
-    	//look up by ECW name
-    	if(category == null){
-
-    		if(insuranceName != null && insuranceName.length()>0){
-    			category = chicaService.getInsCategoryByName(insuranceName,sendingApplication,sendingFacility);
-    		}
-
-    	}
+		if (sendingApplication != null || sendingFacility != null) {
+			
+			//for McKesson Pecar messages
+			if (carrierCode != null && carrierCode.length() > 0) {
+				category = chicaService.getInsCategoryByCarrier(carrierCode, sendingApplication, sendingFacility);
+				
+			}
+			
+			if (category == null) {
+				// for McKesson PCC messages
+				if (planCode != null && planCode.length() > 0) {
+					category = chicaService.getInsCategoryByInsCode(planCode, sendingApplication, sendingFacility);
+				}
+			}
+			
+			if (category == null) {
+				// for SMS PCC messages
+				if (smsCode != null && smsCode.length() > 0) {
+					category = chicaService.getInsCategoryByInsCode(smsCode, sendingApplication, sendingFacility);
+				}
+			}
+			
+			//look up by ECW name
+			if (category == null) {
+				
+				if (insuranceName != null && insuranceName.length() > 0) {
+					category = chicaService.getInsCategoryByName(insuranceName, sendingApplication, sendingFacility);
+				}
+				
+			}
+		}
 
     	if (category != null)
     	{
@@ -207,7 +205,8 @@ public class CheckinPatient implements ChirdlRunnable
     		org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, category, 
     				encounter.getEncounterDatetime());
     	}else{
-    		log.error("Could not map code: plan code: "+planCode+" insurance Name: "+ insuranceName);
+    		log.error("Could not map code: plan code: "+planCode+" insurance Name: "+ insuranceName+
+    			" sending application: "+sendingApplication+" sending facility: "+sendingFacility);
     	}
 
     }
