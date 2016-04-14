@@ -599,46 +599,7 @@ public class HL7SocketHandler extends
 						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getVisitNumber(message);
 						
-						// Store as encounter attribute
-						try
-						{
-							ChirdlutilbackportsEncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName("VisitNumber");
-							ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByEncounterAttribute(encounter.getEncounterId(), encounterAttribute);
-							
-							//ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService
-									//.getEncounterAttributeValueByEncounterAttributeName(encounter.getEncounterId(), "VisitNumber"); // TODO CHICA-633 Constant for VisitNumber
-							//encounterAttributeValue.setEncounterAttributeId(1); // TODO CHICA-633 Change this
-							
-							if(encounterAttributeValue == null) // Attribute value doesn't exist for this encounter, create a new one
-							{
-								encounterAttributeValue = new ChirdlutilbackportsEncounterAttributeValue();
-								encounterAttributeValue.setEncounterAttribute(encounterAttribute);
-								encounterAttributeValue.setEncounterId(encounter.getEncounterId());
-								encounterAttributeValue.setValueText(visitNumber);
-								encounterAttributeValue.setCreator(encounter.getCreator());
-								encounterAttributeValue.setDateCreated(encounter.getDateCreated());
-								encounterAttributeValue.setUuid(UUID.randomUUID().toString());
-								
-								chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
-							}
-							else
-							{
-								// TODO CHICA-633 
-								// I can't think of a case where the visit number would change or need to be updated
-								// but adding testing code just to make sure it works
-								encounterAttributeValue.setValueText(visitNumber);
-								encounterAttributeValue.setChangedBy(encounter.getChangedBy());
-								encounterAttributeValue.setDateChanged(encounter.getDateChanged());
-								
-								chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
-							}	
-						}
-						catch(Exception e)
-						{
-							// TODO CHICA-633 This isn't the correct logging
-							log.error("Error loading ChirdlutilbackportsEncounterAttributeValue (encounterId = " + encounterId + " encounterAttributeName = VisitNumber)");
-						}
-						
+						storeEncounterAttributeAsValueText(encounter, visitNumber, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER);
 					}
 				}
 			} catch (EncodingNotSupportedException e) {
@@ -1583,5 +1544,45 @@ public class HL7SocketHandler extends
 		}
 		
 		return numReps;
+	}
+	
+	/**
+	 * DWE CHICA-633
+	 * 
+	 * Store an encounter attribute value
+	 * 
+	 * @param encounter
+	 * @param attributeName - the name of the encounter attribute
+	 * @param valueText - the value to store in the value_text field
+	 */
+	private void storeEncounterAttributeAsValueText(org.openmrs.Encounter encounter, String attributeName, String valueText)
+	{
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+
+		try
+		{
+			ChirdlutilbackportsEncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(attributeName);
+			ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByEncounterAttribute(encounter.getEncounterId(), encounterAttribute);
+			
+			if(encounterAttributeValue == null) // Attribute value doesn't exist for this encounter, create a new one
+			{
+				encounterAttributeValue = new ChirdlutilbackportsEncounterAttributeValue(encounterAttribute, encounter.getEncounterId(), valueText);
+				encounterAttributeValue.setCreator(encounter.getCreator());
+				encounterAttributeValue.setDateCreated(encounter.getDateCreated());
+				encounterAttributeValue.setUuid(UUID.randomUUID().toString());
+				
+				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+			}
+			else
+			{ 
+				// I can't think of a case where the visit number would change or need to be updated
+				// just log it for now
+				log.error("Encounter attribute already exists for encounterId: " + encounter.getEncounterId() + " attributeName: " + attributeName);
+			}	
+		}
+		catch(Exception e)
+		{
+			log.error("Error storing encounter attribute value encounterId: " + encounter.getEncounterId() + " attributeName: " + attributeName, e);
+		}
 	}
 }
