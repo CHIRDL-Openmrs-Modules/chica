@@ -26,7 +26,7 @@ Maintenance:
 		
     endif
     ;;
-    Priority:	;;
+    Priority:	1000;;
 	Evoke:		;;
     Logic:
         If (mode = PRODUCE) then
