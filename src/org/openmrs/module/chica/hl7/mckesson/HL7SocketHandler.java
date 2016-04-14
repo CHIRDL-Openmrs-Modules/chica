@@ -84,6 +84,10 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  * 
  */
 
+/**
+ * @author msheley
+ *
+ */
 public class HL7SocketHandler extends
 		org.openmrs.module.sockethl7listener.HL7SocketHandler {
 
@@ -1234,12 +1238,12 @@ public class HL7SocketHandler extends
 
 	}
 	
-	
 	/**
-	 * Checks if patient from this hl7 message already has an encounter today.
+	 * Checks if patient from this hl7 message already has an encounter today at the same location.
 	 * The message is saved to the sockethl7listener_patient_message table for record.
-	 * @param message
-	 * @return 
+	 * @param hl7message
+	 * @param locationString
+	 * @return
 	 */
 	private boolean priorCheckinExists(Message hl7message, String locationString) {
 
