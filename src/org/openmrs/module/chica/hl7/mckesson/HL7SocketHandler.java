@@ -55,8 +55,8 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlutilbackportsEncounterAttribute;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlutilbackportsEncounterAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -1568,12 +1568,12 @@ public class HL7SocketHandler extends
 
 		try
 		{
-			ChirdlutilbackportsEncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(attributeName);
-			ChirdlutilbackportsEncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByAttribute(encounter.getEncounterId(), encounterAttribute);
+			EncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(attributeName);
+			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByAttribute(encounter.getEncounterId(), encounterAttribute);
 			
 			if(encounterAttributeValue == null) // Attribute value doesn't exist for this encounter, create a new one
 			{
-				encounterAttributeValue = new ChirdlutilbackportsEncounterAttributeValue(encounterAttribute, encounter.getEncounterId(), valueText);
+				encounterAttributeValue = new EncounterAttributeValue(encounterAttribute, encounter.getEncounterId(), valueText);
 				encounterAttributeValue.setCreator(encounter.getCreator());
 				encounterAttributeValue.setDateCreated(encounter.getDateCreated());
 				encounterAttributeValue.setUuid(UUID.randomUUID().toString());
