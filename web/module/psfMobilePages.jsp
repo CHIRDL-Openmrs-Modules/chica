@@ -3,7 +3,7 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a id="confirmVitalsButton" data-role="button" href="#vitals_page" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="fade">Vitals</a>
+        <a id="confirmVitalsButton" data-role="button" href="#vitals_page" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="fade">Staff</a>
     </div>
 
     <div data-role="content" >
@@ -49,16 +49,16 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a id="vitalsDirectButton" data-role="button" onclick="openVitalsConfirm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a id="vitalsDirectButton" data-role="button" onclick="openVitalsConfirm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div data-role="content">
         <div id="content_1"></div>
         <div id="quit_to_vitals_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
-                <h1>Vitals</h1>
+                <h1>Staff</h1>
             </div>
             <div data-role="content">
-                <span>All answers on this page will be submitted before proceeding to the Vitals page.  Are you sure you want to continue?</span>
+                <span>All answers on this page will be submitted before proceeding to the Staff page.  Are you sure you want to continue?</span>
                 <div style="margin: 0 auto;text-align: center;">
                     <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">Yes</a>
                     <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
@@ -99,16 +99,16 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${NewLastName}', '${patient.birthdate}')">English</a>
-        <a id="vitalsDirectButton_sp" data-role="button" onclick="openVitalsConfirmSpanish()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+        <a id="vitalsDirectButton_sp" data-role="button" onclick="openVitalsConfirmSpanish()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div data-role="content">
         <div id="content_1_sp"></div>
         <div id="quit_to_vitals_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
-                <h1>Vitales</h1>
+                <h1>Personal</h1>
             </div>
             <div data-role="content">
-                <span>Todas las respuestas en esta p&#225;gina se presentar&#225;n antes de proceder a la p&#225;gina vitales.  &#191;Est&#225; seguro que desea continuar?</span>
+                <span>Todas las respuestas en esta p&#225;gina se presentar&#225;n antes de proceder a la p&#225;gina personal.  &#191;Est&#225; seguro que desea continuar?</span>
                 <div style="margin: 0 auto;text-align: center;">
                     <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">Si</a>
                     <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>

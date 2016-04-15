@@ -41,7 +41,7 @@
         <h1>Sex Risk Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
 
     <div data-role="content" >
@@ -59,7 +59,7 @@
         <h1>Sex Risk Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div data-role="content">
         <c:set var="quest_1" value='Have you had sex (including intercourse or oral sex) within the past year?'/>
@@ -132,7 +132,7 @@
         <h1>Sex Risk Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div data-role="content">
         <c:set var="quest_1_sp" value='&#191;Has tenido sexo (incluyendo relaciones sexuales o sexo oral) dentro del a&#241;o pasado?'/>
