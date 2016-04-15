@@ -381,6 +381,12 @@
      	<description>Namespace for MRF query service
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.enableManualCheckin</property>
+        <defaultValue>false</defaultValue>
+        <description>Whether or not the manual checkin option is available on the patient greaseboard.
+        </description>
+    </globalProperty>
    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

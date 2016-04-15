@@ -16,7 +16,7 @@ public class Encounter extends org.openmrs.Encounter implements
 	private String printerLocation = null;
 	private String insuranceCarrierCode = null;
 	private String insurancePlanCode = null;
-
+	
 	/**
 	 * 
 	 */
