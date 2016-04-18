@@ -33,21 +33,12 @@
                 </div>
             </div>
         </div>
-        <div class="ui-grid-a">
-            <div class="ui-block-a">
-                <input type="checkbox" id="SickVisit" name="SickVisit" value="Y" ${SickVisit == "Y" ? 'checked' : '' }/><label for="SickVisit">Sick Visit</label>
-            </div>
+        <div>
+            <input type="checkbox" id="SickVisit" name="SickVisit" value="Y" ${SickVisit == "Y" ? 'checked' : '' }/><label for="SickVisit">Sick Visit</label>
+            <input type="checkbox" id="MATwoIDsChecked" name="MATwoIDsChecked" value="Y" ${MATwoIDsChecked == "Y" ? 'checked' : '' }/><label for="MATwoIDsChecked">Two IDs checked</label>
+            <input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" ${Handout_Reviewed_by_MA == "diet and exercise" ? 'checked' : '' }/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label>
         </div>
-        <div class="ui-grid-a">
-            <div class="ui-block-a">
-                <input type="checkbox" id="MATwoIDsChecked" name="MATwoIDsChecked" value="Y" ${MATwoIDsChecked == "Y" ? 'checked' : '' }/><label for="MATwoIDsChecked">Two IDs checked</label>
-            </div>
-        </div>
-        <div class="ui-grid-a">
-            <div class="ui-block-a">
-                <input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" ${Handout_Reviewed_by_MA == "diet and exercise" ? 'checked' : '' }/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label>
-            </div>
-        </div>
+                
         <div id="invalidLogin" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Invalid Login</h1>
