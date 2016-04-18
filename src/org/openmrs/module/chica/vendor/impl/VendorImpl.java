@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.vendor.Vendor;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 
 
@@ -25,7 +27,7 @@ import org.openmrs.module.chirdlutil.util.Util;
  *
  * @author Steve McKee
  */
-public abstract class VendorImpl implements Vendor {
+public class VendorImpl implements Vendor {
 	
 	private static Log log = LogFactory.getLog(VendorImpl.class);
 	
@@ -132,9 +134,16 @@ public abstract class VendorImpl implements Vendor {
 	}
 	
 	/**
-	 * Abstract method that must be overridden to retrieve the encryption key to decrypt parameter values.
-	 * 
-	 * @return The encryption key or null if one is not found or required.
+	 * @see org.openmrs.module.chica.vendor.Vendor#getEncryptionKey()
 	 */
-	public abstract String getEncryptionKey();
+	public String getEncryptionKey() {
+		String key = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_ENCRYPTION_KEY);
+		if (key == null || key.trim().length() == 0) {
+			log.warn("Cannot find value for global property " + ChirdlUtilConstants.GLOBAL_PROP_ENCRYPTION_KEY + ".  Clear text "
+					+ "value will be used.");
+			return null;
+		}
+		
+		return key;
+	}
 }
