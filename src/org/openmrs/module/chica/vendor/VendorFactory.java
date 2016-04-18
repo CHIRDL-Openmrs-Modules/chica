@@ -16,7 +16,7 @@ package org.openmrs.module.chica.vendor;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openmrs.module.chica.vendor.impl.IUHCernerVendor;
-import org.openmrs.module.chica.vendor.impl.G3Vendor;
+import org.openmrs.module.chica.vendor.impl.VendorImpl;
 
 
 /**
@@ -26,8 +26,8 @@ import org.openmrs.module.chica.vendor.impl.G3Vendor;
  */
 public class VendorFactory {
 	
-	private static final String VENDOR_G3 = "g3";
 	private static final String VENDOR_CERNER = "iuh_cerner";
+	private static final String VENDOR_EPIC = "eskenazi_epic";
 	
 	/**
 	 * Returns the correct vendor implementation based on name.
@@ -37,10 +37,10 @@ public class VendorFactory {
 	 * @return A Vendor object for the requested name or null if one cannot be found.
 	 */
 	public static Vendor getVendor(String vendorName, HttpServletRequest request) {
-		if (VENDOR_G3.equalsIgnoreCase(vendorName)) {
-			return new G3Vendor(request);
-		} else if (VENDOR_CERNER.equalsIgnoreCase(vendorName)) {
+		if (VENDOR_CERNER.equalsIgnoreCase(vendorName)) {
 			return new IUHCernerVendor(request);
+		} else if (VENDOR_EPIC.equalsIgnoreCase(vendorName)) {
+			return new VendorImpl(request);
 		}
 		
 		return null;

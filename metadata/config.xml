@@ -382,6 +382,11 @@
         </description>
     </globalProperty>
     <globalProperty>
+        <property>chica.encryptionKey</property>
+        <description>Encryption key used to decrypt information sent from a third party application.
+        </description>
+    </globalProperty>
+    <globalProperty>
         <property>chica.enableManualCheckin</property>
         <defaultValue>false</defaultValue>
         <description>Whether or not the manual checkin option is available on the patient greaseboard.
