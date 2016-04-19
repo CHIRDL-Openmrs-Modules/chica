@@ -23,6 +23,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -247,7 +248,8 @@ public class GreaseBoardController extends SimpleFormController
 		}
 
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("refreshPeriod", Context.getAdministrationService().getGlobalProperty("chica.greaseBoardRefresh"));
+		map.put("refreshPeriod", Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_REFRESH));
+		map.put("showManualCheckin", Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_ENABLE_MANUAL_CHECKIN));
 		map.put("currentUser", user.getUsername());
 		
 		numRefreshes++;
