@@ -425,7 +425,7 @@
         chica1_patient.hbm.xml
         chica1_patient_obsv.hbm.xml
         chica1_appointments.hbm.xml
-        insurance_category.hbm.xml
+        insurance_mapping.hbm.xml
         family.hbm.xml
         patient_family.hbm.xml
         chica_hl7_export.hbm.xml

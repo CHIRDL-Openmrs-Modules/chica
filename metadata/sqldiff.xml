@@ -3873,6 +3873,39 @@ where action_name='REPRINT';
         ,(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
          </sql>
 	</diff>
+	<diff>  
+        <version>1.7.6</version>  
+        <author>Tammy Dugan</author>  
+        <date>April 13, 2016</date>  
+        <description>  
+        CHICA-701 Update chica_insurance_category table to chica_insurance_mapping table
+        </description>  
+        <sql> 
+CREATE TABLE `chica_insurance_mapping` (
+`INSURANCE_ID` int(11) NOT NULL AUTO_INCREMENT,
+`ins_code` varchar(255) DEFAULT NULL,
+`category` varchar(255) DEFAULT NULL,
+`ins_name` varchar(255) DEFAULT NULL,
+`carrier_code` varchar(255) DEFAULT NULL,
+`plan_code` varchar(255) DEFAULT NULL,
+`sending_application` varchar(255) DEFAULT NULL,
+`sending_facility` varchar(255) DEFAULT NULL,
+PRIMARY KEY (`INSURANCE_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=540 DEFAULT CHARSET=utf8;
+
+insert into chica_insurance_mapping(category,ins_name, carrier_code, plan_code,ins_code,sending_application,sending_facility)
+select category, sms_ins_name, star_carrier_code, star_plan_code, sms_code,'SMS','Eskenazi'
+from chica_insurance_category where sms_ins_name is not null and category is not null and category != '';
+
+insert into chica_insurance_mapping(category,ins_name, carrier_code, plan_code, ins_code,sending_application,sending_facility)
+select category, mckesson_ins_name, star_carrier_code, star_plan_code, ins_code,'ST01','W'
+from chica_insurance_category where mckesson_ins_name is not null and category is not null and category != '';
+
+insert into chica_insurance_mapping(category,ins_name, carrier_code, plan_code, ins_code,sending_application,sending_facility)
+select category, ecw_ins_name, star_carrier_code, star_plan_code, ins_code,'','ECW'
+from chica_insurance_category where ecw_ins_name is not null and category is not null and category != ''; 
+        </sql>
+	</diff>
 </sqldiff>
 
 

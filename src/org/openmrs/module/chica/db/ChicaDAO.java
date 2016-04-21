@@ -107,14 +107,12 @@ public interface ChicaDAO {
 
 	public String getObsvNameByObsvId(String obsvId);
 	
-	public String getInsCategoryByCarrier(String carrierCode);
+	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication);
+
+	public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication);
 	
-	public String getInsCategoryBySMS(String smsCode);
-	
-	public String getInsCategoryByECWName(String ecwName);
-	
-	public String getInsCategoryByInsCode(String insCode);
-	
+	public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication);
+
 	public Integer getHighBP(Integer ageInYears, String sex,
 			Integer bpPercentile, String bpType, Integer heightPercentile);
 

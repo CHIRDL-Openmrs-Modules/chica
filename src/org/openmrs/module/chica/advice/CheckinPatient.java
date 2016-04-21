@@ -6,6 +6,7 @@ package org.openmrs.module.chica.advice;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -41,10 +42,12 @@ public class CheckinPatient implements ChirdlRunnable
 {
 	private Log log = LogFactory.getLog(this.getClass());
 	private org.openmrs.Encounter encounter = null;
+	private HashMap<String,Object> parameters = null;
 
-	public CheckinPatient(org.openmrs.Encounter encounter)
+	public CheckinPatient(org.openmrs.Encounter encounter, HashMap<String,Object> parameters)
 	{
 		this.encounter = encounter;
+		this.parameters = parameters;
 	}
 
 	/*
@@ -100,7 +103,9 @@ public class CheckinPatient implements ChirdlRunnable
 				}
 			}
 		
-			saveInsuranceInfo(encounterId, patient,locationTagId);
+			String sendingApplication =(String) parameters.get("sendingApplication");
+			String sendingFacility = (String) parameters.get("sendingFacility");
+			saveInsuranceInfo(encounterId, patient,locationTagId,sendingApplication,sendingFacility);
 			Program program = chirdlutilbackportsService.getProgram(locationTagId,locationId);
 			StateManager.changeState(patient, sessionId, null,
 					program,null,
@@ -130,7 +135,7 @@ public class CheckinPatient implements ChirdlRunnable
 	    return ChirdlRunnable.PRIORITY_ONE;
     }
 
-    private void saveInsuranceInfo(Integer encounterId, Patient patient,Integer locationTagId)
+    private void saveInsuranceInfo(Integer encounterId, Patient patient,Integer locationTagId, String sendingApplication, String sendingFacility)
     {
     	ChicaService chicaService = Context
     	.getService(ChicaService.class);
@@ -162,39 +167,37 @@ public class CheckinPatient implements ChirdlRunnable
     	}
     	String category = null;
 
-    	//for McKesson Pecar messages
-    	if (carrierCode != null && carrierCode.length() > 0)
-    	{
-    		category = chicaService.getInsCategoryByCarrier(carrierCode);
-
-    	}
-
-    	if (category == null)
-    	{
-    		// for McKesson PCC messages
-    		if (planCode != null && planCode.length() > 0)
-    		{
-    			category = chicaService.getInsCategoryByInsCode(planCode);
-    		}
-    	}
-
-    	if (category == null)
-    	{
-    		// for SMS PCC messages
-    		if (smsCode != null && smsCode.length() > 0)
-    		{
-    			category = chicaService.getInsCategoryBySMS(smsCode);
-    		}
-    	}
-
-    	//look up by ECW name
-    	if(category == null){
-
-    		if(insuranceName != null && insuranceName.length()>0){
-    			category = chicaService.getInsCategoryByECWName(insuranceName);
-    		}
-
-    	}
+		if (sendingApplication != null || sendingFacility != null) {
+			
+			//for McKesson Pecar messages
+			if (carrierCode != null && carrierCode.length() > 0) {
+				category = chicaService.getInsCategoryByCarrier(carrierCode, sendingApplication, sendingFacility);
+				
+			}
+			
+			if (category == null) {
+				// for McKesson PCC messages
+				if (planCode != null && planCode.length() > 0) {
+					category = chicaService.getInsCategoryByInsCode(planCode, sendingApplication, sendingFacility);
+				}
+			}
+			
+			if (category == null) {
+				// for SMS PCC messages
+				if (smsCode != null && smsCode.length() > 0) {
+					category = chicaService.getInsCategoryByInsCode(smsCode, sendingApplication, sendingFacility);
+				}
+			}
+			
+			//look up by ECW name
+			if (category == null) {
+				
+				if (insuranceName != null && insuranceName.length() > 0) {
+					category = chicaService.getInsCategoryByName(insuranceName, sendingApplication, sendingFacility);
+				}
+				
+			}
+		}
 
     	if (category != null)
     	{
@@ -202,7 +205,8 @@ public class CheckinPatient implements ChirdlRunnable
     		org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, category, 
     				encounter.getEncounterDatetime());
     	}else{
-    		log.error("Could not map code: plan code: "+planCode+" insurance Name: "+ insuranceName);
+    		log.error("Could not map code: plan code: "+planCode+" insurance Name: "+ insuranceName+
+    			" sending application: "+sendingApplication+" sending facility: "+sendingFacility);
     	}
 
     }
