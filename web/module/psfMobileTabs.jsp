@@ -64,7 +64,7 @@ $(document).bind("mobileinit", function(){
 	  <div data-role="navbar">
 	    <ul>
 	      <li><a id="confirm_page_tab" href="#confirm_page" data-ajax="false">Questions</a></li>
-	      <li><a id="questions_tab" href="#vitals_page" data-ajax="false">Vitals</a></li>
+	      <li><a id="questions_tab" href="#vitals_page" data-ajax="false">Staff</a></li>
 	    </ul>
 	  </div>
 	</div>
@@ -811,7 +811,7 @@ $(document).bind("mobileinit", function(){
                 <h1>Passcode</h1>
             </div>
             <div data-role="content">
-                <span>Please enter the passcode to access the vitals page.</span>
+                <span>Please enter the passcode to access the staff page.</span>
                 <div style="margin: 0 auto;text-align: center;">
                     <input type="number" masktype="password" id="vitals_passcode" name="vitals_passcode" placeholder="Passcode"/>
                     <a href="#" id="goButton" onclick="checkPasscode()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Go</a>
