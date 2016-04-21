@@ -609,14 +609,14 @@ function setLanguage(patientName, birthdate) {
     var instructions = "<p>1) Please return the device back to the front desk if the patient information listed is incorrect.</p><p>2) Please confirm this form is for:<br/>Name: " + patientName + "<br/>Date of Birth: " + birthdate + "</p>";
     var confirmButtonText = "Confirm";
     var denyButtonText = "Deny";
-    var vitalsButtonText = "Vitals";
+    var vitalsButtonText = "Staff";
     if (!english) {
         langButtonText = "English";
         parentText = "Padres de familia: Muchas gracias por tomarse la molestia de contestar las siguientes preguntas acerca de su nino(a).  Las respuestas de estas preguntas seran: ayundar a su doctor a dar mejor atencion medica.  Si su nino(a) tiene 12 anos o mas, por favor su nino(a) debe contestar las preguntas el (ella) solo(a).  Sus respuestas seran completamente privadas.  No necesita contestar ninguna pregunta que no desee contestar.  Si usted tiene preguntas acerca de este cuestionario, haga el favor de hablar sobre ellas con su doctor.  Por favor llene los circulos de la forma mas completa que le sea posible con un lapiz o lapiz tinta.";
         instructions = "<p>1) Por favor devuelva el aparato a la información si la información del paciente que aparece es incorrecta.</p><p>2) Por favor, confirme esta forma es para:<br/>Nombre: " + patientName + "<br/>Fecha de nacimiento: " + birthdate + "</p>";
         confirmButtonText = "Confirmar";
         denyButtonText = "Negar";
-        vitalsButtonText = "Vitales";
+        vitalsButtonText = "Personal";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
@@ -878,67 +878,67 @@ function finishedValidation(fieldId) {
 }
 
 function validate() {
-    var height = document.getElementById("height").value;
+    var height = $("#height").val();
     if (!validateNumericField(height, 4, 3, 1)) {
         displayValidationError("Height", new Array("999.9", "999"));
         return false;
     }
     
-    var weight = document.getElementById("weight").value;
+    var weight = $("#weight").val();
     if (!validateNumericField(weight, 5, 3, 2)) {
         displayValidationError("Weight", new Array("999.99", "999"));
         return false;
     }
     
-    var hc = document.getElementById("hc").value;
+    var hc = $("#hc").val();
     if (!validateNumericField(hc, 4, 3, 1)) {
         displayValidationError("HC", new Array("999.9", "999"));
         return false;
     }
     
-    var systBp = document.getElementById("BPS").value;
+    var systBp = $("#BPS").val();;
     if (!validateNumericField(systBp, 3, 3, 0)) {
         displayValidationError("Systolic BP", new Array("999"));
         return false;
     }
     
-    var diastBp = document.getElementById("BPD").value;
+    var diastBp = $("#BPD").val();
     if (!validateNumericField(diastBp, 3, 3, 0)) {
         displayValidationError("Diastolic BP", new Array("999"));
         return false;
     }
     
-    var temp = document.getElementById("temp").value;
+    var temp = $("#temp").val();
     if (!validateNumericField(temp, 4, 3, 1)) {
         displayValidationError("Temp", new Array("999.9", "999"));
         return false;
     }
     
-    var pulse = document.getElementById("Pulse").value;
+    var pulse = $("#Pulse").val();
     if (!validateNumericField(pulse, 3, 3, 0)) {
         displayValidationError("Pulse", new Array("999"));
         return false;
     }
     
-    var rr = document.getElementById("RR").value;
+    var rr = $("#RR").val();
     if (!validateNumericField(rr, 3, 3, 0)) {
         displayValidationError("RR", new Array("999"));
         return false;
     }
     
-    var pulseOx = document.getElementById("PulseOx").value;
+    var pulseOx = $("#PulseOx").val();
     if (!validateNumericField(pulseOx, 3, 3, 0)) {
         displayValidationError("Pulse Ox", new Array("999"));
         return false;
     }
     
-    var visionL = document.getElementById("VisionL").value;
+    var visionL = $("#VisionL").val();
     if (!validateNumericField(visionL, 3, 3, 0)) {
         displayValidationError("Vision Left", new Array("999"));
         return false;
     }
     
-    var visionR = document.getElementById("VisionR").value;
+    var visionR = $("#VisionR").val();
     if (!validateNumericField(visionR, 3, 3, 0)) {
         displayValidationError("Vision Right", new Array("999"));
         return false;
@@ -948,6 +948,10 @@ function validate() {
 }
 
 function validateNumericField(value, totalPlaces, beforeDec, afterDec) {
+	if (value == null) {
+		return true;
+	}
+	
 	value = value.trim();
     var index = value.indexOf(".");
     if (index < 0) {
