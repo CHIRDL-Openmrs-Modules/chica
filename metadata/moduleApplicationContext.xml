@@ -41,8 +41,9 @@
                 <prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
                 <prop key="/module/@MODULE_ID@/MCHATMobile.form">MCHATMobile</prop>
                 <prop key="/module/@MODULE_ID@/pwsIUHCerner.form">pwsIUHCerner</prop>
-                <prop key="/module/@MODULE_ID@/SCAREDParentMobile.form">SCAREDParentMobile</prop>
+				<prop key="/module/@MODULE_ID@/SCAREDParentMobile.form">SCAREDParentMobile</prop>
                 <prop key="/module/@MODULE_ID@/ISQMobile.form">ISQMobile</prop>
+                <prop key="/module/@MODULE_ID@/sessionTimeout.form">sessionTimeout</prop>
                 <prop key="/module/@MODULE_ID@/PSQMobile.form">PSQMobile</prop>
             </props>
         </property>
