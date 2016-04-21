@@ -30,7 +30,7 @@
 <c:set var="option3" value="Don't Know"/>
 <c:set var="option1_sp" value="Si"/>
 <c:set var="option2_sp" value="No"/>
-<c:set var="option3_sp" value="No se"/>
+<c:set var="option3_sp" value="No sé"/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="PSQForm" method="POST" action="PSQMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
@@ -271,7 +271,7 @@
                 <label for="PSQQuestionEntry_1_2_DK">${option3_sp}</label>               
             </fieldset>
         </div>
-        <c:set var="quest2_2" value='¿Alguna vez ha visto a su hijo parar de respirar por la noche?'/>
+        <c:set var="quest2_2" value='¿Alguna vez ha visto a su hijo/a parar de respirar por la noche?'/>
         <input id="PSQQuestion_2_2" name="PSQQuestion_2_2" type="hidden" value="${quest2_2}"/>
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest2_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -284,7 +284,7 @@
                 <label for="PSQQuestionEntry_2_2_DK">${option3_sp}</label>               
             </fieldset>
         </div>
-        <c:set var="quest3_2" value='¿Alguna vez ha visto a su hijo despertarse con un bufido?'/>
+        <c:set var="quest3_2" value='¿Alguna vez ha visto a su hijo/a despertarse con un bufido?'/>
         <input id="PSQQuestion_3_2" name="PSQQuestion_3_2" type="hidden" value="${quest3_2}"/>
         <strong>${quest3_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest3_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -339,7 +339,7 @@
                 <label for="PSQQuestionEntry_5_2_DK">${option3_sp}</label>              
             </fieldset>
         </div>
-        <c:set var="quest6" value='¿Su hijo se queja de dolor de cabeza por las mañanas, cuando se despierta?'/>
+        <c:set var="quest6" value='¿Su hijo/a se queja de dolor de cabeza por las mañanas, cuando se despierta?'/>
         <input id="PSQQuestion_6_2" name="PSQQuestion_6_2" type="hidden" value="${quest6}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
