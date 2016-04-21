@@ -7,6 +7,7 @@ package org.openmrs.module.chica.hl7.immunization;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,7 +76,6 @@ public class ImmunizationRegistryQuery
 {
 	private static Log log = LogFactory.getLog(ImmunizationRegistryQuery.class);
 
-	private static org.openmrs.Encounter encounter = null;
 	private static String CHIRP_NOT_AVAILABLE = "CHIRP_not_available";
 	private static String NOT_IN_CHIRP = "not_in_chirp_registry";
 	private static String NOT_MATCHED = "CHIRP_match_not_found";
@@ -491,7 +491,6 @@ public class ImmunizationRegistryQuery
 				return null;
 			}
 			
-			ImmunizationQueryConstructor.saveFile(dir, vxqString, "vxq_1", encounter);
 			String data = getData(vxqString);
 			log.info("Immunization: vxq = " +  vxqString);
 			if (!OkToQuery){
@@ -544,23 +543,19 @@ public class ImmunizationRegistryQuery
 			if (queryResponse.indexOf("|QCK") > 0){
 				
 				
-				//save the obs and file
+				//save the obs
 				Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_IN_CHIRP, new Date());
-				ImmunizationQueryConstructor.saveFile(dir, queryResponse, "qck", encounter);
 				
 				//create the patient in chirp with VXU if VXU is activated.
 					
 				VXU_V04 vxu = new VXU_V04();
 				ImmunizationQueryConstructor.constructVXU(vxu,encounter); 
 				String vxuString = ImmunizationQueryConstructor.getVXUMessageString(vxu);
-				ImmunizationQueryConstructor.saveFile(dir, vxuString, "vxu", encounter);
 				data = getData(vxuString);
 				
 				//Only send VXU if VXU update is enabled in global property
 				
 				String activateVXUToCreatePatient = adminService.getGlobalProperty("chica.activateVXUToCreatePatient");
-				log.info(" Immunization: Create Patient VXU Activated = " + activateVXUToCreatePatient);
-				log.info(" Immunization: Create Patient VXU String = " + vxuString);
 				if (activateVXUToCreatePatient != null && 
 					(activateVXUToCreatePatient.equalsIgnoreCase("true") 
 							|| activateVXUToCreatePatient.equalsIgnoreCase("yes") 
@@ -576,7 +571,6 @@ public class ImmunizationRegistryQuery
 							logError(CHIRP_UPDATE_FAILED, 
 									 queryResponse, url, encounter.getPatientId());
 						}
-						ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxu_confirm", encounter);
 						
 					} catch (IOException e) {
 						logError(CHIRP_ERROR, 
@@ -623,7 +617,6 @@ public class ImmunizationRegistryQuery
 			
 			if (queryResponseMessage instanceof VXX_V02) {
 				
-				ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxx_1", encounter);
 				
 				//match check
 				
@@ -634,28 +627,38 @@ public class ImmunizationRegistryQuery
 					log.info("Immunization: Patient not matched in CHIRP. Encounter id = " + encounterId);
 					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
-				}
+				}				
+
+				/*CHICA-552 MSHELEY In the past CHIRP has reassigned identifiers and merged patients in their database.
+				 *Before saving SIIS identifier, check if identifier exists for another patient, and void the existing identifier.
+				 */
+				PatientIdentifierType immunIdentifierType = patientService.getPatientIdentifierTypeByName(IMMUNIZATION_REGISTRY);
+				PatientIdentifier chirpIdentifier = matchPatient.getPatientIdentifier(immunIdentifierType);
+				PatientIdentifier chicaIdentifier = chicaPatient.getPatientIdentifier(immunIdentifierType);
 				
-				//Match found..  Save identifier for patient that matches.
-				//Do not save as preferred
-				try {
-					PatientIdentifier identifier = matchPatient.getPatientIdentifier(IMMUNIZATION_REGISTRY);
-					if (identifier != null){
-						identifier.setPreferred(false);
-						chicaPatient.addIdentifier(identifier);
+				if (chicaIdentifier == null || !chirpIdentifier.getIdentifier().equals(chicaIdentifier.getIdentifier())){
+					//Match found..  Save identifier for patient that matches.
+					checkIdentifier(chicaPatient, chirpIdentifier);
+					
+					//Do not save as preferred
+					try {
+
+						chirpIdentifier.setPreferred(false);
+						chicaPatient.addIdentifier(chirpIdentifier);
 						patientService.savePatient(chicaPatient);
+
+					} catch (Exception e) {
+						log.error(Util.getStackTrace(e));
+						//CHICA cannot requery after VXX if SIIS not available - save obs as matching error
+						Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
+						return null;
 					}
-				} catch (Exception e1) {
-					log.error(Util.getStackTrace(e1));
-					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
-					return null;
 				}
 				
 				//Construct the 2nd vxq
 				
 				vxqString = constructor.updateVXQ(vxqString, matchPatient);
 				log.info("Immunization: 2nd Vxq: " +  vxqString);
-				ImmunizationQueryConstructor.saveFile(dir, vxqString, "vxq_2", encounter);
 					
 				//requery
 				
@@ -690,8 +693,6 @@ public class ImmunizationRegistryQuery
 				log.info("Immunization: CHIRP response after requery = " + queryResponse);
 				//VXX 2nd time after requery indicates no confirmed match
 				if (queryResponseMessage instanceof VXX_V02) {
-					ImmunizationQueryConstructor.saveFile(dir, queryResponse, "vxx_2", 
-								encounter);
 					Util.saveObs(chicaPatient, statusConcept, encounterId, NOT_MATCHED, new Date());
 					return null;
 						
@@ -713,8 +714,32 @@ public class ImmunizationRegistryQuery
 				}
 				Util.saveObs(chicaPatient, statusConcept, encounterId, MATCHED,
 						new Date());
-				ImmunizationQueryConstructor.saveFile(dir, queryResponse,
-						"vxr", encounter);
+				
+				/* CHICA-552 MSHELEY  If SIIS is not known, we send VXQ with MRN. 
+				 * Sometimes, CHIRP will return VXR with immediately (skipping VXX) that contains the SIIS identifier. 
+				 * Before saving, check if identifier exists already for different patient.
+				 */
+				PatientIdentifierType immunIdentifierType = patientService.getPatientIdentifierTypeByName(IMMUNIZATION_REGISTRY);
+				PatientIdentifier chirpIdentifier = matchPatient.getPatientIdentifier(immunIdentifierType);
+				PatientIdentifier chicaIdentifier = chicaPatient.getPatientIdentifier(immunIdentifierType);
+				
+				if (chicaIdentifier == null || !chirpIdentifier.getIdentifier().equals(chicaIdentifier.getIdentifier())){
+					
+					checkIdentifier(chicaPatient, chirpIdentifier);
+					
+					//Do not save immunization registry ids as preferred
+					try {
+
+						chirpIdentifier.setPreferred(false);
+						chicaPatient.addIdentifier(chirpIdentifier);
+						patientService.savePatient(chicaPatient);
+
+					} catch (Exception e) {
+						// For VXR, no need to store obs with chica status. Ok to continue adding records to list.
+						log.error(Util.getStackTrace(e));
+					}
+				}
+				
 				createImmunizationList(queryResponse, mrn, encounter
 						.getPatientId());
 				return queryResponse;
@@ -878,7 +903,6 @@ public class ImmunizationRegistryQuery
 		
 		//VXR only has one PID
 		PatientService patientService = Context.getPatientService();
-		PersonService personService = Context.getPersonService();
 		LocationService locationService = Context.getLocationService();
 		Set<Patient> chirpPatients = new HashSet<Patient>();
 		
@@ -940,6 +964,37 @@ public class ImmunizationRegistryQuery
 		}
 
 		return chirpPatients;
+	}
+	
+	/*CHICA-552 -MSHELEY Check if SIIS identifier exists for a different CHICA patient.
+	 *If a different patient exists with this identifier, we need to void that existing identifier, 
+	 *because CHIRP has indicated it is not correct.
+	 */
+	private static void checkIdentifier(Patient chicaPatient, PatientIdentifier identifier){
+		
+		PatientService patientService = Context.getPatientService();
+		
+			try {
+				List<PatientIdentifierType> identifiersTypes = Collections.singletonList(identifier.getIdentifierType());
+				List<PatientIdentifier> allMatchedIdentifiers = patientService.getPatientIdentifiers(identifier.getIdentifier(), identifiersTypes, null, null, false);
+				for (PatientIdentifier matchingIdentifier : allMatchedIdentifiers){
+					
+					if (chicaPatient.getPatientId() != matchingIdentifier.getPatient().getPatientId()){
+						/* Another patient already has this SIIS identifier. This id due to CHIRP changing identifiers."
+						 * Void the existing identifier, since it is no longer correct according to CHIRP.
+						 */
+						log.info("CHIRP SIIS identifier (" + identifier.getIdentifier() + ") for Patient " + chicaPatient.getPatientId()
+								+ " already exists for Patient " +  matchingIdentifier.getPatient().getPatientId() );
+						matchingIdentifier.setVoided(true);
+						matchingIdentifier.setVoidReason("Conflicting immunization registry identifier");
+						matchingIdentifier.setVoidedBy(Context.getAuthenticatedUser());
+						matchingIdentifier.setDateVoided(new Date());
+						patientService.savePatientIdentifier(matchingIdentifier);
+					}
+				}
+			} catch (Exception e) {
+				log.error("Exception verifying and saving CHIRP identifier.", e);
+			}
 	}
 	
 }
