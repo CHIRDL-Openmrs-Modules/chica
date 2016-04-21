@@ -1,6 +1,8 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
-
+<openmrs:require
+    allPrivileges="View Encounters, View Patients, View Concept Classes"
+    otherwise="/login.htm" redirect="/module/chica/chicaNoteTester.form" />
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 
 <form name="input" action="chicaNoteTester.form" method="get">
