@@ -14,7 +14,7 @@ body {
 
 #formContainer {
     width:800px;
-    height:1035px; /* Changed 1045 -> 1109 */
+    height:1035px; /* Changed 1109 -> 1035 */
     margin:0 auto;
     border: 1px solid black;
     background-color:#F5FBEF;
