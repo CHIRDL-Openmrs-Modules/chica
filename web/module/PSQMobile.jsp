@@ -326,7 +326,7 @@
                 <label for="PSQQuestionEntry_4_2_DK">${option3_sp}</label>                
             </fieldset>
         </div>
-        <c:set var="quest5" value='¿Su hijo/a se va durmiendo durante el día?'/>
+        <c:set var="quest5_2" value='¿Su hijo/a se va durmiendo durante el día?'/>
         <input id="PSQQuestion_5_2" name="PSQQuestion_5_2" type="hidden" value="${quest5}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -339,7 +339,7 @@
                 <label for="PSQQuestionEntry_5_2_DK">${option3_sp}</label>              
             </fieldset>
         </div>
-        <c:set var="quest6" value='¿Su hijo/a se queja de dolor de cabeza por las mañanas, cuando se despierta?'/>
+        <c:set var="quest6_2" value='¿Su hijo/a se queja de dolor de cabeza por las mañanas, cuando se despierta?'/>
         <input id="PSQQuestion_6_2" name="PSQQuestion_6_2" type="hidden" value="${quest6}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -374,7 +374,6 @@
 <input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
 <input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
 <input id="language" name="language" type="hidden" value="${language}"/>
-<input id="PSQScore" name="PSQScore" type="hidden"/>
 </form>
 </body>
 </html>
