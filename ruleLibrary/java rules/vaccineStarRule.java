@@ -134,7 +134,7 @@ public class vaccineStarRule implements Rule
 						FormInstance formInstance = new FormInstance();
 						formInstance.setLocationId(locationId);
 						parameters.put("formInstance", formInstance);
-						parameters.put(ChirdlUtilConstants.PARAMETER_3, "true");
+						parameters.put(ChirdlUtilConstants.PARAMETER_3, "false");
 						logicService.eval(patientId, "CREATE_JIT", parameters);
 					}
 
