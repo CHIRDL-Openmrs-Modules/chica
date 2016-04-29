@@ -42,7 +42,7 @@
                 
                 <%@ include file="pwsVitals.jsp" %>
                 
-                <%@ include file="pwsPhysicalExam.jsp" %>
+                <%@ include file="pwsExamExtras.jsp" %>
                                
                 <%@ include file="pwsButtons.jsp" %>
                 
