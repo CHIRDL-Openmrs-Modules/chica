@@ -15,10 +15,13 @@ package org.openmrs.module.chica.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.DecoderException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -68,8 +71,14 @@ public class ServletUtil {
         // Get encoded user and password, comes after "BASIC "
         String userpassEncoded = auth.substring(6);
         // Decode it, using any base 64 decoder
-        sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-        String userpassDecoded = new String(dec.decodeBuffer(userpassEncoded));
+              
+        /**
+         * Edited sun.misc.Base64Decoder to org.apache.commons.codec.binary.Base64.decodeBase64
+         */
+        byte[] bytes = userpassEncoded.getBytes();//"UTF-8");
+		byte[] b = org.apache.commons.codec.binary.Base64.decodeBase64(bytes);
+		String userpassDecoded = new String(b);
+        
         String[] userpass = userpassDecoded.split(":");
         if (userpass.length != 2) {
         	return false;
@@ -103,4 +112,5 @@ public class ServletUtil {
 		
 		pw.write("</" + tagName + ">");
 	}
+	
 }

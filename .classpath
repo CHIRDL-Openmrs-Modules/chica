@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="web/src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="rule"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib-common/antlr/antlr_2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib-common/c3p0/c3p0-0.9.1.jar"/>
@@ -141,5 +142,6 @@
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/dss-2.31.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/atd-2.5.0.jar"/>
+	<classpathentry kind="lib" path="/chicaops/lib-common/chica-1.67.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

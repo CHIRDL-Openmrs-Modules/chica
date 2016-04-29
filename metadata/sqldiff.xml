@@ -3873,6 +3873,19 @@ where action_name='REPRINT';
         ,(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
          </sql>
 	</diff>
+	<diff>  
+        <version>1.7.6</version>  
+        <author>Seema Sarala</author>  
+        <date>April 28, 2016</date>  
+        <description>  
+        CHICA-578 Add Metric/Imperial Location Attribute
+        </description>  
+        <sql>  
+        
+        alter table chirdlutilbackports_location_attribute drop column location_attribute_name;
+        
+        </sql>
+	</diff>
 </sqldiff>
 
 
