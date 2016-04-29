@@ -272,6 +272,9 @@ public class getGrowthChartFilename implements Rule {
 		Concept xAxisConcept = null;
 		for (Obs currObs : obs) {
 			Float xValue = null;
+			/**
+			 * Edited to null check obs date/time before calculating ageInMonths
+			 */
 			Date yAxisDate = currObs.getObsDatetime();
 			if (yAxisDate == null) {
 				continue;
