@@ -288,9 +288,9 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
     <div id="content_3_sp" data-role="content">       
-        <c:set var="quest5" value='Mi hijo(a) es t&iacute;mido(a).'/>
-        <input id="SCAREDQuestion_5_2" name="SCAREDQuestion_50_2" type="hidden" value="${quest5}"/>
-        <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
+        <c:set var="quest5_2" value='Mi hijo(a) es t&iacute;mido(a).'/>
+        <input id="SCAREDQuestion_5_2" name="SCAREDQuestion_5_2" type="hidden" value="${quest5_2}"/>
+        <strong>${quest5_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest5_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="vertical">
                 <input type="radio" name="SCAREDQuestionEntry_5_2" id="SCAREDQuestionEntry_5_2_NT" value="0" data-theme="b" />
