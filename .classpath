@@ -141,6 +141,5 @@
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/dss-2.31.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/atd-2.5.0.jar"/>
-	<classpathentry kind="lib" path="/chicaops/lib-common/chica-1.67.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
