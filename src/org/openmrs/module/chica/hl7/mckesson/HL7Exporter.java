@@ -45,7 +45,7 @@ import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chirdlutil.util.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.FileDateComparator;
 import org.openmrs.module.chirdlutil.util.FileListFilter;
@@ -935,7 +935,7 @@ public class HL7Exporter extends AbstractTask {
 			while ((c = fis.read()) != -1) {
 				bas.write(c);
 			}
-			encodedForm = Base64.byteArrayToBase64(bas.toByteArray(), false);
+			encodedForm = byteArrayToBase64(bas.toByteArray(), false);
 
 			fis.close();
 			bas.flush();
@@ -950,6 +950,16 @@ public class HL7Exporter extends AbstractTask {
 		return encodedForm;
 
 	}
+	
+	/**
+     * Added to replace org.openmrs.module.chirdlutil.util.Base64
+     */
+	public static String byteArrayToBase64(byte[] a, boolean alternate) {
+	      
+    	byte[] encodedBtyeArray = Base64.encodeBase64(a, alternate);
+    	String result = javax.xml.bind.DatatypeConverter.printBase64Binary(encodedBtyeArray);
+        return result;
+    }
 
 	private void addOBRSegment(HL7MessageConstructor constructor, Encounter openmrsEncounter,
 			String batteryName, int orderRep) {
