@@ -952,11 +952,14 @@ public class HL7Exporter extends AbstractTask {
 	}
 	
 	/**
-     * Added to replace org.openmrs.module.chirdlutil.util.Base64
+     * Encodes binary data using Base64 algorithm 
+     * @return result: the byte array to a String value
+     * @param bArray is file byte array output stream
+     * @param alternate is the boolean value for chunking the output into 76 character blocks
      */
-	public static String byteArrayToBase64(byte[] a, boolean alternate) {
+	public static String byteArrayToBase64(byte[] bArray, boolean alternate) {
 	      
-    	byte[] encodedBtyeArray = Base64.encodeBase64(a, alternate);
+    	byte[] encodedBtyeArray = Base64.encodeBase64(bArray, alternate);
     	String result = javax.xml.bind.DatatypeConverter.printBase64Binary(encodedBtyeArray);
         return result;
     }
