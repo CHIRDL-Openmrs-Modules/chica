@@ -200,6 +200,4 @@
                         </div>
                     </div>
                   
-                  <%@ include file="pwsExamExtras.jsp" %>
-                  
                 </div>
