@@ -72,7 +72,6 @@ public class ServletUtil {
         /**
          * Edited sun.misc.Base64Decoder to org.apache.commons.codec.binary.Base64.decodeBase64
          */
-        
         byte[] bytes = userpassEncoded.getBytes();//"UTF-8");
 		byte[] b = org.apache.commons.codec.binary.Base64.decodeBase64(bytes);
 		String userpassDecoded = new String(b);
