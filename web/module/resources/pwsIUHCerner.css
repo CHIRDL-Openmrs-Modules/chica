@@ -3,37 +3,12 @@
  */
 @import 'pws.css';
 
-#infoRight {
-    width:452px;
-    float:right;
-    padding:2px;
-    border-bottom: 1px solid black;
-}
-
-
 #vitals {
     width:480px; 
     height:305px;
     float:left;
     border-left: none;
     padding-bottom: 32px;
-}
-
-.flagCell {
-    width:15px;
-    text-align:center;
-    float:left;
-    color:red;
-    
-    font-size: small; /* Adding to correct an issue when zooming */
-}
-
-.vitalsNames {
-    float:left;
-    width:85px;
-    height: 18px;
-    text-align:right;
-    border-left:1px solid black;
 }
 
 .vitalsValues {
@@ -43,25 +18,6 @@
     margin-left:5px;
     text-align:left;
     
-}
-
-#vitalsLegend {
-    width:800px;
-    border-left: 1px solid black;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
-    float:left;
-    margin-left:-1px;
-    height:40px;
-    text-align:center;
-    font-size:0.8em;
-    padding-top:2px;
-    padding-bottom: 5px;
-    
-    /* Adding to fix issues when zooming out 
-    margin-right: -1px;
-    margin-bottom: -1px;
-    */
 }
 
 #buttons {
@@ -78,49 +34,6 @@
         margin-top:5px; 
         height:332px; 
     }
-}
-
-.questionContainer {
-    float:left;
-    width:400px;
-    height:160px;
-    font-size:0.88em;
-    padding-top:10px;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-.questionStem {
-    padding:2px 5px 2px 5px;
-    width:390px;
-    height:65px;
-    
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-.answerContainer {
-    float:left;
-    padding:2px;
-    width:195px;
-    height:88px;
-    
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-#submitButtonBottom {
-    margin-top:16px;
-}
-
-#submitContainer {
-	position:relative;
-    width:800px;
-    height:50px;
-    text-align:center;
-    bottom: 0;
 }
 
 #notesButton{
