@@ -272,8 +272,15 @@ public class getGrowthChartFilename implements Rule {
 		Concept xAxisConcept = null;
 		for (Obs currObs : obs) {
 			Float xValue = null;
+			/**
+			 * Edited to null check obs date/time before calculating ageInMonths
+			 */
+			Date yAxisDate = currObs.getObsDatetime();
+			if (yAxisDate == null) {
+				continue;
+			}
 			Float ageInMonths = Float.parseFloat(Integer.toString(org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate,
-			    currObs.getObsDatetime(), Util.MONTH_ABBR)));
+					yAxisDate, Util.MONTH_ABBR)));
 			// Need to sort out any obs that don't fall into the age range.
 			if (growthChart.getAgeInMonthsMin() > ageInMonths || growthChart.getAgeInMonthsMax() <= ageInMonths) {
 				continue;
@@ -282,7 +289,7 @@ public class getGrowthChartFilename implements Rule {
 			// We have to handle AGE explicitly because it's not tied to a particular concept.
 			if ("AGE".equals(conceptXAxis.getName())) {
 				ageInDays = Float.parseFloat(Integer.toString(org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate,
-				    currObs.getObsDatetime(), Util.DAY_ABBR)));
+						yAxisDate, Util.DAY_ABBR)));
 				xValue = ageInDays;
 			} else {
 				// Get the obs for the x axis for the same encounter
