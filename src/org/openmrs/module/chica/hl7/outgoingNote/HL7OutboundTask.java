@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.sockethl7listener.HL7SocketHandler;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -37,18 +36,12 @@ public class HL7OutboundTask extends AbstractTask
 			if (host == null)
 			{
 				log.error("Could not start " + this.getClass().getName() + ". Host has not been set.");
-				
-				// TODO DWE CHICA-636 What happens here
-				// call shutdown here?
 				return;
 			}
 			
 			if(portString == null)
 			{
 				log.error("Could not start " + this.getClass().getName() + ". Port has not been set.");
-				
-				// TODO DWE CHICA-636 What happens here
-				// call shutdown here?
 				return;
 			}
 
@@ -69,9 +62,6 @@ public class HL7OutboundTask extends AbstractTask
 		catch(Exception e)
 		{
 			log.error("Error starting " + this.getClass().getName() + "...", e);
-			
-			// TODO DWE CHICA-636 What happens here
-			// call shutdown here?
 			return;
 		}
 		
@@ -88,8 +78,6 @@ public class HL7OutboundTask extends AbstractTask
 			
 			hl7OutboundHandler = new HL7OutboundHandler(host, port, socketReadTimeout);
 			new Thread(hl7OutboundHandler).start();
-			//Thread hl7OutboundThread = new Thread(hl7OutboundHandler);
-			//hl7OutboundThread.start();
 			
 			log.error("Finished starting HL7OutboundHandler.");
 		} 
@@ -110,7 +98,6 @@ public class HL7OutboundTask extends AbstractTask
 	@Override 
 	public void shutdown()
 	{
-		//socketHandler.closeSocket();
 		hl7OutboundHandler.setKeepRunning(false);
 		super.shutdown();
 	}

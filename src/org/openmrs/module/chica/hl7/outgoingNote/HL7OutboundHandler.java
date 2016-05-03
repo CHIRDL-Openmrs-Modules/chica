@@ -4,24 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.module.atd.util.ConceptDescriptor;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.sockethl7listener.HL7SocketHandler;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
-import org.openmrs.scheduler.TaskDefinition;
-import org.openmrs.scheduler.tasks.AbstractTask;
+
 
 /**
  * DWE CHICA-636
@@ -36,7 +29,6 @@ public class HL7OutboundHandler implements Runnable
 	private String host;
 	private Integer port;
 	private Integer socketReadTimeout;
-	private HL7SocketHandler socketHandler;
 	private boolean keepRunning = true;
 	private Socket socket;
 	private OutputStream os = null;
