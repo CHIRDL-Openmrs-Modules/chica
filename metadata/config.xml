@@ -411,7 +411,7 @@
         </description>
     </globalProperty>
     <globalProperty>
-        <property>chica.chica.outgoingNoteTXADocumentAvailabilityStatus</property>
+        <property>chica.outgoingNoteTXADocumentAvailabilityStatus</property>
         <defaultValue>UV</defaultValue>
         <description>Value to include in TXA-19 of the outgoing physician note.
         </description>
