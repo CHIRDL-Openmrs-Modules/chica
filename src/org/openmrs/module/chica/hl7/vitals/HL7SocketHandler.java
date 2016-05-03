@@ -44,6 +44,8 @@ import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
+import ca.uhn.hl7v2.model.v25.message.ADT_A01;
+import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 
 /**
  * 
@@ -153,8 +155,21 @@ public class HL7SocketHandler implements Application {
 				error = processMessageSegments(message, incomingMessageString,startTime);
 			}
 			try {
-				ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-				response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
+				if (message instanceof ca.uhn.hl7v2.model.v25.message.ORU_R01 || message instanceof ca.uhn.hl7v2.model.v25.message.ADT_A01)
+				{
+					ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
+					response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
+				}
+				else if(message instanceof ca.uhn.hl7v2.model.v23.message.ORU_R01)
+				{
+					ca.uhn.hl7v2.model.v23.segment.MSH msh = HL7ObsHandler23.getMSH((ca.uhn.hl7v2.model.v23.message.ORU_R01)message);
+					response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
+				}
+				else
+				{
+					response = null;
+				}
+				
 			}
 			catch (IOException e) {
 				logger.error("Error creating ACK message." + e.getMessage());
