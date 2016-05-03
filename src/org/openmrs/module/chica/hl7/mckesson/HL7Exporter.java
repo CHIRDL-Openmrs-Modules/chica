@@ -954,8 +954,8 @@ public class HL7Exporter extends AbstractTask {
 	/**
      * Encodes binary data using Base64 algorithm 
      * @return result: the byte array to a String value
-     * @param bArray is file byte array output stream
-     * @param alternate is the boolean value for chunking the output into 76 character blocks
+     * @param bArray: file byte array output stream
+     * @param alternate: the boolean value for chunking the output into 76 character blocks
      */
 	public static String byteArrayToBase64(byte[] bArray, boolean alternate) {
 	      
