@@ -71,7 +71,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * 
  * @author Steve McKee
  */
-public class ExportPowerNote implements ProcessStateAction {
+public class ExportPhysicianNote implements ProcessStateAction {
 	
 	private static final String TXA_DOCUMENT_COMPLETION_STATUS = "A";
 	private static final String TXA_DOCUMENT_CONFIDENTIALITY_STATUS = "U";
@@ -425,12 +425,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			}
 			else
 			{
-				Integer uniqueId = -1;
-				while(uniqueId < 0){
-					uniqueId = Util.GENERATOR.nextInt();
-				}
-				
-				txa16Value = uniqueId.toString();
+				txa16Value = String.valueOf(Util.GENERATOR.nextInt(Integer.MAX_VALUE));
 			}
 			
 			txa.getUniqueDocumentNumber().getEntityIdentifier().setValue(txa16Value);
