@@ -392,6 +392,36 @@
         <description>Whether or not the manual checkin option is available on the patient greaseboard.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteHost</property>
+        <defaultValue>localhost</defaultValue>
+        <description>IP address of where to send the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNotePort</property>
+        <defaultValue>0</defaultValue>
+        <description>Port to send the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteIncludePV1</property>
+        <defaultValue>false</defaultValue>
+        <description>Set to true to allow a PV1 segment to be added to the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.chica.outgoingNoteTXADocumentAvailabilityStatus</property>
+        <defaultValue>UV</defaultValue>
+        <description>Value to include in TXA-19 of the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteTXAUniqueDocumentNumber</property>
+        <defaultValue>uniqueId</defaultValue>
+        <description>Value to include in TXA-16 of the outgoing physician note.
+        </description>
+    </globalProperty>
    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
