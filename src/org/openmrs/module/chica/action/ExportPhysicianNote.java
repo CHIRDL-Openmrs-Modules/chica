@@ -394,7 +394,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			
 			// DWE CHICA-636 Added global property for TXA-16
 			// Property should be set to "PROVIDER_ID", which matches a concept in the DB
-			// Will default to unique ID if no value is specified in the global properties
+			// Will default to empty if no value is specified in the global properties
 			// This should make it flexible enough to add other options for TXA-16 in the future
 			String txa16Value = "";
 			String propertProviderID = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_TXA_UNIQUE_DOC_NUMBER);
@@ -423,12 +423,9 @@ public class ExportPhysicianNote implements ProcessStateAction {
 					log.error("Error occurred while adding " + PROPERTY_TXA_16_PROVIDER_ID + " to TXA segment.", e);
 				}
 			}
-			else
-			{
-				txa16Value = String.valueOf(Util.GENERATOR.nextInt(Integer.MAX_VALUE));
-			}
 			
-			txa.getUniqueDocumentNumber().getEntityIdentifier().setValue(txa16Value);
+			txa.getUniqueDocumentNumber().getEntityIdentifier().setValue(String.valueOf(Util.GENERATOR.nextInt(Integer.MAX_VALUE)));
+			txa.getUniqueDocumentFileName().setValue(txa16Value); // NOTE: We are using Mirth to add additional components to this field
 			txa.getDocumentCompletionStatus().setValue(TXA_DOCUMENT_COMPLETION_STATUS);
 			txa.getDocumentConfidentialityStatus().setValue(TXA_DOCUMENT_CONFIDENTIALITY_STATUS);
 			txa.getDocumentAvailabilityStatus().setValue(availabilityStatus);
