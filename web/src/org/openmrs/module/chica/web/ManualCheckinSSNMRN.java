@@ -2,13 +2,16 @@ package org.openmrs.module.chica.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientIdentifierException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -26,7 +29,9 @@ public class ManualCheckinSSNMRN {
 	private static final String XML_RESULT_END = "</result>";
 	private static final String XML_TRUE = "true";
 	private static final String XML_FALSE = "false";
-	
+	private static final String XML_SESSION_RESULT_START = "<sessionResult>";
+	private static final String XML_SESSION_RESULT_END = "</sessionResult>";
+
 	public static void verifyMRN(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
 		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL,
@@ -56,12 +61,29 @@ public class ManualCheckinSSNMRN {
 			log.error("Error validating MRN: " + mrn);
 		}
 		
+		EncounterService encounterService = Context.getEncounterService();
+		List<Encounter> encounters = encounterService.getEncountersByPatientIdentifier(mrn);
+		int encounterSize = encounters.size();
+				
 		if (valid) {
 			pw.write(XML_RESULT_START + XML_TRUE + XML_RESULT_END);
 		} else {
 			pw.write(XML_RESULT_START + XML_FALSE + XML_RESULT_END);
 		}
 		
+		boolean sessionValid = false;
+
+		if (encounterSize != 0) {
+			sessionValid = true;
+		}
+		
+		if (sessionValid) {
+			pw.write(XML_SESSION_RESULT_START + XML_TRUE + XML_SESSION_RESULT_END);
+		}else{
+			pw.write(XML_SESSION_RESULT_START + XML_FALSE + XML_SESSION_RESULT_END);
+		}
 		pw.write(XML_MRN_VERIFICATION_END);
+
 	}
+	
 }

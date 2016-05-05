@@ -495,6 +495,9 @@ function checkPrintHandoutsMRN() {
 	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleVerifyPrintHandoutsMRNAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
+			  
+			  var form = $(this).closest("form");
+			  var patientId = form.find("input[name=greaseBoardPatientId]").val();
 	          verifyPrintHandoutsMRN(xml);
 	      }
 	  });
@@ -762,7 +765,8 @@ function verifyPrintHandoutsMRN(responseXML) {
         $("#printHandoutsMrnError").show("highlight", 750);
     } else {
     	var result = $(responseXML).find("result").text();
-        if (result == "true") {
+		var sessionResult = $(responseXML).find("sessionResult").text();
+		if (result == "true" && sessionResult == "true") {
         	$("#printHandoutsMrnError").hide();
         	$("#patientId").val("");
         	$("#sessionId").val("");
@@ -776,8 +780,12 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#printHandoutsMRNDialog").dialog("close");
         	$("#printHandoutsMRNDialog").dialog("option", "hide", { effect: "fade", duration: 500 } );
         	$("#force-print-dialog").dialog("open");
-        } else {
+        } else if (result == "false"){
         	$("#printHandoutsMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
+            $("#printHandoutsMrnError").show("highlight", 750);
+        } else if (sessionResult == "false"){
+			var mrn = $("#printHandoutsMrnLookup").val();
+        	$("#printHandoutsMrnMessage").html("<p><b>Patient "+ mrn +" does exist in the CHICA system with a valid encounter.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
             $("#printHandoutsMrnError").show("highlight", 750);
         }
     }
