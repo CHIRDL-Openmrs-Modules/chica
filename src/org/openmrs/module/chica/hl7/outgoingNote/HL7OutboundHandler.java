@@ -1,6 +1,5 @@
 package org.openmrs.module.chica.hl7.outgoingNote;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -20,8 +19,6 @@ import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
  * DWE CHICA-636
  * Scheduled task to send sockethl7listener_hl7_out_queue records
  * Task will query for records for the specified host and port (destination)
- * @author davely
- *
  */
 public class HL7OutboundHandler implements Runnable
 {
@@ -29,20 +26,18 @@ public class HL7OutboundHandler implements Runnable
 	private String host;
 	private Integer port;
 	private Integer socketReadTimeout;
+	private Integer sleepTime;
 	private boolean keepRunning = true;
 	private Socket socket;
 	private OutputStream os = null;
 	private InputStream is = null;
 	
-	private static final String HL7_START_OF_MESSAGE = "\u000b";
-    private static final String HL7_SEGMENT_SEPARATOR = "\r";
-    private static final String HL7_END_OF_MESSGAE = "\u001c";
-	
-	public HL7OutboundHandler(String host, Integer port, Integer socketReadTimeout)
+	public HL7OutboundHandler(String host, Integer port, Integer socketReadTimeout, Integer sleepTime)
 	{
 		this.host = host;
 		this.port = port;
 		this.socketReadTimeout = socketReadTimeout;
+		this.sleepTime = sleepTime;
 	}
 	
 	@Override
@@ -73,7 +68,7 @@ public class HL7OutboundHandler implements Runnable
 					closeSocket();
 				}
 				
-				Thread.sleep(1000); // TODO CHICA-636
+				Thread.sleep(sleepTime * 1000);
 			}
 		}
 		catch(ContextAuthenticationException e)
@@ -110,15 +105,20 @@ public class HL7OutboundHandler implements Runnable
 		return null;
 	}
 	
+	/**
+	 * Sends the message and updates the ack_received field if it was successfully sent
+	 * @param hl7Outbound
+	 * @param socketHL7ListenerService
+	 */
 	private void sendMessage(HL7Outbound hl7Outbound, SocketHL7ListenerService socketHL7ListenerService)
 	{
 		try
 		{
 			if (os != null)
 			{
-				os.write(HL7_START_OF_MESSAGE.getBytes() );
+				os.write(ChirdlUtilConstants.HL7_START_OF_MESSAGE.getBytes() );
 				os.write(hl7Outbound.getHl7Message().getBytes());
-				os.write(HL7_END_OF_MESSGAE.getBytes() );
+				os.write(ChirdlUtilConstants.HL7_END_OF_MESSGAE.getBytes() );
 				os.write(13);
 				os.flush();
 			}
@@ -159,9 +159,8 @@ public class HL7OutboundHandler implements Runnable
 	
 	/**
 	 * Open socket for host and port
-	 * @throws IOException
 	 */
-	private void openSocket() throws IOException
+	private void openSocket()
 	{
 		try 
 		{
@@ -201,13 +200,17 @@ public class HL7OutboundHandler implements Runnable
 		 }
 	 }
 	 
+	 /**
+	  * Read ACK from the input stream
+	  * @return
+	  */
 	 private String readAck()
 	 {
 		 try
 		 {
 			 StringBuffer stringbuffer = new StringBuffer();
 			 int i = 0;
-			 do 
+			 while(i != 28)
 			 {
 				 i = is.read();
 				 if (i == -1)
@@ -216,8 +219,7 @@ public class HL7OutboundHandler implements Runnable
 				 }
 
 				 stringbuffer.append((char) i);
-			 }
-			 while (i != 28);        
+			 }       
 			 return stringbuffer.toString();
 		 } 
 		 catch (Exception e) 
