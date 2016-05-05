@@ -495,7 +495,7 @@ function checkPrintHandoutsMRN() {
 	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleVerifyPrintHandoutsMRNAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
-			verifyPrintHandoutsMRN(xml);
+	          verifyPrintHandoutsMRN(xml);
 	      }
 	  });
 }
