@@ -18,17 +18,23 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.StringReader;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -39,18 +45,23 @@ import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
+import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
+import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 
 import ca.uhn.hl7v2.model.v25.datatype.TX;
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
 import ca.uhn.hl7v2.model.v25.segment.PID;
+import ca.uhn.hl7v2.model.v25.segment.PV1;
 import ca.uhn.hl7v2.model.v25.segment.EVN;
 import ca.uhn.hl7v2.model.v25.segment.TXA;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -60,8 +71,14 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * 
  * @author Steve McKee
  */
-public class ExportPowerNote implements ProcessStateAction {
+public class ExportPhysicianNote implements ProcessStateAction {
 	
+	private static final String TXA_DOCUMENT_COMPLETION_STATUS = "A";
+	private static final String TXA_DOCUMENT_CONFIDENTIALITY_STATUS = "U";
+	private static final String TXA_DOCUMENT_STORAGE_STATUS = "AC";
+	private static final String TXA_DOCUMENT_CONTENT_PRESENTATION = "FT";
+	private static final String CHICA_POWER_NOTE_CONCEPT = "112358"; //Code for Power Note-CHICA
+
 	private static final String PHYSICIAN_NOTE = "PhysicianNote";
 	
 	private static final String PRODUCE = "PRODUCE";
@@ -69,6 +86,14 @@ public class ExportPowerNote implements ProcessStateAction {
 	private static final String MODE = "mode";
 	
 	private Log log = LogFactory.getLog(this.getClass());
+	
+	private static final String DEFAULT_HOST = "localhost";
+	private static final Integer DEFAULT_PORT = 0;
+	private static final String TXA_ID = "1";
+	private static final String PV1_PATIENT_CLASS = "Outpatient";
+	private static final String DEFAULT_TXA_19 = "AV";
+	private static final String PROPERTY_TXA_16_PROVIDER_ID = "PROVIDER_ID";
+	private static final String MSH_PROCESSING_ID = "P"; // Production;
 	
 	/**
 	 * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#changeState(org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState,
@@ -104,13 +129,10 @@ public class ExportPowerNote implements ProcessStateAction {
 		
 		Result result = dssService.runRule(patient, rule);
 		String note = result.toString();
-		String dataTypeAbbreviation = "TX";
-		String conceptName = "112358";//Code for Power Note-CHICA
-		String resultStatusValue = "F";
 		
-		String message = createOutgoingHL7(encounterId, note, dataTypeAbbreviation, conceptName, resultStatusValue);
+		String message = createOutgoingHL7(encounterId, note, ChirdlUtilConstants.HL7_DATATYPE_TX, CHICA_POWER_NOTE_CONCEPT, ChirdlUtilConstants.HL7_RESULT_STATUS);
 		
-		writeHL7File(message);
+		createHL7OutboundRecord(message, encounterId); // DWE CHICA-636 Store message in the sockethl7listner_hl7_out_queue to be processed by the scheduled task
 		
 		StateManager.endState(patientState);
 		
@@ -179,6 +201,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			
 			addSegmentMSH(openmrsEncounter, mdm);
 			addSegmentPID(openmrsEncounter.getPatient(), mdm);
+			addSegmentPV1(openmrsEncounter, mdm); // DWE CHICA-636 Add PV1 segment
 			addSegmentEVN(openmrsEncounter, mdm);
 			addSegmentTXA(openmrsEncounter, conceptName, mdm);
 			BufferedReader reader = null;
@@ -221,32 +244,24 @@ public class ExportPowerNote implements ProcessStateAction {
 	private MSH addSegmentMSH(Encounter enc, MDM_T02 mdm) {
 		
 		MSH msh = mdm.getMSH();
-		String ourApplication = "CHICA";
-		String ourFacility = enc.getLocation().getName();
-		String messageCode = "MDM";
-		String messageStructure = "T02";
-		String version = "2.2";
-		String processing_id = "T";
 		
 		// Get current date
-		String dateFormat = "yyyyMMddHHmmss";
-		SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-		String formattedDate = formatter.format(new Date());
+		String formattedDate = DateUtil.formatDate(new Date(), ChirdlUtilConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
 		
 		try {
-			msh.getFieldSeparator().setValue("|");
-			msh.getEncodingCharacters().setValue("^~\\&");
+			msh.getFieldSeparator().setValue(ChirdlUtilConstants.HL7_FIELD_SEPARATOR);
+			msh.getEncodingCharacters().setValue(ChirdlUtilConstants.HL7_ENCODING_CHARS);
 			msh.getDateTimeOfMessage().getTime().setValue(formattedDate);
 			
-			msh.getSendingApplication().getNamespaceID().setValue(ourApplication);
-			msh.getSendingFacility().getNamespaceID().setValue(ourFacility);
-			msh.getMessageType().getMessageCode().setValue(messageCode);
-			msh.getMessageType().getTriggerEvent().setValue(messageStructure);
+			msh.getSendingApplication().getNamespaceID().setValue(ChirdlUtilConstants.CONCEPT_CLASS_CHICA);
+			msh.getSendingFacility().getNamespaceID().setValue(enc.getLocation().getName());
+			msh.getMessageType().getMessageCode().setValue(ChirdlUtilConstants.HL7_MDM);
+			msh.getMessageType().getTriggerEvent().setValue(ChirdlUtilConstants.HL7_EVENT_CODE_T02);
 			msh.getMessageControlID().setValue("");
-			msh.getVersionID().getVersionID().setValue(version);
+			msh.getVersionID().getVersionID().setValue(ChirdlUtilConstants.HL7_VERSION_2_2);
 			
-			msh.getProcessingID().getProcessingID().setValue(processing_id);
-			msh.getMessageControlID().setValue(ourApplication + "-" + formattedDate);
+			msh.getProcessingID().getProcessingID().setValue(MSH_PROCESSING_ID);
+			msh.getMessageControlID().setValue(ChirdlUtilConstants.CONCEPT_CLASS_CHICA + "-" + formattedDate);
 			
 		}
 		catch (Exception e) {
@@ -259,12 +274,7 @@ public class ExportPowerNote implements ProcessStateAction {
 	public PID addSegmentPID(Patient pat, MDM_T02 mdm) {
 		
 		PID pid = mdm.getPID();
-		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-		Date dob = pat.getBirthdate();
-		String dobStr = "";
-		if (dob != null)
-			dobStr = df.format(dob);
-		
+	
 		try {
 			// Name
 			pid.getPatientName(0).getFamilyName().getSurname().setValue(pat.getFamilyName());
@@ -290,7 +300,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			pid.getAdministrativeSex().setValue(pat.getGender());
 			
 			// dob
-			pid.getDateTimeOfBirth().getTime().setValue(dobStr);
+			pid.getDateTimeOfBirth().getTime().setValue(DateUtil.formatDate(pat.getBirthdate(), ChirdlUtilConstants.DATE_FORMAT_yyyy_MM_dd));
 			pid.getSetIDPID().setValue("1");
 			
 			
@@ -332,7 +342,7 @@ public class ExportPowerNote implements ProcessStateAction {
 			obx.getSetIDOBX().setValue(String.valueOf(obsRep + 1));
 			obx.getValueType().setValue(hl7Abbreviation);
 			obx.getObservationIdentifier().getIdentifier().setValue(name);
-			obx.getObservationResultStatus().setValue("F");
+			obx.getObservationResultStatus().setValue(ChirdlUtilConstants.HL7_RESULT_STATUS);
 			
 			TX tx = new TX(mdm);
 			tx.setValue(value);
@@ -348,18 +358,10 @@ public class ExportPowerNote implements ProcessStateAction {
 	
 	public EVN addSegmentEVN(Encounter encounter, MDM_T02 mdm) {
 		EVN evn = null;
-		String dateFormat = "yyyyMMddHHmm";
 		try {
 			evn = mdm.getEVN();
-			evn.getEventTypeCode().setValue("T02");
-			
-			SimpleDateFormat df = new SimpleDateFormat(dateFormat);
-			Date encounterDate = encounter.getEncounterDatetime();
-			String dateString = "";
-			if (encounterDate != null)
-				dateString = df.format(encounterDate);
-			evn.getRecordedDateTime().getTime().setValue(dateString);
-			
+			evn.getEventTypeCode().setValue(ChirdlUtilConstants.HL7_EVENT_CODE_T02);
+			evn.getRecordedDateTime().getTime().setValue(DateUtil.formatDate(encounter.getEncounterDatetime(), ChirdlUtilConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm));	
 		}
 		catch (Exception e) {
 			log.error("Exception constructing EVN segment for concept.", e);
@@ -369,36 +371,178 @@ public class ExportPowerNote implements ProcessStateAction {
 	}
 	
 	public TXA addSegmentTXA(Encounter encounter, String conceptName, MDM_T02 mdm) {
+		
+		// DWE CHICA-636 Added global property for TXA-19
+		AdministrationService adminService = Context.getAdministrationService();
+		String availabilityStatus = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_TXA_DOC_AVAILABILITY_STATUS);
+		if(availabilityStatus == null || availabilityStatus.isEmpty())
+		{
+			availabilityStatus = DEFAULT_TXA_19;
+		}
+		
 		TXA txa = null;
-		String dateFormat = "yyyyMMddHHmm";
 		try {
 			txa = mdm.getTXA();
-			SimpleDateFormat df = new SimpleDateFormat(dateFormat);
-			Date encounterDate = encounter.getEncounterDatetime();
-			String dateString = "";
-			if (encounterDate != null)
-				dateString = df.format(encounterDate);
 			
-			txa.getSetIDTXA().setValue("1");
+			String dateString = DateUtil.formatDate(encounter.getEncounterDatetime(), ChirdlUtilConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm);
+			
+			txa.getSetIDTXA().setValue(TXA_ID);
 			txa.getDocumentType().setValue(conceptName);
-			txa.getDocumentContentPresentation().setValue("FT");
+			txa.getDocumentContentPresentation().setValue(TXA_DOCUMENT_CONTENT_PRESENTATION);
 			txa.getActivityDateTime().getTime().setValue(dateString);
 			txa.getOriginationDateTime().getTime().setValue(dateString);
-			Integer uniqueId = -1;
 			
-			while(uniqueId < 0){
-				uniqueId = Util.GENERATOR.nextInt();
+			// DWE CHICA-636 Added global property for TXA-16
+			// Property should be set to "PROVIDER_ID", which matches a concept in the DB
+			// Will default to empty if no value is specified in the global properties
+			// This should make it flexible enough to add other options for TXA-16 in the future
+			String txa16Value = "";
+			String propertProviderID = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_TXA_UNIQUE_DOC_NUMBER);
+			if(PROPERTY_TXA_16_PROVIDER_ID.equalsIgnoreCase(propertProviderID))
+			{
+				try
+				{
+					ObsService obsService = Context.getObsService();
+					List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+					encounters.add(encounter);
+					List<Concept> questions = new ArrayList<Concept>();
+					
+					ConceptService conceptService = Context.getConceptService();
+					Concept concept = conceptService.getConcept(propertProviderID);
+					questions.add(concept);
+					List<Obs> obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
+							null, null, null, null, false);
+					
+					if(obs != null && obs.size() > 0)
+					{
+						txa16Value = obs.get(0).getValueText();
+					}	
+				}
+				catch(Exception e)
+				{
+					log.error("Error occurred while adding " + PROPERTY_TXA_16_PROVIDER_ID + " to TXA segment.", e);
+				}
 			}
-			txa.getUniqueDocumentNumber().getEntityIdentifier().setValue(uniqueId.toString());
-			txa.getDocumentCompletionStatus().setValue("A");
-			txa.getDocumentConfidentialityStatus().setValue("U");
-			txa.getDocumentAvailabilityStatus().setValue("AV");
-			txa.getDocumentStorageStatus().setValue("AC");
+			
+			txa.getUniqueDocumentNumber().getEntityIdentifier().setValue(String.valueOf(Util.GENERATOR.nextInt(Integer.MAX_VALUE)));
+			txa.getUniqueDocumentFileName().setValue(txa16Value); // NOTE: We are using Mirth to add additional components to this field
+			txa.getDocumentCompletionStatus().setValue(TXA_DOCUMENT_COMPLETION_STATUS);
+			txa.getDocumentConfidentialityStatus().setValue(TXA_DOCUMENT_CONFIDENTIALITY_STATUS);
+			txa.getDocumentAvailabilityStatus().setValue(availabilityStatus);
+			txa.getDocumentStorageStatus().setValue(TXA_DOCUMENT_STORAGE_STATUS);
 		}
 		catch (Exception e) {
-			log.error("Exception constructing EVN segment for concept.", e);
+			log.error("Exception constructing TXA segment for concept.", e);
 		}
 		return txa;
 		
+	}
+	
+	/**
+	 * DWE CHICA-636
+	 * Create PV1 segment if the global property is set to true
+	 * @param encounter
+	 * @param mdm
+	 * @return
+	 */
+	private PV1 addSegmentPV1(Encounter encounter, MDM_T02 mdm)
+	{
+		AdministrationService adminService = Context.getAdministrationService();
+		String includePV1 = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_INCLUDE_PV1);
+		if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(includePV1))
+		{
+			try
+			{
+				ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);			
+				EncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER);
+				EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByAttribute(encounter.getEncounterId(), encounterAttribute);
+
+				if(encounterAttributeValue == null)
+				{
+					log.error("Error creating PV1 segment for outgoing note. Unable to locate " + ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER + " attribute for encounterId: " + encounter.getId());		
+					return null;
+				}
+
+				PV1 pv1 = null;
+
+				pv1 = mdm.getPV1();
+				pv1.getSetIDPV1().setValue(TXA_ID);
+				pv1.getPatientClass().setValue(PV1_PATIENT_CLASS);
+				pv1.getVisitNumber().getIDNumber().setValue(encounterAttributeValue.getValueText());
+
+				return pv1;
+
+			}
+			catch(Exception e)
+			{
+				log.error("Exception constructing PV1 segment for outgoing note.", e);
+			}
+		}
+
+		return null;
+	}
+	
+	/**
+	 * DWE CHICA-636 Store the outbound note in the sockethl7listener_hl7_out_queue table
+	 * so that it can be sent by the scheduled task
+	 * 
+	 * @param message
+	 * @param encounterId
+	 */
+	private void createHL7OutboundRecord(String message, Integer encounterId)
+	{
+		AdministrationService adminService = Context.getAdministrationService();
+		String host = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_HOST);
+		String portString = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_PORT);
+		Integer port;
+		
+		// If host and port are not set, allow the record to be created with localhost and port 0
+		if (host == null || host.isEmpty())
+		{
+			log.error("Error creating HL7Outbound record. Host has not been set.");
+			host = DEFAULT_HOST;
+		}
+		
+		if(portString == null || portString.isEmpty())
+		{
+			log.error("Error creating HL7Outbound record. Port has not been set.");
+			port = DEFAULT_PORT;
+		}
+		
+		try
+		{
+			port = Integer.parseInt(portString);
+		}
+		catch(NumberFormatException e)
+		{
+			log.error("Error creating HL7Outbound record. Port is not in a valid numeric format.");
+			return;
+		}
+		
+		try
+		{
+			EncounterService encounterService = Context.getService(EncounterService.class);
+			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);
+			SocketHL7ListenerService socketHL7ListenerService = Context.getService(SocketHL7ListenerService.class);
+			
+			if(openmrsEncounter == null)
+			{
+				log.error("Error creating HL7Outbound record. Unable to locate encounterId: " + encounterId);
+				return;
+			}
+			
+			HL7Outbound hl7Outbound = new HL7Outbound();
+			hl7Outbound.setHl7Message(message);
+			hl7Outbound.setEncounter(openmrsEncounter);
+			hl7Outbound.setAckReceived(null);
+			hl7Outbound.setPort(port);
+			hl7Outbound.setHost(host); 
+			
+			socketHL7ListenerService.saveMessageToDatabase(hl7Outbound);
+		}
+		catch(Exception e)
+		{
+			log.error("Error creating HL7Outbound record.", e);
+		}
 	}
 }
