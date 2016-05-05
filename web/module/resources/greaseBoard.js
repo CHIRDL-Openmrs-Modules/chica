@@ -782,7 +782,7 @@ function verifyPrintHandoutsMRN(responseXML) {
             $("#printHandoutsMrnError").show("highlight", 750);
         } else if (validEncounter == "false"){
 			var mrn = $("#printHandoutsMrnLookup").val();
-        	$("#printHandoutsMrnMessage").html("<p><b>Patient "+ mrn +" does exist in the CHICA system with a valid encounter.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
+        	$("#printHandoutsMrnMessage").html("<p><b>Patient "+ mrn +" does not exist in the CHICA system with a valid encounter.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
             $("#printHandoutsMrnError").show("highlight", 750);
         }
     }
