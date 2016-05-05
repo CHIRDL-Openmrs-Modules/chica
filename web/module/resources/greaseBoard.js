@@ -495,10 +495,7 @@ function checkPrintHandoutsMRN() {
 	      "timeout": 60000, // optional if you want to handle timeouts (which you should)
 	      "error": handleVerifyPrintHandoutsMRNAjaxError, // this sets up jQuery to give me errors
 	      "success": function (xml) {
-			  
-			  var form = $(this).closest("form");
-			  var patientId = form.find("input[name=greaseBoardPatientId]").val();
-	          verifyPrintHandoutsMRN(xml);
+			verifyPrintHandoutsMRN(xml);
 	      }
 	  });
 }
