@@ -45,7 +45,7 @@ import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chirdlutil.util.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.FileDateComparator;
 import org.openmrs.module.chirdlutil.util.FileListFilter;
@@ -935,7 +935,7 @@ public class HL7Exporter extends AbstractTask {
 			while ((c = fis.read()) != -1) {
 				bas.write(c);
 			}
-			encodedForm = Base64.byteArrayToBase64(bas.toByteArray(), false);
+			encodedForm = byteArrayToBase64(bas.toByteArray(), false);
 
 			fis.close();
 			bas.flush();
@@ -950,6 +950,19 @@ public class HL7Exporter extends AbstractTask {
 		return encodedForm;
 
 	}
+	
+	/**
+     * Encodes binary data using Base64 algorithm 
+     * @return result: the byte array to a String value
+     * @param bArray: file byte array output stream
+     * @param alternate: the boolean value for chunking the output into 76 character blocks
+     */
+	public static String byteArrayToBase64(byte[] bArray, boolean alternate) {
+	      
+    	byte[] encodedBtyeArray = Base64.encodeBase64(bArray, alternate);
+    	String result = javax.xml.bind.DatatypeConverter.printBase64Binary(encodedBtyeArray);
+        return result;
+    }
 
 	private void addOBRSegment(HL7MessageConstructor constructor, Encounter openmrsEncounter,
 			String batteryName, int orderRep) {
