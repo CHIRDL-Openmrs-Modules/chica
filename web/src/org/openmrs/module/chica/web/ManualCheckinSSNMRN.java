@@ -31,7 +31,7 @@ public class ManualCheckinSSNMRN {
 	private static final String XML_FALSE = "false";
 	private static final String XML_SESSION_RESULT_START = "<sessionResult>";
 	private static final String XML_SESSION_RESULT_END = "</sessionResult>";
-	
+
 	public static void verifyMRN(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
 		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL,
@@ -72,6 +72,7 @@ public class ManualCheckinSSNMRN {
 		}
 		
 		boolean sessionValid = false;
+
 		if (encounterSize != 0) {
 			sessionValid = true;
 		}
@@ -84,4 +85,5 @@ public class ManualCheckinSSNMRN {
 		pw.write(XML_MRN_VERIFICATION_END);
 
 	}
+	
 }

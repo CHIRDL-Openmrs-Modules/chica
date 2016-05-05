@@ -498,7 +498,6 @@ function checkPrintHandoutsMRN() {
 			  
 			  var form = $(this).closest("form");
 			  var patientId = form.find("input[name=greaseBoardPatientId]").val();
-
 	          verifyPrintHandoutsMRN(xml);
 	      }
 	  });
