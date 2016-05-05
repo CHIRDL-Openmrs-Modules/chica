@@ -784,7 +784,8 @@ function verifyPrintHandoutsMRN(responseXML) {
         	$("#printHandoutsMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
             $("#printHandoutsMrnError").show("highlight", 750);
         } else if (sessionResult == "false"){
-        	$("#printHandoutsMrnMessage").html("<p><b>Patient is not checked in the system.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
+			var mrn = $("#printHandoutsMrnLookup").val();
+        	$("#printHandoutsMrnMessage").html("<p><b>Patient "+ mrn +" does exist in the CHICA system with a valid encounter.<br>Retype the MRN #. Press OK to display the patient handouts.</b></p>");
             $("#printHandoutsMrnError").show("highlight", 750);
         }
     }
