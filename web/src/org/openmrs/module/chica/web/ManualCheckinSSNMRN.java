@@ -29,8 +29,8 @@ public class ManualCheckinSSNMRN {
 	private static final String XML_RESULT_END = "</result>";
 	private static final String XML_TRUE = "true";
 	private static final String XML_FALSE = "false";
-	private static final String XML_SESSION_RESULT_START = "<sessionResult>";
-	private static final String XML_SESSION_RESULT_END = "</sessionResult>";
+	private static final String XML_VALID_ENCOUNTER_START = "<validEncounter>";
+	private static final String XML_VALID_ENCOUNTER_END = "</validEncounter>";
 
 	public static void verifyMRN(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -63,24 +63,17 @@ public class ManualCheckinSSNMRN {
 		
 		EncounterService encounterService = Context.getEncounterService();
 		List<Encounter> encounters = encounterService.getEncountersByPatientIdentifier(mrn);
-		int encounterSize = encounters.size();
-				
+						
 		if (valid) {
 			pw.write(XML_RESULT_START + XML_TRUE + XML_RESULT_END);
 		} else {
 			pw.write(XML_RESULT_START + XML_FALSE + XML_RESULT_END);
 		}
 		
-		boolean sessionValid = false;
-
-		if (encounterSize != 0) {
-			sessionValid = true;
-		}
-		
-		if (sessionValid) {
-			pw.write(XML_SESSION_RESULT_START + XML_TRUE + XML_SESSION_RESULT_END);
+		if (encounters.size() > 0) {
+			pw.write(XML_VALID_ENCOUNTER_START + XML_TRUE + XML_VALID_ENCOUNTER_END);
 		}else{
-			pw.write(XML_SESSION_RESULT_START + XML_FALSE + XML_SESSION_RESULT_END);
+			pw.write(XML_VALID_ENCOUNTER_START + XML_FALSE + XML_VALID_ENCOUNTER_END);
 		}
 		pw.write(XML_MRN_VERIFICATION_END);
 
