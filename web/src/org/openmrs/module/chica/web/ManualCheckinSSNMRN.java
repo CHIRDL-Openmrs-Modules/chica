@@ -70,13 +70,7 @@ public class ManualCheckinSSNMRN {
 			pw.write(XML_RESULT_START + XML_FALSE + XML_RESULT_END);
 		}
 		
-		boolean validEncounter = false;
-
-		if (encounters.size() != 0) {
-			validEncounter = true;
-		}
-		
-		if (validEncounter) {
+		if (encounters.size() > 0) {
 			pw.write(XML_VALID_ENCOUNTER_START + XML_TRUE + XML_VALID_ENCOUNTER_END);
 		}else{
 			pw.write(XML_VALID_ENCOUNTER_START + XML_FALSE + XML_VALID_ENCOUNTER_END);
