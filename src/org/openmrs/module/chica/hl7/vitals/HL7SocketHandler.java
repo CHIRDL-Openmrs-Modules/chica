@@ -515,6 +515,7 @@ public class HL7SocketHandler implements Application {
 					case org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS:
 					case org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_DEG_C: // IUH sends DegC
 					case org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CEL: // ISO standard
+					case org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CELSIUS_C: // Epic send C
 						double convertedValue = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(obs.getValueNumeric(), 
 								obsConceptUnits);
 						obs.setValueNumeric(convertedValue);
