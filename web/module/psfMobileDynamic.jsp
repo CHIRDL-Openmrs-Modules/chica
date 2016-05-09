@@ -59,7 +59,7 @@
 <!-- DWE CHICA-430 Add hidden input to allow these parameters to be included when the checkboxes are unchecked -->
 <input id="SickVisit" name="SickVisit" type="hidden" value="N"/>
 <input id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" type="hidden" value="no diet and exercise given"/>
-
+<input id="MATwoIDsChecked" name="MATwoIDsChecked" type="hidden" value="N"/>
 <input id="showVitals" name="showVitals" type="hidden" value="true"/>
 </form>
 </body>
