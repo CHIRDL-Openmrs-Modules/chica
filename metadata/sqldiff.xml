@@ -3951,6 +3951,19 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
             insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR ELECTRONIC SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
         </sql>
     </diff>
+    
+    <diff>  
+        <version>1.7.8</version>  
+        <author>David Ely</author>  
+        <date>May 10, 2016</date>  
+        <description>  
+        	CHICA-636 Create scheduled task for Outgoing Physician Note
+        </description>  
+        <sql>
+        	INSERT INTO scheduler_task_config(name, description, schedulable_class, start_time_pattern, repeat_interval, start_on_startup, created_by, date_created, uuid)
+			VALUES ('Outgoing Note', 'Task to send note to EHR', 'org.openmrs.module.chica.hl7.outgoingNote.HL7OutboundTask', 'MM/dd/yyyy HH:mm:ss', 86400000, 1, 1, NOW(), UUID()); 
+        </sql>
+    </diff>
 </sqldiff>
 
 
