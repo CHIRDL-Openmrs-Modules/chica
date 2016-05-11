@@ -64,7 +64,7 @@
 }
 
 .force-print-form-object {
-    width:100%;
+    width:550px;
     height: 100%;
     background-color:#F5FBEF;
     float: left;
@@ -101,6 +101,7 @@
 	width: 550px;
 	float: left;
 	padding-left: 10px;
+	overflow-x:auto;
 }
 
 .ui-selectmenu-menu li { 

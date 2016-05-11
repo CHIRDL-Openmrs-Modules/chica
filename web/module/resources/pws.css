@@ -722,10 +722,11 @@ div#notesTabs .ui-tabs-panel{
     width: 550px;
     float: left;
     padding-left: 10px;
+    overflow-x:auto;
 }
 
 .recommendedHandoutObject {
-    width:100%;
+    width:550px;
     height: 100%;
     background-color:#F5FBEF;
     float: left;
