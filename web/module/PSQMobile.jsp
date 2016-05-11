@@ -24,13 +24,13 @@
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
 <c:set var="formName" value="PEDIATRIC SLEEP QUESTIONNAIRE"/>
-<c:set var="formName_sp" value="CUESTIONARIO PEDIATRICO DE SUE&#241O:"/>
+<c:set var="formName_sp" value="CUESTIONARIO PEDIATRICO DE SUE&Ntilde;O:"/>
 <c:set var="option1" value="Yes"/>
 <c:set var="option2" value="No"/>
 <c:set var="option3" value="Don't Know"/>
 <c:set var="option1_sp" value="Si"/>
 <c:set var="option2_sp" value="No"/>
-<c:set var="option3_sp" value="No sé"/>
+<c:set var="option3_sp" value="No s&eacute;"/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="PSQForm" method="POST" action="PSQMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
@@ -58,7 +58,7 @@
         <strong><span id="additionalQuestions"></span></strong>
         <div><br/>
 		</div>
-        <strong><span id="instructions"></span></span></strong>
+        <strong><span id="instructions"></span></strong>
         <div><br/></div> 
     </div>
 
@@ -340,7 +340,7 @@
             </fieldset>
         </div>
         <c:set var="quest6_2" value='&iquest;Su hijo/a se queja de dolor de cabeza por las ma&ntilde;anas, cuando se despierta?'/>
-        <input id="PSQQuestion_6_2" name="PSQQuestion_6_2" type="hidden" value="${quest6_2}"/>
+        <input id="PSQQuestion_6_2" nme="PSQQuestion_6_2" type="hidden" value="${quest6_2}"/>
         <strong>${quest6_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish"${quest6_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="horizontal">
