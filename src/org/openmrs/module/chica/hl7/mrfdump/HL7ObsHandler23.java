@@ -523,4 +523,19 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		}
 		return reps;
 	}
+	
+	/**
+     * @see org.openmrs.module.sockethl7listener.HL7ObsHandler#getUnits(Message, int, int)
+     * DWE CHICA-635
+     */
+    public String getUnits(Message message, int orderRep, int obxRep)
+    {
+    	OBX obx = getOBX(message, orderRep, obxRep);
+    	if(obx != null){
+    		CE units = obx.getUnits();
+    		return units.getIdentifier().getValue();
+    	}
+    				
+		return "";
+    }
 }

@@ -76,4 +76,11 @@ public interface Vendor {
 	 * @return The MRN.
 	 */
 	public String getMrn();
+	
+	/**
+	 * Returns the encryption key for the vendor.
+	 * 
+	 * @return The encryption key
+	 */
+	public String getEncryptionKey();
 }

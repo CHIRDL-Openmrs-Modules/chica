@@ -172,21 +172,6 @@ public class HL7StoreObsRunnable implements Runnable {
 				Concept concept = currObs.getConcept();
 				Integer conceptId = concept.getConceptId();
 				
-				//convert units for historical data
-				switch (conceptId) {
-					case 39650704: //Birth Weight (kg)
-						double kilograms = currObs.getValueNumeric();
-						double pounds = org.openmrs.module.chirdlutil.util.Util.convertUnitsToEnglish(kilograms,
-						    org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG);
-						currObs.setValueNumeric(pounds);//BIRTH WEIGHT in chica in pounds 
-						break;
-					default:
-				}
-				
-				//convert units for historical vitals data
-				org.openmrs.module.chica.hl7.iuHealthVitals.HL7SocketHandler.convertIUHealthVitalsUnits(conceptId,
-				    currObs);
-				
 				// check to see if we've already looked up a mapping for this concept
 				Concept mappedConcept = mrfConceptMapping.get(conceptId);
 				if (mappedConcept == null) {
@@ -199,7 +184,7 @@ public class HL7StoreObsRunnable implements Runnable {
 				}
 				
 				if (mappedConcept != null) {
-					currConceptName = mappedConcept.getName().getName();
+					currConceptName = mappedConcept.getName().getName();			
 					currObs.setConcept(mappedConcept);
 				}
 				
@@ -239,10 +224,11 @@ public class HL7StoreObsRunnable implements Runnable {
 						if (answerConcept != null) {
 							String answerConceptName = answerConcept.getName().getName();
 							currObs.setValueText(answerConceptName);
-							log.error("Could not map IU Health Cerner vitals concept: " + answerConceptName
+							log.error("Could not map vitals concept: " + answerConceptName
 							        + ". Could not store vitals observation.");
 						}
 					}
+					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedConcept);
 					currObs.setConcept(mappedVitalsConcept);
 					currObs.setLocation(location);
 					obsService.saveObs(currObs, null);

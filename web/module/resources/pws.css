@@ -14,7 +14,7 @@ body {
 
 #formContainer {
     width:800px;
-    height:1109px; /* Changed 1045 -> 1109 */
+    height:1035px; /* Changed 1109 -> 1035 */
     margin:0 auto;
     border: 1px solid black;
     background-color:#F5FBEF;
@@ -25,12 +25,6 @@ body {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     margin-bottom:40px;
-}
-
-@-moz-document url-prefix() {
-    #formContainer {
-        height:1109px; /* Changed 1039 -> 1109 */
-    }
 }
 
 #titleContainer {
@@ -77,17 +71,18 @@ body {
 }
 
 #infoRight {
-    width:184px;
-    float:left;
+    width:452px;
+    float:right;
     padding:2px;
     border-bottom: 1px solid black;
 }
 
 #vitals {
-    width:265px;
-    height:305px;
+    width:250px; 
+    height:288px;
     float:left;
-    border-left: 1px solid black;
+    border-left: none;
+    padding-bottom: 32px;
 }
 
 @-moz-document url-prefix() {
@@ -115,15 +110,14 @@ body {
 
 .vitalsValues {
     float:left;
-    width:153px;
+    width:130px;
     height: 18px;
     margin-left:5px;
     text-align:left;
-    
 }
 
 #vitalsLegend {
-    width:267px;
+    width:800px;
     border-left: 1px solid black;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
@@ -133,10 +127,12 @@ body {
     text-align:center;
     font-size:0.8em;
     padding-top:2px;
+    padding-bottom: 5px;
     
     /* Adding to fix issues when zooming out 
     margin-right: -1px;
-    margin-bottom: -1px; */
+    margin-bottom: -1px;
+    */
 }
 
 #exam {
@@ -156,18 +152,18 @@ body {
 }
 
 #buttons {
-    width:270px;
-    height:123px; /* Changed 83 -> 123 */
-    border-bottom: 1px solid black;
-    float:left;
-    margin-top:31px;
-    margin-left:-22px;
+    width:250px;
+    height:230px; 
+    border-bottom: none; 
+    float:left; 
+    margin-top:5px;
+    margin-left:10px;
 }
 
 @-moz-document url-prefix() {
     #buttons {
-        margin-top:43px;
-        height:122px; /* Changed 82 -> 122 */
+        margin-top:5px; 
+        height:332px; 
     }
 }
 
@@ -217,9 +213,9 @@ body {
 
 #examExtras {
     float:left;
-    width:260px;
-    height:350px;
-    margin-left:75px;
+    width:200px;
+    height:337px;
+    margin-left:65px;
 }
 
 #medTable {
@@ -237,10 +233,11 @@ body {
     width:800px;
     height:50px;
     text-align:center;
+    margin-top: 903px;
 }
 
 #submitButtonBottom {
-    margin-top:8px;
+    margin-top:16px;
 }
 
 #submitButtonTop {
@@ -329,9 +326,15 @@ body {
 }
 
 .examExtraData {
-    width:260px;
+    width:200px;
     padding-left:2px;
     margin: 1px 0 1px 0;
+}
+
+.medicalPerformed {
+    width: 480px;
+    margin-left: -1px;
+	margin-right: -1px;
 }
 
 .questionContainer {
@@ -344,6 +347,7 @@ body {
     border-left: 1px solid black;
     margin-left:-1px;
     margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
+    margin-top: 0px;
 }
 
 .questionStem {

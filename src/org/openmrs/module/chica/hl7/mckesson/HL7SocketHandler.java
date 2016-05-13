@@ -55,6 +55,8 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -550,6 +552,7 @@ public class HL7SocketHandler extends
 		String carrierCode = null;
 		String printerLocation = null;
 		String insuranceName = null;
+		String visitNumber = null;
 		Message message = null;
 		
 			try {
@@ -589,6 +592,22 @@ public class HL7SocketHandler extends
 					
 					insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getInsuranceName(message);
+					
+					// DWE CHICA-633 Parse visit number from PV1-19 if this is not IUH
+					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					{
+						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getVisitNumber(message);
+						
+						if(visitNumber != null && !visitNumber.isEmpty())
+						{
+							storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER, visitNumber);
+						}
+						else
+						{
+							log.error("Unable to parse visit number for encounterId: " + encounter.getEncounterId());
+						}		
+					}
 				}
 			} catch (EncodingNotSupportedException e) {
 				log.error("Encoding not supported when parsing incoming message.", e);
@@ -629,10 +648,12 @@ public class HL7SocketHandler extends
 		chicaEncounter.setLocation(location);
 		chicaEncounter.setInsuranceSmsCode(null);
 		
-		// DWE CLINREQ-130 Removed encounter parameter
+		//DWE CLINREQ-130 Removed encounter parameter
 		// CAUTION: If an encounter object is needed in this thread in the future, 
 		// use caution when calling setters on the object.
-		saveHL7Obs(p, message, location, getSession(parameters), printerLocation); 
+		if(getNumOBXSegments(message) > 0){ // DWE CHICA-635 Added check to make sure the message contains OBX segments before starting the new thread
+			saveHL7Obs(p, message, location, getSession(parameters), printerLocation);
+		}
 
 		// This code must come after the code that sets the encounter values
 		// because the states can't be created until the locationTagId and
@@ -1506,5 +1527,69 @@ public class HL7SocketHandler extends
 			 session.getSessionId(), message, printerLocation);
 		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
 		hl7ObsThread.start();
+	}
+	
+	/**
+	 * DWE CHICA-635
+	 * Determine the number of OBX segments in the message
+	 * This method handles the default OBX that HAPI adds and excludes it from the count
+	 * 
+	 * @param message
+	 * @return
+	 */
+	private int getNumOBXSegments(Message message)
+	{
+		
+		int numReps = this.hl7ObsHandler.getReps(message);
+		if(numReps == 1) // Need to check to see if this is the OBX that HAPI adds by default
+		{
+			String obsValueType = this.hl7ObsHandler.getObsValueType(message, 0, 0);
+			if (obsValueType == null) 
+			{
+				numReps = 0;
+			}
+		}
+		
+		return numReps;
+	}
+	
+	/**
+	 * DWE CHICA-633
+	 * 
+	 * Store an encounter attribute value
+	 * 
+	 * @param encounter
+	 * @param attributeName - the name of the encounter attribute
+	 * @param valueText - the value to store in the value_text field
+	 */
+	private void storeEncounterAttributeAsValueText(org.openmrs.Encounter encounter, String attributeName, String valueText)
+	{
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+
+		try
+		{
+			EncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(attributeName);
+			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByAttribute(encounter.getEncounterId(), encounterAttribute);
+			
+			if(encounterAttributeValue == null) // Attribute value doesn't exist for this encounter, create a new one
+			{
+				encounterAttributeValue = new EncounterAttributeValue(encounterAttribute, encounter.getEncounterId(), valueText);
+				encounterAttributeValue.setCreator(encounter.getCreator());
+				encounterAttributeValue.setDateCreated(encounter.getDateCreated());
+				encounterAttributeValue.setUuid(UUID.randomUUID().toString());
+				
+				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+			}
+			else
+			{ 
+				// I can't think of a case where the visit number would change or need to be updated
+				// just log it for now
+				log.error("Encounter attribute already exists for encounterId: " + encounter.getEncounterId() + " attributeName: " + attributeName);
+			}	
+		}
+		catch(Exception e)
+		{
+			log.error("Error storing encounter attribute value encounterId: " + encounter.getEncounterId() + " attributeName: " + attributeName, e);
+		}
 	}
 }

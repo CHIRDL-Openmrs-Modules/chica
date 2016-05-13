@@ -156,7 +156,7 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		String action = request.getParameter(PARAM_ACTION);
-		if (GET_PATIENT_JITS.equals(action)) {
+		if (GET_PATIENT_JITS.equals(action) || DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
 			response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
 		} else if (FORCE_PRINT_FORMS.equals(action)) {

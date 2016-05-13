@@ -74,8 +74,11 @@ public class TestCheckinController extends SimpleFormController
 			encounter.setPatient(patient);
 			encounterService.saveEncounter(encounter);
 			
+			HashMap<String,Object> parameters = new HashMap<String,Object>();
+			parameters.put("sendingApplication", "ST01");
+			parameters.put("sendingFacility","W");
 			SocketHL7ListenerService hl7ListService = Context.getService(SocketHL7ListenerService.class);
-			hl7ListService.messageProcessed(encounter);
+			hl7ListService.messageProcessed(encounter, parameters);
 		}
 		
 		map.put("patientId", patientIdString);

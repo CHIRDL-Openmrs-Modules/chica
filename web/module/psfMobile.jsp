@@ -772,7 +772,7 @@
 		        <h1>Passcode</h1>
 		    </div>
 		    <div data-role="content">
-		        <span>Please enter the passcode to access the vitals page.</span>
+		        <span>Please enter the passcode to access the staff page.</span>
 		        <div style="margin: 0 auto;text-align: center;">
 		            <input type="number" masktype="password" id="vitals_passcode" name="vitals_passcode" placeholder="Passcode"/>
 		            <a href="#" id="goButton" onclick="checkPasscode()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Go</a>

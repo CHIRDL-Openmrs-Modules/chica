@@ -3873,6 +3873,84 @@ where action_name='REPRINT';
         ,(select program_id from chirdlutilbackports_program where name = 'chica_electronic'));
          </sql>
 	</diff>
+	<diff>  
+        <version>1.7.6</version>  
+        <author>Tammy Dugan</author>  
+        <date>April 13, 2016</date>  
+        <description>  
+        CHICA-701 Update chica_insurance_category table to chica_insurance_mapping table
+        </description>  
+        <sql> 
+CREATE TABLE `chica_insurance_mapping` (
+`INSURANCE_ID` int(11) NOT NULL AUTO_INCREMENT,
+`ins_code` varchar(255) DEFAULT NULL,
+`category` varchar(255) DEFAULT NULL,
+`ins_name` varchar(255) DEFAULT NULL,
+`carrier_code` varchar(255) DEFAULT NULL,
+`plan_code` varchar(255) DEFAULT NULL,
+`sending_application` varchar(255) DEFAULT NULL,
+`sending_facility` varchar(255) DEFAULT NULL,
+PRIMARY KEY (`INSURANCE_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=540 DEFAULT CHARSET=utf8;
+
+insert into chica_insurance_mapping(category,ins_name, carrier_code, plan_code,ins_code,sending_application,sending_facility)
+select category, sms_ins_name, star_carrier_code, star_plan_code, sms_code,'SMS','Eskenazi'
+from chica_insurance_category where sms_ins_name is not null and category is not null and category != '';
+
+insert into chica_insurance_mapping(category,ins_name, carrier_code, plan_code, ins_code,sending_application,sending_facility)
+select category, mckesson_ins_name, star_carrier_code, star_plan_code, ins_code,'ST01','W'
+from chica_insurance_category where mckesson_ins_name is not null and category is not null and category != '';
+
+insert into chica_insurance_mapping(category,ins_name, carrier_code, plan_code, ins_code,sending_application,sending_facility)
+select category, ecw_ins_name, star_carrier_code, star_plan_code, ins_code,'','ECW'
+from chica_insurance_category where ecw_ins_name is not null and category is not null and category != ''; 
+        </sql>
+	</diff>
+	<diff>  
+        <version>1.7.7</version>  
+        <author>Steve McKee</author>  
+        <date>April 29, 2016</date>  
+        <description>  
+        CHICA-714: New Epic State Flow
+        </description>  
+        <sql>
+            insert into chirdlutilbackports_program (name, description, version, start_state, end_state) values('chica_epic', 'Program for electronic version of chica for use with Epic', '1.0', (select state_id from chirdlutilbackports_state where name = 'CHECKIN'), (select state_id from chirdlutilbackports_state where name = 'FINISHED'));
+
+            insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Query CDA', 'Query the CDA service', 'org.openmrs.module.chica.action.QueryCDA');
+            insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Processed Vitals HL7', 'Finishes processing after HL7 of vitals received', 'org.openmrs.module.chica.action.ProcessedVitalsHL7');
+            insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Export Physician Note', 'Export the Physician Note back to the EHR', 'org.openmrs.module.chica.action.ExportPhysicianNote');
+            
+            insert into chirdlutilbackports_state (name, description, state_action_id) values ('Query CDA PSF', 'Query the CDA Service during the PSF process', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Query CDA'));
+            insert into chirdlutilbackports_state (name, description, state_action_id) values ('Query CDA PWS', 'Query the CDA Service during the PWS process', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Query CDA'));
+            insert into chirdlutilbackports_state (name, description, state_action_id) values ('Export Physician Note', 'Exports the Physician Note back to the EHR', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Export Physician Note'));
+            insert into chirdlutilbackports_state (name, description, state_action_id) values ('Processed Vitals HL7', 'Processes vitals information sent via HL7', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Processed Vitals HL7'));
+            
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'CHECKIN'),(select state_id from chirdlutilbackports_state where name = 'Query CDA PSF'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Query CDA PSF'),(select state_id from chirdlutilbackports_state where name = 'Randomize'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Randomize'),(select state_id from chirdlutilbackports_state where name = 'PSF_mobile_create'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PSF_mobile_create'),(select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PSF'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PSF'),(select state_id from chirdlutilbackports_state where name = 'PSF WAIT FOR ELECTRONIC SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PSF WAIT FOR ELECTRONIC SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'Query CDA PWS'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PSF_reprint'),(select state_id from chirdlutilbackports_state where name = 'PSF WAIT FOR ELECTRONIC SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Query CDA PWS'),(select state_id from chirdlutilbackports_state where name = 'PWS_create'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_create'),(select state_id from chirdlutilbackports_state where name = 'PWS_post_create'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_post_create'),(select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_reprint'),(select state_id from chirdlutilbackports_state where name = 'PWS_post_create'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS WAIT FOR SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'PWS_process'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_process'),(select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PWS'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'CLEAR INMEMORY OBS PWS'),(select state_id from chirdlutilbackports_state where name = 'Export Physician Note'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Export Physician Note'),(select state_id from chirdlutilbackports_state where name = 'FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Processed Vitals HL7'),(select state_id from chirdlutilbackports_state where name = 'PWS_create'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'PWS_rescan'),(select state_id from chirdlutilbackports_state where name = 'PWS_process'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_create'),(select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'JIT_process'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_rescan'),(select state_id from chirdlutilbackports_state where name = 'JIT_process'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_process'),(select state_id from chirdlutilbackports_state where name = 'JIT_fax'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_fax'),(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_mobile_create'),(select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR ELECTRONIC SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR ELECTRONIC SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+        </sql>
+    </diff>
 </sqldiff>
 
 
