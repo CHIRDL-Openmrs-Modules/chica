@@ -1,13 +1,6 @@
             <div id="examExtras">
                         <div class="examExtraCheckbox">
-                            <c:choose>
-                                <c:when test="${Special_Need == 'Y'}">
-                                    <input type="checkbox" name="Special_Need" value="yes" checked />Special Need Child<br/>
-                                </c:when>
-                                <c:otherwise>
-                                    <input type="checkbox" name="Special_Need" value="yes"/>Special Need Child<br/>
-                                </c:otherwise>
-                            </c:choose>
+                            <input type="checkbox" name="Special_Need" value="yes" ${Special_Need == 'Y' ? 'checked' : ''}/>Special Need Child<br/> 
 							<input id="Special_Need" name="Special_Need" type="hidden" value="no"/>
                         </div>
                         <div>
