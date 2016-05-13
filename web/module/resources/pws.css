@@ -153,7 +153,7 @@ body {
 
 #buttons {
     width:250px;
-    height:250px; 
+    height:230px; 
     border-bottom: none; 
     float:left; 
     margin-top:5px;
@@ -215,7 +215,7 @@ body {
     float:left;
     width:200px;
     height:337px;
-    margin-left:75px;
+    margin-left:65px;
 }
 
 #medTable {
@@ -329,6 +329,12 @@ body {
     width:200px;
     padding-left:2px;
     margin: 1px 0 1px 0;
+}
+
+.medicalPerformed {
+    width: 480px;
+    margin-left: -1px;
+	margin-right: -1px;
 }
 
 .questionContainer {
