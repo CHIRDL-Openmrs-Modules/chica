@@ -340,7 +340,7 @@
             </fieldset>
         </div>
         <c:set var="quest6_2" value='&iquest;Su hijo/a se queja de dolor de cabeza por las ma&ntilde;anas, cuando se despierta?'/>
-        <input id="PSQQuestion_6_2" nme="PSQQuestion_6_2" type="hidden" value="${quest6_2}"/>
+        <input id="PSQQuestion_6_2" name="PSQQuestion_6_2" type="hidden" value="${quest6_2}"/>
         <strong>${quest6_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish"${quest6_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
             <fieldset data-role="controlgroup" data-type="horizontal">
