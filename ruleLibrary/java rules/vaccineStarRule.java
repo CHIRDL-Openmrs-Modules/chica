@@ -179,6 +179,7 @@ public class vaccineStarRule implements Rule
 		map.put("influenza, live, intranasal", "flulive");
 		map.put("polio, unspecified formulation", "IPV");
 		map.put("meningococcal MCV4, unspecified formulation", "MCV");
+		map.put("meningococcal B, unspecified formulation", "MenB");
 		map.put("TST-PPD intradermal", "PPD");
 		map.put("Td(adult) unspecified formulation", "Tdap");
 		
