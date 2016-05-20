@@ -89,28 +89,28 @@ endif;
 endif
 ;;
 Action:
-parentJITCreated := call hasJITBeenCreated with "ADHD PFU";
-parentSpanishJITCreated := call hasJITBeenCreated with "ADHD PSFU";
-teacherJITCreated := call hasJITBeenCreated with "ADHD TFU";
+parentJITCreated := call hasJITBeenCreated with "ADHD P";
+parentSpanishJITCreated := call hasJITBeenCreated with "ADHD PS";
+teacherJITCreated := call hasJITBeenCreated with "ADHD T";
 
 If(ParentVanderbilt = False) AND (preferred_language = Spanish) AND NOT (parentSpanishJITCreated = "yes") then
-call CREATE_JIT with "ADHD PSFU";
+call CREATE_JIT with "ADHD PS";
 endif;
 
 If(ParentVanderbilt = False) AND (preferred_language = English) AND NOT (parentJITCreated = "yes") then
-call CREATE_JIT with "ADHD PFU";
+call CREATE_JIT with "ADHD P";
 endif;
 
 If(ParentVanderbilt = False) AND (preferred_language = null) AND NOT (parentJITCreated = "yes") then
-call CREATE_JIT with "ADHD PFU";
+call CREATE_JIT with "ADHD P";
 endif;
 
 If(ParentVanderbilt = False) AND (preferred_language = null) AND NOT (parentSpanishJITCreated = "yes") then
-call CREATE_JIT with "ADHD PSFU";
+call CREATE_JIT with "ADHD PS";
 endif;
 
 If(TeacherVanderbilt = False) AND NOT (teacherJITCreated = "yes") then
-call CREATE_JIT with "ADHD TFU";
+call CREATE_JIT with "ADHD T";
 endif;
 
 write ("A workup for ADHD has begun, but not all data are in. We are missing || prompttext1 || || prompttext2 || and need data to be complete. CPT 96110");                                                                                                                                                                                                                                                                                                                   
