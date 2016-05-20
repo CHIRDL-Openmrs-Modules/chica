@@ -125,7 +125,7 @@ parentSpanishJITCreated := call hasJITBeenCreated with "ADHD PS";
 teacherJITCreated := call hasJITBeenCreated with "ADHD T";
 
 If(ParentVanderbilt = False) AND (preferred_language = Spanish) AND NOT (parentSpanishJITCreated = "yes") then
-call CREATE_JIT with "ADHD P";
+call CREATE_JIT with "ADHD PS";
 endif;
 
 If(ParentVanderbilt = False) AND (preferred_language = English) AND NOT (parentJITCreated = "yes") then
