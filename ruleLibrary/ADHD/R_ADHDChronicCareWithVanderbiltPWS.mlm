@@ -102,7 +102,7 @@ parentJITCreated := call hasJITBeenCreated with "ADHD PFU";
 parentSpanishJITCreated := call hasJITBeenCreated with "ADHD PSFU";
 teacherJITCreated := call hasJITBeenCreated with "ADHD TFU";
 
-If(ParentVanderbiltDoneFU = False) AND (preferred_language = Spanish) AND NOT (parentSpanishJITCreated = "yes") then then
+If(ParentVanderbiltDoneFU = False) AND (preferred_language = Spanish) AND NOT (parentSpanishJITCreated = "yes") then
 call CREATE_JIT with "ADHD PSFU";
 endif;
 
