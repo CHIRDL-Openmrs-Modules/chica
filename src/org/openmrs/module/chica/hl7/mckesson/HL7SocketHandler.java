@@ -319,6 +319,7 @@ public class HL7SocketHandler extends
 		AddRace(currentPatient, hl7Patient, encounterDate);
 		addMRN(currentPatient, hl7Patient, encounterDate);
 		addPatientAccountNumber(currentPatient, hl7Patient, encounterDate); // DWE CHICA-406
+		updateEthnicity(currentPatient, hl7Patient, encounterDate); // DWE CHICA-706
 		
 		Patient updatedPatient = null;
 		try {
@@ -1590,6 +1591,28 @@ public class HL7SocketHandler extends
 		catch(Exception e)
 		{
 			log.error("Error storing encounter attribute value encounterId: " + encounter.getEncounterId() + " attributeName: " + attributeName, e);
+		}
+	}
+	
+	/**
+	 * DWE CHICA-706
+	 * Updates Ethnicity attribute from hl7 value.
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void updateEthnicity(Patient currentPatient, Patient hl7Patient, Date encounterDate){
+		PersonAttribute currentEthnicityAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_ETHNICITY);
+		PersonAttribute hl7EthnicityAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_ETHNICITY);
+		
+		if (hl7EthnicityAttr == null || hl7EthnicityAttr.getValue() == null 
+				|| hl7EthnicityAttr.getValue().trim().equals(EMPTY_STRING)){
+			return;
+		}
+		
+		if (currentEthnicityAttr == null || currentEthnicityAttr.getValue() == null
+			|| !currentEthnicityAttr.getValue().equals(hl7EthnicityAttr.getValue())){
+			currentPatient.addAttribute(hl7EthnicityAttr);
 		}
 	}
 }

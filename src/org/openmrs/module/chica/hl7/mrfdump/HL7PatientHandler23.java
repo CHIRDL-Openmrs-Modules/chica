@@ -26,6 +26,7 @@ import ca.uhn.hl7v2.model.v23.datatype.IS;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.datatype.XPN;
 import ca.uhn.hl7v2.model.v23.segment.PID;
+import ca.uhn.hl7v2.model.v25.datatype.CE;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.datatype.TS;
 import ca.uhn.hl7v2.model.v23.datatype.XAD;
@@ -548,4 +549,39 @@ public class HL7PatientHandler23 implements HL7PatientHandler
     public String getNextOfKin(Message arg0) {
 	    return null;
     }
+    
+    /**
+	 * DWE CHICA-702
+	 * 
+	 * HL7 version 2.3 Parse ethnicity code from PID-22
+	 * 
+	 * @param message
+	 * @return ethnicity code
+	 */
+	public String getEthnicity(Message message)
+	{
+		IS ethnicGroup = null;
+		PID pid = getPID(message);
+		try
+		{
+			ethnicGroup = pid.getEthnicGroup();
+		} 
+		catch (RuntimeException e)
+		{
+			logger.warn("Unable to parse ethnic group from PID. Message: " + e.getMessage());
+		}
+
+		if (ethnicGroup != null)
+		{
+			try
+			{
+				return ethnicGroup.getValue().toString();
+			} 
+			catch (RuntimeException e1)
+			{
+				logger.debug("Warning: Ethnic group not available in PID segment.");
+			}
+		}
+		return null;
+	}
 }
