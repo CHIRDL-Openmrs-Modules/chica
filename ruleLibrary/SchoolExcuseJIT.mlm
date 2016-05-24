@@ -24,7 +24,13 @@ Logic:
 conclude False;
 ;;
 Action:
+
+excuseJITCreated := call hasJITBeenCreated with "School_Excuse_JIT";
+
+If NOT (excuseJITCreated = "yes") then
 call CREATE_JIT with "School_Excuse_JIT", "", "true";
+endif;
+
 ;;
 Age_Min: 5 years;;
 Age_Max: 19 years;;
