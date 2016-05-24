@@ -553,6 +553,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
     /**
 	 * DWE CHICA-702
 	 * 
+	 * NOT IMPLEMENTED
 	 * HL7 version 2.3 Parse ethnicity code from PID-22
 	 * 
 	 * @param message
@@ -560,28 +561,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	 */
 	public String getEthnicity(Message message)
 	{
-		IS ethnicGroup = null;
-		PID pid = getPID(message);
-		try
-		{
-			ethnicGroup = pid.getEthnicGroup();
-		} 
-		catch (RuntimeException e)
-		{
-			logger.warn("Unable to parse ethnic group from PID. Message: " + e.getMessage());
-		}
-
-		if (ethnicGroup != null)
-		{
-			try
-			{
-				return ethnicGroup.getValue().toString();
-			} 
-			catch (RuntimeException e1)
-			{
-				logger.debug("Warning: Ethnic group not available in PID segment.");
-			}
-		}
+		// Intentionally left empty
 		return null;
 	}
 }
