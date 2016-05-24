@@ -3964,6 +3964,33 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			VALUES ('Outgoing Note', 'Task to send note to EHR', 'org.openmrs.module.chica.hl7.outgoingNote.HL7OutboundTask', 'MM/dd/yyyy HH:mm:ss', 86400000, 1, 1, NOW(), UUID()); 
         </sql>
     </diff>
+    <diff>
+        <version>1.7.9</version>
+        <author>David Ely</author>
+        <date>May 18, 2016</date>
+        <description>
+            CHICA-706 Add new person_attribute_type records to store the patient ethnicity
+        </description>
+        <sql>
+            INSERT INTO `person_attribute_type` (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
+            VALUES ('Ethnicity', 'Ethnicity', 'java.lang.String', 1, 1, NOW(), UUID());
+        </sql>
+    </diff>
+    <diff>
+        <version>1.8.0</version>
+        <author>David Ely</author>
+        <date>May 23, 2016</date>
+        <description>
+            CHICA-706 Add new concept_source records for ethnicity
+        </description>
+        <sql>
+            INSERT INTO `concept_source` (`name`, `description`, `hl7_code`, `creator`, `date_created`, `retired`, `uuid`)
+			VALUES ('Eskenazi Ethnicity Codes', 'Ethnicity codes received from Eskenazi', ' ', '1', NOW(), 0, UUID());
+			
+			INSERT INTO `concept_source` (`name`, `description`, `hl7_code`, `creator`, `date_created`, `retired`, `uuid`)
+			VALUES ('IUH Ethnicity Codes', 'Ethnicity codes received from IUH', ' ', '1', NOW(), 0, UUID());
+        </sql>
+    </diff>
 </sqldiff>
 
 
