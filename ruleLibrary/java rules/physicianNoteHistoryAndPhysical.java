@@ -40,7 +40,6 @@ import org.openmrs.module.chica.util.Util;
  */
 public class physicianNoteHistoryAndPhysical implements Rule {
 	
-	public static final String ABNORMAL_EXAM = "abnormal";
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
@@ -107,8 +106,8 @@ public class physicianNoteHistoryAndPhysical implements Rule {
     	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MATwoIDsChecked", "Two ID's Checked by MA/Nurse: ", encounterId);
     	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MDTwoIDsChecked", "Two ID's Checked: ", encounterId);
     	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Abuse_Concern", "Screened for abuse: ", encounterId);
-    	appendCounseling(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Physical Activity: ", encounterId, "PA");
-    	appendCounseling(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Healthy Diet: ", encounterId, "HD");
+    	appendCounseling(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Physical Activity: ", encounterId, "Physical Activity");
+    	appendCounseling(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Healthy Diet: ", encounterId, "Healthy Diet");
     	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MedicationEducationPerformed", "Medication Education Performed and/or Counseled on Vaccines: ", encounterId);
     	
     	String note = noteBuffer.toString();
@@ -144,17 +143,9 @@ public class physicianNoteHistoryAndPhysical implements Rule {
     	ConceptService conceptService = Context.getConceptService();
 		Concept valueCodedConcept = null;
 		Result result=null;
-
-		if (codedConcept == "HD") {
-			valueCodedConcept = conceptService.getConceptByName("Healthy Diet");
-			result =context.read(patientId, obsDataSource, 
-					new LogicCriteriaImpl(concept).within(Duration.days(-3)).equalTo(new OperandConcept(valueCodedConcept)).last());
-		}
-		else if (codedConcept == "PA"){
-			valueCodedConcept = conceptService.getConceptByName("Physical Activity");
-			result =context.read(patientId, obsDataSource, 
-					new LogicCriteriaImpl(concept).within(Duration.days(-3)).equalTo(new OperandConcept(valueCodedConcept)).last());
-		}
+		valueCodedConcept = conceptService.getConceptByName(codedConcept);
+		result =context.read(patientId, obsDataSource, 
+				new LogicCriteriaImpl(concept).within(Duration.days(-3)).equalTo(new OperandConcept(valueCodedConcept)).last());
 		appendNote(result, noteBuffer, heading, encounterId);
 	}
     
@@ -168,17 +159,8 @@ public class physicianNoteHistoryAndPhysical implements Rule {
     private static void appendNote(Result result, StringBuffer noteBuffer, String heading, Integer encounterId){
     	if (result != null && !result.isEmpty() && Util.equalEncounters(encounterId, result)) {
 			String value = result.toString();
-			if (ABNORMAL_EXAM.equalsIgnoreCase(value)) {
-			noteBuffer.append("*");
-			noteBuffer.append(heading);
-			noteBuffer.append("*");
-			noteBuffer.append(value);
-			noteBuffer.append("*");
-			} else {
 			noteBuffer.append(heading);
 			noteBuffer.append(value);
-			}
-			
 			noteBuffer.append("\n");
 		}
     }
