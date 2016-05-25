@@ -13,16 +13,11 @@
  */
 package org.openmrs.module.chica.rule;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.openmrs.Encounter;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.Duration;
@@ -35,11 +30,8 @@ import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.dss.service.DssService;
-
 
 /**
  *
@@ -48,7 +40,6 @@ import org.openmrs.module.dss.service.DssService;
 public class physicianNotePhysicalExam implements Rule {
 	
 	public static final String ABNORMAL_EXAM = "abnormal";
-	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
@@ -59,7 +50,6 @@ public class physicianNotePhysicalExam implements Rule {
 			System.out.println("chicaNotePhysicalExam: " + (System.currentTimeMillis() - startTime) + "ms");
 			return new Result(examNote);
 		}
-		
 		System.out.println("chicaNotePhysicalExam: " + (System.currentTimeMillis() - startTime) + "ms");
 		return Result.emptyResult();
 	}
@@ -106,7 +96,7 @@ public class physicianNotePhysicalExam implements Rule {
     	LogicContext context = new LogicContextImpl(patientId);
     	LogicDataSource obsDataSource = context.getLogicDataSource("obs");
     	
-    	Encounter encounter = getLastEncounter(patient);
+    	Encounter encounter = org.openmrs.module.chica.util.Util.getLastEncounter(patient);
     	if (encounter == null) {
     		return noteBuffer.toString();
     	}
@@ -115,7 +105,7 @@ public class physicianNotePhysicalExam implements Rule {
     	String conceptName = "HEIGHT";
     	Result heightResult = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
-    	if (heightResult != null && !heightResult.isEmpty() && equalEncounters(encounterId, heightResult)) {
+    	if (heightResult != null && !heightResult.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, heightResult)) {
     		noteBuffer.append("Height: ");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", heightResult);
@@ -139,7 +129,7 @@ public class physicianNotePhysicalExam implements Rule {
     	conceptName = "WEIGHT";
     	Result weightResult = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
-    	if (weightResult != null && !weightResult.isEmpty() && equalEncounters(encounterId, weightResult)) {
+    	if (weightResult != null && !weightResult.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, weightResult)) {
     		noteBuffer.append("Weight: ");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", weightResult);
@@ -164,7 +154,7 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	if (heightResult != null && !heightResult.isEmpty() && weightResult != null && !weightResult.isEmpty() && 
-    			equalEncounters(encounterId, heightResult) && equalEncounters(encounterId, weightResult)) {
+    			org.openmrs.module.chica.util.Util.equalEncounters(encounterId, heightResult) && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, weightResult)) {
 	    	rule.setTokenName("bmi");
 			rule.setParameters(new HashMap<String,Object>());
 	    	Result result = dssService.runRule(patient, rule);
@@ -187,7 +177,7 @@ public class physicianNotePhysicalExam implements Rule {
     	conceptName = "HC";
     	Result result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Head Circumference: ");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", result);
@@ -205,7 +195,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("bp").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Blood Pressure: ");
     		noteBuffer.append(result.toString());
 			org.openmrs.module.dss.hibernateBeans.Rule bpPercentRule = new org.openmrs.module.dss.hibernateBeans.Rule();
@@ -224,7 +214,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("TEMPERATURE CHICA").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Temperature: ");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", result);
@@ -242,7 +232,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("PULSE CHICA").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Pulse: ");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", result);
@@ -255,7 +245,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("PULSEOX").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Pulse Ox: ");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", result);
@@ -268,7 +258,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("VISIONL").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Vision Left: 20/");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", result);
@@ -281,7 +271,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("VISIONR").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Vision Right: 20/");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", result);
@@ -294,7 +284,7 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("RR CHICA").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("RR: ");
     		Map<String,Object> map = new HashMap<String,Object>();
     		map.put("param0", result);
@@ -307,21 +297,21 @@ public class physicianNotePhysicalExam implements Rule {
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("NoVision").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Uncooperative/Unable to Screen Vision");
     		noteBuffer.append("\n");
     	}
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("NoHearing").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Uncooperative/Unable to Screen Hearing");
     		noteBuffer.append("\n");
     	}
     	
     	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("NoBP").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Uncooperative/Unable to Screen Blood Pressure");
     		noteBuffer.append("\n");
     	}
@@ -356,7 +346,7 @@ public class physicianNotePhysicalExam implements Rule {
                                     StringBuffer noteBuffer, String concept, String heading, Integer encounterId) {
     	Result result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl(concept).within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && equalEncounters(encounterId, result)) {
+    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		String value = result.toString();
     		if (ABNORMAL_EXAM.equalsIgnoreCase(value)) {
     			noteBuffer.append("*");
@@ -370,70 +360,8 @@ public class physicianNotePhysicalExam implements Rule {
     		}
     		
     		noteBuffer.append("\n");
+    		 
     	}
-    }
-    
-    private static Encounter getLastEncounter(Patient patient) {
-    	// Get last encounter with last day
-		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
-		Date startDate = startCal.getTime();
-		Date endDate = Calendar.getInstance().getTime();
-		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-			null, null, false);
-		if (encounters == null || encounters.size() == 0) {
-			return null;
-		} else if (encounters.size() == 1) {
-			return encounters.get(0);
-		}
-		
-		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
-		ATDService atdService = Context.getService(ATDService.class);
-		for (int i = encounters.size() - 1; i >= 0; i--) {
-			Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
-			if (stats == null || stats.size() == 0) {
-				continue;
-			}
-			
-			for (Statistics stat : stats) {
-				if (stat.getScannedTimestamp() != null) {
-					return encounter;
-				}
-			}
-		}
-		
-		return null;
-    }
-    
-    private static boolean equalEncounters(Integer encounterId, Result result) {
-    	if (encounterId == null || result == null) {
-    		return false;
-    	}
-    	
-    	Result latestResult = result.latest();
-    	if (latestResult == null) {
-    		return false;
-    	}
-    	
-    	if (latestResult.getResultObject() == null || !(latestResult.getResultObject() instanceof Obs)) {
-    		return false;
-    	}
-    	
-    	Obs obs = (Obs)latestResult.getResultObject();
-    	if (obs == null) {
-    		return false;
-    	}
-    	
-    	Encounter obsEncounter = obs.getEncounter();
-    	if (obsEncounter == null) {
-    		return false;
-    	}
-    	
-    	if (encounterId == obsEncounter.getEncounterId()) {
-    		return true;
-    	}
-    	
-    	return false;
+
     }
 }

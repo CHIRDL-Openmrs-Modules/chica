@@ -7,7 +7,7 @@
                             &nbsp;
                         </div>
                         <div class="examExtraCheckbox">
-                            <input type="checkbox"/>Two ID's Checked<br/>
+                            <input type="checkbox" name="MDTwoIDsChecked" value="Y"/>Two ID's Checked<br/>
                         </div>
                         <div class="examExtraCheckbox">
                             <input type="checkbox" name="screenedForAbuse" value="screened"/>Screened for abuse<br/>
