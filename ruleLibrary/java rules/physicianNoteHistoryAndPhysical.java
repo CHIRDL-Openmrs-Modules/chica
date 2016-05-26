@@ -13,15 +13,23 @@
  */
 package org.openmrs.module.chica.rule;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.Duration;
 import org.openmrs.logic.LogicContext;
+import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.LogicException;
 import org.openmrs.logic.Rule;
 import org.openmrs.logic.datasource.LogicDataSource;
@@ -44,14 +52,11 @@ public class physicianNoteHistoryAndPhysical implements Rule {
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
-		long startTime = System.currentTimeMillis();
 		
 		String examNote = buildHistoryandPhysicalNote(patientId,parameters);
 		if (examNote.trim().length() > 0) {
-			System.out.println("chicaNoteHistoryandPhysicalExam: " + (System.currentTimeMillis() - startTime) + "ms");
 			return new Result(examNote);
 		}
-		System.out.println("chicaNoteHistoryandPhysicalExam: " + (System.currentTimeMillis() - startTime) + "ms");
 		return Result.emptyResult();
 	}
 	
@@ -102,13 +107,13 @@ public class physicianNoteHistoryAndPhysical implements Rule {
     	
     	Integer encounterId = encounter.getEncounterId();
     	
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "SPECIAL NEEDS", "Special Need Child: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MATwoIDsChecked", "Two ID's Checked by MA/Nurse: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MDTwoIDsChecked", "Two ID's Checked: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Abuse_Concern", "Screened for abuse: ", encounterId);
-    	appendCounseling(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Physical Activity: ", encounterId, "Physical Activity");
-    	appendCounseling(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Healthy Diet: ", encounterId, "Healthy Diet");
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MedicationEducationPerformed", "Medication Education Performed and/or Counseled on Vaccines: ", encounterId);
+    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "SPECIAL NEEDS", "Special Need Child: ", encounterId, null);
+    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MATwoIDsChecked", "Two ID's Checked by MA/Nurse: ", encounterId, null);
+    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MDTwoIDsChecked", "Two ID's Checked: ", encounterId, null);
+    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Abuse_Concern", "Screened for abuse: ", encounterId, null);
+    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Physical Activity: ", encounterId, "Physical Activity");
+    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Healthy Diet: ", encounterId, "Healthy Diet");
+    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MedicationEducationPerformed", "Medication Education Performed and/or Counseled on Vaccines: ", encounterId, null);
     	
     	String note = noteBuffer.toString();
     	if (note.trim().length() > 0) {
@@ -122,43 +127,41 @@ public class physicianNoteHistoryAndPhysical implements Rule {
 	 * @param noteBuffer To append the physical exam header and value 
 	 * @param concept Concept Name
 	 * @param heading Physical exam header 
+	 * @param codedConcept Concept name code
 	 */
     private static void appendPhysicalExam(LogicContext context, LogicDataSource obsDataSource, Integer patientId, 
-                                    StringBuffer noteBuffer, String concept, String heading, Integer encounterId) {
-    	Result result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl(concept).within(Duration.days(-3)).last());
+              StringBuffer noteBuffer, String concept, String heading, Integer encounterId, String codedConcept) {
+    	ConceptService conceptService = Context.getConceptService();
+    	Concept valueCodedConcept = null;
+		Result result=null;
+		
+		if (codedConcept!=null){
+			valueCodedConcept = conceptService.getConceptByName(codedConcept);
+			
+			LogicCriteria criteria = new LogicCriteriaImpl(concept).equalTo(new OperandConcept(valueCodedConcept));
+			LogicCriteria encounterCriteria = new LogicCriteriaImpl("encounterId").equalTo(encounterId.intValue());
+			criteria.and(encounterCriteria);
+			result =context.read(patientId, obsDataSource, criteria.last()); 
+
+		}else {
+			result = context.read(patientId, obsDataSource, 
+					new LogicCriteriaImpl(concept).within(Duration.days(-3)).last());
+		}
     	appendNote(result, noteBuffer, heading, encounterId);
     }
-    
-    /**
-     * Appends Discussed Physical Activity and Discussed Healthy Diet to the Physician Note
-     * @param patientId The ID of the patient used to lookup physical exam observations for the current day.
-     * @param noteBuffer To append the physical exam header and value 
-     * @param concept Concept Name
-     * @param heading Discussed Physical Activity or Discussed Healthy Diet header
-     * @param codedConcept Concept name code
-     */
-    private static void appendCounseling(LogicContext context, LogicDataSource obsDataSource, Integer patientId, 
-            StringBuffer noteBuffer, String concept, String heading, Integer encounterId, String codedConcept) {
-    	ConceptService conceptService = Context.getConceptService();
-		Concept valueCodedConcept = null;
-		Result result=null;
-		valueCodedConcept = conceptService.getConceptByName(codedConcept);
-		result =context.read(patientId, obsDataSource, 
-				new LogicCriteriaImpl(concept).within(Duration.days(-3)).equalTo(new OperandConcept(valueCodedConcept)).last());
-		appendNote(result, noteBuffer, heading, encounterId);
-	}
-    
-    /**
-     * Appends Header and value to the physician note
-     * @param result LogicContext Result
-     * @param noteBuffer 
-     * @param heading Physical Exam Extras Heading
-     * @param encounterId The encounter identifier
-     */
+	 /**
+	 * Appends Header and value to the physician note
+	 * @param result LogicContext Result
+	 * @param noteBuffer 
+	 * @param heading Physical Exam Extras Heading
+	 * @param encounterId The encounter identifier
+	 */
     private static void appendNote(Result result, StringBuffer noteBuffer, String heading, Integer encounterId){
     	if (result != null && !result.isEmpty() && Util.equalEncounters(encounterId, result)) {
 			String value = result.toString();
+			if (value.equals("Physical Activity") || value.equals("Healthy Diet")){
+				value = "yes";
+			}
 			noteBuffer.append(heading);
 			noteBuffer.append(value);
 			noteBuffer.append("\n");
