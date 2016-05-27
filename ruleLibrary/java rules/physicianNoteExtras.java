@@ -110,7 +110,7 @@ public class physicianNoteExtras implements Rule {
     	
     	String note = noteBuffer.toString();
     	if (note.trim().length() > 0) {
-    		return "PHYSICAL EXAMINATION\n" + note + "\n";
+    		return "QUALITY INDICATORS\n" + note + "\n";
     	}
     	return note;
     }
