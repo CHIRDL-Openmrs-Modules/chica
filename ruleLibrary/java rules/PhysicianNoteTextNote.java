@@ -1,14 +1,9 @@
 package org.openmrs.module.chica.rule;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.openmrs.Encounter;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.Duration;
@@ -21,8 +16,7 @@ import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
-import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 /**
@@ -136,7 +130,7 @@ public class PhysicianNoteTextNote implements Rule
 		LogicContext context = new LogicContextImpl(patientId);
 		LogicDataSource obsDataSource = context.getLogicDataSource("obs");
 
-		Encounter encounter = getLastEncounter(patient);
+		Encounter encounter = Util.getLastEncounter(patient);
 		if (encounter == null) {
 			return noteBuffer.toString();
 		}
@@ -146,7 +140,7 @@ public class PhysicianNoteTextNote implements Rule
 		if(!conceptName.isEmpty()){
 			Result textNote = context.read(patientId, obsDataSource, 
 					new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
-			if (textNote != null && !textNote.isEmpty() && equalEncounters(encounterId, textNote)) {
+			if (textNote != null && !textNote.isEmpty() && Util.equalEncounters(encounterId, textNote)) {
 				noteBuffer.append(conceptName.toUpperCase());
 				noteBuffer.append("\n");
 				noteBuffer.append(replaceSpecialCharacters(textNote.toString(), parameters));
@@ -204,69 +198,4 @@ public class PhysicianNoteTextNote implements Rule
 		
 		return newTextNote;
 	}
-
-	private static Encounter getLastEncounter(Patient patient) {
-		// Get last encounter with last day
-		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
-		Date startDate = startCal.getTime();
-		Date endDate = Calendar.getInstance().getTime();
-		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-				null, null, false);
-		if (encounters == null || encounters.size() == 0) {
-			return null;
-		} else if (encounters.size() == 1) {
-			return encounters.get(0);
-		}
-
-		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
-		ATDService atdService = Context.getService(ATDService.class);
-		for (int i = encounters.size() - 1; i >= 0; i--) {
-			Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
-			if (stats == null || stats.size() == 0) {
-				continue;
-			}
-
-			for (Statistics stat : stats) {
-				if (stat.getScannedTimestamp() != null) {
-					return encounter;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private static boolean equalEncounters(Integer encounterId, Result result) {
-		if (encounterId == null || result == null) {
-			return false;
-		}
-
-		Result latestResult = result.latest();
-		if (latestResult == null) {
-			return false;
-		}
-
-		if (latestResult.getResultObject() == null || !(latestResult.getResultObject() instanceof Obs)) {
-			return false;
-		}
-
-		Obs obs = (Obs)latestResult.getResultObject();
-		if (obs == null) {
-			return false;
-		}
-
-		Encounter obsEncounter = obs.getEncounter();
-		if (obsEncounter == null) {
-			return false;
-		}
-
-		if (encounterId == obsEncounter.getEncounterId()) {
-			return true;
-		}
-
-		return false;
-	}
-
 }

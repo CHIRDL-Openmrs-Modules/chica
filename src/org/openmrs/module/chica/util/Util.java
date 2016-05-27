@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.EmptyResult;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -664,4 +666,78 @@ public class Util {
 		}
 		return null;
 	}
+	/**
+	 * Retrieves the last encounter for a patient or null if one does not exist.
+	 * @param patient The patient used to find the encounter.
+	 * @return Encounter object or null if one does not exist.
+	 */
+    public static org.openmrs.Encounter getLastEncounter(Patient patient) {
+    	// Get last encounter with last day
+		Calendar startCal = Calendar.getInstance();
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
+		Date startDate = startCal.getTime();
+		Date endDate = Calendar.getInstance().getTime();
+		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
+				null, null, false);
+		if (encounters == null || encounters.size() == 0) {
+			return null;
+		} else if (encounters.size() == 1) {
+			return encounters.get(0);
+		}
+		
+		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
+		ATDService atdService = Context.getService(ATDService.class);
+		for (int i = encounters.size() - 1; i >= 0; i--) {
+			org.openmrs.Encounter encounter = encounters.get(i);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			if (stats == null || stats.size() == 0) {
+				continue;
+			}
+			
+			for (Statistics stat : stats) {
+				if (stat.getScannedTimestamp() != null) {
+					return encounter;
+				}
+			}
+		}
+		
+		return null;
+    }
+    
+    /**
+     * Validating encounterIds
+     * @param encounterId The encounter identifier
+     * @param result
+     * @return
+     */
+    public static boolean equalEncounters(Integer encounterId, Result result) {
+    	if (encounterId == null || result == null) {
+    		return false;
+    	}
+    	
+    	Result latestResult = result.latest();
+    	if (latestResult == null) {
+    		return false;
+    	}
+    	
+    	if (latestResult.getResultObject() == null || !(latestResult.getResultObject() instanceof Obs)) {
+    		return false;
+    	}
+    	
+    	Obs obs = (Obs)latestResult.getResultObject();
+    	if (obs == null) {
+    		return false;
+    	}
+    	
+    	org.openmrs.Encounter obsEncounter = obs.getEncounter();
+    	if (obsEncounter == null) {
+    		return false;
+    	}
+    	
+    	if (encounterId == obsEncounter.getEncounterId()) {
+    		return true;
+    	}
+    	
+    	return false;
+    }
 }
