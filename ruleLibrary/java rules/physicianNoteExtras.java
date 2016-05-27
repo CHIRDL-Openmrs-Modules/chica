@@ -39,14 +39,14 @@ import org.openmrs.module.chica.util.Util;
  *
  * @author Seema Sarala
  */
-public class physicianNoteHistoryAndPhysical implements Rule {
+public class physicianNoteExtras implements Rule {
 	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		
-		String examNote = buildHistoryandPhysicalNote(patientId,parameters);
+		String examNote = buildPhysicalExamExtrasNote(patientId,parameters);
 		if (examNote.trim().length() > 0) {
 			return new Result(examNote);
 		}
@@ -87,7 +87,7 @@ public class physicianNoteHistoryAndPhysical implements Rule {
      * @param patientId The ID of the patient used to lookup physical exam observations for the current day.
      * @return String containing the physical exam portion of the physician note.  This will not return null.
      */
-    private static String buildHistoryandPhysicalNote(Integer patientId, Map<String, Object> parameters) {
+    private static String buildPhysicalExamExtrasNote(Integer patientId, Map<String, Object> parameters) {
     	StringBuffer noteBuffer = new StringBuffer();
     	Patient patient = Context.getPatientService().getPatient(patientId);
     	LogicContext context = new LogicContextImpl(patientId);
@@ -100,13 +100,13 @@ public class physicianNoteHistoryAndPhysical implements Rule {
     	
     	Integer encounterId = encounter.getEncounterId();
     	
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "SPECIAL NEEDS", "Special Need Child: ", encounterId, null);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MATwoIDsChecked", "Two ID's Checked by MA/Nurse: ", encounterId, null);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MDTwoIDsChecked", "Two ID's Checked: ", encounterId, null);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Abuse_Concern", "Screened for abuse: ", encounterId, null);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Physical Activity: ", encounterId, "Physical Activity");
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Healthy Diet: ", encounterId, "Healthy Diet");
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "MedicationEducationPerformed", "Medication Education Performed and/or Counseled on Vaccines: ", encounterId, null);
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "SPECIAL NEEDS", "Special Need Child: ", encounterId, null);
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "MATwoIDsChecked", "Two ID's Checked by MA/Nurse: ", encounterId, null);
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "MDTwoIDsChecked", "Two ID's Checked: ", encounterId, null);
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "Abuse_Concern", "Screened for abuse: ", encounterId, null);
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Physical Activity: ", encounterId, "Physical Activity");
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Healthy Diet: ", encounterId, "Healthy Diet");
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "MedicationEducationPerformed", "Medication Education Performed and/or Counseled on Vaccines: ", encounterId, null);
     	
     	String note = noteBuffer.toString();
     	if (note.trim().length() > 0) {
@@ -122,7 +122,7 @@ public class physicianNoteHistoryAndPhysical implements Rule {
 	 * @param heading Physical exam header 
 	 * @param codedConcept Concept name code
 	 */
-    private static void appendPhysicalExam(LogicContext context, LogicDataSource obsDataSource, Integer patientId, 
+    private static void appendPhysicalExamsExtraNote(LogicContext context, LogicDataSource obsDataSource, Integer patientId, 
               StringBuffer noteBuffer, String concept, String heading, Integer encounterId, String codedConcept) {
     	ConceptService conceptService = Context.getConceptService();
     	Concept valueCodedConcept = null;
