@@ -21,7 +21,6 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.Duration;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
 import org.openmrs.logic.LogicException;
@@ -128,18 +127,21 @@ public class physicianNoteHistoryAndPhysical implements Rule {
     	ConceptService conceptService = Context.getConceptService();
     	Concept valueCodedConcept = null;
 		Result result=null;
-		
+		LogicCriteria criteria = null;
+		LogicCriteria encounterCriteria = null;
+				
 		if (codedConcept!=null){
 			valueCodedConcept = conceptService.getConceptByName(codedConcept);
-			
-			LogicCriteria criteria = new LogicCriteriaImpl(concept).equalTo(new OperandConcept(valueCodedConcept));
-			LogicCriteria encounterCriteria = new LogicCriteriaImpl("encounterId").equalTo(encounterId.intValue());
-			criteria.and(encounterCriteria);
+			criteria = new LogicCriteriaImpl(concept).equalTo(new OperandConcept(valueCodedConcept));
+			encounterCriteria = new LogicCriteriaImpl("encounterId").equalTo(encounterId.intValue());
+			criteria = criteria.and(encounterCriteria);
 			result =context.read(patientId, obsDataSource, criteria.last()); 
 
 		}else {
-			result = context.read(patientId, obsDataSource, 
-					new LogicCriteriaImpl(concept).within(Duration.days(-3)).last());
+			criteria = new LogicCriteriaImpl(concept);
+			encounterCriteria = new LogicCriteriaImpl("encounterId").equalTo(encounterId.intValue());
+			criteria = criteria.and(encounterCriteria);
+			result = context.read(patientId, obsDataSource, criteria.last());
 		}
     	appendNote(result, noteBuffer, heading, encounterId);
     }
