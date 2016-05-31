@@ -554,6 +554,7 @@ public class HL7SocketHandler extends
 		String printerLocation = null;
 		String insuranceName = null;
 		String visitNumber = null;
+		String originalLocation = null;
 		Message message = null;
 		
 			try {
@@ -608,6 +609,15 @@ public class HL7SocketHandler extends
 						{
 							log.error("Unable to parse visit number for encounterId: " + encounter.getEncounterId());
 						}		
+					}
+					
+					// DWE CHICA-751 Parse the original location from the location description field
+					// which is copied from PV1-3.1 to PV1-3.9 by Mirth
+					originalLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getLocationDescription(message);
+					if(originalLocation != null && !originalLocation.isEmpty())
+					{
+						storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_ORIGINAL_LOCATION, originalLocation);
 					}
 				}
 			} catch (EncodingNotSupportedException e) {

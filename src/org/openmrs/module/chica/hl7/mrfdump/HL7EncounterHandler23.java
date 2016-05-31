@@ -287,4 +287,15 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		}
 		return null;
 	}
+	
+	/**
+	 * DWE CHICA-751
+	 * Get location description from PV1-3.9
+	 * Not implemented in this package
+	 */
+	public String getLocationDescription(Message message)
+	{
+		// Intentionally left empty
+		return null;
+	}
 }
