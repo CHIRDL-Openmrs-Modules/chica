@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,7 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -56,6 +59,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeVa
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
@@ -63,6 +67,14 @@ import com.itextpdf.text.pdf.PdfStamper;
 public class getGrowthChartFilename implements Rule {
 	
 	private Log log = LogFactory.getLog(this.getClass());
+	
+	private static final String HEAD_CIRCUMFERENCE = "HC";
+	
+	private static final String WEIGHT = "WEIGHT";
+	
+	private static final String HEIGHT = "HEIGHT";
+	
+	private static final String BMI = "BMI CHICA";
 	
 	/**
 	 * *
@@ -220,7 +232,7 @@ public class getGrowthChartFilename implements Rule {
 										continue;
 									}
 									
-									addPlots(growthChart, patient, conceptXAxis, conceptYAxis, image, content, birthdate);
+									addPlots(growthChart, patient, conceptXAxis, conceptYAxis, image, content, birthdate,pdfStamper);
 								}
 								
 								pdfStamper.close();
@@ -256,8 +268,53 @@ public class getGrowthChartFilename implements Rule {
 		return imageFilename;
 	}
 	
+	/**
+	 * This method fills in the biometric grid in the growth charts with the most recent height, weight, BMI, HC
+	 * 
+	 * @param pdfStamper
+	 * @param encounter
+	 * @param birthdate
+	 * @param count
+	 * @throws Exception
+	 */
+	private void writeBiometrics(PdfStamper pdfStamper, Encounter encounter, Date birthdate, Integer count) throws Exception{
+		//fill in most recent biometrics
+		AcroFields form = pdfStamper.getAcroFields();
+		ObsService obsService = Context.getObsService();
+		
+		if (encounter != null) {
+			Set<Obs> obs = encounter.getObs();
+			for (Obs currObs : obs) {
+				String name = currObs.getConcept().getName().getName();
+				Double value = currObs.getValueNumeric();
+				if (value != null) {
+					value = Math.round(value * 100) / 100D;
+					if (name.equalsIgnoreCase(WEIGHT)) {
+						form.setField("Weight"+count, value.toString()+" lbs");
+					}
+					if (name.equalsIgnoreCase(HEIGHT)) {
+						form.setField("Height"+count, value.toString()+" in");
+					}
+					if (name.equalsIgnoreCase(HEAD_CIRCUMFERENCE)) {
+						form.setField("HC"+count, value.toString()+" cm");
+					}
+					if (name.equalsIgnoreCase(BMI)) {
+						form.setField("BMI"+count, value.toString());
+					}
+				}	
+			}
+			String value = Util.adjustAgeUnits(birthdate, encounter.getEncounterDatetime());
+			form.setField("Age"+count, value);
+			Calendar today = Calendar.getInstance();
+			String pattern = "M/d/yyyy";
+			SimpleDateFormat dateForm = new SimpleDateFormat(pattern);
+			String encounterDate = dateForm.format(encounter.getEncounterDatetime());
+			form.setField("Date"+count, encounterDate);
+		}
+	}
+	
 	private void addPlots(GrowthChart growthChart, Patient patient, ConceptXAxis conceptXAxis, ConceptYAxis conceptYAxis, 
-	                      Image image, PdfContentByte content, Date birthdate) 
+	                      Image image, PdfContentByte content, Date birthdate, PdfStamper pdfStamper) 
 	throws Exception {
 		ConceptService conceptService = Context.getConceptService();
 		Concept yConcept = conceptService.getConceptByName(conceptYAxis.getName());
@@ -270,6 +327,7 @@ public class getGrowthChartFilename implements Rule {
 		    false);
 		Float ageInDays = null;
 		Concept xAxisConcept = null;
+		Integer biometricsIndex = 1;
 		for (Obs currObs : obs) {
 			Float xValue = null;
 			Float ageInMonths = Float.parseFloat(Integer.toString(org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(birthdate,
@@ -306,7 +364,8 @@ public class getGrowthChartFilename implements Rule {
 				Obs matchingOb = matchingObs.get(0);
 				xValue = Float.parseFloat(matchingOb.getValueNumeric().toString());
 			}
-			
+			writeBiometrics(pdfStamper, currObs.getEncounter(), birthdate,biometricsIndex);
+
 			Float xPosition = computeAbsolutePosition(conceptXAxis.getMinPosition(), conceptXAxis.getMaxPosition(), 
 				conceptXAxis.getMinVal(), conceptXAxis.getMaxVal(), xValue);
 			Float yValue = Float.parseFloat(currObs.getValueNumeric().toString());
@@ -314,6 +373,7 @@ public class getGrowthChartFilename implements Rule {
 				conceptYAxis.getMinVal(), conceptYAxis.getMaxVal(), yValue);
 			image.setAbsolutePosition(xPosition, yPosition);
 			content.addImage(image);
+			biometricsIndex++;
 		}
 	}
 	
