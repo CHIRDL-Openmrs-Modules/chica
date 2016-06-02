@@ -281,19 +281,12 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			pid.getPatientName(0).getGivenName().setValue(pat.getGivenName());
 			
 			// Identifiers
-			PatientIdentifier pi = pat.getPatientIdentifier();
+			PatientIdentifier pi = pat.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR); // DWE CHICA-771 Use IDENTIFIER_TYPE_MRN_EHR instead of the first preferred identifier so that we send back exactly what we received
 			
 			// Identifier PID-3
 			// MRN
 			if (pi != null) {
-				String identString = pi.getIdentifier();
-				if (identString != null) {
-					Integer dash = identString.indexOf("-");
-					if (dash >= 0) {
-						identString = identString.substring(0, dash) + identString.substring(dash + 1);
-					}
-				}
-				pid.getPatientIdentifierList(0).getIDNumber().setValue(identString);
+				pid.getPatientIdentifierList(0).getIDNumber().setValue(pi.getIdentifier());
 			}
 			
 			// gender
