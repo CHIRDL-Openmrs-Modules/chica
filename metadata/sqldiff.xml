@@ -3996,11 +3996,11 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         <author>David Ely</author>
         <date>May 31, 2016</date>
         <description>
-            CHICA-771 Add new patient_identifier_type record to store the MRN received from Epic or other EHR without the leading zeros removed
+            CHICA-771 Add new patient_identifier_type record to store the MRN received from Epic or other EHR
         </description>
         <sql>
             INSERT INTO patient_identifier_type (name, description, creator, date_created, uuid)
-			VALUES('MRN_EHR', 'MRN received from EHR without leading zeros removed.', 1, NOW(), UUID());
+			VALUES('MRN_EHR', 'MRN received from EHR.', 1, NOW(), UUID());
         </sql>
     </diff>
     
