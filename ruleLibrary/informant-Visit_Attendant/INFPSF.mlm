@@ -1,0 +1,39 @@
+Maintenance:
+	Title:		Informant PSF;;
+	Filename:		INFPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Seema Sarala;;
+	Specialist:	;;
+	Date:		2016-06-07 08:43:00;;
+	Validation:	;;
+Library:
+	Purpose: PSF question which asks family the relationship of the informant with child ;;
+	Explanation: To see who filled the questionnaire regarding child's developmental stages ;;
+	Keywords:	;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+
+If (mode = PRODUCE) then
+  conclude True;
+endif;
+
+;;
+Action:
+call CREATE_JIT with "INFORMANT_JIT";
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:
