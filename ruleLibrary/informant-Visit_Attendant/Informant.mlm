@@ -1,6 +1,6 @@
 Maintenance:
-	Title:		AdditionalInformationPSF;;
-	Filename:		AdditionalInformationPSF;;
+	Title:		Informant;;
+	Filename:		Informant;;
 	Version:	1.0;;
 	Institution:	Indiana University School of Medicine;;
 	Author:		Seema Sarala;;
@@ -31,7 +31,7 @@ endif;
 
 ;;
 Action:
-call CREATE_JIT with "AdditionalInformation_JIT_Mobile";
+call CREATE_JIT with "INFORMANT_JIT";
 
 ;;
 Age_Min: 0 years;;

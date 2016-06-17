@@ -33,7 +33,7 @@ function init(patientName, birthdate, formInst, language) {
 
 function submitEmptyForm() {
 	setLanguageField();
-	document.getElementById("AdditionalInformantionForm").submit();
+	document.getElementById("RelationshipForm").submit();
 }
 
 function setLanguageField() {
@@ -49,7 +49,7 @@ function setLanguage(patientName, birthdate) {
     var langButtonText = "Español";
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
-    var formTitleText = "Additional Information Form:";
+    var formTitleText = "Informant Relationship with Child Questionnaire:";
     if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
@@ -75,7 +75,8 @@ function changePage(newPageNum) {
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
-    for (var i = 1; i < 3; i++) {
+    // Transfer the answers for the 10 questions
+    for (var i = 1; i < 11; i++) {
     	if (english) {
 	    	setQuestionCheckboxes("Informant_" + i + "_2", "Informant_" + i);
 	    } else {
@@ -106,7 +107,7 @@ function finishForm() {
 	$("#not_finished_final_dialog").popup("close");
 	$("#not_finished_final_dialog_sp").popup("close");
 	setLanguageField();
-	var submitForm = $("#AdditionalInformantionForm"); 
+	var submitForm = $("#RelationshipForm"); 
 	var token = getAuthenticationToken();
     $.ajax({
     	beforeSend: function (xhr) {
@@ -140,14 +141,18 @@ function setQuestionCheckboxes(initialName, newName) {
 		
 		// Select the radio button by name and value
 		$("input[name='" + newName + "'][value='" + selectedValue + "']").prop("checked",true);
-		$("input[name='" + initialName + "'][value='" + selectedValue + "']").prop("checked",false);
+		$("input[name='" + initialName + "'][value='" + selectedValue + "']").prop("checkenewNamed",false);
 		$("input[name='" + newName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
 		$("input[name='" + initialName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
 	}
 }
   
 function concatSelectOption() {
-	var selectedVal = $("#Informant_2").val();
+	var selectedVal = "";
+	$("#Informant_2").change(function() {
+		selectedVal = $(this).val(); 
+	});
+	$( "select" ).change(function() {}).trigger( "change" );
 	document.getElementById('VisitAttendee').value = selectedVal;		
 }
 
@@ -156,13 +161,12 @@ function areAllQuestionsAnswered() {
 	if (english) {
 		spanishChar = "";
 	}
-	for (var i = 1; i < 3; i++) {
-		if ( $("#Informant_" +  i + spanishChar).val() == "" || $("#Informant_" +  i + spanishChar).val() == null ) {
-			return false;
-		}
-	}
-	return false;
+	if ( ($('#Informant_1').val() == "Select One") || ($("#Informant_2 :selected").length == 0) ){
+		return false;
+    }
+	return true;
 }
+
 
 function showBlockingMessage() {
 	var message = "Saving Answers...";
