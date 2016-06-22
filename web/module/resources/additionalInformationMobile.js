@@ -161,10 +161,11 @@ function concatSelectOption() {
 		spanishChar = "";
 	} 
 	var selectedVal = $("#Informant_2" + spanishChar).val();
+	var valueSplit = null;
 	if (selectedVal!=null) {
-		var valueSplit = selectedVal.toString().split(',').join('-');
-		document.getElementById('VisitAttendee').value = valueSplit;
-	}		
+		valueSplit = selectedVal.toString().split(',').join('^^');
+	}
+	document.getElementById('VisitAttendee').value = valueSplit;
 }
 
 function areAllQuestionsAnswered() {
