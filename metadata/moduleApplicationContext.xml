@@ -44,7 +44,7 @@
                 <prop key="/module/@MODULE_ID@/pwsIUHCerner.form">pwsIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/SCAREDParentMobile.form">SCAREDParentMobile</prop>
                 <prop key="/module/@MODULE_ID@/ISQMobile.form">ISQMobile</prop>
-                <prop key="/module/@MODULE_ID@/additionalInfomationMobile.form">additionalInfomationMobile</prop>
+                <prop key="/module/@MODULE_ID@/additionalInformationMobile.form">additionalInformationMobile</prop>
             </props>
         </property>
     </bean>
@@ -228,9 +228,9 @@
         <property name="formView"><value>/module/@MODULE_ID@/ISQMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
-    <bean id="additionalInfomationMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
-        <property name="commandName"><value>additionalInfomationMobileObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/additionalInfomationMobile</value></property>
+    <bean id="additionalInformationMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>additionalInformationMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/additionalInformationMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
     <bean parent="serviceContext">

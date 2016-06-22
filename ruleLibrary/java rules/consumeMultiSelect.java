@@ -115,12 +115,12 @@ public class consumeMultiSelect implements Rule
 				ruleResult.toString().length()>0)
 		{
 			Concept concept = conceptService.getConceptByName(conceptName);
-			org.openmrs.module.chica.util.Util.voidObsForConcept(concept,encounterId, formFieldId); // DWE CHICA-437 Added formFieldId
-			String[] ruleValueSplit = ruleResult.toString().split(",");
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, formFieldId);
+			String[] ruleValueSplit = ruleResult.toString().split("-");
 			for (int i=0; i<ruleValueSplit.length; i++){
-				org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept,
-					encounterId, ruleValueSplit[i].toString(),formInstance,
-					ruleId,locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
+				org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, 
+					encounterId, ruleValueSplit[i].toString(), formInstance, 
+					ruleId, locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 			}
 		}
 		

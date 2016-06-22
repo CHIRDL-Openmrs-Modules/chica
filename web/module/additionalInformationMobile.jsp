@@ -2,7 +2,7 @@
 <%@ page import="org.openmrs.module.chirdlutil.util.Util"%>
 <%@ page import="org.openmrs.Patient" %>
 <!DOCTYPE html>
-<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/additionalInfomationMobile.form" />
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/additionalInformationMobile.form" />
 <html>
 <head>
 <meta charset="utf-8">
@@ -13,7 +13,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/additionalInfomationMobile.js" charset="utf-8"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/additionalInformationMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
@@ -25,7 +25,7 @@
 <c:set var="formName" value="Additional Information Form:"/>
 <c:set var="formName_sp" value=""/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
-<form id="AdditionalInformantionForm" method="POST" action="additionalInfomationMobile.form" method="post" enctype="multipart/form-data">
+<form id="AdditionalInformationForm" method="POST" action="additionalInformationMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
     <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
         <div data-role="header" data-theme="b">
@@ -87,26 +87,26 @@
 				<select name="Informant_1" id="Informant_1" data-native-menu="false">
 					<option name="Informant_1" id="Informant_1_0" value=""/>
 					<label for="Informant_1_0">Select One</label>
-					<option name="Informant_1" id="Informant_1_1" value="self" data-theme="b" />
-					<label for="Informant_1_1">Self</label>
-					<option name="Informant_1" id="Informant_1_2" value="mother" data-theme="b" />
-					<label for="Informant_1_2">Mother</label>
-					<option name="Informant_1" id="Informant_1_3" value="father" data-theme="b" />
-					<label for="Informant_1_3">Father</label>
-					<option name="Informant_1" id="Informant_1_4" value="grandmother" data-theme="b" />
-					<label for="Informant_1_4">Grandmother</label>
-					<option name="Informant_1" id="Informant_1_5" value="grandfather" data-theme="b" />
-					<label for="Informant_1_5">Grandfather</label>
-					<option name="Informant_1" id="Informant_1_6" value="aunt" data-theme="b" />
-					<label for="Informant_1_6">Aunt</label>
-					<option name="Informant_1" id="Informant_1_7" value="uncle" data-theme="b" />
-					<label for="Informant_1_7">Uncle</label>
-					<option name="Informant_1" id="Informant_1_8" value="foster parent" data-theme="b" />
-					<label for="Informant_1_8">Foster parent</label>
-					<option name="Informant_1" id="Informant_1_9" value="sibling" data-theme="b" />
-					<label for="Informant_1_9">Sibling</label>
-					<option name="Informant_1" id="Informant_1_10" value="Other" data-theme="b" />
-					<label for="Informant_1_10">Other</label>
+					<option name="Informant_1" id="Informant_1_Self" value="self" data-theme="b" />
+					<label for="Informant_1_Self">Self</label>
+					<option name="Informant_1" id="Informant_1_mother" value="mother" data-theme="b" />
+					<label for="Informant_1_mother">Mother</label>
+					<option name="Informant_1" id="Informant_1_father" value="father" data-theme="b" />
+					<label for="Informant_1_father">Father</label>
+					<option name="Informant_1" id="Informant_1_gm" value="grandmother" data-theme="b" />
+					<label for="Informant_1_gm">Grandmother</label>
+					<option name="Informant_1" id="Informant_1_gf" value="grandfather" data-theme="b" />
+					<label for="Informant_1_gf">Grandfather</label>
+					<option name="Informant_1" id="Informant_1_aunt" value="aunt" data-theme="b" />
+					<label for="Informant_1_aunt">Aunt</label>
+					<option name="Informant_1" id="Informant_1_uncle" value="uncle" data-theme="b" />
+					<label for="Informant_1_uncle">Uncle</label>
+					<option name="Informant_1" id="Informant_1_fp" value="foster parent" data-theme="b" />
+					<label for="Informant_1_fp">Foster parent</label>
+					<option name="Informant_1" id="Informant_1_sibling" value="sibling" data-theme="b" />
+					<label for="Informant_1_sibling">Sibling</label>
+					<option name="Informant_1" id="Informant_1_other" value="Other" data-theme="b" />
+					<label for="Informant_1_other">Other</label>
 				</select>
 	        </fieldset>
 	    </div>
@@ -120,28 +120,26 @@
 				<select name="Informant_2" id="Informant_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2" id="Informant_2_0"/>
 				  <label for="Informant_2_0">Select all that apply</label>
-				  <option name="Informant_2" value="self" id="Informant_2_1" data-theme="b" />
-				  <label for="Informant_2_1">Self</label>
-				  <option name="Informant_2" value="mother" id="Informant_2_2" data-theme="b" />
-				  <label for="Informant_2_2">Mother</label>
-				  <option name="Informant_2" value="father" id="Informant_2_3" data-theme="b" />
-				  <label for="Informant_2_3">Father</label>
-				  <option name="Informant_2" value="grandmother" id="Informant_2_4" data-theme="b" />
-				  <label for="Informant_2_4">Grandmother</label>
-				  <option name="Informant_2" value="grandfather" id="Informant_2_5" data-theme="b" />
-				  <label for="Informant_2_5">Grandfather</label>
-				  <option name="Informant_2" value="aunt" id="Informant_2_6" data-theme="b" />
-				  <label for="Informant_2_6">Aunt</label>
-				  <option name="Informant_2" value="uncle" id="Informant_2_7" data-theme="b" />
-				  <label for="Informant_2_7">Uncle</label>
-				  <option name="Informant_2" value="foster parent" id="Informant_2_8" data-theme="b" />
-				  <label for="Informant_2_8">Foster parent</label>
-				  <option name="Informant_2" value="sibling" id="Informant_2_9" data-theme="b" />
-				  <label for="Informant_2_9">Sibling</label>
-				  <option name="Informant_2" value="Other" id="Informant_2_10" data-theme="b" />
-				  <label for="Informant_2_10">Other</label>
-				  <option name="Informant_2" value="No One" id="Informant_2_11" data-theme="b" />
-				  <label for="Informant_2_11">No one (I'm here alone)</label>
+				  <option name="Informant_2" value="mother" id="Informant_2_mother" data-theme="b" />
+				  <label for="Informant_2_mother">Mother</label>
+				  <option name="Informant_2" value="father" id="Informant_2_father" data-theme="b" />
+				  <label for="Informant_2_father">Father</label>
+				  <option name="Informant_2" value="grandmother" id="Informant_2_gm" data-theme="b" />
+				  <label for="Informant_2_gm">Grandmother</label>
+				  <option name="Informant_2" value="grandfather" id="Informant_2_gf" data-theme="b" />
+				  <label for="Informant_2_gf">Grandfather</label>
+				  <option name="Informant_2" value="aunt" id="Informant_2_aunt" data-theme="b" />
+				  <label for="Informant_2_aunt">Aunt</label>
+				  <option name="Informant_2" value="uncle" id="Informant_2_uncle" data-theme="b" />
+				  <label for="Informant_2_uncle">Uncle</label>
+				  <option name="Informant_2" value="foster parent" id="Informant_2_fp" data-theme="b" />
+				  <label for="Informant_2_fp">Foster parent</label>
+				  <option name="Informant_2" value="sibling" id="Informant_2_sibling" data-theme="b" />
+				  <label for="Informant_2_sibling">Sibling</label>
+				  <option name="Informant_2" value="Other" id="Informant_2_other" data-theme="b" />
+				  <label for="Informant_2_other">Other</label>
+				  <option name="Informant_2" value="No One" id="Informant_2_noone" data-theme="b" />
+				  <label for="Informant_2_noone">No one (I'm here alone)</label>
 				</select>
 			</fieldset>
 		</div>
@@ -171,28 +169,28 @@
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 				<select name="Informant_1_2" id="Informant_1_2" data-native-menu="false">
-					<option name="Informant_1_2" id="Informant_1_2_0" />
+					<option name="Informant_1_2" id="Informant_1_2_0" value=""/>
 					<label for="Informant_1_2_0">Select One</label>
-					<option name="Informant_1_2" id="Informant_1_2_1" value="self" data-theme="b" />
-					<label for="Informant_1_2_1">Self</label>
-					<option name="Informant_1_2" id="Informant_1_2_2" value="mother" data-theme="b" />
-					<label for="Informant_1_2_2">Mother</label>
-					<option name="Informant_1_2" id="Informant_1_2_3" value="father" data-theme="b" />
-					<label for="Informant_1_2_3">Father</label>
-					<option name="Informant_1_2" id="Informant_1_2_4" value="grandmother" data-theme="b" />
-					<label for="Informant_1_2_4">Grandmother</label>
-					<option name="Informant_1_2" id="Informant_1_2_5" value="grandfather" data-theme="b" />
-					<label for="Informant_1_2_5">Grandfather</label>
-					<option name="Informant_1_2" id="Informant_1_2_6" value="aunt" data-theme="b" />
-					<label for="Informant_1_2_6">Aunt</label>
-					<option name="Informant_1_2" id="Informant_1_2_7" value="uncle" data-theme="b" />
-					<label for="Informant_1_2_7">Uncle</label>
-					<option name="Informant_1_2" id="Informant_1_2_8" value="foster parent" data-theme="b" />
-					<label for="Informant_1_2_8">Foster parent</label>
-					<option name="Informant_1_2" id="Informant_1_2_9" value="sibling" data-theme="b" />
-					<label for="Informant_1_2_9">Sibling</label>
-					<option name="Informant_1_2" id="Informant_1_2_10" value="Other" data-theme="b" />
-					<label for="Informant_1_2_10">Other</label>
+					<option name="Informant_1_2" id="Informant_1_2_self" value="self" data-theme="b" />
+					<label for="Informant_1_2_self">Self</label>
+					<option name="Informant_1_2" id="Informant_1_2_mother" value="mother" data-theme="b" />
+					<label for="Informant_1_2_mother">Mother</label>
+					<option name="Informant_1_2" id="Informant_1_2_father" value="father" data-theme="b" />
+					<label for="Informant_1_2_father">Father</label>
+					<option name="Informant_1_2" id="Informant_1_2_gm" value="grandmother" data-theme="b" />
+					<label for="Informant_1_2_gm">Grandmother</label>
+					<option name="Informant_1_2" id="Informant_1_2_gf" value="grandfather" data-theme="b" />
+					<label for="Informant_1_2_gf">Grandfather</label>
+					<option name="Informant_1_2" id="Informant_1_2_aunt" value="aunt" data-theme="b" />
+					<label for="Informant_1_2_aunt">Aunt</label>
+					<option name="Informant_1_2" id="Informant_1_2_uncle" value="uncle" data-theme="b" />
+					<label for="Informant_1_2_uncle">Uncle</label>
+					<option name="Informant_1_2" id="Informant_1_2_fp" value="foster parent" data-theme="b" />
+					<label for="Informant_1_2_fp">Foster parent</label>
+					<option name="Informant_1_2" id="Informant_1_2_sibling" value="sibling" data-theme="b" />
+					<label for="Informant_1_2_sibling">Sibling</label>
+					<option name="Informant_1_2" id="Informant_1_2_other" value="Other" data-theme="b" />
+					<label for="Informant_1_2_other">Other</label>
 				</select>
 	        </fieldset>
 	    </div>
@@ -206,33 +204,30 @@
 				<select name="Informant_2_2" id="Informant_2_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2_2" id="Informant_2_2_0"/>
 				  <label for="Informant_2_2_0">Select all that apply</label>
-				  <option name="Informant_2_2" value="self" id="Informant_2_2_1" data-theme="b" />
-				  <label for="Informant_2_2_1">Self</label>
-				  <option name="Informant_2_2" value="mother" id="Informant_2_2_2" data-theme="b" />
-				  <label for="Informant_2_2_2">Mother</label>
-				  <option name="Informant_2_2" value="father" id="Informant_2_2_3" data-theme="b" />
-				  <label for="Informant_2_2_3">Father</label>
-				  <option name="Informant_2_2" value="grandmother" id="Informant_2_2_4" data-theme="b" />
-				  <label for="Informant_2_2_4">Grandmother</label>
-				  <option name="Informant_2_2" value="grandfather" id="Informant_2_2_5" data-theme="b" />
-				  <label for="Informant_2_2_5">Grandfather</label>
-				  <option name="Informant_2_2" value="aunt" id="Informant_2_2_6" data-theme="b" />
-				  <label for="Informant_2_2_6">Aunt</label>
-				  <option name="Informant_2_2" value="uncle" id="Informant_2_2_7" data-theme="b" />
-				  <label for="Informant_2_2_7">Uncle</label>
-				  <option name="Informant_2_2" value="foster parent" id="Informant_2_2_8" data-theme="b" />
-				  <label for="Informant_2_2_8">Foster parent</label>
-				  <option name="Informant_2_2" value="sibling" id="Informant_2_2_9" data-theme="b" />
-				  <label for="Informant_2_2_9">Sibling</label>
-				  <option name="Informant_2_2" value="Other" id="Informant_2_2_10" data-theme="b" />
-				  <label for="Informant_2_2_10">Other</label>
-				  <option name="Informant_2_2" value="No One" id="Informant_2_2_11" data-theme="b" />
-				  <label for="Informant_2_2_11">No one (I'm here alone)</label>
+				  <option name="Informant_2_2" value="mother" id="Informant_2_2_mother" data-theme="b" />
+				  <label for="Informant_2_2_mother">Mother</label>
+				  <option name="Informant_2_2" value="father" id="Informant_2_2_father" data-theme="b" />
+				  <label for="Informant_2_2_father">Father</label>
+				  <option name="Informant_2_2" value="grandmother" id="Informant_2_2_gm" data-theme="b" />
+				  <label for="Informant_2_2_gm">Grandmother</label>
+				  <option name="Informant_2_2" value="grandfather" id="Informant_2_2_gf" data-theme="b" />
+				  <label for="Informant_2_2_gf">Grandfather</label>
+				  <option name="Informant_2_2" value="aunt" id="Informant_2_2_aunt" data-theme="b" />
+				  <label for="Informant_2_2_aunt">Aunt</label>
+				  <option name="Informant_2_2" value="uncle" id="Informant_2_2_uncle" data-theme="b" />
+				  <label for="Informant_2_2_uncle">Uncle</label>
+				  <option name="Informant_2_2" value="foster parent" id="Informant_2_2_fp" data-theme="b" />
+				  <label for="Informant_2_2_fp">Foster parent</label>
+				  <option name="Informant_2_2" value="sibling" id="Informant_2_2_sibling" data-theme="b" />
+				  <label for="Informant_2_2_sibling">Sibling</label>
+				  <option name="Informant_2_2" value="Other" id="Informant_2_2_other" data-theme="b" />
+				  <label for="Informant_2_2_other">Other</label>
+				  <option name="Informant_2_2" value="No One" id="Informant_2_2_noone" data-theme="b" />
+				  <label for="Informant_2_2_noone">No one (I'm here alone)</label>
 				</select>
 			</fieldset>
 		</div>
-		<input id="VisitAttendee" name="VisitAttendee" type="hidden" value=""/>
-    	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+		<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
         		
         <%@ include file="mobileFinishDialogs_SP.jsp" %>
         

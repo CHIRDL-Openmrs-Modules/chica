@@ -1,5 +1,6 @@
 var english = false;
 var formInstance = null;
+var numQuestions = 0;
 
 $(document).on("pageinit", function() {
     // Initialize all pages because radio button reset will not work properly.
@@ -29,11 +30,12 @@ function init(patientName, birthdate, formInst, language) {
 	if (!showVitals) {
 		$(".vitalsButton").hide();
 	}
+	numQuestions = $("select[id^='Informant_']").length / 2; // Divide by 2 to handle Spanish version
 }
 
 function submitEmptyForm() {
 	setLanguageField();
-	document.getElementById("AdditionalInformantionForm").submit();
+	document.getElementById("AdditionalInformationForm").submit();
 }
 
 function setLanguageField() {
@@ -54,7 +56,7 @@ function setLanguage(patientName, birthdate) {
         langButtonText = "English";
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
-        formTitleText = "CUESTIONARIO SOBRE EL SUEÑO INFANTIL:";
+        formTitleText = "";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
@@ -74,8 +76,7 @@ function changePage(newPageNum) {
 
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
-    
-    for (var i = 1; i < 3; i++) {
+    for (var i = 1; i <= numQuestions; i++) {
     	if (english) {
 	    	setQuestionCheckboxes("Informant_" + i + "_2", "Informant_" + i);
 	    } else {
@@ -106,7 +107,7 @@ function finishForm() {
 	$("#not_finished_final_dialog").popup("close");
 	$("#not_finished_final_dialog_sp").popup("close");
 	setLanguageField();
-	var submitForm = $("#AdditionalInformantionForm"); 
+	var submitForm = $("#AdditionalInformationForm"); 
 	var token = getAuthenticationToken();
     $.ajax({
     	beforeSend: function (xhr) {
@@ -133,22 +134,37 @@ function handleFinishFormError() {
 }
 
 function setQuestionCheckboxes(initialName, newName) {
-	// Determine if any of the radio buttons in the group are selected
+	// Determine if any of the select options in the group are selected
 	// If so, select the English/Spanish version
-	if($("input[name='" + initialName + "']").is(':checked')) {
-		var selectedValue = $("input[name='" + initialName + "']:checked").val();
-		
-		// Select the radio button by name and value
-		$("input[name='" + newName + "'][value='" + selectedValue + "']").prop("checked",true);
-		$("input[name='" + initialName + "'][value='" + selectedValue + "']").prop("checked",false);
-		$("input[name='" + newName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
-		$("input[name='" + initialName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
+	
+	if(!$("#"+initialName+"").val() == "" && $("option[name='" + initialName + "']").is(':checked')) {
+		var selectedValue = $("#"+initialName+"").val();
+		if ($("#"+initialName).prop('multiple')){
+			for (var i=0; i<selectedValue.length; i++){
+				$("select[name='" + newName + "'] option[value='" + selectedValue[i] + "']").prop("selected",true);
+				$("select[name='" + initialName + "'] option[value='" + selectedValue[i] + "']").prop("selected",false);
+				$("#"+newName).selectmenu().selectmenu('refresh', true);
+				$("#"+initialName).selectmenu().selectmenu('refresh', true);
+			}
+		} else {
+			$("select[name='" + newName + "'] option[value='" + selectedValue + "']").prop("selected",true);
+			$("select[name='" + initialName + "'] option[value='" + selectedValue + "']").prop("selected",false);
+			$("#"+newName).selectmenu().selectmenu('refresh', true);
+			$("#"+initialName).selectmenu().selectmenu('refresh', true);
+		}
 	}
 }
   
 function concatSelectOption() {
-	var selectedVal = $("#Informant_2").val();
-	document.getElementById('VisitAttendee').value = selectedVal;		
+	var spanishChar = "_2";
+	if (english) {
+		spanishChar = "";
+	} 
+	var selectedVal = $("#Informant_2" + spanishChar).val();
+	if (selectedVal!=null) {
+		var valueSplit = selectedVal.toString().split(',').join('-');
+		document.getElementById('VisitAttendee').value = valueSplit;
+	}		
 }
 
 function areAllQuestionsAnswered() {
@@ -156,12 +172,12 @@ function areAllQuestionsAnswered() {
 	if (english) {
 		spanishChar = "";
 	}
-	for (var i = 1; i < 3; i++) {
+	for (var i = 1; i <= numQuestions; i++) {
 		if ( $("#Informant_" +  i + spanishChar).val() == "" || $("#Informant_" +  i + spanishChar).val() == null ) {
 			return false;
 		}
 	}
-	return false;
+	return true;
 }
 
 function showBlockingMessage() {
