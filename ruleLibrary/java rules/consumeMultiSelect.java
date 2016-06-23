@@ -20,6 +20,7 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.logic.op.OperandObject;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class consumeMultiSelect implements Rule
 {
@@ -116,10 +117,10 @@ public class consumeMultiSelect implements Rule
 		{
 			Concept concept = conceptService.getConceptByName(conceptName);
 			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, formFieldId);
-			String[] ruleValueSplit = ruleResult.toString().split("\\^\\^");
+			String[] ruleValueSplit = ruleResult.toString().split(ChirdlUtilConstants.GENERAL_INFO_DEFAULT_DELIMITER);
 			for (int i=0; i<ruleValueSplit.length; i++){
 				org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, 
-					encounterId, ruleValueSplit[i].toString(), formInstance, 
+					encounterId, ruleValueSplit[i].trim().toString(), formInstance, 
 					ruleId, locationTagId, formFieldId); // DWE CHICA-437 Added formFieldId
 			}
 		}
