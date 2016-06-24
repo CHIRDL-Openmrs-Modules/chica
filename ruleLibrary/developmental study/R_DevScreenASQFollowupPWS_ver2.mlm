@@ -41,14 +41,8 @@ Logic:
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
 
-asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
-asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
-
 If (Gender = M) then || heshe || = "He";
 If (Gender = F) then || heshe || = "She";
-
-If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
-If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
 
 If ('Delayed' is in devStatus) OR ('Not_Delayed' is in devStatus) then conclude False;
 If (CurrentStatus = Suspect_delay) then conclude True;
