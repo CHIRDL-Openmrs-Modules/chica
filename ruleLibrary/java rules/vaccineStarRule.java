@@ -1,18 +1,15 @@
 
 package org.openmrs.module.chica.rule;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.ConceptName;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -82,6 +79,7 @@ public class vaccineStarRule implements Rule
 		String vaccineName = (String) parameters.get("concept");
 		HashMap<String, String> map = this.setupVISNameLookup();
 		String shortName = map.get(vaccineName);
+		String relatedVaccine = getRelatedVaccine(vaccineName);
 		
 		Integer locationId = (Integer) parameters.get("locationId");
 		ImmunizationQueryOutput immunizations = 
@@ -92,13 +90,14 @@ public class vaccineStarRule implements Rule
 				immunizations.getImmunizationForecast();
 
 			if(forecastedImmunizations != null){
-
+		
 				ImmunizationForecast immunForecast = forecastedImmunizations.get(vaccineName);
+				ImmunizationForecast immunForecastRelated  =  forecastedImmunizations.get(relatedVaccine);		
 				java.util.Date todaysDate = new java.util.Date();
 
-				if(immunForecast != null&&immunForecast.getDateDue().compareTo(todaysDate)<=0){
-					// Create the JIT
-					
+				if((immunForecast != null && immunForecast.getDateDue().compareTo(todaysDate)<=0)
+						||(immunForecastRelated != null && immunForecastRelated.getDateDue().compareTo(todaysDate)<=0)){
+					// Create the JIT		
 					
 					// Find out if patient is Spanish speaking
 					LogicCriteria conceptCriteria = new LogicCriteriaImpl("preferred_language");
@@ -145,7 +144,7 @@ public class vaccineStarRule implements Rule
 			}
 		}   
 		return new Result(" ");
-			}
+	}
 
 	private String getName(String vaccineName){
 		String shortName = null;
@@ -186,4 +185,12 @@ public class vaccineStarRule implements Rule
 		
 		return map;
 	}
+	
+	private String getRelatedVaccine(String vaccine) {
+	
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("meningococcal MCV4, unspecified formulation", "meningococcal B, unspecified formulation");	
+		return map.get(vaccine);
+	}
+	
 }
