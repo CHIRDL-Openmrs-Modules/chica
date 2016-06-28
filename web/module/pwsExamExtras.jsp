@@ -1,4 +1,4 @@
-				<div id="examExtras">
+            <div id="examExtras">
                         <div class="examExtraCheckbox">
                             <c:choose>
                                 <c:if test="${Special_Need == 'Y'}">
@@ -23,9 +23,6 @@
                         </div>
                         <div class="examExtraCheckbox">
                             <input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet"/>Discussed healthy diet<br/>
-                        </div>
-						<div id="informant" >
-                            <b>Informant:</b> <c:out value="${Informant}"/>
                         </div>
                         <div>
                             &nbsp;
