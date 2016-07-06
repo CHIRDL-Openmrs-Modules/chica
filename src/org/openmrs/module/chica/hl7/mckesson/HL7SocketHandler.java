@@ -86,6 +86,10 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  * 
  */
 
+/**
+ * @author msheley
+ *
+ */
 public class HL7SocketHandler extends
 		org.openmrs.module.sockethl7listener.HL7SocketHandler {
 
@@ -502,7 +506,7 @@ public class HL7SocketHandler extends
 
 			if ((printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS))||
 					!(isValidAge(message, printerLocation, locationString)) ||
-					(filterDuplicateCheckin && priorCheckinExists(message))) {
+					(filterDuplicateCheckin && priorCheckinExists(message, locationString))) {
 
 				try {
 					processMessageError = false;
@@ -1266,20 +1270,21 @@ public class HL7SocketHandler extends
 
 	}
 	
-	
 	/**
-	 * Checks if patient from this hl7 message already has an encounter today.
+	 * Checks if patient from this hl7 message already has an encounter today at the same location.
 	 * The message is saved to the sockethl7listener_patient_message table for record.
-	 * @param message
-	 * @return 
+	 * @param hl7message
+	 * @param locationString
+	 * @return
 	 */
-	private boolean priorCheckinExists(Message hl7message) {
+	private boolean priorCheckinExists(Message hl7message, String locationString) {
 
 		boolean encounterFound = true;
 
 		org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
 		AdministrationService adminService = Context.getService(AdministrationService.class);
 		ChirdlUtilBackportsService chirdlutilbackportsService  = Context.getService(ChirdlUtilBackportsService.class);
+		LocationService locationService = Context.getLocationService();
 
 		try {
 
@@ -1295,18 +1300,22 @@ public class HL7SocketHandler extends
 			}
 		
 			//Get all encounters for that patient from the start of the day
+			//CHICA-721 Only filter if new registration location is the same as the first registration location.
+			//If a patient is registered at one clinic in error, and registered in another clinic afterward,
+			//allow that checkin.
 			Date startOfDay = DateUtils.truncate(new Date(), Calendar.DATE);
-			List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startOfDay, null,
+			Location location = locationService.getLocation(locationString);
+			List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, location, startOfDay, null,
 					null, null, null, false);
 			
 			if (encounters == null || encounters.size() == 0){
 				return !encounterFound;
 			}
-
+			
 			//Save the hl7 message and error
 			this.saveMessage(hl7message, patient, false, true);
 			Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants. ERROR_GENERAL,
-						"An HL7 registration message arrived for a patient that is already checked in.  MRN =  "
+						"An HL7 registration message arrived for a patient at the same location that is already checked in.  MRN =  "
 								+ patient.getPatientIdentifier().getIdentifier(), null, new Date(), null);
 			chirdlutilbackportsService.saveError(error);
 
