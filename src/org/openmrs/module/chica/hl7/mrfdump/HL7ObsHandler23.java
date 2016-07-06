@@ -454,7 +454,10 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 				ORU_R01 oru = (ORU_R01) message;
 
 				int numOrders = oru.getRESPONSE().getORDER_OBSERVATIONReps();
-
+				ConceptDatatype codedDatatype = conceptService.getConceptDatatypeByName("Coded");
+				ConceptDatatype numericDatatype = conceptService.getConceptDatatypeByName("Numeric");
+				ConceptDatatype dateTimeDatatype = conceptService.getConceptDatatypeByName("Datetime");
+				ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
 				for (int i = 0; i < numOrders; i++)
 				{
 					ORU_R01_ORDER_OBSERVATION order = oru.getRESPONSE()
@@ -472,27 +475,19 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 						//infer the type from the data
 						if(obsConcept.getDatatype() == null){
 							if(obs.getValueCoded() != null){
-								ConceptDatatype conceptDatatype = 
-									conceptService.getConceptDatatypeByName("Coded");
-								obsConcept.setDatatype(conceptDatatype);
+								obsConcept.setDatatype(codedDatatype);
 							}
 							
 							if(obs.getValueNumeric() != null){
-								ConceptDatatype conceptDatatype = 
-									conceptService.getConceptDatatypeByName("Numeric");
-								obsConcept.setDatatype(conceptDatatype);
+								obsConcept.setDatatype(numericDatatype);
 							}
 							
 							if(obs.getValueDatetime() != null){
-								ConceptDatatype conceptDatatype = 
-									conceptService.getConceptDatatypeByName("Datetime");
-								obsConcept.setDatatype(conceptDatatype);
+								obsConcept.setDatatype(dateTimeDatatype);
 							}
 							
 							if(obs.getValueText() != null){
-								ConceptDatatype conceptDatatype = 
-									conceptService.getConceptDatatypeByName("Text");
-								obsConcept.setDatatype(conceptDatatype);
+								obsConcept.setDatatype(textDatatype);
 							}
 						}
 						

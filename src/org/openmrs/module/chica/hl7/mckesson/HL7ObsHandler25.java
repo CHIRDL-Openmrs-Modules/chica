@@ -413,6 +413,10 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			ADT_A01 adt = (ADT_A01) message;
 			
 			int numObs = adt.getOBXReps();
+			ConceptDatatype codedDatatype = conceptService.getConceptDatatypeByName("Coded");
+			ConceptDatatype numericDatatype = conceptService.getConceptDatatypeByName("Numeric");
+			ConceptDatatype dateTimeDatatype = conceptService.getConceptDatatypeByName("Datetime");
+			ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
 			Map<String,ConceptDatatype> conceptDataTypeMap = new HashMap<String,ConceptDatatype>();
 			for (int j = 0; j < numObs; j++) {
 				Obs obs = hl7SocketHandler.CreateObservation(null, false, message, 0, j, existingLoc, patient);
@@ -422,23 +426,19 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 				//infer the type from the data
 				if (obsConcept.getDatatype() == null) {
 					if (obs.getValueCoded() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Coded", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(codedDatatype);
 					}
 					
 					if (obs.getValueNumeric() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Numeric", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(numericDatatype);
 					}
 					
 					if (obs.getValueDatetime() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Datetime", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(dateTimeDatatype);
 					}
 					
 					if (obs.getValueText() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Text", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(textDatatype);
 					}
 				}
 				if(obs.getObsDatetime()==null){

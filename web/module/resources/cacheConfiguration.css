@@ -1,0 +1,47 @@
+body {
+    
+}
+
+#content {
+    
+}
+
+#title {
+	text-align: center;
+	margin: auto;
+}
+
+.item {
+	float:left;
+    width: 250px;
+    text-align:right;
+}
+
+.value {
+	text-align:left;
+	overflow: hidden;
+	padding-left: 10px;
+}
+
+fieldset {
+      border: 0;
+}
+
+label {
+  display: block;
+  margin: 30px 0 0 0;
+}
+
+.selectmenu {
+  width: 75px;
+}
+
+.submit {
+  padding-top: 10px;
+}
+
+input {
+  width: 100px;
+}
+
+

@@ -35,10 +35,12 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.hl7.mckesson.HL7SocketHandler;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
@@ -54,8 +56,16 @@ public class HL7ToObs {
 	private static final String HL7_VERSION_2_3 = "2.3";
 	protected final static Log log = LogFactory.getLog(HL7ToObs.class);
 
-	public static void parseHL7ToObs(String hl7Message, Patient patient,
-			String mrn, HashMap<Integer, HashMap<String, Set<Obs>>> patientObsMap) {
+	public static void parseHL7ToObs(String hl7Message, Patient patient, String mrn) {
+		
+		LogicService logicService = Context.getLogicService();
+		Integer patientId = patient.getPatientId();
+		ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
+				.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY);
+		HashMap<String, Set<Obs>> conceptObsMap = xmlDatasource.getObs(patientId);
+		if (conceptObsMap == null) {
+			conceptObsMap = new HashMap<String, Set<Obs>>();
+		}
 
 		try {
 			BufferedReader reader = new BufferedReader(new StringReader(
@@ -79,7 +89,7 @@ public class HL7ToObs {
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith(ChirdlUtilConstants.HL7_SEGMENT_MESSAGE_HEADER_MSH)) {
 					// start processing the new message
-					processMessage(output.toString(), patient, patientObsMap);
+					processMessage(output.toString(), patient, conceptObsMap);
 					HL7SocketHandler.checkAlias(mrn, patient, output.toString());
 					writer.flush();
 					writer.close();
@@ -94,7 +104,8 @@ public class HL7ToObs {
 			writer.close();
 
 			// process last message
-			processMessage(output.toString(), patient, patientObsMap);
+			processMessage(output.toString(), patient, conceptObsMap);
+			xmlDatasource.saveObs(patientId, conceptObsMap);
 			HL7SocketHandler.checkAlias(mrn, patient, output.toString());
 
 		} catch (Exception e) {
@@ -105,9 +116,8 @@ public class HL7ToObs {
 	}
 
 	public static void processMessage(String messageString, Patient patient,
-			HashMap<Integer, HashMap<String, Set<Obs>>> patientObsMap) {
+			HashMap<String, Set<Obs>> obsByConcept) {
 
-		Integer patientId = patient.getPatientId();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		AdministrationService adminService = Context.getAdministrationService();
 
@@ -171,12 +181,9 @@ public class HL7ToObs {
 		HL7ObsHandler23 obsHandler = new HL7ObsHandler23();
 		try {
 			ArrayList<Obs> allObs = obsHandler.getObs(message, patient);
-			HashMap<String, Set<Obs>> obsByConcept = patientObsMap
-					.get(patientId);
 
 			if (obsByConcept == null) {
 				obsByConcept = new HashMap<String, Set<Obs>>();
-				patientObsMap.put(patientId, obsByConcept);
 			}
 
 			for (Obs currObs : allObs) {

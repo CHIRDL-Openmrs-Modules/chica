@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <!DOCTYPE html>
-<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/finishFormsWeb.form" />
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/finishFormsWeb.form" />
 <html>
 <head>
 <meta charset="utf-8">
