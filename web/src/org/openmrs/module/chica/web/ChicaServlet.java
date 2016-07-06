@@ -88,6 +88,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String SAVE_MANUAL_CHECKIN = "saveManualCheckin";
 	private static final String SEND_PAGE_REQUEST = "sendPageRequest";
 	private static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
+	private static final String KEEP_ALIVE = "keepAlive";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -142,6 +143,8 @@ public class ChicaServlet extends HttpServlet {
 	
 	private static final String MAX_CACHE_AGE = "600";
 	
+	private static final String WILL_KEEP_ALIVE = "OK";
+	
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	/**
@@ -156,7 +159,7 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		String action = request.getParameter(PARAM_ACTION);
-		if (GET_PATIENT_JITS.equals(action)) {
+		if (GET_PATIENT_JITS.equals(action) || DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
 			response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
 		} else if (FORCE_PRINT_FORMS.equals(action)) {
@@ -200,6 +203,8 @@ public class ChicaServlet extends HttpServlet {
 			ManualCheckin.saveManualCheckinPatient(request, response);
 		} else if (SEND_PAGE_REQUEST.equals(action)) {
 			Pager.sendPage(request, response);
+		} else if (KEEP_ALIVE.equals(action)) {
+			keepAlive(response);
 		}
 	}
 	
@@ -1412,5 +1417,19 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		return formName;
+	}
+	
+	/**
+	 * Method to keep the session alive.
+	 * 
+	 * @param response The HttpServletResponse where the response will be written.
+	 * @throws IOException
+	 */
+	private void keepAlive(HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(
+			ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		PrintWriter pw = response.getWriter();
+		pw.write(WILL_KEEP_ALIVE);
 	}
 }
