@@ -210,11 +210,12 @@ public class Util {
 	 * 
 	 * @param rows List that will be populated with any PatientRow objects found.
 	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @param showAllPatients - true to show all patients for the user's location
 	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
 	 * @throws Exception
 	 */
-	public static String getPatientsWithPrimaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch) throws Exception {
-		return getPatientsWithForms(rows, sessionIdMatch, PRIMARY_FORM);
+	public static String getPatientsWithPrimaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, boolean showAllPatients) throws Exception {
+		return getPatientsWithForms(rows, sessionIdMatch, PRIMARY_FORM, showAllPatients);
 	}
 	
 	/**
@@ -227,7 +228,7 @@ public class Util {
 	 * @throws Exception
 	 */
 	public static String getPatientSecondaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch) throws Exception {
-		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS);
+		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS, false);
 	}
 	
 	/**
@@ -236,10 +237,11 @@ public class Util {
 	 * 
 	 * @param rows List that will be populated with any PatientRow objects found.
 	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @param showAllPatients - true to show all patients for the user's location
 	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
 	 * @throws Exception
 	 */
-	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType) 
+	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType, boolean showAllPatients) 
 	throws Exception {
 		User user = Context.getUserContext().getAuthenticatedUser();
 		ServerConfig config = org.openmrs.module.chirdlutil.util.Util.getServerConfig();
@@ -291,18 +293,27 @@ public class Util {
 			if (location != null) {
 				locationId = location.getLocationId();
 				if (locationTags != null) {
-					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
-					while (tokenizer.hasMoreTokens()) {
-						String locationTagName = tokenizer.nextToken();
-						locationTagName = locationTagName.trim();
-						Set<LocationTag> tags = location.getTags();
-						for (LocationTag tag : tags) {
-							if (tag.getName().equalsIgnoreCase(locationTagName)) {
-								locationTagIds.add(tag.getLocationTagId());
-							}
+					if(showAllPatients) // DWE CHICA-761 Add all tags to the list
+					{
+						for (LocationTag tag : location.getTags()) 
+						{
+							locationTagIds.add(tag.getLocationTagId());	
 						}
 					}
-					
+					else
+					{
+						StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+						while (tokenizer.hasMoreTokens()) {
+							String locationTagName = tokenizer.nextToken();
+							locationTagName = locationTagName.trim();
+							Set<LocationTag> tags = location.getTags();
+							for (LocationTag tag : tags) {
+								if (tag.getName().equalsIgnoreCase(locationTagName)) {
+									locationTagIds.add(tag.getLocationTagId());
+								}
+							}
+						}
+					}	
 				}
 			}
 		}
@@ -315,7 +326,17 @@ public class Util {
 				if (patientState != null) {
 					unfinishedStates.add(patientState);
 				}
-			} else {
+			}
+			else if(showAllPatients)
+			{
+				// TODO DWE CHICA-761 Change this section to use a different query. I copied this block from the else statement for now
+				List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
+					    todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
+					if (currUnfinishedStates != null) {
+						unfinishedStates.addAll(currUnfinishedStates);
+					}
+			}
+			else {
 				List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
 				    todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
 				if (currUnfinishedStates != null) {

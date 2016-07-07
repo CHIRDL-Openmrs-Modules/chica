@@ -278,3 +278,24 @@ var Base64 = {
 	    }
 	  
 	  }
+
+// DWE CHICA-761
+function removeWhiteSpace(searchString)
+{
+	return searchString.replace(/^\s+|\s+$/gm,'');
+}
+
+//DWE CHICA-761
+function removeLeadingZeros(searchString)
+{	
+	return searchString.replace(/^0+/, '');
+}
+
+// DWE CHICA-761
+// Removes special characters to prevent malicious activity
+// Does not remove hyphen or apostrophe so that searching will
+// be able to find patient names that contain these characters
+function removeSpecialCharacters(searchString) 
+{ 
+    return searchString.replace(/\<|\>|\"|\'|\%|\;|\(|\)|\&|\+|\-/g,""); 
+} 

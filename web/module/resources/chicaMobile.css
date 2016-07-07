@@ -72,4 +72,8 @@ a[data-role="button"] {
 	    background-position: center  !important; 
 	    margin-top:-1px;
 	}
+	
+	.headerdiv{
+		display: inline-block;
+	}
 }

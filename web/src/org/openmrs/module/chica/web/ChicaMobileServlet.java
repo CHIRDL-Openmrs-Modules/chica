@@ -16,11 +16,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
+import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -193,10 +195,13 @@ public class ChicaMobileServlet extends HttpServlet {
 			return;
 		}
 		
+		// DWE CHICA-761
+		boolean showAllPatients = request.getParameter("showAllPatients") != null && request.getParameter("showAllPatients").equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE) ? true : false;
+		
 		try {
 			switch (formType) {
 				case PRIMARY_FORM:
-					result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, sessionId);
+					result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, sessionId, showAllPatients);
 					break;
 				case SECONDARY_FORMS:
 					result = org.openmrs.module.chica.util.Util.getPatientSecondaryForms(rows, sessionId);

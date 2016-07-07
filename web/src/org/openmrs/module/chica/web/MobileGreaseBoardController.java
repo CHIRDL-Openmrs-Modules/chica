@@ -126,7 +126,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 				
 		try {
 			ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
-			String result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, null);
+			String result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, null, false); // DWE CHICA-761 Added parameter so that all patients are not displayed by default
 			if (result != null) {
 				map.put("errorMessage", result);
 				return map;
