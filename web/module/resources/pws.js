@@ -2,6 +2,8 @@ var chicaServletUrl = "/openmrs/moduleServlet/chica/chica?";
 var recommendedHandoutsAction = "action=getPatientJITs&formInstances=";
 var pageOptions = "#page=1&view=FitH,top&navpanes=0";
 var previousRecommendedHandoutSelection = -1;
+var timeoutDialog = null;
+var keepAliveURL = "/openmrs/moduleServlet/chica/chica?action=keepAlive";
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -51,6 +53,7 @@ function combineSelected(selectedForms)
 	$(".recommendedHandoutContainer").show();
 	
 	container.append(newobj);
+	restartSessionCounter(true);
 }
 
 function getSelected(opt) {
@@ -429,6 +432,7 @@ $(function() {
 	    	$(".recommendedHandoutContainer").show();
 	    	
 	    	container.append(newobj);
+	    	restartSessionCounter(true);
 	    } else {
 	    	$(".recommendedHandoutContainer").hide();
 	    }
@@ -443,6 +447,25 @@ $(function() {
         }
       }
 	});
+    
+    // Leave this at the very end of the function
+    $(document).ajaxStart(function() {
+    	restartSessionCounter(false);
+	});
+    
+    if (timeoutDialog === null) {
+    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/module/chica/sessionTimeout.form', 
+    		keep_alive_url: keepAliveURL, dialog_width: '400', title: 'Your CHICA session is about to expire'});
+    	timeoutDialog = getTimeoutDialog();
+    	
+    	$(document).on("dialogopen", "#timeout-dialog", function() {
+    		$("object").hide();
+    	});
+    	
+    	$(document).on("dialogclose", "#timeout-dialog", function() {
+    		$("object").show();
+    	});
+    }
   });
  
 
@@ -509,6 +532,7 @@ function displayFirstJIT()
 		$(".recommendedHandoutContainer").show();;
 		
 		container.append(newobj);
+		restartSessionCounter(true);
     }
 }
 
@@ -548,4 +572,30 @@ function updateRecommendedHandoutDimensions() {
     $("#recommendedHandoutsContainer").css({"height":"100%"});
     divHeight = $("#recommendedHandoutsContainer").height();
     $("#recommendedHandoutsCombineButtonPanel").css({"height":(divHeight - instructHeight - (newDivHeight + 10)) + "px"});
+}
+
+function restartSessionCounter(doRenewSession) {
+	if (timeoutDialog != null) {
+		timeoutDialog.restartCounter();
+	}
+	
+	if (doRenewSession) {
+		renewSession();
+	}
+}
+
+function renewSession() {
+	 $.ajax({
+     	  "cache": false,
+     	  "global": false,
+     	  "dataType": "html",
+     	  "type": "GET",
+     	  "url": keepAliveURL,
+     	  "timeout": 30000, // optional if you want to handle timeouts (which you should)
+     	  "success": function (html) {
+     		if (html == "OK") {
+             // Do nothing.  The session was renewed.
+            }
+           }
+     	});
 }
