@@ -79,7 +79,7 @@ public class temperatureDisplay implements Rule {
 			fullCriteria = conceptCriteria;
 		}
 		
-		ruleResults = context.read(patientId, context.getLogicDataSource("obs"), fullCriteria);
+		ruleResults = context.read(patientId, context.getLogicDataSource("obs"), fullCriteria.last());
 		if (ruleResults == null || ruleResults.size() == 0) {
 			return Result.emptyResult();
 		}

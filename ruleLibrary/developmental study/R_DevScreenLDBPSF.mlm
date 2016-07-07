@@ -42,12 +42,6 @@ Priority: 64;;
 	Evoke:		;;
 Logic:
 
-asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
-asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
-
-If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
-If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
-
 If (mode = PRODUCE) then
 
 AgeInMonths := call ChicaAgeRule with "months";

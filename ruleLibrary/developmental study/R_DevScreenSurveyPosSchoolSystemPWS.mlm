@@ -52,12 +52,6 @@ endif
 If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
 
-asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
-asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
-
-If(asqInterventionSite = null) OR NOT (asqInterventionSite = "true") then conclude False;
-If(asqInterventionSitePartTwo = null) OR NOT (asqInterventionSitePartTwo = "true") then conclude False;
-
 /** If there is a delay, don't show prompt **/
 If 'Delayed' is in devStatus then conclude False;
 
