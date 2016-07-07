@@ -43,7 +43,7 @@
 			<c:set var="ageMD" value="${fn:substringAfter(age,' ')}" />
 			<c:if test ="${ageYr ge 3 && ageMD != 'mo' && ageMD != 'do'}">
 				<div>
-					<strong><label for="visionScreening">This child is due for vision screening. Please, screen and enter results in the EHR.</label></strong><br>
+					<strong><label for="visionScreening">${patient.givenName}&nbsp;${patient.familyName} is due for vision screening. Please, screen and enter results in the EHR.</label></strong><br>
 					<div class="ui-grid-solo">
 						<input type="checkbox" id="passed" name="passed" value="Y" ${passed == "Y" ? 'checked' : '' }/><label for="passed">Passed (>20/30 both eyes)</label>
 					</div>
