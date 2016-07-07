@@ -37,6 +37,34 @@
             <input type="checkbox" id="SickVisit" name="SickVisit" value="Y" ${SickVisit == "Y" ? 'checked' : '' }/><label for="SickVisit">Sick Visit</label>
             <input type="checkbox" id="MATwoIDsChecked" name="MATwoIDsChecked" value="Y" ${MATwoIDsChecked == "Y" ? 'checked' : '' }/><label for="MATwoIDsChecked">Two IDs checked</label>
             <input type="checkbox" id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" value="diet and exercise" ${Handout_Reviewed_by_MA == "diet and exercise" ? 'checked' : '' }/><label for="Handout_Reviewed_by_MA">Diet and Exercise Handout Given</label>
+			<br>
+			<c:set var="age" value="${Age}"/>
+			<c:set var="ageYr" value="${fn:substringBefore(age,' ')}" />
+			<c:set var="ageMD" value="${fn:substringAfter(age,' ')}" />
+			<c:if test ="${ageYr ge 3 && ageMD != 'mo' && ageMD != 'do'}">
+				<div>
+					<strong><label for="visionScreening">This child is due for vision screening. Please, screen and enter results in the EHR.</label></strong><br>
+					<div class="ui-grid-solo">
+						<input type="checkbox" id="passed" name="passed" value="Y" ${passed == "Y" ? 'checked' : '' }/><label for="passed">Passed (>20/30 both eyes)</label>
+					</div>
+					<div class="ui-grid-a">
+						<div class="ui-block-a" >
+							<input type="checkbox" id="failed" name="failed" value="Y" ${failed == "Y" ? 'checked' : '' }/><label for="failed">Failed (20/40 or worse either eye) ---></label>
+						</div>
+						<div class="ui-block-b" >
+							<input type="checkbox" id="referral" name="referral" value="Y" ${referral == "Y" ? 'checked' : '' }/><label for="referral">Refer to ophthalmology</label>
+						</div>
+					</div>
+					<div class="ui-grid-a">
+						<div class="ui-block-a" >
+							<input type="checkbox" id="not_cooperative" name="not_cooperative" value="Y" ${not_cooperative == "Y" ? 'checked' : '' }/><label for="not_cooperative">Patient unable to cooperate</label>
+						</div>
+						<div class="ui-block-b">
+							<input type="checkbox" id="not_done" name="not_done" value="Y" ${not_done == "Y" ? 'checked' : '' }/><label for="not_done">Screening not done</label>
+						</div>
+					</div>
+				</div>
+			</c:if>
         </div>
                 
         <div id="invalidLogin" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
