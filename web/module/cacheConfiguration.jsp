@@ -41,41 +41,7 @@
 		            <div class="item">Heap Size: </div>
 		            <div class="value">
 			            <input type="number" id="EHRCacheHeapSize" name="EHRCacheHeapSize" value="<c:out value='${EHRCacheHeapSize}'/>">
-			            &nbsp;
-			            <select id="EHRCacheHeapSizeUnit" name="EHRCacheHeapSizeUnit" class="selectmenu">
-		                   <c:choose>
-	                           <c:when test="${EHRCacheHeapSizeUnit == 'B'}">
-	                              <option value="B" selected>B</option>
-	                           </c:when>
-	                           <c:otherwise>
-	                              <option value="B">B</option>
-	                           </c:otherwise>
-	                       </c:choose>
-	                       <c:choose>
-	                           <c:when test="${EHRCacheHeapSizeUnit == 'kB'}">
-	                              <option value="KB" selected>KB</option>
-	                           </c:when>
-	                           <c:otherwise>
-	                              <option value="KB">KB</option>
-	                           </c:otherwise>
-	                       </c:choose>
-	                       <c:choose>
-	                           <c:when test="${EHRCacheHeapSizeUnit == 'MB'}">
-	                              <option value="MB" selected>MB</option>
-	                           </c:when>
-	                           <c:otherwise>
-	                              <option value="MB">MB</option>
-	                           </c:otherwise>
-	                       </c:choose>
-	                       <c:choose>
-	                           <c:when test="${EHRCacheHeapSizeUnit == 'GB'}">
-	                              <option value="GB" selected>GB</option>
-	                           </c:when>
-	                           <c:otherwise>
-	                              <option value="GB">GB</option>
-	                           </c:otherwise>
-	                       </c:choose>
-		                </select>
+			            &nbsp;<c:out value="${EHRCacheHeapSizeUnit}"/>
 		            </div>
 	            </fieldset>
 	            <br/>
@@ -87,6 +53,9 @@
 	                       <li><div align="left" style="width: 100%;"><c:out value="${stat.name}"/>:&nbsp<c:out value="${stat.value}"/></div></li>
 	                   </c:forEach>
                    </ul>
+	            </div>
+	            <div id="clearCache">
+	               <input type="button" id="clearEHRMedicalRecordCacheButton" value="Clear Cache"/>
 	            </div>
 	        </div>
 	    </div>
@@ -101,6 +70,16 @@
         <div id="submitConfirmationDialog" title="Confirm Update" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
             <div style="margin: 0 auto;text-align: center;">
                 <div style="color:#000000;">Are you sure you want to update the cache settings?</div>
+            </div>
+        </div>
+        <div id="clearEHRMedicalRecordCacheConfirmationDialog" title="Confirm Clear Cache" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+            <div style="margin: 0 auto;text-align: center;">
+                <div style="color:#000000;">Are you sure you want to clear the EHR Medical Record Cache?</div>
+            </div>
+        </div>
+        <div id="clearCacheCompleteDialog" title="Confirm Clear Cache" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+            <div style="margin: 0 auto;text-align: center;">
+                <div id="cacheMessage" style="color:#000000;"></div>
             </div>
         </div>
     </form>

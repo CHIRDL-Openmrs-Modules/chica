@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
@@ -417,6 +418,13 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			ConceptDatatype numericDatatype = conceptService.getConceptDatatypeByName("Numeric");
 			ConceptDatatype dateTimeDatatype = conceptService.getConceptDatatypeByName("Datetime");
 			ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
+			
+			// Initialize the objects in case they go to a caching mechanism.
+			Hibernate.initialize(codedDatatype);
+			Hibernate.initialize(numericDatatype);
+			Hibernate.initialize(dateTimeDatatype);
+			Hibernate.initialize(textDatatype);
+			
 			Map<String,ConceptDatatype> conceptDataTypeMap = new HashMap<String,ConceptDatatype>();
 			for (int j = 0; j < numObs; j++) {
 				Obs obs = hl7SocketHandler.CreateObservation(null, false, message, 0, j, existingLoc, patient);

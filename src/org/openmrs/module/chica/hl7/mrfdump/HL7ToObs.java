@@ -63,6 +63,11 @@ public class HL7ToObs {
 		ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
 				.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY);
 		HashMap<String, Set<Obs>> conceptObsMap = xmlDatasource.getObs(patientId);
+		if (conceptObsMap != null && conceptObsMap.size() > 0) {
+			// The MRF dump has already been parsed
+			return;
+		}
+		
 		if (conceptObsMap == null) {
 			conceptObsMap = new HashMap<String, Set<Obs>>();
 		}

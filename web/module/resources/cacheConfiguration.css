@@ -11,6 +11,10 @@ body {
 	margin: auto;
 }
 
+#clearEHRMedicalRecordCacheButton {
+	width: 150px;
+}
+
 .item {
 	float:left;
     width: 250px;

@@ -54,7 +54,6 @@ public class CacheConfigurationController extends SimpleFormController {
 	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
 	                                BindException errors) throws Exception {
 		String EHRCacheHeapSizeStr = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE);
-		String EHRCacheHeapSizeUnit = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE_UNIT);
 		Integer EHRCacheHeapSize = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		
@@ -71,7 +70,7 @@ public class CacheConfigurationController extends SimpleFormController {
 				ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 				ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 				ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS, 
-				EHRCacheHeapSize, EHRCacheHeapSizeUnit);
+				EHRCacheHeapSize);
 		} catch (Exception e) {
 			log.error("Error updating the EHR Medical Record Cache heap size.", e);
 			map.put(PARAM_ERROR_MESSAGE, "An error occurred saving the EHR Medical Record Cache heap size: " + e.getMessage());

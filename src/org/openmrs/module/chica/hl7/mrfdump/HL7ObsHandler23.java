@@ -11,6 +11,7 @@ import java.util.Locale;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
@@ -458,6 +459,12 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 				ConceptDatatype numericDatatype = conceptService.getConceptDatatypeByName("Numeric");
 				ConceptDatatype dateTimeDatatype = conceptService.getConceptDatatypeByName("Datetime");
 				ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
+				
+				// Initialize the objects in case they go to a caching mechanism.
+				Hibernate.initialize(codedDatatype);
+				Hibernate.initialize(numericDatatype);
+				Hibernate.initialize(dateTimeDatatype);
+				Hibernate.initialize(textDatatype);
 				for (int i = 0; i < numOrders; i++)
 				{
 					ORU_R01_ORDER_OBSERVATION order = oru.getRESPONSE()
