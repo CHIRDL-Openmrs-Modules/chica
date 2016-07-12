@@ -996,16 +996,6 @@
 	                        <div>
 	                            &#160;
 	                        </div>
-							<div class="examExtraCheckbox">
-	                        	<xsl:choose>
-	                        		<xsl:when test="Records/Record/Field[@id = 'MATwoIDsChecked']/Value = 'Y'">
-	                        			<input type="checkbox" name="MATwoIDsChecked" value="Y" disabled="disabled" checked="checked"/>Two ID's Checked<br/>
-	                        		</xsl:when>
-	                        		<xsl:otherwise>
-	                        			<input type="checkbox" name="MATwoIDsChecked" value="Y" disabled="disabled"/>Two ID's Checked<br/>
-	                        		</xsl:otherwise>
-	                        	</xsl:choose>
-	                        </div>
 	                        <div class="examExtraCheckbox">
 	                        	<xsl:choose>
 	                        		<xsl:when test="Records/Record/Field[@id = 'screenedForAbuse']/Value = 'screened'">
@@ -1035,10 +1025,6 @@
 	                        			<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet" disabled="disabled"/>Discussed healthy diet<br/>
 	                        		</xsl:otherwise>
 	                        	</xsl:choose>
-	                        </div>
-							<div id="informant">
-								Informant:
-	                        	<xsl:value-of select="Records/Record/Field[@id = 'Informant']"/>
 	                        </div>
 	                        <div>
 	                            &#160;
