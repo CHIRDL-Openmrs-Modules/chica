@@ -17,164 +17,43 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.throttle-debounce.js"></script>
 </head>
-
-
-
-
-<style>
-
-#custom-header .ui-block-a{
-	padding-left: 10px;
-	text-align:	left;
-	width: 25%;
-}
-
-#custom-header .ui-block-b{
-   text-align: center;  
-   width: 50%;
-}
-
-#custom-header .ui-block-c{
-   text-align: right;
-   width: 25%;
-}
-
-.refreshButtonDiv{
-	width: 125px !important;
-	display: inline-block;
-	text-align: right;
-}
-
-.showAllDiv{
-	display: inline-block;
-	padding-top: 5px;
-}
-
-/*
-.divBlockC{
-	display: inline-block;
-	text-align: right;
-}
-*/
-
-/*
-
-.toggleShowAll{
-	display: inline-block;
-	height: 50px;
-}
-*/
-
-/*
-.toggleLabel{
-	vertical-align: middle;
-}
-*/
-
-/*
-.toggleShowAllLabel{
-	vertical-align: middle;
-}
-*/
-
-/*
-.toggleShowAllInput{
-	vertical-align: middle;
-}
-*/
-
-/*
-#patientList{
-	margin: 0;
-}
-
-#patientList {
-   -webkit-border-radius:.0 !important;
-   border-radius: 0 !important;
-}
-*/
-
-
-</style>
-
-
-
-
-
 <body>
 
 <div data-role="page" id="patient_list_page" data-theme="b" type="patient_page">
     <div data-role="header" id="custom-header" class="single-line-header" data-theme="a" data-position="fixed">
-    
-    
     <div class="ui-grid-b">
-			<div class="ui-block-a" style="width:25%;">
-				<div class="showAllDiv">
-						
+			<div class="ui-block-a">
+				<div class="showAllDiv">	
 						<input type="checkbox" data-theme="b" name="showAllCheckbox" id="showAllCheckbox" class="custom" data-mini="true"/>
 						<label for="showAllCheckbox">Show all patients</label>
-						
-						<!--
-						<div class="toggleShowAll toggleShowAllLabel"><label>Show all patients:</label></div>
-						<div class="toggleShowAll toggleShowAllInput">
-							<select name="showAllPatients" id="showAllPatients" data-role="slider">
-					            <option value="false">Off</option>
-					            <option value="true">On</option>
-					        </select>
-				        </div>
-    					-->
 				</div>
-				
     		</div>
 
-	
-		
-			<div class="ui-block-b" style="width:50%;">
+			<div class="ui-block-b">
 				<h3>Patients (${currentUser})</h3>
 			</div>	
 			
-			<div class="ui-block-c" style="width:25%;">
+			<div class="ui-block-c">
 				<div class="refreshButtonDiv">
 					<button type="button" id="refreshButton" data-icon="refresh" data-theme="b" onclick="populateList()">Refresh</button>
 				</div>
 			</div>  
 			
-			<div class="ui-block-a" style="width:25%;">
+			<div class="ui-block-a">
 			</div>
 			
-			<div class="ui-block-b" style="width:50%;">
+			<div class="ui-block-b">
 				<div id="searchAllPatientsDIV" data-role="fieldcontain" class="ui-hide-label">
-            		<label for="searchAllPatients">Search</label>
+            		<label for="searchAllPatients" class="ui-hidden-accessible">Search</label>
             		<input type="search" data-theme="b" name="searchAllPatients" id="searchAllPatients" value="" placeholder="Search by patient name or MRN..." data-corners="false"/>
         		</div>
         	</div>	
         	
-			<div class="ui-block-c" style="width:25%;">
+			<div class="ui-block-c">
 			</div>
-			 
-		</div>
-    
-    
-    	
-		
-    		
-    		
-    	
-    	 
-       
-        
-        
-        
+			
+		</div>  
     </div>
-    
-    
-    
-    
-    		
-    			
-    
-    
-    
     <div id="listError" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
         <div data-role="header" data-theme="b">
             <h1>Patient List Error</h1>
@@ -197,26 +76,11 @@
             </div>
         </div>
     </div>
-     <div id="patientContent" data-role="content" role="main">
+    <div id="patientContent" data-role="content" data-inset="true" role="main">
         <div id="sorter">
-            <ul data-role="listview" id="patientList">
-            	
-            </ul>
+            <ul data-role="listview" id="patientList"></ul>
         </div>
     </div>
-    
-    <!--
-    <div data-role="content">
-	    <ul data-role="listview" id="testList" data-filter="true">
-	      <li><a href="index.html">Acura</a></li>
-	      <li><a href="index.html">Audi</a></li>
-	      <li><a href="index.html">BMW</a></li>
-	      <li><a href="index.html">Cadillac</a></li>
-	      <li><a href="index.html">Chrysler</a></li>
-	    </ul>
-  	</div>
-  	-->
-  
     <div id="loadingDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
         <div data-role="content">
             <div style="margin: 0 auto;text-align: center;">

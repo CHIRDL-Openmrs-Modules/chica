@@ -27,22 +27,27 @@ $(document).on("pagecreate", "#patient_list_page", function(){
 $(document).ready(function(){
 	// DWE CHICA-761
 	// Add additional click event listener to the default jquery clear button behavior
+	// IMPORTANT: DO NOT call populateList() from here
+	// This will send too many requests to the server
+	// Especially if the user is typing slow
 	$('#searchAllPatientsDIV a.ui-input-clear').on('click', function(event){
     	$("#searchAllPatients").val("");
 		clearTimeout(timeOutVar); // prevent the list from being refreshed by the timer on the page
-		populateList();
+		filterPatientList();
+		timeOutVar = setTimeout("populateList()", 30000);	
 	});
 	
-	
+	// Fix to allow the search field to display correctly in IE
+	$('#searchAllPatientsDIV div.ui-input-search').addClass("searchAllPatientsInput");
 });
 
-//TODO DWE CHICA-761 Keeping around for development, but can be removed?
 $(document).on("pageshow", "#patient_list_page", function(){
-	
-	
 	// DWE CHICA-761
 	// Bind debounce functionality so that the 
-	// search is performed only after the user has stopped typing for 500ms
+	// search is performed only after the user has stopped typing for 1000ms
+	// IMPORTANT: DO NOT call populateList() from here
+	// This will send too many requests to the server
+	// Especially if the user is typing slow
 	$("#searchAllPatients").on('keyup', $.debounce(function(event){
 		var searchValue = $("#searchAllPatients").val();
 		
@@ -52,9 +57,10 @@ $(document).on("pageshow", "#patient_list_page", function(){
 		if(event.keyCode == 13 || searchValue.length >=1 || event.keyCode == 8)
 		{
 			clearTimeout(timeOutVar); // prevent the list from being refreshed by the timer on the page
-			populateList();
+			filterPatientList();
+			timeOutVar = setTimeout("populateList()", 30000);	
 		}
-	}, 500, false));
+	}, 1000, false));
 });
 
 $(document).on("pageshow", "#passcode_page", function(){
@@ -150,7 +156,7 @@ function populateList() {
         "success": function (xml) {
         	patientListFail = 0;
             parsePatientList(xml);
-            clearTimeout(timeOutVar); // DWE CHICA-761 Testing. Does this prevent an additional timer from being started?
+            clearTimeout(timeOutVar); // Clear the timer here so that multiple timers don't exist (the user clicks the refresh button several times)
             timeOutVar = setTimeout("populateList()", 30000);
         }
     });
@@ -310,38 +316,16 @@ function parsePasscodeResult(responseXML) {
 // DWE CHICA-761
 // Filter using the value entered in the search field
 // Searching will be performed with white space, special characters, and leading zeros removed
-// Search string may contain hyphens and apostrophes
 function filterPatientList()
 {
-    var searchString = removeLeadingZeros(removeSpecialCharacters(removeWhiteSpace($("#searchAllPatients").val()))); //.replace(new RegExp('-', 'g'), '');
+    var searchString = removeLeadingZeros(removeSpecialCharacters(removeWhiteSpace($("#searchAllPatients").val())));
     var regExp = new RegExp(searchString, "i");
     
     $("#patientList li").each(function () {
-    	if ($(this).data("fullname").search(regExp) < 0 && $(this).data("mrn").search(regExp) < 0) {//if ($(this).text().search(regExp) < 0 && $(this).data("mrn").search(regExp) < 0) {
+    	if ($(this).data("fullname").search(regExp) < 0 && $(this).data("mrn").search(regExp) < 0) {
             $(this).hide();
         } else {
             $(this).show()
         }
     });
-}
-
-//TODO DWE CHICA-761 Remove
-function testFilter(text, searchValue)
-{
-	alert(text);
-}
-
-//TODO DWE CHICA-761 Remove
-function loadTestDiv()
-{
-	var filterText = 'Chevrolet';
-	var content = '<li data-filtertext="' + filterText + '">Chevrolet</li>';
-	$("#testList").html(content);
-	$("#testList").listview("refresh");
-}
-
-//TODO DWE CHICA-761 Remove
-function defaultSearch(text, searchValue)
-{
-	return text.toLowerCase().indexOf( searchValue ) === -1;
 }

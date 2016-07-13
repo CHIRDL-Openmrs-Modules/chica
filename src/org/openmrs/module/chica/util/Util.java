@@ -292,28 +292,26 @@ public class Util {
 			location = locationService.getLocation(locationString);
 			if (location != null) {
 				locationId = location.getLocationId();
-				if (locationTags != null) {
-					if(showAllPatients) // DWE CHICA-761 Add all tags to the list
+				if(showAllPatients) // DWE CHICA-761 Add all tags to the list
+				{
+					for (LocationTag tag : location.getTags()) 
 					{
-						for (LocationTag tag : location.getTags()) 
-						{
-							locationTagIds.add(tag.getLocationTagId());	
-						}
+						locationTagIds.add(tag.getLocationTagId());	
 					}
-					else
-					{
-						StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
-						while (tokenizer.hasMoreTokens()) {
-							String locationTagName = tokenizer.nextToken();
-							locationTagName = locationTagName.trim();
-							Set<LocationTag> tags = location.getTags();
-							for (LocationTag tag : tags) {
-								if (tag.getName().equalsIgnoreCase(locationTagName)) {
-									locationTagIds.add(tag.getLocationTagId());
-								}
+				}
+				else if (locationTags != null) {					
+					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+					while (tokenizer.hasMoreTokens()) {
+						String locationTagName = tokenizer.nextToken();
+						locationTagName = locationTagName.trim();
+						Set<LocationTag> tags = location.getTags();
+						for (LocationTag tag : tags) {
+							if (tag.getName().equalsIgnoreCase(locationTagName)) {
+								locationTagIds.add(tag.getLocationTagId());
 							}
 						}
-					}	
+					}
+					
 				}
 			}
 		}
@@ -326,19 +324,9 @@ public class Util {
 				if (patientState != null) {
 					unfinishedStates.add(patientState);
 				}
-			}
-			else if(showAllPatients)
-			{
-				// TODO DWE CHICA-761 Change this section to use a different query. I copied this block from the else statement for now
+			} else {
 				List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
-					    todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
-					if (currUnfinishedStates != null) {
-						unfinishedStates.addAll(currUnfinishedStates);
-					}
-			}
-			else {
-				List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
-				    todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
+					todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
 				if (currUnfinishedStates != null) {
 					unfinishedStates.addAll(currUnfinishedStates);
 				}
