@@ -55,7 +55,7 @@
                    </ul>
 	            </div>
 	            <div id="clearCache">
-	               <input type="button" id="clearEHRMedicalRecordCacheButton" value="Clear Cache"/>
+	               <input type="button" id="clearEHRMedicalRecordCacheButton" class="clearCacheButtons" value="Clear Cache"/>
 	            </div>
 	        </div>
 	    </div>
@@ -77,7 +77,7 @@
                 <div style="color:#000000;">Are you sure you want to clear the EHR Medical Record Cache?</div>
             </div>
         </div>
-        <div id="clearCacheCompleteDialog" title="Confirm Clear Cache" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+        <div id="clearCacheCompleteDialog" title="Clear Cache" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
             <div style="margin: 0 auto;text-align: center;">
                 <div id="cacheMessage" style="color:#000000;"></div>
             </div>

@@ -16,6 +16,7 @@ $(function() {
     $("#errorDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $(".ui-dialog").addClass("no-close");
         },
         autoOpen: false,
         modal: true,
@@ -41,6 +42,7 @@ $(function() {
     $("#submitConfirmationDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $(".ui-dialog").addClass("no-close");
         },
         autoOpen: false,
         modal: true,
@@ -72,6 +74,7 @@ $(function() {
     $("#clearEHRMedicalRecordCacheConfirmationDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $(".ui-dialog").addClass("no-close");
         },
         autoOpen: false,
         modal: true,
@@ -104,6 +107,7 @@ $(function() {
     $("#clearCacheCompleteDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $(".ui-dialog").addClass("no-close");
         },
         autoOpen: false,
         modal: true,

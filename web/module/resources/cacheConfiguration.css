@@ -1,17 +1,9 @@
-body {
-    
-}
-
-#content {
-    
-}
-
 #title {
 	text-align: center;
 	margin: auto;
 }
 
-#clearEHRMedicalRecordCacheButton {
+.clearCacheButtons {
 	width: 150px;
 }
 
@@ -48,4 +40,14 @@ input {
   width: 100px;
 }
 
+.ui-dialog-shadow { 
+    box-shadow: 10px 10px 5px #2E2E2E;
+}
 
+.ui-dialog { 
+    z-index: 1002 !important ;
+}
+
+.no-close .ui-dialog-titlebar-close {
+	display: none 
+}
