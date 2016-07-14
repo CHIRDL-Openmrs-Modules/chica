@@ -3884,7 +3884,7 @@ where action_name='REPRINT';
         INSERT INTO chirdlutilbackports_form_attribute  
             (`name`, `description`)  
             VALUES  
-            ('stylesheet', 'configures stylesheet path for ePWS.');
+            ('stylesheet', 'filepath for stylesheet that is used to display a form in view encounters.');
         </sql>
     </diff>
 </sqldiff>

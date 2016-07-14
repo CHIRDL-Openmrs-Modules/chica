@@ -148,17 +148,19 @@ public class DisplayTiffController extends SimpleFormController {
 					imageFilename = defaultImageDirectory + "NotAvailableTablet.tif";
 					File scanXmlFile = XMLUtil.getXmlFile(imageLocationId, imageFormId, imageFormInstanceId, 
 						XMLUtil.DEFAULT_EXPORT_DIRECTORY);
-					
-					File stylesheetFile;
-					if (stylesheet.equals("pws.xsl")){
-						FormAttributeValue formAttributeValue = service.getFormAttributeValue(imageFormId, "stylesheet", locationTagId, imageLocationId);
-						if (formAttributeValue!=null) {
+					File stylesheetFile=null;
+					FormAttributeValue formAttributeValue = service.getFormAttributeValue(imageFormId, "stylesheet", locationTagId, imageLocationId);
+					if (formAttributeValue!=null) {
+						try{
 							stylesheetFile = new File(formAttributeValue.getValue());
-						} else {
-							stylesheetFile = XMLUtil.findStylesheet(stylesheet);
-						}
+						}catch (Exception e){
+							log.error("The file path in the form attribute is not defined correctly. "+ e);
+						}				
 					} else {
 						stylesheetFile = XMLUtil.findStylesheet(stylesheet);
+					}
+					if (stylesheetFile == null) {
+						log.error("Error finding stylesheet to format the form: " + stylesheet);
 					}
 					if (scanXmlFile != null  && stylesheetFile != null) {
 						try {
