@@ -27,7 +27,7 @@ Logic:
 If (mode = PRODUCE) then
 
 previousWeight := call getPreviousWeight;
-previousWeightDate:= call formatDateMonthYear With "previousWeight_object";
+previousWeightDate:= call shortDateFormat With "previousWeight_object";
 conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
 endif

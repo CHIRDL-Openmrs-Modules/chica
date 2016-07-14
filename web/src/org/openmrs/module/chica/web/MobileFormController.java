@@ -61,6 +61,7 @@ public class MobileFormController extends SimpleFormController {
 	private static final String PARAM_LOCATION_ID = "locationId";
 	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
 	private static final String PARAM_ERROR_MESSAGE = "errorMessage";
+	private static final String PARAM_SESSION_TIMEOUT_WARNING = "sessionTimeoutWarning";
 	
 	/*
 	 * (non-Javadoc)
@@ -130,6 +131,24 @@ public class MobileFormController extends SimpleFormController {
 		} else {
 			log.error("No valid providerId provided.  Cannot log who is viewing form: " + formId);
 		}
+		
+		// Add session timeout information
+		Integer sessionTimeoutWarning = 180;
+		String sessionTimeoutWarningStr = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
+		if (sessionTimeoutWarningStr == null || sessionTimeoutWarningStr.trim().length() == 0) {
+			log.warn("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING + " global property does not have a value set.  180 seconds "
+					+ "will be used as a default value.");
+		} else {
+			try {
+				sessionTimeoutWarning = Integer.parseInt(sessionTimeoutWarningStr);
+			} catch (NumberFormatException e) {
+				log.error("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING + " global property is not a valid Integer.  180 seconds "
+						+ "will be used as a default value");
+				sessionTimeoutWarning = 180;
+			}
+		}
+		
+		map.put(PARAM_SESSION_TIMEOUT_WARNING, sessionTimeoutWarning);
 		
 		return map;
 	}
