@@ -149,12 +149,14 @@ public class DisplayTiffController extends SimpleFormController {
 					File scanXmlFile = XMLUtil.getXmlFile(imageLocationId, imageFormId, imageFormInstanceId, 
 						XMLUtil.DEFAULT_EXPORT_DIRECTORY);
 					
-					ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-					Integer ImageFormId = parseString(imageFormIdString);
-					FormAttributeValue formAttributeValue = chirdlUtilBackportsService.getFormAttributeValue(ImageFormId, "stylesheet", locationTagId, imageLocationId);
 					File stylesheetFile;
-					if (formAttributeValue!=null && stylesheet.equals("pws.xsl")){
-						stylesheetFile = new File(formAttributeValue.getValue());
+					if (stylesheet.equals("pws.xsl")){
+						FormAttributeValue formAttributeValue = service.getFormAttributeValue(imageFormId, "stylesheet", locationTagId, imageLocationId);
+						if (formAttributeValue!=null) {
+							stylesheetFile = new File(formAttributeValue.getValue());
+						} else {
+							stylesheetFile = XMLUtil.findStylesheet(stylesheet);
+						}
 					} else {
 						stylesheetFile = XMLUtil.findStylesheet(stylesheet);
 					}
