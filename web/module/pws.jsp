@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/pws.css" type="text/css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.css"/>
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
@@ -13,6 +14,7 @@
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.js"></script>
         <title>CHICA Physician Encounter Form</title>
     </head>
 
@@ -72,6 +74,8 @@
 				<input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
 				<input id="providerId" name="providerId" type="hidden" value="${providerId}"/>
 				<input id="patientNameForcePrint" name="patientNameForcePrint" type="hidden" value="${PatientName}"/>
+				<input id="sessionTimeout" name="sessionTimeout" type="hidden" value="${pageContext.session.maxInactiveInterval}"/>
+				<input id="sessionTimeoutWarning" name="sessionTimeoutWarning" type="hidden" value="${sessionTimeoutWarning}"/>
             </form>
     	</div>
     </body>

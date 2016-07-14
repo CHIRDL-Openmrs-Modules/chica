@@ -55,7 +55,7 @@ endif
 ;;
 Action:
 write ("Do you feel safe in your current relationship?");
-write ("¿Se siente segura con su pareja? (como violencia domestica o agresión)?") At Spanish;                                                                                                                                                                                                              
+write ("¿Se siente segura con su pareja? (violencia domestica o agresión)?") At Spanish;                                                                                                                                                                                                              
 ;;
 Age_Min: 0 days;;
 Age_Max: 12 years;;
