@@ -998,11 +998,11 @@
 	                        </div>
 							<div class="examExtraCheckbox">
 	                        	<xsl:choose>
-	                        		<xsl:when test="Records/Record/Field[@id = 'MATwoIDsChecked']/Value = 'Y'">
-	                        			<input type="checkbox" name="MATwoIDsChecked" value="Y" disabled="disabled" checked="checked"/>Two ID's Checked<br/>
+	                        		<xsl:when test="Records/Record/Field[@id = 'MDTwoIDsChecked']/Value = 'Y'">
+	                        			<input type="checkbox" name="MDTwoIDsChecked" value="Y" disabled="disabled" checked="checked"/>Two ID's Checked<br/>
 	                        		</xsl:when>
 	                        		<xsl:otherwise>
-	                        			<input type="checkbox" name="MATwoIDsChecked" value="Y" disabled="disabled"/>Two ID's Checked<br/>
+	                        			<input type="checkbox" name="MDTwoIDsChecked" value="Y" disabled="disabled"/>Two ID's Checked<br/>
 	                        		</xsl:otherwise>
 	                        	</xsl:choose>
 	                        </div>
