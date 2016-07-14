@@ -25,6 +25,7 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -147,7 +148,16 @@ public class DisplayTiffController extends SimpleFormController {
 					imageFilename = defaultImageDirectory + "NotAvailableTablet.tif";
 					File scanXmlFile = XMLUtil.getXmlFile(imageLocationId, imageFormId, imageFormInstanceId, 
 						XMLUtil.DEFAULT_EXPORT_DIRECTORY);
-					File stylesheetFile = XMLUtil.findStylesheet(stylesheet);
+					
+					ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+					Integer ImageFormId = parseString(imageFormIdString);
+					FormAttributeValue formAttributeValue = chirdlUtilBackportsService.getFormAttributeValue(ImageFormId, "stylesheet", locationTagId, imageLocationId);
+					File stylesheetFile;
+					if (formAttributeValue!=null && stylesheet.equals("pws.xsl")){
+						stylesheetFile = new File(formAttributeValue.getValue());
+					} else {
+						stylesheetFile = XMLUtil.findStylesheet(stylesheet);
+					}
 					if (scanXmlFile != null  && stylesheetFile != null) {
 						try {
 							String output = XMLUtil.transformFile(scanXmlFile, stylesheetFile);
