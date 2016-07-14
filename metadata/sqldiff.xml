@@ -3933,18 +3933,20 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 
             insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Query CDA', 'Query the CDA service', 'org.openmrs.module.chica.action.QueryCDA');
             INSERT INTO chirdlutilbackports_state_action (action_name, action_description, action_class)
-                SELECT * FROM (SELECT 'Processed Vitals HL7', 'Finishes processing after HL7 of vitals received', 'org.openmrs.module.chica.action.ProcessedVitalsHL7') AS tmp
+                SELECT 'Processed Vitals HL7', 'Finishes processing after HL7 of vitals received', 'org.openmrs.module.chica.action.ProcessedVitalsHL7' from dual
                 WHERE NOT EXISTS (
-                    SELECT action_name FROM chirdlutilbackports_state_action WHERE action_name = 'Processed Vitals HL7') LIMIT 1;
+                    SELECT action_name FROM chirdlutilbackports_state_action WHERE action_name = 'Processed Vitals HL7'
+                );
             insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Export Physician Note', 'Export the Physician Note back to the EHR', 'org.openmrs.module.chica.action.ExportPhysicianNote');
             
             insert into chirdlutilbackports_state (name, description, state_action_id) values ('Query CDA PSF', 'Query the CDA Service during the PSF process', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Query CDA'));
             insert into chirdlutilbackports_state (name, description, state_action_id) values ('Query CDA PWS', 'Query the CDA Service during the PWS process', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Query CDA'));
             insert into chirdlutilbackports_state (name, description, state_action_id) values ('Export Physician Note', 'Exports the Physician Note back to the EHR', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Export Physician Note'));
             INSERT INTO chirdlutilbackports_state (name, description, state_action_id)
-                SELECT * FROM (SELECT 'Processed Vitals HL7', 'Processes vitals information sent via HL7', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Processed Vitals HL7')) AS tmp
+                SELECT 'Processed Vitals HL7', 'Processes vitals information sent via HL7', (select state_action_id from chirdlutilbackports_state_action where action_name = 'Processed Vitals HL7') from dual
                 WHERE NOT EXISTS (
-                    SELECT name FROM chirdlutilbackports_state WHERE name = 'Processed Vitals HL7') LIMIT 1;
+                    SELECT name FROM chirdlutilbackports_state WHERE name = 'Processed Vitals HL7'
+                );
                     
             insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'CHECKIN'),(select state_id from chirdlutilbackports_state where name = 'Query CDA PSF'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
             insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'Query CDA PSF'),(select state_id from chirdlutilbackports_state where name = 'Randomize'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
