@@ -664,4 +664,61 @@ public class Util {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the Location Tag ID
+	 * 
+	 * @param encounterIdString encounter ID
+	 * @return LocationTagId
+	 */
+	public static Integer getLocationTagId(Integer encounterId){
+		
+		String printerLocation = null;
+		Integer locationTagId = null;
+
+		if (encounterId != null)
+		{
+			EncounterService encounterService = Context
+					.getService(EncounterService.class);
+			Encounter encounter = (Encounter) encounterService
+					.getEncounter(encounterId);
+
+			if (encounter != null)
+			{
+				// see if the encounter has a printer location
+				// this will give us the location tag id
+				printerLocation = encounter.getPrinterLocation();
+
+				// if the printer location is null, pick
+				// any location tag id for the given location
+				if (printerLocation == null)
+				{
+					Location location = encounter.getLocation();
+					if (location != null)
+					{
+						Set<LocationTag> tags = location.getTags();
+
+						if (tags != null && tags.size() > 0)
+						{
+							printerLocation = ((LocationTag) tags.toArray()[0])
+									.getTag();
+						}
+					}
+				}
+				if (printerLocation != null)
+				{
+					LocationService locationService = Context
+							.getLocationService();
+					LocationTag tag = locationService
+							.getLocationTagByName(printerLocation);
+					if (tag != null)
+					{
+						locationTagId = tag.getLocationTagId();
+					}
+				}
+			}
+		}
+	return locationTagId;
+	}
+
 }

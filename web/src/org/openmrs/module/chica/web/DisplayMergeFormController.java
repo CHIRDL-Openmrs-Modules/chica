@@ -6,19 +6,15 @@ package org.openmrs.module.chica.web;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
-import org.openmrs.Location;
-import org.openmrs.LocationTag;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -66,6 +62,13 @@ public class DisplayMergeFormController extends SimpleFormController
 		String rightFormIdStr = request.getParameter("rightImageFormId");
 		String rightFormInstanceIdStr = request.getParameter("rightImageFormInstanceId");
 		String rightStylesheet = request.getParameter("rightImageStylesheet");
+		String encounterIdString = request.getParameter("encounterId");
+		Integer encounterId = null;
+		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
+		try {
+			encounterId = Integer.parseInt(encounterIdString);
+		} catch (Exception e){
+		}
 		
 		try {
 			leftLocationId = Integer.parseInt(leftLocationIdStr);
@@ -97,6 +100,8 @@ public class DisplayMergeFormController extends SimpleFormController
 		} catch (NumberFormatException e) {
 		}
 		
+		Integer locationTagId = Util.getLocationTagId(encounterId);
+		File stylesheetFile=null;
 		// Transform the left XML
 		String leftOutput = null;
 		if (leftLocationId != null && leftFormId != null && leftFormInstanceId != null) {
@@ -104,11 +109,19 @@ public class DisplayMergeFormController extends SimpleFormController
 			if (form != null) {
 				map.put("leftImageFormname", form.getName());
 			}
-			
 			map.put("leftImageForminstance", leftFormInstanceId);
 			File leftXmlFile = XMLUtil.getXmlFile(leftLocationId, leftFormId, leftFormInstanceId, 
 				getLocationAttributeDirectoryName());
-			File stylesheetFile = XMLUtil.findStylesheet(leftStylesheet);
+			FormAttributeValue formAttributeValue = service.getFormAttributeValue(leftFormId, ChirdlUtilConstants.FORM_ATTR_STYLESHEET, locationTagId, leftLocationId);
+			if (formAttributeValue != null && formAttributeValue.getValue() != null && !formAttributeValue.getValue().isEmpty()) {
+				try{
+					stylesheetFile = new File(formAttributeValue.getValue());
+				}catch (Exception e){
+					log.error("The file path in the form attribute is not defined correctly. "+ e);
+				}				
+			} else {
+				stylesheetFile = XMLUtil.findStylesheet(leftStylesheet);
+			}
 			if (stylesheetFile == null) {
 				log.error("Error finding stylesheet to format the form: " + leftStylesheet);
 			}
@@ -136,13 +149,8 @@ public class DisplayMergeFormController extends SimpleFormController
 			map.put("rightImageForminstance", rightFormInstanceId);
 			File rightXmlFile = XMLUtil.getXmlFile(rightLocationId, rightFormId, rightFormInstanceId, 
 				XMLUtil.DEFAULT_MERGE_DIRECTORYY);
-			
-			String encounterIdString = request.getParameter("encounterId");
-			Integer locationTagId = getLocationTagId(encounterIdString);
-			ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
-			File stylesheetFile=null;
-			FormAttributeValue formAttributeValue = service.getFormAttributeValue(rightFormId, "stylesheet", locationTagId, rightLocationId);
-			if (formAttributeValue!=null) {
+			FormAttributeValue formAttributeValue = service.getFormAttributeValue(rightFormId, ChirdlUtilConstants.FORM_ATTR_STYLESHEET, locationTagId, rightLocationId);
+			if (formAttributeValue != null && formAttributeValue.getValue() != null && !formAttributeValue.getValue().isEmpty()) {
 				try{
 					stylesheetFile = new File(formAttributeValue.getValue());
 				}catch (Exception e){
@@ -178,67 +186,4 @@ public class DisplayMergeFormController extends SimpleFormController
 	protected String getLocationAttributeDirectoryName() {
 		return XMLUtil.DEFAULT_MERGE_DIRECTORYY;
 	}
-	
-	/**
-	 * Returns the Location Tag ID
-	 * Auto generated method comment
-	 * 
-	 * @param encounterIdString encounter ID
-	 * @return LocationTagId
-	 */
-	private Integer getLocationTagId(String encounterIdString){
-		
-		Integer encounterId = null;
-		try {
-			encounterId = Integer.parseInt(encounterIdString);
-		} catch (Exception e){
-		}
-		String printerLocation = null;
-		Integer locationTagId = null;
-
-		if (encounterId != null)
-		{
-			EncounterService encounterService = Context
-					.getService(EncounterService.class);
-			Encounter encounter = (Encounter) encounterService
-					.getEncounter(encounterId);
-
-			if (encounter != null)
-			{
-				// see if the encounter has a printer location
-				// this will give us the location tag id
-				printerLocation = encounter.getPrinterLocation();
-
-				// if the printer location is null, pick
-				// any location tag id for the given location
-				if (printerLocation == null)
-				{
-					Location location = encounter.getLocation();
-					if (location != null)
-					{
-						Set<LocationTag> tags = location.getTags();
-
-						if (tags != null && tags.size() > 0)
-						{
-							printerLocation = ((LocationTag) tags.toArray()[0])
-									.getTag();
-						}
-					}
-				}
-				if (printerLocation != null)
-				{
-					LocationService locationService = Context
-							.getLocationService();
-					LocationTag tag = locationService
-							.getLocationTagByName(printerLocation);
-					if (tag != null)
-					{
-						locationTagId = tag.getLocationTagId();
-					}
-				}
-			}
-		}
-	return locationTagId;
-	}
-
 }
