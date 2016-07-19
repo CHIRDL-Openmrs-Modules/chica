@@ -23,7 +23,7 @@
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
 <c:set var="formName" value="Additional Information Form:"/>
-<c:set var="formName_sp" value=""/>
+<c:set var="formName_sp" value="El formulario de información adicional"/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="AdditionalInformationForm" method="POST" action="additionalInformationMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
@@ -163,67 +163,67 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
     </div>
     <div id="content_1_sp" data-role="content">
-        <c:set var="quest1_2" value='(Spanish) What is your relationship to ${patient.givenName}&nbsp;${patient.familyName}?'/>
+        <c:set var="quest1_2" value='&iquest;Cu&aacute;l es su relaci&oacute;n con ${patient.givenName}&nbsp;${patient.familyName}?'/>
         <input id="Question_1_2" name="Question_1_2" type="hidden" value="${quest1_2}"/>
 	    <strong>${quest1_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest1_2}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 				<select name="Informant_1_2" id="Informant_1_2" data-native-menu="false">
 					<option name="Informant_1_2" id="Informant_1_2_0" value=""/>
-					<label for="Informant_1_2_0">Select One</label>
+					<label for="Informant_1_2_0">Elija uno</label>
 					<option name="Informant_1_2" id="Informant_1_2_self" value="self" data-theme="b" />
-					<label for="Informant_1_2_self">Self</label>
+					<label for="Informant_1_2_self">Usted mismo/a</label>
 					<option name="Informant_1_2" id="Informant_1_2_mother" value="mother" data-theme="b" />
-					<label for="Informant_1_2_mother">Mother</label>
+					<label for="Informant_1_2_mother">La madre</label>
 					<option name="Informant_1_2" id="Informant_1_2_father" value="father" data-theme="b" />
-					<label for="Informant_1_2_father">Father</label>
+					<label for="Informant_1_2_father">El padre</label>
 					<option name="Informant_1_2" id="Informant_1_2_gm" value="grandmother" data-theme="b" />
-					<label for="Informant_1_2_gm">Grandmother</label>
+					<label for="Informant_1_2_gm">La abuela</label>
 					<option name="Informant_1_2" id="Informant_1_2_gf" value="grandfather" data-theme="b" />
-					<label for="Informant_1_2_gf">Grandfather</label>
+					<label for="Informant_1_2_gf">El abuelo</label>
 					<option name="Informant_1_2" id="Informant_1_2_aunt" value="aunt" data-theme="b" />
-					<label for="Informant_1_2_aunt">Aunt</label>
+					<label for="Informant_1_2_aunt">La t&iacute;a</label>
 					<option name="Informant_1_2" id="Informant_1_2_uncle" value="uncle" data-theme="b" />
-					<label for="Informant_1_2_uncle">Uncle</label>
+					<label for="Informant_1_2_uncle">El t&iacute;o</label>
 					<option name="Informant_1_2" id="Informant_1_2_fp" value="foster parent" data-theme="b" />
-					<label for="Informant_1_2_fp">Foster parent</label>
+					<label for="Informant_1_2_fp">El padre adoptivo/la madre adoptiva</label>
 					<option name="Informant_1_2" id="Informant_1_2_sibling" value="sibling" data-theme="b" />
-					<label for="Informant_1_2_sibling">Sibling</label>
+					<label for="Informant_1_2_sibling">El/la hermano/a</label>
 					<option name="Informant_1_2" id="Informant_1_2_other" value="Other" data-theme="b" />
-					<label for="Informant_1_2_other">Other</label>
+					<label for="Informant_1_2_other">Otra persona</label>
 				</select>
 	        </fieldset>
 	    </div>
     </div>
     <div id="content_2_sp" data-role="content">
-    <c:set var="quest2_2" value='(Spanish) Who else is at this visit?'/>
+    <c:set var="quest2_2" value='&iquest;Qui&eacute;n m&aacute;s est&aacute; en esta visita?'/>
         <input id="Question_2_2" name="Question_2_2" type="hidden" value="${quest2_2}"/>
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest2_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
 			<fieldset data-role="controlgroup" data-type="vertical">
 				<select name="Informant_2_2" id="Informant_2_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2_2" id="Informant_2_2_0"/>
-				  <label for="Informant_2_2_0">Select all that apply</label>
+				  <label for="Informant_2_2_0">Elija todos que aplican</label>
 				  <option name="Informant_2_2" value="mother" id="Informant_2_2_mother" data-theme="b" />
-				  <label for="Informant_2_2_mother">Mother</label>
+				  <label for="Informant_2_2_mother">La madre</label>
 				  <option name="Informant_2_2" value="father" id="Informant_2_2_father" data-theme="b" />
-				  <label for="Informant_2_2_father">Father</label>
+				  <label for="Informant_2_2_father">El padre</label>
 				  <option name="Informant_2_2" value="grandmother" id="Informant_2_2_gm" data-theme="b" />
-				  <label for="Informant_2_2_gm">Grandmother</label>
+				  <label for="Informant_2_2_gm">La abuela</label>
 				  <option name="Informant_2_2" value="grandfather" id="Informant_2_2_gf" data-theme="b" />
-				  <label for="Informant_2_2_gf">Grandfather</label>
+				  <label for="Informant_2_2_gf">El abuelo</label>
 				  <option name="Informant_2_2" value="aunt" id="Informant_2_2_aunt" data-theme="b" />
-				  <label for="Informant_2_2_aunt">Aunt</label>
+				  <label for="Informant_2_2_aunt">La t&iacute;a</label>
 				  <option name="Informant_2_2" value="uncle" id="Informant_2_2_uncle" data-theme="b" />
-				  <label for="Informant_2_2_uncle">Uncle</label>
+				  <label for="Informant_2_2_uncle">El t&iacute;o</label>
 				  <option name="Informant_2_2" value="foster parent" id="Informant_2_2_fp" data-theme="b" />
-				  <label for="Informant_2_2_fp">Foster parent</label>
+				  <label for="Informant_2_2_fp">El padre adoptivo/la madre adoptiva</label>
 				  <option name="Informant_2_2" value="sibling" id="Informant_2_2_sibling" data-theme="b" />
-				  <label for="Informant_2_2_sibling">Sibling</label>
+				  <label for="Informant_2_2_sibling">El/la hermano/a</label>
 				  <option name="Informant_2_2" value="Other" id="Informant_2_2_other" data-theme="b" />
-				  <label for="Informant_2_2_other">Other</label>
+				  <label for="Informant_2_2_other">Otra persona</label>
 				  <option name="Informant_2_2" value="No One" id="Informant_2_2_noone" data-theme="b" />
-				  <label for="Informant_2_2_noone">No one (I'm here alone)</label>
+				  <label for="Informant_2_2_noone">Nadie (Estoy solo/a aqu&iacute;)</label>
 				</select>
 			</fieldset>
 		</div>

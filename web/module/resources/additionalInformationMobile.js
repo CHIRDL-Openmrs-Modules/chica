@@ -52,17 +52,19 @@ function setLanguage(patientName, birthdate) {
     var startButtonText = "Start";
     var vitalsButtonText = "Vitals";
     var formTitleText = "Additional Information Form:";
+	var additionalQuestions = "Please complete some additional information about this visit.";
     if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
         vitalsButtonText = "Vitales";
-        formTitleText = "";
+        formTitleText = "El formulario de información adicional";
+		additionalQuestions = "Por favor, complete la información adicional acerca de esta visita a la clínica.";
     }
-    
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#startButton .ui-btn-text").text(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
     $("#formTitle").text(formTitleText);
+	$("#additionalQuestions").text(additionalQuestions);
 }
 
 function changePage(newPageNum) {
