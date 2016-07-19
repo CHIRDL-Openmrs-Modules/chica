@@ -23,7 +23,7 @@
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
 <c:set var="formName" value="Additional Information Form:"/>
-<c:set var="formName_sp" value="El formulario de información adicional"/>
+<c:set var="formName_sp" value="El formulario de informaci&oacute;n adicional"/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="AdditionalInformationForm" method="POST" action="additionalInformationMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
