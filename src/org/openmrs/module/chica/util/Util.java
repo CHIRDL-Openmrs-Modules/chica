@@ -4,6 +4,7 @@
 package org.openmrs.module.chica.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -41,10 +42,13 @@ import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClient;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClients;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
@@ -663,5 +667,108 @@ public class Util {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the Location Tag ID
+	 * 
+	 * @param encounterIdString encounter ID
+	 * @return LocationTagId
+	 */
+	public static Integer getLocationTagId(Integer encounterId){
+		
+		String printerLocation = null;
+		Integer locationTagId = null;
+
+		if (encounterId != null)
+		{
+			EncounterService encounterService = Context
+					.getService(EncounterService.class);
+			Encounter encounter = (Encounter) encounterService
+					.getEncounter(encounterId);
+
+			if (encounter != null)
+			{
+				// see if the encounter has a printer location
+				// this will give us the location tag id
+				printerLocation = encounter.getPrinterLocation();
+
+				// if the printer location is null, pick
+				// any location tag id for the given location
+				if (printerLocation == null)
+				{
+					Location location = encounter.getLocation();
+					if (location != null)
+					{
+						Set<LocationTag> tags = location.getTags();
+
+						if (tags != null && tags.size() > 0)
+						{
+							printerLocation = ((LocationTag) tags.toArray()[0])
+									.getTag();
+						}
+					}
+				}
+				if (printerLocation != null)
+				{
+					LocationService locationService = Context
+							.getLocationService();
+					LocationTag tag = locationService
+							.getLocationTagByName(printerLocation);
+					if (tag != null)
+					{
+						locationTagId = tag.getLocationTagId();
+					}
+				}
+			}
+		}
+	return locationTagId;
+	}
+
+	/**
+	 * Displays the Stylesheet xsl 
+	 * 
+	 * @param formId The ID of the general form.
+	 * @param locationTagId The location tag ID. 
+	 * @param locationId The clinic location ID.
+	 * @param formInstanceId The ID of the instance of the general form.
+	 * @param strStylesheet The stylesheet file used for the transformation.
+	 * @return strOutput returns the result of the transformation File.
+	 */
+	public static String displayStylesheet(Integer formId, Integer locationTagId, Integer locationId, Integer formInstanceId, String strStylesheet){
+
+		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
+		String strOutput = null;
+		File stylesheetFile = null;
+		String formAttributeName = null;
+		if (strStylesheet.equals("pws.xsl") || strStylesheet.equals("psf.xsl")){
+			formAttributeName = XMLUtil.DEFAULT_EXPORT_DIRECTORY;
+		} else {
+			formAttributeName = XMLUtil.DEFAULT_MERGE_DIRECTORYY;
+		}
+		File XmlFile = XMLUtil.getXmlFile(locationId, formId, formInstanceId, formAttributeName);
+		FormAttributeValue formAttributeValue = service.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_STYLESHEET, locationTagId, locationId);
+		if (formAttributeValue != null && formAttributeValue.getValue() != null && !formAttributeValue.getValue().isEmpty()) {
+			try{
+				stylesheetFile = new File(formAttributeValue.getValue());
+			}catch (Exception e){
+				log.error("The file path in the form attribute is not defined correctly. "+ e);
+			}				
+		} else {
+			stylesheetFile = XMLUtil.findStylesheet(strStylesheet);
+		}
+		if (stylesheetFile == null) {
+			log.error("Error finding stylesheet to format the form: " + strStylesheet);
+		}
+		
+		if (XmlFile != null && stylesheetFile != null) {
+			try {
+				strOutput = XMLUtil.transformFile(XmlFile, stylesheetFile);
+			} catch (Exception e) {
+				log.error("Error transforming xml: " + XmlFile.getAbsolutePath() + " xslt: " + 
+					stylesheetFile.getAbsolutePath(), e);
+			}
+		}
+		return strOutput;
 	}
 }
