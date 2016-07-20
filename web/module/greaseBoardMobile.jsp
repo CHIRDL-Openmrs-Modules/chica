@@ -167,5 +167,7 @@
     </div><!-- /content -->
 </div><!-- /page two -->
 
+<input id="refreshPeriod" name="refreshPeriod" type="hidden" value="${refreshPeriod}"/>
+
 </body>
 </html>

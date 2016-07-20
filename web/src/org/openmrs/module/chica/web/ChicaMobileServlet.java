@@ -169,7 +169,6 @@ public class ChicaMobileServlet extends HttpServlet {
 	 */
 	private void getPatientsWithForms(HttpServletRequest request, HttpServletResponse response, int formType) 
 	throws IOException {
-		long startTime = System.currentTimeMillis(); // TODO DWE CHICA-761 Remove
 		Integer sessionId = null;
 		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
 		if (sessionIdStr != null) {
@@ -284,8 +283,6 @@ public class ChicaMobileServlet extends HttpServlet {
 		}
 		
 		pw.write(XML_PATIENTS_WITH_FORMS_END);
-		long endTime = System.currentTimeMillis(); // TODO DWE CHICA-761 Remove
-		log.error("Total servlet request time: " + (endTime - startTime) + "ms"); // TODO DWE CHICA-761 Remove
 	}
 	
 	/**

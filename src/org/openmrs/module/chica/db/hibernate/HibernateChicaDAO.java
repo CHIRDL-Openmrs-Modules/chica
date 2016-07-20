@@ -1182,4 +1182,40 @@ public class HibernateChicaDAO implements ChicaDAO
 		
 		return null;
     }
+    
+    /**
+     * DWE CHICA-761
+     * @see org.openmrs.module.chica.db.ChicaDAO#getReprintRescanStatesByEncounter(Integer, Date, List, Integer)
+     */
+    public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException
+    {
+    	String dateRestriction = "";
+    	if (optionalDateRestriction != null)
+    	{
+    		dateRestriction = " and start_time >= ?";
+    	} 
+
+    	String sql = "select * from chirdlutilbackports_patient_state a "+
+    			"inner join chirdlutilbackports_session b on a.session_id=b.session_id where state in ("+
+    			"select state_id from chirdlutilbackports_state where state_action_id in ("+
+    			"select state_action_id from chirdlutilbackports_state_action where action_name in ('RESCAN','REPRINT')) "+
+    			") "+
+    			"and encounter_id=? and retired=? and location_tag_id in (:locationTagIds) and location_id=? "+dateRestriction;
+
+    	SQLQuery qry = this.sessionFactory.getCurrentSession()
+    			.createSQLQuery(sql);
+
+    	qry.setInteger(0, encounterId);
+    	qry.setBoolean(1, false);
+    	qry.setParameterList("locationTagIds", locationTagIds);
+    	qry.setInteger(2, locationId);
+
+    	if (optionalDateRestriction != null)
+    	{
+    		qry.setDate(3, optionalDateRestriction);
+    	}
+
+    	qry.addEntity(PatientState.class);
+    	return qry.list();
+    }
 }

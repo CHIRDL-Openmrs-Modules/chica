@@ -1,5 +1,7 @@
 var patientListFail = 0;
 var timeOutVar;
+var refreshPeriod = 60000; // Use global property to override this, see startTimer() below
+var defaultAjaxTimeout = 60000;
 
 $(document).on("pagecreate", "#patient_list_page", function(){
 	
@@ -34,7 +36,7 @@ $(document).ready(function(){
     	$("#searchAllPatients").val("");
 		clearTimeout(timeOutVar); // prevent the list from being refreshed by the timer on the page
 		filterPatientList();
-		timeOutVar = setTimeout("populateList()", 30000);	
+		timeOutVar = setTimeout("populateList()", refreshPeriod);	
 	});
 	
 	// Fix to allow the search field to display correctly in IE
@@ -58,7 +60,7 @@ $(document).on("pageshow", "#patient_list_page", function(){
 		{
 			clearTimeout(timeOutVar); // prevent the list from being refreshed by the timer on the page
 			filterPatientList();
-			timeOutVar = setTimeout("populateList()", 30000);	
+			timeOutVar = setTimeout("populateList()", refreshPeriod);	
 		}
 	}, 1000, false));
 });
@@ -103,6 +105,13 @@ function startTimer() {
     // This delay allows the wait cursor to display when loading the patient list.
 	patientListFail = 0;
 	$("#listError").popup("close");
+	
+	var period = $("#refreshPeriod").val();
+	if(period.length > 0)
+	{
+		refreshPeriod = period * 1000;
+	}
+	
 	timeOutVar = setTimeout("populateList()", 1);
 }
 
@@ -130,7 +139,7 @@ function checkPasscode() {
         "data": action,
         "type": "POST",
         "url": url,
-        "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "timeout": defaultAjaxTimeout, // optional if you want to handle timeouts (which you should)
         "error": handlePasscodeAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
             parsePasscodeResult(xml);
@@ -151,13 +160,13 @@ function populateList() {
         "data": "action=patientsWithPrimaryForm&showAllPatients=" + showAllPatients,
         "type": "POST",
         "url": url,
-        "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "timeout": defaultAjaxTimeout, // optional if you want to handle timeouts (which you should)
         "error": handlePatientListAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
         	patientListFail = 0;
             parsePatientList(xml);
             clearTimeout(timeOutVar); // Clear the timer here so that multiple timers don't exist (the user clicks the refresh button several times)
-            timeOutVar = setTimeout("populateList()", 30000);
+            timeOutVar = setTimeout("populateList()", refreshPeriod);
         }
     });
 }

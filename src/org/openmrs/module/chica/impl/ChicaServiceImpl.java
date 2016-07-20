@@ -1086,4 +1086,12 @@ public class ChicaServiceImpl implements ChicaService
 	        return getChicaDAO().getStudyByTitle(studyTitle);
         }
 
+        /**
+    	 * DWE CHICA-761
+    	 * @see org.openmrs.module.chica.service.ChicaService#getReprintRescanStatesByEncounter(Integer, Date, List, Integer)
+    	 */
+    	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId)
+    	{
+    		return getChicaDAO().getReprintRescanStatesByEncounter(encounterId, optionalDateRestriction, locationTagIds, locationId);
+    	}
 }

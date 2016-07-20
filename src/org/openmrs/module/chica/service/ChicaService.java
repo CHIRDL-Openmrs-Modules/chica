@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.HibernateException;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.FormField;
@@ -236,4 +237,15 @@ public interface ChicaService
 	 * @return Study object with the provided title or null if one is not found with the provided title.
 	 */
 	public Study getStudyByTitle(String studyTitle);
+	
+	/**
+	 * DWE CHICA-761
+	 * * Get reprint/rescan states by encounter Id
+	 * @param encounterId
+	 * @param optionalDateRestriction
+	 * @param locationTagIds
+	 * @param locationId
+	 * @return
+	 */
+	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException;
 }

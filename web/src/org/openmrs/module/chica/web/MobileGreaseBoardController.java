@@ -116,6 +116,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("currentUser", user.getUsername());
+		map.put("refreshPeriod", Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_REFRESH)); // DWE CHICA-761
 		
 		// DWE CHICA-488
 		if(request.getParameter("errorMessage") != null)
