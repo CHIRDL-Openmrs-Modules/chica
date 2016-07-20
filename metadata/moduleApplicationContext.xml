@@ -233,6 +233,7 @@
     <bean id="additionalInformationMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>additionalInformationMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/additionalInformationMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
 	</bean>
     <bean id="sessionTimeout" class="@MODULE_PACKAGE@.web.NoActionController">
         <property name="commandName"><value>sessionTimeoutObject</value></property>
