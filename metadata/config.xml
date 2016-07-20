@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.70.2</version>
+    <version>1.71.0</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -21,9 +21,9 @@
     <require_modules>
         <require_module version="2.31.2">org.openmrs.module.dss</require_module>
         <require_module version="2.5.0">org.openmrs.module.atd</require_module>
-        <require_module version="1.5.1">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="1.5.2">org.openmrs.module.sockethl7listener</require_module>
         <require_module version="1.2.0">org.openmrs.module.rgccd</require_module>
-        <require_module version="1.9.7">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="1.9.8">org.openmrs.module.chirdlutil</require_module>
         <require_module version="2.4.1">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
@@ -379,6 +379,12 @@
     <globalProperty>
         <property>chica.MRFQueryNamespace</property>
      	<description>Namespace for MRF query service
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.sessionTimeoutWarning</property>
+        <defaultValue>180</defaultValue>
+        <description>Number of seconds remaining in the session before the session timeout warning dialog is displayed.
         </description>
     </globalProperty>
    

@@ -3,7 +3,6 @@
  */
 package org.openmrs.module.chica.web;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -58,6 +59,14 @@ public class DisplayMergeFormController extends SimpleFormController
 		String rightFormIdStr = request.getParameter("rightImageFormId");
 		String rightFormInstanceIdStr = request.getParameter("rightImageFormInstanceId");
 		String rightStylesheet = request.getParameter("rightImageStylesheet");
+		String encounterIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		Integer encounterId = null;
+		String strOutput = null;
+		try {
+			encounterId = Integer.parseInt(encounterIdString);
+		} catch (NumberFormatException e){
+			log.error("Error Parsing encounter Id: "+encounterIdString, e);
+		}
 		
 		try {
 			leftLocationId = Integer.parseInt(leftLocationIdStr);
@@ -89,62 +98,28 @@ public class DisplayMergeFormController extends SimpleFormController
 		} catch (NumberFormatException e) {
 		}
 		
+		Integer locationTagId = Util.getLocationTagId(encounterId);
 		// Transform the left XML
-		String leftOutput = null;
 		if (leftLocationId != null && leftFormId != null && leftFormInstanceId != null) {
 			Form form = Context.getFormService().getForm(leftFormId);
 			if (form != null) {
 				map.put("leftImageFormname", form.getName());
 			}
-			
 			map.put("leftImageForminstance", leftFormInstanceId);
-			File leftXmlFile = XMLUtil.getXmlFile(leftLocationId, leftFormId, leftFormInstanceId, 
-				getLocationAttributeDirectoryName());
-			File stylesheetFile = XMLUtil.findStylesheet(leftStylesheet);
-			if (stylesheetFile == null) {
-				log.error("Error finding stylesheet to format the form: " + leftStylesheet);
-			}
-			
-			if (leftXmlFile != null  && stylesheetFile != null) {
-				try {
-					leftOutput = XMLUtil.transformFile(leftXmlFile, stylesheetFile);
-				} catch (Exception e) {
-					log.error("Error transforming xml: " + leftXmlFile.getAbsolutePath() + " xslt: " + 
-						stylesheetFile.getAbsolutePath(), e);
-				}
-			}
+			strOutput = Util.displayStylesheet(leftFormId, locationTagId, leftLocationId, leftFormInstanceId, leftStylesheet);
 		}
-		
-		map.put("leftOutput", leftOutput);
+		map.put("leftOutput", strOutput);
 		
 		// Transform the right XML
-		String rightOutput = null;
 		if (rightLocationId != null && rightFormId != null && rightFormInstanceId != null) {
 			Form form = Context.getFormService().getForm(rightFormId);
 			if (form != null) {
 				map.put("rightImageFormname", form.getName());
 			}
-			
 			map.put("rightImageForminstance", rightFormInstanceId);
-			File rightXmlFile = XMLUtil.getXmlFile(rightLocationId, rightFormId, rightFormInstanceId, 
-				XMLUtil.DEFAULT_MERGE_DIRECTORYY);
-			File stylesheetFile = XMLUtil.findStylesheet(rightStylesheet);
-			if (stylesheetFile == null) {
-				log.error("Error finding stylesheet to format the form: " + rightStylesheet);
-			}
-			
-			if (rightXmlFile != null && stylesheetFile != null) {
-				try {
-					rightOutput = XMLUtil.transformFile(rightXmlFile, stylesheetFile);
-				} catch (Exception e) {
-					log.error("Error transforming xml: " + rightXmlFile.getAbsolutePath() + " xslt: " + 
-						stylesheetFile.getAbsolutePath(), e);
-				}
-			}
+			strOutput = Util.displayStylesheet(rightFormId, locationTagId, rightLocationId, rightFormInstanceId, rightStylesheet);
 		}
-		
-		map.put("rightOutput", rightOutput);
-
+		map.put("rightOutput", strOutput);
 		return map;
 	}
 	
