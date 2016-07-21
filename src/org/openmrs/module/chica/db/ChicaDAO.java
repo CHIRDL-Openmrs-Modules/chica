@@ -185,12 +185,12 @@ public interface ChicaDAO {
 	
 	/**
 	 * DWE CHICA-761
-	 * Get reprint/rescan states by encounter Id
-	 * @param encounterId
+	 * Get reprint/rescan states by session Id
+	 * @param sessionId
 	 * @param optionalDateRestriction
 	 * @param locationTagIds
 	 * @param locationId
 	 * @return
 	 */
-	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException;
+	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException;
 }

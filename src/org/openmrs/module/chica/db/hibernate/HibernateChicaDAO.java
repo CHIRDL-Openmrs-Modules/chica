@@ -1185,35 +1185,38 @@ public class HibernateChicaDAO implements ChicaDAO
     
     /**
      * DWE CHICA-761
-     * @see org.openmrs.module.chica.db.ChicaDAO#getReprintRescanStatesByEncounter(Integer, Date, List, Integer)
+     * @see org.openmrs.module.chica.db.ChicaDAO#getReprintRescanStatesBySessionId(Integer, Date, List, Integer)
      */
-    public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException
+    public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException
     {
     	String dateRestriction = "";
     	if (optionalDateRestriction != null)
     	{
-    		dateRestriction = " and start_time >= ?";
-    	} 
-
-    	String sql = "select * from chirdlutilbackports_patient_state a "+
-    			"inner join chirdlutilbackports_session b on a.session_id=b.session_id where state in ("+
-    			"select state_id from chirdlutilbackports_state where state_action_id in ("+
-    			"select state_action_id from chirdlutilbackports_state_action where action_name in ('RESCAN','REPRINT')) "+
-    			") "+
-    			"and encounter_id=? and retired=? and location_tag_id in (:locationTagIds) and location_id=? "+dateRestriction;
+    		dateRestriction = " AND ps.start_time >= ?";
+    	}
+    	
+    	String sql = "SELECT * from chirdlutilbackports_patient_state ps" +
+    				" INNER JOIN chirdlutilbackports_state s ON ps.state = s.state_id" +
+    				" INNER JOIN chirdlutilbackports_state_action sa ON s.state_action_id = sa.state_action_id" +
+    				" WHERE ps.session_id =?" + 
+    				" AND ps.retired =?" +  
+    				" AND ps.location_id =?" + 
+    				" AND (sa.action_name = 'RESCAN' OR sa.action_name = 'REPRINT')" + dateRestriction +
+    				" AND ps.location_tag_id IN (:locationTagIds)";
 
     	SQLQuery qry = this.sessionFactory.getCurrentSession()
     			.createSQLQuery(sql);
-
-    	qry.setInteger(0, encounterId);
+    	
+    	qry.setInteger(0, sessionId);
     	qry.setBoolean(1, false);
-    	qry.setParameterList("locationTagIds", locationTagIds);
     	qry.setInteger(2, locationId);
 
     	if (optionalDateRestriction != null)
     	{
     		qry.setDate(3, optionalDateRestriction);
     	}
+    	
+    	qry.setParameterList("locationTagIds", locationTagIds);
 
     	qry.addEntity(PatientState.class);
     	return qry.list();

@@ -558,9 +558,10 @@ public class Util {
 			
 			boolean reprint = false;
 			// DWE CHICA-761 Changed this query to scan for reprint states using a list of locationTagIds
+			// Also changed this so that we query by sessionId instead of encounterId
 			try
 			{
-				List<PatientState> currReprintRescanStates = chicaService.getReprintRescanStatesByEncounter(encounterId,
+				List<PatientState> currReprintRescanStates = chicaService.getReprintRescanStatesBySessionId(sessionId,
 					    todaysDate.getTime(), locationTagIds, locationId);
 					if (currReprintRescanStates != null && currReprintRescanStates.size() > 0) {
 						reprint = true;;

@@ -1088,10 +1088,10 @@ public class ChicaServiceImpl implements ChicaService
 
         /**
     	 * DWE CHICA-761
-    	 * @see org.openmrs.module.chica.service.ChicaService#getReprintRescanStatesByEncounter(Integer, Date, List, Integer)
+    	 * @see org.openmrs.module.chica.service.ChicaService#getReprintRescanStatesBySessionId(Integer, Date, List, Integer)
     	 */
-    	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId)
+    	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId)
     	{
-    		return getChicaDAO().getReprintRescanStatesByEncounter(encounterId, optionalDateRestriction, locationTagIds, locationId);
+    		return getChicaDAO().getReprintRescanStatesBySessionId(sessionId, optionalDateRestriction, locationTagIds, locationId);
     	}
 }
