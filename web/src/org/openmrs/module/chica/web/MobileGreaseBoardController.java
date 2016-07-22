@@ -116,6 +116,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("currentUser", user.getUsername());
+		map.put("refreshPeriod", Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_REFRESH)); // DWE CHICA-761
 		
 		// DWE CHICA-488
 		if(request.getParameter("errorMessage") != null)
@@ -126,7 +127,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 				
 		try {
 			ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
-			String result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, null);
+			String result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, null, false); // DWE CHICA-761 Added parameter so that all patients are not displayed by default
 			if (result != null) {
 				map.put("errorMessage", result);
 				return map;

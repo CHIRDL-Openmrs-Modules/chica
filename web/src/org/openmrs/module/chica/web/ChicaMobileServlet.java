@@ -193,10 +193,13 @@ public class ChicaMobileServlet extends HttpServlet {
 			return;
 		}
 		
+		// DWE CHICA-761
+		boolean showAllPatients = request.getParameter("showAllPatients") != null && request.getParameter("showAllPatients").equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE) ? true : false;
+		
 		try {
 			switch (formType) {
 				case PRIMARY_FORM:
-					result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, sessionId);
+					result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, sessionId, showAllPatients);
 					break;
 				case SECONDARY_FORMS:
 					result = org.openmrs.module.chica.util.Util.getPatientSecondaryForms(rows, sessionId);
