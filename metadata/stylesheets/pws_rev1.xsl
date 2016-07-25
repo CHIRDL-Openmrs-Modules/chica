@@ -245,6 +245,12 @@
 						width: 138px;
 					}
 					
+					#informant {
+						width:280px;
+						float:left;
+						padding:2px 2px 2px 5px;
+					}
+					
 					#textNotesContainer{
 						float: left;					
 						padding: 0 0 10px 0;					

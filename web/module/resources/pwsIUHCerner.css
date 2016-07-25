@@ -12,11 +12,23 @@
 
 
 #vitals {
-    width:480px; 
+    width:265px;
     height:305px;
     float:left;
-    border-left: none;
-    padding-bottom: 32px;
+    border-left: 1px solid black;
+}
+
+#informant {
+    width:220px;
+    float:left;
+    padding:2px 2px 2px 5px;
+}
+
+#examExtras {
+    float:left;
+    width:200px;
+    height:335px;
+    margin-left:75px;
 }
 
 .flagCell {
@@ -38,7 +50,7 @@
 
 .vitalsValues {
     float:left;
-    width:360px;
+    width:153px;
     height: 18px;
     margin-left:5px;
     text-align:left;
@@ -65,12 +77,12 @@
 }
 
 #buttons {
-    width:270px;
-    height:332px; 
-    border-bottom: none; 
-    float:right; 
-    margin-top:5px;
-    margin-left:-22px;
+    width: 270px;
+    height: 123px;
+    border-bottom: none;
+    float: right;
+    margin-top: 5px;
+    margin-left: -22px;
 }
 
 @-moz-document url-prefix() {
@@ -112,7 +124,9 @@
 }
 
 #submitButtonBottom {
-    margin-top:16px;
+    margin-top: 10px;
+    margin-left: 356px;
+    float: left;
 }
 
 #submitContainer {
