@@ -70,12 +70,6 @@
 					    border-bottom: 1px solid black;
 					}
 					
-					#informant {
-						width:280px;
-						float:left;
-						padding:2px 2px 2px 5px;
-					}
-					
 					#vitals {
 					    width:223px;
 					    height:272px;
