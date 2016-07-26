@@ -167,7 +167,7 @@ function concatSelectOption() {
 	if (selectedVal!=null) {
 		valueSplit = selectedVal.toString().split(',').join('^^');
 	}
-	document.getElementById('VisitAttendee').value = valueSplit;
+	document.getElementById('Visit_Attendee').value = valueSplit;
 }
 
 function areAllQuestionsAnswered() {

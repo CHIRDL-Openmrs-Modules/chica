@@ -143,7 +143,7 @@
 				</select>
 			</fieldset>
 		</div>
-		<input id="VisitAttendee" name="VisitAttendee" type="hidden" value=""/>
+		<input id="Visit_Attendee" name="Visit_Attendee" type="hidden" value=""/>
     	<div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
         		
         <%@ include file="mobileFinishDialogs.jsp" %>
