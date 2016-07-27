@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -254,7 +255,7 @@ public class PatientRow implements Serializable
     	this.formInstances.add(formInstance);
     }
     
-    public LinkedHashSet<FormInstance> getFormInstances(){
+    public Set<FormInstance> getFormInstances(){
     	return this.formInstances;
     }
     
