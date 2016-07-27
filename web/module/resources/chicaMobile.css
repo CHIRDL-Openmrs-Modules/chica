@@ -73,3 +73,41 @@ a[data-role="button"] {
 	    margin-top:-1px;
 	}
 }
+
+#custom-header .ui-block-a{
+	padding-left: 10px;
+	text-align:	left;
+	width: 25%;
+}
+
+#custom-header .ui-block-b{
+   text-align: center;  
+   width: 50%;
+}
+
+#custom-header .ui-block-c{
+   text-align: right;
+   width: 25%;
+}
+
+.refreshButtonDiv{
+	width: 125px !important;
+	display: inline-block;
+	text-align: right;
+}
+
+.showAllDiv{
+	display: inline-block;
+	padding-top: 5px;
+}
+
+/* Do not display IE's default clear X button*/
+#searchAllPatients::-ms-clear {
+    display: none;
+}
+
+/* Fix for IE so that the right side of the search field is round instead of flat */
+.searchAllPatientsInput{
+	width: 99% !important;
+	border: none;
+}
