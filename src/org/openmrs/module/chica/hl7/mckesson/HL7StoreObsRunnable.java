@@ -141,12 +141,10 @@ public class HL7StoreObsRunnable implements Runnable {
 		ObsInMemoryDatasource xmlDatasource = 
 				(ObsInMemoryDatasource) logicService.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY);
 		
-		HashMap<Integer, HashMap<String, Set<Obs>>> patientObsMap = xmlDatasource.getObs();
-		HashMap<String, Set<Obs>> obsByConcept = patientObsMap.get(patientId);
+		HashMap<String, Set<Obs>> obsByConcept = xmlDatasource.getObs(patientId);
 		
 		if (obsByConcept == null) {
 			obsByConcept = new HashMap<String, Set<Obs>>();
-			patientObsMap.put(patientId, obsByConcept);
 		}
 		
 		final String SOURCE = ChirdlUtilConstants.DATA_SOURCE_IU_HEALTH_MEDICAL_RECORD;
@@ -247,6 +245,8 @@ public class HL7StoreObsRunnable implements Runnable {
 				obs.add(currObs);
 			}
 		}
+		
+		xmlDatasource.saveObs(patientId, obsByConcept);
 		
 		mrfConceptMapping.clear();
 		vitalsConceptMapping.clear();

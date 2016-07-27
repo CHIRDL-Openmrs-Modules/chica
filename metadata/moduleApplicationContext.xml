@@ -46,6 +46,7 @@
                 <prop key="/module/@MODULE_ID@/ISQMobile.form">ISQMobile</prop>
                 <prop key="/module/@MODULE_ID@/sessionTimeout.form">sessionTimeout</prop>
                 <prop key="/module/@MODULE_ID@/PSQMobile.form">PSQMobile</prop>
+                <prop key="/module/@MODULE_ID@/cacheConfiguration.form">cacheConfiguration</prop>
             </props>
         </property>
     </bean>
@@ -238,6 +239,11 @@
         <property name="commandName"><value>PSQMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/PSQMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
+	</bean>
+	<bean id="cacheConfiguration" class="@MODULE_PACKAGE@.web.CacheConfigurationController">
+        <property name="commandName"><value>cacheConfiguration</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/cacheConfiguration</value></property>
+        <property name="successView"><value>cacheConfiguration.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">
