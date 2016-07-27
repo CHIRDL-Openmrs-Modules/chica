@@ -5,7 +5,7 @@ package org.openmrs.module.chica.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -40,7 +40,7 @@ public class PatientRow implements Serializable
 	private Encounter encounter = null;
 	private boolean reprintStatus = false;
 	private ArrayList<String> printableJits;
-	private HashSet<FormInstance> formInstances;
+	private LinkedHashSet<FormInstance> formInstances; //CHICA-815 Ensure correct order of eJITs - MSHELEY
 	private boolean pwsScanned = false;
 	private Integer locationId = null;
 	private Integer locationTagId = null;
@@ -246,14 +246,15 @@ public class PatientRow implements Serializable
 	    
     }
     
+    //CHICA-815 Ensure correct order of mobile eJITs - MSHELEY
     public void addFormInstance(FormInstance formInstance){
     	if(this.formInstances == null){
-    		this.formInstances = new HashSet<FormInstance>();
+    		this.formInstances = new LinkedHashSet<FormInstance>();
     	}
     	this.formInstances.add(formInstance);
     }
     
-    public HashSet<FormInstance> getFormInstances(){
+    public LinkedHashSet<FormInstance> getFormInstances(){
     	return this.formInstances;
     }
     
