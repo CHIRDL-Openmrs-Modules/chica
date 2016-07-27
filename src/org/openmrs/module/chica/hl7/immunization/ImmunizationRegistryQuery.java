@@ -234,11 +234,11 @@ public class ImmunizationRegistryQuery
 
 								if (immuneOutput == null) {
 									immuneOutput = new ImmunizationQueryOutput();
-									ImmunizationForecastLookup.addImmunizationList(
-											patientId, immuneOutput);
 								}
 
 								immuneOutput.addImmunizationPrevious(prevImmunization);
+								ImmunizationForecastLookup.addImmunizationList(
+									patientId, immuneOutput);
 							}
 						}
 						
@@ -405,11 +405,11 @@ public class ImmunizationRegistryQuery
 	
 								if (immuneOutput == null) {
 									immuneOutput = new ImmunizationQueryOutput();
-									ImmunizationForecastLookup.addImmunizationList(
-											patientId, immuneOutput);
 								}
 	
 								immuneOutput.addImmunizationForecast(foreImmunization);
+								ImmunizationForecastLookup.addImmunizationList(
+									patientId, immuneOutput);
 							}
 						}
 					}// end of forecast parsing
