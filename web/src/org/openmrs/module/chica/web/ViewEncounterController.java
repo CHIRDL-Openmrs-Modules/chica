@@ -483,20 +483,25 @@ public class ViewEncounterController extends SimpleFormController {
 									formNameMap.put(formId, formName);
 								}
 								
-							//make sure you only get the most recent psf/pws pair
-							if (row.getPsfId() == null) {
-								if (formName.equals("PSF")) {
-									row.setPsfId(currState.getFormInstance());
+								//make sure you only get the most recent psf/pws pair
+								if (row.getPsfId() == null) {
+									if (formName.equals("PSF")) {
+										row.setPsfId(currState.getFormInstance());
+									}
 								}
-							}
-							if (row.getPwsId() == null) {
-								if (formName.equals("PWS")) {
-									row.setPwsId(currState.getFormInstance());
+								if (row.getPwsId() == null) {
+									if (formName.equals("PWS")) {
+										row.setPwsId(currState.getFormInstance());
+									}
 								}
-							}
-						
-							if (formsToProcess.contains(formName)) {							
-									row.addFormInstance(currState.getFormInstance());
+							
+								String state = currState.getState().getName();
+								if (state.equals("PSF WAIT FOR ELECTRONIC SUBMISSION")){
+									row.setReprintStatus(true);
+								}
+								if (formsToProcess.contains(formName) && !row.isReprintStatus()) {							
+										row.addFormInstance(currState.getFormInstance());
+										row.setReprintStatus(false);
 								}
 							}
 						}
