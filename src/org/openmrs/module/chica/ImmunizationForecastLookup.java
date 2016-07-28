@@ -127,7 +127,7 @@ public class ImmunizationForecastLookup {
 					
 					if ((System.currentTimeMillis() - startTime) > timeout) {
 						//the timeout was exceeded so return null
-						Error error = new Error("Warning", "Query Immunization List Connection", 
+						Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_WARNING, "Query Immunization List Connection", 
 							"Timeout of "+timeout/1000+" seconds was exceeded for patientId: "+
 							encounter.getPatientId()+"."
 							, null, new Date(), null);
