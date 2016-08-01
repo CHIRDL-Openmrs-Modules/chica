@@ -51,7 +51,7 @@
 	               <span>(times are in microseconds)</span>
 	               <ul>
 		               <c:forEach items="${EHRCacheStatistics}" var="stat">
-	                       <li><div align="left" style="width: 100%;"><c:out value="${stat.name}"/>:&nbsp<c:out value="${stat.value}"/></div></li>
+	                       <li><div align="left" style="width: 100%;"><c:out value="${stat.name}"/>:&nbsp;<c:out value="${stat.value}"/></div></li>
 	                   </c:forEach>
                    </ul>
 	            </div>
@@ -85,7 +85,7 @@
                    <span>(times are in microseconds)</span>
                    <ul>
                        <c:forEach items="${immunizationCacheStatistics}" var="stat">
-                           <li><div align="left" style="width: 100%;"><c:out value="${stat.name}"/>:&nbsp<c:out value="${stat.value}"/></div></li>
+                           <li><div align="left" style="width: 100%;"><c:out value="${stat.name}"/>:&nbsp;<c:out value="${stat.value}"/></div></li>
                        </c:forEach>
                    </ul>
                 </div>
