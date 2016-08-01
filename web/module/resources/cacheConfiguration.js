@@ -13,6 +13,12 @@ $(function() {
 		event.preventDefault();
 	});
     
+    $( "#clearImmunizationCacheButton" ).button();
+    $("#clearImmunizationCacheButton").click(function(event) {
+		$("#clearImmunizationCacheConfirmationDialog").dialog("open");
+		event.preventDefault();
+	});
+    
     $("#errorDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
@@ -104,6 +110,39 @@ $(function() {
         ]
     });
     
+    $("#clearImmunizationCacheConfirmationDialog").dialog({
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $(".ui-dialog").addClass("no-close");
+        },
+        autoOpen: false,
+        modal: true,
+        resizable: false,
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        hide: {
+          effect: "fade",
+          duration: 500
+        },
+        buttons: [
+          {
+	          text:"Yes",
+	          click: function() {
+	        	  $(this).dialog("close");
+	        	  clearImmunizationCache();
+	          }
+          },
+          {
+	          text:"No",
+	          click: function() {
+	        	  $(this).dialog("close");
+	          }
+          }
+        ]
+    });
+    
     $("#clearCacheCompleteDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
@@ -138,6 +177,10 @@ $(function() {
 
 function clearEHRMedicalRecordCache() {
 	clearCache("ehrMedicalRecord", "java.lang.Integer", "java.util.HashMap");
+}
+
+function clearImmunizationCache() {
+	clearCache("immunization", "java.lang.Integer", "org.openmrs.module.chica.ImmunizationQueryOutput");
 }
 
 function clearCache(cacheName, keyType, valueType) {
