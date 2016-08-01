@@ -48,7 +48,7 @@ public class ImmunizationForecastLookup {
 			}
         }
         catch (Exception e) {
-	        log.error("Error adding immunization entry", e);
+	        log.error("Error adding immunization entry for patient: " + patientId, e);
         }
 	}
 	
