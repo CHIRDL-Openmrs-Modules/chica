@@ -2,6 +2,7 @@ package org.openmrs.module.chica.web;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -470,42 +471,45 @@ public class ViewEncounterController extends SimpleFormController {
 						.adjustAgeUnits(dob, checkin));
 
 				// psf, pws form ids
+				
+				List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
+				if (patientStates != null && !patientStates.isEmpty()) {
+					List<Date> endTime = new ArrayList<Date>();
+					for (PatientState currState : patientStates) {
+						if (currState.getEndTime() != null) {
+							Integer formId = currState.getFormId();
+							String formName = formNameMap.get(formId);
+							if(formName == null){
+								Form form = formService.getForm(formId);
+								formName = form.getName();
+								formNameMap.put(formId, formName);
+							}
 							
-					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
-					if (patientStates != null && !patientStates.isEmpty()) {
-						for (PatientState currState : patientStates) {
-							if (currState.getEndTime() != null) {
-								Integer formId = currState.getFormId();
-								String formName = formNameMap.get(formId);
-								if(formName == null){
-									Form form = formService.getForm(formId);
-									formName = form.getName();
-									formNameMap.put(formId, formName);
+							//make sure you only get the most recent psf/pws pair
+							if (row.getPsfId() == null) {
+								if (formName.equals("PSF")) {
+									row.setPsfId(currState.getFormInstance());
 								}
-								
-								//make sure you only get the most recent psf/pws pair
-								if (row.getPsfId() == null) {
-									if (formName.equals("PSF")) {
-										row.setPsfId(currState.getFormInstance());
-									}
+							}
+							if (row.getPwsId() == null) {
+								if (formName.equals("PWS")) {
+									row.setPwsId(currState.getFormInstance());
 								}
-								if (row.getPwsId() == null) {
-									if (formName.equals("PWS")) {
-										row.setPwsId(currState.getFormInstance());
-									}
-								}
-							
-								String state = currState.getState().getName();
-								if (state.equals("PSF WAIT FOR ELECTRONIC SUBMISSION")){
-									row.setReprintStatus(true);
-								}
-								if (formsToProcess.contains(formName) && !row.isReprintStatus()) {							
+							}
+						
+							if (formsToProcess.contains(formName)) {
+								if (formName.equals("PWS")) {
+									endTime.add(currState.getEndTime());
+									if (currState.getEndTime().equals(Collections.max(endTime))){
 										row.addFormInstance(currState.getFormInstance());
-										row.setReprintStatus(false);
+									}
+								} else {
+									row.addFormInstance(currState.getFormInstance());
 								}
 							}
 						}
 					}
+				}
 			
 				
 				//get CHICA 1 PSF and PWS ids
