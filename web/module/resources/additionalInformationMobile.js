@@ -13,6 +13,49 @@ $(document).on("pageinit", function() {
 	$(document).ajaxStop(function() {
 		$.unblockUI();
 	});
+	
+	// Change the button for both landscape and portrait view
+	// The id is different depending on which position the tablet is being held
+	// Landscape view causes the list to be too long so jquery automatically opens a new "page"
+	// Question 1
+	$("#Informant_1-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
+	$("#Informant_1-dialog").addClass("selectPopup"); // landscape
+	$("#Informant_1-listbox-popup div.ui-header").removeClass("ui-bar-b").addClass("ui-bar-a"); // Make the title background black instead of blue
+	
+	// Question 2
+	$("#Informant_2-listbox-popup a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // portrait
+	$("#Informant_2-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
+	$("#Informant_2-listbox-popup").addClass("selectPopup"); // portrait
+	$("#Informant_2-listbox-popup div.ui-header").removeClass("ui-bar-b").addClass("ui-bar-a"); // Make the title background black instead of blue
+	$("#Informant_2-dialog").addClass("selectPopup"); // landscape
+	
+	// Spanish Question 1
+	$("#Informant_1_2-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
+	$("#Informant_1_2-dialog").addClass("selectPopup"); // landscape
+	$("#Informant_1_2-listbox-popup div.ui-header").removeClass("ui-bar-b").addClass("ui-bar-a"); // Make the title background black instead of blue
+	
+	// Spanish Question 2
+	$("#Informant_2_2-listbox-popup a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
+	$("#Informant_2_2-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // portrait
+	$("#Informant_2_2-listbox-popup").addClass("selectPopup");
+	$("#Informant_2_2-listbox-popup div.ui-header").removeClass("ui-bar-b").addClass("ui-bar-a"); // Make the title background black instead of blue
+	$("#Informant_2_2-dialog").addClass("selectPopup");
+});
+
+$(document).on("pagebeforeshow", "#Informant_1-dialog", function(){
+	changeCloseButtonText();
+});
+
+$(document).on("pagebeforeshow", "#Informant_1_2-dialog", function(){
+	changeCloseButtonText();
+});
+
+$(document).on("pagebeforeshow", "#Informant_2-dialog", function(){
+	changeCloseButtonText();
+});
+
+$(document).on("pagebeforeshow", "#Informant_2_2-dialog", function(){
+	changeCloseButtonText();
 });
 
 function init(patientName, birthdate, formInst, language) {
@@ -65,6 +108,7 @@ function setLanguage(patientName, birthdate) {
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
     $("#formTitle").text(formTitleText);
 	$("#additionalQuestions").text(additionalQuestions);
+	changeCloseButtonText();
 }
 
 function changePage(newPageNum) {
@@ -85,7 +129,7 @@ function setLanguageFromForm(patientName, birthdate) {
 	    	setQuestionCheckboxes("Informant_" + i, "Informant_" + i + "_2");
 	    }
     }
-        
+    
     changePage(1);
 }
 
@@ -200,4 +244,16 @@ function showBlockingMessage() {
         color: "#000" 
     }, 
     message: blockUIMessage});
+}
+
+function changeCloseButtonText()
+{
+	var doneText = "Done";
+	if(!english)
+	{
+		doneText = "Hecho";
+	}
+    
+	$(".selectPopup .ui-header a").attr("title", doneText);
+    $(".selectPopup .ui-header a .ui-btn-inner .ui-btn-text").text(doneText); 
 }

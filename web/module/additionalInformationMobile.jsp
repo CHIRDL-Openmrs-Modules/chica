@@ -9,6 +9,7 @@
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/additionalInformationMobile.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
@@ -84,6 +85,7 @@
 	    <strong>${quest1}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest1}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
+				<label for="Informant_1">Select One</label>
 				<select name="Informant_1" id="Informant_1" data-native-menu="false">
 					<option name="Informant_1" id="Informant_1_0" value=""/>
 					<label for="Informant_1_0">Select One</label>
@@ -117,6 +119,7 @@
         <strong>${quest2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
 			<fieldset data-role="controlgroup" data-type="vertical">
+				<label for="Informant_2">Select all that apply</label>
 				<select name="Informant_2" id="Informant_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2" id="Informant_2_0"/>
 				  <label for="Informant_2_0">Select all that apply</label>
@@ -168,6 +171,7 @@
 	    <strong>${quest1_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest1_2}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
+	        	<label for="Informant_1_2">Elija uno</label>
 				<select name="Informant_1_2" id="Informant_1_2" data-native-menu="false">
 					<option name="Informant_1_2" id="Informant_1_2_0" value=""/>
 					<label for="Informant_1_2_0">Elija uno</label>
@@ -201,6 +205,7 @@
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest2_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
 			<fieldset data-role="controlgroup" data-type="vertical">
+				<label for="Informant_2_2">Elija todos que aplican</label>
 				<select name="Informant_2_2" id="Informant_2_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2_2" id="Informant_2_2_0"/>
 				  <label for="Informant_2_2_0">Elija todos que aplican</label>
