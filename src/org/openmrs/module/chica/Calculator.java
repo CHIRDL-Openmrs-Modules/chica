@@ -323,6 +323,20 @@ public class Calculator
 		    measurementUnits, Calendar.getInstance().getTime());
 	}
 	
+	/**
+	 * Compute the blood pressure percentile based on page 47 and 48 of
+	 * https://www.nhlbi.nih.gov/files/docs/resources/heart/hbp_ped.pdf
+	 * THE FOURTH REPORT ON THE Diagnosis, Evaluation, and Treatment of High Blood Pressure in Children and Adolescents
+	 * 
+	 * @param birthdate
+	 * @param gender
+	 * @param height
+	 * @param observedBloodPressure
+	 * @param bloodPressureType
+	 * @param measurementUnits
+	 * @param currDate
+	 * @return
+	 */
 	public Double computeBloodPressurePercentile(Date birthdate, String gender, Double height, Double observedBloodPressure,
 	                                             String bloodPressureType, String measurementUnits, Date currDate) {
 		
@@ -331,6 +345,7 @@ public class Calculator
 			return null;
 		}
 		
+		//regression coefficients
 		final double A1_MALE_SYSTOLIC = 102.19768;
 		final double A1_FEMALE_SYSTOLIC = 102.01027;
 		final double A1_MALE_DIASTOLIC = 61.01217;

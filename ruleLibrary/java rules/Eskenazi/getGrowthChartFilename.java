@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -304,7 +303,6 @@ public class getGrowthChartFilename implements Rule {
 			}
 			String value = Util.adjustAgeUnits(birthdate, encounter.getEncounterDatetime());
 			form.setField("Age"+count, value);
-			Calendar today = Calendar.getInstance();
 			String pattern = "M/d/yyyy";
 			SimpleDateFormat dateForm = new SimpleDateFormat(pattern);
 			String encounterDate = dateForm.format(encounter.getEncounterDatetime());
@@ -340,8 +338,16 @@ public class getGrowthChartFilename implements Rule {
 		Collections.reverse(encounters);
 
 		for (Encounter encounter : encounters) {
+			/**
+			 * Edited to null check encounter date/time before calculating ageInMonths
+			 */
+			Date encounterDate = encounter.getEncounterDatetime();
+			if (encounterDate == null) {
+				continue;
+			}
+			
 			Float ageInMonths = Float.parseFloat(Integer.toString(org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(
-			    birthdate, encounter.getEncounterDatetime(), Util.MONTH_ABBR)));
+			    birthdate, encounterDate, Util.MONTH_ABBR)));
 			
 			// Need to sort out any obs that don't fall into the age range.
 			if (growthChart.getAgeInMonthsMin() > ageInMonths || growthChart.getAgeInMonthsMax() <= ageInMonths) {
@@ -353,7 +359,7 @@ public class getGrowthChartFilename implements Rule {
 			// We have to handle AGE explicitly because it's not tied to a particular concept.
 			if ("AGE".equals(conceptXAxis.getName())) {
 				ageInDays = Float.parseFloat(Integer.toString(org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(
-				    birthdate, encounter.getEncounterDatetime(), Util.DAY_ABBR)));
+				    birthdate, encounterDate, Util.DAY_ABBR)));
 				xValue = ageInDays;
 			}
 			

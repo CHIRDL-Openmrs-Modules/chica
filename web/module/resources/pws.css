@@ -85,6 +85,12 @@ body {
     padding-bottom: 32px;
 }
 
+#informant {
+    width:280px;
+    float:left;
+    padding:2px 2px 2px 5px;
+}
+
 @-moz-document url-prefix() {
     #vitals {
         height: 290px;
