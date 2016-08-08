@@ -14,17 +14,18 @@
 package org.openmrs.module.chica;
 
 import java.util.Date;
-import java.util.Hashtable;
-import java.util.LinkedList;
+
+import javax.cache.Cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
-import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.advice.QueryImmunizationForecast;
-import org.openmrs.module.chirdlutil.ReadWriteManager;
+import org.openmrs.module.chica.util.ChicaConstants;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
@@ -35,44 +36,39 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class ImmunizationForecastLookup {
 	
 	private static Log log = LogFactory.getLog(ImmunizationForecastLookup.class);
-	//Hashtable < [patient id], ImmunizationQueryOutput>
-	private static Hashtable<Integer, ImmunizationQueryOutput> immunizationLists = new Hashtable<Integer, ImmunizationQueryOutput>();
-	private static ReadWriteManager immunizationListsLock = new ReadWriteManager();
 	
 	/**
 	 * add a list of forecasted immunizations for a patient
 	 */
 	public static synchronized void addImmunizationList(Integer patientId, ImmunizationQueryOutput immunization) {
-		immunizationListsLock.getWriteLock();
 		try {
-			immunizationLists.put(patientId, immunization);
+			Cache<Integer, ImmunizationQueryOutput> immunizationCache = getCache();
+			if (immunizationCache != null) {
+				immunizationCache.put(patientId, immunization);
+			}
         }
         catch (Exception e) {
-	        log.error("",e);
-        }finally{
-        	immunizationListsLock.releaseWriteLock();
+	        log.error("Error adding immunization entry for patient: " + patientId, e);
         }
 	}
 	
 	/**
-	 * get the forecasted immunization list for a given patient
+	 * Get the forecasted immunization list for a given patient.  If any changes are made to the ImmunizationQueryOutput object, 
+	 * the addImmunizationList method must be called to persist the changes.
 	 */
 	public static synchronized ImmunizationQueryOutput getImmunizationList(Integer patientId) {
- 		immunizationListsLock.getReadLock();
-		LinkedList<ImmunizationForecast> immunizations = new LinkedList<ImmunizationForecast>();
         try {
-	        ImmunizationQueryOutput immunizationList = immunizationLists.get(patientId);
- 	        if(immunizationList == null){
+        	Cache<Integer, ImmunizationQueryOutput> immunizationCache = getCache();
+ 	        if(immunizationCache == null){
  	        	return null;
  	        }
 	        
-	        return immunizationList;
+	        return immunizationCache.get(patientId);
         }
         catch (Exception e) {
-	        log.error("",e);
-        }finally{
-        	immunizationListsLock.releaseReadLock();
+	        log.error("Error retrieving immunization entry for patient: " + patientId, e);
         }
+        
 		return null;
 	}
 	
@@ -80,14 +76,14 @@ public class ImmunizationForecastLookup {
 	 * remove the forecasted immunization list for a given patient
 	 */
 	public static void removeImmunizationList(Integer patientId) {
-		immunizationListsLock.getWriteLock();
 		try {
-	        immunizationLists.remove(patientId);
+			Cache<Integer, ImmunizationQueryOutput> immunizationCache = getCache();
+			if (immunizationCache != null) {
+				immunizationCache.remove(patientId);
+			}
         }
         catch (Exception e) {
-	        log.error("",e);
-        }finally{
-        	immunizationListsLock.releaseWriteLock();
+	        log.error("Error removing immunization entry for patient: " + patientId, e);
         }
 	}
 	
@@ -97,18 +93,15 @@ public class ImmunizationForecastLookup {
 	public static void queryImmunizationList(Encounter encounter, boolean useTimeout) throws QueryImmunizationsException {
 		AdministrationService adminService = Context.getAdministrationService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		org.openmrs.module.chica.service.EncounterService encounterService = Context
-		.getService(org.openmrs.module.chica.service.EncounterService.class);
 		
 		Integer timeout = null;
 		
-		Patient patient = encounter.getPatient();
-		String queryOn = adminService.getGlobalProperty("chica.ImmunizationQueryActivated");
-		if (queryOn.equalsIgnoreCase("true")){
+		String queryOn = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_IMMUNIZATION_QUERY_ACTIVATED);
+		if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(queryOn)){
 		
 			try {
 				if (useTimeout) {
-					timeout = Integer.parseInt(adminService.getGlobalProperty("chica.immunizationListTimeout"));
+					timeout = Integer.parseInt(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_IMMUNIZATION_LIST_TIMEOUT));
 					timeout = timeout * 1000; // convert seconds to
 					// milliseconds
 				}
@@ -134,7 +127,7 @@ public class ImmunizationForecastLookup {
 					
 					if ((System.currentTimeMillis() - startTime) > timeout) {
 						//the timeout was exceeded so return null
-						Error error = new Error("Warning", "Query Immunization List Connection", 
+						Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_WARNING, "Query Immunization List Connection", 
 							"Timeout of "+timeout/1000+" seconds was exceeded for patientId: "+
 							encounter.getPatientId()+"."
 							, null, new Date(), null);
@@ -159,11 +152,22 @@ public class ImmunizationForecastLookup {
 	 * clear the entire forecasted immunization list
 	 */
 	public static void clearimmunizationLists() {
-	    if(immunizationLists != null && !immunizationLists.isEmpty())  {
-	        log.info("Before clearing immunizationList cache, No. of elements" + immunizationLists.size());
-	        immunizationLists.clear();
-	        log.info("After clearing immunizationList cache, No. of elements" + immunizationLists.size());
+		Cache<Integer, ImmunizationQueryOutput> immunizationCache = getCache();
+	    if(immunizationCache != null)  {
+	        immunizationCache.clear();
 	    }
 	}
 	
+	/**
+	 * Retrieves the cache for immunization
+	 * 
+	 * @return Cache object for immunization
+	 */
+    private static Cache<Integer, ImmunizationQueryOutput> getCache() {
+    	ApplicationCacheManager cacheManager = ApplicationCacheManager.getInstance();
+		return cacheManager.getCache(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+    }
 }

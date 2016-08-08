@@ -141,5 +141,6 @@
 	<classpathentry kind="lib" path="lib-common/atd-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutil-1.9.8.jar"/>
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib-common/cache/cache-api-1.0.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

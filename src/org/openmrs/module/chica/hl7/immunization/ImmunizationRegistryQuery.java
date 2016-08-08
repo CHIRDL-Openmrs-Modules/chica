@@ -144,6 +144,9 @@ public class ImmunizationRegistryQuery
 		ConceptService conceptService = Context.getConceptService();
 		ChicaService chicaService = Context.getService(org.openmrs.module.chica.service.ChicaService.class);	
 		ImmunizationForecastLookup.removeImmunizationList(patientId);
+		
+		ImmunizationQueryOutput immuneOutput = ImmunizationForecastLookup
+				.getImmunizationList(patientId);
 	
 		if (message instanceof VXR_V03) {
 			VXR_V03 vxr = (VXR_V03) message;
@@ -229,13 +232,8 @@ public class ImmunizationRegistryQuery
 							Integer immundDoseNumber = prevImmunization.getDose();
 
 							if (immundDoseNumber != null && immundDoseNumber > 0) {
-								ImmunizationQueryOutput immuneOutput = ImmunizationForecastLookup
-										.getImmunizationList(patientId);
-
 								if (immuneOutput == null) {
 									immuneOutput = new ImmunizationQueryOutput();
-									ImmunizationForecastLookup.addImmunizationList(
-											patientId, immuneOutput);
 								}
 
 								immuneOutput.addImmunizationPrevious(prevImmunization);
@@ -400,13 +398,8 @@ public class ImmunizationRegistryQuery
 							Integer doseNumber = foreImmunization.getDose();
 	
 							if (doseNumber != null && doseNumber > 0) {
-								ImmunizationQueryOutput immuneOutput = ImmunizationForecastLookup
-										.getImmunizationList(patientId);
-	
 								if (immuneOutput == null) {
 									immuneOutput = new ImmunizationQueryOutput();
-									ImmunizationForecastLookup.addImmunizationList(
-											patientId, immuneOutput);
 								}
 	
 								immuneOutput.addImmunizationForecast(foreImmunization);
@@ -415,6 +408,11 @@ public class ImmunizationRegistryQuery
 					}// end of forecast parsing
 				}// rxa exists
 			}//end of loop through all rxa's
+			
+			// Save the immunizations if any exist
+			if (immuneOutput != null) {
+				ImmunizationForecastLookup.addImmunizationList(patientId, immuneOutput);
+			}
 		}// is VXR
 	}
 	

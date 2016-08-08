@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 import org.openmrs.module.chirdlutilbackports.cache.CacheStatistic;
 import org.openmrs.module.chirdlutilbackports.util.ChirdlUtilBackportsConstants;
@@ -38,6 +39,13 @@ public class CacheConfigurationController extends SimpleFormController {
 	private static final String PARAM_EHR_CACHE_EXPIRY = "EHRCacheExpiry";
 	private static final String PARAM_EHR_CACHE_EXPIRY_UNIT = "EHRCacheExpiryUnit";
 	private static final String PARAM_EHR_CACHE_STATISTICS = "EHRCacheStatistics";
+	private static final String PARAM_IMMUNIZATION_CACHE_HEAP_SIZE = "immunizationCacheHeapSize";
+	private static final String PARAM_IMMUNIZATION_CACHE_HEAP_SIZE_UNIT = "immunizationCacheHeapSizeUnit";
+	private static final String PARAM_IMMUNIZATION_CACHE_DISK_SIZE = "immunizationCacheDiskSize";
+	private static final String PARAM_IMMUNIZATION_CACHE_DISK_SIZE_UNIT = "immunizationCacheDiskSizeUnit";
+	private static final String PARAM_IMMUNIZATION_CACHE_EXPIRY = "immunizationCacheExpiry";
+	private static final String PARAM_IMMUNIZATION_CACHE_EXPIRY_UNIT = "immunizationCacheExpiryUnit";
+	private static final String PARAM_IMMUNIZATION_CACHE_STATISTICS = "immunizationCacheStatistics";
 	
 	/**
 	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
@@ -53,28 +61,30 @@ public class CacheConfigurationController extends SimpleFormController {
 	@Override
 	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
 	                                BindException errors) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
 		String EHRCacheHeapSizeStr = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE);
-		Integer EHRCacheHeapSize = null;
-		Map<String, Object> map = new HashMap<String, Object>();
+		String immunizationCacheHeapSizeStr = request.getParameter(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE);
 		
-		try {
-			EHRCacheHeapSize = Integer.parseInt(EHRCacheHeapSizeStr);
-		} catch (NumberFormatException e) {
-			map.put(PARAM_ERROR_MESSAGE, "The EHR Medical Record Cache heap size specified is not a valid integer.");
-			return new ModelAndView(new RedirectView(getSuccessView()), map);
+		// Update the EHR Medical Record Cache heap size
+		updateCacheHeapSize(ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
+							ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
+							ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS, 
+							EHRCacheHeapSizeStr, model);
+		
+		// A non-empty model reflects errors occurred updating the heap size
+		if (!model.isEmpty()) {
+			return new ModelAndView(new RedirectView(getSuccessView()), model);
 		}
 		
-		ApplicationCacheManager cacheManager = ApplicationCacheManager.getInstance();
-		try {
-			cacheManager.updateCacheHeapSize(
-				ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
-				ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
-				ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS, 
-				EHRCacheHeapSize);
-		} catch (Exception e) {
-			log.error("Error updating the EHR Medical Record Cache heap size.", e);
-			map.put(PARAM_ERROR_MESSAGE, "An error occurred saving the EHR Medical Record Cache heap size: " + e.getMessage());
-			return new ModelAndView(new RedirectView(getSuccessView()), map);
+		// Update the Immunization Cache heap size
+		updateCacheHeapSize(ChicaConstants.CACHE_IMMUNIZATION, 
+							ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+							ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS, 
+							immunizationCacheHeapSizeStr, model);
+		
+		// A non-empty model reflects errors occurred updating the heap size
+		if (!model.isEmpty()) {
+			return new ModelAndView(new RedirectView(getSuccessView()), model);
 		}
 		
 		return new ModelAndView(new RedirectView(getSuccessView()));
@@ -102,6 +112,9 @@ public class CacheConfigurationController extends SimpleFormController {
 		
 		// Retrieve data for the EHR cache
 		loadEHRMedicalRecordCacheInfo(cacheManager, model);
+		
+		// Retrieve data for the immunization cache
+		loadImmunizationCacheInfo(cacheManager, model);
 		
 		return model;
 	}
@@ -155,5 +168,88 @@ public class CacheConfigurationController extends SimpleFormController {
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS);
 		model.put(PARAM_EHR_CACHE_STATISTICS, stats);
+	}
+	
+	/**
+	 * Loads all the specific information about the Immunization Cache.
+	 * 
+	 * @param cacheManager The Application Cache Manger to access the cache information
+	 * @param model Map containing the HTTP information to display to the client
+	 */
+	private void loadImmunizationCacheInfo(ApplicationCacheManager cacheManager, Map<String, Object> model) {
+		Long EHRCacheHeapSize = cacheManager.getCacheHeapSize(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE, EHRCacheHeapSize);
+		
+		String EHRCacheHeapSizeUnit = cacheManager.getCacheHeapSizeUnit(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE_UNIT, EHRCacheHeapSizeUnit);
+		
+		Long EHRCacheDiskSize = cacheManager.getCacheDiskSize(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE, EHRCacheDiskSize);
+		
+		String EHRCacheDiskSizeUnit = cacheManager.getCacheDiskSizeUnit(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE_UNIT, EHRCacheDiskSizeUnit);
+		
+		Long EHRCacheExpiry = cacheManager.getCacheExpiry(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY, EHRCacheExpiry);
+		
+		String EHRCacheExpiryUnit = cacheManager.getCacheExpiryUnit(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY_UNIT, EHRCacheExpiryUnit);
+		
+		// load the cache statistics
+		List<CacheStatistic> stats = cacheManager.getCacheStatistics(
+			ChicaConstants.CACHE_IMMUNIZATION, 
+			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
+			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
+		model.put(PARAM_IMMUNIZATION_CACHE_STATISTICS, stats);
+	}
+	
+	/**
+	 * Updates a cache's heap size.  It will only update the heap size if the provided value is different than the current value.
+	 * 
+	 * @param cacheName The name of the cache
+	 * @param keyClass The key class of the cache
+	 * @param valueClass The value class of the cache
+	 * @param newCacheHeapSizeStr The new heap size value
+	 * @param model Map used for error handling
+	 */
+	private void updateCacheHeapSize(String cacheName, Class<?> keyClass, Class<?> valueClass, String newCacheHeapSizeStr, Map<String, Object> model) {
+		Long newCacheHeapSize = null;
+		try {
+			newCacheHeapSize = Long.parseLong(newCacheHeapSizeStr);
+		} catch (NumberFormatException e) {
+			model.put(PARAM_ERROR_MESSAGE, "The " + cacheName + " cache heap size specified is not a valid value.");
+			return;
+		}
+		
+		ApplicationCacheManager cacheManager = ApplicationCacheManager.getInstance();
+		
+		// Look at the old setting to see if anything changed
+		Long currentCacheHeapSize = cacheManager.getCacheHeapSize(cacheName, keyClass, valueClass);
+		if (currentCacheHeapSize == null || (currentCacheHeapSize.longValue() != newCacheHeapSize)) {
+			try {
+				cacheManager.updateCacheHeapSize(cacheName, keyClass, valueClass, newCacheHeapSize);
+			} catch (Exception e) {
+				log.error("Error updating the " + cacheName + " cache heap size.", e);
+				model.put(PARAM_ERROR_MESSAGE, "An error occurred saving the " + cacheName + " cache heap size: " + e.getMessage());
+			}
+		}
 	}
 }
