@@ -3888,6 +3888,20 @@ where action_name='REPRINT';
        	 	WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'CHECKIN');
         </sql>
 	</diff>
+	    <diff>
+        <version>1.7.7</version>  
+        <author>Seema Sarala</author>  
+        <date>July 13, 2016</date>  
+        <description>  
+        Add new 'stylesheet' form attribute
+        </description>  
+        <sql> 
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('stylesheet', 'filepath for stylesheet that is used to display a form in view encounters.');
+        </sql>
+    </diff>
 </sqldiff>
 
 
