@@ -733,20 +733,17 @@ public class Util {
 	 * @param locationId The clinic location ID.
 	 * @param formInstanceId The ID of the instance of the general form.
 	 * @param strStylesheet The stylesheet file used for the transformation.
+	 * @param fileLocationFormAttributeName String used to locate the file for the stylesheet 
+	 * transformation (XMLUtil.DEFAULT_EXPORT_DIRECTORY or XMLUtil.DEFAULT_MERGE_DIRECTORY)
 	 * @return strOutput returns the result of the transformation File.
 	 */
-	public static String displayStylesheet(Integer formId, Integer locationTagId, Integer locationId, Integer formInstanceId, String strStylesheet){
+	public static String displayStylesheet(Integer formId, Integer locationTagId, Integer locationId, Integer formInstanceId, 
+	                                       String strStylesheet, String fileLocationFormAttributeName){
 
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
 		String strOutput = null;
 		File stylesheetFile = null;
-		String formAttributeName = null;
-		if (strStylesheet.equals("pws.xsl") || strStylesheet.equals("psf.xsl")){
-			formAttributeName = XMLUtil.DEFAULT_EXPORT_DIRECTORY;
-		} else {
-			formAttributeName = XMLUtil.DEFAULT_MERGE_DIRECTORYY;
-		}
-		File XmlFile = XMLUtil.getXmlFile(locationId, formId, formInstanceId, formAttributeName);
+		File XmlFile = XMLUtil.getXmlFile(locationId, formId, formInstanceId, fileLocationFormAttributeName);
 		FormAttributeValue formAttributeValue = service.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_STYLESHEET, locationTagId, locationId);
 		if (formAttributeValue != null && formAttributeValue.getValue() != null && !formAttributeValue.getValue().isEmpty()) {
 			try{

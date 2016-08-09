@@ -106,7 +106,8 @@ public class DisplayMergeFormController extends SimpleFormController
 				map.put("leftImageFormname", form.getName());
 			}
 			map.put("leftImageForminstance", leftFormInstanceId);
-			strOutput = Util.displayStylesheet(leftFormId, locationTagId, leftLocationId, leftFormInstanceId, leftStylesheet);
+			strOutput = Util.displayStylesheet(leftFormId, locationTagId, leftLocationId, leftFormInstanceId, 
+											   leftStylesheet, getLocationAttributeDirectoryName());
 		}
 		map.put("leftOutput", strOutput);
 		
@@ -117,7 +118,8 @@ public class DisplayMergeFormController extends SimpleFormController
 				map.put("rightImageFormname", form.getName());
 			}
 			map.put("rightImageForminstance", rightFormInstanceId);
-			strOutput = Util.displayStylesheet(rightFormId, locationTagId, rightLocationId, rightFormInstanceId, rightStylesheet);
+			strOutput = Util.displayStylesheet(rightFormId, locationTagId, rightLocationId, rightFormInstanceId, 
+											   rightStylesheet, getLocationAttributeDirectoryName());
 		}
 		map.put("rightOutput", strOutput);
 		return map;
