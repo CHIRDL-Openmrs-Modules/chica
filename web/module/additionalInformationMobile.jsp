@@ -25,6 +25,8 @@
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
 <c:set var="formName" value="Additional Information Form:"/>
 <c:set var="formName_sp" value="El formulario de informaci&oacute;n adicional"/>
+<c:set var="staffButtonText" value="Staff"/>
+<c:set var="staffButtonText_sp" value="Personal"/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="AdditionalInformationForm" method="POST" action="additionalInformationMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
@@ -45,7 +47,7 @@
         <h1 id="formTitle">${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
     </div>
 	<div data-role="content" >
         <strong><span id="additionalQuestions">Please complete some additional information about this visit.</span></strong>
@@ -77,7 +79,7 @@
         <h1>${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
     </div>
     <div id="content_1" data-role="content">
         <c:set var="quest1" value='What is your relationship to ${patient.givenName}&nbsp;${patient.familyName}?'/>
@@ -163,7 +165,7 @@
         <h1>${formName_sp}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
     </div>
     <div id="content_1_sp" data-role="content">
         <c:set var="quest1_2" value='&iquest;Cu&aacute;l es su relaci&oacute;n con ${patient.givenName}&nbsp;${patient.familyName}?'/>
