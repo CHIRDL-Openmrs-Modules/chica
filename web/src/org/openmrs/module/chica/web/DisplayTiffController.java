@@ -21,6 +21,7 @@ import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -141,7 +142,8 @@ public class DisplayTiffController extends SimpleFormController {
 					imageFormId, imageFormInstanceId, imageLocationId, "medium");
 				if (fiav != null && "electronic".equals(fiav.getValue())) {
 					imageFilename = defaultImageDirectory + "NotAvailableTablet.tif";
-					String strOutput = org.openmrs.module.chica.util.Util.displayStylesheet(imageFormId, locationTagId, imageLocationId, imageFormInstanceId, stylesheet);
+					String strOutput = org.openmrs.module.chica.util.Util.displayStylesheet(imageFormId, locationTagId, imageLocationId, imageFormInstanceId, 
+																							stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
 					map.put(htmlOutputParameterName, strOutput);
 				}
 			}
