@@ -17,6 +17,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.QueryKite;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
@@ -104,7 +105,7 @@ public class ChicaRuleTesterController extends SimpleFormController
 						
 						LogicService logicService = Context.getLogicService();
 						ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
-							.getLogicDataSource("RMRS");
+							.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY);
 						//purge these obs from the datasource
 						xmlDatasource.deleteObsByPatientId(patientId);
 

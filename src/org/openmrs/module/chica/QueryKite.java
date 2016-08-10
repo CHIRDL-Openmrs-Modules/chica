@@ -13,27 +13,20 @@ import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Properties;
-import java.util.Set;
 
-import javax.xml.soap.Detail;
-import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.LogicService;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.FileFilterByDate;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.regenstrief.services.DumpService;
@@ -49,8 +42,6 @@ import org.regenstrief.services.IDumpService;
 public class QueryKite
 {
 	private static final String ABBREVIATION_UNITS_MILLISECOND = " ms";
-
-	private static final String CHARACTER_ENCODING_UTF_8 = "UTF-8";
 
 	private static Log log = LogFactory.getLog(QueryKite.class);
 
@@ -224,12 +215,8 @@ public class QueryKite
 					(System.currentTimeMillis()-startTime2) + ABBREVIATION_UNITS_MILLISECOND);
 
 			startTime = System.currentTimeMillis();
-			LogicService logicService = Context.getLogicService();
-
-			ObsInMemoryDatasource xmlDatasource = (ObsInMemoryDatasource) logicService
-					.getLogicDataSource("RMRS");
-			HashMap<Integer, HashMap<String, Set<Obs>>> regenObs = xmlDatasource.getObs();
-			HL7ToObs.parseHL7ToObs(response,patient,mrn,regenObs);		
+			
+			HL7ToObs.parseHL7ToObs(response,patient,mrn);		
 			
 			log.info("Elapsed time for mrf parsing is "+
 					(System.currentTimeMillis()-startTime) + ABBREVIATION_UNITS_MILLISECOND);

@@ -13,19 +13,17 @@
  */
 package org.openmrs.module.chica;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-
 /**
  *
  */
-public class ImmunizationForecast {
-	private Log log = LogFactory.getLog(this.getClass());
+public class ImmunizationForecast implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 	private String vaccineName = null;
 	private String vaccineCode = null;

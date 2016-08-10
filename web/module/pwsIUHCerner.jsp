@@ -41,9 +41,13 @@
                     <b>MRN:</b> <c:out value="${MRN}"/><br/>
                     <b>Date:</b> <c:out value="${VisitDate}"/><br/>
                 <b>Time:</b> <c:out value="${VisitTime}"/></div>
-                                
-                <%@ include file="pwsVitals.jsp" %>
-                      
+                          
+				<%@ include file="pwsVitals.jsp" %>
+				<div id="examExtras">
+					<div id="informant" >
+						<b>Informant:</b> <c:out value="${Informant}"/>
+					</div>
+				</div>
                 <div id="buttons">
                     <div class="buttonsData">
                         <a href="#" id="formPrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Recommended Handouts</a>

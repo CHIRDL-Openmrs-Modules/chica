@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.71.0</version>
+    <version>1.72.1</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -19,12 +19,12 @@
     
     <require_version>1.1.10.2283</require_version>
     <require_modules>
-        <require_module version="2.31.2">org.openmrs.module.dss</require_module>
-        <require_module version="2.5.0">org.openmrs.module.atd</require_module>
-        <require_module version="1.5.2">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="2.31.3">org.openmrs.module.dss</require_module>
+        <require_module version="2.6.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.5.3">org.openmrs.module.sockethl7listener</require_module>
         <require_module version="1.2.0">org.openmrs.module.rgccd</require_module>
-        <require_module version="1.9.8">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.4.1">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+        <require_module version="1.10.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.4.2">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.chica.extension.html.AdminList</class>

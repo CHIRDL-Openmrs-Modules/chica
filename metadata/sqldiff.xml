@@ -3888,8 +3888,22 @@ where action_name='REPRINT';
        	 	WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'CHECKIN');
         </sql>
 	</diff>
-	<diff>  
+	<diff>
         <version>1.7.7</version>  
+        <author>Seema Sarala</author>  
+        <date>July 13, 2016</date>  
+        <description>  
+        Add new 'stylesheet' form attribute
+        </description>  
+        <sql> 
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('stylesheet', 'filepath for stylesheet that is used to display a form in view encounters.');
+        </sql>
+    </diff>
+	<diff>  
+        <version>1.7.8</version>  
         <author>Tammy Dugan</author>  
         <date>April 13, 2016</date>  
         <description>  
@@ -3922,7 +3936,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </sql>
 	</diff>
 	<diff>  
-        <version>1.7.8</version>  
+        <version>1.7.9</version>  
         <author>Steve McKee</author>  
         <date>April 29, 2016</date>  
         <description>  
@@ -3975,7 +3989,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
     </diff>
     
     <diff>  
-        <version>1.7.9</version>  
+        <version>1.8.0</version>  
         <author>David Ely</author>  
         <date>May 10, 2016</date>  
         <description>  
@@ -3987,7 +4001,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </sql>
     </diff>
     <diff>
-        <version>1.8.0</version>
+        <version>1.8.1</version>
         <author>David Ely</author>
         <date>May 18, 2016</date>
         <description>
@@ -3999,7 +4013,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </sql>
     </diff>
     <diff>
-        <version>1.8.1</version>
+        <version>1.8.2</version>
         <author>David Ely</author>
         <date>May 23, 2016</date>
         <description>
@@ -4015,7 +4029,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
     </diff>
     
     <diff>
-        <version>1.8.2</version>
+        <version>1.8.3</version>
         <author>David Ely</author>
         <date>May 31, 2016</date>
         <description>

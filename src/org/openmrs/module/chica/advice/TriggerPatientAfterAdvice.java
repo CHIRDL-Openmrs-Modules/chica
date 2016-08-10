@@ -105,7 +105,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 		else if(method.getName().equals("cleanCache")) 
 		{
             log.info("clear regenObs and medicationList");
-            ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource("RMRS")).clearObs();
+            ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY)).clearObs();
             MedicationListLookup.clearMedicationLists();
             ImmunizationForecastLookup.clearimmunizationLists();
         }

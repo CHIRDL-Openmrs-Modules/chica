@@ -1,4 +1,4 @@
-            <div id="examExtras">
+		    <div id="examExtras">
                         <div class="examExtraCheckbox">
                             <input type="checkbox" name="Special_Need" value="yes" ${Special_Need == 'Y' ? 'checked' : ''}/>Special Need Child<br/> 
 							<input id="Special_Need" name="Special_Need" type="hidden" value="no"/>
@@ -17,6 +17,12 @@
                         </div>
                         <div class="examExtraCheckbox">
                             <input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet"/>Discussed healthy diet<br/>
+                        </div>
+						<div id="informant" >
+                            <b>Informant:</b> <c:out value="${Informant}"/>
+                        </div>
+                        <div>
+                            &nbsp;
                         </div>
                         <div class="examExtraData">
                             <c:out value="${Language}"/>
