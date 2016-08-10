@@ -29,7 +29,7 @@ If (mode = PRODUCE) then
 pain := read Last {PAIN QUALITATIVE from CHICA} Where it Occurred Within Past 2 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 endif
 ;;
-Priority:		0;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
