@@ -276,9 +276,19 @@ public class ViewEncounterController extends SimpleFormController {
 						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName,
 						    encounterId);
 						if (patientStates != null && !patientStates.isEmpty()) {
-							
 							for (PatientState currState : patientStates) {
-								if (currState.getEndTime() != null) {
+								State pwsProcessState = chirdlutilbackportsService.getStateByName("PWS_PROCESS");
+								Integer sessionId = currState.getSessionId();
+								List<PatientState> processState = chirdlutilbackportsService.getPatientStateBySessionState(sessionId, pwsProcessState.getStateId());
+								if (!processState.isEmpty()){
+									PatientState pwsProcessStates = processState.get(0);
+									if (pwsProcessStates.getEndTime() != null && pwsProcessStates.getFormInstanceId() != null && pwsProcessStates.getLocationId() != null && pwsProcessStates.getLocationTagId() != null) {
+										rightImageLocationId = pwsProcessStates.getLocationId();
+										rightImageFormId = pwsProcessStates.getFormId();
+										rightImageFormInstanceId = pwsProcessStates.getFormInstanceId();
+										break;
+									}
+								} else if (currState.getEndTime() != null) {
 									rightImageLocationId = currState.getLocationId();
 									rightImageFormId = currState.getFormId();
 									rightImageFormInstanceId = currState.getFormInstanceId();
@@ -475,7 +485,7 @@ public class ViewEncounterController extends SimpleFormController {
 				
 				List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
 				if (patientStates != null && !patientStates.isEmpty()) {
-					List<Date> endTime = new ArrayList<Date>();
+					List<Date> pwsEndTime = new ArrayList<Date>();
 					for (PatientState currState : patientStates) {
 						if (currState.getEndTime() != null) {
 							Integer formId = currState.getFormId();
@@ -492,17 +502,33 @@ public class ViewEncounterController extends SimpleFormController {
 									row.setPsfId(currState.getFormInstance());
 								}
 							}
+							State pwsProcessState = chirdlutilbackportsService.getStateByName("PWS_PROCESS");
+							Integer sessionId = currState.getSessionId();
+							List<PatientState> processState = chirdlutilbackportsService.getPatientStateBySessionState(sessionId, pwsProcessState.getStateId());
 							if (row.getPwsId() == null) {
 								if (formName.equals("PWS")) {
-									row.setPwsId(currState.getFormInstance());
+									if (!processState.isEmpty()){
+										PatientState pwsProcessStates = processState.get(0);
+										if (pwsProcessStates.getEndTime() != null && pwsProcessStates.getFormInstanceId() != null && pwsProcessStates.getLocationId() != null && pwsProcessStates.getLocationTagId() != null) {
+											row.setPwsId(pwsProcessStates.getFormInstance());
+										}
+									}else if (processState.isEmpty()) {
+										row.setPwsId(currState.getFormInstance());
+									}
 								}
 							}
-						
 							if (formsToProcess.contains(formName)) {
-								if (formName.equals("PWS")) {
-									endTime.add(currState.getEndTime());
-									if (currState.getEndTime().equals(Collections.max(endTime))){
-										row.addFormInstance(currState.getFormInstance());
+								if (formName.equals("PWS") ){
+									pwsEndTime.add(currState.getEndTime());
+									if (!processState.isEmpty()) {
+										PatientState pwsProcessStates = processState.get(0);
+										if (pwsProcessStates.getEndTime() != null && pwsProcessStates.getFormInstanceId() != null && pwsProcessStates.getLocationId() != null && pwsProcessStates.getLocationTagId() != null) {
+											row.addFormInstance(pwsProcessStates.getFormInstance());
+										}
+									} else if (processState.isEmpty()) {
+										if (currState.getEndTime().equals(Collections.max(pwsEndTime)) ){
+											row.addFormInstance(currState.getFormInstance());
+										}
 									}
 								} else {
 									row.addFormInstance(currState.getFormInstance());
@@ -633,5 +659,4 @@ public class ViewEncounterController extends SimpleFormController {
 		return mdName;
 
 	}
-
 }
