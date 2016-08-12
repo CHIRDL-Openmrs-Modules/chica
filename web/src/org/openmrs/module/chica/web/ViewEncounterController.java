@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -44,6 +45,8 @@ public class ViewEncounterController extends SimpleFormController {
 
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
+	private boolean checkPWSProcess = false;
+	HashMap<Date, FormInstance> pwsTempFormInstancesMap = null;
 
 	/*
 	 * (non-Javadoc)
@@ -276,24 +279,28 @@ public class ViewEncounterController extends SimpleFormController {
 						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName,
 						    encounterId);
 						if (patientStates != null && !patientStates.isEmpty()) {
+							pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
 							for (PatientState currState : patientStates) {
-								State pwsProcessState = chirdlutilbackportsService.getStateByName("PWS_PROCESS");
-								Integer sessionId = currState.getSessionId();
-								List<PatientState> processState = chirdlutilbackportsService.getPatientStateBySessionState(sessionId, pwsProcessState.getStateId());
-								if (!processState.isEmpty()){
-									PatientState pwsProcessStates = processState.get(0);
-									if (pwsProcessStates.getEndTime() != null && pwsProcessStates.getFormInstanceId() != null && pwsProcessStates.getLocationId() != null && pwsProcessStates.getLocationTagId() != null) {
-										rightImageLocationId = pwsProcessStates.getLocationId();
-										rightImageFormId = pwsProcessStates.getFormId();
-										rightImageFormInstanceId = pwsProcessStates.getFormInstanceId();
+								if (currState.getEndTime() != null) {
+									if (currState.getState().getName().trim().equals("PWS_process")){
+										checkPWSProcess = true; 
+									}
+									if (!checkPWSProcess) { 
+										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+									} else {
+										rightImageLocationId = currState.getLocationId();
+										rightImageFormId = currState.getFormId();
+										rightImageFormInstanceId = currState.getFormInstanceId();
+										pwsTempFormInstancesMap.clear();
+										checkPWSProcess = false;
 										break;
 									}
-								} else if (currState.getEndTime() != null) {
-									rightImageLocationId = currState.getLocationId();
-									rightImageFormId = currState.getFormId();
-									rightImageFormInstanceId = currState.getFormInstanceId();
-									break;
 								}
+							}
+							if (!pwsTempFormInstancesMap.isEmpty()) {
+								rightImageLocationId = setFormInstance(pwsTempFormInstancesMap).getLocationId();
+								rightImageFormId = setFormInstance(pwsTempFormInstancesMap).getFormId();
+								rightImageFormInstanceId = setFormInstance(pwsTempFormInstancesMap).getFormInstanceId();
 							}
 						} else {
 							if (rightName != null && rightName.equals("PWS")) {
@@ -484,8 +491,9 @@ public class ViewEncounterController extends SimpleFormController {
 				// psf, pws form ids
 				
 				List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
+				
 				if (patientStates != null && !patientStates.isEmpty()) {
-					List<Date> pwsEndTime = new ArrayList<Date>();
+					pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
 					for (PatientState currState : patientStates) {
 						if (currState.getEndTime() != null) {
 							Integer formId = currState.getFormId();
@@ -502,39 +510,35 @@ public class ViewEncounterController extends SimpleFormController {
 									row.setPsfId(currState.getFormInstance());
 								}
 							}
-							State pwsProcessState = chirdlutilbackportsService.getStateByName("PWS_PROCESS");
-							Integer sessionId = currState.getSessionId();
-							List<PatientState> processState = chirdlutilbackportsService.getPatientStateBySessionState(sessionId, pwsProcessState.getStateId());
 							if (row.getPwsId() == null) {
 								if (formName.equals("PWS")) {
-									if (!processState.isEmpty()){
-										PatientState pwsProcessStates = processState.get(0);
-										if (pwsProcessStates.getEndTime() != null && pwsProcessStates.getFormInstanceId() != null && pwsProcessStates.getLocationId() != null && pwsProcessStates.getLocationTagId() != null) {
-											row.setPwsId(pwsProcessStates.getFormInstance());
-										}
-									}else if (processState.isEmpty()) {
+									if (currState.getState().getName().trim().equals("PWS_process")){
+										checkPWSProcess = true;
+									}
+									if (!checkPWSProcess) { 
+										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+									} else {
 										row.setPwsId(currState.getFormInstance());
 									}
 								}
 							}
 							if (formsToProcess.contains(formName)) {
 								if (formName.equals("PWS") ){
-									pwsEndTime.add(currState.getEndTime());
-									if (!processState.isEmpty()) {
-										PatientState pwsProcessStates = processState.get(0);
-										if (pwsProcessStates.getEndTime() != null && pwsProcessStates.getFormInstanceId() != null && pwsProcessStates.getLocationId() != null && pwsProcessStates.getLocationTagId() != null) {
-											row.addFormInstance(pwsProcessStates.getFormInstance());
-										}
-									} else if (processState.isEmpty()) {
-										if (currState.getEndTime().equals(Collections.max(pwsEndTime)) ){
+									if (checkPWSProcess && row.getPwsId() != null) { 
 											row.addFormInstance(currState.getFormInstance());
-										}
-									}
+											pwsTempFormInstancesMap.clear();
+											checkPWSProcess = false;
+									} 
 								} else {
 									row.addFormInstance(currState.getFormInstance());
 								}
 							}
 						}
+					}
+					
+					if (!pwsTempFormInstancesMap.isEmpty()) {
+						row.setPwsId(setFormInstance(pwsTempFormInstancesMap));
+						row.addFormInstance(setFormInstance(pwsTempFormInstancesMap));
 					}
 				}
 			
@@ -658,5 +662,16 @@ public class ViewEncounterController extends SimpleFormController {
 
 		return mdName;
 
+	}
+	
+	private FormInstance setFormInstance(HashMap<Date, FormInstance> pwsTempMap){
+		List<Date> pwsEndTime = new ArrayList<Date>();
+		Iterator<Map.Entry<Date, FormInstance>> iterator = pwsTempMap.entrySet().iterator();
+		while(iterator.hasNext()){
+			Map.Entry<Date, FormInstance> entry = iterator.next();
+			pwsEndTime.add(entry.getKey());
+		}
+		Date maxPwsEndTime = Collections.max(pwsEndTime);
+		return (FormInstance) pwsTempMap.get(maxPwsEndTime);
 	}
 }
