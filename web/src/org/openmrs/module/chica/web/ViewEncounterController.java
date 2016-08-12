@@ -298,9 +298,10 @@ public class ViewEncounterController extends SimpleFormController {
 								}
 							}
 							if (!pwsTempFormInstancesMap.isEmpty()) {
-								rightImageLocationId = setFormInstance(pwsTempFormInstancesMap).getLocationId();
-								rightImageFormId = setFormInstance(pwsTempFormInstancesMap).getFormId();
-								rightImageFormInstanceId = setFormInstance(pwsTempFormInstancesMap).getFormInstanceId();
+								FormInstance pwsFormInstance = setFormInstance(pwsTempFormInstancesMap);
+								rightImageLocationId = pwsFormInstance.getLocationId();
+								rightImageFormId = pwsFormInstance.getFormId();
+								rightImageFormInstanceId = pwsFormInstance.getFormInstanceId();
 							}
 						} else {
 							if (rightName != null && rightName.equals("PWS")) {
@@ -537,8 +538,9 @@ public class ViewEncounterController extends SimpleFormController {
 					}
 					
 					if (!pwsTempFormInstancesMap.isEmpty()) {
-						row.setPwsId(setFormInstance(pwsTempFormInstancesMap));
-						row.addFormInstance(setFormInstance(pwsTempFormInstancesMap));
+						FormInstance pwsFormInstance = setFormInstance(pwsTempFormInstancesMap);
+						row.setPwsId(pwsFormInstance);
+						row.addFormInstance(pwsFormInstance);
 					}
 				}
 			
@@ -666,10 +668,8 @@ public class ViewEncounterController extends SimpleFormController {
 	
 	private FormInstance setFormInstance(HashMap<Date, FormInstance> pwsTempMap){
 		List<Date> pwsEndTime = new ArrayList<Date>();
-		Iterator<Map.Entry<Date, FormInstance>> iterator = pwsTempMap.entrySet().iterator();
-		while(iterator.hasNext()){
-			Map.Entry<Date, FormInstance> entry = iterator.next();
-			pwsEndTime.add(entry.getKey());
+		for (Date key : pwsTempMap.keySet()) {
+			pwsEndTime.add(key);
 		}
 		Date maxPwsEndTime = Collections.max(pwsEndTime);
 		return (FormInstance) pwsTempMap.get(maxPwsEndTime);
