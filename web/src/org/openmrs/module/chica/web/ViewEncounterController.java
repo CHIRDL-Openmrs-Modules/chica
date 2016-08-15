@@ -30,6 +30,7 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.PatientRow;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -282,7 +283,7 @@ public class ViewEncounterController extends SimpleFormController {
 							pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
 							for (PatientState currState : patientStates) {
 								if (currState.getEndTime() != null) {
-									if (currState.getState().getName().trim().equals("PWS_process")){
+									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
 										checkPWSProcess = true; 
 									}
 									if (!checkPWSProcess) { 
@@ -513,7 +514,7 @@ public class ViewEncounterController extends SimpleFormController {
 							}
 							if (row.getPwsId() == null) {
 								if (formName.equals("PWS")) {
-									if (currState.getState().getName().trim().equals("PWS_process")){
+									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
 										checkPWSProcess = true;
 									}
 									if (!checkPWSProcess) { 
@@ -666,6 +667,12 @@ public class ViewEncounterController extends SimpleFormController {
 
 	}
 	
+	/**
+	 * Returns FormInstance with maximum End Time.
+	 * 
+	 * @param pwsTempMap HashMap with key: Current State End Time and Value: Current FormInstance
+	 * @return FormInstance with maximum End Time
+	 */
 	private FormInstance setFormInstance(HashMap<Date, FormInstance> pwsTempMap){
 		List<Date> pwsEndTime = new ArrayList<Date>();
 		for (Date key : pwsTempMap.keySet()) {
