@@ -34,7 +34,7 @@ If (mode = PRODUCE) then
 VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;screen := read Last {VisionScreen from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 endif
 ;;
-Priority:		118;;
+Priority:		1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
