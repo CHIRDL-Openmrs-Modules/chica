@@ -57,24 +57,33 @@
 					}
 					
 					#infoLeft {
-					    width:230px;
-					    float:left;
-					    padding:1px 1px 1px 3px;
-					    border-bottom: 1px solid black;
+						width: 260px;
+						float: left;
+						padding: 2px 2px 2px 5px;
+						border-bottom: 1px solid black;
+					}
+					
+					#infoCenter {
+						width: 200px;
+						float: left;
+						padding: 2px;
+						border-bottom: 1px solid black;
 					}
 					
 					#infoRight {
-					    width:139px;
-					    float:left;
-					    padding:1px;
-					    border-bottom: 1px solid black;
+						width: 129px;
+						height: 49px;
+						float: right;
+						padding: 0px;
+						border-bottom: 1px solid black;
 					}
 					
 					#vitals {
-					    width:223px;
-					    height:272px;
-					    float:left;
-					    border-left: 1px solid black;
+						width: 220px;
+						height: 195px;
+						float: left;
+						border-left: none;
+						padding-bottom: 32px;
 					}
 					
 					.flagCell {
@@ -102,14 +111,14 @@
 					}
 					
 					#vitalsLegend {
-					    width:225px;
+					    width:600px;
 					    border-left: 1px solid black;
 					    border-bottom: 1px solid black;
 					    border-top: 1px solid black;
 					    float:left;
 					    margin-left:-1px;
-					    height:45px;
-					    text-align:center;
+					    height:30px;
+						text-align: -webkit-center;
 					    font-size:0.8em;
 					    padding-top:2px;
 					}
@@ -134,12 +143,6 @@
 					    float:left;
 					    margin-top:6px;
 					    margin-left:0px;
-					}
-					
-					#physicalExam {
-					    float:left;
-					    width:155px;
-					    height:346px;
 					}
 					
 					#examTitle {
@@ -184,10 +187,10 @@
 					}
 					
 					#examExtras {
-					    float:left;
-					    width:190px;
-					    height:346px;
-					    margin-left:20px;
+						float: left;
+						width: 303px;
+						height: 259px;
+						margin-left: 20px;
 					}
 					
 					.examExtraCheckbox {
@@ -202,15 +205,21 @@
 					    margin: 1px 0 1px 0;
 					}
 					
+					.medicalPerformed {
+						width: 322px;
+						padding-left: 2px;
+						margin: 1px 0 1px 0;
+					}
+					
 					.questionContainer {
-					    float:left;
-					    width:300px;
-					    height:130px;
-					    font-size:0.75em;
-					    padding-top:10px;
-					    border-bottom: 1px solid black;
-					    border-left: 1px solid black;
-					    margin-left:-1px;					   					    
+					    float: left;
+						width: 300px;
+						height: 120px;
+						font-size: 0.75em;
+						padding-top: 10px;
+						border-bottom: 1px solid black;
+						border-left: 1px solid black;
+						margin-left: -1px;					   					    
 					}
 					
 					.questionStem {
@@ -223,11 +232,11 @@
 					    float:left;
 					    padding:2px;
 					    width:145px;
-					    height:88px;
+					    height:55px;
 					}
 					
 					.answerCheckbox {
-					    width:160px;
+					    width:150px;
 					    height:15px
 					}
 					
@@ -240,13 +249,19 @@
 						width: 230px;
 					}
 					
-					.infoRightItem {
+					.infoCenterItem {
 						height: 15px;
 						width: 138px;
 					}
 					
+					.infoRightItem {
+						width:124px;
+						float:left;
+						padding:2px 2px 2px 5px;
+					}
+					
 					#informant {
-						width:280px;
+						width:124px;
 						float:left;
 						padding:2px 2px 2px 5px;
 					}
@@ -286,6 +301,10 @@
 						.textNotesTable{page-break-before: always;}
 					}
 					
+					.hidden{
+						display: none;										
+					}
+					
                 </style>
             </head>
             <body>      	
@@ -310,17 +329,29 @@
 		                    	<b>Doctor:</b> <xsl:value-of select="Records/Record/Field[@id = 'Doctor']"/>
 		                	</div>
 		                </div>
-		                <div id="infoRight">
-		                	<div class="infoRightItem">
+		                <div id="infoCenter">
+		                	<div class="infoCenterItem">
 		                    	<b>MRN:</b> <xsl:value-of select="Records/Record/Field[@id = 'MRN']"/>
 		                	</div>
-		                	<div class="infoRightItem">
+		                	<div class="infoCenterItem">
 		                    	<b>Date:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitDate']"/>
 		                	</div>
-		                	<div class="infoRightItem">
+		                	<div class="infoCenterItem">
 		                		<b>Time:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitTime']"/>
 		                	</div>
 		                </div>
+						<div id="infoRight">
+							<div class="infoRightItem">
+								<b>Informant:</b>
+								<xsl:value-of select="Records/Record/Field[@id = 'Informant']"/>
+							</div>
+							<div class="infoRightItem">
+								<xsl:value-of select="Records/Record/Field[@id = 'Language']"/>
+							</div>
+							<div class="">
+		                        &#160;
+		                    </div>
+						</div>
 		                <div id="vitals">
 		                    <div class="flagCell">
 		                        <b><font style="color:black;">A</font></b>
@@ -475,70 +506,72 @@
 		                            </xsl:otherwise>
 		                        </xsl:choose>
 		                    </div>
-		                    <div class="flagCell">
-		                        <b><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b><br/>
-		                    </div>
-		                    <div class="vitalsNames">
-		                        Hear (L):<br/>
-		                    </div>
-		                    <div class="vitalsValues">
-		                        <xsl:choose>
-		                            <xsl:when test="Records/Record/Field[@id = 'HearL'] = ''">
-		                                &#160;
-		                            </xsl:when>
-		                            <xsl:otherwise>
-		                                <xsl:value-of select="Records/Record/Field[@id = 'HearL']"/>
-		                            </xsl:otherwise>
-		                        </xsl:choose>
-		                    </div>
-		                    <div class="flagCell">
-		                        <b><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b><br/>
-		                    </div>
-		                    <div class="vitalsNames">
-		                        Hear (R):<br/>
-		                    </div>
-		                    <div class="vitalsValues">
-		                        <xsl:choose>
-		                            <xsl:when test="Records/Record/Field[@id = 'HearR'] = ''">
-		                                &#160;
-		                            </xsl:when>
-		                            <xsl:otherwise>
-		                                <xsl:value-of select="Records/Record/Field[@id = 'HearR']"/>
-		                            </xsl:otherwise>
-		                        </xsl:choose>
-		                    </div>
-		                    <div class="flagCell">
-		                        <b><xsl:value-of select="Records/Record/Field[@id = 'VisionLA']"/></b><br/>
-		                    </div>
-		                    <div class="vitalsNames">
-		                        Vision (L):<br/>
-		                    </div>
-		                    <div class="vitalsValues">
-		                        <xsl:choose>
-		                            <xsl:when test="Records/Record/Field[@id = 'VisionL'] = ''">
-		                                &#160;
-		                            </xsl:when>
-		                            <xsl:otherwise>
-		                                <xsl:value-of select="Records/Record/Field[@id = 'VisionL']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'VisionL_Corrected']"/>
-		                            </xsl:otherwise>
-		                        </xsl:choose>
-		                    </div>
-		                    <div class="flagCell">
-		                        <b><xsl:value-of select="Records/Record/Field[@id = 'VisionRA']"/></b><br/>
-		                    </div>
-		                    <div class="vitalsNames">
-		                        Vision (R):<br/>
-		                    </div>
-		                    <div class="vitalsValues">
-		                        <xsl:choose>
-		                            <xsl:when test="Records/Record/Field[@id = 'VisionR'] = ''">
-		                                &#160;
-		                            </xsl:when>
-		                            <xsl:otherwise>
-		                                <xsl:value-of select="Records/Record/Field[@id = 'VisionR']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'VisionR_Corrected']"/>
-		                            </xsl:otherwise>
-		                        </xsl:choose>
-		                    </div>
+							<div class="hidden">
+								<div class="flagCell">
+									<b><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b><br/>
+								</div>
+								<div id="HearAA" class="vitalsNames">
+									Hear (L):<br/>
+								</div>
+								<div class="vitalsValues">
+									<xsl:choose>
+										<xsl:when test="Records/Record/Field[@id = 'HearL'] = ''">
+											&#160;
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="Records/Record/Field[@id = 'HearL']"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</div>
+								<div class="flagCell">
+									<b><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b><br/>
+								</div>
+								<div class="vitalsNames">
+									Hear (R):<br/>
+								</div>
+								<div class="vitalsValues">
+									<xsl:choose>
+										<xsl:when test="Records/Record/Field[@id = 'HearR'] = ''">
+											&#160;
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="Records/Record/Field[@id = 'HearR']"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</div>
+								<div class="flagCell">
+									<b><xsl:value-of select="Records/Record/Field[@id = 'VisionLA']"/></b><br/>
+								</div>
+								<div class="vitalsNames">
+									Vision (L):<br/>
+								</div>
+								<div class="vitalsValues">
+									<xsl:choose>
+										<xsl:when test="Records/Record/Field[@id = 'VisionL'] = ''">
+											&#160;
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="Records/Record/Field[@id = 'VisionL']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'VisionL_Corrected']"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</div>
+								<div class="flagCell">
+									<b><xsl:value-of select="Records/Record/Field[@id = 'VisionRA']"/></b><br/>
+								</div>
+								<div class="vitalsNames">
+									Vision (R):<br/>
+								</div>
+								<div class="vitalsValues">
+									<xsl:choose>
+										<xsl:when test="Records/Record/Field[@id = 'VisionR'] = ''">
+											&#160;
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="Records/Record/Field[@id = 'VisionR']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'VisionR_Corrected']"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</div>
+							</div>
 		                    <div class="flagCell">
 		                        <b></b><br/>
 		                    </div>
@@ -571,530 +604,152 @@
 		                            </xsl:otherwise>
 		                        </xsl:choose>
 		                    </div>
-		                    <div id="vitalsLegend">
-		                    	<div class="vitalsLegendRow"><b><font style="color:red;">*</font>=Abnormal, U=Uncorrected,</b></div>
-		                    	<div class="vitalsLegendRow"><b>C=Corrected, A=Axillary, R=Rectal, O=Oral,</b></div>
-		                    	<div class="vitalsLegendRow"><b>F=Failed, P=Passed</b></div>
+							<div class="flagCell">
+		                        <b></b><br/>
+		                    </div>
+							<div>
+								&#160;
+							</div>
+							<div class="flagCell">
+		                        <b></b><br/>
+		                    </div>
+							<div>
+								&#160;
+							</div>
+							<div class="flagCell">
+		                        <b></b><br/>
+		                    </div>
+							<div id="vitalsLegend">
+		                    	<div class="vitalsLegendRow"><b><font style="color:red;">*</font>=Abnormal,</b></div>
+		                    	<div class="vitalsLegendRow"><b>A=Axillary, R=Rectal, O=Oral,</b></div>
 		                    </div>
 		                </div>
-		                <div id="exam">
-		                    <div id="physicalExam">
-		                        <div id="examTitle">
-		                            <b>Physical Exam:</b>
-		                        </div>
-		                        <div class="examFlag">
-		                            &#160;<br/>
-		                        </div>
-		                        <div class="examNames">
-		                            &#160;<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                            Nl<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                            Abnl<br/>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'GeneralExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            General:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_General']/Value = 'N'">
-		                        			<input type="radio" name="Entry_General" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_General" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_General']/Value = 'A'">
-		                        			<input type="radio" name="Entry_General" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_General" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'HeadExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Head:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Head']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Head" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Head" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Head']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Head" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Head" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'SkinExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Skin:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Skin']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Skin" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Skin" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Skin']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Skin" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Skin" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'EyesVisionExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Eyes:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Eyes']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Eyes" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Eyes" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Eyes']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Eyes" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Eyes" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'EarsHearingExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Ears:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Ears']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Ears" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Ears" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Ears']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Ears" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Ears" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'NoseThroatExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Nose/Throat:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Nose']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Nose" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Nose" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Nose']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Nose" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Nose" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'TeethGumsExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Teeth/Gums:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Teeth']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Teeth" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Teeth" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Teeth']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Teeth" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Teeth" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'NodesExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Nodes:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Nodes']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Nodes" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Nodes" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Nodes']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Nodes" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Nodes" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'ChestLungsExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Chest/Lungs:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Chest']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Chest" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Chest" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Chest']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Chest" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Chest" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'HeartPulsesExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Heart/Pulses:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Heart']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Heart" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Heart" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Heart']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Heart" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Heart" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'AbdomenExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Abdomen:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Abdomen']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Abdomen" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Abdomen" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Abdomen']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Abdomen" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Abdomen" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'ExtGenitaliaExamA']"/>
-		                        </div>
-		                        <div class="examNames">
-		                            Ext Genitalia:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_ExtGenitalia']/Value = 'N'">
-		                        			<input type="radio" name="Entry_ExtGenitalia" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_ExtGenitalia" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_ExtGenitalia']/Value = 'A'">
-		                        			<input type="radio" name="Entry_ExtGenitalia" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_ExtGenitalia" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'BackExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Back:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Back']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Back" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Back" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Back']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Back" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Back" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'NeuroExamA']"/><br/>
-		                        </div>
-		                        <div class="examNames">
-		                            Neuro:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Neuro']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Neuro" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Neuro" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Neuro']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Neuro" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Neuro" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examFlag">
-		                            <xsl:value-of select="Records/Record/Field[@id = 'ExtremitiesExamA']"/>
-		                        </div>
-		                        <div class="examNames">
-		                            Extremities:<br/>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Extremities']/Value = 'N'">
-		                        			<input type="radio" name="Entry_Extremities" value="N" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Extremities" value="N" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div class="examHeader">
-		                        	<xsl:choose>
-		                        		<xsl:when test="Records/Record/Field[@id = 'Entry_Extremities']/Value = 'A'">
-		                        			<input type="radio" name="Entry_Extremities" value="A" disabled="disabled" checked="checked"/><br/>
-		                        		</xsl:when>
-		                        		<xsl:otherwise>
-		                        			<input type="radio" name="Entry_Extremities" value="A" disabled="disabled"/><br/>
-		                        		</xsl:otherwise>
-		                        	</xsl:choose>
-		                        </div>
-		                        <div id="examLegend">
-		                            <b><font style="color:red;">*</font> = Previously Abnormal</b>
-		                        </div>
-		                    </div>
-		                  <div id="examExtras">
-		                    <div class="examExtraCheckbox">
-		                    	<xsl:choose>
-		                    		<xsl:when test="Records/Record/Field[@id = 'Special_Need']/Value = 'Y'">
-		                    			<input type="checkbox" name="Special_Need" value="Y" disabled="disabled" checked="checked"/>Special Need Child<br/>
-		                    		</xsl:when>
-		                    		<xsl:otherwise>
-		                    			<input type="checkbox" name="Special_Need" value="Y" disabled="disabled"/>Special Need Child<br/>
-		                    		</xsl:otherwise>
-		                    	</xsl:choose>
-	                        </div>
-	                        <div>
-	                            &#160;
-	                        </div>
+						<div id="examExtras">
 							<div class="examExtraCheckbox">
-	                        	<xsl:choose>
-	                        		<xsl:when test="Records/Record/Field[@id = 'MDTwoIDsChecked']/Value = 'Y'">
-	                        			<input type="checkbox" name="MDTwoIDsChecked" value="Y" disabled="disabled" checked="checked"/>Two ID's Checked<br/>
-	                        		</xsl:when>
-	                        		<xsl:otherwise>
-	                        			<input type="checkbox" name="MDTwoIDsChecked" value="Y" disabled="disabled"/>Two ID's Checked<br/>
-	                        		</xsl:otherwise>
-	                        	</xsl:choose>
-	                        </div>
-	                        <div class="examExtraCheckbox">
-	                        	<xsl:choose>
-	                        		<xsl:when test="Records/Record/Field[@id = 'screenedForAbuse']/Value = 'screened'">
-	                        			<input type="checkbox" name="screenedForAbuse" value="screened" disabled="disabled" checked="checked"/>Screened for abuse<br/>
-	                        		</xsl:when>
-	                        		<xsl:otherwise>
-	                        			<input type="checkbox" name="screenedForAbuse" value="screened" disabled="disabled"/>Screened for abuse<br/>
-	                        		</xsl:otherwise>
-	                        	</xsl:choose>
-	                        </div>
-	                        <div class="examExtraCheckbox">
-	                        	<xsl:choose>
-	                        		<xsl:when test="Records/Record/Field[@id = 'discussedPhysicalActivity']/Value = 'Physical Activity'">
-	                        			<input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity" disabled="disabled" checked="checked"/>Discussed physical activity<br/>
-	                        		</xsl:when>
-	                        		<xsl:otherwise>
-	                        			<input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity" disabled="disabled"/>Discussed physical activity<br/>
-	                        		</xsl:otherwise>
-	                        	</xsl:choose>
-	                        </div>
-	                        <div class="examExtraCheckbox">
-	                        	<xsl:choose>
-	                        		<xsl:when test="Records/Record/Field[@id = 'discussedHealthyDiet']/Value = 'Healthy Diet'">
-	                        			<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet" disabled="disabled" checked="checked"/>Discussed healthy diet<br/>
-	                        		</xsl:when>
-	                        		<xsl:otherwise>
-	                        			<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet" disabled="disabled"/>Discussed healthy diet<br/>
-	                        		</xsl:otherwise>
-	                        	</xsl:choose>
-	                        </div>
-							<div id="informant">
-								Informant:
-	                        	<xsl:value-of select="Records/Record/Field[@id = 'Informant']"/>
-	                        </div>
-	                        <div>
-	                            &#160;
-	                        </div>
-	                        <div class="examExtraData">
-	                            <xsl:value-of select="Records/Record/Field[@id = 'Language']"/>
-	                        </div>
-	                        <div>
-	                            &#160;
-	                        </div>
-	                        <div class="examExtraData">
-	                            <xsl:value-of select="Records/Record/Field[@id = 'TobaccoLabel']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'TobaccoAnswer']"/>
-	                        </div>
-	                        <div class="examExtraData">
-	                            <xsl:value-of select="Records/Record/Field[@id = 'AlcoholLabel']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'AlcoholAnswer']"/>
-	                        </div>
-	                        <div class="examExtraData">
-	                            <xsl:value-of select="Records/Record/Field[@id = 'DrugsLabel']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'DrugsAnswer']"/>
-	                        </div>
-	                        <div>
-	                            &#160;
-	                        </div>
-	                        <xsl:choose>
-	                            <xsl:when test="Records/Record/Field[@id = 'Pain'] = '0'">
-	                            	<div class="examExtraData">Pain (0-10):<xsl:value-of select="Records/Record/Field[@id = 'Pain']"/></div>
-	                            </xsl:when>
-	                            <xsl:otherwise>
-	                            	<div class="highlightYellow examExtraData">Pain (0-10):<xsl:value-of select="Records/Record/Field[@id = 'Pain']"/></div>
-	                            </xsl:otherwise>
-	                        </xsl:choose>
-		                            
-	                        <xsl:choose>
-	                            <xsl:when test="Records/Record/Field[@id = 'Allergy'] = 'NONE'">
-	                            	<div class="examExtraData">Allergies:<xsl:value-of select="Records/Record/Field[@id = 'Allergy']"/></div>
-	                            </xsl:when>
-	                            <xsl:otherwise>
-	                            	<div class="highlightYellow examExtraData">Allergies:<xsl:value-of select="Records/Record/Field[@id = 'Allergy']"/></div>
-	                            </xsl:otherwise>
-	                        </xsl:choose>
-		                            
-	                        <div class="examExtraData">
-	                            <xsl:value-of select="Records/Record/Field[@id = 'MedicationLabel']"/>
-	                        </div>
-		                  </div>
-		                </div>
-		                <div id="buttons">
-		                </div>
-		                <div class="questionContainer">
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'Special_Need']/Value = 'yes'">
+										<input type="checkbox" name="Special_Need" value="yes" disabled="disabled" checked="checked"/>Special Need Child<br/>
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="checkbox" name="Special_Need" value="yes" disabled="disabled"/>Special Need Child<br/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+							<div>
+								&#160;
+							</div>
+							<div class="examExtraCheckbox">
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'MDTwoIDsChecked']/Value = 'Y'">
+										<input type="checkbox" name="MDTwoIDsChecked" value="Y" disabled="disabled" checked="checked"/>Two ID's Checked<br/>
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="checkbox" name="MDTwoIDsChecked" value="Y" disabled="disabled"/>Two ID's Checked<br/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+							<div class="examExtraCheckbox">
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'screenedForAbuse']/Value = 'screened'">
+										<input type="checkbox" name="screenedForAbuse" value="screened" disabled="disabled" checked="checked"/>Screened for abuse<br/>
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="checkbox" name="screenedForAbuse" value="screened" disabled="disabled"/>Screened for abuse<br/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+							<div class="examExtraCheckbox">
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'discussedPhysicalActivity']/Value = 'Physical Activity'">
+										<input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity" disabled="disabled" checked="checked"/>Discussed physical activity<br/>
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity" disabled="disabled"/>Discussed physical activity<br/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+							<div class="examExtraCheckbox">
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'discussedHealthyDiet']/Value = 'Healthy Diet'">
+										<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet" disabled="disabled" checked="checked"/>Discussed healthy diet<br/>
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet" disabled="disabled"/>Discussed healthy diet<br/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+							<div>
+								&#160;
+							</div>
+							<div class="examExtraData">
+								<xsl:value-of select="Records/Record/Field[@id = 'TobaccoLabel']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'TobaccoAnswer']"/>
+							</div>
+							<div class="examExtraData">
+								<xsl:value-of select="Records/Record/Field[@id = 'AlcoholLabel']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'AlcoholAnswer']"/>
+							</div>
+							<div class="examExtraData">
+								<xsl:value-of select="Records/Record/Field[@id = 'DrugsLabel']"/>&#160;<xsl:value-of select="Records/Record/Field[@id = 'DrugsAnswer']"/>
+							</div>
+							<div>
+								&#160;
+							</div>
+							<div class="hidden">
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'Pain'] = '0'">
+										<div class="examExtraData">Pain (0-10):<xsl:value-of select="Records/Record/Field[@id = 'Pain']"/></div>
+									</xsl:when>
+									<xsl:otherwise>
+										<div class="highlightYellow examExtraData">Pain (0-10):<xsl:value-of select="Records/Record/Field[@id = 'Pain']"/></div>
+									</xsl:otherwise>
+								</xsl:choose>
+										
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'Allergy'] = 'NONE'">
+										<div class="examExtraData">Allergies:<xsl:value-of select="Records/Record/Field[@id = 'Allergy']"/></div>
+									</xsl:when>
+									<xsl:otherwise>
+										<div class="highlightYellow examExtraData">Allergies:<xsl:value-of select="Records/Record/Field[@id = 'Allergy']"/></div>
+									</xsl:otherwise>
+								</xsl:choose>
+								<div>
+									&#160;
+								</div>	
+							</div>
+							<div class="medicalPerformed">
+								<label>Medication Education Performed and/or Counseled on Vaccines</label>
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'MedicationEducationPerformed']/Value = 'yes'">
+										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedYES" value="yes" disabled="disabled" checked="checked" />Y
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedYES" value="yes" disabled="disabled" />Y
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'MedicationEducationPerformed']/Value = 'no'">
+										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNO" value="no" disabled="disabled" checked="checked" />N
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNO" value="no" disabled="disabled" />N
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:choose>
+									<xsl:when test="Records/Record/Field[@id = 'MedicationEducationPerformed']/Value = 'not applicable'">
+										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" disabled="disabled" checked="checked" />N/A
+									</xsl:when>
+									<xsl:otherwise>
+										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" />N/A
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+								
+						  </div>
+
+						<div class="questionContainer">
 		                    <xsl:choose>
-		                        <xsl:when test="Records/Record/Field[@id = 'Prompt1_Text'] = ''">
+		                        <xsl:when test="Records/Record/Field[@id = 'Prompt1_Text'] = ''"><div>
+								&#160;
+							</div>	
 		                            &#160;
 		                        </xsl:when>
 		                        <xsl:otherwise>
