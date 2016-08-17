@@ -118,13 +118,13 @@
 					    float:left;
 					    margin-left:-1px;
 					    height:30px;
-						text-align: -webkit-center;
+						text-align: center;
 					    font-size:0.8em;
 					    padding-top:2px;
 					}
 					
 					.vitalsLegendRow {
-						width:225px;
+						width:600px;
 					}
 					
 					#exam {
@@ -607,18 +607,28 @@
 							<div class="flagCell">
 		                        <b></b><br/>
 		                    </div>
-							<div>
-								&#160;
-							</div>
+							<div class="vitalsNames">
+		                        <br/>
+		                    </div>
+		                    <div class="vitalsValues">
+		                    </div>
 							<div class="flagCell">
 		                        <b></b><br/>
 		                    </div>
-							<div>
-								&#160;
-							</div>
+							<div class="vitalsNames">
+		                        <br/>
+		                    </div>
+		                    <div class="vitalsValues">
+		                    </div>
 							<div class="flagCell">
 		                        <b></b><br/>
 		                    </div>
+							<div class="vitalsNames">
+		                        <br/>
+		                    </div>
+		                    <div class="vitalsValues">
+		                    </div>
+							
 							<div id="vitalsLegend">
 		                    	<div class="vitalsLegendRow"><b><font style="color:red;">*</font>=Abnormal,</b></div>
 		                    	<div class="vitalsLegendRow"><b>A=Axillary, R=Rectal, O=Oral,</b></div>
