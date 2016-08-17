@@ -169,13 +169,13 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <div class="flagCell">
+                    <div class="flagCell hearing">
                         <b><c:out value="${HearA}"/></b><br/>
                     </div>
-                    <div class="vitalsNames">
+                    <div class="vitalsNames hearing">
                         Hear (L):<br/>
                     </div>
-                    <div class="vitalsValues">
+                    <div class="vitalsValues hearing">
                         <c:choose>
                             <c:when test="${empty HearL}">
                                 &nbsp;
@@ -185,13 +185,13 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <div class="flagCell">
+                    <div class="flagCell hearing">
                         <b><c:out value="${HearA}"/></b><br/>
                     </div>
-                    <div class="vitalsNames">
+                    <div class="vitalsNames hearing">
                         Hear (R):<br/>
                     </div>
-                    <div class="vitalsValues">
+                    <div class="vitalsValues hearing">
                         <c:choose>
                             <c:when test="${empty HearR}">
                                 &nbsp;
@@ -201,13 +201,13 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <div class="flagCell">
+                    <div class="flagCell vision">
                         <b><c:out value="${VisionLA}"/></b><br/>
                     </div>
-                    <div class="vitalsNames">
+                    <div class="vitalsNames vision">
                         Vision (L):<br/>
                     </div>
-                    <div class="vitalsValues">
+                    <div class="vitalsValues vision">
                         <c:choose>
                             <c:when test="${empty VisionL}">
                                 &nbsp;
@@ -217,13 +217,13 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <div class="flagCell">
+                    <div class="flagCell vision">
                         <b><c:out value="${VisionRA}"/></b><br/>
                     </div>
-                    <div class="vitalsNames">
+                    <div class="vitalsNames vision">
                         Vision (R):<br/>
                     </div>
-                    <div class="vitalsValues">
+                    <div class="vitalsValues vision">
                         <c:choose>
                             <c:when test="${empty VisionR}">
                                 &nbsp;
@@ -249,13 +249,13 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <div class="flagCell">
+                    <div class="flagCell" style="height: 23px;">
                         <b></b><br/>
                     </div>
-                    <div class="vitalsNames">
+                    <div class="vitalsNames" style="height: 23px;">
                         Prev WT:<br/>
                     </div>
-                    <div class="vitalsValues">
+                    <div class="vitalsValues" style="height: 23px;">
                         <c:choose>
                             <c:when test="${empty PrevWeight}">
                                 &nbsp;
@@ -264,10 +264,13 @@
                                 <c:out value="${PrevWeight}"/>&nbsp;(<c:out value="${PrevWeightDate}"/>)
                             </c:otherwise>
                         </c:choose>
-                    </div>
-                    <div id="vitalsLegend">
+                    </div> 
+                    <div id="vitalsLegendIUHCerner">
                     <b><font style="color:red;">*</font>=Abnormal, U=Uncorrected,<br/>
                     C=Corrected, A=Axillary,
                     R=Rectal, O=Oral,<br/>
-                    F=Failed, P=Passed</b></div>
+                    F=Failed, P=Passed</b></div>             
+                    <div id="vitalsLegendEskenaziEpic">
+                    <b><font style="color:red;">*</font>=Abnormal,<br/>
+                    A=Axillary, R=Rectal, O=Oral</b></div>         
                 </div>
