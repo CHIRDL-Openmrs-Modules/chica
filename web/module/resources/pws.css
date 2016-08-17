@@ -65,30 +65,26 @@ body {
 
 #infoLeft {
     width:337px;
+    height: 53px;
     float:left;
     padding:2px 2px 2px 5px;
     border-bottom: 1px solid black;
 }
 
-#infoRight {
-    width:452px;
-    float:right;
+#infoCenter { 
+    width:252px;
+    height: 53px;
+    float:left;
     padding:2px;
     border-bottom: 1px solid black;
 }
 
-#vitals {
-    width:250px; 
-    height:288px;
+#infoRight {
+    width:196px;
+    height: 53px;
     float:left;
-    border-left: none;
-    padding-bottom: 32px;
-}
-
-#informant {
-    width:280px;
-    float:left;
-    padding:2px 2px 2px 5px;
+    padding:2px;
+    border-bottom: 1px solid black;
 }
 
 @-moz-document url-prefix() {
@@ -122,25 +118,6 @@ body {
     text-align:left;
 }
 
-#vitalsLegend {
-    width:800px;
-    border-left: 1px solid black;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
-    float:left;
-    margin-left:-1px;
-    height:40px;
-    text-align:center;
-    font-size:0.8em;
-    padding-top:2px;
-    padding-bottom: 5px;
-    
-    /* Adding to fix issues when zooming out 
-    margin-right: -1px;
-    margin-bottom: -1px;
-    */
-}
-
 #exam {
     border-bottom: 1px solid black;
     float:left;
@@ -154,22 +131,6 @@ body {
     #exam {
         margin-top:-225px;
         height: 346px;
-    }
-}
-
-#buttons {
-    width:250px;
-    height:230px; 
-    border-bottom: none; 
-    float:left; 
-    margin-top:5px;
-    margin-left:10px;
-}
-
-@-moz-document url-prefix() {
-    #buttons {
-        margin-top:5px; 
-        height:332px; 
     }
 }
 
