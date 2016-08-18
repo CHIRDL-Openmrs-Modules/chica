@@ -5,17 +5,9 @@
 
 #vitals {
     width:265px;
-    height:305px;
+    height:346px;
     float:left;
     border-left: none;
-    padding-bottom: 32px;
-    border-left: 1px solid black;
-}
-
-#informant {
-    width:220px;
-    float:left;
-    padding:2px 2px 2px 5px;
 }
 
 #examExtras {
@@ -51,9 +43,27 @@
     
 }
 
+#vitalsLegendIUHCerner{
+    width:800px;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    float:left;
+    margin-left:-1px;
+    height:40px;
+    text-align:center;
+    font-size:0.8em;
+    padding-top:7px;
+    padding-bottom: 5px;
+}
+
+#vitalsLegendEskenaziEpic{
+	display: none;
+}
+
 #buttons {
     width: 270px;
-    height: 123px;
+    height: 341px;
     border-bottom: none;
     float: right;
     margin-top: 5px;
@@ -63,7 +73,7 @@
 @-moz-document url-prefix() {
     #buttons {
         margin-top:5px; 
-        height:332px; 
+        height:341px; 
     }
 }
 
