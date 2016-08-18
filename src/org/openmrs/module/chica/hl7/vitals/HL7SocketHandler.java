@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.openmrs.Concept;
 import org.openmrs.ConceptNumeric;
@@ -24,15 +25,16 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.hl7.HL7Constants;
+import org.openmrs.module.chica.hl7.mrfdump.HL7EncounterHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
-import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -44,8 +46,6 @@ import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
-import ca.uhn.hl7v2.model.v25.message.ADT_A01;
-import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 
 /**
  * 
@@ -312,7 +312,21 @@ public class HL7SocketHandler implements Application {
 			// before creating the ChirdlUtilConstants.STATE_PROCESS_VITALS PatientState
 			// and processing the obs
 			if(patient != null){
-				org.openmrs.module.chica.hibernateBeans.Encounter encounter = getRecentEncounter(patient);
+				
+				org.openmrs.module.chica.hibernateBeans.Encounter encounter = null;
+				
+				// Check global property to determine if we should look up the encounter using the visit number
+				AdministrationService adminService = Context.getAdministrationService();
+				String useVisitNumber = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_VITALS_USE_VISIT_NUMBER);
+				
+				if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(useVisitNumber))
+				{
+					encounter = getEncounterByVisitNumber(patient, message);
+				}
+				else
+				{
+					encounter = getRecentEncounter(patient);
+				}
 
 				if (encounter != null) {
 					Location location = encounter.getLocation();
@@ -582,5 +596,58 @@ public class HL7SocketHandler implements Application {
 	public void setSource(String source)
 	{
 		this.source = source;
+	}
+	
+	/**
+	 * DWE CHICA-784
+	 * Get the encounter using the visit number found in PV1-19
+	 * If PV1-19 is empty, which should never happen, this method will default back to the old way of looking up the most recent encounter for the patient
+	 * 
+	 * @param patient
+	 * @param message
+	 * @return
+	 */
+	private org.openmrs.module.chica.hibernateBeans.Encounter getEncounterByVisitNumber(Patient patient, Message message)
+	{
+		org.openmrs.module.chica.hibernateBeans.Encounter encounter = null;
+		HL7EncounterHandler23 hl7EncounterHandler23 = new HL7EncounterHandler23();
+		String visitNumber = hl7EncounterHandler23.getVisitNumber(message);
+		
+		if(visitNumber != null && !visitNumber.isEmpty())
+		{
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+
+			try
+			{	
+				EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByValue(visitNumber, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER);
+				
+				if(encounterAttributeValue != null)
+				{
+					EncounterService encounterService = Context.getService(EncounterService.class);
+					encounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterAttributeValue.getEncounterId());
+					
+					// Make sure the patientId for the encounter record matches the patient from the HL7 message
+					if(patient.getPatientId().intValue() != encounter.getPatientId().intValue())
+					{
+						logger.error("Unable to match encounter to patientId: " + patient.getPatientId());
+						encounter = null;
+					}
+				}
+				else
+				{
+					logger.error("Unable to locate encounter for visit number: " + visitNumber);					
+				}
+			}
+			catch(Exception e)
+			{
+				logger.error("Error occurred while locating encounter for visit number: " + visitNumber, e);				
+			}
+		}
+		else
+		{
+			logger.error("Unable to locate visit number in HL7 message for patientId: " + patient.getPatientId());
+		}
+		
+		return encounter;
 	}
 }

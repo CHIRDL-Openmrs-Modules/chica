@@ -428,6 +428,12 @@
         <description>Number of seconds remaining in the session before the session timeout warning dialog is displayed.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.vitalsUseVisitNumberLookupEncounter</property>
+        <defaultValue>false</defaultValue>
+        <description>Used to determine if the visit number received in PV1-19 should be used to lookup the encounter when processing vitals.
+        </description>
+    </globalProperty>
    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
