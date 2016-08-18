@@ -2,6 +2,7 @@ package org.openmrs.module.chica.web;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.PatientRow;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -275,14 +277,29 @@ public class ViewEncounterController extends SimpleFormController {
 						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName,
 						    encounterId);
 						if (patientStates != null && !patientStates.isEmpty()) {
-							
+							boolean checkPWSProcess = false;
+							HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
 							for (PatientState currState : patientStates) {
 								if (currState.getEndTime() != null) {
-									rightImageLocationId = currState.getLocationId();
-									rightImageFormId = currState.getFormId();
-									rightImageFormInstanceId = currState.getFormInstanceId();
-									break;
+									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
+										checkPWSProcess = true; 
+									}
+									if (!checkPWSProcess) { 
+										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+									} else {
+										rightImageLocationId = currState.getLocationId();
+										rightImageFormId = currState.getFormId();
+										rightImageFormInstanceId = currState.getFormInstanceId();
+										pwsTempFormInstancesMap.clear();
+										break;
+									}
 								}
+							}
+							if (!pwsTempFormInstancesMap.isEmpty()) {
+								FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+								rightImageLocationId = formInstance.getLocationId();
+								rightImageFormId = formInstance.getFormId();
+								rightImageFormInstanceId = formInstance.getFormInstanceId();
 							}
 						} else {
 							if (rightName != null && rightName.equals("PWS")) {
@@ -471,19 +488,22 @@ public class ViewEncounterController extends SimpleFormController {
 						.adjustAgeUnits(dob, checkin));
 
 				// psf, pws form ids
+				
+				List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
+				
+				if (patientStates != null && !patientStates.isEmpty()) {
+					HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+					boolean checkPWSProcess = false;
+					for (PatientState currState : patientStates) {
+						if (currState.getEndTime() != null) {
+							Integer formId = currState.getFormId();
+							String formName = formNameMap.get(formId);
+							if(formName == null){
+								Form form = formService.getForm(formId);
+								formName = form.getName();
+								formNameMap.put(formId, formName);
+							}
 							
-					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
-					if (patientStates != null && !patientStates.isEmpty()) {
-						for (PatientState currState : patientStates) {
-							if (currState.getEndTime() != null) {
-								Integer formId = currState.getFormId();
-								String formName = formNameMap.get(formId);
-								if(formName == null){
-									Form form = formService.getForm(formId);
-									formName = form.getName();
-									formNameMap.put(formId, formName);
-								}
-								
 							//make sure you only get the most recent psf/pws pair
 							if (row.getPsfId() == null) {
 								if (formName.equals("PSF")) {
@@ -492,16 +512,36 @@ public class ViewEncounterController extends SimpleFormController {
 							}
 							if (row.getPwsId() == null) {
 								if (formName.equals("PWS")) {
-									row.setPwsId(currState.getFormInstance());
+									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
+										checkPWSProcess = true;
+									}
+									if (!checkPWSProcess) { 
+										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+									} else {
+										row.setPwsId(currState.getFormInstance());
+									}
 								}
 							}
-						
-							if (formsToProcess.contains(formName)) {							
+							if (formsToProcess.contains(formName)) {
+								if (formName.equals("PWS") ){
+									if (checkPWSProcess && row.getPwsId() != null) { 
+											row.addFormInstance(currState.getFormInstance());
+											pwsTempFormInstancesMap.clear();
+											checkPWSProcess = false;
+									} 
+								} else {
 									row.addFormInstance(currState.getFormInstance());
 								}
 							}
 						}
 					}
+					
+					if (!pwsTempFormInstancesMap.isEmpty()) {
+						FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+						row.setPwsId(formInstance);
+						row.addFormInstance(formInstance);
+					}
+				}
 			
 				
 				//get CHICA 1 PSF and PWS ids
@@ -624,5 +664,4 @@ public class ViewEncounterController extends SimpleFormController {
 		return mdName;
 
 	}
-
 }
