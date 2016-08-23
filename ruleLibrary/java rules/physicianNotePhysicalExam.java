@@ -257,32 +257,6 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("VISIONL").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
-    		noteBuffer.append("Vision Left: 20/");
-    		Map<String,Object> map = new HashMap<String,Object>();
-    		map.put("param0", result);
-    		rule.setTokenName("integerResult");
-			rule.setParameters(map);
-    		Result roundedResult = dssService.runRule(patient, rule);
-    		noteBuffer.append(roundedResult.toString());
-    		noteBuffer.append("\n");
-    	}
-    	
-    	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("VISIONR").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
-    		noteBuffer.append("Vision Right: 20/");
-    		Map<String,Object> map = new HashMap<String,Object>();
-    		map.put("param0", result);
-    		rule.setTokenName("integerResult");
-			rule.setParameters(map);
-    		Result roundedResult = dssService.runRule(patient, rule);
-    		noteBuffer.append(roundedResult.toString());
-    		noteBuffer.append("\n");
-    	}
-    	
-    	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("RR CHICA").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("RR: ");
@@ -296,48 +270,15 @@ public class physicianNotePhysicalExam implements Rule {
     	}
     	
     	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("NoVision").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
-    		noteBuffer.append("Uncooperative/Unable to Screen Vision");
-    		noteBuffer.append("\n");
-    	}
-    	
-    	result = context.read(patientId, obsDataSource, 
-			new LogicCriteriaImpl("NoHearing").within(Duration.days(-3)).last());
-    	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
-    		noteBuffer.append("Uncooperative/Unable to Screen Hearing");
-    		noteBuffer.append("\n");
-    	}
-    	
-    	result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl("NoBP").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Uncooperative/Unable to Screen Blood Pressure");
     		noteBuffer.append("\n");
     	}
-    	
-    	// Physical Exam portion
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "General_Exam", "General: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Head_Exam", "Head: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Skin_Exam", "Skin: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Eyes/Vision_Exam", "Eyes: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Ears/Hearing_Exam", "Ears: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Nose/Throat_Exam", "Nose/Throat: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Teeth/Gums_Exam", "Teeth/Gums: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Nodes_Exam", "Nodes: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Chest/Lungs_Exam", "Chest/Lungs: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Heart/Pulses_Exam", "Heart/Pulses: ", 
-    		encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Abdomen_Exam", "Abdomen: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "ExtGenitalia_Exam", "Ext. Genitalia: ", 
-    		encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Back_Exam", "Back: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Neuro_Exam", "Neuro: ", encounterId);
-    	appendPhysicalExam(context, obsDataSource, patientId, noteBuffer, "Extremities_Exam", "Extremities: ", encounterId);
-    	
+
     	String note = noteBuffer.toString();
     	if (note.trim().length() > 0) {
-    		return "PHYSICAL EXAMINATION\n" + note + "\n";
+    		return "VITAL SIGNS\n" + note + "\n";
     	}
     	return note;
     }
