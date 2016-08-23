@@ -125,6 +125,8 @@
 				<select name="Informant_2" id="Informant_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2" id="Informant_2_0"/>
 				  <label for="Informant_2_0">Select all that apply</label>
+				  <option name="Informant_2" value="No One" id="Informant_2_noone" data-theme="b" />
+				  <label for="Informant_2_noone">No one (I'm here alone)</label>
 				  <option name="Informant_2" value="mother" id="Informant_2_mother" data-theme="b" />
 				  <label for="Informant_2_mother">Mother</label>
 				  <option name="Informant_2" value="father" id="Informant_2_father" data-theme="b" />
@@ -143,8 +145,6 @@
 				  <label for="Informant_2_sibling">Sibling</label>
 				  <option name="Informant_2" value="Other" id="Informant_2_other" data-theme="b" />
 				  <label for="Informant_2_other">Other</label>
-				  <option name="Informant_2" value="No One" id="Informant_2_noone" data-theme="b" />
-				  <label for="Informant_2_noone">No one (I'm here alone)</label>
 				</select>
 			</fieldset>
 		</div>
@@ -211,6 +211,8 @@
 				<select name="Informant_2_2" id="Informant_2_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2_2" id="Informant_2_2_0"/>
 				  <label for="Informant_2_2_0">Elija todos que aplican</label>
+				  <option name="Informant_2_2" value="No One" id="Informant_2_2_noone" data-theme="b" />
+				  <label for="Informant_2_2_noone">Nadie (Estoy solo/a aqu&iacute;)</label>
 				  <option name="Informant_2_2" value="mother" id="Informant_2_2_mother" data-theme="b" />
 				  <label for="Informant_2_2_mother">La madre</label>
 				  <option name="Informant_2_2" value="father" id="Informant_2_2_father" data-theme="b" />
@@ -229,8 +231,6 @@
 				  <label for="Informant_2_2_sibling">El/la hermano/a</label>
 				  <option name="Informant_2_2" value="Other" id="Informant_2_2_other" data-theme="b" />
 				  <label for="Informant_2_2_other">Otra persona</label>
-				  <option name="Informant_2_2" value="No One" id="Informant_2_2_noone" data-theme="b" />
-				  <label for="Informant_2_2_noone">Nadie (Estoy solo/a aqu&iacute;)</label>
 				</select>
 			</fieldset>
 		</div>
