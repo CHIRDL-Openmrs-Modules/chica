@@ -107,6 +107,7 @@ public class physicianNoteExtras implements Rule {
     	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Physical Activity: ", encounterId, "Physical Activity");
     	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "Counseling", "Discussed Healthy Diet: ", encounterId, "Healthy Diet");
     	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "MedicationEducationPerformed", "Medication Education Performed and/or Counseled on Vaccines: ", encounterId, null);
+    	appendPhysicalExamsExtraNote(context, obsDataSource, patientId, noteBuffer, "Informant", "Informant: ", encounterId, null);
     	
     	String note = noteBuffer.toString();
     	if (note.trim().length() > 0) {
@@ -158,6 +159,9 @@ public class physicianNoteExtras implements Rule {
 			if (value.equals("Physical Activity") || value.equals("Healthy Diet")){
 				value = "yes";
 			}
+			if (heading.trim().equals("Informant:") ){
+				noteBuffer.append("\n");
+			} 
 			noteBuffer.append(heading);
 			noteBuffer.append(value);
 			noteBuffer.append("\n");
