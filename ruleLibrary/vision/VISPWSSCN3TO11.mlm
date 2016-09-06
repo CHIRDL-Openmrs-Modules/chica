@@ -46,7 +46,7 @@ If (mode = CONSUME) then
 If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "Although || firstname || should have had vision screening today, we had no record of the screen.";
 If  (Box2=true) then || note2 || = "|| firstname || passed the vision screen.";
 If  (Box4=true) then || note4 || = "|| firstname || failed the vision screen.";
-If  (Box5=true) then || note5 || = "We were unable to perfom the screen on || firstname ||.";
+If  (Box5=true) then || note5 || = "We were unable to perform the screen on || firstname ||.";
 /* */
 
 If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
