@@ -26,6 +26,10 @@ Logic:
 
 
 If (mode = PRODUCE) then
+AdditionalInformation_JIT_created := call hasJITBeenCreated with "AdditionalInformation_JIT_Mobile";
+
+If (AdditionalInformation_JIT_created = "yes") then Conclude False;
+
   conclude True;
 endif;
 
