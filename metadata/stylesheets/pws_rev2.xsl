@@ -748,7 +748,7 @@
 										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" disabled="disabled" checked="checked" />N/A
 									</xsl:when>
 									<xsl:otherwise>
-										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" />N/A
+										<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" disabled="disabled"/>N/A
 									</xsl:otherwise>
 								</xsl:choose>
 							</div>
