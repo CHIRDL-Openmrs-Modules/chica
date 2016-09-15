@@ -108,12 +108,9 @@ public class HL7SocketHandler extends
 	
 	private static final String STATE_CLINIC_REGISTRATION = "Clinic Registration";
 	private static final String STATE_HL7_CHECKIN = "Process Checkin HL7";
-	private static final String STATE_QUERY_ALIAS = "QUERY KITE Alias";
 	
 	private static final String CONCEPT_INSURANCE_NAME = "InsuranceName";
 	
-	private static final String PARAMETER_QUERY_ALIAS_START = "queryKiteAliasStart";
-	private static final String PARAMETER_QUERY_ALIAS_STOP = "queryKiteAliasEnd";
 	private static final String PARAMETER_SESSION = "session";
 	
 	private static final String PROCESS_HL7_CHECKIN_END = "processCheckinHL7End";
@@ -154,7 +151,8 @@ public class HL7SocketHandler extends
 							encounterDate);
 				}
 				
-			
+				parameters.put(PROCESS_HL7_CHECKIN_END, new java.util.Date());
+
 			}
 
 		} catch (RuntimeException e) {
@@ -696,25 +694,7 @@ public class HL7SocketHandler extends
 		patientState.setStartTime(processCheckinHL7Start);
 		patientState.setEndTime(processCheckinHL7End);
 		chirdlutilbackportsService.updatePatientState(patientState);
-
-		state = chirdlutilbackportsService.getStateByName(STATE_QUERY_ALIAS);
-		patientState = chirdlutilbackportsService
-				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
-						getLocationId(chicaEncounter), null);
-		Date queryKiteAliasStart = (Date) parameters.get(PARAMETER_QUERY_ALIAS_START);
-		if (queryKiteAliasStart == null){
-			queryKiteAliasStart = new java.util.Date();
-		}
-		Date queryKiteAliasEnd = (Date) parameters.get(PARAMETER_QUERY_ALIAS_STOP);
-		if (queryKiteAliasEnd == null){
-			queryKiteAliasEnd = new java.util.Date();
-		}
 		
-		patientState.setStartTime(queryKiteAliasStart);
-		patientState.setEndTime(queryKiteAliasEnd);
-		chirdlutilbackportsService.updatePatientState(patientState);
-
 		encounterService.saveEncounter(chicaEncounter);
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConceptByName(CONCEPT_INSURANCE_NAME);
