@@ -397,7 +397,7 @@ public class ViewEncounterController extends SimpleFormController {
 			if (dob != null) {
 				dobString = new SimpleDateFormat("yyyy-MM-dd").format(dob);
 			}
-			map.put("titleMRN", patient.getPatientIdentifier());
+			map.put("titleMRN", Util.getDisplayMRN(patient));
 			map.put("titleLastName", patient.getFamilyName());
 			map.put("titleFirstName", patient.getGivenName());
 			map.put("titleDOB", dobString);
