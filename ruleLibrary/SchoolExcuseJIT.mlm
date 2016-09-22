@@ -21,7 +21,7 @@ Data:
 Priority:	;;
 	Evoke:		;;
 Logic:
-conclude False;
+conclude True;
 ;;
 Action:
 
