@@ -64,7 +64,7 @@ body {
 }
 
 #infoLeft {
-    width:337px;
+    width:432px; /* This width is necessary to handle long names */
     height: 53px;
     float:left;
     padding:2px 2px 2px 5px;
@@ -72,7 +72,7 @@ body {
 }
 
 #infoCenter { 
-    width:252px;
+    width:192px;
     height: 53px;
     float:left;
     padding:2px;
@@ -80,7 +80,7 @@ body {
 }
 
 #infoRight {
-    width:196px;
+    width:161px;
     height: 53px;
     float:left;
     padding:2px;
