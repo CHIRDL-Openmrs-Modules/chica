@@ -320,6 +320,7 @@ public class HL7SocketHandler extends
 		AddCitizenship(currentPatient, hl7Patient, encounterDate);
 		AddRace(currentPatient, hl7Patient, encounterDate);
 		addMRN(currentPatient, hl7Patient, encounterDate);
+		addMRNEHR(currentPatient, hl7Patient, encounterDate); // DWE Epic_Eskenazi release 10/1/16
 		addPatientAccountNumber(currentPatient, hl7Patient, encounterDate); // DWE CHICA-406
 		updateEthnicity(currentPatient, hl7Patient, encounterDate); // DWE CHICA-706
 		
@@ -1613,5 +1614,60 @@ public class HL7SocketHandler extends
 			|| !currentEthnicityAttr.getValue().equals(hl7EthnicityAttr.getValue())){
 			currentPatient.addAttribute(hl7EthnicityAttr);
 		}
+	}
+	
+	/**
+	 * DWE Epic_Eskenazi release 10/1/16
+	 * @param existingPatient
+	 * @param newPatient
+	 * @param encounterDate
+	 */
+	public void addMRNEHR(Patient existingPatient, Patient newPatient, Date encounterDate)
+	{
+		PatientService patientService = Context.getPatientService();
+		String newMRNEHR = null;
+		String existingMRNEHR = null;
+
+		try {
+
+			//Get the existing "MRN_EHR" identifier
+			PatientIdentifier piExistingPatient = existingPatient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR); 
+
+			PatientIdentifier piNewPatient = newPatient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR);
+			
+			if(piExistingPatient != null)
+			{
+				// Identifier already exists don't create another
+				return;
+			}
+			
+			if(piNewPatient == null)
+			{
+				// Identifier not found in the HL7 message?
+				return;
+			}
+			
+			newMRNEHR = piNewPatient.getIdentifier();
+			if(newMRNEHR == null)
+			{
+				return;
+			}
+
+			//Create the new identifier object and add to existing patient
+			PatientIdentifier newIdentifier = new PatientIdentifier();
+			newIdentifier.setIdentifier(newMRNEHR);
+			newIdentifier.setIdentifierType( patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR));
+			newIdentifier.setLocation(piNewPatient.getLocation());
+			newIdentifier.setPatient(existingPatient);
+			newIdentifier.setPreferred(false); // THIS SHOULD NOT BE SET AS THE PREFERRED IDENTIFIER
+			newIdentifier.setCreator(Context.getAuthenticatedUser());
+			newIdentifier.setDateCreated(new Date());
+			existingPatient.addIdentifier(newIdentifier);
+
+		} catch (Exception e) {
+			log.error("Exception adding new " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + " to existing patient. Existing " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + ": " 
+					+ existingMRNEHR + "; New "+ ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR +": " + newMRNEHR, e);
+		}
+
 	}
 }
