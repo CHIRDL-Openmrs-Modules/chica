@@ -428,9 +428,10 @@ public class LoadObsController extends SimpleFormController
 									encounter.setInsuranceSmsCode(currObs
 											.getObsvVal());
 									encounterService.saveEncounter(encounter);
+									
 									currObs.setObsvVal(chicaService
-											.getInsCategoryBySMS(currObs
-													.getObsvVal()));
+											.getInsCategoryByInsCode(currObs
+													.getObsvVal(),"SMS","Eskenazi"));
 								}
 								createObs(currObs, format, location,
 										openmrsPatient, encounter,

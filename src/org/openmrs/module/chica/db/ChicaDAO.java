@@ -4,6 +4,7 @@ package org.openmrs.module.chica.db;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
@@ -107,14 +108,12 @@ public interface ChicaDAO {
 
 	public String getObsvNameByObsvId(String obsvId);
 	
-	public String getInsCategoryByCarrier(String carrierCode);
+	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication);
+
+	public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication);
 	
-	public String getInsCategoryBySMS(String smsCode);
-	
-	public String getInsCategoryByECWName(String ecwName);
-	
-	public String getInsCategoryByInsCode(String insCode);
-	
+	public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication);
+
 	public Integer getHighBP(Integer ageInYears, String sex,
 			Integer bpPercentile, String bpType, Integer heightPercentile);
 
@@ -183,4 +182,15 @@ public interface ChicaDAO {
 	 * @return Study object with the provided title or null if one is not found with the provided title.
 	 */
 	public Study getStudyByTitle(String studyTitle);
+	
+	/**
+	 * DWE CHICA-761
+	 * Get reprint/rescan states by session Id
+	 * @param sessionId
+	 * @param optionalDateRestriction
+	 * @param locationTagIds
+	 * @param locationId
+	 * @return
+	 */
+	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException;
 }

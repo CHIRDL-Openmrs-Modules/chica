@@ -2,6 +2,7 @@ package org.openmrs.module.chica.advice;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -41,11 +42,12 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				{
 					AdministrationService adminService = Context.getAdministrationService();
 					org.openmrs.Encounter encounter = (org.openmrs.Encounter) args[0];
+					HashMap<String,Object> parameters = (HashMap<String,Object>) args[1];
 					
 					ThreadManager threadManager = ThreadManager.getInstance();
 					Location location = encounter.getLocation();
 					//spawn the checkin thread
-					threadManager.execute(new CheckinPatient(encounter), location.getLocationId());
+					threadManager.execute(new CheckinPatient(encounter,parameters), location.getLocationId());
 					
 					String queryMeds = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_QUERY_MEDS);
 					if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(queryMeds)) {
@@ -103,7 +105,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 		else if(method.getName().equals("cleanCache")) 
 		{
             log.info("clear regenObs and medicationList");
-            ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource("RMRS")).clearObs();
+            ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY)).clearObs();
             MedicationListLookup.clearMedicationLists();
             ImmunizationForecastLookup.clearimmunizationLists();
         }

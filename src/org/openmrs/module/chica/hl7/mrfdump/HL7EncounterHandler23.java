@@ -16,6 +16,7 @@ import org.openmrs.module.sockethl7listener.Provider;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v23.datatype.CX;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.datatype.TS;
 import ca.uhn.hl7v2.model.v23.datatype.XCN;
@@ -252,6 +253,49 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 			return HL7ObsHandler23.getOBR((ORU_R01) message, orderRep);
 		}
 
+		return null;
+	}
+	
+	/**
+	 * DWE CHICA-633 
+	 * Get visit number from PV1-19
+	 */
+	@Override
+	public String getVisitNumber(Message message)
+	{
+		CX visitNumber = null;
+		PV1 pv1 = getPV1(message);
+		try
+		{
+			visitNumber = pv1.getVisitNumber();
+		} 
+		catch (RuntimeException e)
+		{
+			logger.error("Unable to parse visit number from PV1-19.", e);
+		}
+
+		if (visitNumber != null)
+		{
+			try
+			{
+				return visitNumber.getID().toString(); // This appears to be the only difference between version 2.3 and 2.5
+			} 
+			catch (RuntimeException e1)
+			{
+				logger.error("Visit number not available in PV1-19 segment.", e1);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * DWE CHICA-751
+	 * Get location description from PV1-3.9
+	 * Not implemented in this package
+	 */
+	public String getLocationDescription(Message message)
+	{
+		// Intentionally left empty
 		return null;
 	}
 }

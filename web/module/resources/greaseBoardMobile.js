@@ -1,5 +1,7 @@
 var patientListFail = 0;
 var timeOutVar;
+var refreshPeriod = 60000; // Use global property to override this, see startTimer() below
+var defaultAjaxTimeout = 60000;
 
 $(document).on("pagecreate", "#patient_list_page", function(){
 	
@@ -15,7 +17,52 @@ $(document).on("pagecreate", "#patient_list_page", function(){
 		$("#passcode").focus();
 	});
 	
+	// DWE CHICA-761
+    $("#showAllCheckbox").click(function(){
+    	clearTimeout(timeOutVar);
+    	populateList();
+    });
+    
 	$.mobile.changePage("#passcode_page", { transition: "fade"});
+});
+
+$(document).ready(function(){
+	// DWE CHICA-761
+	// Add additional click event listener to the default jquery clear button behavior
+	// IMPORTANT: DO NOT call populateList() from here
+	// This will send too many requests to the server
+	// Especially if the user is typing slow
+	$('#searchAllPatientsDIV a.ui-input-clear').on('click', function(event){
+    	$("#searchAllPatients").val("");
+		clearTimeout(timeOutVar); // prevent the list from being refreshed by the timer on the page
+		filterPatientList();
+		timeOutVar = setTimeout("populateList()", refreshPeriod);	
+	});
+	
+	// Fix to allow the search field to display correctly in IE
+	$('#searchAllPatientsDIV div.ui-input-search').addClass("searchAllPatientsInput");
+});
+
+$(document).on("pageshow", "#patient_list_page", function(){
+	// DWE CHICA-761
+	// Bind debounce functionality so that the 
+	// search is performed only after the user has stopped typing for 1000ms
+	// IMPORTANT: DO NOT call populateList() from here
+	// This will send too many requests to the server
+	// Especially if the user is typing slow
+	$("#searchAllPatients").on('keyup', $.debounce(function(event){
+		var searchValue = $("#searchAllPatients").val();
+		
+		// Only perform the search if
+		// the enter key was pressed, there has been >= 1 characters entered, or
+		// the backspace key was pressed
+		if(event.keyCode == 13 || searchValue.length >=1 || event.keyCode == 8)
+		{
+			clearTimeout(timeOutVar); // prevent the list from being refreshed by the timer on the page
+			filterPatientList();
+			timeOutVar = setTimeout("populateList()", refreshPeriod);	
+		}
+	}, 1000, false));
 });
 
 $(document).on("pageshow", "#passcode_page", function(){
@@ -58,6 +105,13 @@ function startTimer() {
     // This delay allows the wait cursor to display when loading the patient list.
 	patientListFail = 0;
 	$("#listError").popup("close");
+	
+	var period = $("#refreshPeriod").val();
+	if(period.length > 0)
+	{
+		refreshPeriod = period * 1000;
+	}
+	
 	timeOutVar = setTimeout("populateList()", 1);
 }
 
@@ -85,7 +139,7 @@ function checkPasscode() {
         "data": action,
         "type": "POST",
         "url": url,
-        "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "timeout": defaultAjaxTimeout, // optional if you want to handle timeouts (which you should)
         "error": handlePasscodeAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
             parsePasscodeResult(xml);
@@ -94,6 +148,7 @@ function checkPasscode() {
 }
 
 function populateList() {
+	var showAllPatients = $("#showAllCheckbox").is(':checked'); // DWE CHICA-761
     var url = "/openmrs/moduleServlet/chica/chicaMobile";
     var token = getAuthenticationToken();
     $.ajax({
@@ -102,15 +157,16 @@ function populateList() {
 	    },
         "cache": false,
         "dataType": "xml",
-        "data": "action=patientsWithPrimaryForm",
+        "data": "action=patientsWithPrimaryForm&showAllPatients=" + showAllPatients,
         "type": "POST",
         "url": url,
-        "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "timeout": defaultAjaxTimeout, // optional if you want to handle timeouts (which you should)
         "error": handlePatientListAjaxError, // this sets up jQuery to give me errors
         "success": function (xml) {
         	patientListFail = 0;
             parsePatientList(xml);
-            timeOutVar = setTimeout("populateList()", 30000);
+            clearTimeout(timeOutVar); // Clear the timer here so that multiple timers don't exist (the user clicks the refresh button several times)
+            timeOutVar = setTimeout("populateList()", refreshPeriod);
         }
     });
 }
@@ -172,7 +228,11 @@ function parsePatientList(responseXML) {
             	theme = "b";
             }
             
-            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ')" id="' + patientId + '" data-role="list-divider"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
+            // DWE CHICA-761 Allow the user to search by patient name or MRN
+            var mrn = removeSpecialCharacters($(this).find("mrn").text()); //.replace(new RegExp('-', 'g'), ''); 
+            var fullName = removeSpecialCharacters(firstName) + ' ' + removeSpecialCharacters(lastName);
+            
+            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ')" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
             count++;
         });
 
@@ -197,6 +257,8 @@ function parsePatientList(responseXML) {
         $("#patientList").html(content);
         $("div[type='patient_page']").page();
         $("#patientList").listview("refresh");
+        
+        filterPatientList(); // DWE CHICA-761
     }
 }
 
@@ -258,4 +320,21 @@ function parsePasscodeResult(responseXML) {
             }
         }
     }
+}
+
+// DWE CHICA-761
+// Filter using the value entered in the search field
+// Searching will be performed with white space, special characters, and leading zeros removed
+function filterPatientList()
+{
+    var searchString = removeLeadingZeros(removeSpecialCharacters(removeWhiteSpace($("#searchAllPatients").val())));
+    var regExp = new RegExp(searchString, "i");
+    
+    $("#patientList li").each(function () {
+    	if ($(this).data("fullname").search(regExp) < 0 && $(this).data("mrn").search(regExp) < 0) {
+            $(this).hide();
+        } else {
+            $(this).show()
+        }
+    });
 }

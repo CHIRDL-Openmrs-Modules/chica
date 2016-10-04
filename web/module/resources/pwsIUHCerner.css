@@ -3,25 +3,11 @@
  */
 @import 'pws.css';
 
-#infoRight {
-    width:452px;
-    float:right;
-    padding:2px;
-    border-bottom: 1px solid black;
-}
-
-
 #vitals {
     width:265px;
-    height:305px;
+    height:346px;
     float:left;
-    border-left: 1px solid black;
-}
-
-#informant {
-    width:220px;
-    float:left;
-    padding:2px 2px 2px 5px;
+    border-left: none;
 }
 
 #examExtras {
@@ -57,7 +43,7 @@
     
 }
 
-#vitalsLegend {
+#vitalsLegendIUHCerner{
     width:800px;
     border-left: 1px solid black;
     border-bottom: 1px solid black;
@@ -67,18 +53,17 @@
     height:40px;
     text-align:center;
     font-size:0.8em;
-    padding-top:2px;
+    padding-top:7px;
     padding-bottom: 5px;
-    
-    /* Adding to fix issues when zooming out 
-    margin-right: -1px;
-    margin-bottom: -1px;
-    */
+}
+
+#vitalsLegendEskenaziEpic{
+	display: none;
 }
 
 #buttons {
     width: 270px;
-    height: 123px;
+    height: 341px;
     border-bottom: none;
     float: right;
     margin-top: 5px;
@@ -88,7 +73,7 @@
 @-moz-document url-prefix() {
     #buttons {
         margin-top:5px; 
-        height:332px; 
+        height:341px; 
     }
 }
 

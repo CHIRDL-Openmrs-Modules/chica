@@ -715,20 +715,16 @@ public class ChicaServiceImpl implements ChicaService
 		return getChicaDAO().getObsvNameByObsvId(obsvId);
 	}
 	
-	public String getInsCategoryByCarrier(String carrierCode){
-		return getChicaDAO().getInsCategoryByCarrier(carrierCode);
+	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication){
+		return getChicaDAO().getInsCategoryByCarrier(carrierCode,sendingFacility,sendingApplication);
 	}
 	
-	public String getInsCategoryBySMS(String smsCode){
-		return getChicaDAO().getInsCategoryBySMS(smsCode);
+	public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication){
+		return getChicaDAO().getInsCategoryByName(insuranceName,sendingFacility,sendingApplication);
 	}
 	
-	public String getInsCategoryByECWName(String ecwName){
-		return getChicaDAO().getInsCategoryByECWName(ecwName);
-	}
-	
-	public String getInsCategoryByInsCode(String insCode){
-		return getChicaDAO().getInsCategoryByInsCode(insCode);
+	public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication){
+		return getChicaDAO().getInsCategoryByInsCode(insCode,sendingFacility,sendingApplication);
 	}
 	
 	public Double getHighBP(Patient patient, Integer bpPercentile,
@@ -1090,4 +1086,12 @@ public class ChicaServiceImpl implements ChicaService
 	        return getChicaDAO().getStudyByTitle(studyTitle);
         }
 
+        /**
+    	 * DWE CHICA-761
+    	 * @see org.openmrs.module.chica.service.ChicaService#getReprintRescanStatesBySessionId(Integer, Date, List, Integer)
+    	 */
+    	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId)
+    	{
+    		return getChicaDAO().getReprintRescanStatesBySessionId(sessionId, optionalDateRestriction, locationTagIds, locationId);
+    	}
 }

@@ -25,6 +25,8 @@
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
 <c:set var="formName" value="Additional Information Form:"/>
 <c:set var="formName_sp" value="El formulario de informaci&oacute;n adicional"/>
+<c:set var="staffButtonText" value="Staff"/>
+<c:set var="staffButtonText_sp" value="Personal"/>
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="AdditionalInformationForm" method="POST" action="additionalInformationMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
@@ -44,8 +46,8 @@
     <div data-role="header" >
         <h1 id="formTitle">${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
     </div>
 	<div data-role="content" >
         <strong><span id="additionalQuestions">Please complete some additional information about this visit.</span></strong>
@@ -76,8 +78,8 @@
     <div data-role="header" >
         <h1>${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
     </div>
     <div id="content_1" data-role="content">
         <c:set var="quest1" value='What is your relationship to ${patient.givenName}&nbsp;${patient.familyName}?'/>
@@ -123,6 +125,8 @@
 				<select name="Informant_2" id="Informant_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2" id="Informant_2_0"/>
 				  <label for="Informant_2_0">Select all that apply</label>
+				  <option name="Informant_2" value="No One" id="Informant_2_noone" data-theme="b" />
+				  <label for="Informant_2_noone">No one (I'm here alone)</label>
 				  <option name="Informant_2" value="mother" id="Informant_2_mother" data-theme="b" />
 				  <label for="Informant_2_mother">Mother</label>
 				  <option name="Informant_2" value="father" id="Informant_2_father" data-theme="b" />
@@ -141,8 +145,6 @@
 				  <label for="Informant_2_sibling">Sibling</label>
 				  <option name="Informant_2" value="Other" id="Informant_2_other" data-theme="b" />
 				  <label for="Informant_2_other">Other</label>
-				  <option name="Informant_2" value="No One" id="Informant_2_noone" data-theme="b" />
-				  <label for="Informant_2_noone">No one (I'm here alone)</label>
 				</select>
 			</fieldset>
 		</div>
@@ -162,8 +164,8 @@
    <div data-role="header" >
         <h1>${formName_sp}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
     </div>
     <div id="content_1_sp" data-role="content">
         <c:set var="quest1_2" value='&iquest;Cu&aacute;l es su relaci&oacute;n con ${patient.givenName}&nbsp;${patient.familyName}?'/>
@@ -209,6 +211,8 @@
 				<select name="Informant_2_2" id="Informant_2_2" multiple="multiple" data-native-menu="false">
 				  <option name="Informant_2_2" id="Informant_2_2_0"/>
 				  <label for="Informant_2_2_0">Elija todos que aplican</label>
+				  <option name="Informant_2_2" value="No One" id="Informant_2_2_noone" data-theme="b" />
+				  <label for="Informant_2_2_noone">Nadie (Estoy solo/a aqu&iacute;)</label>
 				  <option name="Informant_2_2" value="mother" id="Informant_2_2_mother" data-theme="b" />
 				  <label for="Informant_2_2_mother">La madre</label>
 				  <option name="Informant_2_2" value="father" id="Informant_2_2_father" data-theme="b" />
@@ -227,8 +231,6 @@
 				  <label for="Informant_2_2_sibling">El/la hermano/a</label>
 				  <option name="Informant_2_2" value="Other" id="Informant_2_2_other" data-theme="b" />
 				  <label for="Informant_2_2_other">Otra persona</label>
-				  <option name="Informant_2_2" value="No One" id="Informant_2_2_noone" data-theme="b" />
-				  <label for="Informant_2_2_noone">Nadie (Estoy solo/a aqu&iacute;)</label>
 				</select>
 			</fieldset>
 		</div>

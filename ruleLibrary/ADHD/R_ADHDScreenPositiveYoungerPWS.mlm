@@ -120,18 +120,27 @@ endif;
 endif
 ;;
 Action:
-If(ParentVanderbilt = False) AND (preferred_language = Spanish) then
-call CREATE_JIT with "ADHD PS";
-endif;
-If(ParentVanderbilt = False) AND (preferred_language = English) then
-call CREATE_JIT with "ADHD P";
-endif;
-If(ParentVanderbilt = False) AND (preferred_language = null) then
-call CREATE_JIT with "ADHD P";
+parentJITCreated := call hasJITBeenCreated with "ADHD P";
+parentSpanishJITCreated := call hasJITBeenCreated with "ADHD PS";
+teacherJITCreated := call hasJITBeenCreated with "ADHD T";
+
+If(ParentVanderbilt = False) AND (preferred_language = Spanish) AND NOT (parentSpanishJITCreated = "yes") then
 call CREATE_JIT with "ADHD PS";
 endif;
 
-If(TeacherVanderbilt = False) then
+If(ParentVanderbilt = False) AND (preferred_language = English) AND NOT (parentJITCreated = "yes") then
+call CREATE_JIT with "ADHD P";
+endif;
+
+If(ParentVanderbilt = False) AND (preferred_language = null) AND NOT (parentJITCreated = "yes") then
+call CREATE_JIT with "ADHD P";
+endif;
+
+If(ParentVanderbilt = False) AND (preferred_language = null) AND NOT (parentSpanishJITCreated = "yes") then
+call CREATE_JIT with "ADHD PS";
+endif;
+
+If(TeacherVanderbilt = False) AND NOT (teacherJITCreated = "yes") then
 call CREATE_JIT with "ADHD T";
 endif;
 

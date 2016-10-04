@@ -1,0 +1,109 @@
+@import 'pws.css';
+
+#formContainer {
+    width:800px;
+    height:967px;
+    margin:0 auto;
+    border: 1px solid black;
+    background-color:#F5FBEF;
+    box-shadow: 10px 10px 5px #2E2E2E;
+    -webkit-box-shadow: 10px 10px 5px #2E2E2E;
+    -moz-box-shadow: 10px 10px 5px #2E2E2E;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    margin-bottom:40px;
+}
+
+#submitContainer {
+    width:800px;
+    height:50px;
+    text-align:center;
+    margin-top: 818px;
+}
+
+#vitals {
+    width:250px; 
+    height:264px;
+    float:left;
+    border-left: none;
+}
+
+.flagCell, .vitalsNames, .vitalsValues {
+    padding-bottom: 1px;
+}
+
+#vitalsLegendEskenaziEpic {
+    width:800px;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    float:left;
+    margin-left:-1px;
+    height:28px;
+    text-align:center;
+    font-size:0.8em;
+    padding-top:7px;
+    padding-bottom: 5px;
+}
+
+#vitalsLegendIUHCerner {
+	display: none;
+	}
+
+#buttons {
+    width:250px; 
+    height:175px;
+    border-bottom: none; 
+    float:left; 
+    margin-top:5px;
+    margin-left:45px;
+}
+
+@-moz-document url-prefix() {
+    #buttons {
+        margin-top:5px; 
+        height:175px; 
+    }
+}
+
+#examExtras {
+    float:left;
+    width:200px;
+    height:274px; 
+    margin-left:45px;
+}
+
+.examExtraData {
+    width:260px;
+    padding-left:2px;
+    margin: 1px 0 1px 0;
+}
+
+.medicalPerformed {
+    width: 500px;
+    margin-left: -1px;
+	margin-right: -1px;
+	padding-left: 2px; /* Align with tobacco, drugs, and alcohol */
+	padding-bottom: 10px;
+}
+
+/* Hide hearing and vision for Eskenazi */
+.hearing, .vision{
+    display: none;
+}
+
+/* Hide medication label */
+.medicationDiv{
+    display: none;
+}
+
+#painAndAllergiesDiv {
+    width:250px; 
+    height:125px;
+    border-bottom: none; 
+    float:left; 
+    margin-top:5px;
+    margin-left:45px;
+    display: none; /* Hide pain and allergies*/
+}

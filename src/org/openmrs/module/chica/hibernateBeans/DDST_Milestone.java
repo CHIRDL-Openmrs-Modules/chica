@@ -1,7 +1,7 @@
 package org.openmrs.module.chica.hibernateBeans;
 
 /**
- * Holds information to store in the chica_insurance_category table
+ * Holds information to store in the ddst_milestone table
  * 
  * @author Tammy Dugan
  */
