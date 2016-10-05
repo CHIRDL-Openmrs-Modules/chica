@@ -196,32 +196,6 @@
                                                   <td>
                                                   <xsl:choose>
                                                   <xsl:when
-                                                  test="Records/Record/Field[@id = 'NoVision']/Value = 'Y'"
-                                                  ><input name="Vision" type="checkbox"
-                                                  value="Vision" checked="checked"
-                                                  onclick="return false" onkeydown="return false"
-                                                  /></xsl:when>
-                                                  <xsl:otherwise><input name="Vision"
-                                                  type="checkbox" value="Vision"
-                                                  onclick="return false" onkeydown="return false"
-                                                  /></xsl:otherwise>
-                                                  </xsl:choose>Vision</td>
-                                                  <td>
-                                                  <xsl:choose>
-                                                  <xsl:when
-                                                  test="Records/Record/Field[@id = 'NoHearing']/Value = 'Y'"
-                                                  ><input name="Hearing" type="checkbox"
-                                                  value="Hearing" checked="checked"
-                                                  onclick="return false" onkeydown="return false"
-                                                  /></xsl:when>
-                                                  <xsl:otherwise><input name="Hearing"
-                                                  type="checkbox" value="Hearing"
-                                                  onclick="return false" onkeydown="return false"
-                                                  /></xsl:otherwise>
-                                                  </xsl:choose>Hearing</td>
-                                                  <td>
-                                                  <xsl:choose>
-                                                  <xsl:when
                                                   test="Records/Record/Field[@id = 'NoBP']/Value = 'Y'"
                                                   ><input name="BP" type="checkbox" value="BP"
                                                   checked="checked" onclick="return false"
@@ -254,40 +228,6 @@
                                                   />&#160;<xsl:variable name="weightUnits"
                                                   select="Records/Record/Field[@id = 'WeightSUnits']"/>
                                                   <xsl:value-of select="$weightUnits/Value"/></td>
-                                                  <td rowspan="3">
-                                                  <table align="center" border="0" cellpadding="1"
-                                                  cellspacing="1">
-                                                  <tbody>
-                                                  <tr>
-                                                  <td style="text-align: right;"> Vision Left:</td>
-                                                  <td>20/<xsl:variable name="vision"
-                                                  select="Records/Record/Field[@id = 'VisionL']"/>
-                                                  <xsl:value-of select="$vision/Value"/></td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td style="text-align: right;"> Vision Right:</td>
-                                                  <td>20/<xsl:variable name="vision"
-                                                  select="Records/Record/Field[@id = 'VisionR']"/>
-                                                  <xsl:value-of select="$vision/Value"/></td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td colspan="2" style="text-align: center;">
-                                                  Vision Corrected? <xsl:choose>
-                                                  <xsl:when
-                                                  test="Records/Record/Field[@id = 'Vision_Corrected']/Value = 'Y'"
-                                                  ><input name="VisionCorrected" type="checkbox"
-                                                  value="VisionCorrected" checked="checked"
-                                                  onclick="return false" onkeydown="return false"
-                                                  /></xsl:when>
-                                                  <xsl:otherwise><input name="VisionCorrected"
-                                                  type="checkbox" value="VisionCorrected"
-                                                  onclick="return false" onkeydown="return false"
-                                                  /></xsl:otherwise>
-                                                  </xsl:choose></td>
-                                                  </tr>
-                                                  </tbody>
-                                                  </table>
-                                                  </td>
                                                   </tr>
                                                   <tr>
                                                   <td style="text-align: right;"> HC:</td>
@@ -366,76 +306,6 @@
                                                               </xsl:otherwise>
                                                           </xsl:choose>Axillary
                                                       </td>
-                                                  <td align="center">P</td>
-                                                  <td align="center">F</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td style="text-align: right;"> Left Ear @
-                                                  25db:</td>
-                                                  <td>
-                                                  <xsl:choose>
-                                                  <xsl:when
-                                                  test="Records/Record/Field[@id = 'HearL']/Value = 'P'">
-                                                  <input name="leftEarPass" type="checkbox"
-                                                  value="leftEarPass" checked="checked"
-                                                  onclick="return false" onkeydown="return false"/>
-                                                  </xsl:when>
-                                                  <xsl:otherwise>
-                                                  <input name="leftEarPass" type="checkbox"
-                                                  value="leftEarPass" onclick="return false"
-                                                  onkeydown="return false"/>
-                                                  </xsl:otherwise>
-                                                  </xsl:choose>
-                                                  </td>
-                                                  <td>
-                                                  <xsl:choose>
-                                                  <xsl:when
-                                                  test="Records/Record/Field[@id = 'HearL']/Value = 'F'">
-                                                  <input name="leftEarFail" type="checkbox"
-                                                  value="leftEarFail" checked="checked"
-                                                  onclick="return false" onkeydown="return false"/>
-                                                  </xsl:when>
-                                                  <xsl:otherwise>
-                                                  <input name="leftEarFail" type="checkbox"
-                                                  value="leftEarFail" onclick="return false"
-                                                  onkeydown="return false"/>
-                                                  </xsl:otherwise>
-                                                  </xsl:choose>
-                                                  </td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td style="text-align: right;"> Right Ear @
-                                                  25db:</td>
-                                                  <td>
-                                                  <xsl:choose>
-                                                  <xsl:when
-                                                  test="Records/Record/Field[@id = 'HearR']/Value = 'P'">
-                                                  <input name="rightEarPass" type="checkbox"
-                                                  value="rightEarPass" checked="checked"
-                                                  onclick="return false" onkeydown="return false"/>
-                                                  </xsl:when>
-                                                  <xsl:otherwise>
-                                                  <input name="rightEarPass" type="checkbox"
-                                                  value="rightEarPass" onclick="return false"
-                                                  onkeydown="return false"/>
-                                                  </xsl:otherwise>
-                                                  </xsl:choose>
-                                                  </td>
-                                                  <td>
-                                                  <xsl:choose>
-                                                  <xsl:when
-                                                  test="Records/Record/Field[@id = 'HearR']/Value = 'F'">
-                                                  <input name="rightEarFail" type="checkbox"
-                                                  value="rightEarFail" checked="checked"
-                                                  onclick="return false" onkeydown="return false"/>
-                                                  </xsl:when>
-                                                  <xsl:otherwise>
-                                                  <input name="rightEarFail" type="checkbox"
-                                                  value="rightEarFail" onclick="return false"
-                                                  onkeydown="return false"/>
-                                                  </xsl:otherwise>
-                                                  </xsl:choose>
-                                                  </td>
                                                   </tr>
                                                   </tbody>
                                                   </table>
