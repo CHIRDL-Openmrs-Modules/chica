@@ -80,7 +80,8 @@ public class VendorImpl implements Vendor {
 	 * @see org.openmrs.module.chica.vendor.Vendor#getProviderId()
 	 */
 	public String getProviderId() {
-		return request.getParameter(PARAM_PROVIDER_ID);
+		// DWE CHICA-861 Trim leading and trailing white space, we found that the url contained a space in this parameter
+		return removeWhiteSpaceFromParameter(PARAM_PROVIDER_ID);
 	}
 	
 	/**
@@ -145,5 +146,22 @@ public class VendorImpl implements Vendor {
 		}
 		
 		return key;
+	}
+	
+	/**
+	 * Removes whitespace from the parameter value
+	 * @param parameterName
+	 * @return
+	 */
+	public String removeWhiteSpaceFromParameter(String parameterName)
+	{
+		String paramValue = request.getParameter(parameterName);
+		
+		if(paramValue != null && paramValue.length() > 0)
+		{
+			paramValue = paramValue.trim();
+		}
+		
+		return paramValue;
 	}
 }
