@@ -56,7 +56,7 @@
 								<table border="0" cellpadding="1" cellspacing="1">
 									<tbody>
 										<div id="psfTitleContainer">
-											<span style="font-size:16px;">
+											<span style="font-size:19px;">
 												<strong>CHICA Pre-Screening</strong>
                                             </span>
 										</div>
