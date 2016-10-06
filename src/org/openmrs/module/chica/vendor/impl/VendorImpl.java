@@ -13,8 +13,12 @@
  */
 package org.openmrs.module.chica.vendor.impl;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -39,6 +43,9 @@ public class VendorImpl implements Vendor {
 	protected static final String PARAM_FORM_NAME = "formName";
 	protected static final String PARAM_PASSWORD = "password";
 	protected static final String PARAM_USERNAME = "username";
+	private static final char CHARACTER_SPACE = ' ';
+	private static final String STRING_SPACE = " ";
+	private static final String REPLACEMENT_VALUE_ZERO = "0";
 	
 	protected HttpServletRequest request = null;
 	
@@ -81,7 +88,7 @@ public class VendorImpl implements Vendor {
 	 */
 	public String getProviderId() {
 		// DWE CHICA-861 Trim leading and trailing white space, we found that the url contained a space in this parameter
-		return removeWhiteSpaceFromParameter(PARAM_PROVIDER_ID);
+		return removeLeadingTrailingSpacesAddLeadingZeros(PARAM_PROVIDER_ID);
 	}
 	
 	/**
@@ -149,17 +156,43 @@ public class VendorImpl implements Vendor {
 	}
 	
 	/**
-	 * Removes whitespace from the parameter value
+	 * DWE CHICA-861
+	 * Removes the first whitespace and replaces all others with zeros
+	 * Also removes trailing spaces, but leaves any spaces in the middle
+	 * 
+	 * The examples observed so far always contain atleast one space, followed by more spaces that should be zeros
+	 * For example, "   1234" should be "001234" but comes across with 3 leading spaces. 
+	 * The first is removed but the others are replaced by zeros. Also remove trailing spaces.
+	 * If the parameter contains spaces in the middle of the value, they are left in place
+	 * For example, "     1234   5678   " will become "00001234   5678"
+	 * 
 	 * @param parameterName
 	 * @return
 	 */
-	public String removeWhiteSpaceFromParameter(String parameterName)
+	public String removeLeadingTrailingSpacesAddLeadingZeros(String parameterName)
 	{
 		String paramValue = request.getParameter(parameterName);
 		
 		if(paramValue != null && paramValue.length() > 0)
 		{
-			paramValue = paramValue.trim();
+			if(paramValue.charAt(0) == CHARACTER_SPACE) 
+			{
+				paramValue = paramValue.substring(1); // Remove the leading space, but leave the rest of the leading spaces
+			}
+			
+			paramValue = StringUtils.stripEnd(paramValue, STRING_SPACE); // Remove all trailing spaces
+			
+			if(paramValue.length() > 0 && paramValue.charAt(0) == CHARACTER_SPACE)
+			{
+				// Replace all of the remaining leading spaces with zeros. This will leave any spaces in the middle as is
+				Pattern p = Pattern.compile("^(\\s*)(.+)$");
+				Matcher m = p.matcher(paramValue);
+
+				if (m.matches()) 
+				{
+					paramValue = m.group(1).replaceAll(STRING_SPACE, REPLACEMENT_VALUE_ZERO) + m.group(2);
+				}
+			}
 		}
 		
 		return paramValue;
