@@ -88,7 +88,15 @@ public class VendorImpl implements Vendor {
 	 */
 	public String getProviderId() {
 		// DWE CHICA-861 Trim leading and trailing white space, we found that the url contained a space in this parameter
-		return removeLeadingTrailingSpacesAddLeadingZeros(PARAM_PROVIDER_ID);
+		try
+		{
+			return removeLeadingTrailingSpacesAddLeadingZeros(PARAM_PROVIDER_ID);
+		}
+		catch(Exception e)
+		{
+			log.error("Error getting " + PARAM_PROVIDER_ID + " parameter in HTTP request.", e);
+			return "";
+		}
 	}
 	
 	/**
@@ -169,7 +177,7 @@ public class VendorImpl implements Vendor {
 	 * @param parameterName
 	 * @return
 	 */
-	public String removeLeadingTrailingSpacesAddLeadingZeros(String parameterName)
+	public String removeLeadingTrailingSpacesAddLeadingZeros(String parameterName) throws Exception
 	{
 		String paramValue = request.getParameter(parameterName);
 		
