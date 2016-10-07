@@ -125,17 +125,6 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="text-align: center;">
-								<strong>
-									<u>Please fill in the circles completely with a pencil or
-										pen</u>
-								</strong>
-								<u>
-									<strong>.</strong>
-								</u>
-							</td>
-						</tr>
-						<tr>
 							<td>
 								<table align="center" border="0" cellpadding="1" cellspacing="1">
 									<tbody>
