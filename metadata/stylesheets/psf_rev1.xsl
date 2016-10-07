@@ -993,9 +993,7 @@
 									seran completamente privadas. No necesita contestar
 										<strong>ninguna</strong> pregunta que no desee contestar. Si
 									usted tiene preguntas acerca de este cuestionario, haga el favor
-									de hablar sobre ellas con su doctor. <strong><u>Por favor llene
-											los circulos de la forma mas completa que le sea posible
-											con un lapiz o lapiz tinta.</u></strong></span>
+									de hablar sobre ellas con su doctor. </span>
 							</td>
 						</tr>
 						<tr>
