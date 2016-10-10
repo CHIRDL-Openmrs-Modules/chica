@@ -94,6 +94,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	private static final String DEFAULT_TXA_19 = "AV";
 	private static final String PROPERTY_TXA_16_PROVIDER_ID = "PROVIDER_ID";
 	private static final String MSH_PROCESSING_ID = "P"; // Production;
+	private static final String PWS_PROVIDER_SUBMIT = "PWS_provider_submit";
 	
 	/**
 	 * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#changeState(org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState,
@@ -409,7 +410,21 @@ public class ExportPhysicianNote implements ProcessStateAction {
 					if(obs != null && obs.size() > 0)
 					{
 						txa16Value = obs.get(0).getValueText();
-					}	
+					}
+					else
+					{
+						// DWE CHICA-861 If we did not find and obs for "PROVIDER_ID", attempt to use the provider Id of the person that submitted the PWS
+						questions.clear();
+						concept = conceptService.getConcept(PWS_PROVIDER_SUBMIT);
+						questions.add(concept);
+						obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
+								null, null, null, null, false);
+						
+						if(obs != null && obs.size() > 0)
+						{
+							txa16Value = obs.get(0).getValueText();
+						}
+					}
 				}
 				catch(Exception e)
 				{
