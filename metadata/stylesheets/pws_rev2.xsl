@@ -628,7 +628,7 @@
 							
 							<div id="vitalsLegend">
 		                    	<div class="vitalsLegendRow"><b><font style="color:red;">*</font>=Abnormal,</b></div>
-		                    	<div class="vitalsLegendRow"><b>A=Axillary, R=Rectal, O=Oral,</b></div>
+		                    	<div class="vitalsLegendRow"><b>A=Axillary, R=Rectal, O=Oral</b></div>
 		                    </div>
 		                </div>
 						<div id="examExtras">
