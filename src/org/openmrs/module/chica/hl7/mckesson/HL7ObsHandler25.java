@@ -512,7 +512,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
     	OBX obx = getOBX(message, orderRep, obxRep);
     	if(obx != null){
     		CE units = obx.getUnits();
-    		return units.getText().toString();
+    		return units.getIdentifier().getValue();
     	}
     				
 		return "";
