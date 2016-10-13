@@ -182,7 +182,8 @@ public class HL7StoreObsRunnable implements Runnable {
 				}
 				
 				if (mappedConcept != null) {
-					currConceptName = mappedConcept.getName().getName();			
+					currConceptName = mappedConcept.getName().getName();
+					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedConcept);
 					currObs.setConcept(mappedConcept);
 				}
 				
@@ -226,7 +227,7 @@ public class HL7StoreObsRunnable implements Runnable {
 							        + ". Could not store vitals observation.");
 						}
 					}
-					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedConcept);
+					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedVitalsConcept);
 					currObs.setConcept(mappedVitalsConcept);
 					currObs.setLocation(location);
 					obsService.saveObs(currObs, null);
