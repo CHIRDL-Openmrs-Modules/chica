@@ -47,12 +47,14 @@ Age := call ChicaAgeRule with "years";
 If (tobacco = "True") then || tobacco || = "Y";
 If (tobacco = Null) then || tobacco || = "unknown";
 If (tobacco = "False") then || tobacco || = "N";
-If (drugs1 = no) AND (drugs2 = no) AND (drugs3 = no) AND (drugs4 = no)AND (drugs5 = no) then || drugs || = "N";
-If (drugs1 = Null) OR (drugs2 = Null) OR (drugs3 = Null) OR (drugs4 = Null) OR (drugs5 = Null) then || drugs || = "unknown";
+
+If (drugs1 = no) OR (drugs2 = no) OR (drugs3 = no) OR (drugs4 = no) OR (drugs5 = no) then || drugs || = "N";
 If (drugs1 = yes) OR (drugs2 = yes) OR (drugs3 = yes) OR (drugs4 = yes) OR (drugs5 = yes) then || drugs || = "Y";
-If (alcohol1 = no) AND (alcohol2 = no) AND (alcohol3 = no) AND (alcohol4 = no) then || alcohol || = "N";
-If (alcohol1 = Null) OR (alcohol2 = Null) OR (alcohol3 = Null) OR (alcohol4 = Null) then || alcohol || = "unknown";
+If (drugs1 = Null) AND (drugs2 = Null) AND (drugs3 = Null) AND (drugs4 = Null) AND (drugs5 = Null) then || drugs || = "unknown";
+
+If (alcohol1 = no) OR (alcohol2 = no) OR (alcohol3 = no) OR (alcohol4 = no) then || alcohol || = "N";
 If (alcohol1 = yes) OR (alcohol2 = yes) OR (alcohol3 = yes) OR (alcohol4 = yes) then || alcohol || = "Y";
+If (alcohol1 = Null) AND (alcohol2 = Null) AND (alcohol3 = Null) AND (alcohol4 = Null) then || alcohol || = "unknown";
 
 If (Age > 10 ) then || headalc || = "Alcohol";
 If (Age > 10 ) then || headtob || = "Tobacco";
