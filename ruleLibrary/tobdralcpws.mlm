@@ -48,7 +48,7 @@ If (tobacco = "True") then || tobacco || = "Y";
 If (tobacco = Null) then || tobacco || = "unknown";
 If (tobacco = "False") then || tobacco || = "N";
 
-If (drugs1 = no) OR (drugs2 = no) OR (drugs3 = no) AND (drugs4 = no) AND (drugs5 = no) then || drugs || = "N";
+If (drugs1 = no) OR (drugs2 = no) OR (drugs3 = no) OR (drugs4 = no) OR (drugs5 = no) then || drugs || = "N";
 If (drugs1 = yes) OR (drugs2 = yes) OR (drugs3 = yes) OR (drugs4 = yes) OR (drugs5 = yes) then || drugs || = "Y";
 If (drugs1 = Null) AND (drugs2 = Null) AND (drugs3 = Null) AND (drugs4 = Null) AND (drugs5 = Null) then || drugs || = "unknown";
 
