@@ -220,6 +220,8 @@ public class HL7SocketHandler extends
 				if (personAttrType != null) {
 					PersonAttribute personAttr = new PersonAttribute(
 							personAttrType, ssn);
+					UUID uuid = UUID.randomUUID();
+					personAttr.setUuid(uuid.toString());
 					hl7Patient.addAttribute(personAttr);
 				}
 			}
@@ -928,6 +930,8 @@ public class HL7SocketHandler extends
 			if (personAttrType != null) {
 				PersonAttribute personAttr = new PersonAttribute(
 						personAttrType, newSSN.getIdentifier());
+				UUID uuid = UUID.randomUUID();
+				personAttr.setUuid(uuid.toString());
 				currentPatient.addAttribute(personAttr);
 			}
 			return;
@@ -968,6 +972,8 @@ public class HL7SocketHandler extends
 		if (currentReligionAttr == null ||
 				!currentReligionAttr.getValue().equalsIgnoreCase(
 						newReligion)) {
+			UUID uuid = UUID.randomUUID();
+			newReligionAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(newReligionAttr);
 		}
 
@@ -998,6 +1004,8 @@ public class HL7SocketHandler extends
 		String newMaritalStat = newMaritalStatAttr.getValue();
 		if ( currentMaritalStatAttr == null 
 				|| !currentMaritalStatAttr.getValue().equalsIgnoreCase(newMaritalStat)) {
+			UUID uuid = UUID.randomUUID();
+			newMaritalStatAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(newMaritalStatAttr);
 		}
 
@@ -1028,6 +1036,8 @@ public class HL7SocketHandler extends
 					|| currentMaidenNameAttr.getValue() == null
 					|| !currentMaidenNameAttr.getValue().equalsIgnoreCase(
 							newMaidenName)) {
+			UUID uuid = UUID.randomUUID();
+			newMaidenNameAttr.setUuid(uuid.toString());
 				currentPatient.addAttribute(newMaidenNameAttr);
 		}
 		
@@ -1059,6 +1069,8 @@ public class HL7SocketHandler extends
 				|| currentNextOfKinNameAttr.getValue() == null
 				|| !currentNextOfKinNameAttr.getValue().equalsIgnoreCase(
 						newNextOfKinName)) {
+					UUID uuid = UUID.randomUUID();
+					newNextOfKinNameAttr.setUuid(uuid.toString());
 					currentPatient.addAttribute(newNextOfKinNameAttr);
 				}
 	}
@@ -1088,6 +1100,8 @@ public class HL7SocketHandler extends
 		String newTelNumName = hl7TelNumAttr.getValue();
 		if (currentTelNumAttr == null || currentTelNumAttr.getValue() == null
 				||  !currentTelNumAttr.getValue().equals( newTelNumName)) {
+					UUID uuid = UUID.randomUUID();
+					hl7TelNumAttr.setUuid(uuid.toString());		
 					currentPatient.addAttribute(hl7TelNumAttr);
 				}
 		}
@@ -1112,6 +1126,8 @@ public class HL7SocketHandler extends
 
 		if (currentCitizenshipAttr == null || currentCitizenshipAttr.getValue() == null
 				|| ! currentCitizenshipAttr.getValue().equals(hl7Citizenship)){
+			UUID uuid = UUID.randomUUID();
+			hl7CitizenshipAttr.setUuid(uuid.toString());	
 			currentPatient.addAttribute(hl7CitizenshipAttr);
 		}
 	}
@@ -1135,6 +1151,8 @@ public class HL7SocketHandler extends
 		
 		if (currentRaceAttr == null || currentRaceAttr.getValue() == null
 			|| !currentRaceAttr.getValue().equals(hl7Race)){
+			UUID uuid = UUID.randomUUID();
+			hl7RaceAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(hl7RaceAttr);
 		}
 		
@@ -1192,7 +1210,7 @@ public class HL7SocketHandler extends
 			PatientIdentifier newPatientIdentifier= newPatient.getPatientIdentifier();
 
 			existingMRN = existingPatientIdentifier.getIdentifier();
-			newMRN = null;
+			newMRN = newPatientIdentifier.getIdentifier();
 
 			PatientIdentifierType identifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
@@ -1484,6 +1502,8 @@ public class HL7SocketHandler extends
 		
 		if (currentAccountNumberAttr == null || currentAccountNumberAttr.getValue() == null
 			|| !currentAccountNumberAttr.getValue().equals(hl7AccountNumberAttr.getValue())){
+			UUID uuid = UUID.randomUUID();
+			hl7AccountNumberAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(hl7AccountNumberAttr);
 		}
 	}
@@ -1637,6 +1657,8 @@ public class HL7SocketHandler extends
 		
 		if (currentEthnicityAttr == null || currentEthnicityAttr.getValue() == null
 			|| !currentEthnicityAttr.getValue().equals(hl7EthnicityAttr.getValue())){
+			UUID uuid = UUID.randomUUID();
+			hl7EthnicityAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(hl7EthnicityAttr);
 		}
 	}
