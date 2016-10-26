@@ -1262,7 +1262,8 @@ public class HL7SocketHandler extends
 			
 			for(PatientIdentifier identifier:currIdentifiers){
 				String identifierStr = identifier.getIdentifier();
-				if(identifierStr!=null && identifierStr.equals(newMRN)){
+				if(identifier.getIdentifierType().getName().equals(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN)&&
+						identifierStr!=null && identifierStr.equals(newMRN)){
 					identifier.setPreferred(true);
 					foundMatchingMRN = true;
 					//unvoid the existing identifier
@@ -1712,7 +1713,8 @@ public class HL7SocketHandler extends
 			
 			for(PatientIdentifier identifier:currIdentifiers){
 				String identifierStr = identifier.getIdentifier();
-				if(identifierStr!=null && identifierStr.equals(newMRNEHR)){
+				if(identifier.getIdentifierType().getName().equals(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR)&&
+						identifierStr!=null && identifierStr.equals(newMRNEHR)){
 					foundMatchingMRN = true;
 					//unvoid the existing identifier
 					identifier.setVoided(false);
