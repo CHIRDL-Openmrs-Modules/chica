@@ -377,6 +377,8 @@ public class HL7SocketHandler implements Application {
 									}
 
 									convertVitalsUnits(obs, mappedConcept);
+									//void all previous values for this concept
+									org.openmrs.module.atd.util.Util.voidObsForConcept(mappedConcept, encounterId, null, "voided due to new vitals");
 									obs.setConcept(mappedConcept);
 									obs.setLocation(location); 
 									obs.setEncounter(encounter);
