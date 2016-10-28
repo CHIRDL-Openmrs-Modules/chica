@@ -764,12 +764,14 @@ public class HL7SocketHandler extends
 
 			}
 
-			if (newName.getUuid() == null) {
-				UUID uuid = UUID.randomUUID();
-				newName.setUuid(uuid.toString());
+			if(!found){
+				if (newName.getUuid() == null) {
+					UUID uuid = UUID.randomUUID();
+					newName.setUuid(uuid.toString());
+					currentPatient.addName(newName);
+				}
 			}
-
-			currentPatient.addName(newName);
+			
 			Set<PersonName> names = currentPatient.getNames();
 
 			// reset all addresses preferred status
@@ -1251,16 +1253,40 @@ public class HL7SocketHandler extends
 			existingPatientIdentifier.setVoidedBy(Context.getAuthenticatedUser());
 			existingPatientIdentifier.setDateVoided(new Date());
 
+			
+			Set<PatientIdentifier> currIdentifiers = existingPatient.getIdentifiers();
+			
+			//See if the identifier already exists
+			//If it does, set it as preferred
+			boolean foundMatchingMRN = false;
+			
+			for(PatientIdentifier identifier:currIdentifiers){
+				String identifierStr = identifier.getIdentifier();
+				if(identifier.getIdentifierType().getName().equals(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN)&&
+						identifierStr!=null && identifierStr.equals(newMRN)){
+					identifier.setPreferred(true);
+					foundMatchingMRN = true;
+					//unvoid the existing identifier
+					identifier.setVoided(false);
+					identifier.setVoidedBy(null);
+					identifier.setDateVoided(null);
+					break;
+				}
+			}
+			
 			//Create the new identifier object and add to existing patient
-			PatientIdentifier newIdentifier = new PatientIdentifier();
-			newIdentifier.setIdentifier(newMRN);
-			newIdentifier.setIdentifierType( patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN));
-			newIdentifier.setLocation(newPatientIdentifier.getLocation());
-			newIdentifier.setPatient(existingPatient);
-			newIdentifier.setPreferred(true);
-			newIdentifier.setCreator(Context.getAuthenticatedUser());
-			newIdentifier.setDateCreated(new Date());
-			existingPatient.addIdentifier(newIdentifier);
+			if (!foundMatchingMRN) {
+				PatientIdentifier newIdentifier = new PatientIdentifier();
+				newIdentifier.setIdentifier(newMRN);
+				newIdentifier.setIdentifierType(patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN));
+				newIdentifier.setLocation(newPatientIdentifier.getLocation());
+				newIdentifier.setPatient(existingPatient);
+				newIdentifier.setPreferred(true);
+				newIdentifier.setCreator(Context.getAuthenticatedUser());
+				newIdentifier.setDateCreated(new Date());
+				
+				existingPatient.addIdentifier(newIdentifier);
+			}
 
 		} catch (Exception e) {
 			log.error("Exception adding new MRN to existing patient. Existing MRN: " 
@@ -1657,10 +1683,13 @@ public class HL7SocketHandler extends
 
 			PatientIdentifier piNewPatient = newPatient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR);
 			
-			if(piExistingPatient != null)
-			{
-				// Identifier already exists don't create another
-				return;
+			if(piExistingPatient != null){
+				existingMRNEHR = piExistingPatient.getIdentifier();
+			
+				//void the existing identifier
+				piExistingPatient.setVoided(true);
+				piExistingPatient.setVoidedBy(Context.getAuthenticatedUser());
+				piExistingPatient.setDateVoided(new Date());
 			}
 			
 			if(piNewPatient == null)
@@ -1674,17 +1703,40 @@ public class HL7SocketHandler extends
 			{
 				return;
 			}
-
+			
+			
 			//Create the new identifier object and add to existing patient
-			PatientIdentifier newIdentifier = new PatientIdentifier();
-			newIdentifier.setIdentifier(newMRNEHR);
-			newIdentifier.setIdentifierType( patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR));
-			newIdentifier.setLocation(piNewPatient.getLocation());
-			newIdentifier.setPatient(existingPatient);
-			newIdentifier.setPreferred(false); // THIS SHOULD NOT BE SET AS THE PREFERRED IDENTIFIER
-			newIdentifier.setCreator(Context.getAuthenticatedUser());
-			newIdentifier.setDateCreated(new Date());
-			existingPatient.addIdentifier(newIdentifier);
+			Set<PatientIdentifier> currIdentifiers = existingPatient.getIdentifiers();
+			
+			//See if the identifier already exists
+			boolean foundMatchingMRN = false;
+			
+			for(PatientIdentifier identifier:currIdentifiers){
+				String identifierStr = identifier.getIdentifier();
+				if(identifier.getIdentifierType().getName().equals(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR)&&
+						identifierStr!=null && identifierStr.equals(newMRNEHR)){
+					foundMatchingMRN = true;
+					//unvoid the existing identifier
+					identifier.setVoided(false);
+					identifier.setVoidedBy(null);
+					identifier.setDateVoided(null);
+					break;
+				}
+			}
+			
+			//Create the new identifier object and add to existing patient
+			if (!foundMatchingMRN) {
+				PatientIdentifier newIdentifier = new PatientIdentifier();
+				newIdentifier.setIdentifier(newMRNEHR);
+				newIdentifier.setIdentifierType(patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR));
+				newIdentifier.setLocation(piNewPatient.getLocation());
+				newIdentifier.setPatient(existingPatient);
+				newIdentifier.setPreferred(false); // THIS SHOULD NOT BE SET AS THE PREFERRED IDENTIFIER
+				newIdentifier.setCreator(Context.getAuthenticatedUser());
+				newIdentifier.setDateCreated(new Date());
+				
+				existingPatient.addIdentifier(newIdentifier);
+			}
 
 		} catch (Exception e) {
 			log.error("Exception adding new " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + " to existing patient. Existing " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + ": " 
