@@ -122,6 +122,60 @@ public class Util {
 		    formInstance, ruleId, locationTagId, usePrintedTimestamp, formFieldId);
 	}
 	
+	
+	/**
+	 * This method is duplicated in atd. It is in chica because the chica rules need it
+	 * @param concept
+	 * @param encounterId
+	 * @param formFieldId - DWE CHICA-437 the form field id or null if one is not used
+	 */
+	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId)
+	{
+		voidObsForConcept(concept,encounterId, formFieldId,"voided due to rescan");
+	}
+	
+	private static List<Obs> findObsToVoid(Concept concept,Integer encounterId, Integer formFieldId){
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		ObsService obsService = Context.getObsService();
+		
+		// DWE CHICA-437 Before voiding obs records, we need to check to see if there is an 
+		// existing atd_statistics record. This is needed for cases where a form may have more
+		// than one field that uses the same concept and the same rule. Checking the atd_statistics
+		// table will allow us to determine if the obs record is for the specified field
+		List<Obs> obs = new ArrayList<Obs>();
+		if(formFieldId != null)
+		{
+			// Get a list of obs records that have a related atd_statistics record.
+			// This will give us a list of obs records that can be voided below
+			ATDService atdService = Context.getService(ATDService.class);
+			obs = atdService.getObsWithStatistics(encounter.getEncounterId(), concept.getConceptId(), formFieldId, false);
+		}
+		else
+		{
+			// Use previously existing functionality for cases where we don't have a formFieldId
+			// Examples of this can be seen in calculatePercentiles()
+			List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+			encounters.add(encounter);
+			List<Concept> questions = new ArrayList<Concept>();
+			
+			questions.add(concept);
+			obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
+					null, null, null, null, false);
+		}
+		return obs;
+	}
+	
+	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId, String voidReason)
+	{
+		List<Obs> obs = findObsToVoid(concept,encounterId, formFieldId);
+		ObsService obsService = Context.getObsService();
+		
+		for(Obs currObs:obs){
+			obsService.voidObs(currObs, voidReason);
+		}
+	}
+	
 	public static String sendPage(String message, String pagerNumber) {
 		AdministrationService adminService = Context.getAdministrationService();
 		String idParam = adminService.getGlobalProperty("chica.pagerUrlNumberParam");
@@ -606,7 +660,7 @@ public class Util {
 			if (percentile != null) {
 				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
 				
-				org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
 				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
 				    new Date());
 			}
@@ -623,7 +677,7 @@ public class Util {
 			    patient.getBirthdate(), "hc", null);
 			if (percentile != null) {
 				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
-				org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
 				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
 				    new Date());
 			}
@@ -640,7 +694,7 @@ public class Util {
 			    patient.getBirthdate(), "length", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
 			if (percentile != null) {
 				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
-				org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
 				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
 				    new Date());
 			}
@@ -657,7 +711,7 @@ public class Util {
 			    patient.getBirthdate(), "weight", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
 			if (percentile != null) {
 				percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2); // round percentile to two places
-				org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
+				org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
 				org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, percentile.toString(),
 				    new Date());
 			}
@@ -670,7 +724,7 @@ public class Util {
 		
 		result = atdService.evaluateRule("bp", patient, parameters);
 		if (!(result instanceof EmptyResult)) {
-			org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
 			org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(), new Date());
 		}
 		
@@ -681,7 +735,7 @@ public class Util {
 		
 		result = atdService.evaluateRule("bmi", patient, parameters);
 		if (!(result instanceof EmptyResult)) {
-			org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
+			org.openmrs.module.chica.util.Util.voidObsForConcept(concept, encounterId, null); // DWE CHICA-437 Added formFieldId parameter - intentionally null here
 			org.openmrs.module.chirdlutil.util.Util.saveObs(patient, concept, encounterId, result.toString(), new Date());
 		}
 		
