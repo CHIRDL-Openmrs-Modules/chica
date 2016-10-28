@@ -1407,9 +1407,6 @@ public class HL7SocketHandler extends
 			int age = Util.getAgeInUnits(dob, new java.util.Date(), ChirdlUtilConstants.YEAR_ABBR);
 
 			if (age >= ageLimit){
-				//save the message
-				Patient patient = this.getPatientFromMessage(message);
-				saveMessage(message, patient, false, false);
 				return !ageOk;
 			}
 			
@@ -1444,13 +1441,12 @@ public class HL7SocketHandler extends
 		Integer patientId = null;
 		if (patient != null) {
 			patientId = patient.getPatientId();
-		}
-		
-		try {
-			sockethl7listenerService.setHl7Message(patientId, null, this.parser.encode(message),
-					duplicateString, duplcateEncounter, super.getPort());
-		} catch (HL7Exception e) {
-			log.error("Error saving HL7 registration message.", e);
+			try {
+				sockethl7listenerService.setHl7Message(patientId, null, this.parser.encode(message),
+						duplicateString, duplcateEncounter, super.getPort());
+			} catch (HL7Exception e) {
+				log.error("Error saving HL7 registration message.", e);
+			}
 		}
 	}
 	
