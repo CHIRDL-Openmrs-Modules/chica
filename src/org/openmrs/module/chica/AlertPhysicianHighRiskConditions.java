@@ -14,21 +14,23 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.Encounter;
 import org.openmrs.Form;
-import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Person;
+import org.openmrs.PersonAttribute;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.scheduler.tasks.AbstractTask;
-import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
 
 /**
  * @author Tammy Dugan
@@ -59,10 +61,11 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		EncounterService encounterService = Context.getEncounterService();
 		
 		//get encounters that should have been submitted but have not been processed by the task
-		List<Encounter> encounters = encounterService.getEncounters(null, null, startDate, endDate, null, null, null, false);
+		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(null, null, startDate, endDate, null, null,
+		    null, false);
 		ObsService obsService = Context.getObsService();
 		ConceptService conceptService = Context.getConceptService();
-		HashSet<Encounter> notificationSet = new HashSet<Encounter>();
+		HashSet<org.openmrs.Encounter> notificationSet = new HashSet<org.openmrs.Encounter>();
 		
 		//get suicide observations
 		List<Concept> questions = new ArrayList<Concept>();
@@ -86,17 +89,55 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		
 		addEncounters(obs, notificationSet);
 		
-		//TODO construct and send email
+		ChirdlUtilBackportsService cub = Context.getService(ChirdlUtilBackportsService.class);
+		
+		for (org.openmrs.Encounter encounter : notificationSet) {
+			Encounter chicaEncounter = (Encounter) encounterService.getEncounter(encounter.getEncounterId());
+			Integer locationId = chicaEncounter.getLocation().getLocationId();
+			String printerLocation = chicaEncounter.getPrinterLocation();
+			if (printerLocation != null) {
+				LocationTagAttribute locTagAttr = cub.getLocationTagAttribute(printerLocation.trim());
+				if (locTagAttr != null) {
+					Integer locationTagId = locTagAttr.getLocationTagAttributeId();
+					sendEmailNotification(locationId, locationTagId);
+				}
+			}
+		}
 		
 		Context.closeSession();
 		
 	}
 	
-	private static void addEncounters(List<Obs> obs, HashSet<Encounter> notificationSet) {
+	private static void sendEmailNotification(Integer locationId, Integer locationTagId) {
+		ChirdlUtilBackportsService cub = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTagAttributeValue lav = cub.getLocationTagAttributeValue(locationTagId, "HighRiskContact", locationId);
+		PersonService personService = Context.getPersonService();
+		if (lav != null) {
+			String highRiskPersonIdStr = lav.getValue();
+			if (highRiskPersonIdStr != null) {
+				try {
+					Integer personId = Integer.parseInt(highRiskPersonIdStr);
+					Person person = personService.getPerson(personId);
+					if (person != null) {
+						PersonAttribute personAttribute = person.getAttribute("email");
+						if (personAttribute != null) {
+							String email = personAttribute.getValue();
+							String lastName = person.getPersonName().getFamilyName();
+							String firstName = person.getPersonName().getGivenName();
+							//TODO construct email
+						}
+					}
+				}
+				catch (Exception e) {}
+			}
+		}
+	}
+	
+	private static void addEncounters(List<Obs> obs, HashSet<org.openmrs.Encounter> notificationSet) {
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
 		for (Obs currOb : obs) {
-			Encounter encounter = currOb.getEncounter();
+			org.openmrs.Encounter encounter = currOb.getEncounter();
 			Integer encounterId = encounter.getEncounterId();
 			Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<Integer, List<PatientState>>();
 			Form form = Context.getFormService().getForm("PWS");
@@ -109,6 +150,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 			
 			if (containsEndState) {
 				//if the PWS was submitted, see if any checkboxes on prompt
+				//TODO
 			} else {
 				//if the PWS was not submitted, add the encounter to the notification list
 				notificationSet.add(encounter);
