@@ -55,6 +55,8 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -84,6 +86,10 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  * 
  */
 
+/**
+ * @author msheley
+ *
+ */
 public class HL7SocketHandler extends
 		org.openmrs.module.sockethl7listener.HL7SocketHandler {
 
@@ -102,12 +108,9 @@ public class HL7SocketHandler extends
 	
 	private static final String STATE_CLINIC_REGISTRATION = "Clinic Registration";
 	private static final String STATE_HL7_CHECKIN = "Process Checkin HL7";
-	private static final String STATE_QUERY_ALIAS = "QUERY KITE Alias";
 	
 	private static final String CONCEPT_INSURANCE_NAME = "InsuranceName";
 	
-	private static final String PARAMETER_QUERY_ALIAS_START = "queryKiteAliasStart";
-	private static final String PARAMETER_QUERY_ALIAS_STOP = "queryKiteAliasEnd";
 	private static final String PARAMETER_SESSION = "session";
 	
 	private static final String PROCESS_HL7_CHECKIN_END = "processCheckinHL7End";
@@ -148,7 +151,8 @@ public class HL7SocketHandler extends
 							encounterDate);
 				}
 				
-			
+				parameters.put(PROCESS_HL7_CHECKIN_END, new java.util.Date());
+
 			}
 
 		} catch (RuntimeException e) {
@@ -216,6 +220,8 @@ public class HL7SocketHandler extends
 				if (personAttrType != null) {
 					PersonAttribute personAttr = new PersonAttribute(
 							personAttrType, ssn);
+					UUID uuid = UUID.randomUUID();
+					personAttr.setUuid(uuid.toString());
 					hl7Patient.addAttribute(personAttr);
 				}
 			}
@@ -316,7 +322,9 @@ public class HL7SocketHandler extends
 		AddCitizenship(currentPatient, hl7Patient, encounterDate);
 		AddRace(currentPatient, hl7Patient, encounterDate);
 		addMRN(currentPatient, hl7Patient, encounterDate);
+		addMRNEHR(currentPatient, hl7Patient, encounterDate); // DWE Epic_Eskenazi release 10/1/16
 		addPatientAccountNumber(currentPatient, hl7Patient, encounterDate); // DWE CHICA-406
+		updateEthnicity(currentPatient, hl7Patient, encounterDate); // DWE CHICA-706
 		
 		Patient updatedPatient = null;
 		try {
@@ -499,7 +507,7 @@ public class HL7SocketHandler extends
 
 			if ((printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS))||
 					!(isValidAge(message, printerLocation, locationString)) ||
-					(filterDuplicateCheckin && priorCheckinExists(message))) {
+					(filterDuplicateCheckin && priorCheckinExists(message, locationString))) {
 
 				try {
 					processMessageError = false;
@@ -550,6 +558,8 @@ public class HL7SocketHandler extends
 		String carrierCode = null;
 		String printerLocation = null;
 		String insuranceName = null;
+		String visitNumber = null;
+		String originalLocation = null;
 		Message message = null;
 		
 			try {
@@ -589,6 +599,31 @@ public class HL7SocketHandler extends
 					
 					insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getInsuranceName(message);
+					
+					// DWE CHICA-633 Parse visit number from PV1-19 if this is not IUH
+					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					{
+						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getVisitNumber(message);
+						
+						if(visitNumber != null && !visitNumber.isEmpty())
+						{
+							storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER, visitNumber);
+						}
+						else
+						{
+							log.error("Unable to parse visit number for encounterId: " + encounter.getEncounterId());
+						}		
+					}
+					
+					// DWE CHICA-751 Parse the original location from the location description field
+					// which is copied from PV1-3.1 to PV1-3.9 by Mirth
+					originalLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+							.getLocationDescription(message);
+					if(originalLocation != null && !originalLocation.isEmpty())
+					{
+						storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_ORIGINAL_LOCATION, originalLocation);
+					}
 				}
 			} catch (EncodingNotSupportedException e) {
 				log.error("Encoding not supported when parsing incoming message.", e);
@@ -629,10 +664,12 @@ public class HL7SocketHandler extends
 		chicaEncounter.setLocation(location);
 		chicaEncounter.setInsuranceSmsCode(null);
 		
-		// DWE CLINREQ-130 Removed encounter parameter
+		//DWE CLINREQ-130 Removed encounter parameter
 		// CAUTION: If an encounter object is needed in this thread in the future, 
 		// use caution when calling setters on the object.
-		saveHL7Obs(p, message, location, getSession(parameters), printerLocation); 
+		if(getNumOBXSegments(message) > 0){ // DWE CHICA-635 Added check to make sure the message contains OBX segments before starting the new thread
+			saveHL7Obs(p, message, location, getSession(parameters), printerLocation);
+		}
 
 		// This code must come after the code that sets the encounter values
 		// because the states can't be created until the locationTagId and
@@ -660,25 +697,7 @@ public class HL7SocketHandler extends
 		patientState.setStartTime(processCheckinHL7Start);
 		patientState.setEndTime(processCheckinHL7End);
 		chirdlutilbackportsService.updatePatientState(patientState);
-
-		state = chirdlutilbackportsService.getStateByName(STATE_QUERY_ALIAS);
-		patientState = chirdlutilbackportsService
-				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
-						getLocationId(chicaEncounter), null);
-		Date queryKiteAliasStart = (Date) parameters.get(PARAMETER_QUERY_ALIAS_START);
-		if (queryKiteAliasStart == null){
-			queryKiteAliasStart = new java.util.Date();
-		}
-		Date queryKiteAliasEnd = (Date) parameters.get(PARAMETER_QUERY_ALIAS_STOP);
-		if (queryKiteAliasEnd == null){
-			queryKiteAliasEnd = new java.util.Date();
-		}
 		
-		patientState.setStartTime(queryKiteAliasStart);
-		patientState.setEndTime(queryKiteAliasEnd);
-		chirdlutilbackportsService.updatePatientState(patientState);
-
 		encounterService.saveEncounter(chicaEncounter);
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConceptByName(CONCEPT_INSURANCE_NAME);
@@ -745,12 +764,14 @@ public class HL7SocketHandler extends
 
 			}
 
-			if (newName.getUuid() == null) {
-				UUID uuid = UUID.randomUUID();
-				newName.setUuid(uuid.toString());
+			if(!found){
+				if (newName.getUuid() == null) {
+					UUID uuid = UUID.randomUUID();
+					newName.setUuid(uuid.toString());
+					currentPatient.addName(newName);
+				}
 			}
-
-			currentPatient.addName(newName);
+			
 			Set<PersonName> names = currentPatient.getNames();
 
 			// reset all addresses preferred status
@@ -909,6 +930,8 @@ public class HL7SocketHandler extends
 			if (personAttrType != null) {
 				PersonAttribute personAttr = new PersonAttribute(
 						personAttrType, newSSN.getIdentifier());
+				UUID uuid = UUID.randomUUID();
+				personAttr.setUuid(uuid.toString());
 				currentPatient.addAttribute(personAttr);
 			}
 			return;
@@ -949,6 +972,8 @@ public class HL7SocketHandler extends
 		if (currentReligionAttr == null ||
 				!currentReligionAttr.getValue().equalsIgnoreCase(
 						newReligion)) {
+			UUID uuid = UUID.randomUUID();
+			newReligionAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(newReligionAttr);
 		}
 
@@ -979,6 +1004,8 @@ public class HL7SocketHandler extends
 		String newMaritalStat = newMaritalStatAttr.getValue();
 		if ( currentMaritalStatAttr == null 
 				|| !currentMaritalStatAttr.getValue().equalsIgnoreCase(newMaritalStat)) {
+			UUID uuid = UUID.randomUUID();
+			newMaritalStatAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(newMaritalStatAttr);
 		}
 
@@ -1009,6 +1036,8 @@ public class HL7SocketHandler extends
 					|| currentMaidenNameAttr.getValue() == null
 					|| !currentMaidenNameAttr.getValue().equalsIgnoreCase(
 							newMaidenName)) {
+			UUID uuid = UUID.randomUUID();
+			newMaidenNameAttr.setUuid(uuid.toString());
 				currentPatient.addAttribute(newMaidenNameAttr);
 		}
 		
@@ -1040,6 +1069,8 @@ public class HL7SocketHandler extends
 				|| currentNextOfKinNameAttr.getValue() == null
 				|| !currentNextOfKinNameAttr.getValue().equalsIgnoreCase(
 						newNextOfKinName)) {
+					UUID uuid = UUID.randomUUID();
+					newNextOfKinNameAttr.setUuid(uuid.toString());
 					currentPatient.addAttribute(newNextOfKinNameAttr);
 				}
 	}
@@ -1069,6 +1100,8 @@ public class HL7SocketHandler extends
 		String newTelNumName = hl7TelNumAttr.getValue();
 		if (currentTelNumAttr == null || currentTelNumAttr.getValue() == null
 				||  !currentTelNumAttr.getValue().equals( newTelNumName)) {
+					UUID uuid = UUID.randomUUID();
+					hl7TelNumAttr.setUuid(uuid.toString());		
 					currentPatient.addAttribute(hl7TelNumAttr);
 				}
 		}
@@ -1093,6 +1126,8 @@ public class HL7SocketHandler extends
 
 		if (currentCitizenshipAttr == null || currentCitizenshipAttr.getValue() == null
 				|| ! currentCitizenshipAttr.getValue().equals(hl7Citizenship)){
+			UUID uuid = UUID.randomUUID();
+			hl7CitizenshipAttr.setUuid(uuid.toString());	
 			currentPatient.addAttribute(hl7CitizenshipAttr);
 		}
 	}
@@ -1116,6 +1151,8 @@ public class HL7SocketHandler extends
 		
 		if (currentRaceAttr == null || currentRaceAttr.getValue() == null
 			|| !currentRaceAttr.getValue().equals(hl7Race)){
+			UUID uuid = UUID.randomUUID();
+			hl7RaceAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(hl7RaceAttr);
 		}
 		
@@ -1173,7 +1210,7 @@ public class HL7SocketHandler extends
 			PatientIdentifier newPatientIdentifier= newPatient.getPatientIdentifier();
 
 			existingMRN = existingPatientIdentifier.getIdentifier();
-			newMRN = null;
+			newMRN = newPatientIdentifier.getIdentifier();
 
 			PatientIdentifierType identifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
@@ -1216,16 +1253,40 @@ public class HL7SocketHandler extends
 			existingPatientIdentifier.setVoidedBy(Context.getAuthenticatedUser());
 			existingPatientIdentifier.setDateVoided(new Date());
 
+			
+			Set<PatientIdentifier> currIdentifiers = existingPatient.getIdentifiers();
+			
+			//See if the identifier already exists
+			//If it does, set it as preferred
+			boolean foundMatchingMRN = false;
+			
+			for(PatientIdentifier identifier:currIdentifiers){
+				String identifierStr = identifier.getIdentifier();
+				if(identifier.getIdentifierType().getName().equals(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN)&&
+						identifierStr!=null && identifierStr.equals(newMRN)){
+					identifier.setPreferred(true);
+					foundMatchingMRN = true;
+					//unvoid the existing identifier
+					identifier.setVoided(false);
+					identifier.setVoidedBy(null);
+					identifier.setDateVoided(null);
+					break;
+				}
+			}
+			
 			//Create the new identifier object and add to existing patient
-			PatientIdentifier newIdentifier = new PatientIdentifier();
-			newIdentifier.setIdentifier(newMRN);
-			newIdentifier.setIdentifierType( patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN));
-			newIdentifier.setLocation(newPatientIdentifier.getLocation());
-			newIdentifier.setPatient(existingPatient);
-			newIdentifier.setPreferred(true);
-			newIdentifier.setCreator(Context.getAuthenticatedUser());
-			newIdentifier.setDateCreated(new Date());
-			existingPatient.addIdentifier(newIdentifier);
+			if (!foundMatchingMRN) {
+				PatientIdentifier newIdentifier = new PatientIdentifier();
+				newIdentifier.setIdentifier(newMRN);
+				newIdentifier.setIdentifierType(patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN));
+				newIdentifier.setLocation(newPatientIdentifier.getLocation());
+				newIdentifier.setPatient(existingPatient);
+				newIdentifier.setPreferred(true);
+				newIdentifier.setCreator(Context.getAuthenticatedUser());
+				newIdentifier.setDateCreated(new Date());
+				
+				existingPatient.addIdentifier(newIdentifier);
+			}
 
 		} catch (Exception e) {
 			log.error("Exception adding new MRN to existing patient. Existing MRN: " 
@@ -1234,20 +1295,21 @@ public class HL7SocketHandler extends
 
 	}
 	
-	
 	/**
-	 * Checks if patient from this hl7 message already has an encounter today.
+	 * Checks if patient from this hl7 message already has an encounter today at the same location.
 	 * The message is saved to the sockethl7listener_patient_message table for record.
-	 * @param message
-	 * @return 
+	 * @param hl7message
+	 * @param locationString
+	 * @return
 	 */
-	private boolean priorCheckinExists(Message hl7message) {
+	private boolean priorCheckinExists(Message hl7message, String locationString) {
 
 		boolean encounterFound = true;
 
 		org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
 		AdministrationService adminService = Context.getService(AdministrationService.class);
 		ChirdlUtilBackportsService chirdlutilbackportsService  = Context.getService(ChirdlUtilBackportsService.class);
+		LocationService locationService = Context.getLocationService();
 
 		try {
 
@@ -1263,18 +1325,22 @@ public class HL7SocketHandler extends
 			}
 		
 			//Get all encounters for that patient from the start of the day
+			//CHICA-721 Only filter if new registration location is the same as the first registration location.
+			//If a patient is registered at one clinic in error, and registered in another clinic afterward,
+			//allow that checkin.
 			Date startOfDay = DateUtils.truncate(new Date(), Calendar.DATE);
-			List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startOfDay, null,
+			Location location = locationService.getLocation(locationString);
+			List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, location, startOfDay, null,
 					null, null, null, false);
 			
 			if (encounters == null || encounters.size() == 0){
 				return !encounterFound;
 			}
-
+			
 			//Save the hl7 message and error
 			this.saveMessage(hl7message, patient, false, true);
 			Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants. ERROR_GENERAL,
-						"An HL7 registration message arrived for a patient that is already checked in.  MRN =  "
+						"An HL7 registration message arrived for a patient at the same location that is already checked in.  MRN =  "
 								+ patient.getPatientIdentifier().getIdentifier(), null, new Date(), null);
 			chirdlutilbackportsService.saveError(error);
 
@@ -1341,9 +1407,6 @@ public class HL7SocketHandler extends
 			int age = Util.getAgeInUnits(dob, new java.util.Date(), ChirdlUtilConstants.YEAR_ABBR);
 
 			if (age >= ageLimit){
-				//save the message
-				Patient patient = this.getPatientFromMessage(message);
-				saveMessage(message, patient, false, false);
 				return !ageOk;
 			}
 			
@@ -1378,13 +1441,12 @@ public class HL7SocketHandler extends
 		Integer patientId = null;
 		if (patient != null) {
 			patientId = patient.getPatientId();
-		}
-		
-		try {
-			sockethl7listenerService.setHl7Message(patientId, null, this.parser.encode(message),
-					duplicateString, duplcateEncounter, super.getPort());
-		} catch (HL7Exception e) {
-			log.error("Error saving HL7 registration message.", e);
+			try {
+				sockethl7listenerService.setHl7Message(patientId, null, this.parser.encode(message),
+						duplicateString, duplcateEncounter, super.getPort());
+			} catch (HL7Exception e) {
+				log.error("Error saving HL7 registration message.", e);
+			}
 		}
 	}
 	
@@ -1437,6 +1499,8 @@ public class HL7SocketHandler extends
 		
 		if (currentAccountNumberAttr == null || currentAccountNumberAttr.getValue() == null
 			|| !currentAccountNumberAttr.getValue().equals(hl7AccountNumberAttr.getValue())){
+			UUID uuid = UUID.randomUUID();
+			hl7AccountNumberAttr.setUuid(uuid.toString());
 			currentPatient.addAttribute(hl7AccountNumberAttr);
 		}
 	}
@@ -1506,5 +1570,174 @@ public class HL7SocketHandler extends
 			 session.getSessionId(), message, printerLocation);
 		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
 		hl7ObsThread.start();
+	}
+	
+	/**
+	 * DWE CHICA-635
+	 * Determine the number of OBX segments in the message
+	 * This method handles the default OBX that HAPI adds and excludes it from the count
+	 * 
+	 * @param message
+	 * @return
+	 */
+	private int getNumOBXSegments(Message message)
+	{
+		
+		int numReps = this.hl7ObsHandler.getReps(message);
+		if(numReps == 1) // Need to check to see if this is the OBX that HAPI adds by default
+		{
+			String obsValueType = this.hl7ObsHandler.getObsValueType(message, 0, 0);
+			if (obsValueType == null) 
+			{
+				numReps = 0;
+			}
+		}
+		
+		return numReps;
+	}
+	
+	/**
+	 * DWE CHICA-633
+	 * 
+	 * Store an encounter attribute value
+	 * 
+	 * @param encounter
+	 * @param attributeName - the name of the encounter attribute
+	 * @param valueText - the value to store in the value_text field
+	 */
+	private void storeEncounterAttributeAsValueText(org.openmrs.Encounter encounter, String attributeName, String valueText)
+	{
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+
+		try
+		{
+			EncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(attributeName);
+			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByAttribute(encounter.getEncounterId(), encounterAttribute);
+			
+			if(encounterAttributeValue == null) // Attribute value doesn't exist for this encounter, create a new one
+			{
+				encounterAttributeValue = new EncounterAttributeValue(encounterAttribute, encounter.getEncounterId(), valueText);
+				encounterAttributeValue.setCreator(encounter.getCreator());
+				encounterAttributeValue.setDateCreated(encounter.getDateCreated());
+				encounterAttributeValue.setUuid(UUID.randomUUID().toString());
+				
+				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+			}
+			else
+			{ 
+				// I can't think of a case where the visit number would change or need to be updated
+				// just log it for now
+				log.error("Encounter attribute already exists for encounterId: " + encounter.getEncounterId() + " attributeName: " + attributeName);
+			}	
+		}
+		catch(Exception e)
+		{
+			log.error("Error storing encounter attribute value encounterId: " + encounter.getEncounterId() + " attributeName: " + attributeName, e);
+		}
+	}
+	
+	/**
+	 * DWE CHICA-706
+	 * Updates Ethnicity attribute from hl7 value.
+	 * @param currentPatient
+	 * @param hl7Patient
+	 * @param encounterDate
+	 */
+	private void updateEthnicity(Patient currentPatient, Patient hl7Patient, Date encounterDate){
+		PersonAttribute currentEthnicityAttr = currentPatient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_ETHNICITY);
+		PersonAttribute hl7EthnicityAttr = hl7Patient.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_ETHNICITY);
+		
+		if (hl7EthnicityAttr == null || hl7EthnicityAttr.getValue() == null 
+				|| hl7EthnicityAttr.getValue().trim().equals(EMPTY_STRING)){
+			return;
+		}
+		
+		if (currentEthnicityAttr == null || currentEthnicityAttr.getValue() == null
+			|| !currentEthnicityAttr.getValue().equals(hl7EthnicityAttr.getValue())){
+			UUID uuid = UUID.randomUUID();
+			hl7EthnicityAttr.setUuid(uuid.toString());
+			currentPatient.addAttribute(hl7EthnicityAttr);
+		}
+	}
+	
+	/**
+	 * DWE Epic_Eskenazi release 10/1/16
+	 * @param existingPatient
+	 * @param newPatient
+	 * @param encounterDate
+	 */
+	public void addMRNEHR(Patient existingPatient, Patient newPatient, Date encounterDate)
+	{
+		PatientService patientService = Context.getPatientService();
+		String newMRNEHR = null;
+		String existingMRNEHR = null;
+
+		try {
+
+			//Get the existing "MRN_EHR" identifier
+			PatientIdentifier piExistingPatient = existingPatient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR); 
+
+			PatientIdentifier piNewPatient = newPatient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR);
+			
+			if(piExistingPatient != null){
+				existingMRNEHR = piExistingPatient.getIdentifier();
+			
+				//void the existing identifier
+				piExistingPatient.setVoided(true);
+				piExistingPatient.setVoidedBy(Context.getAuthenticatedUser());
+				piExistingPatient.setDateVoided(new Date());
+			}
+			
+			if(piNewPatient == null)
+			{
+				// Identifier not found in the HL7 message?
+				return;
+			}
+			
+			newMRNEHR = piNewPatient.getIdentifier();
+			if(newMRNEHR == null)
+			{
+				return;
+			}
+			
+			
+			//Create the new identifier object and add to existing patient
+			Set<PatientIdentifier> currIdentifiers = existingPatient.getIdentifiers();
+			
+			//See if the identifier already exists
+			boolean foundMatchingMRN = false;
+			
+			for(PatientIdentifier identifier:currIdentifiers){
+				String identifierStr = identifier.getIdentifier();
+				if(identifier.getIdentifierType().getName().equals(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR)&&
+						identifierStr!=null && identifierStr.equals(newMRNEHR)){
+					foundMatchingMRN = true;
+					//unvoid the existing identifier
+					identifier.setVoided(false);
+					identifier.setVoidedBy(null);
+					identifier.setDateVoided(null);
+					break;
+				}
+			}
+			
+			//Create the new identifier object and add to existing patient
+			if (!foundMatchingMRN) {
+				PatientIdentifier newIdentifier = new PatientIdentifier();
+				newIdentifier.setIdentifier(newMRNEHR);
+				newIdentifier.setIdentifierType(patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR));
+				newIdentifier.setLocation(piNewPatient.getLocation());
+				newIdentifier.setPatient(existingPatient);
+				newIdentifier.setPreferred(false); // THIS SHOULD NOT BE SET AS THE PREFERRED IDENTIFIER
+				newIdentifier.setCreator(Context.getAuthenticatedUser());
+				newIdentifier.setDateCreated(new Date());
+				
+				existingPatient.addIdentifier(newIdentifier);
+			}
+
+		} catch (Exception e) {
+			log.error("Exception adding new " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + " to existing patient. Existing " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + ": " 
+					+ existingMRNEHR + "; New "+ ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR +": " + newMRNEHR, e);
+		}
+
 	}
 }

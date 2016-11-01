@@ -15,11 +15,7 @@ package org.openmrs.module.chica.vendor.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.vendor.Vendor;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 
 /**
@@ -28,8 +24,6 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
  * @author Steve McKee
  */
 public class IUHCernerVendor extends VendorImpl implements Vendor {
-	
-	private static Log log = LogFactory.getLog(IUHCernerVendor.class);
 	
 	private static final String PARAM_PERSON = "person";
 	private static final String PARAM_USER = "user";
@@ -46,18 +40,6 @@ public class IUHCernerVendor extends VendorImpl implements Vendor {
 	public IUHCernerVendor(HttpServletRequest request) {
 		super(request);
 	}
-	
-	@Override
-    public String getEncryptionKey() {
-		String key = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_IU_HEALTH_CERNER_ENCRYPTION_KEY);
-		if (key == null || key.trim().length() == 0) {
-			log.warn("Cannot find value for global property " + ChirdlUtilConstants.GLOBAL_PROP_IU_HEALTH_CERNER_ENCRYPTION_KEY + ".  Clear text "
-					+ "value will be used.");
-			return null;
-		}
-		
-		return key;
-    }
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.impl.VendorImpl#getMrn()

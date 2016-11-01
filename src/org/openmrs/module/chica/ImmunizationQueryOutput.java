@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.chica;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +30,10 @@ import org.openmrs.module.chica.service.ChicaService;
 /**
  *
  */
-public class ImmunizationQueryOutput {
+public class ImmunizationQueryOutput implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private HashMap<String,ImmunizationForecast> immunizationForecast = null;
@@ -88,7 +92,6 @@ public class ImmunizationQueryOutput {
     	}
     	
      	prevImmunizations.put(immunizationPrevious.getDose(), immunizationPrevious);
-     	Integer size = prevImmunizations.size();
 		List<ImmunizationPrevious> list 
 			= new ArrayList<ImmunizationPrevious> ( prevImmunizations.values());
 		prevImmunizations.clear();

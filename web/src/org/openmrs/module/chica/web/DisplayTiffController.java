@@ -3,7 +3,6 @@ package org.openmrs.module.chica.web;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,16 +11,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.Location;
-import org.openmrs.LocationTag;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
@@ -145,18 +142,9 @@ public class DisplayTiffController extends SimpleFormController {
 					imageFormId, imageFormInstanceId, imageLocationId, "medium");
 				if (fiav != null && "electronic".equals(fiav.getValue())) {
 					imageFilename = defaultImageDirectory + "NotAvailableTablet.tif";
-					File scanXmlFile = XMLUtil.getXmlFile(imageLocationId, imageFormId, imageFormInstanceId, 
-						XMLUtil.DEFAULT_EXPORT_DIRECTORY);
-					File stylesheetFile = XMLUtil.findStylesheet(stylesheet);
-					if (scanXmlFile != null  && stylesheetFile != null) {
-						try {
-							String output = XMLUtil.transformFile(scanXmlFile, stylesheetFile);
-							map.put(htmlOutputParameterName, output);
-						} catch (Exception e) {
-							log.error("Error transforming xml: " + scanXmlFile.getAbsolutePath() + " xslt: " + 
-								stylesheetFile.getAbsolutePath(), e);
-						}
-					}
+					String strOutput = org.openmrs.module.chica.util.Util.displayStylesheet(imageFormId, locationTagId, imageLocationId, imageFormInstanceId, 
+																							stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
+					map.put(htmlOutputParameterName, strOutput);
 				}
 			}
 			
@@ -183,7 +171,7 @@ public class DisplayTiffController extends SimpleFormController {
 		try {
 			// default 
 			String na = "notavailable";
-			String encounterIdString = request.getParameter("encounterId");
+			String encounterIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 
 			String leftImageFormInstanceIdString = request
 					.getParameter("leftImageFormInstanceId");
@@ -215,62 +203,13 @@ public class DisplayTiffController extends SimpleFormController {
 			if(form != null){
 				map.put("rightImageFormname", form.getName());
 			}
-			
 			Integer encounterId = null;
-
-			try
-			{
+			try {
 				encounterId = Integer.parseInt(encounterIdString);
-			} catch (Exception e)
-			{
+			} catch (NumberFormatException e){
+				log.error("Error Parsing encounter Id: "+encounterIdString, e);
 			}
-
-			String printerLocation = null;
-			Integer locationTagId = null;
-
-			if (encounterId != null)
-			{
-				EncounterService encounterService = Context
-						.getService(EncounterService.class);
-				Encounter encounter = (Encounter) encounterService
-						.getEncounter(encounterId);
-
-				if (encounter != null)
-				{
-					// see if the encounter has a printer location
-					// this will give us the location tag id
-					printerLocation = encounter.getPrinterLocation();
-
-					// if the printer location is null, pick
-					// any location tag id for the given location
-					if (printerLocation == null)
-					{
-						Location location = encounter.getLocation();
-						if (location != null)
-						{
-							Set<LocationTag> tags = location.getTags();
-
-							if (tags != null && tags.size() > 0)
-							{
-								printerLocation = ((LocationTag) tags.toArray()[0])
-										.getTag();
-							}
-						}
-					}
-					if (printerLocation != null)
-					{
-						LocationService locationService = Context
-								.getLocationService();
-						LocationTag tag = locationService
-								.getLocationTagByName(printerLocation);
-						if (tag != null)
-						{
-							locationTagId = tag.getLocationTagId();
-						}
-					}
-				}
-			}
-
+			Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounterId);
 			setImageLocation(defaultImageDirectory,leftImageFormIdString,leftImageLocationIdString,
 				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename",encounterId,leftStylesheet,
 				"leftHtmlOutput");

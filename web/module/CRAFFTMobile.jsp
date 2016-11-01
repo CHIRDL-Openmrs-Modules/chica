@@ -40,8 +40,8 @@
     <div data-role="header">
         <h1>CRAFFT:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
 
     <div data-role="content" >
@@ -58,8 +58,8 @@
     <div data-role="header">
         <h1>CRAFFT:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div id="content_1" data-role="content">
         <c:set var="quest1" value='Have you ever ridden in a car driven by someone (including yourself) who was "high" or had been using alcohol or drugs?'/>
@@ -108,8 +108,8 @@
     <div data-role="header">
         <h1>CRAFFT:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitals</a>
+        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div id="content_2" data-role="content">
         <c:set var="quest4" value='Do you ever forget things you did while using alcohol or drugs?'/>
@@ -193,8 +193,8 @@
     <div data-role="header">
         <h1>CRAFFT:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div id="content_1_sp" data-role="content">
         <c:set var="quest1_2_sp" value='&#191;Ha viajado, alguna vez, en un carro o veh&#205;culo conducido por una persona (o usted mismo/a) que haya consumido alcohol, drogas o sustancias psicoactivas?'/>
@@ -243,8 +243,8 @@
     <div data-role="header">
         <h1>CRAFFT:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-        <a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Vitales</a>
+        <a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div id="content_2_sp" data-role="content">
         <c:set var="quest4_2_sp" value='&#191;Se ha metido, alguna vez, en l&#237;os o problemas al tomar alcohol, drogas o sustancias psicoactivas?'/>

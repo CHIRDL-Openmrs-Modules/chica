@@ -258,6 +258,7 @@ function forcePrint_loadForms() {
 
 function forcePrint_handleGetAvailableFormsError(xhr, textStatus, error) {
 	$(".force-print-forms-loading").hide();
+	$(".force-print-form-loading").hide();
 	$(".force-print-button-panel").hide();
 	$(".force-print-forms-server-error-text").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error loading forms: ' + error + '</span>');
 	$(".force-print-forms-server-error").show();

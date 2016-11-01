@@ -31,7 +31,17 @@ endif
 
 ;;
 Action:
+psfSubmitted := call CheckPSFWaitForElectronicSubmissionState;
+vitalsProcessed := call CheckProcessedVitalsState;
+
+If (psfSubmitted = "true") AND (vitalsProcessed = "true") then 
 call CREATE_JIT with "GrowthChart", "", "true";
+endif;
+
+If NOT (psfSubmitted = "true") OR NOT (vitalsProcessed = "true") then 
+	call CREATE_JIT with "GrowthChart", "", "false";
+endif;
+
 ;;
 Age_Min: 0 days;;
 Age_Max: 20 years;;

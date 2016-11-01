@@ -3,20 +3,18 @@
  */
 @import 'pws.css';
 
-#infoRight {
-    width:452px;
-    float:right;
-    padding:2px;
-    border-bottom: 1px solid black;
-}
-
-
 #vitals {
-    width:480px; 
-    height:305px;
+    width:265px;
+    height:346px;
     float:left;
     border-left: none;
-    padding-bottom: 32px;
+}
+
+#examExtras {
+    float:left;
+    width:200px;
+    height:335px;
+    margin-left:75px;
 }
 
 .flagCell {
@@ -38,14 +36,14 @@
 
 .vitalsValues {
     float:left;
-    width:360px;
+    width:153px;
     height: 18px;
     margin-left:5px;
     text-align:left;
     
 }
 
-#vitalsLegend {
+#vitalsLegendIUHCerner{
     width:800px;
     border-left: 1px solid black;
     border-bottom: 1px solid black;
@@ -55,28 +53,27 @@
     height:40px;
     text-align:center;
     font-size:0.8em;
-    padding-top:2px;
+    padding-top:7px;
     padding-bottom: 5px;
-    
-    /* Adding to fix issues when zooming out 
-    margin-right: -1px;
-    margin-bottom: -1px;
-    */
+}
+
+#vitalsLegendEskenaziEpic{
+	display: none;
 }
 
 #buttons {
-    width:270px;
-    height:332px; 
-    border-bottom: none; 
-    float:right; 
-    margin-top:5px;
-    margin-left:-22px;
+    width: 270px;
+    height: 341px;
+    border-bottom: none;
+    float: right;
+    margin-top: 5px;
+    margin-left: -22px;
 }
 
 @-moz-document url-prefix() {
     #buttons {
         margin-top:5px; 
-        height:332px; 
+        height:341px; 
     }
 }
 
@@ -112,7 +109,9 @@
 }
 
 #submitButtonBottom {
-    margin-top:16px;
+    margin-top: 10px;
+    margin-left: 356px;
+    float: left;
 }
 
 #submitContainer {

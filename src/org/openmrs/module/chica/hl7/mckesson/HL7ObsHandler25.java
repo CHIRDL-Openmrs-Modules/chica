@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
@@ -413,6 +414,17 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			ADT_A01 adt = (ADT_A01) message;
 			
 			int numObs = adt.getOBXReps();
+			ConceptDatatype codedDatatype = conceptService.getConceptDatatypeByName("Coded");
+			ConceptDatatype numericDatatype = conceptService.getConceptDatatypeByName("Numeric");
+			ConceptDatatype dateTimeDatatype = conceptService.getConceptDatatypeByName("Datetime");
+			ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
+			
+			// Initialize the objects in case they go to a caching mechanism.
+			Hibernate.initialize(codedDatatype);
+			Hibernate.initialize(numericDatatype);
+			Hibernate.initialize(dateTimeDatatype);
+			Hibernate.initialize(textDatatype);
+			
 			Map<String,ConceptDatatype> conceptDataTypeMap = new HashMap<String,ConceptDatatype>();
 			for (int j = 0; j < numObs; j++) {
 				Obs obs = hl7SocketHandler.CreateObservation(null, false, message, 0, j, existingLoc, patient);
@@ -422,23 +434,19 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 				//infer the type from the data
 				if (obsConcept.getDatatype() == null) {
 					if (obs.getValueCoded() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Coded", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(codedDatatype);
 					}
 					
 					if (obs.getValueNumeric() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Numeric", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(numericDatatype);
 					}
 					
 					if (obs.getValueDatetime() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Datetime", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(dateTimeDatatype);
 					}
 					
 					if (obs.getValueText() != null) {
-						ConceptDatatype conceptDatatype = getConceptDatatype("Text", conceptDataTypeMap, conceptService);
-						obsConcept.setDatatype(conceptDatatype);
+						obsConcept.setDatatype(textDatatype);
 					}
 				}
 				if(obs.getObsDatetime()==null){
@@ -494,4 +502,19 @@ public class HL7ObsHandler25 implements HL7ObsHandler
     public Date getDateStopped(Message message) {
 	    return null;
     }
+    
+    /**
+     * @see org.openmrs.module.sockethl7listener.HL7ObsHandler#getUnits(Message, int, int)
+     * DWE CHICA-635
+     */
+    public String getUnits(Message message, int orderRep, int obxRep)
+    {
+    	OBX obx = getOBX(message, orderRep, obxRep);
+    	if(obx != null){
+    		CE units = obx.getUnits();
+    		return units.getIdentifier().getValue();
+    	}
+    				
+		return "";
+    } 
 }

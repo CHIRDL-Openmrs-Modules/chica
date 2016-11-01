@@ -15,13 +15,44 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/greaseBoardMobile.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.throttle-debounce.js"></script>
 </head>
 <body>
 
 <div data-role="page" id="patient_list_page" data-theme="b" type="patient_page">
-    <div data-role="header" class="single-line-header" data-theme="a" data-position="fixed">
-        <h1>Patients (${currentUser})</h1>
-        <a href="#" data-icon="refresh" data-theme="b" class="ui-btn-right" onclick="populateList()">Refresh</a>
+    <div data-role="header" id="custom-header" class="single-line-header" data-theme="a" data-position="fixed">
+    <div class="ui-grid-b">
+			<div class="ui-block-a">
+				<div class="showAllDiv">	
+						<input type="checkbox" data-theme="b" name="showAllCheckbox" id="showAllCheckbox" class="custom" data-mini="true"/>
+						<label for="showAllCheckbox">Show all patients</label>
+				</div>
+    		</div>
+
+			<div class="ui-block-b">
+				<h3>Patients (${currentUser})</h3>
+			</div>	
+			
+			<div class="ui-block-c">
+				<div class="refreshButtonDiv">
+					<button type="button" id="refreshButton" data-icon="refresh" data-theme="b" onclick="populateList()">Refresh</button>
+				</div>
+			</div>  
+			
+			<div class="ui-block-a">
+			</div>
+			
+			<div class="ui-block-b">
+				<div id="searchAllPatientsDIV" data-role="fieldcontain" class="ui-hide-label">
+            		<label for="searchAllPatients" class="ui-hidden-accessible">Search</label>
+            		<input type="search" data-theme="b" name="searchAllPatients" id="searchAllPatients" value="" placeholder="Search by patient name or MRN..." data-corners="false"/>
+        		</div>
+        	</div>	
+        	
+			<div class="ui-block-c">
+			</div>
+			
+		</div>  
     </div>
     <div id="listError" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
         <div data-role="header" data-theme="b">
@@ -135,6 +166,8 @@
             </div>
     </div><!-- /content -->
 </div><!-- /page two -->
+
+<input id="refreshPeriod" name="refreshPeriod" type="hidden" value="${refreshPeriod}"/>
 
 </body>
 </html>

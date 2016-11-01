@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.70.2</version>
+    <version>1.73.2</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -19,12 +19,12 @@
     
     <require_version>1.1.10.2283</require_version>
     <require_modules>
-        <require_module version="2.31.2">org.openmrs.module.dss</require_module>
-        <require_module version="2.5.0">org.openmrs.module.atd</require_module>
-        <require_module version="1.5.1">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="2.31.3">org.openmrs.module.dss</require_module>
+        <require_module version="2.7.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.6.0">org.openmrs.module.sockethl7listener</require_module>
         <require_module version="1.2.0">org.openmrs.module.rgccd</require_module>
-        <require_module version="1.9.7">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.4.1">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+        <require_module version="1.11.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.5.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.chica.extension.html.AdminList</class>
@@ -381,6 +381,59 @@
      	<description>Namespace for MRF query service
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.encryptionKey</property>
+        <description>Encryption key used to decrypt information sent from a third party application.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.enableManualCheckin</property>
+        <defaultValue>false</defaultValue>
+        <description>Whether or not the manual checkin option is available on the patient greaseboard.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteHost</property>
+        <defaultValue>localhost</defaultValue>
+        <description>IP address of where to send the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNotePort</property>
+        <defaultValue>0</defaultValue>
+        <description>Port to send the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteIncludePV1</property>
+        <defaultValue>false</defaultValue>
+        <description>Set to true to allow a PV1 segment to be added to the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteTXADocumentAvailabilityStatus</property>
+        <defaultValue>UV</defaultValue>
+        <description>Value to include in TXA-19 of the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteTXAUniqueDocumentNumber</property>
+        <defaultValue>uniqueId</defaultValue>
+        <description>Value to include in TXA-16 of the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.sessionTimeoutWarning</property>
+        <defaultValue>180</defaultValue>
+        <description>Number of seconds remaining in the session before the session timeout warning dialog is displayed.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.vitalsUseVisitNumberLookupEncounter</property>
+        <defaultValue>false</defaultValue>
+        <description>Used to determine if the visit number received in PV1-19 should be used to lookup the encounter when processing vitals.
+        </description>
+    </globalProperty>
    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
@@ -414,7 +467,7 @@
         chica1_patient.hbm.xml
         chica1_patient_obsv.hbm.xml
         chica1_appointments.hbm.xml
-        insurance_category.hbm.xml
+        insurance_mapping.hbm.xml
         family.hbm.xml
         patient_family.hbm.xml
         chica_hl7_export.hbm.xml

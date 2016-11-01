@@ -147,4 +147,18 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 		String accountNumber = hl7PatientHandler.getAccountNumber(message);
 		addAttribute(hl7Patient,  ChirdlUtilConstants.PERSON_ATTRIBUTE_PATIENT_ACCOUNT_NUMBER, accountNumber, encounterDate);
 	}
+	
+	/**
+	 * DWE CHICA-706
+	 * @param message
+	 * @param hl7Patient
+	 * @param encounterDate
+	 * @param hl7PatientHandler
+	 */
+	protected void setEthnicity(Message message, Patient hl7Patient,
+			Date encounterDate, HL7PatientHandler hl7PatientHandler)
+	{
+		String ethnicity = hl7PatientHandler.getEthnicity(message);
+		addAttribute(hl7Patient,  ChirdlUtilConstants.PERSON_ATTRIBUTE_ETHNICITY, ethnicity, encounterDate);
+	}
 }

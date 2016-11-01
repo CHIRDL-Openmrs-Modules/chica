@@ -51,13 +51,13 @@ function setLanguage(patientName, birthdate) {
     var additionalQuestions = "The following are some additional questions about depression.";
     var instructions = '<p>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</p>';
     var startButtonText = "Start";
-    var vitalsButtonText = "Vitals";
+    var vitalsButtonText = "Staff";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "Las preguntas siguientes son adicionales acerca de la depresión.";
         instructions = '<p>Durante las últimas 2 semanas, ¿qué tan seguido le han afectado cualquiera de los siguientes problemas?</p>';
         startButtonText = "Comienzo";
-        vitalsButtonText = "Vitales";
+        vitalsButtonText = "Personal";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);

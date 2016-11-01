@@ -4,6 +4,7 @@
 package org.openmrs.module.chica.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,15 +38,20 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.EmptyResult;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClient;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClients;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
@@ -72,6 +79,9 @@ public class Util {
 	private static Log log = LogFactory.getLog(Util.class);
 	
 	public static final Random GENERATOR = new Random();
+	
+	private static final String START_STATE = "start_state";
+	private static final String END_STATE = "end_state";
 	
 	/**
 	 * 
@@ -112,45 +122,21 @@ public class Util {
 		    formInstance, ruleId, locationTagId, usePrintedTimestamp, formFieldId);
 	}
 	
+	
 	/**
-	 * 
+	 * This method is duplicated in atd. It is in chica because the chica rules need it
 	 * @param concept
 	 * @param encounterId
 	 * @param formFieldId - DWE CHICA-437 the form field id or null if one is not used
 	 */
-	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId){
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-		ObsService obsService = Context.getObsService();
-		
-		// DWE CHICA-437 Before voiding obs records, we need to check to see if there is an 
-		// existing atd_statistics record. This is needed for cases where a form may have more
-		// than one field that uses the same concept and the same rule. Checking the atd_statistics
-		// table will allow us to determine if the obs record is for the specified field
-		List<Obs> obs = new ArrayList<Obs>();
-		if(formFieldId != null)
-		{
-			// Get a list of obs records that have a related atd_statistics record.
-			// This will give us a list of obs records that can be voided below
-			ATDService atdService = Context.getService(ATDService.class);
-			obs = atdService.getObsWithStatistics(encounter.getEncounterId(), concept.getConceptId(), formFieldId, false);
-		}
-		else
-		{
-			// Use previously existing functionality for cases where we don't have a formFieldId
-			// Examples of this can be seen in calculatePercentiles()
-			List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
-			encounters.add(encounter);
-			List<Concept> questions = new ArrayList<Concept>();
-			
-			questions.add(concept);
-			obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
-					null, null, null, null, false);
-		}
-		
-		for(Obs currObs:obs){
-			obsService.voidObs(currObs, "voided due to rescan");
-		}
+	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId)
+	{
+		voidObsForConcept(concept,encounterId, formFieldId,"voided due to rescan");
+	}
+	
+	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId, String voidReason)
+	{
+		org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, formFieldId, voidReason);
 	}
 	
 	public static String sendPage(String message, String pagerNumber) {
@@ -208,11 +194,12 @@ public class Util {
 	 * 
 	 * @param rows List that will be populated with any PatientRow objects found.
 	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @param showAllPatients - true to show all patients for the user's location
 	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
 	 * @throws Exception
 	 */
-	public static String getPatientsWithPrimaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch) throws Exception {
-		return getPatientsWithForms(rows, sessionIdMatch, PRIMARY_FORM);
+	public static String getPatientsWithPrimaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, boolean showAllPatients) throws Exception {
+		return getPatientsWithForms(rows, sessionIdMatch, PRIMARY_FORM, showAllPatients);
 	}
 	
 	/**
@@ -225,7 +212,7 @@ public class Util {
 	 * @throws Exception
 	 */
 	public static String getPatientSecondaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch) throws Exception {
-		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS);
+		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS, false);
 	}
 	
 	/**
@@ -234,10 +221,11 @@ public class Util {
 	 * 
 	 * @param rows List that will be populated with any PatientRow objects found.
 	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @param showAllPatients - true to show all patients for the user's location
 	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
 	 * @throws Exception
 	 */
-	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType) 
+	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType, boolean showAllPatients) 
 	throws Exception {
 		User user = Context.getUserContext().getAuthenticatedUser();
 		ServerConfig config = org.openmrs.module.chirdlutil.util.Util.getServerConfig();
@@ -267,7 +255,6 @@ public class Util {
 		}
 		
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		ATDService atdService = Context.getService(ATDService.class);
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		
@@ -288,7 +275,14 @@ public class Util {
 			location = locationService.getLocation(locationString);
 			if (location != null) {
 				locationId = location.getLocationId();
-				if (locationTags != null) {
+				if(showAllPatients) // DWE CHICA-761 Add all tags to the list
+				{
+					for (LocationTag tag : location.getTags()) 
+					{
+						locationTagIds.add(tag.getLocationTagId());	
+					}
+				}
+				else if (locationTags != null) {					
 					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
 					while (tokenizer.hasMoreTokens()) {
 						String locationTagName = tokenizer.nextToken();
@@ -306,20 +300,84 @@ public class Util {
 		}
 		
 		List<PatientState> unfinishedStates = new ArrayList<PatientState>();
-		for (Integer locationTagId : locationTagIds) {
-			Program program = chirdlUtilBackportsService.getProgram(locationTagId, locationId);
-			if (sessionIdMatch != null) {
-				PatientState patientState = chirdlUtilBackportsService.getLastPatientState(sessionIdMatch);
-				if (patientState != null) {
-					unfinishedStates.add(patientState);
-				}
-			} else {
-				List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
-				    todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
-				if (currUnfinishedStates != null) {
-					unfinishedStates.addAll(currUnfinishedStates);
+		if(showAllPatients) // DWE CHICA-761 Get unfinished patient states for all patients by location so that all patients registered to the location can be displayed
+		{
+			try
+			{
+				// NOTE: This requires that the same program is being used for all location tags for a location
+				// Performance benefits to this were minimal, if it becomes a problem where not all tags are using the same
+				// program, we can switch back to the old behavior if needed
+				Program program = chirdlUtilBackportsService.getProgramByLocation(locationId); 
+				List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatientsByLocation(
+						todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationId);
+					if (currUnfinishedStates != null) 
+					{
+						unfinishedStates.addAll(currUnfinishedStates);
+					}
+			}
+			catch(Exception e)
+			{
+				log.error("Error occurred while generating a list of all patients for location (locationId: " + locationId + ").", e);
+				return null;
+			}	
+		}
+		else
+		{
+			for (Integer locationTagId : locationTagIds) {
+				Program program = chirdlUtilBackportsService.getProgram(locationTagId, locationId);
+				if (sessionIdMatch != null) {
+					PatientState patientState = chirdlUtilBackportsService.getLastPatientState(sessionIdMatch);
+					if (patientState != null) {
+						unfinishedStates.add(patientState);
+					}
+				} else {
+					List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
+						todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
+					if (currUnfinishedStates != null) {
+						unfinishedStates.addAll(currUnfinishedStates);
+					}
 				}
 			}
+		}
+		
+		// DWE CHICA-761 Moved this block out of the loop below
+		List<MobileForm> mobileFormsList = new ArrayList<MobileForm>();
+		switch(formType) {
+		case PRIMARY_FORM:
+			MobileForm primaryForm = config.getPrimaryForm(username);
+			if (primaryForm != null) {
+				mobileFormsList.add(primaryForm);
+			}
+
+			break;
+		case SECONDARY_FORMS:
+			List<MobileForm> mobileForms = config.getSecondaryForms(username);
+			if (mobileForms != null) {
+				mobileFormsList.addAll(mobileForms);
+			}
+
+			break;
+		}
+		
+		// DWE CHICA-761 Create a hashmap of mobile form start/end states so we don't query for them in the loop
+		// Also create a map of forms so we don't have to query for them below
+		FormService formService = Context.getFormService();
+		Map<String, Form> formMap = new HashMap<String, Form>();
+		Map<String, HashMap<String, State>> mobileFormStartEndStateMap = new HashMap<String, HashMap<String, State>>();
+		for (MobileForm mobileForm : mobileFormsList)
+		{
+			Form form = formService.getForm(mobileForm.getName());
+			if(form == null)
+			{
+				continue;
+			}
+			formMap.put(mobileForm.getName(), form);
+			HashMap<String, State> startEndStateMap = new HashMap<String, State>();
+			State startState = chirdlUtilBackportsService.getStateByName(mobileForm.getStartState());
+			State endState = chirdlUtilBackportsService.getStateByName(mobileForm.getEndState());
+			startEndStateMap.put(START_STATE, startState);
+			startEndStateMap.put(END_STATE, endState);
+			mobileFormStartEndStateMap.put(mobileForm.getName(), startEndStateMap);	
 		}
 		
 		Map<String, PatientRow> patientEncounterRowMap = new HashMap<String, PatientRow>();
@@ -341,38 +399,30 @@ public class Util {
 				patientEncounterRowMap.put(patientId + "_" + encounterId, row);
 			}
 			
-			List<MobileForm> mobileFormsList = new ArrayList<MobileForm>();
-			switch(formType) {
-				case PRIMARY_FORM:
-					MobileForm primaryForm = config.getPrimaryForm(username);
-					if (primaryForm == null) {
-						continue;
-					} else {
-						mobileFormsList.add(primaryForm);
-					}
-					
-					break;
-				case SECONDARY_FORMS:
-					List<MobileForm> mobileForms = config.getSecondaryForms(username);
-					if (mobileForms == null) {
-						continue;
-					} else {
-						mobileFormsList.addAll(mobileForms);
-					}
-					
-					break;
-			}
-			
 			for (MobileForm mobileForm : mobileFormsList) {
-				State startState = chirdlUtilBackportsService.getStateByName(mobileForm.getStartState());
-				State endState = chirdlUtilBackportsService.getStateByName(mobileForm.getEndState());
+				State startState;
+				State endState;
+				HashMap<String, State> startEndStateMap = mobileFormStartEndStateMap.get(mobileForm.getName());
+				if(startEndStateMap == null)
+				{
+					continue;
+				}
+				else
+				{
+					startState = startEndStateMap.get(START_STATE);
+					endState = startEndStateMap.get(END_STATE);
+					if(startState == null || endState == null)
+					{
+						continue;
+					}
+				}
 				
 				getPatientStatesByEncounterId(chirdlUtilBackportsService, formPatientStateCreateMap, encounterId,
 				    startState.getStateId(), true);
 				getPatientStatesByEncounterId(chirdlUtilBackportsService, formPatientStateProcessMap, encounterId,
 				    endState.getStateId(), false);
 				
-				Form form = Context.getFormService().getForm(mobileForm.getName());
+				Form form = formMap.get(mobileForm.getName()); // DWE CHICA-761 Changed to pull from the map instead of querying
 				if (form == null) {
 					continue;
 				}
@@ -422,25 +472,32 @@ public class Util {
 			String lastName = org.openmrs.module.chirdlutil.util.Util.toProperCase(patient.getFamilyName());
 			String firstName = org.openmrs.module.chirdlutil.util.Util.toProperCase(patient.getGivenName());
 			
-			String mrn = atdService.evaluateRule("medicalRecordWithFormatting", patient, null).toString();
-			
-			String dob = atdService.evaluateRule("birthdate>fullDateFormat", patient, null).toString();
+			// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
+			String mrn = org.openmrs.module.chirdlutil.util.Util.formatMRN(patient);
+			String dob = DateUtil.formatDate(patient.getBirthdate(), ChirdlUtilConstants.DATE_FORMAT_MMM_d_yyyy);
+			 
 			String sex = patient.getGender();
 			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 			
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("encounterId", encounterId);
-			String appointment = atdService.evaluateRule("scheduledTime>fullTimeFormat", patient, parameters).toString();
+			// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
+			String appointment = "";
+			if(encounter != null)
+			{
+				appointment = DateUtil.formatDate(encounter.getScheduledTime(), ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
+			}
+			
 			Date encounterDate = null;
 			
 			if (encounter != null) {
 				row.setEncounter(encounter);
+					
 				encounterDate = encounter.getEncounterDatetime();
 				if (encounterDate != null && !org.openmrs.module.chirdlutil.util.Util.isToday(encounterDate)) {
 					continue;
 				}
-				parameters.put("param0", new Result(encounter.getEncounterDatetime()));
-				String checkin = atdService.evaluateRule("fullTimeFormat", patient, parameters).toString();
+				// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
+				String checkin = DateUtil.formatDate(encounter.getEncounterDatetime(), ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
+				
 				List<User> providers = Context.getUserService().getUsersByPerson(encounter.getProvider(), true);
 				String mdName = "";
 				if (providers != null && providers.size() > 0) {
@@ -479,14 +536,21 @@ public class Util {
 			}
 			
 			boolean reprint = false;
-			for (Integer locationTagId : locationTagIds) {
-				List<PatientState> currReprintRescanStates = chicaService.getReprintRescanStatesByEncounter(encounterId,
-				    todaysDate.getTime(), locationTagId, locationId);
-				if (currReprintRescanStates != null && currReprintRescanStates.size() > 0) {
-					reprint = true;;
-				}
+			// DWE CHICA-761 Changed this query to scan for reprint states using a list of locationTagIds
+			// Also changed this so that we query by sessionId instead of encounterId
+			try
+			{
+				List<PatientState> currReprintRescanStates = chicaService.getReprintRescanStatesBySessionId(sessionId,
+					    todaysDate.getTime(), locationTagIds, locationId);
+					if (currReprintRescanStates != null && currReprintRescanStates.size() > 0) {
+						reprint = true;;
+					}
 			}
-			
+			catch(Exception e)
+			{
+				log.error("Error getting reprint/rescan states", e);
+			}
+		
 			row.setReprintStatus(reprint);
 			row.setAppointment(appointment);
 			row.setDob(dob);
@@ -663,5 +727,179 @@ public class Util {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Retrieves the last encounter for a patient or null if one does not exist.
+	 * @param patient The patient used to find the encounter.
+	 * @return Encounter object or null if one does not exist.
+	 */
+    public static org.openmrs.Encounter getLastEncounter(Patient patient) {
+    	// Get last encounter with last day
+		Calendar startCal = Calendar.getInstance();
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
+		Date startDate = startCal.getTime();
+		Date endDate = Calendar.getInstance().getTime();
+		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
+				null, null, false);
+		if (encounters == null || encounters.size() == 0) {
+			return null;
+		} else if (encounters.size() == 1) {
+			return encounters.get(0);
+		}
+		
+		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
+		ATDService atdService = Context.getService(ATDService.class);
+		for (int i = encounters.size() - 1; i >= 0; i--) {
+			org.openmrs.Encounter encounter = encounters.get(i);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			if (stats == null || stats.size() == 0) {
+				continue;
+			}
+			
+			for (Statistics stat : stats) {
+				if (stat.getScannedTimestamp() != null) {
+					return encounter;
+				}
+			}
+		}
+		
+		return null;
+    }
+    
+    /**
+     * Validating encounterIds
+     * @param encounterId The encounter identifier
+     * @param result
+     * @return
+     */
+    public static boolean equalEncounters(Integer encounterId, Result result) {
+    	if (encounterId == null || result == null) {
+    		return false;
+    	}
+    	
+    	Result latestResult = result.latest();
+    	if (latestResult == null) {
+    		return false;
+    	}
+    	
+    	if (latestResult.getResultObject() == null || !(latestResult.getResultObject() instanceof Obs)) {
+    		return false;
+    	}
+    	
+    	Obs obs = (Obs)latestResult.getResultObject();
+    	if (obs == null) {
+    		return false;
+    	}
+    	
+    	org.openmrs.Encounter obsEncounter = obs.getEncounter();
+    	if (obsEncounter == null) {
+    		return false;
+    	}
+    	
+    	if (encounterId == obsEncounter.getEncounterId()) {
+    		return true;
+    	}
+    	
+    	return false;
+    }
+	
+	/**
+	 * Returns the Location Tag ID
+	 * 
+	 * @param encounterIdString encounter ID
+	 * @return LocationTagId
+	 */
+	public static Integer getLocationTagId(Integer encounterId){
+		
+		String printerLocation = null;
+		Integer locationTagId = null;
+
+		if (encounterId != null)
+		{
+			EncounterService encounterService = Context
+					.getService(EncounterService.class);
+			Encounter encounter = (Encounter) encounterService
+					.getEncounter(encounterId);
+
+			if (encounter != null)
+			{
+				// see if the encounter has a printer location
+				// this will give us the location tag id
+				printerLocation = encounter.getPrinterLocation();
+
+				// if the printer location is null, pick
+				// any location tag id for the given location
+				if (printerLocation == null)
+				{
+					Location location = encounter.getLocation();
+					if (location != null)
+					{
+						Set<LocationTag> tags = location.getTags();
+
+						if (tags != null && tags.size() > 0)
+						{
+							printerLocation = ((LocationTag) tags.toArray()[0])
+									.getTag();
+						}
+					}
+				}
+				if (printerLocation != null)
+				{
+					LocationService locationService = Context
+							.getLocationService();
+					LocationTag tag = locationService
+							.getLocationTagByName(printerLocation);
+					if (tag != null)
+					{
+						locationTagId = tag.getLocationTagId();
+					}
+				}
+			}
+		}
+	return locationTagId;
+	}
+
+	/**
+	 * Displays the Stylesheet xsl 
+	 * 
+	 * @param formId The ID of the general form.
+	 * @param locationTagId The location tag ID. 
+	 * @param locationId The clinic location ID.
+	 * @param formInstanceId The ID of the instance of the general form.
+	 * @param strStylesheet The stylesheet file used for the transformation.
+	 * @param fileLocationFormAttributeName String used to locate the file for the stylesheet 
+	 * transformation (XMLUtil.DEFAULT_EXPORT_DIRECTORY or XMLUtil.DEFAULT_MERGE_DIRECTORY)
+	 * @return strOutput returns the result of the transformation File.
+	 */
+	public static String displayStylesheet(Integer formId, Integer locationTagId, Integer locationId, Integer formInstanceId, 
+	                                       String strStylesheet, String fileLocationFormAttributeName){
+
+		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
+		String strOutput = null;
+		File stylesheetFile = null;
+		File XmlFile = XMLUtil.getXmlFile(locationId, formId, formInstanceId, fileLocationFormAttributeName);
+		FormAttributeValue formAttributeValue = service.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_STYLESHEET, locationTagId, locationId);
+		if (formAttributeValue != null && formAttributeValue.getValue() != null && !formAttributeValue.getValue().isEmpty()) {
+			try{
+				stylesheetFile = new File(formAttributeValue.getValue());
+			}catch (Exception e){
+				log.error("The file path in the form attribute is not defined correctly. "+ e);
+			}				
+		} else {
+			stylesheetFile = XMLUtil.findStylesheet(strStylesheet);
+		}
+		if (stylesheetFile == null) {
+			log.error("Error finding stylesheet to format the form: " + strStylesheet);
+		}
+		
+		if (XmlFile != null && stylesheetFile != null) {
+			try {
+				strOutput = XMLUtil.transformFile(XmlFile, stylesheetFile);
+			} catch (Exception e) {
+				log.error("Error transforming xml: " + XmlFile.getAbsolutePath() + " xslt: " + 
+					stylesheetFile.getAbsolutePath(), e);
+			}
+		}
+		return strOutput;
 	}
 }

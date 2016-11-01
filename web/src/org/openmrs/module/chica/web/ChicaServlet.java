@@ -41,6 +41,7 @@ import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
+import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -88,6 +89,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String SAVE_MANUAL_CHECKIN = "saveManualCheckin";
 	private static final String SEND_PAGE_REQUEST = "sendPageRequest";
 	private static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
+	private static final String KEEP_ALIVE = "keepAlive";
+	private static final String CLEAR_CACHE = "clearCache";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -103,6 +106,11 @@ public class ChicaServlet extends HttpServlet {
 	private static final String PARAM_NEED_VITALS = "needVitals";
 	private static final String PARAM_WAITING_FOR_MD = "waitingForMD";
 	private static final String PARAM_BAD_SCANS = "badScans";
+	private static final String PARAM_CACHE_NAME = "cacheName";
+	private static final String PARAM_CACHE_KEY_TYPE = "cacheKeyType";
+	private static final String PARAM_CACHE_VALUE_TYPE = "cacheValueType";
+	
+	private static final String RESULT_SUCCESS = "success";
 	
 	private static final String XML_AVAILABLE_JITS_START = "<availableJITs>";
 	private static final String XML_AVAILABLE_JITS_END = "</availableJITs>";
@@ -142,6 +150,8 @@ public class ChicaServlet extends HttpServlet {
 	
 	private static final String MAX_CACHE_AGE = "600";
 	
+	private static final String WILL_KEEP_ALIVE = "OK";
+	
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	/**
@@ -156,7 +166,7 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		String action = request.getParameter(PARAM_ACTION);
-		if (GET_PATIENT_JITS.equals(action)) {
+		if (GET_PATIENT_JITS.equals(action) || DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
 			response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
 		} else if (FORCE_PRINT_FORMS.equals(action)) {
@@ -200,6 +210,10 @@ public class ChicaServlet extends HttpServlet {
 			ManualCheckin.saveManualCheckinPatient(request, response);
 		} else if (SEND_PAGE_REQUEST.equals(action)) {
 			Pager.sendPage(request, response);
+		} else if (KEEP_ALIVE.equals(action)) {
+			keepAlive(response);
+		} else if (CLEAR_CACHE.equals(action)) {
+			clearCache(request, response);
 		}
 	}
 	
@@ -1412,5 +1426,93 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		return formName;
+	}
+	
+	/**
+	 * Method to keep the session alive.
+	 * 
+	 * @param response The HttpServletResponse where the response will be written.
+	 * @throws IOException
+	 */
+	private void keepAlive(HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(
+			ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		PrintWriter pw = response.getWriter();
+		pw.write(WILL_KEEP_ALIVE);
+	}
+	
+	/**
+	 * Clears the given cache in the request
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
+    private void clearCache(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		
+    	PrintWriter pw = response.getWriter();
+    	String cacheName = request.getParameter(PARAM_CACHE_NAME);
+    	if (cacheName == null || cacheName.isEmpty()) {
+    		String message = "Please specify a " + PARAM_CACHE_NAME + " parameter";
+    		log.error(message);
+    		pw.write(message);
+    		return;
+    	}
+    	
+    	String cacheKeyType = request.getParameter(PARAM_CACHE_KEY_TYPE);
+    	if (cacheKeyType == null || cacheKeyType.isEmpty()) {
+    		String message = "Please specify a " + PARAM_CACHE_KEY_TYPE + " parameter";
+    		log.error(message);
+    		pw.write(message);
+    		return;
+    	}
+    	
+    	String cacheValueType = request.getParameter(PARAM_CACHE_VALUE_TYPE);
+    	if (cacheValueType == null || cacheValueType.isEmpty()) {
+    		String message = "Please specify a " + PARAM_CACHE_VALUE_TYPE + " parameter";
+    		log.error(message);
+    		pw.write(message);
+    		return;
+    	}
+    	
+    	Class<?> keyType = null;
+    	Class<?> valueType = null;
+    	try {
+    		keyType = Class.forName(cacheKeyType);
+    	}
+    	catch (LinkageError | ClassNotFoundException e) {
+    		String message = "Error creating class from reflection using parameter " + PARAM_CACHE_KEY_TYPE + " " + keyType + 
+    				" for cache " + cacheName;
+    		log.error(message, e);
+    		pw.write(message);
+    		return;
+    	}
+    	
+    	try {
+    		valueType = Class.forName(cacheValueType);
+    	}
+    	catch (LinkageError | ClassNotFoundException e) {
+    		String message = "Error creating class from reflection using parameter " + PARAM_CACHE_VALUE_TYPE + " " + valueType + 
+    				" for cache " + cacheName;
+    		log.error(message, e);
+    		pw.write(message);
+    		return;
+    	}
+    	
+    	ApplicationCacheManager cacheManager = ApplicationCacheManager.getInstance();
+    	try {
+    		cacheManager.clearCache(cacheName, keyType, valueType);
+    	}
+    	catch (Exception e) {
+    		String message = "Error clearing cache " + cacheName;
+    		log.error(message, e);
+    		pw.write(message);
+    		return;
+    	}
+    	
+    	pw.write(RESULT_SUCCESS);
 	}
 }

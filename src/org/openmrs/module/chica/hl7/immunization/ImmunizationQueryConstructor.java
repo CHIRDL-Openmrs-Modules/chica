@@ -272,21 +272,13 @@ public class ImmunizationQueryConstructor extends
 
 		if (patient == null)
 			return null;
+		//Always use CHICA MRN for initial query and not CHIRP SIIS (CHICA-756 MSHELEY)
 		PatientIdentifierType pidtype = patientService
 				.getPatientIdentifierTypeByName("MRN_OTHER");
 		PatientIdentifier pid = patient.getPatientIdentifier(pidtype);
 		String identifier = pid.getIdentifier();
 		String idType = "MR";
 	
-		// Check for existing state id attribute.
-		PatientIdentifier patientIdentifier = patient
-				.getPatientIdentifier("Immunization Registry");
-		if (patientIdentifier != null
-				&& patientIdentifier.getIdentifier() != null) {
-			idType = "SR";
-			identifier = patientIdentifier.getIdentifier();
-		}
-		
 		try {
 			qrd.getQueryDateTime().getTimeOfAnEvent().setValue(date);
 			qrd.getQueryFormatCode().setValue(

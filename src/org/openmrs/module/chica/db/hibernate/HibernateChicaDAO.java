@@ -257,14 +257,16 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public String getInsCategoryByCarrier(String carrierCode)
+	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category where star_carrier_code=?";
+			String sql = "select distinct category from chica_insurance_mapping where carrier_code=? and sending_application=? and sending_facility=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setString(0, carrierCode);
+			qry.setString(1, sendingFacility);
+			qry.setString(2, sendingApplication);
 			qry.addScalar("category");
 			return (String) qry.uniqueResult();
 		} catch (Exception e)
@@ -274,15 +276,17 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public String getInsCategoryByInsCode(String insCode)
+	public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category where ins_code=?";
+			String sql = "select distinct category from chica_insurance_mapping where ins_code=? and sending_application=? and sending_facility=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.addScalar("category");
 			qry.setString(0, insCode);
+			qry.setString(1, sendingFacility);
+			qry.setString(2, sendingApplication);
 			List<String> list = qry.list();
 			// if result is not unique, return null
 			if (list.size() == 1){
@@ -294,16 +298,18 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		return null;
 	}
-	
-	public String getInsCategoryByECWName(String ecwName)
+
+	public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category where ecw_ins_name=?";
+			String sql = "select distinct category from chica_insurance_mapping where ins_name=? and sending_application=? and sending_facility=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.addScalar("category");
-			qry.setString(0, ecwName);
+			qry.setString(0, insuranceName);
+			qry.setString(1, sendingFacility);
+			qry.setString(2, sendingApplication);
 
 			return (String) qry.uniqueResult();
 		} catch (Exception e)
@@ -312,30 +318,11 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		return null;
 	}
-
-	public String getInsCategoryBySMS(String smsCode)
-	{
-		try
-		{
-			String sql = "select distinct category from chica_insurance_category where sms_code=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.addScalar("category");
-			qry.setString(0, smsCode);
-
-			return (String) qry.uniqueResult();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
-
 	public List<String> getInsCategories()
 	{
 		try
 		{
-			String sql = "select distinct category from chica_insurance_category " +
+			String sql = "select distinct category from chica_insurance_mapping " +
 			"where category is not null and category <> '' order by category";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
@@ -1194,5 +1181,44 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		
 		return null;
+    }
+    
+    /**
+     * DWE CHICA-761
+     * @see org.openmrs.module.chica.db.ChicaDAO#getReprintRescanStatesBySessionId(Integer, Date, List, Integer)
+     */
+    public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException
+    {
+    	String dateRestriction = "";
+    	if (optionalDateRestriction != null)
+    	{
+    		dateRestriction = " AND ps.start_time >= ?";
+    	}
+    	
+    	String sql = "SELECT * from chirdlutilbackports_patient_state ps" +
+    				" INNER JOIN chirdlutilbackports_state s ON ps.state = s.state_id" +
+    				" INNER JOIN chirdlutilbackports_state_action sa ON s.state_action_id = sa.state_action_id" +
+    				" WHERE ps.session_id =?" + 
+    				" AND ps.retired =?" +  
+    				" AND ps.location_id =?" + 
+    				" AND (sa.action_name = 'RESCAN' OR sa.action_name = 'REPRINT')" + dateRestriction +
+    				" AND ps.location_tag_id IN (:locationTagIds)";
+
+    	SQLQuery qry = this.sessionFactory.getCurrentSession()
+    			.createSQLQuery(sql);
+    	
+    	qry.setInteger(0, sessionId);
+    	qry.setBoolean(1, false);
+    	qry.setInteger(2, locationId);
+
+    	if (optionalDateRestriction != null)
+    	{
+    		qry.setDate(3, optionalDateRestriction);
+    	}
+    	
+    	qry.setParameterList("locationTagIds", locationTagIds);
+
+    	qry.addEntity(PatientState.class);
+    	return qry.list();
     }
 }

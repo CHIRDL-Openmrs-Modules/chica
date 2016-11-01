@@ -37,12 +37,12 @@ function setLanguage(patientName, birthdate) {
     var langButtonText = "Español";
     var additionalQuestions = "The following are some additional questions about alcohol and drug use.";
     var startButtonText = "Start";
-    var vitalsButtonText = "Vitals";
+    var vitalsButtonText = "Staff";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "Las preguntas siguientes son adicionales acerca del consumo de alcohol y las drogas.";
         startButtonText = "Comienzo";
-        vitalsButtonText = "Vitales";
+        vitalsButtonText = "Personal";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);

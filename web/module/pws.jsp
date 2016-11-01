@@ -3,9 +3,10 @@
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/pws.form" />
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/pws.css" type="text/css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/pwsEskenaziEpic.css" type="text/css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.css"/>
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
@@ -13,6 +14,7 @@
         <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.js"></script>
         <title>CHICA Physician Encounter Form</title>
     </head>
 
@@ -35,16 +37,23 @@
                     <b>DOB:</b> <c:out value="${DOB}"/> <b>Age:</b> <c:out value="${Age}"/><br/>
                     <b>Doctor:</b> <c:out value="${Doctor}"/>
                 </div>
-                <div id="infoRight">
+                <div id="infoCenter">
                     <b>MRN:</b> <c:out value="${MRN}"/><br/>
                     <b>Date:</b> <c:out value="${VisitDate}"/><br/>
                 <b>Time:</b> <c:out value="${VisitTime}"/></div>
+                <div id="infoRight">
+                    <b>Informant:</b> <c:out value="${Informant}"/><br/>
+                    <c:out value="${Language}"/><br/>  
+                    <br/>         
+                </div>
                 
                 <%@ include file="pwsVitals.jsp" %>
                 
-                <%@ include file="pwsPhysicalExam.jsp" %>
+                <%@ include file="pwsExamExtras.jsp" %>
                                
                 <%@ include file="pwsButtons.jsp" %>
+                
+                <%@ include file="pwsPainAndAllergies.jsp" %>
                 
                 <%@ include file="pwsQuestions.jsp" %>
                                 
@@ -72,6 +81,8 @@
 				<input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
 				<input id="providerId" name="providerId" type="hidden" value="${providerId}"/>
 				<input id="patientNameForcePrint" name="patientNameForcePrint" type="hidden" value="${PatientName}"/>
+				<input id="sessionTimeout" name="sessionTimeout" type="hidden" value="${pageContext.session.maxInactiveInterval}"/>
+				<input id="sessionTimeoutWarning" name="sessionTimeoutWarning" type="hidden" value="${sessionTimeoutWarning}"/>
             </form>
     	</div>
     </body>
