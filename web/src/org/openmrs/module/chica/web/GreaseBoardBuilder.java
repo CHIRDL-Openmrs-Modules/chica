@@ -68,6 +68,14 @@ public class GreaseBoardBuilder {
 	
 	private static final String PWS_REPRINT_COLOR = "blue_highlight";
 	
+	private static final String NO_VITALS_COLOR = "darkGreen_highlight";
+	
+	private static final String NO_PSF_COLOR = "lightGreen_highlight";
+	
+	private static boolean bVitals = false;
+	
+	private static boolean bVitalsPSF = false;
+		
 	/**
 	 * Creates the patient information needed for display on the Grease Board. All necessary
 	 * information is placed in the provided map.
@@ -247,10 +255,18 @@ public class GreaseBoardBuilder {
 				row.setSessionId(sessionId);
 				String stateName = state.getName();
 				if (stateName.equalsIgnoreCase("PSF_wait_to_scan")
-				        || stateName.equalsIgnoreCase("PSF WAIT FOR ELECTRONIC SUBMISSION")) {
-					needVitals++;
+				        || stateName.equalsIgnoreCase("PWS WAIT FOR SUBMISSION")) { 
+					HashMap<Integer, Date> patientStateEndTime = chirdlutilbackportsService.getPatientStateEndTime(sessionId);
+					Date endTimePSF = patientStateEndTime.get("PSF WAIT FOR ELECTRONIC SUBMISSION");
+					Date endTimeVitals = patientStateEndTime.get("Processed Vitals HL7");
+					if (endTimePSF!=null && endTimeVitals==null){
+						needVitals++;
+						bVitals = true;
+					} else if (endTimeVitals != null){
+						bVitalsPSF = true;
+					}
 				}
-				if (stateName.equalsIgnoreCase("PWS_wait_to_scan")) {
+				if (stateName.equalsIgnoreCase("PWS_wait_to_scan") || stateName.equalsIgnoreCase("PWS WAIT FOR SUBMISSION")) {
 					waitingForMD++;
 				}
 				setStatus(state, row, sessionId, currState);
@@ -359,7 +375,15 @@ public class GreaseBoardBuilder {
 			return;
 		}
 		if (stateName.equals("PWS_wait_to_scan") || stateName.equals("PWS WAIT FOR SUBMISSION")) {
-			row.setStatusColor(READY_COLOR);
+			if (bVitals) {
+				row.setStatusColor(NO_VITALS_COLOR);
+				bVitals = false;
+			} else if (bVitalsPSF) {
+				row.setStatusColor(READY_COLOR);
+				bVitalsPSF = false;
+			} else {
+				row.setStatusColor(NO_PSF_COLOR);
+			}
 			row.setStatus("PWS Ready");
 			return;
 		}

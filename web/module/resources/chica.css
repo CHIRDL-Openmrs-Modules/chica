@@ -132,6 +132,14 @@ td.viewEncounterAction{
 	background-color:#FFC;
 	text-align: center;
 }
+.darkGreen_highlight{
+	background-color:#316731; /*#3a563a;*/
+	text-align: center;
+}
+.lightGreen_highlight{
+	background-color:#8ffd8f;
+	text-align: center;
+}
 
 input.readonly {
 background-color: #8FABC7;
