@@ -24,7 +24,7 @@ birthWeight:= read last {BIRTH WEIGHT from RMRS};
 gestAge:= read last {GEST AGE BY EXAM from RMRS};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 endif
 ;;
-Priority:		;;
+Priority: 1000;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then
