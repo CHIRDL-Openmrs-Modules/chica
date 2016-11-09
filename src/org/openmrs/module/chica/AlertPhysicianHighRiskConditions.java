@@ -16,11 +16,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Form;
+import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
@@ -28,7 +30,6 @@ import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.MailSender;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -64,6 +65,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		Date endDate = date.getTime();
 		
 		EncounterService encounterService = Context.getEncounterService();
+		LocationService locationService = Context.getLocationService();
 		
 		//get encounters that should have been submitted but have not been processed by the task
 		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(null, null, startDate, endDate, null, null,
@@ -77,6 +79,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		questions.add(conceptService.getConceptByName("suicide_concerns"));
 		List<Concept> answers = new ArrayList<Concept>();
 		answers.add(conceptService.getConceptByName("True"));
+		answers.add(conceptService.getConceptByName("yes"));
 		
 		List<Obs> obs = obsService.getObservations(null, encounters, questions, answers, null, null, null, null, null, null,
 		    null, false);
@@ -102,17 +105,15 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ruleName = "Abuse_Concern_PWS";
 		rule = dssService.getRule(ruleName);
 		addEncounters(obs, notificationSet, rule.getRuleId());
-		
-		ChirdlUtilBackportsService cub = Context.getService(ChirdlUtilBackportsService.class);
-		
+				
 		for (org.openmrs.Encounter encounter : notificationSet) {
 			Encounter chicaEncounter = (Encounter) encounterService.getEncounter(encounter.getEncounterId());
 			Integer locationId = chicaEncounter.getLocation().getLocationId();
 			String printerLocation = chicaEncounter.getPrinterLocation();
 			if (printerLocation != null) {
-				LocationTagAttribute locTagAttr = cub.getLocationTagAttribute(printerLocation.trim());
-				if (locTagAttr != null) {
-					Integer locationTagId = locTagAttr.getLocationTagAttributeId();
+				LocationTag locTag = locationService.getLocationTagByName(printerLocation.trim());
+				if (locTag != null) {
+					Integer locationTagId = locTag.getLocationTagId();
 					sendEmailNotification(locationId, locationTagId);//TODO Do we want individual emails for each encounter?
 				}
 			}
@@ -166,7 +167,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 								mailSender.sendMail(sendingEmail, emailList, subject, body, null);
 							}
 							catch (Exception e) {
-								log.error("Error zipping and sending email", e);
+								log.error("Error sending email", e);
 								return;
 							}
 							finally {
