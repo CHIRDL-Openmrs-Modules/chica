@@ -139,6 +139,9 @@ public class GreaseBoardBuilder {
 			}
 			
 			List<PatientRow> rows = new ArrayList<PatientRow>();
+			List<String> stateNames = new ArrayList<String>();
+			stateNames.add(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
+			stateNames.add(ChirdlUtilConstants.STATE_PROCESS_VITALS);
 			
 			for (PatientState currState : unfinishedStates) {
 				String checkoutStateString = adminService.getGlobalProperty("chica.greaseboardCheckoutState");
@@ -248,25 +251,24 @@ public class GreaseBoardBuilder {
 				row.setSessionId(sessionId);
 				String stateName = state.getName();
 				String strPWSGBIndicator = null;
-				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_TO_SCAN)
-				        || stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION)
+				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION)
 				        	|| stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
-					List<String> stateNames = new ArrayList<String>();
-					stateNames.add(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
-					stateNames.add(ChirdlUtilConstants.STATE_PROCESS_VITALS);
 					Map<String, List<PatientState>> patientState = chirdlutilbackportsService.getPatientStatesBySessionId(sessionId,stateNames,false);
-				    if (patientState.containsKey(ChirdlUtilConstants.STATE_PROCESS_VITALS) ){
-				    	if (patientState.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION).get(0).getEndTime()==null) {
-				    		strPWSGBIndicator = "PWS Ready/Awaiting PSF";
-				    	} else if (patientState.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION).get(0).getEndTime()!=null) {
-				    		strPWSGBIndicator = "PWS Ready";
+				    if (patientState.containsKey(ChirdlUtilConstants.STATE_PROCESS_VITALS) && patientState.get(ChirdlUtilConstants.STATE_PROCESS_VITALS).get(0).getEndTime()!=null){
+				    	List<PatientState> psfWaitPatientState = patientState.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
+				    	for (PatientState psfState : psfWaitPatientState) {
+				    		if (psfState.getEndTime()==null) {
+					    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_PSF;
+					    	} else {
+					    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY;
+					    	}
 				    	}
 					} else {
 						needVitals++;
-						strPWSGBIndicator = "PWS Ready/Awaiting Vitals";
+						strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_VITALS;
 					}
 				}
-				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_TO_SCAN) || stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
+				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
 					waitingForMD++;
 				}
 				setStatus(state, row, sessionId, currState, strPWSGBIndicator);
@@ -349,11 +351,6 @@ public class GreaseBoardBuilder {
 			row.setStatus("Printing PSF...");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_PSF_WAIT_TO_SCAN)) {
-			row.setStatusColor(READY_COLOR);
-			row.setStatus("PSF Ready");
-			return;
-		}
 		if (stateName.equals(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION)) {
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PSF Tablet Ready");
@@ -374,7 +371,7 @@ public class GreaseBoardBuilder {
 			row.setStatus("Printing PWS...");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_WAIT_TO_SCAN) || stateName.equals(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
+		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
 			row.setStatusColor(READY_COLOR);
 			row.setStatus(strPWSGBIndicator);
 			return;
