@@ -261,6 +261,7 @@ public class GreaseBoardBuilder {
 					    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_PSF;
 					    	} else {
 					    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY;
+					    		break;
 					    	}
 				    	}
 					} else {
