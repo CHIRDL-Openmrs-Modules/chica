@@ -5,7 +5,7 @@
         </div>
     </div>
     <div data-role="content">   
- 		<div id="confidentialityNoticeDiv"><p>Answers to the following questions are confidential. ${patient.givenName} should answer the questions privately.</p></div>          
+ 		<div id="confidentialityNoticeDiv"><p>The following questions are confidential. ${newFirstName} should answer them privately.</p></div>          
         <div style="margin: 0 auto;text-align: center;">
             <a href="#" id="confidentialityOKButton" onClick="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">OK</a>
       	</div>
