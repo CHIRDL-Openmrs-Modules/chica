@@ -250,31 +250,21 @@ public class GreaseBoardBuilder {
 				row.setPatientId(patient.getPatientId());
 				row.setSessionId(sessionId);
 				String stateName = state.getName();
-				String strPWSGBIndicator = null;
-				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION)) {
-					needVitals++;
-				}
-				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
-					Map<String, List<PatientState>> patientState = chirdlutilbackportsService.getPatientStatesBySessionId(sessionId,stateNames,false);
-				    if (patientState.containsKey(ChirdlUtilConstants.STATE_PROCESS_VITALS) && patientState.get(ChirdlUtilConstants.STATE_PROCESS_VITALS).get(0).getEndTime()!=null){
-				    	List<PatientState> psfWaitPatientState = patientState.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
-				    	for (PatientState psfState : psfWaitPatientState) {
-				    		if (psfState.getEndTime()==null) {
-					    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_PSF;
-					    	} else {
-					    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY;
-					    		break;
-					    	}
-				    	}
-					} else {
+								
+				Map<String, List<PatientState>> patientStatesMap = null;
+				if(stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION) || stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION))
+				{
+					patientStatesMap = chirdlutilbackportsService.getPatientStatesBySessionId(sessionId,stateNames,false);
+					List<PatientState> vitalsStates = patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS);
+					if(vitalsStates == null || (vitalsStates != null && vitalsStates.get(0).getEndTime() == null))
+					{
 						needVitals++;
-						strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_VITALS;
 					}
+					if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
+						waitingForMD++;
+					}	
 				}
-				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
-					waitingForMD++;
-				}
-				setStatus(state, row, sessionId, currState, strPWSGBIndicator);
+				setStatus(state, row, sessionId, currState, patientStatesMap);
 				row.setLocationId(currState.getLocationId());
 				row.setLocationTagId(currState.getLocationTagId());
 				rows.add(row);
@@ -303,7 +293,7 @@ public class GreaseBoardBuilder {
 	 * @param sessionId The sessionId for the patient row.
 	 * @param currState The current PatientState of the row.
 	 */
-	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, String strPWSGBIndicator) {
+	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, List<PatientState>> patientStatesMap) {
 		//see if an incomplete state exists for the JIT
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State jitIncompleteState = chirdlutilbackportsService.getStateByName("JIT_incomplete");
@@ -376,6 +366,21 @@ public class GreaseBoardBuilder {
 		}
 		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
 			row.setStatusColor(READY_COLOR);
+			String strPWSGBIndicator = null;
+			if(patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS) == null 
+					|| (patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS) != null && patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS).get(0).getEndTime() == null)) {
+				strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_VITALS;
+			} else {
+				List<PatientState> psfWaitPatientState = patientStatesMap.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
+		    	for (PatientState psfState : psfWaitPatientState) {
+		    		if (psfState.getEndTime()==null) {
+			    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_PSF;
+			    	} else {
+			    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY;
+			    		break;
+			    	}
+		    	}
+			}
 			row.setStatus(strPWSGBIndicator);
 			return;
 		}
