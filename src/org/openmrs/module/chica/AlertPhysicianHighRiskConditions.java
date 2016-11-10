@@ -18,6 +18,7 @@ import org.openmrs.Concept;
 import org.openmrs.Form;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.ConceptService;
@@ -105,16 +106,17 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ruleName = "Abuse_Concern_PWS";
 		rule = dssService.getRule(ruleName);
 		addEncounters(obs, notificationSet, rule.getRuleId());
-				
+		org.openmrs.module.chica.service.EncounterService chicaEncounterService = Context.getService(org.openmrs.module.chica.service.EncounterService.class);	
+		
 		for (org.openmrs.Encounter encounter : notificationSet) {
-			Encounter chicaEncounter = (Encounter) encounterService.getEncounter(encounter.getEncounterId());
+			Encounter chicaEncounter = (Encounter) chicaEncounterService.getEncounter(encounter.getEncounterId());
 			Integer locationId = chicaEncounter.getLocation().getLocationId();
 			String printerLocation = chicaEncounter.getPrinterLocation();
 			if (printerLocation != null) {
 				LocationTag locTag = locationService.getLocationTagByName(printerLocation.trim());
 				if (locTag != null) {
 					Integer locationTagId = locTag.getLocationTagId();
-					sendEmailNotification(locationId, locationTagId);//TODO Do we want individual emails for each encounter?
+					sendEmailNotification(locationId, locationTagId,chicaEncounter);//TODO Do we want individual emails for each encounter?
 				}
 			}
 		}
@@ -123,7 +125,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		
 	}
 	
-	private void sendEmailNotification(Integer locationId, Integer locationTagId) {
+	private void sendEmailNotification(Integer locationId, Integer locationTagId,Encounter chicaEncounter) {
 		ChirdlUtilBackportsService cub = Context.getService(ChirdlUtilBackportsService.class);
 		LocationTagAttributeValue lav = cub.getLocationTagAttributeValue(locationTagId, "HighRiskContact", locationId);
 		PersonService personService = Context.getPersonService();
@@ -157,10 +159,14 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 								String lastName = person.getPersonName().getFamilyName();
 								String firstName = person.getPersonName().getGivenName();
 								String sendingEmail = "stmdowns@iu.edu";
-								String subject = "High risk conditions alert!"; //TODO subject content
-								String body = "This is test content for the body for provider " + firstName + " " + lastName;//TODO body content
-								//TODO should we tell which condition (child abuse or suicide or have a general message)
+								String subject = "CHICA high risk conditions (suicide or abuse)"; 
+								Patient patient = chicaEncounter.getPatient();
 								
+								String body = "The following patient was identified by CHICA as being at high risk of suicide or abuse.\n";
+								body+="We do not have a record of "+firstName+" "+lastName+" addressing this issue.\n";
+								body+="Please check the medical record to make sure the condition was addressed.\n\n";
+								body+="mrn: "+ patient.getPatientIdentifier()+"\t"+patient.getGivenName()+" "+patient.getFamilyName();
+							
 								Properties mailProps = new Properties();
 								mailProps.put("mail.smtp.host", smtpMailHost);
 								MailSender mailSender = new MailSender(mailProps);
