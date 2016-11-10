@@ -156,16 +156,15 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 									return;
 								}
 								
-								String lastName = person.getPersonName().getFamilyName();
-								String firstName = person.getPersonName().getGivenName();
 								String sendingEmail = "stmdowns@iu.edu";
 								String subject = "CHICA high risk conditions (suicide or abuse)"; 
 								Patient patient = chicaEncounter.getPatient();
 								
-								String body = "The following patient was identified by CHICA as being at high risk of suicide or abuse.\n";
-								body+="We do not have a record of "+firstName+" "+lastName+" addressing this issue.\n";
-								body+="Please check the medical record to make sure the condition was addressed.\n\n";
-								body+="mrn: "+ patient.getPatientIdentifier()+"\t"+patient.getGivenName()+" "+patient.getFamilyName();
+								String body = "The following patient indicated in CHICA that he/she might be at high risk of suicide or abuse.\n"+
+										"We do not have a record in CHICA of the patient's provider addressing this issue.\n"+
+										"We recommend checking the patient's medical record to make sure the issue was addressed.\n\n";
+								
+								body+="mrn: "+ patient.getPatientIdentifier()+"\tname: "+patient.getGivenName()+" "+patient.getFamilyName();
 							
 								Properties mailProps = new Properties();
 								mailProps.put("mail.smtp.host", smtpMailHost);
