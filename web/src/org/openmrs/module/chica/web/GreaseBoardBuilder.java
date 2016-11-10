@@ -252,12 +252,10 @@ public class GreaseBoardBuilder {
 				String stateName = state.getName();
 								
 				Map<String, List<PatientState>> psfAndVitalsStatesMap = null;
-				if(stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION) || stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION))
-				{
+				if(stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION) || stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
 					psfAndVitalsStatesMap = chirdlutilbackportsService.getPatientStatesBySessionId(sessionId,stateNames,false);
 					List<PatientState> vitalsStates = psfAndVitalsStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS);
-					if(vitalsStates == null || (vitalsStates != null && vitalsStates.get(0).getEndTime() == null))
-					{
+					if(vitalsStates == null || (vitalsStates != null && vitalsStates.get(0).getEndTime() == null)) {
 						needVitals++;
 					}
 					if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
@@ -381,7 +379,6 @@ public class GreaseBoardBuilder {
 			    	}
 				}
 			} else {
-				// PSF and Vitals map was empty, set to error
 				row.setStatusColor(WAIT_COLOR);
 				row.setStatus("Error. Contact support");
 			}
