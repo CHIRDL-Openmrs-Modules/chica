@@ -251,11 +251,11 @@ public class GreaseBoardBuilder {
 				row.setSessionId(sessionId);
 				String stateName = state.getName();
 								
-				Map<String, List<PatientState>> patientStatesMap = null;
+				Map<String, List<PatientState>> psfAndVitalsStatesMap = null;
 				if(stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION) || stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION))
 				{
-					patientStatesMap = chirdlutilbackportsService.getPatientStatesBySessionId(sessionId,stateNames,false);
-					List<PatientState> vitalsStates = patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS);
+					psfAndVitalsStatesMap = chirdlutilbackportsService.getPatientStatesBySessionId(sessionId,stateNames,false);
+					List<PatientState> vitalsStates = psfAndVitalsStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS);
 					if(vitalsStates == null || (vitalsStates != null && vitalsStates.get(0).getEndTime() == null))
 					{
 						needVitals++;
@@ -264,7 +264,7 @@ public class GreaseBoardBuilder {
 						waitingForMD++;
 					}	
 				}
-				setStatus(state, row, sessionId, currState, patientStatesMap);
+				setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap);
 				row.setLocationId(currState.getLocationId());
 				row.setLocationTagId(currState.getLocationTagId());
 				rows.add(row);
@@ -293,7 +293,7 @@ public class GreaseBoardBuilder {
 	 * @param sessionId The sessionId for the patient row.
 	 * @param currState The current PatientState of the row.
 	 */
-	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, List<PatientState>> patientStatesMap) {
+	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, List<PatientState>> psfAndVitalsStatesMap) {
 		//see if an incomplete state exists for the JIT
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State jitIncompleteState = chirdlutilbackportsService.getStateByName("JIT_incomplete");
@@ -366,22 +366,25 @@ public class GreaseBoardBuilder {
 		}
 		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
 			row.setStatusColor(READY_COLOR);
-			String strPWSGBIndicator = null;
-			if(patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS) == null 
-					|| (patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS) != null && patientStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS).get(0).getEndTime() == null)) {
-				strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_VITALS;
-			} else {
-				List<PatientState> psfWaitPatientState = patientStatesMap.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
-		    	for (PatientState psfState : psfWaitPatientState) {
-		    		if (psfState.getEndTime()==null) {
-			    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY_AWAITING_PSF;
-			    	} else {
-			    		strPWSGBIndicator = ChirdlUtilConstants.PWS_READY;
-			    		break;
+			if (psfAndVitalsStatesMap != null) {
+				List<PatientState> vitalsStates = psfAndVitalsStatesMap.get(ChirdlUtilConstants.STATE_PROCESS_VITALS);
+				if(vitalsStates == null || (vitalsStates != null && vitalsStates.get(0).getEndTime() == null)) {
+					row.setStatus(ChirdlUtilConstants.PWS_READY_AWAITING_VITALS);
+				} else {
+					List<PatientState> psfWaitForSubmissionStates = psfAndVitalsStatesMap.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
+					row.setStatus(ChirdlUtilConstants.PWS_READY_AWAITING_PSF); 
+					for (PatientState psfState : psfWaitForSubmissionStates) {
+			    		if (psfState.getEndTime() != null) {
+			    			row.setStatus(ChirdlUtilConstants.PWS_READY);
+			    			return;
+				    	} 
 			    	}
-		    	}
+				}
+			} else {
+				// PSF and Vitals map was empty, set to error
+				row.setStatusColor(WAIT_COLOR);
+				row.setStatus("Error. Contact support");
 			}
-			row.setStatus(strPWSGBIndicator);
 			return;
 		}
 		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_PROCESS)) {
