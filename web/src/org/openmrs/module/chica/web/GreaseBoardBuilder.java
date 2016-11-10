@@ -251,8 +251,10 @@ public class GreaseBoardBuilder {
 				row.setSessionId(sessionId);
 				String stateName = state.getName();
 				String strPWSGBIndicator = null;
-				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION)
-				        	|| stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
+				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION)) {
+					needVitals++;
+				}
+				if (stateName.equalsIgnoreCase(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
 					Map<String, List<PatientState>> patientState = chirdlutilbackportsService.getPatientStatesBySessionId(sessionId,stateNames,false);
 				    if (patientState.containsKey(ChirdlUtilConstants.STATE_PROCESS_VITALS) && patientState.get(ChirdlUtilConstants.STATE_PROCESS_VITALS).get(0).getEndTime()!=null){
 				    	List<PatientState> psfWaitPatientState = patientState.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
