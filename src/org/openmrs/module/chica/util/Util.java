@@ -122,45 +122,21 @@ public class Util {
 		    formInstance, ruleId, locationTagId, usePrintedTimestamp, formFieldId);
 	}
 	
+	
 	/**
-	 * 
+	 * This method is duplicated in atd. It is in chica because the chica rules need it
 	 * @param concept
 	 * @param encounterId
 	 * @param formFieldId - DWE CHICA-437 the form field id or null if one is not used
 	 */
-	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId){
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-		ObsService obsService = Context.getObsService();
-		
-		// DWE CHICA-437 Before voiding obs records, we need to check to see if there is an 
-		// existing atd_statistics record. This is needed for cases where a form may have more
-		// than one field that uses the same concept and the same rule. Checking the atd_statistics
-		// table will allow us to determine if the obs record is for the specified field
-		List<Obs> obs = new ArrayList<Obs>();
-		if(formFieldId != null)
-		{
-			// Get a list of obs records that have a related atd_statistics record.
-			// This will give us a list of obs records that can be voided below
-			ATDService atdService = Context.getService(ATDService.class);
-			obs = atdService.getObsWithStatistics(encounter.getEncounterId(), concept.getConceptId(), formFieldId, false);
-		}
-		else
-		{
-			// Use previously existing functionality for cases where we don't have a formFieldId
-			// Examples of this can be seen in calculatePercentiles()
-			List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
-			encounters.add(encounter);
-			List<Concept> questions = new ArrayList<Concept>();
-			
-			questions.add(concept);
-			obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
-					null, null, null, null, false);
-		}
-		
-		for(Obs currObs:obs){
-			obsService.voidObs(currObs, "voided due to rescan");
-		}
+	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId)
+	{
+		voidObsForConcept(concept,encounterId, formFieldId,"voided due to rescan");
+	}
+	
+	public static void voidObsForConcept(Concept concept,Integer encounterId, Integer formFieldId, String voidReason)
+	{
+		org.openmrs.module.atd.util.Util.voidObsForConcept(concept, encounterId, formFieldId, voidReason);
 	}
 	
 	public static String sendPage(String message, String pagerNumber) {
