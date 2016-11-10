@@ -95,6 +95,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	private static final String PROPERTY_TXA_16_PROVIDER_ID = "PROVIDER_ID";
 	private static final String MSH_PROCESSING_ID = "P"; // Production;
 	private static final String PWS_PROVIDER_SUBMIT = "PWS_provider_submit";
+	private static final String DEFAULT_OBX_VALUE = "No patient or provider responses found";
 	
 	/**
 	 * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#changeState(org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState,
@@ -194,7 +195,6 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		try {
 			
 			Integer numberOfOBXSegments = 0;
-			boolean sendHL7 = false;
 			
 			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);
 			
@@ -228,12 +228,14 @@ public class ExportPhysicianNote implements ProcessStateAction {
 				}
 			}
 			
-			if (numberOfOBXSegments > 0)
-				sendHL7 = true;
-			
-			if (sendHL7) {
-				return getMessage(mdm);
+			if(numberOfOBXSegments == 0)
+			{
+				// Add atleast one OBX so that we can send a note back indicating that none of the checkboxes were checked on the PWS
+				addSegmentOBX(conceptName, DEFAULT_OBX_VALUE, hl7Abbreviation, numberOfOBXSegments, mdm);
 			}
+			
+			return getMessage(mdm);
+			
 		}
 		catch (Exception e) {
 			

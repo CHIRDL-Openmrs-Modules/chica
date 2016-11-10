@@ -218,6 +218,11 @@ public class GreaseBoardController extends SimpleFormController
 				
 				HashMap<String,Object> actionParameters = new HashMap<String,Object>();
 				actionParameters.put("formName", formName);
+				
+				if(formName.equalsIgnoreCase(ChirdlUtilConstants.FORM_PWS)) // DWE CHICA-821 Allow PWS to auto-print when "reprinting"
+				{
+					actionParameters.put(ChirdlUtilConstants.PARAMETER_FORCE_AUTO_PRINT, ChirdlUtilConstants.GENERAL_INFO_TRUE);
+				}
 
 				if (currState != null)
 				{
