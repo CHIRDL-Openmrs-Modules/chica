@@ -190,7 +190,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 								}
 								
 								String sendingEmail = FROM_EMAIL;
-								String subject = "CHICA high risk conditions (suicide or abuse)";
+								String subject = "[CONFIDENTIAL] CHICA high risk conditions (suicide or abuse)";
 								Patient patient = chicaEncounter.getPatient();
 								
 								String body = riskText
