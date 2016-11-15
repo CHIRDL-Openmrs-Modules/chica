@@ -4040,8 +4040,25 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			VALUES('MRN_EHR', 'MRN received from EHR.', 1, NOW(), UUID());
         </sql>
     </diff>
-    <diff>  
-        <version>1.8.4</version>  
+    <diff>
+        <version>1.8.4</version>
+        <author>Tammy Dugan</author>
+        <date>November 1, 2016</date>
+        <description>
+            CHICA-763 
+            Add a new location attribute to identify the provider to notify if high risk conditions are not acknowledged on the PWS.
+            Add a new person attribute type to store the email address.
+        </description>
+        <sql>
+            INSERT INTO `chirdlutilbackports_location_tag_attribute`(name,description) 
+        VALUES ( 'HighRiskContact', 'Provider to notify if high risk prompt is not acknowledged on the PWS.');
+        
+        INSERT INTO `person_attribute_type` (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
+            VALUES ('email', 'email', 'java.lang.String', 1, 1, NOW(), UUID());
+        </sql>
+    </diff>
+	<diff>  
+        <version>1.8.5</version>  
         <author>David Ely</author>  
         <date>November 9, 2016</date>  
         <description>  
