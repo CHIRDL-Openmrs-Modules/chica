@@ -187,7 +187,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 								String emailAddys = personAttribute.getValue();
 								if (emailAddys == null || emailAddys.trim().length() == 0) {
 									log.error("No valid " + ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL
-									        + " found for location " + locationId + ".  No one will be emailed.");
+									        + " found for personId " + personId + ".  No one will be emailed.");
 									return;
 								}
 								String[] emailList = emailAddys.split(",");
