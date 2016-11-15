@@ -60,6 +60,11 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		final String ABUSE_NOTIFICATION_TEXT = this.taskDefinition.getProperty("ABUSE_NOTIFICATION_TEXT");
 		final String FROM_EMAIL = this.taskDefinition.getProperty("FROM_EMAIL");
 		
+		if(SUICIDE_NOTIFICATION_TEXT == null||ABUSE_NOTIFICATION_TEXT==null||FROM_EMAIL==null){
+			log.error("One or more required properties for AlertPhysicianHighRiskCondition are not set");
+			return;
+		}
+		
 		Calendar date = Calendar.getInstance();
 		date.set(Calendar.HOUR_OF_DAY, 0);
 		date.set(Calendar.MINUTE, 0);
@@ -239,7 +244,10 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ATDService atdService = Context.getService(ATDService.class);
 		final String FORM_NAME = this.taskDefinition.getProperty("FORM_NAME");
 		final String END_STATE_NAME = this.taskDefinition.getProperty("END_STATE_NAME");
-		
+		if(FORM_NAME == null||END_STATE_NAME==null){
+			log.error("One or more required properties for AlertPhysicianHighRiskCondition are not set");
+			return;
+		}
 		for (Obs currOb : obs) {
 			org.openmrs.Encounter encounter = currOb.getEncounter();
 			Integer encounterId = encounter.getEncounterId();
