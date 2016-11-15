@@ -478,7 +478,7 @@ public class Util {
 			
 			// DWE CHICA-884 Get patient age. This will be used to determine if the confidentiality pop-up should be
 			// displayed for patients >= 12 years old
-			Integer ageAtVisitWithoutUnits = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(patient.getBirthdate(), Calendar.getInstance().getTime(), YEAR_ABBR);
+			Integer ageInYears = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(patient.getBirthdate(), Calendar.getInstance().getTime(), YEAR_ABBR);
 						
 			String sex = patient.getGender();
 			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
@@ -565,7 +565,7 @@ public class Util {
 			row.setSex(sex);
 			row.setPatientId(patient.getPatientId());
 			row.setSessionId(sessionId);
-			row.setAgeAtVisitWithoutUnits(ageAtVisitWithoutUnits);
+			row.setAgeInYears(ageInYears);
 			
 			rows.add(row);
 		}
