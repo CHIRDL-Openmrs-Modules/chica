@@ -1,5 +1,7 @@
 package org.openmrs.module.chica.rule;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,10 +48,15 @@ public class CheckPSFWaitForElectronicSubmissionState implements Rule{
 		{
 			// Get patient states for the encounter and state
 			List<PatientState> patientStates = chirdlutilbackportsService.getPatientStateByEncounterState(encounterId, state.getStateId());
-			
 			if (patientStates != null && patientStates.size() > 0) {
-				PatientState patientState = patientStates.get(0);
-				if(patientState != null && patientState.getEndTime() != null){
+				PatientState patientState = null;
+				ArrayList<Date> psfEndTime = new ArrayList<Date>();
+				for (int i=0; i<patientStates.size(); i++) {
+					patientState = patientStates.get(i);
+					if (patientState.getEndTime() != null  )
+						psfEndTime.add(patientState.getEndTime());
+				}
+				if(patientState != null && !psfEndTime.isEmpty()){
 					return new Result(ChirdlUtilConstants.GENERAL_INFO_TRUE);
 				}
 				else{
