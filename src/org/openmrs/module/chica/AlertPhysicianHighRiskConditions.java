@@ -48,19 +48,17 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	private static final String FROM_EMAIL = "stmdowns@iu.edu";
-	
 	private static final String LOC_TAG_ATTR_HIGH_RISK_CONTACT = "HighRiskContact";
-	
-	private static final String SUICIDE_NOTIFICATION_TEXT = "Suicide: The following patient indicated in CHICA that he/she might be at high risk of suicide.";
-	
-	private static final String ABUSE_NOTIFICATION_TEXT = "Abuse: The following patient's parent indicated in CHICA possible concern for abuse.";
 	
 	private static int NUM_DAYS = 3;//number of days allowed to submit PWS
 	
 	@Override
 	public void execute() {
 		Context.openSession();
+		
+		final String SUICIDE_NOTIFICATION_TEXT = this.taskDefinition.getProperty("SUICIDE_NOTIFICATION_TEXT");
+		final String ABUSE_NOTIFICATION_TEXT = this.taskDefinition.getProperty("ABUSE_NOTIFICATION_TEXT");
+		final String FROM_EMAIL = this.taskDefinition.getProperty("FROM_EMAIL");
 		
 		Calendar date = Calendar.getInstance();
 		date.set(Calendar.HOUR_OF_DAY, 0);
@@ -91,7 +89,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ruleNames.add("Depression_SuicidePWS");
 		ruleNames.add("bf_suicide_PWS");
 		
-		createAndSendNotifications(encounters, questions, answers, ruleNames, SUICIDE_NOTIFICATION_TEXT);
+		createAndSendNotifications(encounters, questions, answers, ruleNames, SUICIDE_NOTIFICATION_TEXT, FROM_EMAIL);
 		
 		//get abuse observations
 		questions = new ArrayList<Concept>();
@@ -101,7 +99,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ruleNames = new ArrayList<String>();
 		ruleNames.add("Abuse_Concern_PWS");
 		
-		createAndSendNotifications(encounters, questions, answers, ruleNames, ABUSE_NOTIFICATION_TEXT);
+		createAndSendNotifications(encounters, questions, answers, ruleNames, ABUSE_NOTIFICATION_TEXT, FROM_EMAIL);
 		
 		Context.closeSession();
 		
@@ -117,7 +115,8 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param notificationText
 	 */
 	private void createAndSendNotifications(List<org.openmrs.Encounter> encounters, List<Concept> questions,
-	                                        List<Concept> answers, ArrayList<String> ruleNames, String notificationText) {
+	                                        List<Concept> answers, ArrayList<String> ruleNames, String notificationText,
+	                                        String fromEmail) {
 		LocationService locationService = Context.getLocationService();
 		ObsService obsService = Context.getObsService();
 		org.openmrs.module.chica.service.EncounterService chicaEncounterService = Context
@@ -143,7 +142,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 				LocationTag locTag = locationService.getLocationTagByName(printerLocation.trim());
 				if (locTag != null) {
 					Integer locationTagId = locTag.getLocationTagId();
-					sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText);
+					sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail);
 				}
 			}
 		}
@@ -157,66 +156,73 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param chicaEncounter
 	 * @param riskText
 	 */
-	private void sendEmailNotification(Integer locationId, Integer locationTagId, Encounter chicaEncounter, String riskText) {
+	private void sendEmailNotification(Integer locationId, Integer locationTagId, Encounter chicaEncounter, String riskText,
+	                                   String fromEmail) {
 		ChirdlUtilBackportsService cub = Context.getService(ChirdlUtilBackportsService.class);
 		LocationTagAttributeValue lav = cub.getLocationTagAttributeValue(locationTagId, LOC_TAG_ATTR_HIGH_RISK_CONTACT,
 		    locationId);
 		PersonService personService = Context.getPersonService();
 		if (lav != null) {
 			String highRiskPersonIdStr = lav.getValue();
-			if (highRiskPersonIdStr != null) {
+			if (highRiskPersonIdStr != null && highRiskPersonIdStr.trim().length() > 0) {
 				try {
-					Integer personId = Integer.parseInt(highRiskPersonIdStr);
-					Person person = personService.getPerson(personId);
-					if (person != null) {
-						PersonAttribute personAttribute = person.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL);
-						if (personAttribute != null) {
-							
-							// Get the email addresses
-							String emailAddys = personAttribute.getValue();
-							if (emailAddys == null || emailAddys.trim().length() == 0) {
-								log.error("No valid " + ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL + " found for location "
-								        + locationId + ".  No one will be emailed.");
-								return;
-							}
-							String[] emailList = emailAddys.split(",");
-							try {
+					
+					String[] personIdStrs = highRiskPersonIdStr.split(",");
+					
+					for (String personIdStr : personIdStrs) {
+						
+						Integer personId = Integer.parseInt(personIdStr);
+						Person person = personService.getPerson(personId);
+						if (person != null) {
+							PersonAttribute personAttribute = person
+							        .getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL);
+							if (personAttribute != null) {
 								
-								String smtpMailHost = Context.getAdministrationService().getGlobalProperty(
-								    "chirdlutil.smtpMailHost");
-								if (smtpMailHost == null) {
-									log.error("Please specify global property chirdlutil.smtpMailHost for correct email operability.");
+								// Get the email addresses
+								String emailAddys = personAttribute.getValue();
+								if (emailAddys == null || emailAddys.trim().length() == 0) {
+									log.error("No valid " + ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL
+									        + " found for location " + locationId + ".  No one will be emailed.");
 									return;
 								}
-								
-								String sendingEmail = FROM_EMAIL;
-								String subject = "[CONFIDENTIAL] CHICA high risk conditions (suicide or abuse)";
-								Patient patient = chicaEncounter.getPatient();
-								
-								String body = riskText
-								        + "\n"
-								        + "We do not have a record in CHICA of the patient's provider addressing this issue.\n"
-								        + "We recommend checking the patient's medical record to make sure the issue was addressed.\n\n";
-								
-								body += "mrn: " + patient.getPatientIdentifier() + "\tname: " + patient.getGivenName() + " "
-								        + patient.getFamilyName();
-								
-								Properties mailProps = new Properties();
-								mailProps.put("mail.smtp.host", smtpMailHost);
-								MailSender mailSender = new MailSender(mailProps);
-								mailSender.sendMail(sendingEmail, emailList, subject, body, null);
-							}
-							catch (Exception e) {
-								log.error("Error sending email", e);
-								return;
-							}
-							finally {
-								
+								String[] emailList = emailAddys.split(",");
+								try {
+									
+									String smtpMailHost = Context.getAdministrationService().getGlobalProperty(
+									    "chirdlutil.smtpMailHost");
+									if (smtpMailHost == null) {
+										log.error("Please specify global property chirdlutil.smtpMailHost for correct email operability.");
+										return;
+									}
+									
+									String sendingEmail = fromEmail;
+									String subject = "[CONFIDENTIAL] CHICA high risk conditions (suicide or abuse)";
+									Patient patient = chicaEncounter.getPatient();
+									
+									String body = riskText
+									        + "\n"
+									        + "We do not have a record in CHICA of the patient's provider addressing this issue.\n"
+									        + "We recommend checking the patient's medical record to make sure the issue was addressed.\n\n";
+									
+									body += "mrn: " + patient.getPatientIdentifier() + "\tname: " + patient.getGivenName()
+									        + " " + patient.getFamilyName();
+									
+									Properties mailProps = new Properties();
+									mailProps.put("mail.smtp.host", smtpMailHost);
+									MailSender mailSender = new MailSender(mailProps);
+									mailSender.sendMail(sendingEmail, emailList, subject, body, null);
+								}
+								catch (Exception e) {
+									log.error("Error sending email for high risk condition", e);
+									return;
+								}
 							}
 						}
 					}
 				}
-				catch (Exception e) {}
+				catch (Exception e) {
+					log.error("Error sending email for high risk condition", e);
+				}
 			}
 		}
 	}
@@ -228,17 +234,19 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param notificationSet
 	 * @param ruleId
 	 */
-	private static void addEncounters(List<Obs> obs, HashSet<org.openmrs.Encounter> notificationSet, Integer ruleId) {
+	private void addEncounters(List<Obs> obs, HashSet<org.openmrs.Encounter> notificationSet, Integer ruleId) {
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		ATDService atdService = Context.getService(ATDService.class);
+		final String FORM_NAME = this.taskDefinition.getProperty("FORM_NAME");
+		final String END_STATE_NAME = this.taskDefinition.getProperty("END_STATE_NAME");
 		
 		for (Obs currOb : obs) {
 			org.openmrs.Encounter encounter = currOb.getEncounter();
 			Integer encounterId = encounter.getEncounterId();
 			Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<Integer, List<PatientState>>();
-			Form form = Context.getFormService().getForm("PWS");
+			Form form = Context.getFormService().getForm(FORM_NAME);
 			Integer formId = form.getFormId();
-			State endState = backportsService.getStateByName(ChirdlUtilConstants.STATE_PWS_PROCESS);
+			State endState = backportsService.getStateByName(END_STATE_NAME);
 			Integer endStateId = endState.getStateId();
 			Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, true);
 			
