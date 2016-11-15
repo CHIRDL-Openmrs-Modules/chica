@@ -1177,12 +1177,12 @@ function displayConfidentialityDialog()
 	if(($("#displayConfidentialityNotice").val() === 'true') && ($("#ageInYears").val() >= 12))
 	{
 		var headerText = "Confidentiality Notice";
-		var notificationText = "The following questions are confidential. " + $("#patientFirstName").val() + " should answer them privately.";
+		var notificationText = "These questions should be answered by " + $("#patientFirstName").val() + " in private.";
 		var okButtonText = "OK";
 		if(!english)
 		{
 			headerText = "Confidentiality Notice";
-			notificationText = "The following questions are confidential. " + $("#patientFirstName").val() + " should answer them privately.";
+			notificationText = "These questions should be answered by " + $("#patientFirstName").val() + " in private.";
 			okButtonText = "OK";
 		}
 		

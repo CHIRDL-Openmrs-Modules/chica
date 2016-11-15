@@ -45,6 +45,7 @@ public class PatientRow implements Serializable
 	private boolean pwsScanned = false;
 	private Integer locationId = null;
 	private Integer locationTagId = null;
+	private Integer ageAtVisitWithoutUnits = null;
 	
 	
     /**
@@ -315,6 +316,23 @@ public class PatientRow implements Serializable
     }
     
     /**
+     * Gets age at visit without units (yo, mo, wk, do)
+     * @return
+     */
+    public Integer getAgeAtVisitWithoutUnits()
+    {
+    	return ageAtVisitWithoutUnits;
+    }
+    
+    /**
+     * @param ageAtVisitWithoutUnits
+     */
+    public void setAgeAtVisitWithoutUnits(Integer ageAtVisitWithoutUnits)
+    {
+    	this.ageAtVisitWithoutUnits = ageAtVisitWithoutUnits;
+    }
+    
+    /**
      * 
      * Creates an XML representation of this PatientRow object.
      * 
@@ -351,6 +369,7 @@ public class PatientRow implements Serializable
     	}
     	xmlWriter.append("</pwsId>");
     	xmlWriter.append("<ageAtVisit>" + ageAtVisit + "</ageAtVisit>");
+    	xmlWriter.append("<ageAtVisitWithoutUnits>" + ageAtVisitWithoutUnits + "</ageAtVisitWithoutUnits>");
     	xmlWriter.append("<station>" + station + "</station>");
     	xmlWriter.append("<weightPercentile>" + weightPercentile + "</weightPercentile>");
     	xmlWriter.append("<heightPercentile>" + heightPercentile + "</heightPercentile>");
