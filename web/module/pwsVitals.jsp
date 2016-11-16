@@ -5,22 +5,30 @@
                     <div class="vitalsNames">
                         <b>Vital Signs:</b>
                     </div>                  
-                    <c:choose>
-                            <c:when test="${empty VitalsProcessed}">
-                                <c:set var="vitalsProcessedFlag" value="" />
-                                <c:set var="vitalsProcessedClass" value=""/>
+						<c:choose>
+                            <c:when test="${(empty VitalsProcessed) || (empty psfSubmitted)}">
+                                <c:set var="vitalsPSFProcessedFlag" value="" />
+                                <c:set var="vitalsPSFProcessedClass" value=""/>
                             </c:when>
-                            <c:when test="${VitalsProcessed == 'true'}">
-                               <c:set var="vitalsProcessedFlag" value="vitals received" />
-                               <c:set var="vitalsProcessedClass" value=""/>
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="vitalsProcessedFlag" value="awaiting vitals" />
-                                <c:set var="vitalsProcessedClass" value="awaitingVitalsClass"/>
-                            </c:otherwise>
+							<c:otherwise>
+								<c:choose>
+									<c:when test="${VitalsProcessed == 'false'}">
+									   <c:set var="vitalsPSFProcessedFlag" value="awaiting vitals" />
+									   <c:set var="vitalsPSFProcessedClass" value="awaitingClass"/>
+									</c:when>
+									<c:when test="${psfSubmitted == 'false'}">
+									   <c:set var="vitalsPSFProcessedFlag" value="awaiting pre-screener" />
+									   <c:set var="vitalsPSFProcessedClass" value="awaitingClass"/>
+									</c:when>
+									 <c:when test="${(VitalsProcessed == 'true') && (psfSubmitted == 'true')}">
+										<c:set var="vitalsPSFProcessedFlag" value="" />
+										<c:set var="vitalsPSFProcessedClass" value=""/>
+									</c:when>
+								</c:choose>
+							</c:otherwise>
                         </c:choose>   
-                    <div class="vitalsValues ${vitalsProcessedClass}">
-                        <c:out value="${vitalsProcessedFlag}" />
+                    <div class="vitalsValues ${vitalsPSFProcessedClass}">
+                        <c:out value="${vitalsPSFProcessedFlag}" />
                     </div>
                     <div class="flagCell">
                         <b><c:out value="${HeightA}"/></b><br/>
