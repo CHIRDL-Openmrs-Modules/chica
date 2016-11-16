@@ -23,6 +23,12 @@ $(document).on("pagecreate", "#patient_list_page", function(){
     	populateList();
     });
     
+    // DWE CHICA-884
+    $("#confidentialityOKButton").click(function () {
+    	finishConfidentialityDialog();
+        return false;
+    });
+    
 	$.mobile.changePage("#passcode_page", { transition: "fade"});
 });
 
@@ -115,14 +121,24 @@ function startTimer() {
 	timeOutVar = setTimeout("populateList()", 1);
 }
 
-function finishForm(patientId, encounterId, sessionId) {
+function finishForm(patientId, encounterId, sessionId, ageInYears, firstName) {
 	clearTimeout(timeOutVar);
-	$("#loadingDialog").popup("open", { transition: "pop"});
-	//$.mobile.loading("show");
     $("#patientId").val(patientId);
     $("#encounterId").val(encounterId);
     $("#sessionId").val(sessionId);
-    login(parsePatientSelectionResult, handleListAuthenticationAjaxError);
+    
+    if(($("#displayConfidentialityNoticeMobileGreaseBoard").val() === 'true') && (ageInYears >= 12))
+    {
+		$("#confidentialityNoticeHeader h3").text("Confidentiality Notice");
+		$("#confidentialityNoticeDiv").html("<p>Please tell the family that " + firstName + " should answer each question.</p>");
+		$("#confidentialityOKButton .ui-btn-text").text('OK');
+    	$("#confidentialityDialog").popup("open", { transition: "pop"});
+    }
+    else
+    {
+    	$("#loadingDialog").popup("open", { transition: "pop"});
+    	login(parsePatientSelectionResult, handleListAuthenticationAjaxError);
+    }
 }
 
 function checkPasscode() {
@@ -232,7 +248,10 @@ function parsePatientList(responseXML) {
             var mrn = removeSpecialCharacters($(this).find("mrn").text()); //.replace(new RegExp('-', 'g'), ''); 
             var fullName = removeSpecialCharacters(firstName) + ' ' + removeSpecialCharacters(lastName);
             
-            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ')" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
+            // DWE CHICA-884
+            var ageInYears = $(this).find("ageInYears").text();
+            
+            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ', ' + ageInYears + ', \'' + firstName + '\');" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
             count++;
         });
 
@@ -337,4 +356,14 @@ function filterPatientList()
             $(this).show()
         }
     });
+}
+
+//DWE CHICA-884
+//Binds the popafterclose event to the confidentiality dialog to allow the loading dialog to display
+//and then submit the form
+function finishConfidentialityDialog()
+{
+	$("#confidentialityDialog").on("popupafterclose", function(){$("#loadingDialog").popup("open", { transition: "pop"}); login(parsePatientSelectionResult, handleListAuthenticationAjaxError);});
+	$("#confidentialityDialog").popup("close");
+	
 }

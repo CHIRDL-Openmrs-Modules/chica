@@ -475,7 +475,11 @@ public class Util {
 			// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
 			String mrn = org.openmrs.module.chirdlutil.util.Util.formatMRN(patient);
 			String dob = DateUtil.formatDate(patient.getBirthdate(), ChirdlUtilConstants.DATE_FORMAT_MMM_d_yyyy);
-			 
+			
+			// DWE CHICA-884 Get patient age. This will be used to determine if the confidentiality pop-up should be
+			// displayed for patients >= 12 years old
+			Integer ageInYears = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(patient.getBirthdate(), Calendar.getInstance().getTime(), YEAR_ABBR);
+						
 			String sex = patient.getGender();
 			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 			
@@ -561,6 +565,7 @@ public class Util {
 			row.setSex(sex);
 			row.setPatientId(patient.getPatientId());
 			row.setSessionId(sessionId);
+			row.setAgeInYears(ageInYears);
 			
 			rows.add(row);
 		}

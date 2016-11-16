@@ -149,6 +149,12 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
         }
 	});
     
+    // DWE CHICA-884
+    $("#confidentialityOKButton").click(function () {
+    	backToQuestions();
+        return false;
+    });
+    
     // Initialize all pages because radio button reset will not work properly.
     $("div[type='question_page']").page();
     
@@ -1162,4 +1168,32 @@ function shouldShowVitalsButton() {
      }
      
      return true;
+}
+
+// DWE CHICA-884
+// Display confidentiality notice if the patient is 12 or older and the location attribute value is set to true
+function displayConfidentialityDialog()
+{
+	if(($("#displayConfidentialityNotice").val() === 'true') && ($("#ageInYears").val() >= 12))
+	{
+		var headerText = "Confidentiality Notice";
+		var notificationText = "These questions should be answered by " + $("#patientFirstName").val() + " in private.";
+		var okButtonText = "OK";
+		if(!english)
+		{
+			headerText = "Confidentiality Notice";
+			notificationText = "These questions should be answered by " + $("#patientFirstName").val() + " in private.";
+			okButtonText = "OK";
+		}
+		
+		$("#confidentialityNoticeHeader h3").text(headerText);
+		$("#confidentialityNoticeDiv").html("<p>" + notificationText + "</p>");
+		$("#confidentialityOKButton .ui-btn-text").text(okButtonText);
+		$("#confidentialityDialog").popup("open", { transition: "pop"});
+	}
+	else
+	{
+		// Don't display the dialog, just proceed to the questions
+		backToQuestions();
+	}
 }
