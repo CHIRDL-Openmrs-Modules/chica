@@ -4080,6 +4080,26 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			FROM location a;
          </sql>
 	</diff>
+	<diff>  
+        <version>1.8.6</version>  
+        <author>David Ely</author>  
+        <date>November 16, 2016</date>  
+        <description>  
+        	CHICA-886 Add new state, state action, and state mapping to allow the PWS to be printed from the GreaseBoard 
+        	when it DOES NOT already exist (tablet and vitals have not been submitted).
+        	Also, delete the existing mapping for QUERY KITE PWS -> Query CDA PWS
+        </description>  
+        <sql>
+            insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('EndStateChangeStateAction', 'End the current state and change to the next state', 'org.openmrs.module.chica.action.EndStateChangeStateAction');
+              
+            insert into chirdlutilbackports_state (name, description, state_action_id) values ('Grease Board Print PWS', 'Print the PWS from the Grease Board', (select state_action_id from chirdlutilbackports_state_action where action_name = 'EndStateChangeStateAction'));
+  			
+  			insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) 
+			values ((select state_id from chirdlutilbackports_state where name = 'Grease Board Print PWS'),
+  			(select state_id from chirdlutilbackports_state where name = 'Query CDA PWS'),
+  			(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+         </sql>
+	</diff>
 </sqldiff>
 
 
