@@ -211,8 +211,7 @@ public class GreaseBoardController extends SimpleFormController
 					} else
 					{
 						// create for the first time if it does not exist
-						currState = chirdlutilbackportsService.getStateByName("QUERY KITE "
-								+ formName);
+						currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_GREASE_BOARD_PRINT_PWS);
 					}
 				}
 				
