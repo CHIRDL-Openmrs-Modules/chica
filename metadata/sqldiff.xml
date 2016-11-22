@@ -4087,7 +4087,6 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         <description>  
         	CHICA-886 Add new state, state action, and state mapping to allow the PWS to be printed from the GreaseBoard 
         	when it DOES NOT already exist (tablet and vitals have not been submitted).
-        	Also, delete the existing mapping for QUERY KITE PWS -> Query CDA PWS
         </description>  
         <sql>
             insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('EndStateChangeStateAction', 'End the current state and change to the next state', 'org.openmrs.module.chica.action.EndStateChangeStateAction');
