@@ -77,11 +77,10 @@ public class getObsList implements Rule
 
    		Integer encounterId = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
    		
-   		LogicCriteria conceptCriteria = new LogicCriteriaImpl(
-   				conceptName);
-   		
    		if(encounterId != null)
    		{
+   			LogicCriteria conceptCriteria = new LogicCriteriaImpl(
+   				conceptName);
    			LogicCriteria encounterCriteria = 
    				new LogicCriteriaImpl(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID).equalTo(encounterId.intValue());
    			
