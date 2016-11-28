@@ -745,11 +745,18 @@ function verifyEncounterMRN(responseXML, newTab) {
         $("#encounterMrnError").show("highlight", 750);
     } else {
     	var result = $(responseXML).find("result").text();
-        if (result == "true") {
+		var validEncounter = $(responseXML).find("validEncounter").text();
+        if (result == "true" && validEncounter == "true") {
         	$("#viewEncountersMRNDialog").dialog("close");
         	popupfull("viewEncounter.form?mrn=" + $("#encounterMrnLookup").val(), newTab);
-        } else {
+        } else if (result == "false"){
+			newTab.close();
         	$("#encounterMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the encounters.</b></p>");
+            $("#encounterMrnError").show("highlight", 750);
+        } else { 
+			newTab.close();
+			var mrn = $("#encounterMrnLookup").val();
+        	$("#encounterMrnMessage").html("<p><b>Patient "+ mrn +" does not exist in the CHICA system with a valid encounter.<br>Please re-enter the MRN #. </b></p>");
             $("#encounterMrnError").show("highlight", 750);
         }
     }
