@@ -138,7 +138,7 @@
 	<classpathentry kind="lib" path="lib-common/rgccd-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/cache/cache-api-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/chirdlutil-1.11.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.5.0.jar" sourcepath="/chirdlutilbackports/src"/>
 	<classpathentry kind="lib" path="lib-common/dss-2.31.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/atd-2.7.1.jar"/>

@@ -10,13 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -30,6 +33,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	private static final String SELECTION_ERROR = "An error occurred while selecting a patient from the list.</br>Please enter the passcode and try again.";
+	private static final String PARAM_DISPLAY_CONFIDENTIALITY_NOTICE = "displayConfidentialityNoticeMobileGreaseBoard";
 
 	/*
 	 * (non-Javadoc)
@@ -123,6 +127,34 @@ public class MobileGreaseBoardController extends SimpleFormController {
 		{
 			map.put("errorMessage", request.getParameter("errorMessage"));
 			return map;
+		}
+		
+		// DWE CHICA-884
+		// Look up location attribute to determine if the confidentiality pop-up should be displayed to the mobile greaseboard
+		String locationString = user.getUserProperty(ChirdlUtilConstants.USER_PROPERTY_LOCATION);
+		
+		if (locationString != null) 
+		{
+			try
+			{
+				LocationService locationService = Context.getLocationService();
+				Location location = locationService.getLocation(locationString);
+				if (location != null)
+				{
+					ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+					LocationAttributeValue locationAttributeValue = 
+							chirdlUtilBackportsService.getLocationAttributeValue(location.getLocationId(), ChirdlUtilConstants.LOCATION_ATTR_DISPLAY_CONFIDENTIALITY_NOTICE);
+					
+					if(locationAttributeValue != null)
+					{
+						map.put(PARAM_DISPLAY_CONFIDENTIALITY_NOTICE, locationAttributeValue.getValue());
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				log.error("Error retrieving location attribute " + ChirdlUtilConstants.LOCATION_ATTR_DISPLAY_CONFIDENTIALITY_NOTICE + ". The confidentiality notice will not be displayed on the mobile greaseboard.", e);
+			}	
 		}
 				
 		try {
