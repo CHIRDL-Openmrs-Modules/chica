@@ -21,24 +21,24 @@
 					}
 
 					#patientInfoLeft {
-						width: 390px;
+						width: 480px;
 						float: left;
 						padding: 5px 2px 2px 5px;
 					}
 					
 					#patientInfoRight {
-						width: 250px;
+						width: 237px;
 						float: right;
 						padding: 2px;
 					}
 					
 					.patientInfoLeftItem {
 						height: 15px;
-						width: 388px;
+						width: 480px;
 					}
 
 					.patientInfoRightItem {
-						width:240px;
+						width:237px;
 						float:left;
 						padding:2px 2px 2px 5px;
 					}
