@@ -211,13 +211,17 @@ public class GreaseBoardController extends SimpleFormController
 					} else
 					{
 						// create for the first time if it does not exist
-						currState = chirdlutilbackportsService.getStateByName("QUERY KITE "
-								+ formName);
+						currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_GREASE_BOARD_PRINT_PWS);
 					}
 				}
 				
 				HashMap<String,Object> actionParameters = new HashMap<String,Object>();
 				actionParameters.put("formName", formName);
+				
+				if(formName.equalsIgnoreCase(ChirdlUtilConstants.FORM_PWS)) // DWE CHICA-821 Allow PWS to auto-print when "reprinting"
+				{
+					actionParameters.put(ChirdlUtilConstants.PARAMETER_FORCE_AUTO_PRINT, ChirdlUtilConstants.GENERAL_INFO_TRUE);
+				}
 
 				if (currState != null)
 				{

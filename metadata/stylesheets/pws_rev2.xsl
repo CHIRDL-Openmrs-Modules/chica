@@ -57,15 +57,16 @@
 					}
 					
 					#infoLeft {
-						width: 260px;
+						width: 434px;
 						float: left;
 						padding: 2px 2px 2px 5px;
 						border-bottom: 1px solid black;
 					}
 					
 					#infoCenter {
-						width: 200px;
-						float: left;
+						width: 155px;
+						height: 60px;
+						float: right;
 						padding: 2px;
 						border-bottom: 1px solid black;
 					}
@@ -246,12 +247,13 @@
 					
 					.infoLeftItem {
 						height: 15px;
-						width: 230px;
+						width: 434px;
 					}
 					
 					.infoCenterItem {
 						height: 15px;
-						width: 138px;
+						width: 95px;
+						padding: 0px 0px 0px 60px;
 					}
 					
 					.infoRightItem {
@@ -328,6 +330,10 @@
 		                	<div class="infoLeftItem">
 		                    	<b>Doctor:</b> <xsl:value-of select="Records/Record/Field[@id = 'Doctor']"/>
 		                	</div>
+							<div class="infoLeftItem">
+								<b>Informant:</b>
+								<xsl:value-of select="Records/Record/Field[@id = 'Informant']"/>
+							</div>
 		                </div>
 		                <div id="infoCenter">
 		                	<div class="infoCenterItem">
@@ -339,19 +345,10 @@
 		                	<div class="infoCenterItem">
 		                		<b>Time:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitTime']"/>
 		                	</div>
-		                </div>
-						<div id="infoRight">
-							<div class="infoRightItem">
-								<b>Informant:</b>
-								<xsl:value-of select="Records/Record/Field[@id = 'Informant']"/>
-							</div>
-							<div class="infoRightItem">
+							<div class="infoCenterItem">
 								<xsl:value-of select="Records/Record/Field[@id = 'Language']"/>
 							</div>
-							<div class="">
-		                        &#160;
-		                    </div>
-						</div>
+		                </div>
 		                <div id="vitals">
 		                    <div class="flagCell">
 		                        <b><font style="color:black;">A</font></b>
@@ -631,7 +628,7 @@
 							
 							<div id="vitalsLegend">
 		                    	<div class="vitalsLegendRow"><b><font style="color:red;">*</font>=Abnormal,</b></div>
-		                    	<div class="vitalsLegendRow"><b>A=Axillary, R=Rectal, O=Oral,</b></div>
+		                    	<div class="vitalsLegendRow"><b>A=Axillary, R=Rectal, O=Oral</b></div>
 		                    </div>
 		                </div>
 						<div id="examExtras">

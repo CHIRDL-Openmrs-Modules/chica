@@ -98,6 +98,7 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String XML_SAVE_RESULT_START = "<saveResult>";
 	private static final String XML_SAVE_RESULT_END = "</saveResult>";
 	private static final String XML_RESULT = "result";
+	private static final String XML_AGE_IN_YEARS = "ageInYears";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
@@ -243,6 +244,7 @@ public class ChicaMobileServlet extends HttpServlet {
 					ServletUtil.writeTag(XML_CHECKIN, ServletUtil.escapeXML(row.getCheckin()), printWriter);
 					ServletUtil.writeTag(XML_DATE_OF_BIRTH, ServletUtil.escapeXML(row.getDob()), printWriter);
 					ServletUtil.writeTag(XML_AGE, ServletUtil.escapeXML(row.getAgeAtVisit()), printWriter);
+					ServletUtil.writeTag(XML_AGE_IN_YEARS, row.getAgeInYears(), printWriter); // DWE CHICA-884 patient age used to determine if confidentiality pop-up should be displayed
 					ServletUtil.writeTag(XML_MD_NAME, ServletUtil.escapeXML(row.getMdName()), printWriter);
 					ServletUtil.writeTag(XML_SEX, row.getSex(), printWriter);
 					ServletUtil.writeTag(XML_STATION, ServletUtil.escapeXML(row.getStation()), printWriter);

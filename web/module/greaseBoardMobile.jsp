@@ -88,6 +88,9 @@
             </div>
         </div>
     </div>
+    
+    <%@ include file="confidentialityDialog.jsp" %>
+    
     <div data-role="footer" data-theme="a" data-position="fixed" style="text-align: left;">
         <h4>
         <div class="ui-grid-b">
@@ -168,6 +171,7 @@
 </div><!-- /page two -->
 
 <input id="refreshPeriod" name="refreshPeriod" type="hidden" value="${refreshPeriod}"/>
+<input id="displayConfidentialityNoticeMobileGreaseBoard" name="displayConfidentialityNoticeMobileGreaseBoard" type="hidden" value="${displayConfidentialityNoticeMobileGreaseBoard}"/>
 
 </body>
 </html>

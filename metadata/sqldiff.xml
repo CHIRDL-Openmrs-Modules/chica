@@ -4040,6 +4040,65 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			VALUES('MRN_EHR', 'MRN received from EHR.', 1, NOW(), UUID());
         </sql>
     </diff>
+    <diff>
+        <version>1.8.4</version>
+        <author>Tammy Dugan</author>
+        <date>November 1, 2016</date>
+        <description>
+            CHICA-763 
+            Add a new location attribute to identify the provider to notify if high risk conditions are not acknowledged on the PWS.
+            Add a new person attribute type to store the email address.
+        </description>
+        <sql>
+            INSERT INTO `chirdlutilbackports_location_tag_attribute`(name,description) 
+        VALUES ( 'HighRiskContact', 'Provider to notify if high risk prompt is not acknowledged on the PWS.');
+        
+        INSERT INTO `person_attribute_type` (`name`, `description`, `format`, `searchable`, `creator`, `date_created`, `uuid`)
+            VALUES ('email', 'email', 'java.lang.String', 1, 1, NOW(), UUID());
+        </sql>
+    </diff>
+	<diff>  
+        <version>1.8.5</version>  
+        <author>David Ely</author>  
+        <date>November 9, 2016</date>  
+        <description>  
+        	CHICA-884 Add new location attribute to allow the confidentiality notice to be displayed for patients 12 years or older
+        </description>  
+        <sql>  
+            INSERT INTO chirdlutilbackports_location_attribute (name, description)
+			VALUES ('displayConfidentialityNotice', 'Determines if the confidentiality notice should be displayed when the patient is 12 years or older');
+			
+			INSERT INTO chirdlutilbackports_location_attribute (name, description)
+			VALUES ('displayConfidentialityNoticeMobileGreaseBoard', 'Determines if the confidentiality notice should be displayed to the registration staff when the patient is selected on the mobile greaseboard');
+			
+			INSERT INTO chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+			SELECT a.location_id, 'true', (SELECT location_attribute_id FROM chirdlutilbackports_location_attribute WHERE name='displayConfidentialityNotice')
+			FROM location a;
+			
+			INSERT INTO chirdlutilbackports_location_attribute_value (location_id, value, location_attribute_id) 
+			SELECT a.location_id, 'false', (SELECT location_attribute_id FROM chirdlutilbackports_location_attribute WHERE name='displayConfidentialityNoticeMobileGreaseBoard')
+			FROM location a;
+         </sql>
+	</diff>
+	<diff>  
+        <version>1.8.6</version>  
+        <author>David Ely</author>  
+        <date>November 16, 2016</date>  
+        <description>  
+        	CHICA-886 Add new state, state action, and state mapping to allow the PWS to be printed from the GreaseBoard 
+        	when it DOES NOT already exist (tablet and vitals have not been submitted).
+        </description>  
+        <sql>
+            insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('EndStateChangeStateAction', 'End the current state and change to the next state', 'org.openmrs.module.chica.action.EndStateChangeStateAction');
+              
+            insert into chirdlutilbackports_state (name, description, state_action_id) values ('Grease Board Print PWS', 'Print the PWS from the Grease Board', (select state_action_id from chirdlutilbackports_state_action where action_name = 'EndStateChangeStateAction'));
+  			
+  			insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) 
+			values ((select state_id from chirdlutilbackports_state where name = 'Grease Board Print PWS'),
+  			(select state_id from chirdlutilbackports_state where name = 'Query CDA PWS'),
+  			(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+         </sql>
+	</diff>
 </sqldiff>
 
 

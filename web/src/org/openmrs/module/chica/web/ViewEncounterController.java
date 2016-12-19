@@ -599,9 +599,9 @@ public class ViewEncounterController extends SimpleFormController {
 
 				FormInstance pwsId = row.getPwsId();
 				if (pwsId != null) {
-					State currState = chirdlutilbackportsService.getStateByName("PWS_wait_to_scan");
+					State currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_PWS_PROCESS);
 					List<PatientState> pwsScanStates = chirdlutilbackportsService.getPatientStateByFormInstanceState(pwsId,
-					    currState,true);
+						currState,true);
 					if (pwsScanStates != null && pwsScanStates.size() > 0) {
 						PatientState pwsScanState = pwsScanStates.get(0);
 						if (pwsScanState.getEndTime() != null) {

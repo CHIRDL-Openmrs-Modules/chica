@@ -46,15 +46,15 @@ public class CheckPSFWaitForElectronicSubmissionState implements Rule{
 		{
 			// Get patient states for the encounter and state
 			List<PatientState> patientStates = chirdlutilbackportsService.getPatientStateByEncounterState(encounterId, state.getStateId());
-			
 			if (patientStates != null && patientStates.size() > 0) {
-				PatientState patientState = patientStates.get(0);
-				if(patientState != null && patientState.getEndTime() != null){
-					return new Result(ChirdlUtilConstants.GENERAL_INFO_TRUE);
+				for(PatientState psfState : patientStates)
+				{
+					if(psfState.getEndTime() != null)
+					{
+						return new Result(ChirdlUtilConstants.GENERAL_INFO_TRUE);
+					}
 				}
-				else{
-					return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
-				}
+				return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
 			}
 			else{
 				return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);

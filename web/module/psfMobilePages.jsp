@@ -36,10 +36,13 @@
                 </div>
             </div>
         </div>
+        
+        <%@ include file="confidentialityDialog.jsp" %>
+        
     </div><!-- /content -->
     
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-        <a id="confirmButton" href="#" data-role="button" data-theme="b" onclick="backToQuestions()" style="width: 150px;">Confirm</a>
+        <a id="confirmButton" href="#" data-role="button" data-theme="b" onclick="displayConfidentialityDialog();" style="width: 150px;">Confirm</a>
         <a id="denyButton" href="#" data-role="button" data-theme="b" style="width: 150px;">Deny</a>
     </div>
     
@@ -175,3 +178,6 @@
 <input id="maxElements" name="maxElements" type="hidden" value="5"/>
 <input id="language" name="language" type="hidden" value="${language}"/>
 <input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
+<input type="hidden" name="ageInYears" id="ageInYears" value="${AgeInYears}" />
+<input type="hidden" name="displayConfidentialityNotice" id="displayConfidentialityNotice" value="${DisplayConfidentialityNotice}" />
+<input type="hidden" name="patientFirstName" id="patientFirstName" value="${patient.givenName}" />
