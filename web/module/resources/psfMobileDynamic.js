@@ -1181,8 +1181,8 @@ function displayConfidentialityDialog()
 		var okButtonText = "OK";
 		if(!english)
 		{
-			headerText = "Confidentiality Notice";
-			notificationText = "These questions should be answered by " + $("#patientFirstName").val() + " in private.";
+			headerText = "Aviso de confidencialidad";
+			notificationText = "Estas preguntas deben ser contestadas por " + $("#patientFirstName").val() + " en privado.";
 			okButtonText = "OK";
 		}
 		
