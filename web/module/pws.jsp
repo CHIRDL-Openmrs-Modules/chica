@@ -15,6 +15,7 @@
         <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.js"></script>
+        <script>var ctx = "${pageContext.request.contextPath}"</script>
         <title>CHICA Physician Encounter Form</title>
     </head>
 

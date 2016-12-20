@@ -12,6 +12,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/cacheConfiguration.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}"</script>
 <title>Cache Configuration</title>
 </head>
 <body>

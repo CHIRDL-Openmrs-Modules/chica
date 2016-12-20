@@ -17,6 +17,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}"</script>
 
 </head>
 <c:set var="search" value="'" />

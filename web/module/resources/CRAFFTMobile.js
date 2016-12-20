@@ -202,7 +202,7 @@ function showBlockingMessage() {
 		message = "Ahorrar Respuestas...";
 	}
 	
-	var blockUIMessage = '<table><tr><td><h3><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;' + message + '</h3></td></tr></table>';
+	var blockUIMessage = '<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;' + message + '</h3></td></tr></table>';
 	$.blockUI({ css: { 
         border: "1px solid black", 
         padding: "15px", 

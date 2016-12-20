@@ -97,7 +97,7 @@
                 <div id="formSelectionDialog" title="CHICA Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
                     <div id="formSelectionDialogContainer">
                         <div id="formLoading">
-                           <span id="formLoadingPanel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
+                           <span id="formLoadingPanel"><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
                         </div>
                         <div id="formServerError">
                             <div id="formServerErrorText" class="ui-state-error"></div>

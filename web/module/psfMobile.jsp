@@ -14,6 +14,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}"</script>
 </head>
 <body style="font-size: 20px" onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}')">
 <form id="psfForm" method="POST" data-ajax="false">

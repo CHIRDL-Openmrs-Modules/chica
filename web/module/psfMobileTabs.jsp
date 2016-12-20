@@ -19,6 +19,7 @@ $(document).bind("mobileinit", function(){
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}"</script>
 <style>
 #quit_dialog .ui-header a {
     display: none;
