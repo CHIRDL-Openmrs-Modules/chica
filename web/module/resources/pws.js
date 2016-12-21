@@ -454,7 +454,7 @@ $(function() {
 	});
     
     if (timeoutDialog === null) {
-    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: ctx + '/logout', logout_redirect_url: '/openmrs/module/chica/sessionTimeout.form', 
+    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: ctx + '/logout', logout_redirect_url: ctx + '/module/chica/sessionTimeout.form', 
     		keep_alive_url: keepAliveURL, dialog_width: '400', title: 'Your CHICA session is about to expire'});
     	timeoutDialog = getTimeoutDialog();
     	
