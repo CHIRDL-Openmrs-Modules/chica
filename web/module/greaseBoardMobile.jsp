@@ -13,10 +13,10 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.timer.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/greaseBoardMobile.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.throttle-debounce.js"></script>
-<script>var ctx = "${pageContext.request.contextPath}"</script>
 </head>
 <body>
 

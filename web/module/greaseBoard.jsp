@@ -30,13 +30,13 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.timer.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/greaseBoard.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.floatThead.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
-<script>var ctx = "${pageContext.request.contextPath}"</script>
 <style>
 #overlay { 
   display:none; 

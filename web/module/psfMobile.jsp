@@ -10,11 +10,11 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/psfMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}";</script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/psfMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
-<script>var ctx = "${pageContext.request.contextPath}"</script>
 </head>
 <body style="font-size: 20px" onLoad="init('${patient.givenName}&nbsp;${patient.familyName}', '${patient.birthdate}', '${formInstance}')">
 <form id="psfForm" method="POST" data-ajax="false">
