@@ -17,7 +17,7 @@ input[masktype=password] {
     display: block !important;
     height: 1.2em !important;
     width: 100% !important;
-    background-image: url('/openmrs/moduleResources/chica/images/speaker.png') !important;
+    background-image: url('images/speaker.png') !important;
     background-repeat: no-repeat  !important;
     background-position: center  !important; 
     margin-top:2px;
@@ -67,7 +67,7 @@ a[data-role="button"] {
 	    display: block !important;
 	    height: 1.2em !important;
 	    width: 100% !important;
-	    background-image: url('/openmrs/moduleResources/chica/images/speaker.png') !important;
+	    background-image: url('images/speaker.png') !important;
 	    background-repeat: no-repeat  !important;
 	    background-position: center  !important; 
 	    margin-top:-1px;

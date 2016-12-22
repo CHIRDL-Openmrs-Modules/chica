@@ -303,7 +303,7 @@ function loadQuestions() {
 }
 
 function loadDynamicQuestions() {
-  var url = "/openmrs/moduleServlet/chica/chicaMobile";
+  var url = ctx + "/moduleServlet/chica/chicaMobile";
   var action = "action=getPrioritizedElements&formId=" + formId + "&formInstanceId=" + formInstanceId + "&encounterId=" + 
   	encounterId + "&maxElements=5";
   var message = "Loading Questions...";
@@ -313,7 +313,7 @@ function loadDynamicQuestions() {
   
   var token = getAuthenticationToken();
   
-  $("#blockUIMessage").html('<table><tr><td><h3><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;' + message + '</h3></td></tr></table>');
+  $("#blockUIMessage").html('<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;' + message + '</h3></td></tr></table>');
   $.ajax({
 	  beforeSend: function (xhr) {
 		    xhr.setRequestHeader ("Authorization", token );
@@ -371,7 +371,7 @@ function saveDynamicQuestions(autoloadNextQuestions) {
     var patientId = $("#patientId").val();
 	var locationId = $("#locationId").val();
 	var locationTagId = $("#locationTagId").val();
-	var url = "/openmrs/moduleServlet/chica/chicaMobile";
+	var url = ctx + "/moduleServlet/chica/chicaMobile";
 	var action = "action=saveExportElements&formId=" + formId
 			+ "&formInstanceId=" + formInstanceId + "&encounterId="
 			+ encounterId + "&patientId=" + patientId + "&locationId="
@@ -383,7 +383,7 @@ function saveDynamicQuestions(autoloadNextQuestions) {
 	}
 	var token = getAuthenticationToken();
 	$("#blockUIMessage").html(
-			'<table><tr><td><h3><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap"><h3>&nbsp;' + message + '</h3></td></tr></table>');
+			'<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap"><h3>&nbsp;' + message + '</h3></td></tr></table>');
 	$.ajax({
 		beforeSend: function (xhr) {
 		    xhr.setRequestHeader ("Authorization", token );
@@ -666,7 +666,7 @@ function setQuestionCheckboxes(initialCheckBoxId, newCheckBoxId) {
 }
 
 function getPatientForms() {
-  var url = "/openmrs/moduleServlet/chica/chicaMobile";
+  var url = ctx + "/moduleServlet/chica/chicaMobile";
   var sessionId = $("#sessionId").val();
   var token = getAuthenticationToken();
   $.ajax({
@@ -805,7 +805,7 @@ function attemptLoadForms() {
 
 function checkPasscode() {
   var passcode = $("#vitals_passcode").val();
-  var url = "/openmrs/moduleServlet/chica/chicaMobile";
+  var url = ctx + "/moduleServlet/chica/chicaMobile";
   var action = "action=verifyPasscode&passcode=" + passcode;
   var token = getAuthenticationToken();
   $.ajax({
@@ -859,7 +859,7 @@ function finishVitals() {
 }
 
 function showBlockingMessage() {
-	var blockUIMessage = '<table><tr><td><h3><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;Please wait...</h3></td></tr></table>';
+	var blockUIMessage = '<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;Please wait...</h3></td></tr></table>';
 	var divHtml = $("#blockUIMessage").html();
 	if (divHtml !== null && divHtml.length > 0) {
 		blockUIMessage = divHtml;

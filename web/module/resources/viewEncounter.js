@@ -110,7 +110,7 @@ function exitForm() {
 
 function checkEncounterMRN() {
 	$("#encounterMrnError").hide();
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	  $.ajax({
 		  beforeSend: function(){
 			  $("#viewEncountersMRNOKButton").button("disable");

@@ -30,12 +30,13 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.timer.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/greaseBoard.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.floatThead.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <style>
 #overlay { 
   display:none; 
@@ -180,7 +181,7 @@ label {
     </div>
     <div class="encounterarea" id="middle">
         <div id="overlay">
-		  <img src="/openmrs/moduleResources/chica/images/ajax-loader-circle.gif" id="img-load" />
+		  <img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader-circle.gif" id="img-load" />
 		</div>
         <div id="badScansArea">
             <table width="100%"
@@ -293,7 +294,7 @@ label {
         <div style="margin: 0 auto;text-align: center;">
             <div style="color:#000000;"><p><b>Type the MRN #. Press OK to display the record.</b></p></div>
             <div id="mrnLoading" class="force-print-form-loading">
-                 <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
+                 <span><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
               </div>
             <div id="mrnError" style="text-align:center;"><span id="mrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="mrnLookup" tabindex="1"/></div>
@@ -303,7 +304,7 @@ label {
         <div style="margin: 0 auto;text-align: center;">
             <div style="color:#000000;"><p><b>Type the MRN #. Press OK to display the patient's encounters.</b></p></div>
             <div id="encounterMrnLoading" class="force-print-form-loading">
-                 <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
+                 <span><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
               </div>
             <div id="encounterMrnError" style="text-align:center;"><span id="encounterMrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="encounterMrnLookup" tabindex="1"/></div>
@@ -313,7 +314,7 @@ label {
         <div style="margin: 0 auto;text-align: center;">
             <div style="color:#000000;"><p><b>Type the MRN #. Press OK to display the patient handouts.</b></p></div>
             <div id="printHandoutsMrnLoading" class="force-print-form-loading">
-                 <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
+                 <span><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
               </div>
             <div id="printHandoutsMrnError" style="text-align:center;"><span id="printHandoutsMrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="printHandoutsMrnLookup" tabindex="1"/></div>
@@ -321,7 +322,7 @@ label {
     </div>
     <div id="manualCheckinDialog" title="Check-in Patient" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
         <div id="manualCheckinLoading" style="height:400px;margin: 0 auto;text-align: center;">
-             <span style="color:#000000;"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading information...</span>
+             <span style="color:#000000;"><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Loading information...</span>
         </div>
         <div id="manualCheckinSaving" style="height:400px;margin: 0 auto;text-align: center;">
              <span id="savingContainer" style="color:#000000;"></span>
@@ -602,7 +603,7 @@ label {
 	        </div>
 	        <div id="pagerError" style="text-align:center;"><span id="pagerErrorMessage" class="alertText"></span></div>
 	        <div id="pagerSaving">
-	             <span style="color:#000000;"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Sending request...</span>
+	             <span style="color:#000000;"><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Sending request...</span>
 	        </div>
         </div>
         <div id="pagerComplete" style="text-align:center;"><span style="color:#000000;">Page request successfully sent.</span></div>

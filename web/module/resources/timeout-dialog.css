@@ -3,7 +3,7 @@
 }
 
 #timeout-dialog {
-  background: url("/openmrs/moduleResources/chica/images/timeout-icon.png") no-repeat 15px 25px;
+  background: url("images/timeout-icon.png") no-repeat 15px 25px;
 }
 
 #timeout-message, #timeout-question {

@@ -92,7 +92,7 @@ function login(successFunction, errorFunction) {
 	    password = decrypted.toString(CryptoJS.enc.Utf8);
 	}
 	
-    var url = "/openmrs/moduleServlet/chica/chicaMobile";
+    var url = ctx + "/moduleServlet/chica/chicaMobile";
     var action = "action=authenticateUser";
     var token = getAuthenticationToken();
     $.ajax({
