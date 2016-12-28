@@ -38,7 +38,6 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.Vaccine;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 

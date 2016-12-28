@@ -23,7 +23,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 /**
@@ -67,7 +67,7 @@ public class Pager {
 			}
 		}
 		
-		LocationAttributeValue locAttrValue = chirdlutilbackportsService.getLocationAttributeValue(locationId,
+		ChirdlLocationAttributeValue locAttrValue = chirdlutilbackportsService.getLocationAttributeValue(locationId,
 			ChirdlUtilConstants.LOCATION_ATTR_PAGER_MESSAGE);
 		String message = locAttrValue.getValue();
 		

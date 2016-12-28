@@ -141,7 +141,7 @@ public class HL7PatientHandler25 extends
 				}
 
 			}
-		} catch (HL7Exception e)
+		} catch (Exception e)
 		{
 			logger.error(e.getMessage());
 			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));

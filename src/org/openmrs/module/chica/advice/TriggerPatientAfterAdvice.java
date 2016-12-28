@@ -13,7 +13,6 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.TeleformFileState;
 import org.openmrs.module.chica.ImmunizationForecastLookup;
-import org.openmrs.module.chica.MedicationListLookup;
 import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
@@ -48,12 +47,6 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					Location location = encounter.getLocation();
 					//spawn the checkin thread
 					threadManager.execute(new CheckinPatient(encounter,parameters), location.getLocationId());
-					
-					String queryMeds = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_QUERY_MEDS);
-					if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(queryMeds)) {
-						//spawn the medication query thread
-						threadManager.execute(new QueryMeds(encounter), location.getLocationId());
-					}
 					
 					String executeImmunization = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_IMMUNIZATION_QUERY_ACTIVATED);
 					if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(executeImmunization)) {
@@ -106,7 +99,6 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 		{
             log.info("clear regenObs and medicationList");
             ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY)).clearObs();
-            MedicationListLookup.clearMedicationLists();
             ImmunizationForecastLookup.clearimmunizationLists();
         }
 	}

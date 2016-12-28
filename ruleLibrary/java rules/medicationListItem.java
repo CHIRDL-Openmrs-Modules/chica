@@ -25,51 +25,54 @@ public class medicationListItem implements Rule {
 	 * @see org.openmrs.logic.rule.Rule#eval(org.openmrs.Patient, org.openmrs.logic.LogicCriteria)
 	 */
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
-		Integer index = null;
-		Integer locationTagId = null;
-		Integer locationId = null;
+		// CHICA-221 Just return empty result since this is no longer in use
+		// Once the form definition has been updated, this rule can be removed.
 		
-		if (parameters != null) {
-			index = Integer.parseInt((String) parameters.get("param0"));
-			locationTagId = (Integer) parameters.get("locationTagId");
-			locationId = (Integer) parameters.get("locationId");
-		}
-		
-		LinkedList<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
-		
-		if(medicationList == null||medicationList.size()==0){
-			return Result.emptyResult();
-		}
-		MedicationListLookup.filterMedListByDate(medicationList,2,locationTagId,
-            locationId);
-		
-		if (medicationList != null&&index != null&&index<medicationList.toArray().length) {
-			
-			Medication currDrug = (Medication) medicationList.toArray()[index];
-			
-			//rx norm name, then original text name, then ndc name
-			String name = currDrug.getRxNormName();
-			
-			if (name == null||name.length()==0) {
-				name = currDrug.getOriginalText();
-			}
-			
-			if (name == null||name.length()==0) {
-				name = currDrug.getNdcName();
-			}
-			
-			// ignore null values
-			if (name != null) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-				Date dispenseDate = currDrug.getDispenseDate();
-				String dateString = "";
-				if(dispenseDate != null){
-					dateString = " ("+formatter.format(dispenseDate)+")";
-				}
-
-				return new Result(name+dateString);
-			}
-		}
+//		Integer index = null;
+//		Integer locationTagId = null;
+//		Integer locationId = null;
+//		
+//		if (parameters != null) {
+//			index = Integer.parseInt((String) parameters.get("param0"));
+//			locationTagId = (Integer) parameters.get("locationTagId");
+//			locationId = (Integer) parameters.get("locationId");
+//		}
+//		
+//		LinkedList<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
+//		
+//		if(medicationList == null||medicationList.size()==0){
+//			return Result.emptyResult();
+//		}
+//		MedicationListLookup.filterMedListByDate(medicationList,2,locationTagId,
+//            locationId);
+//		
+//		if (medicationList != null&&index != null&&index<medicationList.toArray().length) {
+//			
+//			Medication currDrug = (Medication) medicationList.toArray()[index];
+//			
+//			//rx norm name, then original text name, then ndc name
+//			String name = currDrug.getRxNormName();
+//			
+//			if (name == null||name.length()==0) {
+//				name = currDrug.getOriginalText();
+//			}
+//			
+//			if (name == null||name.length()==0) {
+//				name = currDrug.getNdcName();
+//			}
+//			
+//			// ignore null values
+//			if (name != null) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//				Date dispenseDate = currDrug.getDispenseDate();
+//				String dateString = "";
+//				if(dispenseDate != null){
+//					dateString = " ("+formatter.format(dispenseDate)+")";
+//				}
+//
+//				return new Result(name+dateString);
+//			}
+//		}
 		
 		return Result.emptyResult();
 	}

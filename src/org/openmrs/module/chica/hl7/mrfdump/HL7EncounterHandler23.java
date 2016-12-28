@@ -45,7 +45,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		try
 		{
 			doctor = pv1.getAttendingDoctor(0);
-		} catch (HL7Exception e)
+		} catch (Exception e)
 		{
 			this.logger.warn("Unable to parse doctor name from PV1. Message: "
 					+ e.getMessage());
@@ -186,7 +186,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		} 
 		if (timeStamp != null)
 		{
-			ST dtm = timeStamp.getTimeOfAnEvent();
+			ST dtm = null; //timeStamp.getTimeOfAnEvent(); // TODO CHICA-221
 			if (dtm == null || dtm.getValue() == null)
 			{
 				timeStamp = msh.getDateTimeOfMessage();
@@ -237,7 +237,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 
 			}
 
-		} catch (HL7Exception e2)
+		} catch (Exception e2)
 		{
 			this.logger.error("Unable to collect provider id from PV1 segment");
 			this.logger.error(e2.getMessage());

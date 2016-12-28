@@ -29,6 +29,7 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
@@ -476,9 +477,10 @@ public class ManualCheckin
 		try
 		{
 			userId = Integer.parseInt(request.getParameter("manualCheckinDoctor"));
-			UserService userService = Context.getUserService();
-			user = userService.getUser(userId);
-			provider.setProviderfromUser(user);
+			// TODO CHICA-221
+//			UserService userService = Context.getUserService();
+//			user = userService.getUser(userId);
+//			provider.setProviderfromUser(user);
 		} catch (Exception e)
 		{
 			log.error("Could not assign provider: "+userId);

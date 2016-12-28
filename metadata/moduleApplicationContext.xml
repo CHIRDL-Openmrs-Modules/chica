@@ -10,7 +10,6 @@
             <props>
                 <prop key="/module/@MODULE_ID@/testCheckin.form">testCheckin</prop>
                 <prop key="/module/@MODULE_ID@/parseDictionary.form">parseDictionary</prop>
-                <prop key="/module/@MODULE_ID@/loadObs.form">loadObs</prop>
                 <prop key="/module/@MODULE_ID@/fillOutPSF.form">fillOutPSF</prop>
                 <prop key="/module/@MODULE_ID@/fillOutPWS.form">fillOutPWS</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoard.form">greaseBoard</prop>
@@ -70,11 +69,6 @@
         <property name="commandName"><value>chicaNoteTesterObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/chicaNoteTester</value></property>
         <property name="successView"><value>chicaNoteTester.form</value></property>
-    </bean>
-    <bean id="loadObs" class="org.openmrs.module.chica.web.LoadObsController">
-        <property name="commandName"><value>loadObsObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/loadObs</value></property>
-        <property name="successView"><value>loadObs.form</value></property>
     </bean>
     <bean id="displayTiff" class="org.openmrs.module.chica.web.DisplayTiffController">
         <property name="commandName"><value>displayTiffObject</value></property>

@@ -24,30 +24,33 @@ public class medicationListSig implements Rule {
 	 * @see org.openmrs.logic.rule.Rule#eval(org.openmrs.Patient, org.openmrs.logic.LogicCriteria)
 	 */
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
-		Integer index = null;
-		Integer locationTagId = null;
-		Integer locationId = null;
+		// CHICA-221 Just return empty result since this is no longer in use
+		// Once the form definition has been updated, this rule can be removed.
 		
-		if (parameters != null) {
-			index = Integer.parseInt((String) parameters.get("param0"));
-			locationTagId = (Integer) parameters.get("locationTagId");
-			locationId = (Integer) parameters.get("locationId");
-		}
-		
-		LinkedList<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
-		
-		if(medicationList == null||medicationList.size()==0){
-			return Result.emptyResult();
-		}
-		MedicationListLookup.filterMedListByDate(medicationList,2,locationTagId,
-            locationId);
-		
-		if (medicationList != null&&index != null&&index<medicationList.toArray().length) {
-			
-			Medication currDrug = (Medication) medicationList.toArray()[index];
-			
-			return new Result(currDrug.getSig());
-		}
+//		Integer index = null;
+//		Integer locationTagId = null;
+//		Integer locationId = null;
+//		
+//		if (parameters != null) {
+//			index = Integer.parseInt((String) parameters.get("param0"));
+//			locationTagId = (Integer) parameters.get("locationTagId");
+//			locationId = (Integer) parameters.get("locationId");
+//		}
+//		
+//		LinkedList<Medication> medicationList = MedicationListLookup.getMedicationList(patientId);
+//		
+//		if(medicationList == null||medicationList.size()==0){
+//			return Result.emptyResult();
+//		}
+//		MedicationListLookup.filterMedListByDate(medicationList,2,locationTagId,
+//            locationId);
+//		
+//		if (medicationList != null&&index != null&&index<medicationList.toArray().length) {
+//			
+//			Medication currDrug = (Medication) medicationList.toArray()[index];
+//			
+//			return new Result(currDrug.getSig());
+//		}
 		
 		return Result.emptyResult();
 	}

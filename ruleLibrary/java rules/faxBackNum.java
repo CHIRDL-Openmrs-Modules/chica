@@ -34,7 +34,7 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 public class faxBackNum implements Rule
@@ -89,7 +89,7 @@ public class faxBackNum implements Rule
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		if (formInstance != null) {
 			Integer locationId = formInstance.getLocationId();
-			LocationAttributeValue locationAttributeValue = chirdlUtilBackportsService.getLocationAttributeValue(locationId,
+			ChirdlLocationAttributeValue locationAttributeValue = chirdlUtilBackportsService.getLocationAttributeValue(locationId,
 			    "faxNumber");
 			
 			if (locationAttributeValue != null) {

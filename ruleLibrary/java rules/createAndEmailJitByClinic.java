@@ -32,7 +32,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.ZipUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
@@ -142,7 +142,7 @@ public class createAndEmailJitByClinic implements Rule {
 		
 		// Find the email addresses
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
-		LocationAttributeValue emailLav = service.getLocationAttributeValue(locationId, "diabetesEndoEmail");
+		ChirdlLocationAttributeValue emailLav = service.getLocationAttributeValue(locationId, "diabetesEndoEmail");
 		if (emailLav == null || emailLav.getValue() == null || emailLav.getValue().trim().length() == 0) {
 			log.error("No location attribute value specified for location: " + locationId + " and attribute name " + 
 				"diabetesEndoEmail.  No form will be emailed.");
@@ -150,7 +150,7 @@ public class createAndEmailJitByClinic implements Rule {
 		}
 		
 		// Get the email addresses
-		LocationAttributeValue lav = service.getLocationAttributeValue(locationId, locationAttr);
+		ChirdlLocationAttributeValue lav = service.getLocationAttributeValue(locationId, locationAttr);
 		if (lav == null || lav.getValue() == null || lav.getValue().trim().length() == 0) {
 			log.error("No valid " + locationAttr + " found for location " + locationId + ".  No one will be emailed.");
 			return Result.emptyResult();
