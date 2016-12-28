@@ -11,9 +11,6 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.rgccd.MedicationListComparator;
-import org.openmrs.module.chica.MedicationListLookup;
-import org.openmrs.module.rgccd.Medication;
 
 /**
  * Calculates a person's age in years based from their date of birth to the index date
