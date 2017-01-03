@@ -45,14 +45,16 @@
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-run.jar"/>
 	<classpathentry kind="lib" path="lib-common/mail/activation.jar"/>
 	<classpathentry kind="lib" path="lib-common/mail/mail.jar"/>
-	<classpathentry kind="lib" path="lib-common/hibernate/hibernate325-mod.jar"/>
+	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-c3p0-3.6.5.Final.jar"/>
+	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-core-3.6.5.Final-mod.jar"/>
+	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-ehcache-3.6.5.Final.jar"/>
+	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-search-3.4.2.Final.jar"/>
 	<classpathentry kind="lib" path="lib-common/asm/asm.jar"/>
 	<classpathentry kind="lib" path="lib-common/asm/asm-attrs.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-collections/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-io/commons-io-1.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-lang/commons-lang-2.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/dwr/dwr-1.1.3mod.jar"/>
-	<classpathentry kind="lib" path="lib-common/hibernate/hibernate325.jar"/>
 	<classpathentry kind="lib" path="lib-common/jakarta-log4j/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jcommon-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jfreechart-1.0.1.jar"/>
