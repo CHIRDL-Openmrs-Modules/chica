@@ -4,6 +4,7 @@
 package org.openmrs.module.chica.hl7.mckesson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -105,7 +106,15 @@ public class CheckinProcessor extends AbstractTask
 		try
 		{
 			if(this.server != null){
-				this.server.stop();
+				// CHICA-221 Use stopAndWait() instead of stop()
+				// Openmrs added multiple calls to SchedulerUtil.startUp() which could potentially
+				// allow multiple instances of this task to run at the same time or causes errors when starting
+				// the second instance which would cause zero instances to be running since the first one will eventually shutdown
+				this.server.stopAndWait();
+				
+				// Adding this delay due to limitations with Hapi. Hapi does not call AcceptorThread.stopAndWait().
+				// AcceptorThread.stop() is used which does not guarantee that the socket has had time to close
+				Thread.sleep(3000);
 			}
 		} catch (Exception e)
 		{
