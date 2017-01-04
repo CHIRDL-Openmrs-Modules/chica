@@ -164,7 +164,7 @@
 	<classpathentry kind="output" path="build"/>
 	
 	<!-- CHICA-221 Adding these for spring-aop, which is used in TriggerPatientAfterAdvice. I did not see these included with openmrs -->
-	<classpathentry kind="lib" path="lib/aspectj-weaver/aspectj-weaver.jar"/>
-	<classpathentry kind="lib" path="lib/jamon/jamon-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/aopalliance/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/aspectj-weaver.jar"/>
+	<classpathentry kind="lib" path="lib/jamon-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/aopalliance-1.0.jar"/>
 </classpath>
