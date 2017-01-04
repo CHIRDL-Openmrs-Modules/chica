@@ -6,8 +6,9 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib-common/antlr/antlr_2.7.6.jar"/>
+	<classpathentry kind="lib" path="lib-common/antlr/antlr-runtime-3.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/c3p0/c3p0-0.9.1.jar"/>
-	<classpathentry kind="lib" path="lib-common/cglib/cglib-2.1_3.jar"/>
+	<classpathentry kind="lib" path="lib-common/cglib/cglib-2.2.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-beanutils/commons-beanutils-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-beanutils/commons-beanutils-bean-collections-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-beanutils/commons-beanutils-core-1.7.0.jar"/>
@@ -38,8 +39,6 @@
 	<classpathentry kind="lib" path="lib-common/xerces/resolver.jar"/>
 	<classpathentry kind="lib" path="lib-common/xerces/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib-common/xerces/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib-common/spring-framework/spring-test.jar"/>
-	<classpathentry kind="lib" path="lib-common/spring-framework/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-bind.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-extras.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-run.jar"/>
@@ -49,8 +48,9 @@
 	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-core-3.6.5.Final-mod.jar"/>
 	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-ehcache-3.6.5.Final.jar"/>
 	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-search-3.4.2.Final.jar"/>
-	<classpathentry kind="lib" path="lib-common/asm/asm.jar"/>
-	<classpathentry kind="lib" path="lib-common/asm/asm-attrs.jar"/>
+	<classpathentry kind="lib" path="lib-common/asm/asm-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib-common/asm/asm-commons-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib-common/asm/asm-util-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-collections/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-io/commons-io-1.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-lang/commons-lang-2.1.jar"/>
@@ -63,7 +63,6 @@
 	<classpathentry kind="lib" path="lib-common/simple/simple-xml-1.6-mod.jar"/>
 	<classpathentry kind="lib" path="lib-common/velocity/velocity-1.6-dev.jar"/>
 	<classpathentry kind="lib" path="lib-common/ant-contrib/ant-contrib-1.0b2.jar"/>
-	<classpathentry kind="lib" path="lib-common/asm/asm-1.5.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/benerator/databene-benerator-0.5.5.jar"/>
 	<classpathentry kind="lib" path="lib-common/benerator/databene-commons-0.4.5.jar"/>
 	<classpathentry kind="lib" path="lib-common/benerator/databene-webdecs-0.4.5.jar"/>
@@ -71,7 +70,7 @@
 	<classpathentry kind="lib" path="lib-common/commons-digester/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-io/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-lang/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="lib-common/commons-pool/commons-pool-1.2.jar"/>
+	<classpathentry kind="lib" path="lib-common/commons-pool/commons-pool-1.5.7.jar"/>
 	<classpathentry kind="lib" path="lib-common/dwr/dwr-205.jar"/>
 	<classpathentry kind="lib" path="lib-common/jakarta-log4j/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jcommon-1.0.15.jar"/>
@@ -85,7 +84,18 @@
 	<classpathentry kind="lib" path="lib-common/slf4j/jcl-over-slf4j-1.5.6.jar"/>
 	<classpathentry kind="lib" path="lib-common/slf4j/slf4j-api-1.5.6.jar"/>
 	<classpathentry kind="lib" path="lib-common/slf4j/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib-common/spring-framework/spring-2.5.6.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-aop-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-beans-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-context-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-core-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-expression-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-jdbc-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-orm-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-oxm-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-test-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-tx-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-web-3.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib-common/spring-framework/spring-webmvc-3.2.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib-common/tomcat/catalina.jar"/>
 	<classpathentry kind="lib" path="lib-common/tomcat/catalina-ant.jar"/>
 	<classpathentry kind="lib" path="lib-common/tomcat/jsp-api.jar"/>
@@ -152,4 +162,9 @@
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/atd-2.8.0.jar"/>
 	<classpathentry kind="output" path="build"/>
+	
+	<!-- CHICA-221 Adding these for spring-aop, which is used in TriggerPatientAfterAdvice. I did not see these included with openmrs -->
+	<classpathentry kind="lib" path="lib/aspectj-weaver/aspectj-weaver.jar"/>
+	<classpathentry kind="lib" path="lib/jamon/jamon-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/aopalliance/aopalliance-1.0.jar"/>
 </classpath>

@@ -324,4 +324,20 @@
         <property name="serviceInterface" value="org.openmrs.module.chica.service.ChicaRmiService"/>
         <property name="registryPort" value="1197"/>
     </bean>
+    
+    
+    <bean id="triggerPatientAfterAdviceMethodBean" class="org.openmrs.module.chica.advice.TriggerPatientAfterAdvice" />
+
+	<bean id="testCheckinProxy"
+                class="org.springframework.aop.framework.ProxyFactoryBean">
+
+		<property name="target" ref="testCheckin" />
+
+		<property name="interceptorNames">
+			<list>
+				<value>triggerPatientAfterAdviceMethodBean</value>
+			</list>
+		</property>
+	</bean>
+	
 </beans>

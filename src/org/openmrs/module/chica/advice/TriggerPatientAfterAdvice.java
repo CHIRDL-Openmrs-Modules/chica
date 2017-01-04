@@ -29,6 +29,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 {
 	private Log log = LogFactory.getLog(this.getClass());
 
+	@Override
 	public void afterReturning(Object returnValue, Method method,
 			Object[] args, Object target) throws Throwable
 	{
