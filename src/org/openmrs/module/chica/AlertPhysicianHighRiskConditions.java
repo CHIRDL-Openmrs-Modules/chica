@@ -39,9 +39,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	private static final String LOC_TAG_ATTR_HIGH_RISK_CONTACT = "HighRiskContact";
-	
-	private static int NUM_DAYS = 2;//number of days allowed to submit PWS
-	
+		
 	@Override
 	public void execute() {
 		Context.openSession();
@@ -51,9 +49,16 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		final String DV_NOTIFICATION_TEXT = this.taskDefinition.getProperty("DV_NOTIFICATION_TEXT");
 		final String FROM_EMAIL = this.taskDefinition.getProperty("FROM_EMAIL");
 		final String SUBJECT = this.taskDefinition.getProperty("SUBJECT");
+		Integer NUM_DAYS=null;
+        try {
+	        NUM_DAYS = Integer.parseInt(this.taskDefinition.getProperty("NUM_DAYS"));
+        }
+        catch (Exception e) {
+	        log.error("Error generated", e);
+        }
 		
 		if (SUICIDE_NOTIFICATION_TEXT == null || ABUSE_NOTIFICATION_TEXT == null || FROM_EMAIL == null
-		        || DV_NOTIFICATION_TEXT == null || SUBJECT == null) {
+		        || DV_NOTIFICATION_TEXT == null || SUBJECT == null || NUM_DAYS == null) {
 			log.error("One or more required properties for AlertPhysicianHighRiskCondition are not set");
 			return;
 		}
@@ -101,6 +106,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param ruleNames
 	 * @param notificationText
 	 * @param fromEmail
+	 * @param subject
 	 */
 	private void createAndSendNotifications(List<org.openmrs.Encounter> encounters, ArrayList<String> ruleNames,
 	                                        String notificationText, String fromEmail, String subject) {
@@ -132,13 +138,14 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	}
 	
 	/**
-	 *  Construct and send notification emails
+	 * Construct and send notification emails
 	 * 
 	 * @param locationId
 	 * @param locationTagId
 	 * @param chicaEncounter
 	 * @param riskText
 	 * @param fromEmail
+	 * @param subject
 	 */
 	private void sendEmailNotification(Integer locationId, Integer locationTagId, Encounter chicaEncounter, String riskText,
 	                                   String fromEmail,String subject) {
