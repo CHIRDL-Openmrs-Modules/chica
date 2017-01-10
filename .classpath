@@ -55,7 +55,7 @@
 	<classpathentry kind="lib" path="lib-common/commons-io/commons-io-1.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-lang/commons-lang-2.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/dwr/dwr-1.1.3mod.jar"/>
-	<classpathentry kind="lib" path="lib-common/jakarta-log4j/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib-common/jakarta-log4j/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jcommon-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jfreechart-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/mysql-connector-java/mysql-connector-java-3.1.10-bin.jar"/>
@@ -72,7 +72,6 @@
 	<classpathentry kind="lib" path="lib-common/commons-lang/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-pool/commons-pool-1.5.7.jar"/>
 	<classpathentry kind="lib" path="lib-common/dwr/dwr-205.jar"/>
-	<classpathentry kind="lib" path="lib-common/jakarta-log4j/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jcommon-1.0.15.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jfreechart-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib-common/junit/xmlunit-1.2.jar"/>
