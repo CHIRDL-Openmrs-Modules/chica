@@ -28,22 +28,22 @@
 	<classpathentry kind="lib" path="lib-common/jakarta-taglibs/taglibs-response-1.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/jakarta-taglibs/taglibs-standard-1.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/jstl/jstl-1.1.2.jar"/>
-	<classpathentry kind="lib" path="lib-common/jta/jta.jar"/>
+	<classpathentry kind="lib" path="lib-common/jta/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/neal-reporting/Acme.jar"/>
 	<classpathentry kind="lib" path="lib-common/neal-reporting/reports.jar"/>
-	<classpathentry kind="lib" path="lib-common/saxon/saxon8.jar"/>
-	<classpathentry kind="lib" path="lib-common/saxon/saxon8-dom.jar"/>
+	<classpathentry kind="lib" path="lib-common/saxon/saxon-8.7.jar"/>
+	<classpathentry kind="lib" path="lib-common/saxon/saxon-dom-8.7.jar"/>
 	<classpathentry kind="lib" path="lib-common/stax/stax-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/stax/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib-common/tomcat/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib-common/xerces/resolver.jar"/>
-	<classpathentry kind="lib" path="lib-common/xerces/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib-common/xerces/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib-common/tomcat/servlet-api-2.5.jar"/>
+	<classpathentry kind="lib" path="lib-common/xerces/xml-resolver-1.1.jar"/>
+	<classpathentry kind="lib" path="lib-common/xerces/xercesImpl-2.8.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/xerces/xml-apis-1.3.03.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-bind.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-extras.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-run.jar"/>
-	<classpathentry kind="lib" path="lib-common/mail/activation.jar"/>
-	<classpathentry kind="lib" path="lib-common/mail/mail.jar"/>
+	<classpathentry kind="lib" path="lib-common/mail/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="lib-common/mail/mail-1.4.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-c3p0-3.6.5.Final.jar"/>
 	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-core-3.6.5.Final-mod.jar"/>
 	<classpathentry kind="lib" path="lib-common/hibernate/hibernate-ehcache-3.6.5.Final.jar"/>
@@ -56,27 +56,26 @@
 	<classpathentry kind="lib" path="lib-common/commons-lang/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/dwr/dwr-2.0.5-mod.jar"/>
 	<classpathentry kind="lib" path="lib-common/jakarta-log4j/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="lib-common/mysql-connector-java/mysql-connector-java-3.1.10-bin.jar"/>
+	<classpathentry kind="lib" path="lib-common/mysql-connector-java/mysql-connector-java-5.1.28.jar"/>
 	<classpathentry kind="lib" path="lib-common/neal-reporting/poi.jar"/>
 	<classpathentry kind="lib" path="lib-common/simple/simple-xml-1.6-mod.jar"/>
-	<classpathentry kind="lib" path="lib-common/velocity/velocity-1.6-dev.jar"/>
+	<classpathentry kind="lib" path="lib-common/velocity/velocity-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/ant-contrib/ant-contrib-1.0b2.jar"/>
-	<classpathentry kind="lib" path="lib-common/benerator/databene-benerator-0.5.5.jar"/>
-	<classpathentry kind="lib" path="lib-common/benerator/databene-commons-0.4.5.jar"/>
-	<classpathentry kind="lib" path="lib-common/benerator/databene-webdecs-0.4.5.jar"/>
+	<classpathentry kind="lib" path="lib-common/benerator/databene-benerator-0.5.9.jar"/>
+	<classpathentry kind="lib" path="lib-common/benerator/databene-commons-0.4.9.jar"/>
+	<classpathentry kind="lib" path="lib-common/benerator/databene-webdecs-0.4.9.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-digester/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib-common/commons-pool/commons-pool-1.5.7.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jcommon-1.0.15.jar"/>
 	<classpathentry kind="lib" path="lib-common/jfreechart/jfreechart-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib-common/junit/xmlunit-1.2.jar"/>
-	<classpathentry kind="lib" path="lib-common/liquibase/liquibase-1.9.1-mod.jar"/>
-	<classpathentry kind="lib" path="lib-common/mysql-connector-java/mysql-connector-java-5.1.7-bin.jar"/>
+	<classpathentry kind="lib" path="lib-common/liquibase/liquibase-core-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib-common/poi/poi-3.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/quartz/quartz-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/simple/simple-xml-1.6.1-mod.jar"/>
-	<classpathentry kind="lib" path="lib-common/slf4j/jcl-over-slf4j-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib-common/slf4j/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib-common/slf4j/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib-common/slf4j/jcl-over-slf4j-1.6.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/slf4j/slf4j-api-1.6.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/slf4j/slf4j-log4j12-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-aop-3.2.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-beans-3.2.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-context-3.2.7.RELEASE.jar"/>
@@ -91,12 +90,11 @@
 	<classpathentry kind="lib" path="lib-common/spring-framework/spring-webmvc-3.2.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib-common/tomcat/catalina.jar"/>
 	<classpathentry kind="lib" path="lib-common/tomcat/catalina-ant.jar"/>
-	<classpathentry kind="lib" path="lib-common/tomcat/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib-common/tomcat/jsp-api-2.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/tomcat/naming-resources.jar"/>
 	<classpathentry kind="lib" path="lib-common/tomcat/tools.jar"/>
-	<classpathentry kind="lib" path="lib-common/velocity/velocity-1.6-beta1.jar"/>
 	<classpathentry kind="lib" path="lib-common/xerces/xercesSamples.jar"/>
-	<classpathentry kind="lib" path="lib-common/xstream/xstream-1.3.jar"/>
+	<classpathentry kind="lib" path="lib-common/xstream/xstream-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/jibx-tools.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/xmlpull_1_1_4.jar"/>
 	<classpathentry kind="lib" path="lib-common/jibx/org.eclipse.jdt.core.jar"/>
@@ -140,9 +138,9 @@
 	<classpathentry kind="lib" path="lib-common/json/jackson-core-asl-1.9.13.jar"/>
 	<classpathentry kind="lib" path="lib-common/json/jackson-mapper-asl-1.9.13.jar"/>
 	<classpathentry kind="lib" path="lib-common/groovy-all-1.7.6.jar"/>
-	<classpathentry kind="lib" path="lib-common/junit/dbunit-2.4.4.jar"/>
+	<classpathentry kind="lib" path="lib-common/junit/dbunit-2.4.7.jar"/>
 	<classpathentry kind="lib" path="lib-common/junit/hsqldb-1.8.0.10.jar"/>
-	<classpathentry kind="lib" path="lib-common/junit/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="lib-common/junit/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="lib" path="/atd/dist"/>
 	<classpathentry kind="lib" path="/dss/dist"/>
