@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.jfree.util.Log;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.PersonAddress;
 import org.openmrs.module.chirdlutil.util.Util;
 
@@ -34,6 +35,9 @@ public class HL7PatientHandler25 extends
 		org.openmrs.module.sockethl7listener.HL7PatientHandler25
 {
 
+	/** Logger for this class and subclasses */
+	protected final Log Log = LogFactory.getLog(getClass());
+	
 	//------get additional person attributes for chica patients
 	public String getSSN(Message message)
 	{
