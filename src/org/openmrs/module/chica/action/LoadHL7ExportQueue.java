@@ -44,7 +44,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 	private static final String FORM_ATTRIBUTE_EXPORTABLE = "exportForm";
 	
 	/** Logger for this class and subclasses */
-	protected final Log Log = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)
@@ -84,7 +84,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, VITALS_CONCEPT_MAP_LOCATION, locationId);
 				if (conceptMapLocationTagAttrValue == null || conceptMapLocationTagAttrValue.getValue() == null
 						|| conceptMapLocationTagAttrValue.getValue().trim().equals("")) {
-					Log.error("Location tag attribute for location map location for location id = " + locationId + " is null or empty.");
+					log.error("Location tag attribute for location map location for location id = " + locationId + " is null or empty.");
 					return;
 				}
 				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
@@ -101,7 +101,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 							locationId);
 				if (conceptMapLocationTagAttrValue == null || conceptMapLocationTagAttrValue.getValue() == null
 						|| conceptMapLocationTagAttrValue.getValue().trim().equals("")) {
-					Log.error("Location tag attribute for location of POC observation concept map for location id = " + locationId + " is null or empty.");
+					log.error("Location tag attribute for location of POC observation concept map for location id = " + locationId + " is null or empty.");
 					return;
 				};
 				addExportToQueue(encounterId, sessionId, conceptMapLocationTagAttrValue );
@@ -139,7 +139,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 								locationId);
 				if (tiffLocationTagConceptMapLocation == null || tiffLocationTagConceptMapLocation.getValue() == null
 						|| tiffLocationTagConceptMapLocation.getValue().trim().equals("")){
-					Log.error("Location tag attribute for location of tiff concept map for location id = " + locationId + " is null or empty.");
+					log.error("Location tag attribute for location of tiff concept map for location id = " + locationId + " is null or empty.");
 					return;
 				}
 				
