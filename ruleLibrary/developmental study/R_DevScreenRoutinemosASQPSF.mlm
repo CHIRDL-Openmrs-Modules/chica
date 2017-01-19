@@ -100,5 +100,4 @@ write ("Por favor llene el formulario ASQ acerca del desarrollo de || firstname 
 Age_Min: 9          months     ;;
 Age_Max: 39         months     ;;
 end:
-}
  
