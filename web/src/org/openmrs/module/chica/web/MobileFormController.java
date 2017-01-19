@@ -127,7 +127,8 @@ public class MobileFormController extends SimpleFormController {
 		
 		// Save who is viewing the form.
 		if (providerId != null && providerId.trim().length() > 0) {
-			saveProviderViewer(patient, formId, encounterId, providerId);
+			FormInstance frmInstance = new FormInstance(locationId,formId,formInstanceId);
+			saveProviderViewer(patient, formId, encounterId, providerId, frmInstance, formInstTag);
 		} else {
 			log.error("No valid providerId provided.  Cannot log who is viewing form: " + formId);
 		}
@@ -164,12 +165,15 @@ public class MobileFormController extends SimpleFormController {
 		//parse out the location_id,form_id,location_tag_id, and form_instance_id
 		//from the selected form
 		String formInstance = request.getParameter(PARM_FORM_INSTANCE);
+		FormInstance frmInstance = null;
+		FormInstanceTag formInstTag = null;
 		if (formInstance != null && formInstance.trim().length() > 0) {
-			FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+			formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 			chosenLocationId = formInstTag.getLocationId();
 			chosenLocationTagId = formInstTag.getLocationTagId();
 			chosenFormId = formInstTag.getFormId();
 			chosenFormInstanceId = formInstTag.getFormInstanceId();
+			frmInstance = new FormInstance(chosenLocationId,chosenFormId,chosenFormInstanceId);
 		}
 		
 		TeleformTranslator translator = new TeleformTranslator();
@@ -195,7 +199,7 @@ public class MobileFormController extends SimpleFormController {
 			Integer patientId = Integer.parseInt(patientIdStr);
 			Patient patient = Context.getPatientService().getPatient(patientId);
 			Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
-			saveProviderSubmitter(patient, chosenFormId, encounterId, providerId);
+			saveProviderSubmitter(patient, chosenFormId, encounterId, providerId, frmInstance, formInstTag);
 		} else {
 			log.error("No valid providerId provided.  Cannot log who is submitting form: " + chosenFormId);
 		}
@@ -347,10 +351,10 @@ public class MobileFormController extends SimpleFormController {
 	 * @param encounterId The encounter ID of the encounter where the form was created.
 	 * @param providerId The ID of the provider to be stored.
 	 */
-	private void saveProviderViewer(Patient patient, Integer formId, Integer encounterId, String providerId) {
+	private void saveProviderViewer(Patient patient, Integer formId, Integer encounterId, String providerId, FormInstance formInstance, FormInstanceTag formInstTag) {
 		Form form = Context.getFormService().getForm(formId);
 		String conceptName = form.getName() + PROVIDER_VIEW;
-		saveProviderInfo(patient, formId, encounterId, providerId, conceptName);
+		saveProviderInfo(patient, formId, encounterId, providerId, conceptName, formInstance, formInstTag);
 	}
 	
 	/**
@@ -361,10 +365,10 @@ public class MobileFormController extends SimpleFormController {
 	 * @param encounterId The encounter ID of the encounter where the form was created.
 	 * @param providerId The ID of the provider to be stored.
 	 */
-	private void saveProviderSubmitter(Patient patient, Integer formId, Integer encounterId, String providerId) {
+	private void saveProviderSubmitter(Patient patient, Integer formId, Integer encounterId, String providerId, FormInstance formInstance, FormInstanceTag formInstTag) {
 		Form form = Context.getFormService().getForm(formId);
 		String conceptName = form.getName() + PROVIDER_SUBMIT;
-		saveProviderInfo(patient, formId, encounterId, providerId, conceptName);
+		saveProviderInfo(patient, formId, encounterId, providerId, conceptName, formInstance, formInstTag);
 	}
 	
 	/**
@@ -376,14 +380,13 @@ public class MobileFormController extends SimpleFormController {
 	 * @param providerId The ID of the provider to be stored.
 	 * @param conceptName The name of the concept.
 	 */
-	private void saveProviderInfo(Patient patient, Integer formId, Integer encounterId, String providerId, String conceptName) {
+	private void saveProviderInfo(Patient patient, Integer formId, Integer encounterId, String providerId, String conceptName, FormInstance formInstance, FormInstanceTag formInstTag) {
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConceptByName(conceptName);
 		if (concept == null) {
 			log.error("Could not log provider info.  Concept " + conceptName + " not found.");
 			return;
 		}
-		
-		Util.saveObs(patient, concept, encounterId, providerId, new Date());
+		org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, encounterId, providerId, formInstance, null, formInstTag.getLocationTagId(), null);
 	}
 }
