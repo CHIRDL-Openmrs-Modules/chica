@@ -19,11 +19,6 @@ Data:
 
 mode:=read {mode from Parameters};
 
-If (mode = PRODUCE) then
-
-conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-
-endif
 ;;
 Priority:		;;
 	Evoke:		;;
