@@ -47,12 +47,12 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					ThreadManager threadManager = ThreadManager.getInstance();
 					Location location = encounter.getLocation();
 					//spawn the checkin thread
-					threadManager.execute(new CheckinPatient(encounter,parameters), location.getLocationId());
+					threadManager.execute(new CheckinPatient(encounter.getEncounterId(),parameters), location.getLocationId());
 					
 					String executeImmunization = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_IMMUNIZATION_QUERY_ACTIVATED);
 					if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(executeImmunization)) {
 						//spawn the immunization query thread
-						Thread immunThread = new Thread(new QueryImmunizationForecast(encounter));
+						Thread immunThread = new Thread(new QueryImmunizationForecast(encounter.getEncounterId()));
 						immunThread.start();
 						//ImmunizationForecastLookup.queryImmunizationList(encounter, true);
 					}

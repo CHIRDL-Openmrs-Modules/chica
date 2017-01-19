@@ -14,19 +14,21 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.Patient;
-import org.openmrs.User;
+import org.openmrs.Provider;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
-import org.openmrs.api.UserService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
@@ -261,15 +263,19 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
 		PatientService patientService = Context.getPatientService();
-		UserService userService = Context.getUserService();
 
 		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
-		User provider = userService.getUser(providerId);
+		ProviderService providerService = Context.getProviderService();
+		Provider provider = providerService.getProvider(providerId);
 
 		encounter.setLocation(locationService.getLocation("Unknown Location"));
-		encounter.setProvider(provider);
+		
+		// CHICA-221 Use the new setProvider() method
+		EncounterRole encounterRole = encounterService.getEncounterRoleByName(ChirdlUtilConstants.ENCOUNTER_ROLE_ATTENDING_PROVIDER);
+		encounter.setProvider(encounterRole, provider);
+		
 		encounter.setPatient(patient);
 		Calendar scheduledTime = Calendar.getInstance();
 		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
@@ -429,15 +435,19 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
 		PatientService patientService = Context.getPatientService();
-		UserService userService = Context.getUserService();
 		ATDService atdService = Context.getService(ATDService.class);
 		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
-		User provider = userService.getUser(providerId);
+		ProviderService providerService = Context.getProviderService();
+		Provider provider = providerService.getProvider(providerId);
 
 		encounter.setLocation(locationService.getLocation("Unknown Location"));
-		encounter.setProvider(provider);
+		
+		// CHICA-221 Use the new setProvider() method
+		EncounterRole encounterRole = encounterService.getEncounterRoleByName(ChirdlUtilConstants.ENCOUNTER_ROLE_ATTENDING_PROVIDER);
+		encounter.setProvider(encounterRole, provider);
+		
 		encounter.setPatient(patient);
 		Calendar scheduledTime = Calendar.getInstance();
 		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);

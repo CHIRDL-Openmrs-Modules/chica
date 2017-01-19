@@ -7,14 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.EncounterRole;
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.User;
+import org.openmrs.Provider;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.openmrs.api.UserService;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -67,10 +70,15 @@ public class TestCheckinController extends SimpleFormController
 			encounter.setEncounterDatetime(new java.util.Date());
 			Location location = locationService.getLocation("Unknown Location");
 			Patient patient = patientService.getPatient(patientId);
-			User provider = userService.getUser(providerId);
+			ProviderService providorService = Context.getProviderService();
+			Provider provider = providorService.getProvider(providerId);
 		
 			encounter.setLocation(location);
-			encounter.setProvider(provider);
+			
+			// CHICA-221 Use the new setProvider() method
+			EncounterRole encounterRole = encounterService.getEncounterRoleByName(ChirdlUtilConstants.ENCOUNTER_ROLE_ATTENDING_PROVIDER);
+			encounter.setProvider(encounterRole, provider);
+			
 			encounter.setPatient(patient);
 			encounterService.saveEncounter(encounter);
 			

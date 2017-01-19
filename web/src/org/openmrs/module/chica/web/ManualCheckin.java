@@ -34,14 +34,13 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
-import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientIdentifierException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
-import org.openmrs.api.UserService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25;
@@ -52,7 +51,6 @@ import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.validator.PatientIdentifierValidator;
@@ -169,37 +167,30 @@ public class ManualCheckin
 
 		//Sort provider by lastname,firstname, and remove duplicates
 		//Ensure proper case.
-		UserService userService = Context.getUserService();
-		Role role = userService.getRole("Provider");
-		List<User> doctors = Context.getService(ChirdlUtilBackportsService.class).getUsersByRole(role, false);
+		ProviderService providerService = Context.getProviderService();
+		List<org.openmrs.Provider> doctors = providerService.getAllProviders();
 		
-		List<User> doctorList = new ArrayList<User>();
+		List<org.openmrs.Provider> doctorList = new ArrayList<org.openmrs.Provider>();
 		
-		Comparator<User> comparator = new Comparator<User>(){
-			 
-            public int compare(User p1, User p2) 
+		Comparator<org.openmrs.Provider> comparator = new Comparator<org.openmrs.Provider>(){		 
+            public int compare(org.openmrs.Provider p1, org.openmrs.Provider p2) 
             {
-               PersonName pn1 = new PersonName();
-               PersonName pn2 = new PersonName();
-               if (p1 != null){
-            	   pn1 = p1.getPersonName();
-               }
-               if (p2!= null){
-            	   pn2 = p2.getPersonName();
-               }
+               Person person1 = p1.getPerson();
+               Person person2 = p2.getPerson();
+               
                String p1FirstName = null;
                String p2FirstName = null;
                String p1LastName = null;
                String p2LastName = null;
                
-               if(pn1 != null){
-                   p1FirstName = pn1.getGivenName(); 
-                   p1LastName = pn1.getFamilyName();
+               if(person1 != null){
+                   p1FirstName = person1.getGivenName(); 
+                   p1LastName = person1.getFamilyName();
               }
                
-               if(pn2 != null){
-                   p2FirstName = pn2.getGivenName();
-                   p2LastName = pn2.getFamilyName();
+               if(person2 != null){
+                   p2FirstName = person2.getGivenName();
+                   p2LastName = person2.getFamilyName();
                }
                
                if(p1FirstName == null){
@@ -237,14 +228,14 @@ public class ManualCheckin
 
 		//weed out duplicates from already sorted list
 		Integer size = doctors.size();
-		ArrayList<User> noDups  = new ArrayList<User>(size);
+		ArrayList<org.openmrs.Provider> noDups  = new ArrayList<org.openmrs.Provider>(size);
 		if(size > 0)
 		{
-			User prev =  doctors.get(0);
+			org.openmrs.Provider prev =  doctors.get(0);
 			noDups.add(prev);
 		
 			for (Integer index = 1; index < size; index++){
-				User nextdoc = doctors.get(index);
+				org.openmrs.Provider nextdoc = doctors.get(index);
 				if (compareOnlyName(nextdoc, prev) != 0){
 					noDups.add(nextdoc);
 					prev = nextdoc;
@@ -252,23 +243,24 @@ public class ManualCheckin
 	
 			}
 		}
-		for(User currDoc:noDups){
-			if(!(currDoc.getFamilyName() == null||currDoc.getFamilyName().length()==0)){
-				String lastName = Util.toProperCase(currDoc.getFamilyName());
-				String firstName = Util.toProperCase(currDoc.getGivenName());
-				currDoc.getPersonName().setFamilyName(lastName);
-				currDoc.getPersonName().setGivenName(firstName);
+		for(org.openmrs.Provider currDoc:noDups){
+			Person person = currDoc.getPerson();
+			if(!(person.getFamilyName() == null||person.getFamilyName().length()==0)){
+				String lastName = Util.toProperCase(person.getFamilyName());
+				String firstName = Util.toProperCase(person.getGivenName());
+				person.getPersonName().setFamilyName(lastName);
+				person.getPersonName().setGivenName(firstName);
 				doctorList.add(currDoc);
 			}
 		}
 		
 		pw.write("<doctors>");
-		for (User doctor : doctorList) {
+		for (org.openmrs.Provider doctor : doctorList) {
 			pw.write("<doctor>");
 			ServletUtil.writeTag("lastName", ServletUtil.escapeXML(doctor.getPerson().getFamilyName()), pw);
 			ServletUtil.writeTag("firstName", ServletUtil.escapeXML(doctor.getPerson().getGivenName()), pw);
 			ServletUtil.writeTag("middleName", ServletUtil.escapeXML(doctor.getPerson().getMiddleName()), pw);
-			ServletUtil.writeTag("userId", doctor.getUserId(), pw);
+			ServletUtil.writeTag("providerId", doctor.getId(), pw); // CHICA-221 Changed this parameter from userId to providerId and in the .jsp
 			pw.write("</doctor>");
 		}
 		pw.write("</doctors>");
@@ -284,15 +276,15 @@ public class ManualCheckin
 	
     private static int compareOnlyName(Object o1, Object o2) 
     {
-       User p1 = (User) o1;
-       User p2 = (User) o2;
+    	org.openmrs.Provider p1 = (org.openmrs.Provider) o1;
+    	org.openmrs.Provider p2 = (org.openmrs.Provider) o2;
        PersonName pn1 = new PersonName();
        PersonName pn2 = new PersonName();
-       if (p1 != null){
-    	   pn1 = p1.getPersonName();
+       if (p1 != null && p1.getPerson() != null){
+    	   pn1 = p1.getPerson().getPersonName();
        }
-       if (p2!= null){
-    	   pn2 = p2.getPersonName();
+       if (p2!= null && p2.getPerson() != null){
+    	   pn2 = p2.getPerson().getPersonName();
        }
        String p1FirstName = null;
        String p2FirstName = null;
@@ -473,17 +465,16 @@ public class ManualCheckin
 			}
 		}
 		Provider provider = new Provider();
-		Integer userId = null;
+		Integer providerId = null;
 		try
 		{
-			userId = Integer.parseInt(request.getParameter("manualCheckinDoctor"));
-			// TODO CHICA-221
-//			UserService userService = Context.getUserService();
-//			user = userService.getUser(userId);
-//			provider.setProviderfromUser(user);
+			providerId = Integer.parseInt(request.getParameter("manualCheckinDoctor"));
+			ProviderService providerService = Context.getProviderService();
+			org.openmrs.Provider openmrsProvider = providerService.getProvider(providerId);
+			provider.setProvider(openmrsProvider);
 		} catch (Exception e)
 		{
-			log.error("Could not assign provider: "+userId);
+			log.error("Could not assign provider: "+providerId);
 			log.error(e.getMessage());
 			log.error(Util.getStackTrace(e));
 		}
@@ -647,15 +638,13 @@ public class ManualCheckin
 		if (encounters != null && encounters.size() > 0)
 		{
 			Encounter encounter = (Encounter) encounters.get(0);
-			UserService userService = Context.getUserService();
-			List<User> providers = userService.getUsersByPerson(encounter.getProvider(), true);
-			User provider = null;
-			if(providers != null&& providers.size()>0){
-				provider = providers.get(0);
-			}
+			
+			// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
+			org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+			
 			if (provider != null)
 			{
-				ServletUtil.writeTag("doctor", provider.getUserId(), pw);
+				ServletUtil.writeTag("doctor", provider.getId(), pw);
 			}
 
 			ServletUtil.writeTag("station", ServletUtil.escapeXML(encounter.getPrinterLocation()), pw);
