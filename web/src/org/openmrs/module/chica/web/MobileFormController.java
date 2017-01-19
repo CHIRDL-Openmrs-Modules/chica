@@ -350,6 +350,8 @@ public class MobileFormController extends SimpleFormController {
 	 * @param formId The ID of the form being viewed.
 	 * @param encounterId The encounter ID of the encounter where the form was created.
 	 * @param providerId The ID of the provider to be stored.
+	 * @param formInstance The FormInstance object containing location ID, form ID and form instance ID. 
+	 * @param formInstTag The form instance tag information
 	 */
 	private void saveProviderViewer(Patient patient, Integer formId, Integer encounterId, String providerId, FormInstance formInstance, FormInstanceTag formInstTag) {
 		Form form = Context.getFormService().getForm(formId);
@@ -364,6 +366,8 @@ public class MobileFormController extends SimpleFormController {
 	 * @param formId The ID of the form being viewed.
 	 * @param encounterId The encounter ID of the encounter where the form was created.
 	 * @param providerId The ID of the provider to be stored.
+	 * @param formInstance The FormInstance object containing location ID, form ID and form instance ID. 
+	 * @param formInstTag The form instance tag information
 	 */
 	private void saveProviderSubmitter(Patient patient, Integer formId, Integer encounterId, String providerId, FormInstance formInstance, FormInstanceTag formInstTag) {
 		Form form = Context.getFormService().getForm(formId);
@@ -379,6 +383,8 @@ public class MobileFormController extends SimpleFormController {
 	 * @param encounterId The encounter ID of the encounter where the form was created.
 	 * @param providerId The ID of the provider to be stored.
 	 * @param conceptName The name of the concept.
+	 * @param formInstance The FormInstance object containing location ID, form ID and form instance ID. 
+	 * @param formInstTag The form instance tag information
 	 */
 	private void saveProviderInfo(Patient patient, Integer formId, Integer encounterId, String providerId, String conceptName, FormInstance formInstance, FormInstanceTag formInstTag) {
 		ConceptService conceptService = Context.getConceptService();
