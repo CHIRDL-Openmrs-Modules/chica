@@ -24,7 +24,8 @@
             <form id="pwsForm" name="pwsForm" action="pws.form" method="post">
                 <div id="titleContainer">
                     <div id="submitFormTop">
-                        <a href="#" id="submitButtonTop" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Submit</a>
+                        <a href="#" id="submitButtonTop" class="icon-button mediumButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Sign</a>
+                        <a href="#" id="saveDraftButtonTop" class="icon-button mediumButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Save Draft</a>
                     </div>
                     <div id="title">
                         <h3>CHICA Physician Encounter Form</h3>
@@ -59,7 +60,8 @@
                 <%@ include file="pwsQuestions.jsp" %>
                                 
                 <div id="submitContainer">
-                    <a href="#" id="submitButtonBottom" class="icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Submit</a>
+                    <a href="#" id="submitButtonBottom" class="icon-button mediumButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Sign</a>
+                    <a href="#" id="saveDraftButtonBottom" class="icon-button mediumButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Save Draft</a>
                 </div>
       
                 <%@ include file="pwsDialogs.jsp" %>
@@ -84,6 +86,7 @@
 				<input id="patientNameForcePrint" name="patientNameForcePrint" type="hidden" value="${PatientName}"/>
 				<input id="sessionTimeout" name="sessionTimeout" type="hidden" value="${pageContext.session.maxInactiveInterval}"/>
 				<input id="sessionTimeoutWarning" name="sessionTimeoutWarning" type="hidden" value="${sessionTimeoutWarning}"/>
+				<input id="draft" name="draft" type="hidden" value="false"/>
             </form>
     	</div>
     </body>

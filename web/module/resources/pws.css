@@ -203,13 +203,17 @@ body {
     margin-top: 903px;
 }
 
-#submitButtonBottom {
+#submitButtonBottom, #saveDraftButtonBottom {
     margin-top:16px;
 }
 
 #submitButtonTop {
     margin-top:15px;
     margin-left:5px;
+}
+
+#saveDraftButtonTop {
+	margin-top:15px;
 }
 
 #confirmText {
@@ -385,6 +389,10 @@ a.icon-button span.ui-icon {
     left: .2em;
     top: 50%;
     margin-top: -9px;
+}
+
+.mediumButton {
+	width: 110px;
 }
 
 .largeButton {

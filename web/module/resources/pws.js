@@ -4,6 +4,7 @@ var pageOptions = "#page=1&view=FitH,top&navpanes=0";
 var previousRecommendedHandoutSelection = -1;
 var timeoutDialog = null;
 var keepAliveURL = ctx + "/moduleServlet/chica/chica?action=keepAlive";
+var saveDraftURL = chicaServletUrl + "action=saveFormDraft";
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -122,6 +123,8 @@ $(function() {
 	$("#forcePrintButton").button();
 	$("#retryButton").button();
 	$("#notesButton").button();
+	$("#saveDraftButtonTop").button();
+	$("#saveDraftButtonBottom").button();
 	
 	getAvailableJits();
 	
@@ -259,6 +262,16 @@ $(function() {
 	
 	$("#submitButtonTop").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");
+		event.preventDefault();
+	});
+	
+	$("#saveDraftButtonBottom").click(function(event) {
+		saveDraft();
+		event.preventDefault();
+	});
+	
+	$("#saveDraftButtonTop").click(function(event) {
+		saveDraft();
 		event.preventDefault();
 	});
 	
@@ -598,4 +611,25 @@ function renewSession() {
             }
            }
      	});
+}
+
+function saveDraft() {
+	var submitForm = $("#pwsForm"); 
+    $.ajax({
+    	"cache": false,
+        "data": submitForm.serialize(),
+        "type": "POST",
+        "url": saveDraftURL,
+        "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "error": handleSaveDraftError, // this sets up jQuery to give me errors
+        "success": function (xml) {
+        	window.parent.closeIframe();
+        }
+    });
+}
+
+function handleSaveDraftError(xhr, textStatus, error) {
+	$("#noForms").hide();
+	$("#formServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error occurred locating recommended forms: ' + error + '</span>');
+	$("#formServerError").show();
 }

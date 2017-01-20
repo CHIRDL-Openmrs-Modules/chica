@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.FieldType;
 import org.openmrs.Form;
+import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
@@ -37,6 +39,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.atd.TeleformTranslator;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -91,6 +94,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
 	private static final String KEEP_ALIVE = "keepAlive";
 	private static final String CLEAR_CACHE = "clearCache";
+	private static final String SAVE_FORM_DRAFT = "saveFormDraft";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -214,6 +218,8 @@ public class ChicaServlet extends HttpServlet {
 			keepAlive(response);
 		} else if (CLEAR_CACHE.equals(action)) {
 			clearCache(request, response);
+		} else if (SAVE_FORM_DRAFT.equals(action)) {
+			saveFormDraft(request, response);
 		}
 	}
 	
@@ -1515,4 +1521,40 @@ public class ChicaServlet extends HttpServlet {
     	
     	pw.write(RESULT_SUCCESS);
 	}
+    
+    private void saveFormDraft(HttpServletRequest request, HttpServletResponse response) {
+    	Integer formId = null;
+		Integer formInstanceId = null;
+		Integer locationId = null;
+		Integer locationTagId = null;
+		
+		//parse out the location_id,form_id,location_tag_id, and form_instance_id
+		//from the selected form
+		String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
+		FormInstanceTag formInstTag = null;
+		if (formInstance != null && formInstance.trim().length() > 0) {
+			formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+			locationId = formInstTag.getLocationId();
+			locationTagId = formInstTag.getLocationTagId();
+			formId = formInstTag.getFormId();
+			formInstanceId = formInstTag.getFormInstanceId();
+		} else {
+			// return an error
+			
+		}
+		
+		FormService formService = Context.getFormService();
+		HashSet<String> inputFields = new HashSet<String>();
+		Form form = formService.getForm(formId);
+		Set<FormField> formFields = form.getFormFields();
+		TeleformTranslator translator = new TeleformTranslator();
+		FieldType exportFieldType = translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
+		for (FormField formField : formFields) {
+			org.openmrs.Field currField = formField.getField();
+			FieldType fieldType = currField.getFieldType();
+			if (fieldType != null && fieldType.equals(exportFieldType)) {
+				inputFields.add(currField.getName());
+			}
+		}
+    }
 }
