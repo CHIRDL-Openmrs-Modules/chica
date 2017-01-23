@@ -232,7 +232,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 					id = doctor.getIDNumber().toString();
 				}
 
-				provider.setId(id);
+				provider.setEhrProviderId(id);
 
 				return provider;
 
