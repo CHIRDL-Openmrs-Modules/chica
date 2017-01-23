@@ -35,10 +35,7 @@ public class ChicaActivator extends BaseModuleActivator {
 		try
 		{
 			AdministrationService adminService = Context.getAdministrationService();
-			// TODO CHICA-221 Commenting out. This is no longer needed. REMOVE
-//			Context.authenticate(adminService
-//				.getGlobalProperty("scheduler.username"), adminService
-//				.getGlobalProperty("scheduler.password"));
+			 
 			Iterator<GlobalProperty> properties = adminService
 					.getAllGlobalProperties().iterator();
 			GlobalProperty currProperty = null;

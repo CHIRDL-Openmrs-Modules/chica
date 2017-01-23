@@ -19,6 +19,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.datatype.TS;
+import ca.uhn.hl7v2.model.v23.datatype.TSComponentOne;
 import ca.uhn.hl7v2.model.v23.datatype.XCN;
 import ca.uhn.hl7v2.model.v23.message.ADT_A01;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
@@ -186,7 +187,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		} 
 		if (timeStamp != null)
 		{
-			ST dtm = null; //timeStamp.getTimeOfAnEvent(); // TODO CHICA-221
+			TSComponentOne dtm = timeStamp.getTimeOfAnEvent();
 			if (dtm == null || dtm.getValue() == null)
 			{
 				timeStamp = msh.getDateTimeOfMessage();
