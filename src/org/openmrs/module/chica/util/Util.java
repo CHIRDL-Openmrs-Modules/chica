@@ -907,4 +907,19 @@ public class Util {
 		}
 		return strOutput;
 	}
+	
+	public static Integer getPWSTimeFrame() {
+		Integer ePWSTimeFrame = null;
+		String ePWSTimeFrameStr = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_ePWS_TIMEFRAME);
+		if (ePWSTimeFrameStr == null || ePWSTimeFrameStr.trim().length() == 0) {
+			log.error("No value set for global property: chica.ePWSTimeFrame.");
+			return null;
+		}
+		try {
+			ePWSTimeFrame = Integer.parseInt(ePWSTimeFrameStr);
+		} catch (NumberFormatException e) {
+			log.error("Invalid number format for global property chica.ePWSTimeFrame");
+		}
+		return ePWSTimeFrame;
+	}
 }
