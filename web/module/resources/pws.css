@@ -227,7 +227,7 @@ body {
     color:#000;
 }
 
-#submitWaitDialog {
+#submitWaitDialog, #saveDraftWaitDialog {
     border: 4px solid #FA8258;
 }
 

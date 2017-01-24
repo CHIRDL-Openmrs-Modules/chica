@@ -298,6 +298,24 @@ $(function() {
           }
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
 	
+	$("#saveDraftWaitDialog").dialog({
+		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+        autoOpen: false,
+        modal: true,
+        maxWidth: 100,
+        maxHeight: 50,
+        width: 100,
+        height: 50,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          }
+    }).dialog("widget").find(".ui-dialog-titlebar").hide();
+	
 	$("#formSelectionDialog").dialog({
     	open: function() { 
     		$(".recommendedHandoutContainer").hide();
@@ -377,6 +395,67 @@ $(function() {
           }
         }
     });
+	
+	$("#saveDraftErrorDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	$("#saveDraftSuccessDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	$("#serverErrorDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	if ($("#serverErrorMessage").html() != null && $("#serverErrorMessage").html().length > 0) {
+		$("#serverErrorDialog").dialog("open");
+	}
 	
     $("#formSelectionDialogContainer").css("background", "#f4f0ec"); 
 	
@@ -614,6 +693,8 @@ function renewSession() {
 }
 
 function saveDraft() {
+	$("#saveDraftWaitDialog").dialog("open");
+	processCheckboxes();
 	var submitForm = $("#pwsForm"); 
     $.ajax({
     	"cache": false,
@@ -622,14 +703,20 @@ function saveDraft() {
         "url": saveDraftURL,
         "timeout": 30000, // optional if you want to handle timeouts (which you should)
         "error": handleSaveDraftError, // this sets up jQuery to give me errors
-        "success": function (xml) {
-        	window.parent.closeIframe();
+        "success": function (text) {
+        	$("#saveDraftWaitDialog").dialog("close");
+        	if (text === "success") {
+	        	$("#saveDraftSuccessDialog").dialog("open");
+        	} else {
+        		$("#saveDraftErrorMessage").html(text);
+        		$("#saveDraftErrorDialog").dialog("open");
+        	}
         }
     });
 }
 
 function handleSaveDraftError(xhr, textStatus, error) {
-	$("#noForms").hide();
-	$("#formServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error occurred locating recommended forms: ' + error + '</span>');
-	$("#formServerError").show();
+	$("#saveDraftWaitDialog").dialog("close");
+	$("#saveDraftErrorMessage").html("<p><b>An error occurred saving the draft: " + error + "</b></p>");
+	$("#saveDraftErrorDialog").dialog("open");
 }

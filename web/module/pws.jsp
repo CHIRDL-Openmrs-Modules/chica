@@ -86,7 +86,6 @@
 				<input id="patientNameForcePrint" name="patientNameForcePrint" type="hidden" value="${PatientName}"/>
 				<input id="sessionTimeout" name="sessionTimeout" type="hidden" value="${pageContext.session.maxInactiveInterval}"/>
 				<input id="sessionTimeoutWarning" name="sessionTimeoutWarning" type="hidden" value="${sessionTimeoutWarning}"/>
-				<input id="draft" name="draft" type="hidden" value="false"/>
             </form>
     	</div>
     </body>
