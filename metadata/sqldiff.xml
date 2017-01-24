@@ -4099,6 +4099,20 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
   			(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
          </sql>
 	</diff>
+	<diff>
+        <version>1.8.7</version>
+        <author>David Ely</author>
+        <date>January 24, 2017</date>
+        <description>
+            CHICA-221 Migrate data from person_attribute to provider.identifier column
+        </description>
+        <sql>
+            Update provider p
+			Inner Join person_attribute pa ON p.person_id = pa.person_id
+			Set p.identifier = pa.value
+			Where pa.person_attribute_type_id = (Select person_attribute_type_id From person_attribute_type Where name = 'Provider ID') And pa.voided = false;
+        </sql>
+    </diff>
 </sqldiff>
 
 
