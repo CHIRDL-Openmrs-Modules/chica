@@ -120,6 +120,8 @@ public class MobileFormController extends SimpleFormController {
 			log.error(message);
 		}
 		
+		map.put(PARAM_PATIENT_ID, patientIdStr);
+		
 		return new ModelAndView(new RedirectView(view), map);
 	}
 	
@@ -166,7 +168,9 @@ public class MobileFormController extends SimpleFormController {
 		if (providerId != null && providerId.trim().length() > 0) {
 			saveProviderViewer(patient, encounterId, providerId, formInstTag);
 		} else {
-			log.error("No valid providerId provided.  Cannot log who is viewing form: " + formId);
+			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientIdStr + 
+				" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
+					formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
 		}
 		
 		// Add session timeout information
