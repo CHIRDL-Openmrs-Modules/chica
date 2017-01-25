@@ -1531,6 +1531,15 @@ public class ChicaServlet extends HttpServlet {
     	pw.write(RESULT_SUCCESS);
 	}
     
+    /**
+     * Saves a draft of a form. Text written to the response will indicate if the procedure completed
+     * successfully.  The procedure executed normally if "success" is returned in the response.  
+     * A message containing an error message to display to the client will be returned otherwise.
+     * 
+     * @param request The request from the client
+     * @param response The response that will be sent back to the client
+     * @throws IOException
+     */
     private void saveFormDraft(HttpServletRequest request, HttpServletResponse response) throws IOException {
     	response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
 		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);

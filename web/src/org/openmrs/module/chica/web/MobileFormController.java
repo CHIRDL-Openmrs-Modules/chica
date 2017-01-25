@@ -125,6 +125,12 @@ public class MobileFormController extends SimpleFormController {
 		return new ModelAndView(new RedirectView(view), map);
 	}
 	
+	/**
+	 * Loads the data for the page to display.
+	 * 
+	 * @param request Request information from the client
+	 * @param map Map where all the page parameters will be written
+	 */
 	private void loadFormData(HttpServletRequest request, Map<String, Object> map) {
 		map.put(PARAM_ERROR_MESSAGE, request.getParameter(PARAM_ERROR_MESSAGE));
 		
