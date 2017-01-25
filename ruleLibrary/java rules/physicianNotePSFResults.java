@@ -33,6 +33,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.PSFQuestionAnswer;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.util.Util;
 
 
 /**
@@ -108,7 +109,7 @@ public class physicianNotePSFResults implements Rule {
 		
 		// Get last encounter with last day
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		Patient patient = Context.getPatientService().getPatient(patientId);

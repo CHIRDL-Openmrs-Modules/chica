@@ -433,6 +433,12 @@
         <description>Used to determine if the visit number received in PV1-19 should be used to lookup the encounter when processing vitals.
         </description>
     </globalProperty>
+	<globalProperty>
+        <property>chica.formTimeLimit</property>
+        <defaultValue>2</defaultValue>
+        <description>Timeout for forms (in days).
+        </description>
+    </globalProperty>
    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

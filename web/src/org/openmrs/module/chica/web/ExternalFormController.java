@@ -60,43 +60,6 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class ExternalFormController extends SimpleFormController {
 	
-	private static final String DASH = "-";
-	private static final String PARAM_FORM_INSTANCE = "formInstance";
-	private static final String PARAM_PATIENT_ID = "patientId";
-	private static final String PARAM_ENCOUNTER_ID = "encounterId";
-	private static final String PARAM_SESSION_ID = "sessionId";
-	private static final String PARAM_MISSING_FORM_INSTANCE = "missingFormInstance";
-	private static final String PARAM_MISSING_ENCOUNTER = "missingEncounter";
-	private static final String PARAM_INVALID_END_STATE = "invalidEndState";
-	private static final String PARAM_INVALID_START_STATE = "invalidStartState";
-	private static final String PARAM_MISSING_END_STATE = "missingEndState";
-	private static final String PARAM_MISSING_START_STATE = "missingStartState";
-	private static final String PARAM_INVALID_PATIENT = "invalidPatient";
-	private static final String PARAM_INVALID_FORM = "invalidForm";
-	private static final String PARAM_PROVIDER_ID = "providerId";
-	private static final String PARAM_END_STATE = "endState";
-	private static final String PARAM_START_STATE = "startState";
-	private static final String PARAM_FAILED_AUTHENTICATION = "failedAuthentication";
-	private static final String PARAM_MISSING_PROVIDER_ID = "missingProviderId";
-	private static final String PARAM_MISSING_PASSWORD = "missingPassword";
-	private static final String PARAM_MISSING_USER = "missingUser";
-	private static final String PARAM_MISSING_MRN = "missingMRN";
-	private static final String PARAM_MISSING_FORM_PAGE = "missingFormPage";
-	private static final String PARAM_MISSING_FORM = "missingForm";
-	private static final String PARAM_MRN = "mrn";
-	private static final String PARAM_FORM_PAGE = "formPage";
-	private static final String PARAM_FORM_NAME = "formName";
-	private static final String PARAM_INVALID_VENDOR = "invalidVendor";
-	private static final String PARAM_MISSING_VENDOR = "missingVendor";
-	private static final String PARAM_VAL_TRUE = "true";
-	private static final String PARAM_HAS_ERRORS = "hasErrors";
-	private static final String PARAM_VENDOR = "vendor";
-	private static final String PARAM_SHOW_HANDOUTS = "showHandouts";
-	private static final String PARAM_LOCATION_ID = "locationId";
-	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
-	private static final String PARAM_PATIENT_NAME = "patientName";
-	//private static final String PERSON_ATTR_TYPE_PROVIDER_ID = "Provider ID";
-	
 	/**
 	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
 	 */
@@ -112,64 +75,64 @@ public class ExternalFormController extends SimpleFormController {
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		String vendorStr = request.getParameter(PARAM_VENDOR);
-    	map.put(PARAM_VENDOR, vendorStr);
+		String vendorStr = request.getParameter(ChirdlUtilConstants.PARAMETER_VENDOR);
+    	map.put(ChirdlUtilConstants.PARAMETER_VENDOR, vendorStr);
     	if (vendorStr == null || vendorStr.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_VENDOR, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
     	
     	Vendor vendor = VendorFactory.getVendor(vendorStr, request);
     	if (vendor == null) {
-    		map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_INVALID_VENDOR, PARAM_VAL_TRUE);
+    		map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
     	}
     	
 		String formName = vendor.getFormName();
 		String formPage = vendor.getFormPage();
 		String mrn = vendor.getMrn();
-		map.put(PARAM_FORM_NAME, formName);
-		map.put(PARAM_FORM_PAGE, formPage);
-		map.put(PARAM_MRN, mrn);
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_NAME, formName);
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_PAGE, formPage);
+		map.put(ChirdlUtilConstants.PARAMETER_MRN, mrn);
 		
 		if (formName == null || formName.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_FORM, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_FORM, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
 		
 		if (formPage == null || formPage.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_FORM_PAGE, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_FORM_PAGE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
 		
 		if (mrn == null || mrn.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_MRN, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_MRN, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
 		
 		String username = vendor.getUsername();
 		if (username == null || username.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_USER, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_USER, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
 		
 		String password = vendor.getPassword();
 		if (password == null || password.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_PASSWORD, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PASSWORD, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
 		
 		String providerId = vendor.getProviderId();
 		if (providerId == null || providerId.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_PROVIDER_ID, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PROVIDER_ID, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
 		
@@ -177,8 +140,8 @@ public class ExternalFormController extends SimpleFormController {
 			Context.authenticate(username, password);
 		} catch (ContextAuthenticationException e) {
 			// username/password not valid
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_FAILED_AUTHENTICATION, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_FAILED_AUTHENTICATION, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return map;
 		}
 		
@@ -194,18 +157,18 @@ public class ExternalFormController extends SimpleFormController {
     	Map<String, Object> map = new HashMap<String, Object>();
     	String view = getFormView();
     	
-    	String vendorStr = request.getParameter(PARAM_VENDOR);
-    	map.put(PARAM_VENDOR, vendorStr);
+    	String vendorStr = request.getParameter(ChirdlUtilConstants.PARAMETER_VENDOR);
+    	map.put(ChirdlUtilConstants.PARAMETER_VENDOR, vendorStr);
     	if (vendorStr == null || vendorStr.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_VENDOR, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
     	
     	Vendor vendor = VendorFactory.getVendor(vendorStr, request);
     	if (vendor == null) {
-    		map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_INVALID_VENDOR, PARAM_VAL_TRUE);
+    		map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
     	}
     	
@@ -216,58 +179,58 @@ public class ExternalFormController extends SimpleFormController {
     	String endStateStr = vendor.getEndState();
     	String providerId = vendor.getProviderId();
     	
-    	map.put(PARAM_FORM_NAME, formName);
-		map.put(PARAM_FORM_PAGE, formPage);
-		map.put(PARAM_MRN, mrn);
-		map.put(PARAM_START_STATE, startStateStr);
-		map.put(PARAM_END_STATE, endStateStr);
-		map.put(PARAM_PROVIDER_ID, providerId);
-		map.put(PARAM_VENDOR, vendor);
+    	map.put(ChirdlUtilConstants.PARAMETER_FORM_NAME, formName);
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_PAGE, formPage);
+		map.put(ChirdlUtilConstants.PARAMETER_MRN, mrn);
+		map.put(ChirdlUtilConstants.PARAMETER_START_STATE, startStateStr);
+		map.put(ChirdlUtilConstants.PARAMETER_END_STATE, endStateStr);
+		map.put(ChirdlUtilConstants.PARAMETER_PROVIDER_ID, providerId);
+		map.put(ChirdlUtilConstants.PARAMETER_VENDOR, vendor);
 		
 		Form form = Context.getFormService().getForm(formName);
 		if (form == null) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_INVALID_FORM, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_FORM, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
 		
 		Patient patient = getPatientByMRN(mrn);
 		if (patient == null) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_INVALID_PATIENT, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_PATIENT, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
 		
 		if (startStateStr == null || startStateStr.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_START_STATE, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_START_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
 		
 		if (endStateStr == null || endStateStr.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_END_STATE, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_END_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
 		
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State startState = backportsService.getStateByName(startStateStr);
 		if (startState == null) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_INVALID_START_STATE, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_START_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
 		
 		State endState = backportsService.getStateByName(endStateStr);
 		if (endState == null) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_INVALID_END_STATE, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_END_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
 		
 		if (providerId == null || providerId.trim().length() == 0) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_PROVIDER_ID, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PROVIDER_ID, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return new ModelAndView(view, map);
 		}
 		
@@ -278,13 +241,14 @@ public class ExternalFormController extends SimpleFormController {
 //			return new ModelAndView(view, map);
 //		}
 		
-		map.put(PARAM_PATIENT_ID, patient.getPatientId());
+		map.put(ChirdlUtilConstants.PARAMETER_PATIENT_ID, patient.getPatientId());
 		
 		Encounter encounter = getRecentEncounter(
 			patient, backportsService, startState.getStateId(), endState.getStateId(), form.getFormId());
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_TIME_LIMIT, (Util.getFormTimeLimit())*24);
 		if (encounter == null) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_ENCOUNTER, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_ENCOUNTER, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			
 			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
 			return new ModelAndView(view, map);
@@ -293,8 +257,8 @@ public class ExternalFormController extends SimpleFormController {
 		FormInstanceTag tag = getFormInstanceInfo(encounter.getEncounterId(), form.getFormId(), startState.getStateId(), 
 			endState.getStateId(), backportsService);
 		if (tag == null) {
-			map.put(PARAM_HAS_ERRORS, PARAM_VAL_TRUE);
-			map.put(PARAM_MISSING_FORM_INSTANCE, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_FORM_INSTANCE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			
 			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
 			return new ModelAndView(view, map);
@@ -302,11 +266,11 @@ public class ExternalFormController extends SimpleFormController {
 		
 		List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
 		if (sessions != null && sessions.size() > 0) {
-			map.put(PARAM_SESSION_ID, sessions.get(0).getSessionId());
+			map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessions.get(0).getSessionId());
 		}
 		
-		map.put(PARAM_ENCOUNTER_ID, encounter.getEncounterId());
-		map.put(PARAM_FORM_INSTANCE, tag.toString());
+		map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounter.getEncounterId());
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, tag.toString());
     	
 	    return new ModelAndView(new RedirectView(formPage), map);
     }
@@ -329,7 +293,7 @@ public class ExternalFormController extends SimpleFormController {
 	    }
 	    
 	    // Patient not found by MRN.  Try spotting a dash.
-	    int dashIndex = mrn.indexOf(DASH);
+	    int dashIndex = mrn.indexOf(ChirdlUtilConstants.GENERAL_INFO_DASH);
 	    if (dashIndex < 0) {
 	    	// Place a dash in the next-to-last character position and ask again.
 	    	int length = mrn.length();
@@ -337,7 +301,7 @@ public class ExternalFormController extends SimpleFormController {
 	    	if (position >= 0) {
 	    		String firstPart = mrn.substring(0, position);
 	    		String lastPart = mrn.substring(position, length);
-	    		String newMrn = firstPart + DASH + lastPart;
+	    		String newMrn = firstPart + ChirdlUtilConstants.GENERAL_INFO_DASH + lastPart;
 	    		patients = patientService.getPatients(null, newMrn, types, true);
 			    if (patients.size() > 0) {
 			    	Patient patient = patients.get(0);
@@ -364,7 +328,7 @@ public class ExternalFormController extends SimpleFormController {
                                          Integer endStateId, Integer formId) {
     	// Get last encounter with last day
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
@@ -491,7 +455,7 @@ public class ExternalFormController extends SimpleFormController {
 		if (encounter != null) {
 			Location location = encounter.getLocation();
 			if (location != null) {
-				map.put(PARAM_LOCATION_ID, location.getLocationId());
+				map.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, location.getLocationId());
 			} else {
 				return;
 			}
@@ -499,27 +463,27 @@ public class ExternalFormController extends SimpleFormController {
 			Set<LocationTag> tags = location.getTags();
 			if (tags != null && tags.size() > 0) {
 				LocationTag tag = tags.iterator().next();
-				map.put(PARAM_LOCATION_TAG_ID, tag.getLocationTagId());
+				map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, tag.getLocationTagId());
 			} else {
 				return;
 			}
 			
 			List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
 			if (sessions != null && sessions.size() > 0) {
-				map.put(PARAM_SESSION_ID, sessions.get(0).getSessionId());
+				map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessions.get(0).getSessionId());
 			} else {
 				return;
 			}
 			
 			PersonName personName = patient.getPersonName();
 			if (personName != null && personName.getGivenName() != null && personName.getFamilyName() != null) {
-				map.put(PARAM_PATIENT_NAME, personName.getGivenName() + " " + personName.getFamilyName());
+				map.put(ChirdlUtilConstants.PARAMETER_PATIENT_NAME, personName.getGivenName() + " " + personName.getFamilyName());
 			} else {
 				// Default to MRN if a name cannot be found.
-				map.put(PARAM_PATIENT_NAME, mrn);
+				map.put(ChirdlUtilConstants.PARAMETER_PATIENT_NAME, mrn);
 			}
 			
-			map.put(PARAM_SHOW_HANDOUTS, PARAM_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_SHOW_HANDOUTS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 		}
     }
 }

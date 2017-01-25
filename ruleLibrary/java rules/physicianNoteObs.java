@@ -50,6 +50,7 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ObsComparator;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -135,7 +136,7 @@ public class physicianNoteObs implements Rule {
 		
 		// Get last encounter with last day
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - 3);
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
