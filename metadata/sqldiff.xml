@@ -4126,6 +4126,18 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			WHERE concept_id IN (SELECT concept_id FROM concept_name WHERE name IN ('TEMPERATURE CHICA', 'HEIGHT', 'WEIGHT', 'HC', 'HCCENTILE', 'HTCENTILE', 'WTCENTILE', 'BMICENTILE', 'BMICHICA')); 
         </sql>
     </diff>
+    <diff>
+        <version>1.8.9</version>
+        <author>David Ely</author>
+        <date>January 25, 2017</date>
+        <description>
+            CHICA-221 Add role_privilege records for Chicauser
+        </description>
+        <sql>
+           	INSERT INTO role_privilege(role, privilege)
+			VALUES('Chicauser','Get Providers'), ('Chicauser','Manage Providers'), ('Chicauser','Manage Encounter Roles'), ('Chicauser','Get Visits');
+        </sql>
+    </diff>
 </sqldiff>
 
 
