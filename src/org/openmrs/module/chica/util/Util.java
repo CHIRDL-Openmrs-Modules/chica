@@ -917,13 +917,13 @@ public class Util {
 		Integer formTimeLimit = null;
 		String formTimeLimitStr = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT);
 		if (formTimeLimitStr == null || formTimeLimitStr.trim().length() == 0) {
-			log.error("No value set for global property: chica.formTimeLimit.");
+			log.error("No value set for global property: "+ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT+". A default of 2 days will be used.");
 			formTimeLimitStr = "2";
 		}
 		try {
 			formTimeLimit = Integer.parseInt(formTimeLimitStr);
 		} catch (NumberFormatException e) {
-			log.error("Invalid number format for global property chica.formTimeLimit. A default of 2 days will be used.");
+			log.error("Invalid number format for global property "+ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT+". A default of 2 days will be used.");
 			formTimeLimit = 2;
 		}
 		return formTimeLimit;
