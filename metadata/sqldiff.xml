@@ -4113,6 +4113,19 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			Where pa.person_attribute_type_id = (Select person_attribute_type_id From person_attribute_type Where name = 'Provider ID') And pa.voided = false;
         </sql>
     </diff>
+    <diff>
+        <version>1.8.8</version>
+        <author>David Ely</author>
+        <date>January 25, 2017</date>
+        <description>
+            CHICA-221 Set concepts to allow precision
+        </description>
+        <sql>
+           	UPDATE concept_numeric
+			SET precise = 1
+			WHERE concept_id IN (SELECT concept_id FROM concept_name WHERE name IN ('TEMPERATURE CHICA', 'HEIGHT', 'WEIGHT', 'HC', 'HCCENTILE', 'HTCENTILE', 'WTCENTILE', 'BMICENTILE', 'BMICHICA')); 
+        </sql>
+    </diff>
 </sqldiff>
 
 
