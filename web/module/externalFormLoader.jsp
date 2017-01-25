@@ -54,7 +54,7 @@
                        <div><p>A patient with MRN ${mrn} cannot be found in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingEncounter eq 'true'}">
-                       <div><p>A valid encounter within the past 48 hours cannot be found for patient ${mrn} in the CHICA system.</p></div>
+                       <div><p>A valid encounter within the past ${formTimeLimit} hours cannot be found for patient ${mrn} in the CHICA system.</p></div>
                    </c:when>
                    <c:when test="${missingFormInstance eq 'true'}">
                        <div><p>The form ${formName} does not exist or has already been submitted for patient ${mrn} in the CHICA system.</p></div>

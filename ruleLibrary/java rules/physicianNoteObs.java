@@ -136,8 +136,7 @@ public class physicianNoteObs implements Rule {
 		
 		// Get last encounter with last day
 		Calendar startCal = Calendar.getInstance();
-		Integer ePWSTimeFrame = Util.getPWSTimeFrame();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - ePWSTimeFrame);
+		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 

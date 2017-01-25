@@ -435,9 +435,9 @@
         </description>
     </globalProperty>
 	<globalProperty>
-        <property>chica.ePWSTimeFrame</property>
+        <property>chica.formTimeLimit</property>
         <defaultValue>2</defaultValue>
-        <description>Timeout for ePWS (in days).
+        <description>Timeout for forms (in days).
         </description>
     </globalProperty>
    
