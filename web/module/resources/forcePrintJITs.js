@@ -241,7 +241,7 @@ function forcePrint_loadForms() {
 		action = "action=getForcePrintForms&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
 			locationId + "&locationTagId=" + locationTagId;
 	}
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	$.ajax({
 	  "cache": false,
 	  "dataType": "xml",
@@ -329,7 +329,7 @@ function forcePrint_loadForm() {
 			locationId + "&locationTagId=" + locationTagId + "&formIds=" + formIds + "&randomNumber=" + randomNumber;
 	}
 	
-	var url = "/openmrs/moduleServlet/chica/chica?";
+	var url = ctx + "/moduleServlet/chica/chica?";
 	$.ajax({
 		  "cache": false,
 		  "dataType": "xml",
@@ -387,7 +387,7 @@ function forcePrint_parseForcePrintedForms(responseXML) {
     				forcePrintedForms.toString() + "&randomNumber=" + randomNumber +  "#view=fit&navpanes=0";
     		}
     		
-    		var url = "/openmrs/moduleServlet/chica/chica?";
+    		var url = ctx + "/moduleServlet/chica/chica?";
     		var obj = $(".force-print-form-object");
     		var container = obj.parent();
     		var newUrl = url + action;

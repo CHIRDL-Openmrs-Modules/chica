@@ -143,7 +143,7 @@ function finishForm(patientId, encounterId, sessionId, ageInYears, firstName) {
 
 function checkPasscode() {
     var passcode = $("#passcode").val();
-    var url = "/openmrs/moduleServlet/chica/chicaMobile";
+    var url = ctx + "/moduleServlet/chica/chicaMobile";
     var action = "action=verifyPasscode&passcode=" + passcode;
     var token = getAuthenticationToken();
     $.ajax({
@@ -165,7 +165,7 @@ function checkPasscode() {
 
 function populateList() {
 	var showAllPatients = $("#showAllCheckbox").is(':checked'); // DWE CHICA-761
-    var url = "/openmrs/moduleServlet/chica/chicaMobile";
+    var url = ctx + "/moduleServlet/chica/chicaMobile";
     var token = getAuthenticationToken();
     $.ajax({
     	beforeSend: function (xhr) {
@@ -250,8 +250,9 @@ function parsePatientList(responseXML) {
             
             // DWE CHICA-884
             var ageInYears = $(this).find("ageInYears").text();
+            var newFirstName = firstName.replace("'", "\\'");
             
-            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ', ' + ageInYears + ', \'' + firstName + '\');" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
+            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ', ' + ageInYears + ', \'' + newFirstName + '\');" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
             count++;
         });
 

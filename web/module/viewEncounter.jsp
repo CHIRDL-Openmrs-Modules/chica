@@ -197,7 +197,7 @@
         <div style="margin: 0 auto;text-align: center;">
             <div style="color:#000000;"><p><b>Type the MRN #. Press OK to display the patient's encounters.</b></p></div>
             <div id="encounterMrnLoading" class="form-loading">
-                 <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
+                 <span><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Verifying MRN...</span>
               </div>
             <div id="encounterMrnError" style="text-align:center;"><span id="encounterMrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="encounterMrnLookup" tabindex="1"/></div>

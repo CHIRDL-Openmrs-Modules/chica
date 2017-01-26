@@ -1,7 +1,7 @@
 <div id="force-print-dialog" title="Available Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
     <div class="force-print-content">
          <div class="force-print-forms-loading">
-             <span id="force-print-forms-loading-panel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
+             <span id="force-print-forms-loading-panel"><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
          </div>
          <div class="force-print-forms-server-error">
              <div class="force-print-forms-server-error-text ui-state-error"></div>
@@ -27,7 +27,7 @@
             </object>
          </div>
          <div class="force-print-form-loading">
-            <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
+            <span><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
          </div>
          <input type="hidden" id="patientId" />
          <input type="hidden" id="sessionId" />

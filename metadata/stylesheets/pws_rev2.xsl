@@ -57,14 +57,14 @@
 					}
 					
 					#infoLeft {
-						width: 368px;
+						width: 434px;
 						float: left;
 						padding: 2px 2px 2px 5px;
 						border-bottom: 1px solid black;
 					}
 					
 					#infoCenter {
-						width: 221px;
+						width: 155px;
 						height: 60px;
 						float: right;
 						padding: 2px;
@@ -247,12 +247,12 @@
 					
 					.infoLeftItem {
 						height: 15px;
-						width: 300px;
+						width: 434px;
 					}
 					
 					.infoCenterItem {
 						height: 15px;
-						width: 160px;
+						width: 95px;
 						padding: 0px 0px 0px 60px;
 					}
 					

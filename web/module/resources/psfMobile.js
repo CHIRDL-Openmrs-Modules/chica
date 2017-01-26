@@ -524,7 +524,7 @@ function showPasscode() {
 function checkPasscode() {
 //    $.mobile.loading("show");
     var passcode = $("#vitals_passcode").val();
-    var url = "/openmrs/moduleServlet/chica/chicaMobile";
+    var url = ctx + "/moduleServlet/chica/chicaMobile";
     var action = "action=verifyPasscode&passcode=" + passcode;
     var token = getAuthenticationToken();
     $.ajax({

@@ -1,9 +1,9 @@
-var chicaServletUrl = "/openmrs/moduleServlet/chica/chica?";
+var chicaServletUrl = ctx + "/moduleServlet/chica/chica?";
 var recommendedHandoutsAction = "action=getPatientJITs&formInstances=";
 var pageOptions = "#page=1&view=FitH,top&navpanes=0";
 var previousRecommendedHandoutSelection = -1;
 var timeoutDialog = null;
-var keepAliveURL = "/openmrs/moduleServlet/chica/chica?action=keepAlive";
+var keepAliveURL = ctx + "/moduleServlet/chica/chica?action=keepAlive";
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -454,7 +454,7 @@ $(function() {
 	});
     
     if (timeoutDialog === null) {
-    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/module/chica/sessionTimeout.form', 
+    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: ctx + '/logout', logout_redirect_url: ctx + '/module/chica/sessionTimeout.form', 
     		keep_alive_url: keepAliveURL, dialog_width: '400', title: 'Your CHICA session is about to expire'});
     	timeoutDialog = getTimeoutDialog();
     	

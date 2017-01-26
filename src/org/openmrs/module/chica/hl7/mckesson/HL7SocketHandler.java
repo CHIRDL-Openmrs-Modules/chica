@@ -939,6 +939,8 @@ public class HL7SocketHandler extends
 
 		if (currentSSN == null) {
 			// if patient has no SSN.
+			UUID uuid = UUID.randomUUID();
+			newSSN.setUuid(uuid.toString());
 			currentPatient.addIdentifier(newSSN);
 		} else {
 			// if patient has a different SSN
@@ -1730,6 +1732,8 @@ public class HL7SocketHandler extends
 				newIdentifier.setPreferred(false); // THIS SHOULD NOT BE SET AS THE PREFERRED IDENTIFIER
 				newIdentifier.setCreator(Context.getAuthenticatedUser());
 				newIdentifier.setDateCreated(new Date());
+				UUID uuid = UUID.randomUUID();
+				newIdentifier.setUuid(uuid.toString());
 				
 				existingPatient.addIdentifier(newIdentifier);
 			}

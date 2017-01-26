@@ -1,4 +1,4 @@
-var chicaServletUrl = "/openmrs/moduleServlet/chica/chica?";
+var chicaServletUrl = ctx + "/moduleServlet/chica/chica?";
 $(function() {
     $( "#cacheTabs" ).tabs();
     $( "#submitButton" ).button();
