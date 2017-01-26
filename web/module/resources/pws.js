@@ -116,15 +116,8 @@ function getAvailableJits() {
 
 $(function() {
 	$("button, input:submit, input:button").button();
-	$("#submitButtonTop").button();
-	$("#submitButtonBottom").button();
-	$("#formPrintButton").button();
-	$("#problemButton").button();
-	$("#forcePrintButton").button();
-	$("#retryButton").button();
-	$("#notesButton").button();
-	$("#saveDraftButtonTop").button();
-	$("#saveDraftButtonBottom").button();
+	$("#submitButtonTop, #submitButtonBottom, #saveDraftButtonTop, #saveDraftButtonBottom").button();
+	$("#retryButton, #notesButton, #formPrintButton, #problemButton, #forcePrintButton").button();
 	
 	getAvailableJits();
 	
@@ -207,14 +200,16 @@ $(function() {
         ]
     });
 	
-	 $("#historyAndPhysicalText").keyup(function() {
-		 updateCount('historyAndPhysicalText');
-	    });
+	updateCount("historyAndPhysicalText");
+	updateCount("assessmentAndPlanText");
+	$("#historyAndPhysicalText").keyup(function() {
+		updateCount('historyAndPhysicalText');
+	});
 	 
-	 $("#assessmentAndPlanText").keyup(function() {
-		 updateCount('assessmentAndPlanText');
+	$("#assessmentAndPlanText").keyup(function() {
+		updateCount('assessmentAndPlanText');
 	    	
-	    });
+	});
 	
 	// Append the notes dialog to the parent form so that it can be submitted
 	$('#notesDialog').parent().appendTo($("form:first"));
@@ -255,22 +250,12 @@ $(function() {
         ]
     })
 	
-	$("#submitButtonBottom").click(function(event) {
+	$("#submitButtonBottom, #submitButtonTop").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");
 		event.preventDefault();
 	});
 	
-	$("#submitButtonTop").click(function(event) {
-		$("#confirmSubmitDialog").dialog("open");
-		event.preventDefault();
-	});
-	
-	$("#saveDraftButtonBottom").click(function(event) {
-		saveDraft();
-		event.preventDefault();
-	});
-	
-	$("#saveDraftButtonTop").click(function(event) {
+	$("#saveDraftButtonBottom, #saveDraftButtonTop").click(function(event) {
 		saveDraft();
 		event.preventDefault();
 	});
