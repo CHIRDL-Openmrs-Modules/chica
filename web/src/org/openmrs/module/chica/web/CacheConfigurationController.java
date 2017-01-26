@@ -72,6 +72,7 @@ public class CacheConfigurationController extends SimpleFormController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String EHRCacheHeapSizeStr = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE);
 		String immunizationCacheHeapSizeStr = request.getParameter(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE);
+		String formDraftCacheHeapSizeStr = request.getParameter(PARAM_FORM_DRAFT_CACHE_HEAP_SIZE);
 		
 		// Update the EHR Medical Record Cache heap size
 		updateCacheHeapSize(ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
@@ -89,6 +90,17 @@ public class CacheConfigurationController extends SimpleFormController {
 							ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 							ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS, 
 							immunizationCacheHeapSizeStr, model);
+		
+		// A non-empty model reflects errors occurred updating the heap size
+		if (!model.isEmpty()) {
+			return new ModelAndView(new RedirectView(getSuccessView()), model);
+		}
+		
+		// Update the Form Draft Cache heap size
+		updateCacheHeapSize(AtdConstants.CACHE_FORM_DRAFT, 
+							AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+							AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS, 
+							formDraftCacheHeapSizeStr, model);
 		
 		// A non-empty model reflects errors occurred updating the heap size
 		if (!model.isEmpty()) {
