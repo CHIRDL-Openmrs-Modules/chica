@@ -4135,7 +4135,20 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </description>
         <sql>
            	INSERT INTO role_privilege(role, privilege)
-			VALUES('Chicauser','Get Providers'), ('Chicauser','Manage Providers'), ('Chicauser','Manage Encounter Roles'), ('Chicauser','Get Visits');
+			VALUES('Chicauser','Manage Providers'), ('Chicauser','Manage Encounter Roles'), ('Chicauser','Get Encounter Roles');
+        </sql>
+    </diff>
+    <diff>
+        <version>1.9.0</version>
+        <author>David Ely</author>
+        <date>January 27, 2017</date>
+        <description>
+            CHICA-221 Update global property so that we CHICA can accept whatever patient name the EHR sends
+        </description>
+        <sql>
+           	Update global_property
+			Set property_value = ''
+			Where property = 'patient.nameValidationRegex';
         </sql>
     </diff>
 </sqldiff>
