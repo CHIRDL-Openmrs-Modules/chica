@@ -41,7 +41,7 @@ Priority:		630;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) OR (mode = CONSUME) then
-If (csp = forward) then || positionText || := "**Parent reports FORWARD FACING car seat. Should be rearfacing until age 2. ";
+If (csp = forward) then || positionText || = "**Parent reports FORWARD FACING car seat. Should be rearfacing until age 2. ";
 endif
 
 If (mode = PRODUCE) then
