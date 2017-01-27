@@ -155,5 +155,3 @@ write ("Do not suspect delay");
 Age_Min: 8          months     ;;
 Age_Max: 1050 days     ;;
 end:
-
-}

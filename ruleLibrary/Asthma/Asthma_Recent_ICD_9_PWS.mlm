@@ -109,7 +109,7 @@ If  (Box3=true) AND NOT(Box4=true) then
 endif;
 
 If  (Box5=true) then
- CALL storeObs With "PatientHandout","AsthmaActionPlan";;
+ CALL storeObs With "PatientHandout","AsthmaActionPlan";
  CALL storeNote With "I gave the patient an asthma action plan for home and school.", "DISEASE MANAGEMENT";
 endif;
 

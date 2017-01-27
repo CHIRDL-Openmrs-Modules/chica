@@ -54,7 +54,7 @@ endif
 ;;
 Action:
 write ("Does || firstname || put two words together when || text || speaks, such as 'Want drink' and 'Get down'?  Do not count 'thank you' and 'bye-bye'.");
-write("¿|| firstname || puede poner dos palabras juntas cuando habla como “quiero tomar”.”? No cuente gracias y adiós") At Spanish;                                                                                                                                                                                                                   
+write("¿|| firstname || puede poner dos palabras juntas cuando habla como 'quiero tomar'? No cuente gracias y adiós") At Spanish;                                                                                                                                                                                                                   
 ;;
 Age_Min: 799 days;;
 Age_Max: 840 days;;
