@@ -55,7 +55,7 @@ If (Box2=true) then
 endif;
 If (Box5=true) then
  CALL storeObs With "Abuse_Concern","no";
- CALL storeNote With "I do not suspect abuse in this case.", "PSYCHOSOCIAL"
+ CALL storeNote With "I do not suspect abuse in this case.", "PSYCHOSOCIAL";
 endif;
 
 

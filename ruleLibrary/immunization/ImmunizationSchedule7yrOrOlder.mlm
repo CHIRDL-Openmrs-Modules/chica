@@ -25,7 +25,7 @@ Data:
 	If (Gender = M) then || sex || = "M";
 	If (Gender = F) then || sex || = "F";
         If (mode = PRODUCE) then
-            chirpStatus = CALL queryCHIRP;  /* Re-queries CHIRP if this is a force print and if previous query was unsuccessful*/
+            chirpStatus := CALL queryCHIRP;  /* Re-queries CHIRP if this is a force print and if previous query was unsuccessful*/
             If (chirpStatus = not_in_chirp_registry ) then 
                  || Text || = "This child does not exist in CHIRP.  Please fill out any immunization information you have. A new CHIRP record can be created when scanned.";
 			If (chirpStatus = CHIRP_match_not_found ) then
