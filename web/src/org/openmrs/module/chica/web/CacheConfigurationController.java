@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.atd.util.AtdConstants;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 import org.openmrs.module.chirdlutilbackports.cache.CacheStatistic;
@@ -46,6 +47,13 @@ public class CacheConfigurationController extends SimpleFormController {
 	private static final String PARAM_IMMUNIZATION_CACHE_EXPIRY = "immunizationCacheExpiry";
 	private static final String PARAM_IMMUNIZATION_CACHE_EXPIRY_UNIT = "immunizationCacheExpiryUnit";
 	private static final String PARAM_IMMUNIZATION_CACHE_STATISTICS = "immunizationCacheStatistics";
+	private static final String PARAM_FORM_DRAFT_CACHE_HEAP_SIZE = "formDraftCacheHeapSize";
+	private static final String PARAM_FORM_DRAFT_CACHE_HEAP_SIZE_UNIT = "formDraftCacheHeapSizeUnit";
+	private static final String PARAM_FORM_DRAFT_CACHE_DISK_SIZE = "formDraftCacheDiskSize";
+	private static final String PARAM_FORM_DRAFT_CACHE_DISK_SIZE_UNIT = "formDraftCacheDiskSizeUnit";
+	private static final String PARAM_FORM_DRAFT_CACHE_EXPIRY = "formDraftCacheExpiry";
+	private static final String PARAM_FORM_DRAFT_CACHE_EXPIRY_UNIT = "formDraftCacheExpiryUnit";
+	private static final String PARAM_FORM_DRAFT_CACHE_STATISTICS = "formDraftCacheStatistics";
 	
 	/**
 	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
@@ -64,6 +72,7 @@ public class CacheConfigurationController extends SimpleFormController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String EHRCacheHeapSizeStr = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE);
 		String immunizationCacheHeapSizeStr = request.getParameter(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE);
+		String formDraftCacheHeapSizeStr = request.getParameter(PARAM_FORM_DRAFT_CACHE_HEAP_SIZE);
 		
 		// Update the EHR Medical Record Cache heap size
 		updateCacheHeapSize(ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
@@ -81,6 +90,17 @@ public class CacheConfigurationController extends SimpleFormController {
 							ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 							ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS, 
 							immunizationCacheHeapSizeStr, model);
+		
+		// A non-empty model reflects errors occurred updating the heap size
+		if (!model.isEmpty()) {
+			return new ModelAndView(new RedirectView(getSuccessView()), model);
+		}
+		
+		// Update the Form Draft Cache heap size
+		updateCacheHeapSize(AtdConstants.CACHE_FORM_DRAFT, 
+							AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+							AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS, 
+							formDraftCacheHeapSizeStr, model);
 		
 		// A non-empty model reflects errors occurred updating the heap size
 		if (!model.isEmpty()) {
@@ -115,6 +135,9 @@ public class CacheConfigurationController extends SimpleFormController {
 		
 		// Retrieve data for the immunization cache
 		loadImmunizationCacheInfo(cacheManager, model);
+		
+		// Retrieve data for the form draft cache
+		loadFormDraftCacheInfo(cacheManager, model);
 		
 		return model;
 	}
@@ -177,41 +200,41 @@ public class CacheConfigurationController extends SimpleFormController {
 	 * @param model Map containing the HTTP information to display to the client
 	 */
 	private void loadImmunizationCacheInfo(ApplicationCacheManager cacheManager, Map<String, Object> model) {
-		Long EHRCacheHeapSize = cacheManager.getCacheHeapSize(
+		Long immunizationCacheHeapSize = cacheManager.getCacheHeapSize(
 			ChicaConstants.CACHE_IMMUNIZATION, 
 			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE, EHRCacheHeapSize);
+		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE, immunizationCacheHeapSize);
 		
-		String EHRCacheHeapSizeUnit = cacheManager.getCacheHeapSizeUnit(
+		String immunizationCacheHeapSizeUnit = cacheManager.getCacheHeapSizeUnit(
 			ChicaConstants.CACHE_IMMUNIZATION, 
 			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE_UNIT, EHRCacheHeapSizeUnit);
+		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE_UNIT, immunizationCacheHeapSizeUnit);
 		
-		Long EHRCacheDiskSize = cacheManager.getCacheDiskSize(
+		Long immunizationCacheDiskSize = cacheManager.getCacheDiskSize(
 			ChicaConstants.CACHE_IMMUNIZATION, 
 			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE, EHRCacheDiskSize);
+		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE, immunizationCacheDiskSize);
 		
-		String EHRCacheDiskSizeUnit = cacheManager.getCacheDiskSizeUnit(
+		String immunizationCacheDiskSizeUnit = cacheManager.getCacheDiskSizeUnit(
 			ChicaConstants.CACHE_IMMUNIZATION, 
 			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE_UNIT, EHRCacheDiskSizeUnit);
+		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE_UNIT, immunizationCacheDiskSizeUnit);
 		
-		Long EHRCacheExpiry = cacheManager.getCacheExpiry(
+		Long immunizationCacheExpiry = cacheManager.getCacheExpiry(
 			ChicaConstants.CACHE_IMMUNIZATION, 
 			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY, EHRCacheExpiry);
+		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY, immunizationCacheExpiry);
 		
-		String EHRCacheExpiryUnit = cacheManager.getCacheExpiryUnit(
+		String immunizationCacheExpiryUnit = cacheManager.getCacheExpiryUnit(
 			ChicaConstants.CACHE_IMMUNIZATION, 
 			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY_UNIT, EHRCacheExpiryUnit);
+		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY_UNIT, immunizationCacheExpiryUnit);
 		
 		// load the cache statistics
 		List<CacheStatistic> stats = cacheManager.getCacheStatistics(
@@ -219,6 +242,57 @@ public class CacheConfigurationController extends SimpleFormController {
 			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
 			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
 		model.put(PARAM_IMMUNIZATION_CACHE_STATISTICS, stats);
+	}
+	
+	/**
+	 * Loads all the specific information about the Immunization Cache.
+	 * 
+	 * @param cacheManager The Application Cache Manger to access the cache information
+	 * @param model Map containing the HTTP information to display to the client
+	 */
+	private void loadFormDraftCacheInfo(ApplicationCacheManager cacheManager, Map<String, Object> model) {
+		Long formDraftCacheHeapSize = cacheManager.getCacheHeapSize(
+			AtdConstants.CACHE_FORM_DRAFT, 
+			AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+			AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+		model.put(PARAM_FORM_DRAFT_CACHE_HEAP_SIZE, formDraftCacheHeapSize);
+		
+		String formDraftCacheHeapSizeUnit = cacheManager.getCacheHeapSizeUnit(
+			AtdConstants.CACHE_FORM_DRAFT, 
+			AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+			AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+		model.put(PARAM_FORM_DRAFT_CACHE_HEAP_SIZE_UNIT, formDraftCacheHeapSizeUnit);
+		
+		Long formDraftCacheDiskSize = cacheManager.getCacheDiskSize(
+			AtdConstants.CACHE_FORM_DRAFT, 
+			AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+			AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+		model.put(PARAM_FORM_DRAFT_CACHE_DISK_SIZE, formDraftCacheDiskSize);
+		
+		String formDraftCacheDiskSizeUnit = cacheManager.getCacheDiskSizeUnit(
+			AtdConstants.CACHE_FORM_DRAFT, 
+			AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+			AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+		model.put(PARAM_FORM_DRAFT_CACHE_DISK_SIZE_UNIT, formDraftCacheDiskSizeUnit);
+		
+		Long formDraftCacheExpiry = cacheManager.getCacheExpiry(
+			AtdConstants.CACHE_FORM_DRAFT, 
+			AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+			AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+		model.put(PARAM_FORM_DRAFT_CACHE_EXPIRY, formDraftCacheExpiry);
+		
+		String formDraftCacheExpiryUnit = cacheManager.getCacheExpiryUnit(
+			AtdConstants.CACHE_FORM_DRAFT, 
+			AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+			AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+		model.put(PARAM_FORM_DRAFT_CACHE_EXPIRY_UNIT, formDraftCacheExpiryUnit);
+		
+		// load the cache statistics
+		List<CacheStatistic> stats = cacheManager.getCacheStatistics(
+			AtdConstants.CACHE_FORM_DRAFT, 
+			AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+			AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+		model.put(PARAM_FORM_DRAFT_CACHE_STATISTICS, stats);
 	}
 	
 	/**

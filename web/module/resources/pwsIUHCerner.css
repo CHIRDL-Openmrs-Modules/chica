@@ -108,12 +108,6 @@
     margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
 }
 
-#submitButtonBottom {
-    margin-top: 10px;
-    margin-left: 356px;
-    float: left;
-}
-
 #submitContainer {
 	position:relative;
     width:800px;
@@ -125,4 +119,8 @@
 #notesButton{
     /* Hide the Notes button for IUH*/
     display: none;
+}
+
+#submitButtonBottom, #saveDraftButtonBottom {
+    margin-top:12px;
 }

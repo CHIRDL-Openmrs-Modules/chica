@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -110,4 +111,46 @@ public class ServletUtil {
 		pw.write("</" + tagName + ">");
 	}
 	
+	/**
+	 * Utility method for logging messages to a physical log as well as formatting the message for display to a user 
+	 * using HTML.
+	 * 
+	 * @param pw Printer used to write the HTML version.  This can be null if there's no intention for an HTML version
+	 * of the message.
+	 * @param e An exception to be logged.  This can be null if the exception logging is not needed.
+	 * @param log Log object used to write the message to disk.  This can be null if there's no intention to write the 
+	 * message to disk.
+	 * @param errorMessageParts The pieces used to build the log messages.
+	 * @return The HTML formatted message
+	 */
+	public static String writeHtmlErrorMessage(PrintWriter pw, Exception e, Log log, String... errorMessageParts) {
+		if (errorMessageParts == null || errorMessageParts.length == 0) {
+			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
+		}
+		
+		StringBuffer htmlMessageBuffer = new StringBuffer("<b>");
+		StringBuffer messageBuffer = new StringBuffer();
+		for (String errorMessagePart : errorMessageParts) {
+			htmlMessageBuffer.append("<p>");
+			htmlMessageBuffer.append(errorMessagePart);
+			htmlMessageBuffer.append("</p>");
+			messageBuffer.append(errorMessagePart);
+			messageBuffer.append(" ");
+		}
+		
+		if (log != null) {
+			if (e != null) {
+				log.error(messageBuffer.toString(), e);
+			} else {
+				log.error(messageBuffer.toString());
+			}
+		}
+		
+		htmlMessageBuffer.append("</b>");
+		if (pw != null) {
+			pw.write(htmlMessageBuffer.toString());
+		}
+		
+		return htmlMessageBuffer.toString();
+	}
 }

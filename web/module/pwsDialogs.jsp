@@ -86,12 +86,17 @@
                 </div>
                 <div id="confirmSubmitDialog" title="Confirm" class="ui-overlay">
                     <div id="confirmText">
-                        <span>Click OK to finalize the form.</span>
+                        <span>Click OK to sign the form.</span>
                     </div>
                 </div>
                 <div id="submitWaitDialog" class="noTitle">
                     <div id="submitWaitText">
-                        <span>Submitting...</span>
+                        <span>Signing...</span>
+                    </div>
+                </div>
+                <div id="saveDraftWaitDialog" class="noTitle">
+                    <div id="saveDraftWaitText">
+                        <span>Saving Draft...</span>
                     </div>
                 </div>
                 <div id="formSelectionDialog" title="CHICA Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
@@ -133,11 +138,11 @@
 								    <li><a href="#tabs-1">Assessment and Plan</a></li>								    
 								  </ul>
 								  <div id="tabs-0">
-								     <textarea id="historyAndPhysicalText" name="historyAndPhysicalText" class="notesTextArea" maxlength="62000" placeholder="History and Physical..."></textarea> 							  	 
+								     <textarea id="historyAndPhysicalText" name="historyAndPhysicalText" class="notesTextArea" maxlength="62000" placeholder="History and Physical...">${not empty historyAndPhysicalText ? historyAndPhysicalText : ''}</textarea> 							  	 
 								  	 <span class="textCount" id="historyAndPhysicalTextCount">0 of 62000 character max</span>
 								  </div>
 								  <div id="tabs-1">								     
-								     <textarea id="assessmentAndPlanText" name="assessmentAndPlanText" class="notesTextArea" maxlength="62000" placeholder="Assessment and Plan..."></textarea>							     
+								     <textarea id="assessmentAndPlanText" name="assessmentAndPlanText" class="notesTextArea" maxlength="62000" placeholder="Assessment and Plan...">${not empty assessmentAndPlanText ? assessmentAndPlanText : ''}</textarea>							     
 								     <span class="textCount" id="assessmentAndPlanTextCount">0 of 62000 character max</span>
 								  </div>								  
                             </div>                       
@@ -149,4 +154,19 @@
 				        <div style="color:#000000;"><p><b>Please select at least two forms to combine.</b></p></div>
 				    </div>
 				</div>
+				<div id="saveDraftErrorDialog" title="Save Draft Error" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                    <div style="margin: 0 auto;text-align: center;">
+                        <div id="saveDraftErrorMessage" style="color:#000000;"><p><b>An error occurred saving the draft.</b></p></div>
+                    </div>
+                </div>
+                <div id="saveDraftSuccessDialog" title="Save Draft" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                    <div style="margin: 0 auto;text-align: center;">
+                        <div style="color:#000000;"><p><b>Draft successfully saved.</b></p></div>
+                    </div>
+                </div>
+                <div id="serverErrorDialog" title="Server Error" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+                    <div style="margin: 0 auto;text-align: center;">
+                        <div id="serverErrorMessage" style="color:#000000;">${errorMessage}</div>
+                    </div>
+                </div>
                 <%@ include file="forcePrintJITs.jsp" %>
