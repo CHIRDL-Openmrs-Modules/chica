@@ -5,7 +5,7 @@
 
 #vitals {
     width:265px;
-    height:346px;
+    height:292px;
     float:left;
     border-left: none;
 }
@@ -63,7 +63,7 @@
 
 #buttons {
     width: 270px;
-    height: 341px;
+    height: 287px;
     border-bottom: none;
     float: right;
     margin-top: 5px;
@@ -123,4 +123,11 @@
 
 #submitButtonBottom, #saveDraftButtonBottom {
     margin-top:12px;
+}
+
+#vitalsContainer {
+    width: 800px;
+    height: 345px;
+    float: left;
+    margin-bottom: 1px;
 }
