@@ -5,7 +5,7 @@
 
 #vitals {
     width:265px;
-    height:346px;
+    height:292px;
     float:left;
     border-left: none;
 }
@@ -44,7 +44,7 @@
 }
 
 #vitalsLegendIUHCerner{
-    width:800px;
+    width:820px;
     border-left: 1px solid black;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
@@ -63,7 +63,7 @@
 
 #buttons {
     width: 270px;
-    height: 341px;
+    height: 287px;
     border-bottom: none;
     float: right;
     margin-top: 5px;
@@ -77,45 +77,6 @@
     }
 }
 
-.questionContainer {
-    float:left;
-    width:400px;
-    height:160px;
-    font-size:0.88em;
-    padding-top:10px;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-.questionStem {
-    padding:2px 5px 2px 5px;
-    width:390px;
-    height:65px;
-    
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-.answerContainer {
-    float:left;
-    padding:2px;
-    width:195px;
-    height:88px;
-    
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-#submitContainer {
-	position:relative;
-    width:800px;
-    height:50px;
-    text-align:center;
-    bottom: 0;
-}
-
 #notesButton{
     /* Hide the Notes button for IUH*/
     display: none;
@@ -123,4 +84,11 @@
 
 #submitButtonBottom, #saveDraftButtonBottom {
     margin-top:12px;
+}
+
+#vitalsContainer {
+    width: 820px;
+    height: 345px;
+    float: left;
+    margin-bottom: 1px;
 }

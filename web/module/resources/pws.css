@@ -13,7 +13,7 @@ body {
 }
 
 #formContainer {
-    width:800px;
+    width:820px;
     height:1035px; /* Changed 1109 -> 1035 */
     margin:0 auto;
     border: 1px solid black;
@@ -197,10 +197,11 @@ body {
 }
 
 #submitContainer {
-    width:800px;
+	position:relative;
+    width:820px;
     height:50px;
     text-align:center;
-    margin-top: 903px;
+    bottom: 0;
 }
 
 #submitButtonBottom, #saveDraftButtonBottom {
@@ -333,7 +334,7 @@ body {
 .answerContainer {
     float:left;
     padding:2px;
-    width:201px;
+    width:203px;
     height:88px;
     
     margin-left:-1px;
@@ -711,4 +712,11 @@ div#notesTabs .ui-tabs-panel{
     height: 100%;
     background-color:#F5FBEF;
     float: left;
+}
+
+#questionAnswerContainer {
+   width: 819px;
+   height: 512px;
+   float: left;
+   margin-left: 3px;
 }

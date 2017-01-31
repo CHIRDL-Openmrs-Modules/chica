@@ -15,13 +15,6 @@
     margin-bottom:40px;
 }
 
-#submitContainer {
-    width:820px;
-    height:50px;
-    text-align:center;
-    margin-top: 818px;
-}
-
 #vitals {
     width:260px; 
     height:274px;
@@ -112,11 +105,4 @@
    width: 820px;
    height: 275px;
    float: left;
-}
-
-#questionAnswerContainer {
-   width: 820px;
-   height: 512px;
-   float: left;
-   margin-left: 4px;
 }
