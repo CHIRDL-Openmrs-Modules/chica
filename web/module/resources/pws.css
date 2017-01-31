@@ -28,7 +28,7 @@ body {
 }
 
 #titleContainer {
-    width:790px;
+    width:810px;
     height:50px;
     position: relative;
     padding:5px;
@@ -39,7 +39,7 @@ body {
 #title, 
 #mrn,
 #submitFormTop {
-    width: 800px;
+    width: 820px;
     height: 100%;
     text-align:center;
     position: absolute;
@@ -72,7 +72,7 @@ body {
 }
 
 #infoCenter { 
-    width:172px;
+    width:182px;
     height: 53px;
     float:left;
     padding:2px;
@@ -80,7 +80,7 @@ body {
 }
 
 #infoRight {
-    width:161px;
+    width:171px;
     height: 53px;
     float:left;
     padding:2px;
@@ -112,7 +112,7 @@ body {
 
 .vitalsValues {
     float:left;
-    width:144px;
+    width:151px;
     height: 18px;
     margin-left:5px;
     text-align:left;
@@ -310,20 +310,20 @@ body {
 
 .questionContainer {
     float:left;
-    width:400px;
+    width:411px;
     height:160px;
     font-size:0.88em;
     padding-top:10px;
     border-bottom: 1px solid black;
     border-left: 1px solid black;
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
+    margin-left:-2px;
+    margin-right: -3px; /* Adding this so that the question container looks correct when zooming out*/
     margin-top: 0px;
 }
 
 .questionStem {
     padding:2px 5px 2px 5px;
-    width:390px;
+    width:400px;
     height:65px;
     
     margin-left:-1px;
@@ -333,7 +333,7 @@ body {
 .answerContainer {
     float:left;
     padding:2px;
-    width:195px;
+    width:201px;
     height:88px;
     
     margin-left:-1px;

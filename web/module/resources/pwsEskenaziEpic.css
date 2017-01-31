@@ -1,7 +1,7 @@
 @import 'pws.css';
 
 #formContainer {
-    width:800px;
+    width:820px;
     height:967px;
     margin:0 auto;
     border: 1px solid black;
@@ -16,15 +16,15 @@
 }
 
 #submitContainer {
-    width:800px;
+    width:820px;
     height:50px;
     text-align:center;
     margin-top: 818px;
 }
 
 #vitals {
-    width:250px; 
-    height:264px;
+    width:260px; 
+    height:274px;
     float:left;
     border-left: none;
 }
@@ -34,7 +34,7 @@
 }
 
 #vitalsLegendEskenaziEpic {
-    width:800px;
+    width:820px;
     border-left: 1px solid black;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
@@ -52,7 +52,7 @@
 	}
 
 #buttons {
-    width:250px; 
+    width:265px; 
     height:175px;
     border-bottom: none; 
     float:left; 
@@ -69,7 +69,7 @@
 
 #examExtras {
     float:left;
-    width:200px;
+    width:205px;
     height:274px; 
     margin-left:45px;
 }
@@ -106,4 +106,16 @@
     margin-top:5px;
     margin-left:45px;
     display: none; /* Hide pain and allergies*/
+}
+
+#vitalsContainer {
+   width: 820px;
+   height: 275px;
+   float: left;
+}
+
+#questionAnswerContainer {
+   width: 820px;
+   height: 512px;
+   float: left;
 }
