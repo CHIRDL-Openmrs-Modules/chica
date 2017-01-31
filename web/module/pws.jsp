@@ -54,8 +54,9 @@
 					<%@ include file="pwsExamExtras.jsp" %>
 								   
 					<%@ include file="pwsButtons.jsp" %>
+					
+					<%@ include file="pwsPainAndAllergies.jsp" %>
                 </div>
-                <%@ include file="pwsPainAndAllergies.jsp" %>
                 <div id="questionAnswerContainer">
 					<%@ include file="pwsQuestions.jsp" %>
                 </div>             
