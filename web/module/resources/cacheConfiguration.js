@@ -1,21 +1,24 @@
 var chicaServletUrl = ctx + "/moduleServlet/chica/chica?";
 $(function() {
     $( "#cacheTabs" ).tabs();
-    $( "#submitButton" ).button();
+    $( "#submitButton, #clearEHRMedicalRecordCacheButton, #clearImmunizationCacheButton, #clearFormDraftCacheButton" ).button();
     $("#submitButton").click(function(event) {
 		$("#submitConfirmationDialog").dialog("open");
 		event.preventDefault();
 	});
     
-    $( "#clearEHRMedicalRecordCacheButton" ).button();
     $("#clearEHRMedicalRecordCacheButton").click(function(event) {
 		$("#clearEHRMedicalRecordCacheConfirmationDialog").dialog("open");
 		event.preventDefault();
 	});
     
-    $( "#clearImmunizationCacheButton" ).button();
     $("#clearImmunizationCacheButton").click(function(event) {
 		$("#clearImmunizationCacheConfirmationDialog").dialog("open");
+		event.preventDefault();
+	});
+    
+    $("#clearFormDraftCacheButton").click(function(event) {
+		$("#clearFormDraftCacheConfirmationDialog").dialog("open");
 		event.preventDefault();
 	});
     
@@ -143,6 +146,39 @@ $(function() {
         ]
     });
     
+    $("#clearFormDraftCacheConfirmationDialog").dialog({
+        open: function() { 
+            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+            $(".ui-dialog").addClass("no-close");
+        },
+        autoOpen: false,
+        modal: true,
+        resizable: false,
+        show: {
+          effect: "fade",
+          duration: 500
+        },
+        hide: {
+          effect: "fade",
+          duration: 500
+        },
+        buttons: [
+          {
+	          text:"Yes",
+	          click: function() {
+	        	  $(this).dialog("close");
+	        	  clearFormDraftCache();
+	          }
+          },
+          {
+	          text:"No",
+	          click: function() {
+	        	  $(this).dialog("close");
+	          }
+          }
+        ]
+    });
+    
     $("#clearCacheCompleteDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
@@ -181,6 +217,11 @@ function clearEHRMedicalRecordCache() {
 
 function clearImmunizationCache() {
 	clearCache("immunization", "java.lang.Integer", "org.openmrs.module.chica.ImmunizationQueryOutput");
+}
+
+function clearFormDraftCache() {
+	clearCache("formDraft", "org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag", 
+			"org.openmrs.module.atd.xmlBeans.Records");
 }
 
 function clearCache(cacheName, keyType, valueType) {

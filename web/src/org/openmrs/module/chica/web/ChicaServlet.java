@@ -23,13 +23,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Field;
+import org.openmrs.FieldType;
 import org.openmrs.Form;
+import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
@@ -37,6 +42,10 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.atd.TeleformTranslator;
+import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.atd.xmlBeans.Record;
+import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -91,6 +100,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
 	private static final String KEEP_ALIVE = "keepAlive";
 	private static final String CLEAR_CACHE = "clearCache";
+	private static final String SAVE_FORM_DRAFT = "saveFormDraft";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -109,6 +119,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String PARAM_CACHE_NAME = "cacheName";
 	private static final String PARAM_CACHE_KEY_TYPE = "cacheKeyType";
 	private static final String PARAM_CACHE_VALUE_TYPE = "cacheValueType";
+	private static final String PARAM_PROVIDER_ID = "providerId";
 	
 	private static final String RESULT_SUCCESS = "success";
 	
@@ -151,6 +162,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String MAX_CACHE_AGE = "600";
 	
 	private static final String WILL_KEEP_ALIVE = "OK";
+	
+	private static final String PROVIDER_SAVE_DRAFT = "_provider_save_draft";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
@@ -214,6 +227,8 @@ public class ChicaServlet extends HttpServlet {
 			keepAlive(response);
 		} else if (CLEAR_CACHE.equals(action)) {
 			clearCache(request, response);
+		} else if (SAVE_FORM_DRAFT.equals(action)) {
+			saveFormDraft(request, response);
 		}
 	}
 	
@@ -1514,5 +1529,170 @@ public class ChicaServlet extends HttpServlet {
     	}
     	
     	pw.write(RESULT_SUCCESS);
+	}
+    
+    /**
+     * Saves a draft of a form. Text written to the response will indicate if the procedure completed
+     * successfully.  The procedure executed normally if "success" is returned in the response.  
+     * A message containing an error message to display to the client will be returned otherwise.
+     * 
+     * @param request The request from the client
+     * @param response The response that will be sent back to the client
+     * @throws IOException
+     */
+    private void saveFormDraft(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		
+    	PrintWriter pw = response.getWriter();
+    	Integer formId = null;
+		
+		//parse out the location_id,form_id,location_tag_id, and form_instance_id
+		//from the selected form
+		String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
+		FormInstanceTag formInstTag = null;
+		if (formInstance != null && formInstance.trim().length() > 0) {
+			formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+			formId = formInstTag.getFormId();
+		} else {
+			String messagePart1 = "Error saving form draft: form instance tag parameter not found.";
+			String messagePart2 = "Please contact support.";
+			ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(formId);
+		
+		ATDService atdService = Context.getService(ATDService.class);
+		Records records = null;
+		try {
+			records = atdService.getFormRecords(formInstTag);
+		} catch (Exception e) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+			String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+			ServletUtil.writeHtmlErrorMessage(pw, e, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		if (records == null) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+    		String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+    		ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		Record record = records.getRecord();
+		if (record == null) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+    		String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+    		ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		Map<String, org.openmrs.module.atd.xmlBeans.Field> recordFieldMap = org.openmrs.module.atd.util.Util.createRecordFieldMap(records);
+		Set<FormField> formFields = form.getFormFields();
+		TeleformTranslator translator = new TeleformTranslator();
+		FieldType exportFieldType = translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
+		for (FormField formField : formFields) {
+			Field currField = formField.getField();
+			FieldType fieldType = currField.getFieldType();
+			if (fieldType != null && fieldType.equals(exportFieldType)) {
+				String fieldName = currField.getName();
+				org.openmrs.module.atd.xmlBeans.Field recordField = recordFieldMap.get(fieldName);
+				String value = request.getParameter(fieldName);
+				if (recordField != null) {
+					recordField.setValue(value);
+				} else {
+					org.openmrs.module.atd.xmlBeans.Field field = new org.openmrs.module.atd.xmlBeans.Field();
+					field.setId(fieldName);
+					field.setValue(value);
+					record.addField(field);
+				}
+			}
+		}
+		
+		try {
+			atdService.saveFormRecordsDraft(formInstTag, records);
+		} catch (Exception e) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+			String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+			ServletUtil.writeHtmlErrorMessage(pw, e, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		String providerId = request.getParameter(PARAM_PROVIDER_ID);
+		String patientId = request.getParameter(PARAM_PATIENT_ID);
+		String encounterId = request.getParameter(PARAM_ENCOUNTER_ID);
+		// Save who created a draft.
+		if (providerId != null && providerId.trim().length() > 0 && patientId != null && patientId.trim().length() > 0 && 
+				encounterId != null && encounterId.trim().length() > 0) {
+			try {
+				saveProviderDraft(Integer.parseInt(patientId), Integer.parseInt(encounterId), providerId, formInstTag);
+			} catch (NumberFormatException e) {
+				log.error("Error saving provider ID for draft form ID: " + formId + " patient ID: " + patientId + 
+					" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
+						formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
+						" location tag ID: " + formInstTag.getLocationTagId());
+			}
+		} else {
+			log.error("Cannot log who is saving a draft for form ID: " + formId + " patient ID: " + patientId + 
+				" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
+					formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
+					" location tag ID: " + formInstTag.getLocationTagId());
+		}
+		
+		pw.write(RESULT_SUCCESS);
+    }
+    
+    /**
+	 * Saves the user's provider ID to an observation for saving a draft.
+	 * 
+	 * @param patientId The ID of the patient who owns the form.
+	 * @param formId The ID of the form being viewed.
+	 * @param encounterId The encounter ID of the encounter where the form was created.
+	 * @param providerId The ID of the provider to be stored.
+	 * @param formInstTag The form instance tag information
+	 */
+	private void saveProviderDraft(Integer patientId, Integer encounterId, String providerId, FormInstanceTag formInstTag) {
+		Form form = Context.getFormService().getForm(formInstTag.getFormId());
+		String conceptName = form.getName() + PROVIDER_SAVE_DRAFT;
+		saveProviderInfo(patientId, encounterId, providerId, conceptName, formInstTag);
+	}
+	
+	/**
+	 * Saves the submitter's provider ID to an observation.
+	 * 
+	 * @param patient The ID of the patient who owns the form.
+	 * @param formId The ID of the form being viewed.
+	 * @param encounterId The encounter ID of the encounter where the form was created.
+	 * @param providerId The ID of the provider to be stored.
+	 * @param conceptName The name of the concept.
+	 * @param formInstTag The form instance tag information
+	 */
+	private void saveProviderInfo(Integer patientId, Integer encounterId, String providerId, String conceptName, FormInstanceTag formInstTag) {
+		PatientService patientService = Context.getPatientService();
+		Patient patient = patientService.getPatient(patientId);
+		if (patient == null) {
+			log.error("Could not log provider info.  Patient " + patientId + " not found.");
+			return;
+		}
+		
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConceptByName(conceptName);
+		if (concept == null) {
+			log.error("Could not log provider info.  Concept " + conceptName + " not found.");
+			return;
+		}
+		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(),formInstTag.getFormId(),formInstTag.getFormInstanceId());
+		org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, encounterId, providerId, formInstance, null, formInstTag.getLocationTagId(), null);
 	}
 }
