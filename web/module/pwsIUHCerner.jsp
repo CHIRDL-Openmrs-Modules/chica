@@ -49,7 +49,7 @@
                     <br/>         
                 </div>
                 
-                <div id="vitalsContainer">
+				<div id="vitalsContainer">
 					<%@ include file="pwsVitals.jsp" %>
 								
 	                <div id="buttons">
@@ -73,9 +73,9 @@
 	                    </c:if> -->
 	                </div>
                 </div>
-                
-                <%@ include file="pwsQuestions.jsp" %>
-                
+                <div id="questionAnswerContainer">
+                	<%@ include file="pwsQuestions.jsp" %>
+                </div>
                  
                 <div id="submitContainer">
                     <a href="#" id="submitButtonBottom" class="icon-button mediumButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Sign</a>

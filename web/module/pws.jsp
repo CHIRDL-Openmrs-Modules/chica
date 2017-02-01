@@ -48,17 +48,18 @@
                     <c:out value="${Language}"/><br/>  
                     <br/>         
                 </div>
-                
-                <%@ include file="pwsVitals.jsp" %>
-                
-                <%@ include file="pwsExamExtras.jsp" %>
-                               
-                <%@ include file="pwsButtons.jsp" %>
-                
-                <%@ include file="pwsPainAndAllergies.jsp" %>
-                
-                <%@ include file="pwsQuestions.jsp" %>
-                                
+                <div id="vitalsContainer">
+					<%@ include file="pwsVitals.jsp" %>
+					
+					<%@ include file="pwsExamExtras.jsp" %>
+								   
+					<%@ include file="pwsButtons.jsp" %>
+					
+					<%@ include file="pwsPainAndAllergies.jsp" %>
+                </div>
+                <div id="questionAnswerContainer">
+					<%@ include file="pwsQuestions.jsp" %>
+                </div>             
                 <div id="submitContainer">
                     <a href="#" id="submitButtonBottom" class="icon-button mediumButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Sign</a>
                     <a href="#" id="saveDraftButtonBottom" class="icon-button mediumButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Save Draft</a>
