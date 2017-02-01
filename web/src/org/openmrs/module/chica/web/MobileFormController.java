@@ -1,14 +1,8 @@
 package org.openmrs.module.chica.web;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,16 +19,12 @@ import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.TeleformTranslator;
-import org.openmrs.module.atd.datasource.FormDatasource;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.IOUtil;
-import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.springframework.validation.BindException;
@@ -76,6 +66,73 @@ public class MobileFormController extends SimpleFormController {
 	@Override
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		loadFormData(request, map);
+		return map;
+	}
+	
+	@Override
+	protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object object,
+	                                             BindException errors) throws Exception {
+		//parse out the location_id,form_id,location_tag_id, and form_instance_id
+		//from the selected form
+		Map<String, Object> map = new HashMap<String, Object>();
+		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
+		String formInstance = request.getParameter(PARM_FORM_INSTANCE);
+		String providerId = request.getParameter(PARAM_PROVIDER_ID);
+		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
+		FormInstanceTag formInstTag = null;
+		if (formInstance != null && formInstance.trim().length() > 0) {
+			formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+		} else {
+			String messagePart1 = "Error signing form: form instance tag parameter not found.";
+			String messagePart2 = "Please contact support.";
+			String htmlMessage = ServletUtil.writeHtmlErrorMessage(null, null, log, messagePart1, messagePart2);
+    		loadFormData(request, map);
+    		map.put(PARAM_ERROR_MESSAGE, htmlMessage);
+    		return new ModelAndView(getFormView(), map);
+		}
+		
+		try {
+			scanForm(formInstTag, request);
+		} catch (Exception e) {
+			String messagePart1 = "Error signing form.";
+			String messagePart2 = "Please contact support with the following information: Form ID: " + 
+				formInstTag.getFormId() + " Form Instance ID: " + formInstTag.getFormInstanceId() + 
+				" Location ID: " + formInstTag.getLocationId() + " Location Tag ID: " + 
+				formInstTag.getLocationTagId();
+			String htmlMessage = ServletUtil.writeHtmlErrorMessage(null, e, log, messagePart1, messagePart2);
+			loadFormData(request, map);
+			map.put(PARAM_ERROR_MESSAGE, htmlMessage);
+			return new ModelAndView(getFormView(), map);
+		}
+		
+		String view = getSuccessView();
+		
+		// Save who is submitting the form.
+		if (providerId != null && providerId.trim().length() > 0) {
+			Integer patientId = Integer.parseInt(patientIdStr);
+			Patient patient = Context.getPatientService().getPatient(patientId);
+			saveProviderSubmitter(patient, encounterId, providerId, formInstTag);
+		} else {
+			String message = "No valid providerId provided.  Cannot log who is submitting form ID: " + formInstTag.getFormId() + 
+					" form instance ID: " + formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
+					" location tag ID: " + formInstTag.getLocationTagId();
+			log.error(message);
+		}
+		
+		map.put(PARAM_PATIENT_ID, patientIdStr);
+		
+		return new ModelAndView(new RedirectView(view), map);
+	}
+	
+	/**
+	 * Loads the data for the page to display.
+	 * 
+	 * @param request Request information from the client
+	 * @param map Map where all the page parameters will be written
+	 */
+	private void loadFormData(HttpServletRequest request, Map<String, Object> map) {
+		map.put(PARAM_ERROR_MESSAGE, request.getParameter(PARAM_ERROR_MESSAGE));
 		
 		String encounterIdStr = request.getParameter(PARAM_ENCOUNTER_ID);
 		map.put(PARAM_ENCOUNTER_ID, encounterIdStr);
@@ -88,7 +145,6 @@ public class MobileFormController extends SimpleFormController {
 		String providerId = request.getParameter(PARAM_PROVIDER_ID);
 		map.put(PARAM_PROVIDER_ID, providerId);
 		
-		TeleformTranslator translator = new TeleformTranslator();
 		String formInstance = request.getParameter(PARM_FORM_INSTANCE);
 		FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 		Integer locationId = formInstTag.getLocationId();
@@ -101,35 +157,26 @@ public class MobileFormController extends SimpleFormController {
 		map.put(PARAM_FORM_INSTANCE_ID, formInstanceId);
 		map.put(PARAM_LOCATION_ID, locationId);
 		map.put(PARAM_LOCATION_TAG_ID, locationTagId);
-		String mergeFilename = getMergeFilename(locationId, locationTagId, formId, formInstanceId);
-		if (mergeFilename == null) {
-			String message = 
-				"Could not locate form instance. Please contact support with the following information: Form ID: " + formId + 
-				" Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
-			log.error(message);
-			map.put(PARAM_ERROR_MESSAGE, message);
-			return map;
-		}
-		
-		InputStream input = new FileInputStream(mergeFilename);
 		
 		//Run this to show the form
 		try {
-			showForm(map, formId, formInstanceId, locationId, translator, input);
+			showForm(map, formInstTag);
 		} catch (Exception e) {
-			String message = 
-				"Error retrieving data to display a form. Please contact support with the following information: Form ID: " + 
-				formId + " Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
-			log.error(message);
-			map.put(PARAM_ERROR_MESSAGE, message);
-			return map;
+			String messagePart1 = "Error retrieving data to display the form.";
+			String messagePart2 = "Please contact support with the following information: Form ID: " + 
+				formId + " Form Instance ID: " + formInstanceId + " Location ID: " + locationId + " Location Tag ID: " + locationTagId;
+			String htmlMessage = ServletUtil.writeHtmlErrorMessage(null, e, log, messagePart1, messagePart2);
+			map.put(PARAM_ERROR_MESSAGE, htmlMessage);
+			return;
 		}
 		
 		// Save who is viewing the form.
 		if (providerId != null && providerId.trim().length() > 0) {
 			saveProviderViewer(patient, encounterId, providerId, formInstTag);
 		} else {
-			log.error("No valid providerId provided.  Cannot log who is viewing form: " + formId);
+			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientIdStr + 
+				" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
+					formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
 		}
 		
 		// Add session timeout information
@@ -149,142 +196,49 @@ public class MobileFormController extends SimpleFormController {
 		}
 		
 		map.put(PARAM_SESSION_TIMEOUT_WARNING, sessionTimeoutWarning);
-		
-		return map;
 	}
 	
-	@Override
-	protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object object,
-	                                             BindException errors) throws Exception {
-		Integer chosenFormId = null;
-		Integer chosenFormInstanceId = null;
-		Integer chosenLocationId = null;
-		Integer chosenLocationTagId = null;
-		
-		//parse out the location_id,form_id,location_tag_id, and form_instance_id
-		//from the selected form
-		String formInstance = request.getParameter(PARM_FORM_INSTANCE);
-		FormInstanceTag formInstTag = null;
-		if (formInstance != null && formInstance.trim().length() > 0) {
-			formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
-			chosenLocationId = formInstTag.getLocationId();
-			chosenLocationTagId = formInstTag.getLocationTagId();
-			chosenFormId = formInstTag.getFormId();
-			chosenFormInstanceId = formInstTag.getFormInstanceId();
+	private void showForm(Map<String, Object> map, FormInstanceTag formInstanceTag) throws Exception {
+		Records records = Context.getService(ATDService.class).getFormRecords(formInstanceTag);
+		if (records == null) {
+			return;
 		}
 		
-		TeleformTranslator translator = new TeleformTranslator();
-		String mergeFilename = getMergeFilename(chosenLocationId, chosenLocationTagId, chosenFormId, chosenFormInstanceId);
-		if (mergeFilename != null) {
-			InputStream input = new FileInputStream(mergeFilename);
-			try {
-				scanForm(chosenFormId, chosenFormInstanceId, chosenLocationTagId, chosenLocationId, translator, input,
-				    request, mergeFilename);
-			} catch (Exception e) {
-				log.error("Error scanning form", e);
-			}
-		} 
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
-		map.put(PARAM_PATIENT_ID, patientIdStr);
-		String view = getSuccessView();
-		
-		// Save who is submitting the form.
-		String providerId = request.getParameter(PARAM_PROVIDER_ID);
-		if (providerId != null && providerId.trim().length() > 0) {
-			Integer patientId = Integer.parseInt(patientIdStr);
-			Patient patient = Context.getPatientService().getPatient(patientId);
-			Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
-			saveProviderSubmitter(patient, encounterId, providerId, formInstTag);
-		} else {
-			log.error("No valid providerId provided.  Cannot log who is submitting form: " + chosenFormId);
+		Record record = records.getRecord();
+		if (record == null) {
+			return;
 		}
 		
-		return new ModelAndView(new RedirectView(view), map);
-	}
-	
-	private String getMergeFilename(Integer chosenLocationId, Integer chosenLocationTagId, Integer chosenFormId, 
-	                                Integer chosenFormInstanceId) {
-		String mergeFilename = null;
-		ArrayList<String> possibleMergeFilenames = new ArrayList<String>();
-		String defaultMergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(chosenFormId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, chosenLocationTagId, chosenLocationId));
-		String pendingMergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(chosenFormId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, chosenLocationTagId, chosenLocationId))
-		        + ChirdlUtilConstants.FILE_PENDING + File.separator;
-		
-		// Parse the merge file
-		FormInstance formInstance = new FormInstance(chosenLocationId, chosenFormId, chosenFormInstanceId);
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20);
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_22);
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_23);
-		possibleMergeFilenames.add(defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_19);
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XML);
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20);
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_22);
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_23);
-		possibleMergeFilenames.add(pendingMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_19);
-		
-		for (String currFilename : possibleMergeFilenames) {
-			File file = new File(currFilename);
-			if (file.exists()) {
-				mergeFilename = currFilename;
-				break;
-			}
+		List<Field> fields = record.getFields();
+		if (fields == null) {
+			return;
 		}
 		
-		return mergeFilename;
-	}
-	
-	private void showForm(Map<String, Object> map, Integer formId, Integer formInstanceId, Integer locationId,
-	                             TeleformTranslator translator, InputStream inputMergeFile) throws Exception {
-		FormService formService = Context.getFormService();
-		LogicService logicService = Context.getLogicService();
-		FormDatasource formDatasource = (FormDatasource) logicService.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_FORM);
-		HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = formDatasource.getFormFields(new FormInstance(
-		        locationId, formId, formInstanceId));
-		
-		//Parse the merge file to get the field values to display
-		FormInstance formInstance = formDatasource.parseTeleformXmlFormat(inputMergeFile, null, null);
-		inputMergeFile.close();
-		fieldMap = formDatasource.getFormFields(formInstance);
-		
-		Form form = formService.getForm(formId);
-		Set<FormField> formFields = form.getFormFields();
-		
-		//store the values of fields in the jsp map
-		for (FormField formField : formFields) {
-			org.openmrs.Field currField = formField.getField();
-			FieldType fieldType = currField.getFieldType();
-			if (fieldType == null || !fieldType.equals(translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT))) {
-				Field lookupField = fieldMap.get(currField.getName());
-				if (lookupField != null) {
-					map.put(currField.getName(), lookupField.getValue());
-				}
+		for (Field field : fields) {
+			if (field.getId() != null && field.getValue() != null) {
+				map.put(field.getId(), field.getValue());
 			}
 		}
 	}
 	
-	private void scanForm(Integer formId, Integer formInstanceId, Integer locationTagId, Integer locationId,
-	                             TeleformTranslator translator, InputStream inputMergeFile, HttpServletRequest request,
-	                             String mergeFilename) throws Exception {
+	private void scanForm(FormInstanceTag formInstanceTag, HttpServletRequest request) throws Exception {
 		//pull all the input fields from the database for the form
 		FormService formService = Context.getFormService();
 		HashSet<String> inputFields = new HashSet<String>();
-		Form form = formService.getForm(formId);
+		Form form = formService.getForm(formInstanceTag.getFormId());
 		Set<FormField> formFields = form.getFormFields();
+		TeleformTranslator translator = new TeleformTranslator();
+		FieldType exportFieldType = translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
 		for (FormField formField : formFields) {
 			org.openmrs.Field currField = formField.getField();
 			FieldType fieldType = currField.getFieldType();
-			if (fieldType != null && fieldType.equals(translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT))) {
+			if (fieldType != null && fieldType.equals(exportFieldType)) {
 				inputFields.add(currField.getName());
 			}
 		}
 		
-		Records records = (Records) XMLUtil.deserializeXML(Records.class, inputMergeFile);
-		inputMergeFile.close();
+		ATDService atdService = Context.getService(ATDService.class);
+		Records records = atdService.getFormRecords(formInstanceTag);
 		Record record = records.getRecord();
 		for (String inputField : inputFields) {
 			String inputVal = request.getParameter(inputField);
@@ -316,28 +270,7 @@ public class MobileFormController extends SimpleFormController {
 			}
 		}
 		
-		String exportDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_EXPORT_DIRECTORY, locationTagId, locationId));
-		String defaultMergeDirectory = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
-		        .getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId));
-		
-		FormInstance formInstance = new FormInstance(locationId, formId, formInstanceId);
-		//Write the xml for the export file
-		//Use xmle extension to represent form completion through electronic means.
-		String exportFilename = exportDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_XMLE;
-		
-		OutputStream output = new FileOutputStream(exportFilename);
-		XMLUtil.serializeXML(records, output);
-		output.flush();
-		output.close();
-		
-		//rename the merge file to trigger state change
-		String newMergeFilename = defaultMergeDirectory + formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20;
-		File newFile = new File(newMergeFilename);
-		if (!newFile.exists()) {
-			IOUtil.copyFile(mergeFilename, newMergeFilename);
-			IOUtil.deleteFile(mergeFilename);
-		}
+		Context.getService(ATDService.class).saveFormRecords(formInstanceTag, records);
 	}
 	
 	/**

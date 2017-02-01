@@ -141,6 +141,6 @@
 	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/dss-2.31.3.jar"/>
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.7.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/atd-2.8.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/atd-2.8.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

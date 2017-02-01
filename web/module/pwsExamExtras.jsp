@@ -1,22 +1,22 @@
 		    <div id="examExtras">
                         <div class="examExtraCheckbox">
-                            <input type="checkbox" name="Special_Need" value="yes" ${Special_Need == 'Y' ? 'checked' : ''}/>Special Need Child<br/> 
+                            <input type="checkbox" name="Special_Need" value="yes" ${Special_Need == 'Y' || Special_Need == 'yes' ? 'checked' : ''}/>Special Need Child<br/> 
 							<input id="Special_Need" name="Special_Need" type="hidden" value="no"/>
                         </div>
                         <div>
                             &nbsp;
                         </div>
                         <div class="examExtraCheckbox">
-                            <input type="checkbox" name="MDTwoIDsChecked" value="Y"/>Two ID's Checked<br/>
+                            <input type="checkbox" name="MDTwoIDsChecked" value="Y" ${MDTwoIDsChecked == 'Y' ? 'checked' : ''}/>Two ID's Checked<br/>
                         </div>
                         <div class="examExtraCheckbox">
-                            <input type="checkbox" name="screenedForAbuse" value="screened"/>Screened for abuse<br/>
+                            <input type="checkbox" name="screenedForAbuse" value="screened" ${screenedForAbuse == 'screened' ? 'checked' : ''}/>Screened for abuse<br/>
                         </div>
                         <div class="examExtraCheckbox">
-                            <input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity"/>Discussed physical activity<br/>
+                            <input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity" ${discussedPhysicalActivity == 'Physical Activity' ? 'checked' : ''}/>Discussed physical activity<br/>
                         </div>
                         <div class="examExtraCheckbox">
-                            <input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet"/>Discussed healthy diet<br/>
+                            <input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet" ${discussedHealthyDiet == 'Healthy Diet' ? 'checked' : ''}/>Discussed healthy diet<br/>
                         </div>                       
                         <div>
                             &nbsp;
@@ -35,9 +35,9 @@
                         </div>                       
 						<div class="medicalPerformed">
 							<label>Medication Education Performed and/or Counseled on Vaccines</label>
-								<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedYES" value="yes"/>Y
-								<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNO" value="no"/>N
-								<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable"/>N/A<br>
+								<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedYES" value="yes" ${MedicationEducationPerformed == 'yes' ? 'checked' : ''}/>Y
+								<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNO" value="no" ${MedicationEducationPerformed == 'no' ? 'checked' : ''}/>N
+								<input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" ${MedicationEducationPerformed == 'not applicable' ? 'checked' : ''}/>N/A<br>
 						</div>
 											 
 						<div>

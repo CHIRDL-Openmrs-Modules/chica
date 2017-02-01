@@ -4,6 +4,7 @@ var pageOptions = "#page=1&view=FitH,top&navpanes=0";
 var previousRecommendedHandoutSelection = -1;
 var timeoutDialog = null;
 var keepAliveURL = ctx + "/moduleServlet/chica/chica?action=keepAlive";
+var saveDraftURL = chicaServletUrl + "action=saveFormDraft";
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -115,13 +116,8 @@ function getAvailableJits() {
 
 $(function() {
 	$("button, input:submit, input:button").button();
-	$("#submitButtonTop").button();
-	$("#submitButtonBottom").button();
-	$("#formPrintButton").button();
-	$("#problemButton").button();
-	$("#forcePrintButton").button();
-	$("#retryButton").button();
-	$("#notesButton").button();
+	$("#submitButtonTop, #submitButtonBottom, #saveDraftButtonTop, #saveDraftButtonBottom").button();
+	$("#retryButton, #notesButton, #formPrintButton, #problemButton, #forcePrintButton").button();
 	
 	getAvailableJits();
 	
@@ -204,14 +200,16 @@ $(function() {
         ]
     });
 	
-	 $("#historyAndPhysicalText").keyup(function() {
-		 updateCount('historyAndPhysicalText');
-	    });
+	updateCount("historyAndPhysicalText");
+	updateCount("assessmentAndPlanText");
+	$("#historyAndPhysicalText").keyup(function() {
+		updateCount('historyAndPhysicalText');
+	});
 	 
-	 $("#assessmentAndPlanText").keyup(function() {
-		 updateCount('assessmentAndPlanText');
+	$("#assessmentAndPlanText").keyup(function() {
+		updateCount('assessmentAndPlanText');
 	    	
-	    });
+	});
 	
 	// Append the notes dialog to the parent form so that it can be submitted
 	$('#notesDialog').parent().appendTo($("form:first"));
@@ -252,13 +250,13 @@ $(function() {
         ]
     })
 	
-	$("#submitButtonBottom").click(function(event) {
+	$("#submitButtonBottom, #submitButtonTop").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");
 		event.preventDefault();
 	});
 	
-	$("#submitButtonTop").click(function(event) {
-		$("#confirmSubmitDialog").dialog("open");
+	$("#saveDraftButtonBottom, #saveDraftButtonTop").click(function(event) {
+		saveDraft();
 		event.preventDefault();
 	});
 	
@@ -268,6 +266,24 @@ $(function() {
 	});
 	
 	$("#submitWaitDialog").dialog({
+		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+        autoOpen: false,
+        modal: true,
+        maxWidth: 100,
+        maxHeight: 50,
+        width: 100,
+        height: 50,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          }
+    }).dialog("widget").find(".ui-dialog-titlebar").hide();
+	
+	$("#saveDraftWaitDialog").dialog({
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
@@ -364,6 +380,67 @@ $(function() {
           }
         }
     });
+	
+	$("#saveDraftErrorDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	$("#saveDraftSuccessDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	$("#serverErrorDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	if ($("#serverErrorMessage").html() != null && $("#serverErrorMessage").html().length > 0) {
+		$("#serverErrorDialog").dialog("open");
+	}
 	
     $("#formSelectionDialogContainer").css("background", "#f4f0ec"); 
 	
@@ -598,4 +675,33 @@ function renewSession() {
             }
            }
      	});
+}
+
+function saveDraft() {
+	$("#saveDraftWaitDialog").dialog("open");
+	processCheckboxes();
+	var submitForm = $("#pwsForm"); 
+    $.ajax({
+    	"cache": false,
+        "data": submitForm.serialize(),
+        "type": "POST",
+        "url": saveDraftURL,
+        "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "error": handleSaveDraftError, // this sets up jQuery to give me errors
+        "success": function (text) {
+        	$("#saveDraftWaitDialog").dialog("close");
+        	if (text === "success") {
+	        	$("#saveDraftSuccessDialog").dialog("open");
+        	} else {
+        		$("#saveDraftErrorMessage").html(text);
+        		$("#saveDraftErrorDialog").dialog("open");
+        	}
+        }
+    });
+}
+
+function handleSaveDraftError(xhr, textStatus, error) {
+	$("#saveDraftWaitDialog").dialog("close");
+	$("#saveDraftErrorMessage").html("<p><b>An error occurred saving the draft: " + error + "</b></p>");
+	$("#saveDraftErrorDialog").dialog("open");
 }
