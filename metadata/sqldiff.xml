@@ -4143,7 +4143,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         <author>David Ely</author>
         <date>January 27, 2017</date>
         <description>
-            CHICA-221 Update global property so that we CHICA can accept whatever patient name the EHR sends
+            CHICA-221 Update global property so that CHICA can accept whatever patient name the EHR sends
         </description>
         <sql>
            	Update global_property

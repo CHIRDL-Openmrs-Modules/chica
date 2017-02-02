@@ -118,11 +118,9 @@ public class ImmunizationQueryConstructor extends
 				this.vxu = new VXU_V04();
 			}
 		} catch (EncodingNotSupportedException e) {
-			log
-					.equals("Error parsing vxu string to VXU_V04 - encoding not supported");
+			log.error("Error parsing vxu string to VXU_V04 - encoding not supported", e);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			log.equals("Error parsing vxu string to VXU_V04");
+			log.error("Error parsing vxu string to VXU_V04", e);
 		}
 
 	}
@@ -178,8 +176,7 @@ public class ImmunizationQueryConstructor extends
 			AddSegmentQRF(qrf, encounter);
 			vxqString = convertVXQMessageToString(vxq);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error in constructVXQ().", e);
 		}
 
 		return vxqString;
@@ -201,8 +198,7 @@ public class ImmunizationQueryConstructor extends
 			vxu = AddSegmentNK1(vxu, patient.getPatientId());
 			vxuString = getVXUMessageString(vxu);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error in constructVXU().", e);
 		}
 
 		return vxuString;
@@ -473,7 +469,7 @@ public class ImmunizationQueryConstructor extends
 						ourApplication + "-" + formattedDate);
 			}
 		} catch (DataTypeException e) {
-			e.printStackTrace();
+			log.error("Error in AddSegmentMSH().", e);
 		}
 
 		return vxq;
@@ -528,7 +524,7 @@ public class ImmunizationQueryConstructor extends
 				msh.getMessageControlID().setValue(
 						ourApplication + "-" + patientId);
 			} catch (DataTypeException e) {
-				e.printStackTrace();
+				log.error("Error in AddSegmentMSHByEncounter().", e);
 			}
 		}
 
@@ -587,7 +583,7 @@ public class ImmunizationQueryConstructor extends
 		try {
 			msg = pipeParser.encode(vxu);
 		} catch (Exception e) {
-			System.out.println("Exception parsing VXU message.");
+			log.error("Exception parsing VXU message.");
 		}
 		return msg;
 
@@ -1102,9 +1098,9 @@ public class ImmunizationQueryConstructor extends
 			vxuString = getVXUMessageString(vxu);
 
 		} catch (DataTypeException e) {
-			e.printStackTrace();
+			log.error("DataTypeException in addVaccine().", e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error in addVaccine().", e);
 		}
 
 		return vxuString;
