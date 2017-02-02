@@ -35,11 +35,11 @@ psfSubmitted := call CheckPSFWaitForElectronicSubmissionState;
 vitalsProcessed := call CheckProcessedVitalsState;
 
 If (psfSubmitted = "true") AND (vitalsProcessed = "true") then 
-call CREATE_JIT with "GrowthChart", "", "true";
+call CREATE_JIT with "GrowthChart", "", "true", "true";
 endif;
 
 If NOT (psfSubmitted = "true") OR NOT (vitalsProcessed = "true") then 
-	call CREATE_JIT with "GrowthChart", "", "false";
+	call CREATE_JIT with "GrowthChart", "", "false", "true";
 endif;
 
 ;;
