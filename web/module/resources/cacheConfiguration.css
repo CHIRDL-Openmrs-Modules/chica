@@ -11,12 +11,14 @@
 	float:left;
     width: 250px;
     text-align:right;
+    margin-bottom: 2px;
 }
 
 .value {
 	text-align:left;
 	overflow: hidden;
 	padding-left: 10px;
+	margin-bottom: 2px;
 }
 
 fieldset {
