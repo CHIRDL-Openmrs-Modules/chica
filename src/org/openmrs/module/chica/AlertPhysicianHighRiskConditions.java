@@ -265,7 +265,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 						    sort, 1, null, null, null, false);
 						if (suicideObs != null && suicideObs.size() > 0) {
 							Obs obs = suicideObs.get(0);
-							if (obs.getValueCoded() != null && obs.getValueCoded().getName().getName().equals("True")) {
+							if (obs.getValueCoded() != null && obs.getValueCoded().getName().getName().equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)) {
 								notificationSet.add(encounter);
 							}
 						}
