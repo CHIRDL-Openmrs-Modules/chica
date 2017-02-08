@@ -228,6 +228,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param encounters
 	 * @param notificationSet
 	 * @param ruleId
+	 * @param ruleName
 	 */
 	private void addEncounters(List<org.openmrs.Encounter> encounters, HashSet<org.openmrs.Encounter> notificationSet,
 	                           Integer ruleId, String ruleName) {
