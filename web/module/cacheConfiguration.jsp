@@ -125,7 +125,31 @@
                        </c:forEach>
                    </ul>
                 </div>
+                <div id="clearFormFromDraftCache">
+                    <h3>Clear Specific Form Draft</h3>
+                    <fieldset>
+                        <div class="item">Form ID: </div>
+                        <div class="value">
+                            <input type="number" id="formCacheFormId" name="formCacheFormId" value=""/>
+                        </div>
+                        <div class="item">Form Instance ID: </div>
+                        <div class="value">
+                            <input type="number" id="formCacheFormInstanceId" name="formCacheFormInstanceId" value=""/>
+                        </div>
+                        <div class="item">Location ID: </div>
+                        <div class="value">
+                            <input type="number" id="formCacheLocationId" name="formCacheLocationId" value=""/>
+                        </div>
+                        <div class="item">Location Tag ID: </div>
+                        <div class="value">
+                            <input type="number" id="formCacheLocationTagId" name="formCacheLocationTagId" value=""/>
+                        </div>
+                    </fieldset>
+                    <input type="button" id="clearFormDraftButton" class="clearCacheButtons" value="Clear Form"/>
+                </div>
+                <br/>
                 <div id="clearFormDraftCache">
+                    <h3>Clear All Form Drafts</h3>
                    <input type="button" id="clearFormDraftCacheButton" class="clearCacheButtons" value="Clear Cache"/>
                 </div>
             </div>

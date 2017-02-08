@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import javax.cache.Cache;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.TeleformTranslator;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.atd.util.AtdConstants;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.util.PatientRow;
@@ -100,6 +102,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
 	private static final String KEEP_ALIVE = "keepAlive";
 	private static final String CLEAR_CACHE = "clearCache";
+	private static final String CLEAR_FORM_INSTANCE_FROM_FORM_CACHE = "clearFormInstanceFromFormCache";
 	private static final String SAVE_FORM_DRAFT = "saveFormDraft";
 	
 	private static final String PARAM_ACTION = "action";
@@ -229,6 +232,8 @@ public class ChicaServlet extends HttpServlet {
 			clearCache(request, response);
 		} else if (SAVE_FORM_DRAFT.equals(action)) {
 			saveFormDraft(request, response);
+		} else if (CLEAR_FORM_INSTANCE_FROM_FORM_CACHE.equals(action)) {
+			clearFormInstaceFromFormDraftCache(request, response);
 		}
 	}
 	
@@ -1694,5 +1699,58 @@ public class ChicaServlet extends HttpServlet {
 		}
 		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(),formInstTag.getFormId(),formInstTag.getFormInstanceId());
 		org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, encounterId, providerId, formInstance, null, formInstTag.getLocationTagId(), null);
+	}
+	
+	/**
+	 * Clears an individual form instance from the form draft cache.
+	 * 
+	 * @param request The request from the client
+     * @param response The response that will be sent back to the client
+	 * @throws IOException
+	 */
+	private void clearFormInstaceFromFormDraftCache(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		
+    	PrintWriter pw = response.getWriter();
+		
+		// parse out the location_id, form_id, location_tag_id, and form_instance_id from the selected form
+		String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
+		FormInstanceTag formInstTag = null;
+		if (formInstance != null && formInstance.trim().length() > 0) {
+			try {
+				formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+			} catch (Exception e) {
+				String message = "Error clearing form instance " + formInstance + " from the " + AtdConstants.CACHE_FORM_DRAFT + 
+						" cache.  Cannot successfully parse the form instance provided.";
+	    		log.error(message, e);
+	    		pw.write(message);
+			}
+		} else {
+			String messagePart1 = "Error clearing form instance from the " + AtdConstants.CACHE_FORM_DRAFT + 
+					" cache: form instance tag parameter not found.";
+			String messagePart2 = "Please contact support.";
+			ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		ApplicationCacheManager cacheManager = ApplicationCacheManager.getInstance();
+		try {
+			Cache<FormInstanceTag, Records> formCache = cacheManager.getCache(AtdConstants.CACHE_FORM_DRAFT, 
+																			  AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+																			  AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+			if (formCache != null) {
+				boolean existed = formCache.remove(formInstTag);
+				pw.write(String.valueOf(existed));
+			} else {
+				String message = "The " + AtdConstants.CACHE_FORM_DRAFT + " cache cannot be located.";
+				log.error(message);
+	    		pw.write(message);
+			}
+		} catch (Exception e) {
+			String message = "Error clearing form instance " + formInstance + " from the " + AtdConstants.CACHE_FORM_DRAFT + " cache.";
+    		log.error(message, e);
+    		pw.write(message);
+		}
 	}
 }
