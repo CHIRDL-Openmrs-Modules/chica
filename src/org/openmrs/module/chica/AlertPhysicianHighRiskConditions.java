@@ -9,15 +9,20 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.LocationTag;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
@@ -39,7 +44,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	private static final String LOC_TAG_ATTR_HIGH_RISK_CONTACT = "HighRiskContact";
-		
+	
 	@Override
 	public void execute() {
 		Context.openSession();
@@ -49,13 +54,13 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		final String DV_NOTIFICATION_TEXT = this.taskDefinition.getProperty("DV_NOTIFICATION_TEXT");
 		final String FROM_EMAIL = this.taskDefinition.getProperty("FROM_EMAIL");
 		final String SUBJECT = this.taskDefinition.getProperty("SUBJECT");
-		Integer NUM_DAYS=null;
-        try {
-	        NUM_DAYS = Integer.parseInt(this.taskDefinition.getProperty("NUM_DAYS"));
-        }
-        catch (Exception e) {
-	        log.error("Error generated", e);
-        }
+		Integer NUM_DAYS = null;
+		try {
+			NUM_DAYS = Integer.parseInt(this.taskDefinition.getProperty("NUM_DAYS"));
+		}
+		catch (Exception e) {
+			log.error("Error generated", e);
+		}
 		
 		if (SUICIDE_NOTIFICATION_TEXT == null || ABUSE_NOTIFICATION_TEXT == null || FROM_EMAIL == null
 		        || DV_NOTIFICATION_TEXT == null || SUBJECT == null || NUM_DAYS == null) {
@@ -119,7 +124,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		
 		for (String ruleName : ruleNames) {
 			Rule rule = dssService.getRule(ruleName);
-			addEncounters(encounters, notificationSet, rule.getRuleId());
+			addEncounters(encounters, notificationSet, rule.getRuleId(), ruleName);
 		}
 		
 		//send notification emails
@@ -131,7 +136,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 				LocationTag locTag = locationService.getLocationTagByName(printerLocation.trim());
 				if (locTag != null) {
 					Integer locationTagId = locTag.getLocationTagId();
-					sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail,subject);
+					sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail, subject);
 				}
 			}
 		}
@@ -148,7 +153,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param subject
 	 */
 	private void sendEmailNotification(Integer locationId, Integer locationTagId, Encounter chicaEncounter, String riskText,
-	                                   String fromEmail,String subject) {
+	                                   String fromEmail, String subject) {
 		ChirdlUtilBackportsService cub = Context.getService(ChirdlUtilBackportsService.class);
 		LocationTagAttributeValue lav = cub.getLocationTagAttributeValue(locationTagId, LOC_TAG_ATTR_HIGH_RISK_CONTACT,
 		    locationId);
@@ -225,9 +230,10 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param ruleId
 	 */
 	private void addEncounters(List<org.openmrs.Encounter> encounters, HashSet<org.openmrs.Encounter> notificationSet,
-	                           Integer ruleId) {
+	                           Integer ruleId, String ruleName) {
 		ATDService atdService = Context.getService(ATDService.class);
-				
+		ObsService obsService = Context.getObsService();
+		
 		for (org.openmrs.Encounter encounter : encounters) {
 			Integer encounterId = encounter.getEncounterId();
 			
@@ -242,7 +248,30 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 			
 			//if there are no boxes checked, add the encounter to the notification list
 			if (!oneBoxChecked) {
-				notificationSet.add(encounter);
+				
+				//special processing for combined suicide/depression rule
+				if (ruleName.equals("Depression_SuicidePWS")) {
+					List<Person> patientList = new ArrayList<Person>();
+					patientList.add(encounter.getPatient());
+					List<Concept> questionList = new ArrayList<Concept>();
+					ConceptService conceptService = Context.getConceptService();
+					Concept suicideConcept = conceptService.getConceptByName("suicide_concerns");
+					questionList.add(suicideConcept);
+					Vector sort = new Vector<String>();
+					sort.add("obsDatetime");
+					
+					List<Obs> suicideObs = obsService.getObservations(patientList, null, questionList, null, null, null,
+					    sort, 1, null, null, null, false);
+					if(suicideObs != null && suicideObs.size()>0){
+						Obs obs = suicideObs.get(0);
+						if(obs.getValueCoded()!= null&&obs.getValueCoded().getName().getName().equals("True")){
+							notificationSet.add(encounter);
+						}
+					}
+					
+				} else {
+					notificationSet.add(encounter);
+				}
 			}
 		}
 	}
