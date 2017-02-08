@@ -257,19 +257,20 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 					List<Concept> questionList = new ArrayList<Concept>();
 					ConceptService conceptService = Context.getConceptService();
 					Concept suicideConcept = conceptService.getConceptByName("suicide_concerns");
-					questionList.add(suicideConcept);
-					Vector sort = new Vector<String>();
-					sort.add("obsDatetime");
-					
-					List<Obs> suicideObs = obsService.getObservations(patientList, null, questionList, null, null, null,
-					    sort, 1, null, null, null, false);
-					if(suicideObs != null && suicideObs.size()>0){
-						Obs obs = suicideObs.get(0);
-						if(obs.getValueCoded()!= null&&obs.getValueCoded().getName().getName().equals("True")){
-							notificationSet.add(encounter);
+					if (suicideConcept != null) {
+						questionList.add(suicideConcept);
+						Vector sort = new Vector<String>();
+						sort.add("obsDatetime");
+						
+						List<Obs> suicideObs = obsService.getObservations(patientList, null, questionList, null, null, null,
+						    sort, 1, null, null, null, false);
+						if (suicideObs != null && suicideObs.size() > 0) {
+							Obs obs = suicideObs.get(0);
+							if (obs.getValueCoded() != null && obs.getValueCoded().getName().getName().equals("True")) {
+								notificationSet.add(encounter);
+							}
 						}
 					}
-					
 				} else {
 					notificationSet.add(encounter);
 				}
