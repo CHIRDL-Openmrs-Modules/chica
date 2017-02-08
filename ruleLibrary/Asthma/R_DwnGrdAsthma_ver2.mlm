@@ -39,7 +39,7 @@ If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
 
 If (SxLast3Mos = True) then conclude False;
-If (CurrentStatus = Persistent-controller) OR (CurrentStatus = Persistent-no-controller) OR (CurrentStatus = Persistent-non-adherent) then conclude True;
+If (CurrentStatus = "Persistent-controller") OR (CurrentStatus = "Persistent-no-controller") OR (CurrentStatus = "Persistent-non-adherent") then conclude True;
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 endif
