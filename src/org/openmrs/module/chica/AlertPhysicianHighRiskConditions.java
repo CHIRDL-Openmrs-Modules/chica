@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -259,7 +258,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 					Concept suicideConcept = conceptService.getConceptByName("suicide_concerns");
 					if (suicideConcept != null) {
 						questionList.add(suicideConcept);
-						Vector sort = new Vector<String>();
+						List<String> sort = new ArrayList<String>();
 						sort.add("obsDatetime");
 						
 						List<Obs> suicideObs = obsService.getObservations(patientList, null, questionList, null, null, null,
