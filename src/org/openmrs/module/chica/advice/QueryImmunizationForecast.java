@@ -14,6 +14,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.QueryImmunizationsException;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationRegistryQuery;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -30,11 +31,11 @@ public class QueryImmunizationForecast implements ChirdlRunnable {
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private QueryImmunizationsException exception = null;
+	
+	private Integer encounterId = null; // Use encounterId instead of an encounter object to prevent lazy initialization errors
 
-	private org.openmrs.Encounter encounter = null;
-
-	public QueryImmunizationForecast(org.openmrs.Encounter encounter) {
-		this.encounter = encounter;
+	public QueryImmunizationForecast(Integer encounterId) {
+		this.encounterId = encounterId;
 	}
 
 	/*
@@ -54,12 +55,10 @@ public class QueryImmunizationForecast implements ChirdlRunnable {
 			.getService(ChirdlUtilBackportsService.class);
 		EncounterService encounterService = Context
 			.getService(org.openmrs.module.chica.service.EncounterService.class);
+		Encounter chicaEncounter = (Encounter) encounterService.getEncounter(encounterId);
 		
 		try {
-
-			
 			//encounter/session
-			Integer encounterId = encounter.getEncounterId();
 			List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(encounterId);
 			Session session = sessions.get(0);
 			Integer sessionId = session.getSessionId();
@@ -67,13 +66,10 @@ public class QueryImmunizationForecast implements ChirdlRunnable {
 			//location
 			Integer locationTagId = null;
 			Integer locationId = null;
-			org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter 
-					= (org.openmrs.module.chica.hibernateBeans.Encounter) encounterService
-					.getEncounter(encounter.getEncounterId());
 			String printerLocation = chicaEncounter.getPrinterLocation();
 			if (printerLocation != null)
 			{
-				Location location = encounter.getLocation();
+				Location location = chicaEncounter.getLocation();
 				Set<LocationTag> tags = location.getTags();
 				for(LocationTag tag:tags){
 					if(printerLocation.equalsIgnoreCase(tag.getTag())){
@@ -86,11 +82,11 @@ public class QueryImmunizationForecast implements ChirdlRunnable {
 			
 			//patient state
 			State queryImmunizationListState = chirdlutilbackportsService.getStateByName("Query Immunization Forecast");
-			PatientState state = chirdlutilbackportsService.addPatientState(encounter.getPatient(), queryImmunizationListState, 
+			PatientState state = chirdlutilbackportsService.addPatientState(chicaEncounter.getPatient(), queryImmunizationListState, 
 				sessionId, locationTagId, locationId, null);
 		
 			//send POST and create immunization list
-			ImmunizationRegistryQuery.queryCHIRP(encounter);
+			ImmunizationRegistryQuery.queryCHIRP(chicaEncounter);
 					
 			state.setEndTime(new java.util.Date());
 			chirdlutilbackportsService.updatePatientState(state);
@@ -115,7 +111,7 @@ public class QueryImmunizationForecast implements ChirdlRunnable {
 	 */
 	public String getName() {
 		return "Query Immunization Forecast (Encounter: "
-				+ encounter.getEncounterId() + ")";
+				+ encounterId + ")";
 	}
 
 	/**

@@ -19,6 +19,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.datatype.TS;
+import ca.uhn.hl7v2.model.v23.datatype.TSComponentOne;
 import ca.uhn.hl7v2.model.v23.datatype.XCN;
 import ca.uhn.hl7v2.model.v23.message.ADT_A01;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
@@ -45,7 +46,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		try
 		{
 			doctor = pv1.getAttendingDoctor(0);
-		} catch (HL7Exception e)
+		} catch (Exception e)
 		{
 			this.logger.warn("Unable to parse doctor name from PV1. Message: "
 					+ e.getMessage());
@@ -186,7 +187,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		} 
 		if (timeStamp != null)
 		{
-			ST dtm = timeStamp.getTimeOfAnEvent();
+			TSComponentOne dtm = timeStamp.getTimeOfAnEvent();
 			if (dtm == null || dtm.getValue() == null)
 			{
 				timeStamp = msh.getDateTimeOfMessage();
@@ -231,13 +232,13 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 					id = doctor.getIDNumber().toString();
 				}
 
-				provider.setId(id);
+				provider.setEhrProviderId(id);
 
 				return provider;
 
 			}
 
-		} catch (HL7Exception e2)
+		} catch (Exception e2)
 		{
 			this.logger.error("Unable to collect provider id from PV1 segment");
 			this.logger.error(e2.getMessage());

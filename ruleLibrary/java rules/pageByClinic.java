@@ -33,7 +33,7 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.service.DssService;
 
@@ -134,7 +134,7 @@ public class pageByClinic implements Rule {
 		
 		// Get the pager numbers
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
-		LocationAttributeValue lav = service.getLocationAttributeValue(locationId, locationAttr);
+		ChirdlLocationAttributeValue lav = service.getLocationAttributeValue(locationId, locationAttr);
 		if (lav == null || lav.getValue() == null || lav.getValue().trim().length() == 0) {
 			log.error("No valid " + locationAttr + " found for location " + locationId + ".  No one will be paged.");
 			return Result.emptyResult();

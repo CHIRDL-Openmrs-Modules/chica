@@ -4099,6 +4099,58 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
   			(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
          </sql>
 	</diff>
+	<diff>
+        <version>1.8.7</version>
+        <author>David Ely</author>
+        <date>January 24, 2017</date>
+        <description>
+            CHICA-221 Migrate data from person_attribute to provider.identifier column
+        </description>
+        <sql>
+            Update provider p
+			Inner Join person_attribute pa ON p.person_id = pa.person_id
+			Set p.identifier = pa.value
+			Where pa.person_attribute_type_id = (Select person_attribute_type_id From person_attribute_type Where name = 'Provider ID') And pa.voided = false;
+        </sql>
+    </diff>
+    <diff>
+        <version>1.8.8</version>
+        <author>David Ely</author>
+        <date>January 25, 2017</date>
+        <description>
+            CHICA-221 Set concepts to allow precision
+        </description>
+        <sql>
+           	UPDATE concept_numeric
+			SET precise = 1
+			WHERE concept_id IN (SELECT concept_id FROM concept_name WHERE name IN ('TEMPERATURE CHICA', 'HEIGHT', 'WEIGHT', 'HC', 'HCCENTILE', 'HTCENTILE', 'WTCENTILE', 'BMICENTILE', 'BMI CHICA')); 
+        </sql>
+    </diff>
+    <diff>
+        <version>1.8.9</version>
+        <author>David Ely</author>
+        <date>January 25, 2017</date>
+        <description>
+            CHICA-221 Add role_privilege records for Chicauser
+        </description>
+        <sql>
+           	INSERT INTO role_privilege(role, privilege)
+			VALUES('Chicauser','Manage Providers'), ('Chicauser','Manage Encounter Roles'), ('Chicauser','Get Encounter Roles');
+        </sql>
+    </diff>
+    <diff>
+        <version>1.9.0</version>
+        <author>David Ely</author>
+        <date>January 27, 2017</date>
+        <description>
+            CHICA-221 Update global property so that CHICA can accept whatever patient name the EHR sends
+        </description>
+        <sql>
+           	Update global_property
+			Set property_value = ''
+			Where property = 'patient.nameValidationRegex';
+        </sql>
+    </diff>
 </sqldiff>
 
 

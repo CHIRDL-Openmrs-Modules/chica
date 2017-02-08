@@ -52,7 +52,7 @@ import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 import com.itextpdf.text.Image;
@@ -122,7 +122,7 @@ public class getGrowthChartFilename implements Rule {
 			
 			ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			Integer locationId = formInstance.getLocationId();
-			LocationAttributeValue locationAttributeValue = 
+			ChirdlLocationAttributeValue locationAttributeValue = 
 				chirdlUtilBackportsService.getLocationAttributeValue(locationId, "growthChartDirectory");
 		
 			if(locationAttributeValue == null){

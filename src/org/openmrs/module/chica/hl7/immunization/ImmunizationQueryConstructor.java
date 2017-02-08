@@ -32,10 +32,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.action.ProduceFormInstance;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v231.datatype.CX;
@@ -119,11 +118,9 @@ public class ImmunizationQueryConstructor extends
 				this.vxu = new VXU_V04();
 			}
 		} catch (EncodingNotSupportedException e) {
-			log
-					.equals("Error parsing vxu string to VXU_V04 - encoding not supported");
-		} catch (HL7Exception e) {
-			// TODO Auto-generated catch block
-			log.equals("Error parsing vxu string to VXU_V04");
+			log.error("Error parsing vxu string to VXU_V04 - encoding not supported", e);
+		} catch (Exception e) {
+			log.error("Error parsing vxu string to VXU_V04", e);
 		}
 
 	}
@@ -179,8 +176,7 @@ public class ImmunizationQueryConstructor extends
 			AddSegmentQRF(qrf, encounter);
 			vxqString = convertVXQMessageToString(vxq);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error in constructVXQ().", e);
 		}
 
 		return vxqString;
@@ -202,8 +198,7 @@ public class ImmunizationQueryConstructor extends
 			vxu = AddSegmentNK1(vxu, patient.getPatientId());
 			vxuString = getVXUMessageString(vxu);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error in constructVXU().", e);
 		}
 
 		return vxuString;
@@ -474,7 +469,7 @@ public class ImmunizationQueryConstructor extends
 						ourApplication + "-" + formattedDate);
 			}
 		} catch (DataTypeException e) {
-			e.printStackTrace();
+			log.error("Error in AddSegmentMSH().", e);
 		}
 
 		return vxq;
@@ -529,7 +524,7 @@ public class ImmunizationQueryConstructor extends
 				msh.getMessageControlID().setValue(
 						ourApplication + "-" + patientId);
 			} catch (DataTypeException e) {
-				e.printStackTrace();
+				log.error("Error in AddSegmentMSHByEncounter().", e);
 			}
 		}
 
@@ -575,7 +570,7 @@ public class ImmunizationQueryConstructor extends
 		String msg = null;
 		try {
 			msg = pipeParser.encode(vxu);
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error("Exception parsing constructed message.");
 		}
 		return msg;
@@ -587,8 +582,8 @@ public class ImmunizationQueryConstructor extends
 		String msg = null;
 		try {
 			msg = pipeParser.encode(vxu);
-		} catch (HL7Exception e) {
-			System.out.println("Exception parsing VXU message.");
+		} catch (Exception e) {
+			log.error("Exception parsing VXU message.");
 		}
 		return msg;
 
@@ -683,7 +678,7 @@ public class ImmunizationQueryConstructor extends
 
 		} catch (EncodingNotSupportedException e) {
 			log.error(Util.getStackTrace(e));
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error(Util.getStackTrace(e));
 		}
 		return stateIdString;
@@ -749,7 +744,7 @@ public class ImmunizationQueryConstructor extends
 
 		} catch (DataTypeException e) {
 			log.error(Util.getStackTrace(e));
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error(Util.getStackTrace(e));
 		}
 		return vxu;
@@ -892,7 +887,7 @@ public class ImmunizationQueryConstructor extends
 
 		} catch (DataTypeException e) {
 			log.error(Util.getStackTrace(e));
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error(Util.getStackTrace(e));
 		}
 		return null;
@@ -980,7 +975,7 @@ public class ImmunizationQueryConstructor extends
 
 		} catch (DataTypeException e) {
 			log.error(Util.getStackTrace(e));
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error(Util.getStackTrace(e));
 		}
 
@@ -1019,14 +1014,14 @@ public class ImmunizationQueryConstructor extends
 			String city = location.getCityVillage();
 			String state = location.getStateProvince();
 			String zipcode = location.getPostalCode();
-			LocationAttributeValue attrvalue = service
+			ChirdlLocationAttributeValue attrvalue = service
 					.getLocationAttributeValue(location.getLocationId(),
 							"clinicDisplayName");
 			if (attrvalue != null) {
 				facility = attrvalue.getValue();
 			}
 			
-			LocationAttributeValue facCodeAttrVal = service
+			ChirdlLocationAttributeValue facCodeAttrVal = service
 			.getLocationAttributeValue(location.getLocationId(),
 					"facilityCode");
 			if (facCodeAttrVal != null) {
@@ -1103,9 +1098,9 @@ public class ImmunizationQueryConstructor extends
 			vxuString = getVXUMessageString(vxu);
 
 		} catch (DataTypeException e) {
-			e.printStackTrace();
-		} catch (HL7Exception e) {
-			e.printStackTrace();
+			log.error("DataTypeException in addVaccine().", e);
+		} catch (Exception e) {
+			log.error("Error in addVaccine().", e);
 		}
 
 		return vxuString;
@@ -1142,7 +1137,7 @@ public class ImmunizationQueryConstructor extends
 			String city = location.getCityVillage();
 			String state = location.getStateProvince();
 			String zipcode = location.getPostalCode();
-			LocationAttributeValue attrvalue = service
+			ChirdlLocationAttributeValue attrvalue = service
 					.getLocationAttributeValue(location.getLocationId(),
 							"clinicDisplayName");
 			if (attrvalue != null) {
@@ -1150,7 +1145,7 @@ public class ImmunizationQueryConstructor extends
 			}
 			
 			if (location != null){
-				LocationAttributeValue facCodeAttrVal = service
+				ChirdlLocationAttributeValue facCodeAttrVal = service
 				.getLocationAttributeValue(location.getLocationId(),
 						"facilityCode");
 				if (facCodeAttrVal != null) {
@@ -1239,7 +1234,7 @@ public class ImmunizationQueryConstructor extends
 
 		} catch (DataTypeException e) {
 			log.error(Util.getStackTrace(e));
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error(Util.getStackTrace(e));
 		}
 
@@ -1314,7 +1309,7 @@ public class ImmunizationQueryConstructor extends
 
 		} catch (DataTypeException e) {
 			log.error(Util.getStackTrace(e));
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error(Util.getStackTrace(e));
 		}
 
@@ -1459,10 +1454,10 @@ public class ImmunizationQueryConstructor extends
 			if (includeLocation && location != null) {
 				
 				
-				LocationAttributeValue attrvalue = service
+				ChirdlLocationAttributeValue attrvalue = service
 						.getLocationAttributeValue(location.getLocationId(),
 								"clinicDisplayName");
-				LocationAttributeValue facilityCodeAttrValue = 
+				ChirdlLocationAttributeValue facilityCodeAttrValue = 
 					service.getLocationAttributeValue(location.getLocationId(), "facilityCode");
 				if (attrvalue != null) {
 					facility = attrvalue.getValue();
@@ -1516,7 +1511,7 @@ public class ImmunizationQueryConstructor extends
 			// vxu.getORCRXARXROBXNTE(rep).getRXA().get
 		} catch (DataTypeException e) {
 			log.error(Util.getStackTrace(e));
-		} catch (HL7Exception e) {
+		} catch (Exception e) {
 			log.error(Util.getStackTrace(e));
 		}
 
