@@ -52,7 +52,7 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
@@ -94,7 +94,7 @@ public class QueryGIS implements ChirdlRunnable{
 			
 			// Check to see if it's an intervention site
 			ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
-			LocationAttributeValue lav = service.getLocationAttributeValue(locationId, "isGISInterventionLocation");
+			ChirdlLocationAttributeValue lav = service.getLocationAttributeValue(locationId, "isGISInterventionLocation");
 			if (lav == null || !"true".equalsIgnoreCase(lav.getValue())) {
 				return;
 			}
@@ -199,7 +199,7 @@ public class QueryGIS implements ChirdlRunnable{
 			connectionTimeout = connectionTimeout * 1000;
 			
 			ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-			LocationAttributeValue attrVal = backportsService.getLocationAttributeValue(locationId, "GISDirectory");
+			ChirdlLocationAttributeValue attrVal = backportsService.getLocationAttributeValue(locationId, "GISDirectory");
 			if (attrVal == null || attrVal.getValue().trim().length() == 0) {
 				log.error("Please specify a directory for the GISDirectory location attribute value for location: " + 
 					locationId);

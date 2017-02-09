@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -26,7 +25,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
@@ -41,12 +39,12 @@ import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 public class CheckinPatient implements ChirdlRunnable
 {
 	private Log log = LogFactory.getLog(this.getClass());
-	private org.openmrs.Encounter encounter = null;
+	private Integer encounterId = null; // Use encounterId instead of an encounter object to prevent lazy initialization errors
 	private HashMap<String,Object> parameters = null;
 
-	public CheckinPatient(org.openmrs.Encounter encounter, HashMap<String,Object> parameters)
+	public CheckinPatient(Integer encounterId, HashMap<String,Object> parameters)
 	{
-		this.encounter = encounter;
+		this.encounterId = encounterId;
 		this.parameters = parameters;
 	}
 
@@ -68,15 +66,19 @@ public class CheckinPatient implements ChirdlRunnable
 					.getGlobalProperty("scheduler.username"), adminService
 					.getGlobalProperty("scheduler.password"));
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-
-			Patient patient = this.encounter.getPatient();
-			Hibernate.initialize(patient); //fully initialize the patient to
-				//prevent lazy initialization errors
-
-			Integer encounterId = this.encounter.getEncounterId();
 			
+			org.openmrs.module.chica.service.EncounterService encounterService = Context
+								        .getService(org.openmrs.module.chica.service.EncounterService.class);
+			Encounter chicaEncounter = (Encounter) encounterService.getEncounter(this.encounterId);
+			
+			if(chicaEncounter == null){
+				return;
+			}
+								
+			Patient patient = chicaEncounter.getPatient();
+
 			//The session is unique because only 1 session exists at checkin
-			List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(encounterId);
+			List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(chicaEncounter.getEncounterId());
 			Session session = sessions.get(0);
 			
 			Integer sessionId = session.getSessionId();
@@ -85,14 +87,10 @@ public class CheckinPatient implements ChirdlRunnable
 			Integer locationId = null;
 			
 			// lookup location tag id by printer location
-			org.openmrs.module.chica.service.EncounterService encounterService = Context
-					.getService(org.openmrs.module.chica.service.EncounterService.class);
-			org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = (Encounter) encounterService
-					.getEncounter(this.encounter.getEncounterId());
 			String printerLocation = chicaEncounter.getPrinterLocation();
 			if (printerLocation != null)
 			{
-				Location location = this.encounter.getLocation();
+				Location location = chicaEncounter.getLocation();
 				Set<LocationTag> tags = location.getTags();
 				for(LocationTag tag:tags){
 					if(printerLocation.equalsIgnoreCase(tag.getTag())){
@@ -105,7 +103,7 @@ public class CheckinPatient implements ChirdlRunnable
 		
 			String sendingApplication =(String) parameters.get("sendingApplication");
 			String sendingFacility = (String) parameters.get("sendingFacility");
-			saveInsuranceInfo(encounterId, patient,locationTagId,sendingApplication,sendingFacility);
+			saveInsuranceInfo(chicaEncounter.getEncounterId(), patient,locationTagId,sendingApplication,sendingFacility);
 			Program program = chirdlutilbackportsService.getProgram(locationTagId,locationId);
 			StateManager.changeState(patient, sessionId, null,
 					program,null,
@@ -125,7 +123,7 @@ public class CheckinPatient implements ChirdlRunnable
 	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
 	 */
     public String getName() {
-	    return "Checkin Patient (Encounter: " + encounter.getEncounterId() + ")";
+	    return "Checkin Patient (Encounter: " + encounterId + ")";
     }
 
 	/**

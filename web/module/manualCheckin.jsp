@@ -275,7 +275,7 @@ if (err != 0)
 <select name="doctor" tabindex="2" id="doctorName">
 <c:forEach items="${doctors}" var="doctorListDoctor">
 <option 
-<c:if test="${doctorListDoctor.person.familyName == 'Other'}">selected</c:if> value="${doctorListDoctor.userId}">${doctorListDoctor.person.familyName}<c:if test="${!empty doctorListDoctor.person.givenName}">, ${doctorListDoctor.person.givenName}</c:if><c:if test="${!empty doctorListDoctor.person.middleName}">${doctorListDoctor.person.middleName}</c:if>
+<c:if test="${doctorListDoctor.person.familyName == 'Other'}">selected</c:if> value="${doctorListDoctor.providerId}">${doctorListDoctor.person.familyName}<c:if test="${!empty doctorListDoctor.person.givenName}">, ${doctorListDoctor.person.givenName}</c:if><c:if test="${!empty doctorListDoctor.person.middleName}">${doctorListDoctor.person.middleName}</c:if>
 </option>
 </c:forEach>	
 </select>

@@ -108,7 +108,7 @@ public class ImmunizationForecastLookup {
 			}
 			catch (NumberFormatException e) {};
 			
-			QueryImmunizationForecast queryImmunizationsThread = new QueryImmunizationForecast(encounter);
+			QueryImmunizationForecast queryImmunizationsThread = new QueryImmunizationForecast(encounter.getEncounterId());
 			Thread thread = new Thread(queryImmunizationsThread);
 			thread.start();
 			long startTime = System.currentTimeMillis();

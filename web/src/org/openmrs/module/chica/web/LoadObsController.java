@@ -587,7 +587,7 @@ public class LoadObsController extends SimpleFormController
 		{
 			provider.setLastName(tokenizer.nextToken());
 		}
-		provider.createUserForProvider(provider);
+		provider.createProvider(provider);
 		return provider;
 	}
 }

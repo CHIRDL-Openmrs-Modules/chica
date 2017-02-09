@@ -417,13 +417,13 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		PersonName name = new PersonName();
 		PID pid = getPID(message);
 		String ln = "", fn = "", mn = "";
-		XPN xpn = null;
+		XPN[] xpn = null;
 		try
 		{
 			xpn = pid.getPatientName();
-			ST STln = xpn.getFamilyName();
-			ST STfn = xpn.getGivenName();
-			ST STmn = xpn.getMiddleInitialOrName();
+			ST STln = xpn[0].getFamilyName();
+			ST STfn = xpn[0].getGivenName();
+			ST STmn = xpn[0].getMiddleInitialOrName();
 
 			if (STln != null && STln.getValue() != null)
 			{

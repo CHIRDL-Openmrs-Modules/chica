@@ -43,6 +43,7 @@ import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
@@ -272,18 +273,19 @@ public class ChicaRmiServiceImpl extends RemoteServer implements ChicaRmiService
 						}
 						parameters.put("param0", new Result(encounter.getEncounterDatetime()));
 						String checkin = atdService.evaluateRule("fullTimeFormat", patient, parameters).toString();
-						List<User> providers = Context.getUserService().getUsersByPerson(encounter.getProvider(), true);
+						// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
+						org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
 						String mdName = "";
-						if (providers != null && providers.size() > 0) {
-							User provider = providers.get(0);
-							String firstInit = Util.toProperCase(provider.getGivenName());
+						if (provider != null) {
+							Person person = provider.getPerson();
+							String firstInit = Util.toProperCase(person.getGivenName());
 							if (firstInit != null && firstInit.length() > 0) {
 								firstInit = firstInit.substring(0, 1);
 							} else {
 								firstInit = "";
 							}
 							
-							String middleInit = Util.toProperCase(encounter.getProvider().getMiddleName());
+							String middleInit = Util.toProperCase(person.getMiddleName());
 							if (middleInit != null && middleInit.length() > 0) {
 								middleInit = middleInit.substring(0, 1);
 							} else {
@@ -298,7 +300,7 @@ public class ChicaRmiServiceImpl extends RemoteServer implements ChicaRmiService
 							if (mdName.length() > 0) {
 								mdName += " ";
 							}
-							String familyName = Util.toProperCase(provider.getFamilyName());
+							String familyName = Util.toProperCase(person.getFamilyName());
 							if (familyName == null) {
 								familyName = "";
 							}
