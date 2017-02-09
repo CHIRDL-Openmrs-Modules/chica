@@ -141,6 +141,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_FORCE_PRINT_JIT_START = "<forcePrintJIT>";
 	private static final String XML_FORCE_PRINT_JIT_END = "</forcePrintJIT>";
 	private static final String XML_DISPLAY_NAME = "displayName";
+	private static final String XML_DISPLAY_FORM_GP = "displayFrmGp";
 	private static final String XML_PATIENT_ROWS_START = "<patientRows>";
 	private static final String XML_PATIENT_ROWS_END = "</patientRows>";
 	private static final String XML_GREASEBOARD_START = "<greaseboard>";
@@ -667,6 +668,7 @@ public class ChicaServlet extends HttpServlet {
 		FormAttribute ageMaxUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS);
 		FormAttribute displayNameAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME);
 		FormAttribute outputTypeAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE);
+		FormAttribute displayGpHeader = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTRIBUTE_DISPLAY_GP_HEADER);
 		
 		Map<Integer, String> formAttrValAgeMinMap = getFormAttributeValues(chirdlutilbackportsService, ageMinAttr.getFormAttributeId(), 
 			locationId, locationTagId);
@@ -676,6 +678,8 @@ public class ChicaServlet extends HttpServlet {
 			locationId, locationTagId);
 		Map<Integer, String> formAttrValAgeMaxUnitsMap = getFormAttributeValues(chirdlutilbackportsService, ageMaxUnitsAttr.getFormAttributeId(), 
 			locationId, locationTagId);
+		Map<Integer, String> formAttrValDisplayGpHeaderMap = getFormAttributeValues(chirdlutilbackportsService, displayGpHeader.getFormAttributeId(), 
+			locationId, locationTagId);
 		for (FormAttributeValue attribute : attributes) {
 			if (attribute.getValue().equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE) && 
 					attribute.getLocationId().equals(locationId) && 
@@ -683,6 +687,7 @@ public class ChicaServlet extends HttpServlet {
 				Form form = formService.getForm(attribute.getFormId());
 				Integer formId = form.getFormId();
 				if (!form.getRetired()) {
+					log.info("FORM IDD FOR JIT:::"+formId);
 					FormDisplay formDisplay = new FormDisplay();
 					formDisplay.setFormName(form.getName());
 					formDisplay.setFormId(form.getFormId());
@@ -690,8 +695,19 @@ public class ChicaServlet extends HttpServlet {
 						displayNameAttr, locationTagId, locationId);
 					if (attributeValue == null || attributeValue.getValue() == null) {
 						formDisplay.setDisplayName(form.getName());
+						//formDisplay.setDisplayFrmGp(form.getDi=);
 					} else {
 						formDisplay.setDisplayName(attributeValue.getValue());
+						formDisplay.setDisplayFrmGp(attributeValue.getValue());
+					}
+					
+					String displayGroupHeader = formAttrValDisplayGpHeaderMap.get(formId);
+					if (displayGroupHeader == null || displayGroupHeader.trim().length() == 0) {
+						//printableJits.add(formDisplay);
+						//continue;
+					}
+					if (formId == 207 || formId == 206) {
+						System.out.println(formId);
 					}
 					
 					String ageMin = formAttrValAgeMinMap.get(formId);
@@ -755,14 +771,17 @@ public class ChicaServlet extends HttpServlet {
 		if (defaultOutputType == null) {
 			defaultOutputType = "";
 		}
-		
+		int i=0;
 		for (FormDisplay formDisplay: printableJits) {
+			log.info("COUNT:::"+formDisplay.getFormId()+" Countingg "+ i++);
 			pw.write(XML_FORCE_PRINT_JIT_START);
 			ServletUtil.writeTag(XML_FORM_ID, formDisplay.getFormId(), pw);
 			ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(formDisplay.getDisplayName()), pw);
+			ServletUtil.writeTag(XML_DISPLAY_FORM_GP, ServletUtil.escapeXML(formDisplay.getDisplayFrmGp()), pw);
 			FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
 				outputTypeAttr, locationTagId, locationId);
 			pw.write(XML_OUTPUT_TYPE_START);
+			log.info("formDisplay.getFormId():::"+formDisplay.getFormId()+" .. name :: "+formDisplay.getDisplayName());
 			if (outputType != null && outputType.getValue() != null && !outputType.getValue().isEmpty()) {
 				pw.write(outputType.getValue());
 			} else {

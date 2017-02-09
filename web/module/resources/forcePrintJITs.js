@@ -273,11 +273,12 @@ function forcePrint_parseAvailableForms(responseXML) {
     	$(".force-print-forms-container").hide();
     	$(".force-print-form-container").hide();
     	$(".force-print-no-forms").show();
-    } else {
+    } else {alert($(responseXML).find("forcePrintJIT").text());
     	$(responseXML).find("forcePrintJIT").each(function () {
     		foundForms = true;
         	var formName = $(this).find("displayName").text();
             var formId = $(this).find("formId").text();
+			var formGroup = $(this).find("displayformGroup").text(); alert(formGroup);
             var outputType = $(this).find("outputType").text();
             $('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
         });

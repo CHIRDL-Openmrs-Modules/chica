@@ -4099,6 +4099,20 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
   			(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
          </sql>
 	</diff>
+	<diff>
+        <version>1.8.7</version>  
+        <author>Seema Sarala</author>  
+        <date>February 02, 2017</date>  
+        <description>  
+        	Add new form attribute 'displayGroupHeader' for grouping forms in Print JIT list
+        </description>  
+        <sql> 
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('displayGroupHeader', 'Header for grouping forms in Print JIT list.');
+        </sql>
+    </diff>
 </sqldiff>
 
 
