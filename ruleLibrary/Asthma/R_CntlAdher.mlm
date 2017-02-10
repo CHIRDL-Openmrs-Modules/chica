@@ -36,7 +36,7 @@ Logic:
 If (mode = PRODUCE) then
 
 If (StatusKnown = True) then conclude False;
-If (CurrentStatus = Persistent-controller) OR (CurrentStatus = Persistent-non-adherent) then conclude True;
+If (CurrentStatus = "Persistent-controller") OR (CurrentStatus = "Persistent-non-adherent") then conclude True;
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 endif
