@@ -278,7 +278,8 @@ function forcePrint_parseAvailableForms(responseXML) {
     		foundForms = true;
         	var formName = $(this).find("displayName").text();
             var formId = $(this).find("formId").text();
-			var formGroup = $(this).find("displayformGroup").text(); alert(formGroup);
+			var formGroup = $(this).find("displayFrmGp").text(); if (formId == 207) {alert("frm::"+formGroup);}
+			//var formGroup1 = $(this).find("displayGroupHeader").text(); if (formGroup1 != null) {alert("frm gp 1::"+formGroup1);}
             var outputType = $(this).find("outputType").text();
             $('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
         });

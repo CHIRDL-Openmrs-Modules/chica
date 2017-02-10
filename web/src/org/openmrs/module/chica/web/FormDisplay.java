@@ -22,7 +22,6 @@ public class FormDisplay implements Comparable{
 	private String formName = null;
 	private String displayName = null;
 	private Integer formId = null;
-	private String displayFrmGp = null;
 	
     /**
      * @return the formName
@@ -75,20 +74,5 @@ public class FormDisplay implements Comparable{
      */
     public void setFormId(Integer formId) {
     	this.formId = formId;
-    }
-    
-
-    /**
-     * @return the displayFrmGp
-     */
-    public String getDisplayFrmGp() {
-    	return this.displayFrmGp;
-    }
-	
-    /**
-     * @param displayName the displayName to set
-     */
-    public void setDisplayFrmGp(String displayFrmGp) {
-    	this.displayFrmGp = displayFrmGp;
     }
 }
