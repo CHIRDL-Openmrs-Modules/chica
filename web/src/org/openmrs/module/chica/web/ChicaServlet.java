@@ -141,6 +141,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_FORCE_PRINT_JIT_START = "<forcePrintJIT>";
 	private static final String XML_FORCE_PRINT_JIT_END = "</forcePrintJIT>";
 	private static final String XML_DISPLAY_NAME = "displayName";
+	private static final String XML_DISPLAY_GROUP_START = "<displayFrmGp>";
+	private static final String XML_DISPLAY_GROUP_END = "</displayFrmGp>";
 	private static final String XML_DISPLAY_FORM_GP = "displayFrmGp";
 	private static final String XML_PATIENT_ROWS_START = "<patientRows>";
 	private static final String XML_PATIENT_ROWS_END = "</patientRows>";
@@ -668,7 +670,7 @@ public class ChicaServlet extends HttpServlet {
 		FormAttribute ageMaxUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS);
 		FormAttribute displayNameAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME);
 		FormAttribute outputTypeAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE);
-		FormAttribute displayGpHeader = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTRIBUTE_DISPLAY_GP_HEADER);
+		FormAttribute displayGpHeaderAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTRIBUTE_DISPLAY_GP_HEADER);
 		
 		Map<Integer, String> formAttrValAgeMinMap = getFormAttributeValues(chirdlutilbackportsService, ageMinAttr.getFormAttributeId(), 
 			locationId, locationTagId);
@@ -678,8 +680,8 @@ public class ChicaServlet extends HttpServlet {
 			locationId, locationTagId);
 		Map<Integer, String> formAttrValAgeMaxUnitsMap = getFormAttributeValues(chirdlutilbackportsService, ageMaxUnitsAttr.getFormAttributeId(), 
 			locationId, locationTagId);
-		Map<Integer, String> formAttrValDisplayGpHeaderMap = getFormAttributeValues(chirdlutilbackportsService, displayGpHeader.getFormAttributeId(), 
-			locationId, locationTagId);
+		//Map<Integer, String> formAttrValDisplayGpHeaderMap = getFormAttributeValues(chirdlutilbackportsService, displayGpHeaderAttr.getFormAttributeId(), 
+			//locationId, locationTagId);
 		for (FormAttributeValue attribute : attributes) {
 			if (attribute.getValue().equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE) && 
 					attribute.getLocationId().equals(locationId) && 
@@ -695,20 +697,17 @@ public class ChicaServlet extends HttpServlet {
 						displayNameAttr, locationTagId, locationId);
 					if (attributeValue == null || attributeValue.getValue() == null) {
 						formDisplay.setDisplayName(form.getName());
-						//formDisplay.setDisplayFrmGp(form.getDi=);
 					} else {
 						formDisplay.setDisplayName(attributeValue.getValue());
-						formDisplay.setDisplayFrmGp(attributeValue.getValue());
 					}
 					
-					String displayGroupHeader = formAttrValDisplayGpHeaderMap.get(formId);
-					if (displayGroupHeader == null || displayGroupHeader.trim().length() == 0) {
-						//printableJits.add(formDisplay);
-						//continue;
+					/*String displayGroupHeader = formAttrValDisplayGpHeaderMap.get(formId);
+					if (displayGroupHeader != null && displayGroupHeader.trim().length() > 0) {
+						//***formDisplay.setDisplayFrmGp(displayGroupHeader);
 					}
 					if (formId == 207 || formId == 206) {
 						System.out.println(formId);
-					}
+					}*/
 					
 					String ageMin = formAttrValAgeMinMap.get(formId);
 					if (ageMin == null || ageMin.trim().length() == 0) {
@@ -777,9 +776,19 @@ public class ChicaServlet extends HttpServlet {
 			pw.write(XML_FORCE_PRINT_JIT_START);
 			ServletUtil.writeTag(XML_FORM_ID, formDisplay.getFormId(), pw);
 			ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(formDisplay.getDisplayName()), pw);
-			ServletUtil.writeTag(XML_DISPLAY_FORM_GP, ServletUtil.escapeXML(formDisplay.getDisplayFrmGp()), pw);
+			//ServletUtil.writeTag(XML_DISPLAY_FORM_GP, ServletUtil.escapeXML(formDisplay.getDisplayFrmGp()), pw);
 			FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
 				outputTypeAttr, locationTagId, locationId);
+			FormAttributeValue displayGpHeader = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
+				displayGpHeaderAttr, locationTagId, locationId);
+			pw.write(XML_DISPLAY_GROUP_START);
+			
+			if (displayGpHeader != null && displayGpHeader.getValue() != null && !displayGpHeader.getValue().isEmpty()) {
+				pw.write(displayGpHeader.getValue());
+			} else {
+				//pw.write(defaultOutputType);
+			}
+			pw.write(XML_DISPLAY_GROUP_END);
 			pw.write(XML_OUTPUT_TYPE_START);
 			log.info("formDisplay.getFormId():::"+formDisplay.getFormId()+" .. name :: "+formDisplay.getDisplayName());
 			if (outputType != null && outputType.getValue() != null && !outputType.getValue().isEmpty()) {
@@ -787,7 +796,6 @@ public class ChicaServlet extends HttpServlet {
 			} else {
 				pw.write(defaultOutputType);
 			}
-			
 			pw.write(XML_OUTPUT_TYPE_END);
 			pw.write(XML_FORCE_PRINT_JIT_END);
 		}
