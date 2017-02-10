@@ -34,7 +34,7 @@ Priority: 357;;
 Logic:
 If (mode = PRODUCE) then
 
-If (CurrentStatus = Intermittent) OR (CurrentStatus = Persistent-controller) OR (CurrentStatus = Persistent-no-controller) OR (CurrentStatus = Persistent-non-adherent) then conclude True;
+If (CurrentStatus = Intermittent) OR (CurrentStatus = "Persistent-controller") OR (CurrentStatus = "Persistent-no-controller") OR (CurrentStatus = "Persistent-non-adherent") then conclude True;
 Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
 endif
