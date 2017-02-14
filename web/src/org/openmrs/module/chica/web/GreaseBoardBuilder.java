@@ -370,13 +370,15 @@ public class GreaseBoardBuilder {
 					row.setStatus(ChirdlUtilConstants.PWS_READY_AWAITING_VITALS);
 				} else {
 					List<PatientState> psfWaitForSubmissionStates = psfAndVitalsStatesMap.get(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
-					row.setStatus(ChirdlUtilConstants.PWS_READY_AWAITING_PSF); 
-					for (PatientState psfState : psfWaitForSubmissionStates) {
-			    		if (psfState.getEndTime() != null) {
-			    			row.setStatus(ChirdlUtilConstants.PWS_READY);
-			    			return;
-				    	} 
-			    	}
+					row.setStatus(ChirdlUtilConstants.PWS_READY_AWAITING_PSF);
+					if (psfWaitForSubmissionStates != null) {
+						for (PatientState psfState : psfWaitForSubmissionStates) {
+				    		if (psfState.getEndTime() != null) {
+				    			row.setStatus(ChirdlUtilConstants.PWS_READY);
+				    			return;
+					    	} 
+				    	}
+					}
 				}
 			} else {
 				row.setStatusColor(WAIT_COLOR);
