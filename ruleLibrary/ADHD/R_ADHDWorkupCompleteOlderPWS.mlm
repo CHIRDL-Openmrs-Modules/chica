@@ -51,24 +51,24 @@ If ('NegativePredominantlyInattentiveSubtype' is in ParentAssessmentScale) AND (
 If ('NegativePredominantlyInattentiveSubtype' is in TeacherAssessmentScale) AND ('NegativePredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || = " NEGATIVE for ADHD,";
 
 
-If ('PredominantlyInattentiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 ||= "Predominantly Inattentive,";
-If ('PredominantlyHyperactiveImpulsiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 ||= "Pred. Hyperactive/Impulsive,";
+If ('PredominantlyInattentiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || = "Predominantly Inattentive,";
+If ('PredominantlyHyperactiveImpulsiveSubtype' is in ParentAssessmentScale) then || ParentPrompt1 || = "Pred. Hyperactive/Impulsive,";
 If ('ADHDCombinedInattentionHyperactivity' is in ParentAssessmentScale) then || ParentPrompt1 || = " ADHD Comb Inattention/Hyper,";
 
-If ('NegativeOppositionalDefiantDisorderScreen' is in ParentAssessmentScale) AND ('NegativeConductDisorderScreen' is in ParentAssessmentScale) AND ('NegativeAnxietyDepressionScreen' is in ParentAssessmentScale) then || ParentPrompt2 ||= "none";
+If ('NegativeOppositionalDefiantDisorderScreen' is in ParentAssessmentScale) AND ('NegativeConductDisorderScreen' is in ParentAssessmentScale) AND ('NegativeAnxietyDepressionScreen' is in ParentAssessmentScale) then || ParentPrompt2 || = "none";
 
-If ('OppositionalDefiantDisorderScreen' is in ParentAssessmentScale) then || ParentPrompt2 ||= "Opp. Defiant,";
+If ('OppositionalDefiantDisorderScreen' is in ParentAssessmentScale) then || ParentPrompt2 || = "Opp. Defiant,";
 If ('ConductDisorderScreen' is in ParentAssessmentScale) then || ParentPrompt3 || ="Conduct D/O,";
 If ('AnxietyDepressionScreen' is in ParentAssessmentScale) then || ParentPrompt4 || ="Anx/Dep,";
 
-If ('PredominantlyInattentiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || ="Predominantly Inattentive Subtype,";
-If ('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || ="Predominantly Hyperactive/Impulsive Subtype,";
+If ('PredominantlyInattentiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || = "Predominantly Inattentive Subtype,";
+If ('PredominantlyHyperactiveImpulsiveSubtype' is in TeacherAssessmentScale) then || TeacherPrompt1 || = "Predominantly Hyperactive/Impulsive Subtype,";
 If ('ADHDCombinedInattentionHyperactivity' is in TeacherAssessmentScale) then || TeacherPrompt1 || = " ADHD Combined Inattention/Hyperactivity,";
 
-If ('NegativeOppositionalDefiantDisorderScreen' is in ParentAssessmentScale) AND ('NegativeAnxietyDepressionScreen' is in TeacherAssessmentScale) then || TeacherPrompt2 ||= "none";
+If ('NegativeOppositionalDefiantDisorderScreen' is in ParentAssessmentScale) AND ('NegativeAnxietyDepressionScreen' is in TeacherAssessmentScale) then || TeacherPrompt2 || = "none";
 
-If ('OppositionalDefiantDisorderScreen' is in TeacherAssessmentScale) then || TeacherPrompt2 ||= "Oppositional Defiant,";
-If ('AnxietyDepressionScreen' is in TeacherAssessmentScale) then || TeacherPrompt3 ||= "Anxiety/Depression,";
+If ('OppositionalDefiantDisorderScreen' is in TeacherAssessmentScale) then || TeacherPrompt2 || = "Oppositional Defiant,";
+If ('AnxietyDepressionScreen' is in TeacherAssessmentScale) then || TeacherPrompt3 || = "Anxiety/Depression,";
 endif
 
 If (mode = PRODUCE) then

@@ -44,7 +44,7 @@ If (mode = PRODUCE) then
 If  (VisitType = SickVisit) then conclude false;
 
 If (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred) OR (CurrentStatus = no) OR (ChronicCareStatus = Chronic_Care) then conclude False;
-If (Target = Target_Met) AND ('Medication' is in Meds) AND SideEffects=no then conclude True;
+If (Target = Target_Met) AND ('Medication' is in Meds) AND SideEffects="no" then conclude True;
 If (Target = Target_Met) AND ('Medication' is in Meds) AND SideEffects=NULL then conclude True;
 
 Else conclude False;
