@@ -119,6 +119,24 @@ public class VendorImpl implements Vendor {
 	public String getPassword() {
 		String password = request.getParameter(PARAM_PASSWORD);
 		if (password == null || password.trim().length() == 0) {
+			// Check to see if it's in the username field
+			String username = request.getParameter(PARAM_USERNAME);
+			if (username != null && username.trim().length() > 0) {
+				int passwordIndex = username.indexOf("&password=");
+				if (passwordIndex >= 0) {
+					// Get the password from the username
+					password = username.substring(passwordIndex + "&password=".length(), username.length());
+					// Replace %2F with forward slash
+					password = password.replaceAll("%2F", "/");
+					// Replace %3D with =
+					password = password.replaceAll("%3D", "=");
+					// Replace %2B with +
+					password = password.replaceAll("%2B", "+");
+				}
+			}
+		}
+		
+		if (password == null || password.trim().length() == 0) {
 			log.error("No " + PARAM_PASSWORD + " parameter found in HTTP request.");
 			return null;
 		}
@@ -139,6 +157,16 @@ public class VendorImpl implements Vendor {
 		if (username == null || username.trim().length() == 0) {
 			log.error("No " + PARAM_USERNAME + " parameter found in HTTP request.");
 			return null;
+		}
+		
+		int passwordIndex = username.indexOf("&password");
+		if (passwordIndex >= 0) {
+			// Remove the password from the username
+			username = username.substring(0, passwordIndex);
+			// Replace %2F with forward slash
+			username = username.replaceAll("%2F", "/");
+			// Replace %3D with =
+			username = username.replaceAll("%3D", "=");
 		}
 		
 		String key = getEncryptionKey();
