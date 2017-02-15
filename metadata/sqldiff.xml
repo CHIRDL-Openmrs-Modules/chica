@@ -4164,7 +4164,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
     <diff>
         <version>1.9.1</version>
         <author>David Ely</author>
-        <date>February, 20 2017</date>
+        <date>February, 15 2017</date>
         <description>
             CHICA-937 Remove old scheduled tasks.
         </description>
@@ -4192,6 +4192,19 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 
 			Delete From scheduler_task_config
 			Where name = 'CheckinProcessor';
+        </sql>
+    </diff>
+    <diff>
+    <version>1.9.2</version>
+        <author>David Ely</author>
+        <date>February 15, 2017</date>
+        <description>
+            CHICA-929 Update global property to turn off case sensitive searches
+        </description>
+        <sql>
+           	Update global_property
+			Set property_value = 'false'
+			Where property = 'search.caseSensitiveDatabaseStringComparison';
         </sql>
     </diff>
 </sqldiff>
