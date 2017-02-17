@@ -48,7 +48,7 @@
                     </tr>
                     <tr>
                         <td align="right" style="width: 80px;">Language:</td>
-                        <td align="left" style="width: 170px;"><c:out value="${Language}"/>*</td>
+                        <td align="left" style="width: 170px;"><c:out value="${Language}"/></td>
                     </tr>
                 </tbody>
             </table>

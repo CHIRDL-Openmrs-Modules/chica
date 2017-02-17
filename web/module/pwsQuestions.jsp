@@ -11,30 +11,26 @@
         <table width="1002" border="0" class="pws_prompts_table">
             <tbody>
                 <tr>
-                    <td>
-                        <c:choose>
-                            <c:when test="${empty Prompt1_Text}">
-                                <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td width="500" valign="top" class="pws_prompt_text">
-                                    <c:out value="${Prompt1_Text}" />
-                                </td>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td width="500" valign="top" class="pws_prompt_text left_border">
-                        <c:choose>
-                            <c:when test="${empty Prompt2_Text}">
-                                <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td width="500" valign="top" class="pws_prompt_text">
-                                    <c:out value="${Prompt2_Text}" />
-                                </td>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
+                    <c:choose>
+                        <c:when test="${empty Prompt1_Text}">
+                            <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td width="500" valign="top" class="pws_prompt_text">
+                                <c:out value="${Prompt1_Text}" />
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${empty Prompt2_Text}">
+                            <td width="500" valign="top" class="pws_prompt_text left_border">&nbsp;</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td width="500" valign="top" class="pws_prompt_text left_border">
+                                <c:out value="${Prompt2_Text}" />
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
                 <tr>
                     <td valign="top">
@@ -251,30 +247,26 @@
         <table width="1002" border="0" class="pws_prompts_table">
             <tbody>
                 <tr>
-                    <td width="500" valign="top" class="pws_prompt_text">
-                        <c:choose>
-                            <c:when test="${empty Prompt3_Text}">
-                                <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td width="500" valign="top" class="pws_prompt_text">
-                                    <c:out value="${Prompt3_Text}" />
-                                </td>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td width="500" valign="top" class="pws_prompt_text left_border">
-                        <c:choose>
-                            <c:when test="${empty Prompt4_Text}">
-                                <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td width="500" valign="top" class="pws_prompt_text">
-                                    <c:out value="${Prompt4_Text}" />
-                                </td>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
+                    <c:choose>
+                        <c:when test="${empty Prompt3_Text}">
+                            <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td width="500" valign="top" class="pws_prompt_text">
+                                <c:out value="${Prompt3_Text}" />
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${empty Prompt4_Text}">
+                            <td width="500" valign="top" class="pws_prompt_text left_border">&nbsp;</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td width="500" valign="top" class="pws_prompt_text left_border">
+                                <c:out value="${Prompt4_Text}" />
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
                 <tr>
                     <td valign="top">
@@ -469,7 +461,6 @@
                                         </c:choose>
                                     </td>
                                     <td width="249" valign="top" class="pws_leaf_cell">
-                                        <input type="checkbox">
                                         <c:choose>
                                             <c:when test="${empty Answer4_6}">
                                                 <input type="checkbox" name="sub_Choice4" value="6" disabled/>
@@ -492,30 +483,26 @@
         <table width="1002" border="0" class="pws_prompts_table">
             <tbody>
                 <tr>
-                    <td width="500" valign="top" class="pws_prompt_text">
-                        <c:choose>
-                            <c:when test="${empty Prompt5_Text}">
-                                <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td width="500" valign="top" class="pws_prompt_text">
-                                    <c:out value="${Prompt5_Text}" />
-                                </td>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td width="500" valign="top" class="pws_prompt_text left_border">
-                        <c:choose>
-                            <c:when test="${empty Prompt6_Text}">
-                                <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
-                            </c:when>
-                            <c:otherwise>
-                                <td width="500" valign="top" class="pws_prompt_text">
-                                    <c:out value="${Prompt6_Text}" />
-                                </td>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
+                    <c:choose>
+                        <c:when test="${empty Prompt5_Text}">
+                            <td width="500" valign="top" class="pws_prompt_text">&nbsp;</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td width="500" valign="top" class="pws_prompt_text">
+                                <c:out value="${Prompt5_Text}" />
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${empty Prompt6_Text}">
+                            <td width="500" valign="top" class="pws_prompt_text left_border">&nbsp;</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td width="500" valign="top" class="pws_prompt_text left_border">
+                                <c:out value="${Prompt6_Text}" />
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
                 <tr>
                     <td valign="top">
@@ -536,7 +523,6 @@
                                         </c:choose>
                                     </td>
                                     <td width="249" valign="top" class="pws_leaf_cell">
-                                        <input type="checkbox">
                                         <c:choose>
                                             <c:when test="${empty Answer5_2}">
                                                 <input type="checkbox" name="sub_Choice5" value="2" disabled/>
@@ -558,7 +544,6 @@
                             <tbody>
                                 <tr>
                                     <td width="249" valign="top" class="pws_leaf_cell">
-                                        <input type="checkbox">
                                         <c:choose>
                                             <c:when test="${empty Answer6_1}">
                                                 <input type="checkbox" name="sub_Choice6" value="1" disabled/>
@@ -608,7 +593,6 @@
                                         </c:choose>
                                     </td>
                                     <td width="249" valign="top" class="pws_leaf_cell">
-                                        <input type="checkbox">
                                         <c:choose>
                                             <c:when test="${empty Answer5_4}">
                                                 <input type="checkbox" name="sub_Choice5" value="4" disabled/>
@@ -630,7 +614,6 @@
                             <tbody>
                                 <tr>
                                     <td width="249" valign="top" class="pws_leaf_cell">
-                                        <input type="checkbox">
                                         <c:choose>
                                             <c:when test="${empty Answer6_3}">
                                                 <input type="checkbox" name="sub_Choice6" value="3" disabled/>
