@@ -122,7 +122,8 @@
 	                        </div>
                         </div>
 			            <div class="recommendedHandoutContainer">
-				           <object class="recommendedHandoutObject" data="" onreadystatechange="return formLoaded();" onload="formLoaded();" type="application/pdf">
+			            <!-- CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page. -->
+				           <object class="recommendedHandoutObject" onreadystatechange="return formLoaded();" onload="formLoaded();">
 				              <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
 				              <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
 				           </object>

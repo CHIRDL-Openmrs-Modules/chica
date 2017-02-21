@@ -21,7 +21,8 @@
              </div>
          </div>
          <div class="force-print-form-container">
-            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();" type="application/pdf">
+         	<!-- CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page. -->
+            <object class="force-print-form-object" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
                <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
                <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
             </object>

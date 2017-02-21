@@ -5,6 +5,7 @@ var previousRecommendedHandoutSelection = -1;
 var timeoutDialog = null;
 var keepAliveURL = ctx + "/moduleServlet/chica/chica?action=keepAlive";
 var saveDraftURL = chicaServletUrl + "action=saveFormDraft";
+var type = "application/pdf";
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -51,6 +52,7 @@ function combineSelected(selectedForms)
 	var newobj = obj.clone();
 	obj.remove();
 	newobj.attr("data", newUrl);
+	newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
 	$(".recommendedHandoutContainer").show();
 	
 	container.append(newobj);
@@ -315,7 +317,10 @@ $(function() {
         	var container = obj.parent();
         	var newobj = obj.clone();
         	obj.remove();
-        	newobj.attr("data", "");
+        	
+        	// CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page.
+			newobj.removeAttr("data");
+			newobj.removeAttr("type");
         	container.append(newobj);
     	},
     	close: function() { 
@@ -506,6 +511,7 @@ $(function() {
 	    	var newobj = obj.clone();
 	    	obj.remove();
 	    	newobj.attr("data", newUrl);
+	    	newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
 	    	$(".recommendedHandoutContainer").show();
 	    	
 	    	container.append(newobj);
@@ -606,6 +612,7 @@ function displayFirstJIT()
 		var newobj = obj.clone();
 		obj.remove();
 		newobj.attr("data", newUrl);
+		newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
 		$(".recommendedHandoutContainer").show();;
 		
 		container.append(newobj);
