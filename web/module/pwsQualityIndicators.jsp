@@ -4,7 +4,7 @@
             <h4 class="logo">Quality Indicators</h4>
         </a>
         <a href="#">
-            <div class="ui-icon ui-icon-minusthick"></div>
+            <div class="ui-icon ui-icon-minusthick white"></div>
         </a>
     </header>
     <section class="psf_results" id="quality_indicators">

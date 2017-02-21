@@ -200,8 +200,8 @@ $(function() {
         ]
     });
 	
-	updateCount("historyAndPhysicalText");
-	updateCount("assessmentAndPlanText");
+//	updateCount("historyAndPhysicalText");
+//	updateCount("assessmentAndPlanText");
 	$("#historyAndPhysicalText").keyup(function() {
 		updateCount('historyAndPhysicalText');
 	});
@@ -543,6 +543,137 @@ $(function() {
     		$("object").show();
     	});
     }
+	$("#patient_header a").click(function(event) {
+		if ($("#patient_name").is(":visible")) {
+			$("#patient_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#patient_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#patient_name").slideUp("slow", function() {
+				if (!$("#handouts").is(":visible")) {
+					$("#patient_container").addClass("patient_container_collapse");
+					$("#handouts_container").addClass("patient_container_collapse");
+					$("#patient_container").animate({
+						height: '30px'
+					}, 500);
+					$("#handouts_container").animate({
+						height: '30px'
+					}, 500);
+				}
+				$("#patient_header").addClass("round_corners");
+  			});
+		} else {
+			$("#patient_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#patient_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#patient_name").slideDown("slow");
+			$("#patient_header").removeClass("round_corners");
+			$("#patient_container").removeClass("patient_container_collapse");
+			$("#handouts_container").removeClass("patient_container_collapse");
+			$("#patient_container").animate({
+						height: '180px'
+					}, 500);
+					$("#handouts_container").animate({
+						height: '180px'
+					}, 500);
+		}
+    	event.preventDefault();
+	});
+	
+	$("#handouts_header a").click(function(event) {
+		if ($("#handouts").is(":visible")) {
+			$("#handouts_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#handouts_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#handouts").slideUp("slow", function() {
+				if (!$("#patient_name").is(":visible")) {
+					$("#patient_container").addClass("patient_container_collapse");
+					$("#handouts_container").addClass("patient_container_collapse");
+					$("#patient_container").animate({
+						height: '30px'
+					}, 500);
+					$("#handouts_container").animate({
+						height: '30px'
+					}, 500);
+				}
+				$("#handouts_header").addClass("round_corners");
+  			});
+		} else {
+			$("#handouts_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#handouts_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#handouts").slideDown("slow");
+			$("#handouts_header").removeClass("round_corners");
+			$("#patient_container").removeClass("patient_container_collapse");
+			$("#handouts_container").removeClass("patient_container_collapse");
+			$("#patient_container").animate({
+						height: '180px'
+					}, 500);
+					$("#handouts_container").animate({
+						height: '180px'
+					}, 500);
+		}
+    	event.preventDefault();
+	});
+	
+	$("#vitals_header a").click(function(event) {
+		if ($("#vitals").is(":visible")) {
+			$("#vitals_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#vitals_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#vitals").slideUp("slow", function() {
+				$("#vitals_header").addClass("round_corners");
+  			});
+		} else {
+			$("#vitals_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#vitals_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#vitals").slideDown("slow");
+			$("#vitals_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
+	
+	$("#quality_indicators_header a").click(function(event) {
+		if ($("#quality_indicators").is(":visible")) {
+			$("#quality_indicators_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#quality_indicators_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#quality_indicators").slideUp("slow", function() {
+				$("#quality_indicators_header").addClass("round_corners");
+  			});
+		} else {
+			$("#quality_indicators_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#quality_indicators_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#quality_indicators").slideDown("slow");
+			$("#quality_indicators_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
+	
+	$("#psf_results_header a").click(function(event) {
+		if ($("#psf_results").is(":visible")) {
+			$("#psf_results_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#psf_results_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#psf_results").slideUp("slow", function() {
+				$("#psf_results_header").addClass("round_corners");
+  			});
+		} else {
+			$("#psf_results_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#psf_results_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#psf_results").slideDown("slow");
+			$("#psf_results_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
+	
+	$("#pws_prompts_header a").click(function(event) {
+		if ($("#pws_prompts").is(":visible")) {
+			$("#pws_prompts_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#pws_prompts_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#pws_prompts").slideUp("slow", function() {
+				$("#pws_prompts_header").addClass("round_corners");
+  			});
+		} else {
+			$("#pws_prompts_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#pws_prompts_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#pws_prompts").slideDown("slow");
+			$("#pws_prompts_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
   });
  
 

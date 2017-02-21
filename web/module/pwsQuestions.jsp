@@ -4,7 +4,7 @@
             <h4 class="logo">Physician Prompts</h4>
         </a>
         <a href="#">
-            <div class="ui-icon ui-icon-minusthick"></div>
+            <div class="ui-icon ui-icon-minusthick white"></div>
         </a>
     </header>
     <section class="pws_prompts" id="pws_prompts">

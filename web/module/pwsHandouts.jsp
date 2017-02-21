@@ -4,7 +4,7 @@
             <h4 class="logo">Handouts</h4>
         </a>
         <a href="#">
-            <div class="ui-icon ui-icon-minusthick"></div>
+            <div class="ui-icon ui-icon-minusthick white"></div>
         </a>
     </header>
     <section class="fixed_height_section" id="handouts">
