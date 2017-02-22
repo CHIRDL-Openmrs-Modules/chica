@@ -266,6 +266,7 @@ function forcePrint_handleGetAvailableFormsError(xhr, textStatus, error) {
 
 function forcePrint_parseAvailableForms(responseXML) {
 	var foundForms = false;
+
 	// no matches returned
     if (responseXML === null) {
     	$(".force-print-forms-loading").hide();
@@ -273,16 +274,55 @@ function forcePrint_parseAvailableForms(responseXML) {
     	$(".force-print-forms-container").hide();
     	$(".force-print-form-container").hide();
     	$(".force-print-no-forms").show();
-    } else {alert($(responseXML).find("forcePrintJIT").text());
+    } else {//alert($(responseXML).find("forcePrintJIT").text());
+	
+		var map = {}; //new Object(); 
+		var formName = null;
+		var formId = null;
+		var outputType = null;
     	$(responseXML).find("forcePrintJIT").each(function () {
     		foundForms = true;
-        	var formName = $(this).find("displayName").text();
-            var formId = $(this).find("formId").text();
-			var formGroup = $(this).find("displayFrmGp").text(); if (formId == 207) {alert("frm::"+formGroup);}
-			//var formGroup1 = $(this).find("displayGroupHeader").text(); if (formGroup1 != null) {alert("frm gp 1::"+formGroup1);}
-            var outputType = $(this).find("outputType").text();
-            $('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+        	formName = $(this).find("displayName").text();
+            formId = $(this).find("formId").text();
+			var formGroup = $(this).find("displayFrmGp").text(); 
+            outputType = $(this).find("outputType").text();
+	
+			if (formGroup != null && formGroup.trim()!= "") {		
+				if (!( formGroup in map)) {
+					var array = [];
+					array.push(formName);	
+					map[formGroup] = array;
+				} else {
+					map[formGroup].push(formName);
+				}
+			}
+			if (formGroup == null | formGroup.trim().length == 0) {
+				$('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+			}
         });
+
+		if (map != null) {// && map.length > 0 ){
+			var keys = [];
+			$('.accordion').remove();
+			$('.panel').remove();
+
+			for (var frmGroup in map) {
+				if (frmGroup != null) {
+					
+					keys.push(frmGroup);
+					var frms = map[frmGroup]; 
+					//alert("KEY::"+frmGroup);
+					
+					$('<button id="test" class="accordion">' + frmGroup + '</button><div id="formGp" class="panel"></div>').appendTo($('#force-print-form-list'));
+					for (i = 0; i < frms.length; i++) { 
+						$('.panel:last').append('<li id="' + formId + '" title="' + frms[i] + '" outputType="' + outputType + '" class="ui-widget-content">' + frms[i] + '</li>');
+					}
+
+				}
+			}
+
+			togglePrintJITs();
+		}
     }
     
     $(".force-print-form-list").css({"max-width":"325px"});
@@ -294,15 +334,18 @@ function forcePrint_parseAvailableForms(responseXML) {
   		$(".force-print-forms-container").hide();
   		$(".force-print-no-forms").show();
   	}
+
   	$("#force-print-form-list").selectable({
-  	  selecting: function(e, ui) { // on select
+	  filter: "LI",
+  	  selecting: function(e, ui) { 
           var curr = $(ui.selecting.tagName, e.target).index(ui.selecting); // get selecting item index
-          if(e.shiftKey && previousForcePrintSelection > -1) { // if shift key was pressed and there is previous - select them all
-              $(ui.selecting.tagName, e.target).slice(Math.min(previousForcePrintSelection, curr), 1 + Math.max(previousForcePrintSelection, curr)).addClass('ui-selected');
-              previousForcePrintSelection = -1; // and reset prev
-          } else {
-        	  previousForcePrintSelection = curr; // othervise just save prev
-          }
+		  var tagName = ui.selecting.tagName;
+		  if(e.shiftKey && previousForcePrintSelection > -1) { // if shift key was pressed and there is previous - select them all
+			  $(ui.selecting.tagName, e.target).slice(Math.min(previousForcePrintSelection, curr), 1 + Math.max(previousForcePrintSelection, curr)).addClass('ui-selected');
+			  previousForcePrintSelection = -1; // and reset prev
+		  } else {
+			  previousForcePrintSelection = curr; // othervise just save prev
+		  }
         }
   	});
 
@@ -458,4 +501,22 @@ function updateForcePrintDimensions() {
     divHeight = $(".force-print-forms-container").height();
     $(".force-print-create-button-panel").css({"height":(divHeight - instructHeight - nameHeight - newDivHeight - 30) + "px"});
     hasUpdatedForcePrintDimensions = true;
+}
+
+
+
+function togglePrintJITs() {
+	var acc = document.getElementsByClassName("accordion");
+	var i;
+	for (i = 0; i < acc.length; i++) {
+	  acc[i].onclick = function() {
+		this.classList.toggle("active");
+		var panel = this.nextElementSibling;
+		if (panel.style.maxHeight){
+		  panel.style.maxHeight = null;
+		} else {
+		  panel.style.maxHeight = panel.scrollHeight + "px";
+		} 
+	  }
+	}
 }

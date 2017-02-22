@@ -145,3 +145,46 @@
 	min-height: 40px;
 	padding-top: 0.4em;
 }
+
+button.accordion {
+    background-color: #eee;
+    margin: 3px;
+    color: #444;
+    cursor: pointer;
+    padding: 0.4em;
+    width: 98%;
+    border: none;
+    text-align: left;
+    outline: none;
+    /*font-size: 14px; */
+    transition: 0.4s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	white-space: nowrap;   
+	font-weight: bold;		
+
+}
+
+button.accordion.active, button.accordion:hover {
+    background-color: #ddd;
+}
+
+button.accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+button.accordion.active:after {
+    content: "\2212";
+}
+
+div.panel {
+    max-height: 0;
+    overflow: hidden;
+	border: 0;
+	text-align: left;
+    transition: max-height 0.2s ease-out;
+}
