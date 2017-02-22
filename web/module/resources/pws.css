@@ -21,7 +21,7 @@ body {
 }
 
 /* Patient Container */
-.patient_container {
+.patient_container, .patient_information_container, .handouts_container {
     width: 30%;
     margin-left: auto;
     margin-right: auto;
@@ -30,8 +30,16 @@ body {
     padding: 2px;
     min-width: 500px;
     min-height:0px;
-    height: 180px;
+    height: 165px;
     max-width: 500px;
+}
+.patient_information_container {
+    width: 700px;
+    max-width: 700px;
+}
+.handouts_container {
+    min-width: 300px;
+    max-width: 300px;
 }
 .psf_container {
     margin-left: auto;
@@ -158,7 +166,7 @@ body {
     background-color: #b24926;
     padding-top: 15px;
     padding-bottom: 15px;
-    font-size: 15px;
+    font-size: 14px;
 }
 .page_container {
     width: 100%;
@@ -202,7 +210,7 @@ header a div {
     padding-top: 12px;
     height: 30px;
 }
-.logo {
+.logo, .handouts_logo {
     color: #fff;
     font-weight: bold;
     text-align: undefined;
@@ -211,6 +219,9 @@ header a div {
     float: left;
     margin-top: 8px;
     margin-left: 25px;
+}
+.handouts_logo {
+    width: 250px;
 }
 .patient_name_header {
     color: black;
@@ -251,10 +262,10 @@ header a div {
     padding-bottom: 10px;
     overflow: auto;
     width: 100%;
-    height: 130px;
+    height: 110px;
 }
 .handouts_buttons_container {
-    margin-top: 23px;
+    margin-top: 13px;
 }
 .left_border {
     border-left: 1px solid black;
@@ -310,4 +321,135 @@ a.icon-button span.ui-icon {
 
 .ui-icon.white { 
 	background-image: url(images/ui-icons_ffffff_256x240.png); 
+}
+.round_corners {
+	border-radius: 10px 10px 10px 10px;
+}
+
+#submitWaitDialog, #saveDraftWaitDialog {
+    border: 4px solid #FA8258;
+    text-align: center;
+}
+
+#formSelectionDialogContainer {
+	width: 100%;
+    height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    overflow-y: hidden;
+}
+
+#confirmText {
+    text-align:center;
+    color:#000;
+    padding-bottom:20px;
+}
+
+#submitWaitText {
+    text-align:center;
+    color:#000;
+}
+
+#formLoading {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+
+#formLoadingPanel {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 75px;
+    color: #000;
+}
+
+#formServerError { 
+    margin:0 auto;
+    text-align: center;
+    color: red;
+}
+
+#formServerErrorText {
+	height: 60px;
+	line-height: 60px;
+}
+
+#noForms {
+	text-align: center;
+    margin: 0 auto;
+    color: #000;
+}
+
+#recommendedHandoutsContainer {
+    text-align: center;
+    margin: 0 auto;
+    color: #000;
+    height: 96%;
+    width: 330px;
+    background: #cc9966;
+    float: left;
+    border-radius: 7px;
+    padding-top: 0px;
+}
+
+.recommendedHandoutsMultiselect {
+    color: #FFFFFF;
+    font-size: 0.7em;
+    margin-top: 4px;
+}
+
+.recommendedHandoutsFormListContainer {
+    width: 99%;
+    overflow-y:auto;
+}
+
+#recommendedHandoutsFormList .ui-selecting { 
+    background: #81F781; 
+    color: black;
+}
+
+#recommendedHandoutsFormList .ui-selected { 
+    background: #81F781; 
+    color: black; 
+}
+
+#recommendedHandoutsFormList { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0; 
+    width: 100%;
+    height: 100%;
+}
+
+#recommendedHandoutsFormList li { 
+    margin: 3px; 
+    padding: 0.4em;  
+    height: 18px; 
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.recommendedHandoutsCombineButtonPanel {
+    height: 15%;
+    padding-top: 0.4em;
+}
+
+.recommendedHandoutContainer {
+    height: 99%;
+    width: 550px;
+    float: left;
+    padding-left: 10px;
+    overflow-x:auto;
+}
+
+.recommendedHandoutObject {
+    width:550px;
+    height: 100%;
+    background-color:#F5FBEF;
+    float: left;
 }

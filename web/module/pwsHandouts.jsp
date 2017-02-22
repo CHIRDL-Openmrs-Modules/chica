@@ -1,7 +1,7 @@
-<div class="patient_container" id="handouts_container">
+<div class="handouts_container" id="handouts_container">
     <header id="handouts_header">
         <a href="">
-            <h4 class="logo">Handouts</h4>
+            <h4 class="handouts_logo">Handouts</h4>
         </a>
         <a href="#">
             <div class="ui-icon ui-icon-minusthick white"></div>

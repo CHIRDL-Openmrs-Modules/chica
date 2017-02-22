@@ -269,9 +269,9 @@ $(function() {
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
-        maxWidth: 100,
+        maxWidth: 175,
         maxHeight: 50,
-        width: 100,
+        width: 175,
         height: 50,
         show: {
             effect: "fade",
@@ -287,9 +287,9 @@ $(function() {
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
-        maxWidth: 100,
+        maxWidth: 175,
         maxHeight: 50,
-        width: 100,
+        width: 175,
         height: 50,
         show: {
             effect: "fade",
@@ -568,10 +568,10 @@ $(function() {
 			$("#patient_container").removeClass("patient_container_collapse");
 			$("#handouts_container").removeClass("patient_container_collapse");
 			$("#patient_container").animate({
-						height: '180px'
+						height: '165px'
 					}, 500);
 					$("#handouts_container").animate({
-						height: '180px'
+						height: '165px'
 					}, 500);
 		}
     	event.preventDefault();
@@ -583,12 +583,12 @@ $(function() {
 			$("#handouts_header div").addClass("ui-icon ui-icon-plusthick white");
     		$("#handouts").slideUp("slow", function() {
 				if (!$("#patient_name").is(":visible")) {
-					$("#patient_container").addClass("patient_container_collapse");
 					$("#handouts_container").addClass("patient_container_collapse");
-					$("#patient_container").animate({
+					$("#handouts_container").addClass("patient_container_collapse");
+					$("#handouts_container").animate({
 						height: '30px'
 					}, 500);
-					$("#handouts_container").animate({
+					$("#patient_container").animate({
 						height: '30px'
 					}, 500);
 				}
@@ -599,13 +599,13 @@ $(function() {
 			$("#handouts_header div").addClass("ui-icon ui-icon-minusthick white");
 			$("#handouts").slideDown("slow");
 			$("#handouts_header").removeClass("round_corners");
-			$("#patient_container").removeClass("patient_container_collapse");
 			$("#handouts_container").removeClass("patient_container_collapse");
-			$("#patient_container").animate({
-						height: '180px'
+			$("#handouts_container").removeClass("patient_container_collapse");
+			$("#handouts_container").animate({
+						height: '165px'
 					}, 500);
-					$("#handouts_container").animate({
-						height: '180px'
+					$("#patient_container").animate({
+						height: '165px'
 					}, 500);
 		}
     	event.preventDefault();
