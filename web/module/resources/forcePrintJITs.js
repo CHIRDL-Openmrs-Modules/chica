@@ -1,6 +1,7 @@
 var isChromeSafari = false;
 var previousForcePrintSelection = -1;
 var hasUpdatedForcePrintDimensions = false;
+var type = "application/pdf";
 $(function() {
 	$(".force-print-no-forms").hide();
 	isChromeSafari = forcePrint_checkForChromeSafari();
@@ -69,7 +70,10 @@ $(function() {
         	var container = obj.parent();
         	var newobj = obj.clone();
         	obj.remove();
-        	newobj.attr("data", "");
+        	
+        	// CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page.
+			newobj.removeAttr("data");
+			newobj.removeAttr("type");
         	container.append(newobj);
         },
         close: function(event, ui) { 
@@ -439,6 +443,7 @@ function forcePrint_parseForcePrintedForms(responseXML) {
     		var newobj = obj.clone();
     		obj.remove();
     		newobj.attr("data", newUrl);
+    		newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
     		newobj.on("load", function () {
     			$(".force-print-form-loading").hide();
     			$(".force-print-form-container").show();
