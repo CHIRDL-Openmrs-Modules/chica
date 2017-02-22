@@ -4,7 +4,7 @@
     <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/pws.css" type="text/css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/pwsEskenaziEpic.css" type="text/css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.css" />

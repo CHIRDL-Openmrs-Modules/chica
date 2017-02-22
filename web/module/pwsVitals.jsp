@@ -59,14 +59,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="right" style="width: 35;"><font color="red"><c:out value="${HearA}"/></font>Hear (L):</td>
+                        <td align="right" style="width: 35;"><div class="hearing"><font color="red"><c:out value="${HearA}"/></font>Hear (L):</div></td>
                         <td align="left" style="width: 195;">
                             <c:choose>
                                 <c:when test="${empty HearL}">
-                                    &nbsp;
+                                    <div class="hearing">&nbsp;</div>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${HearL}" />
+                                    <div class="hearing"><c:out value="${HearL}" /></div>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -122,14 +122,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="right" style="width: 35;"><font color="red"><c:out value="${HearA}"/></font>Hear (R):</td>
+                        <td align="right" style="width: 35;"><div class="hearing"><font color="red"><c:out value="${HearA}"/></font>Hear (R):</div></td>
                         <td align="left" style="width: 195;">
                             <c:choose>
                                 <c:when test="${empty HearR}">
-                                    &nbsp;
+                                    <div class="hearing">&nbsp;</div>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${HearR}" />
+                                    <div class="hearing"><c:out value="${HearR}" /></div>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -181,15 +181,16 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="right" style="width: 35;"><font color="red"><c:out value="${VisionLA}"/></font>Vision (L):</td>
+                        <td align="right" style="width: 35;"><div class="vision"><font color="red"><c:out value="${VisionLA}"/></font>Vision (L):</div></td>
                         <td align="left" style="width: 195;">
                             <c:choose>
                                 <c:when test="${empty VisionL}">
-                                    &nbsp;
+                                    <div class="vision">&nbsp;</div>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${VisionL}" />&nbsp;
-                                    <c:out value="${VisionL_Corrected}" />
+                                    <div class="vision">
+                                    	<c:out value="${VisionL}" />&nbsp;<c:out value="${VisionL_Corrected}" />
+                                    </div>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -232,15 +233,16 @@
                         <td align="left" style="width: 220;">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td align="right" style="width: 70;"><font color="red"><c:out value="${VisionRA}"/></font>Vision (R):</td>
+                        <td align="right" style="width: 70;"><div class="vision"><font color="red"><c:out value="${VisionRA}"/></font>Vision (R):</div></td>
                         <td align="left" style="width: 220;">
                             <c:choose>
                                 <c:when test="${empty VisionR}">
-                                    &nbsp;
+                                    <div class="vision">&nbsp;</div>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${VisionR}" />&nbsp;
-                                    <c:out value="${VisionR_Corrected}" />
+                                    <div class="vision">
+                                    	<c:out value="${VisionR}" />&nbsp;<c:out value="${VisionR_Corrected}" />
+                                    </div>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -249,7 +251,8 @@
             </table>
         </div>
         <div class="vitals_legend">
-            <span class="vitals_lengend_span"><font color="red">*</font>=Abnormal, A=Axillary, R=Rectal, O=Oral</span>
+            <span id="vitalsLegendEskenaziEpic" class="vitals_lengend_span"><font color="red">*</font>=Abnormal, A=Axillary, R=Rectal, O=Oral</span>
+            <span id="vitalsLegendIUHCerner" class="vitals_lengend_span"><font color="red">*</font>=Abnormal, U=Uncorrected, C=Corrected, A=Axillary, R=Rectal, O=Oral, F=Failed, P=Passed</span>
         </div>
     </section>
 </div>
