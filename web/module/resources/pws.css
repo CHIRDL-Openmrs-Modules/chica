@@ -88,6 +88,7 @@ body {
     float: right;
     text-align: right;
     padding-right: 5px;
+    margin-top: 2px;
 }
 .bottom_button_container {
     margin-left: auto;
@@ -163,10 +164,11 @@ body {
     width: 1010px;
     margin: auto;
     overflow: auto;
-    background-color: #b24926;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    background-color: #CACACA;
     font-size: 14px;
+    border-radius: 10px 10px 0px 0px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 .page_container {
     width: 100%;

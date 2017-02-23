@@ -122,13 +122,13 @@
                                     </td>
                                     <td width="249" valign="top" class="pws_leaf_cell">
                                         <c:choose>
-                                            <c:when test="${empty Answer1_3}">
-                                                <input type="checkbox" name="sub_Choice1" value="3" disabled/>
+                                            <c:when test="${empty Answer1_4}">
+                                                <input type="checkbox" name="sub_Choice1" value="4" disabled/>
                                                 <br/>
                                             </c:when>
                                             <c:otherwise>
-                                                <input type="checkbox" name="sub_Choice1" value="3" ${fn:contains(Choice1, '3') ? 'checked' : ''}/>
-                                                <c:out value="${Answer1_3}" />
+                                                <input type="checkbox" name="sub_Choice1" value="4" ${fn:contains(Choice1, '4') ? 'checked' : ''}/>
+                                                <c:out value="${Answer1_4}" />
                                                 <br/>
                                             </c:otherwise>
                                         </c:choose>
