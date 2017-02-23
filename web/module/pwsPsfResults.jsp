@@ -13,9 +13,16 @@
     </header>
     <section class="psf_results" id="psf_results">
         <div class="psf_results_container">
-            <span class="patient_name">
-                    <c:out value="${psfResults}" />
-                </span>
+            <span class="psf_results_text">
+                <c:choose>
+                    <c:when test="${empty psfResults}">
+                        Pre-screening questions concerning the patient have not been answered.
+                    </c:when>
+                    <c:otherwise>
+                        <c:out value="${psfResults}" />
+                    </c:otherwise>
+                </c:choose>
+            </span>
         </div>
     </section>
 </div>

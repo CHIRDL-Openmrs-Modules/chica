@@ -239,7 +239,7 @@ header a div {
 }
 
 /* Patient Section */
-.patient_name {
+.patient_name, .psf_results_text {
     background-color: #F5FBEF;
     padding-top: 10px;
     padding-bottom: 10px;
