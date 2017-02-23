@@ -1,12 +1,11 @@
 body {
-    font-family: Sans-Serif;
+    font-family: Helvetica,Arial,sans-serif;
     background-color: #f2f2f2;
     margin-top: 0px;
     margin-right: 0px;
     margin-bottom: 0px;
     margin-left: 0px;
-    font-style: normal;
-    font-weight: 200;
+    font-size: 14px;
 }
 
 .pws_prompts_table {
@@ -185,7 +184,6 @@ header {
     border-bottom: 1px solid black;
     display: block;
     border-radius: 10px 10px 0px 0px;
-    font-family: sans-serif;
 }
 header h4 {
     margin-bottom: 0px;
