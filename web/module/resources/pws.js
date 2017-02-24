@@ -271,9 +271,9 @@ $(function() {
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
-        maxWidth: 175,
+        maxWidth: 100,
         maxHeight: 50,
-        width: 175,
+        width: 100,
         height: 50,
         show: {
             effect: "fade",
@@ -289,9 +289,9 @@ $(function() {
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
-        maxWidth: 175,
+        maxWidth: 100,
         maxHeight: 50,
-        width: 175,
+        width: 100,
         height: 50,
         show: {
             effect: "fade",
