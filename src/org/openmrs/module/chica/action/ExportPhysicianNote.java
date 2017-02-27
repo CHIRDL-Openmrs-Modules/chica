@@ -389,37 +389,28 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			txa.getOriginationDateTime().getTime().setValue(dateString);
 			
 			// DWE CHICA-636 Added global property for TXA-16
-			// Property should be set to "PROVIDER_ID", which matches a concept in the DB
-			// Will default to empty if no value is specified in the global properties
+			// Will default to empty if no value is specified in the global properties (currently empty for IUH)
 			// This should make it flexible enough to add other options for TXA-16 in the future
 			String txa16Value = "";
-			String propertProviderID = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_TXA_UNIQUE_DOC_NUMBER);
-			if(PROPERTY_TXA_16_PROVIDER_ID.equalsIgnoreCase(propertProviderID))
+			String propertyProviderID = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_NOTE_TXA_UNIQUE_DOC_NUMBER);
+			if(PROPERTY_TXA_16_PROVIDER_ID.equalsIgnoreCase(propertyProviderID))
 			{
+				// CHICA-922 Obs for PROVIDER_ID is no longer created. The identifier received in the HL7 message is now
+				// stored in the provider.identifier column. Default to sending the identifier of the provider that 
+				// submitted the PWS. If this value isn't found, use the value from the provider.identifier column
 				try
 				{
-					ObsService obsService = Context.getObsService();
-					List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
-					encounters.add(encounter);
-					List<Concept> questions = new ArrayList<Concept>();
-					
+					List<Concept> concepts = new ArrayList<Concept>();
 					ConceptService conceptService = Context.getConceptService();
-					Concept concept = conceptService.getConcept(propertProviderID);
-					questions.add(concept);
-					List<Obs> obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
-							null, null, null, null, false);
-					
-					if(obs != null && obs.size() > 0)
+					Concept concept = conceptService.getConcept(PWS_PROVIDER_SUBMIT);
+					if(concept != null)
 					{
-						txa16Value = obs.get(0).getValueText();
-					}
-					else
-					{
-						// DWE CHICA-861 If we did not find and obs for "PROVIDER_ID", attempt to use the provider Id of the person that submitted the PWS
-						questions.clear();
-						concept = conceptService.getConcept(PWS_PROVIDER_SUBMIT);
-						questions.add(concept);
-						obs = obsService.getObservations(null, encounters, questions, null, null, null, null,
+						concepts.add(concept);
+						
+						ObsService obsService = Context.getObsService();
+						List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+						encounters.add(encounter);
+						List<Obs> obs = obsService.getObservations(null, encounters, concepts, null, null, null, null,
 								null, null, null, null, false);
 						
 						if(obs != null && obs.size() > 0)
@@ -427,10 +418,20 @@ public class ExportPhysicianNote implements ProcessStateAction {
 							txa16Value = obs.get(0).getValueText();
 						}
 					}
+					
+					if(txa16Value.isEmpty())
+					{
+						// Use provider.identifier
+						org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+						if(provider != null)
+						{
+							txa16Value = provider.getIdentifier();
+						}
+					}
 				}
 				catch(Exception e)
 				{
-					log.error("Error occurred while adding " + PROPERTY_TXA_16_PROVIDER_ID + " to TXA segment.", e);
+					log.error("Error occurred while adding provider id to TXA segment for encounter: " + encounter.getEncounterId() + ".", e);
 				}
 			}
 			
