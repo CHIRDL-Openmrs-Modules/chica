@@ -278,56 +278,71 @@ function forcePrint_parseAvailableForms(responseXML) {
     	$(".force-print-forms-container").hide();
     	$(".force-print-form-container").hide();
     	$(".force-print-no-forms").show();
-    } else {//alert($(responseXML).find("forcePrintJIT").text());
-	
-		var map = {}; //new Object(); 
-		var formName = null;
-		var formId = null;
-		var outputType = null;
+    } else {
+		var groupMap = {};  
+		var generalFrmArray = [];
     	$(responseXML).find("forcePrintJIT").each(function () {
-    		foundForms = true;
-        	formName = $(this).find("displayName").text();
-            formId = $(this).find("formId").text();
-			var formGroup = $(this).find("displayFrmGp").text(); 
-            outputType = $(this).find("outputType").text();
-	
-			if (formGroup != null && formGroup.trim()!= "") {		
-				if (!( formGroup in map)) {
+			foundForms = true;
+			var formGroupName = $(this).find("displayFrmGp").text(); 
+ 			if (formGroupName != null && formGroupName.trim()!= "") {		
+				if (!( formGroupName in groupMap)) {
 					var array = [];
-					array.push(formName);	
-					map[formGroup] = array;
+					array.push($(this));	
+					groupMap[formGroupName] = array;
 				} else {
-					map[formGroup].push(formName);
+					groupMap[formGroupName].push($(this));
 				}
-			}
-			if (formGroup == null | formGroup.trim().length == 0) {
-				$('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+			} else { 
+				generalFrmArray.push($(this)); 
 			}
         });
 
-		if (map != null) {// && map.length > 0 ){
-			var keys = [];
+		var generalFormNames = [];
+		var generalMap = {};
+		$.each(generalFrmArray, function( index, value ) {
+		  generalFormNames.push(value.find("displayName").text());
+		  generalMap[value.find("displayName").text()] = value.find("formId").text()+","+value.find("outputType").text() ;
+		});
+		generalFormNames.sort(); 
+
+		var keys = [];
+		if (groupMap != null) {
 			$('.accordion').remove();
 			$('.panel').remove();
-
-			for (var frmGroup in map) {
-				if (frmGroup != null) {
-					
-					keys.push(frmGroup);
-					var frms = map[frmGroup]; 
-					//alert("KEY::"+frmGroup);
-					
-					$('<button id="test" class="accordion">' + frmGroup + '</button><div id="formGp" class="panel"></div>').appendTo($('#force-print-form-list'));
-					for (i = 0; i < frms.length; i++) { 
-						$('.panel:last').append('<li id="' + formId + '" title="' + frms[i] + '" outputType="' + outputType + '" class="ui-widget-content">' + frms[i] + '</li>');
-					}
-
+			
+			$.each(groupMap, function(groupMap, value) {
+				keys.push(groupMap);
+			});
+		}			
+		keys.sort();
+		var allForms = keys.concat(generalFormNames);
+		allForms.sort();
+		$.each( allForms, function( intValue, currentElement ) {
+			if($.inArray(currentElement, generalFormNames) != -1) {
+				var formSplit = generalMap[currentElement].split(',');
+				$('<li id="' + formSplit[0] + '" title="' + currentElement + '" outputType="' + formSplit[1] + '">' + currentElement + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+			} else {
+				var frms = groupMap[currentElement]; 
+				$('<button class="accordion">' + currentElement + '</button><div id="formGp" class="panel"></div>').appendTo($('#force-print-form-list')); 
+				var displayName = [];
+				var branchMap = {};
+				for (i = 0; i < frms.length; i++) { 
+					displayName.push(frms[i].find("displayName").text());
+					branchMap[frms[i].find("displayName").text()] = frms[i].find("formId").text()+","+frms[i].find("outputType").text() ;
+					displayName.sort();
 				}
+				$.each(displayName, function( index, value ) {
+					var formSplit = branchMap[value].split(',');
+					$('.panel:last').append('<li id="' + formSplit[0] + '" title="' + value + '" outputType="' + formSplit[1] + '" class="ui-widget-content">' + value + '</li>');
+				});
+				
 			}
-
-			togglePrintJITs();
-		}
+			
+		});
+		togglePrintJITs();
     }
+
+	
     
     $(".force-print-form-list").css({"max-width":"325px"});
 
@@ -525,3 +540,4 @@ function togglePrintJITs() {
 	  }
 	}
 }
+
