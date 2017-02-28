@@ -103,6 +103,10 @@ a.icon-button span.ui-icon {
     padding-right: 5px;
     max-height: 150px;
 }
+.psf_results_container pre {
+	font-family: Helvetica,Arial,sans-serif;
+	font-size: 14px;
+}
 .mrn_container {
     width: 32%;
     font-size: 25px;
@@ -241,7 +245,7 @@ a.icon-button span.ui-icon {
 .text_color {
     color: black;
 }
-.patient_name, .psf_results_text {
+.patient_name {
     background-color: #F5FBEF;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -252,7 +256,6 @@ a.icon-button span.ui-icon {
 }
 .psf_results {
     background-color: #F5FBEF;
-    padding-top: 10px;
     padding-bottom: 10px;
     overflow: auto;
     width: 100%;

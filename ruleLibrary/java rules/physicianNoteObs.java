@@ -152,7 +152,7 @@ public class physicianNoteObs implements Rule {
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0 && latestEncounter == null; i--) {
 			Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PWS");
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
 			if (stats == null || stats.size() == 0) {
 				continue;
 			}
