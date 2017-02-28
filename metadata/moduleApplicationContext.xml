@@ -315,6 +315,7 @@
         </property>
     </bean> 
     
+    <!-- CHICA-961 Remove to allow for faster shutdown
     <bean id="chicaRmiService" class="org.openmrs.module.chica.impl.ChicaRmiServiceImpl">
     </bean>
     
@@ -324,7 +325,7 @@
         <property name="serviceInterface" value="org.openmrs.module.chica.service.ChicaRmiService"/>
         <property name="registryPort" value="1197"/>
     </bean>
-    
+    -->
     
     <bean id="triggerPatientAfterAdviceMethodBean" class="org.openmrs.module.chica.advice.TriggerPatientAfterAdvice" />
 
@@ -339,5 +340,4 @@
 			</list>
 		</property>
 	</bean>
-	
 </beans>

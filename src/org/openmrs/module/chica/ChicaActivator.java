@@ -69,6 +69,10 @@ public class ChicaActivator extends BaseModuleActivator {
 	 */
 	public void stopped() {
 		this.log.info("Shutting down Chica Module");
+		
+		// CHICA-961 Add calls to shutdown() to allow the application to shutdown faster
+		org.openmrs.module.chirdlutil.threadmgmt.ThreadManager.getInstance().shutdown();
+		org.openmrs.module.chirdlutil.threadmgmt.PrinterThreadManager.getInstance().shutdown();
 	}
 
 }
