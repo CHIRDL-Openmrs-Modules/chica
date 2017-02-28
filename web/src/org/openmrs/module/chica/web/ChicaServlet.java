@@ -143,7 +143,6 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_DISPLAY_NAME = "displayName";
 	private static final String XML_DISPLAY_GROUP_START = "<displayFrmGp>";
 	private static final String XML_DISPLAY_GROUP_END = "</displayFrmGp>";
-	private static final String XML_DISPLAY_FORM_GP = "displayFrmGp";
 	private static final String XML_PATIENT_ROWS_START = "<patientRows>";
 	private static final String XML_PATIENT_ROWS_END = "</patientRows>";
 	private static final String XML_GREASEBOARD_START = "<greaseboard>";
@@ -759,7 +758,6 @@ public class ChicaServlet extends HttpServlet {
 		if (defaultOutputType == null) {
 			defaultOutputType = "";
 		}
-		int i=0;
 		for (FormDisplay formDisplay: printableJits) {
 			pw.write(XML_FORCE_PRINT_JIT_START);
 			ServletUtil.writeTag(XML_FORM_ID, formDisplay.getFormId(), pw);
