@@ -79,7 +79,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 		try
 		{
 			obx = adt.getOBX(obRep);
-		} catch (HL7Exception e)
+		} catch (Exception e)
 		{
 			log.error(e.getMessage());
 			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));

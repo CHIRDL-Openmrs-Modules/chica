@@ -2551,6 +2551,18 @@ select a.* from
 (select count(*) as cnt from user_role where user_id=(select max(user_id) from users where system_id='2-6'))b
 where b.cnt=0;
 
+INSERT INTO role(role, description, uuid)
+VALUES('Chicauser','User of the CHICA system', UUID());
+
+INSERT INTO role_privilege(role, privilege) 
+VALUES('Chicauser', 'Add Encounters'), ('Chicauser', 'Add Observations'), ('Chicauser', 'Add Patients'), 
+('Chicauser', 'Edit Encounters'), ('Chicauser', 'Edit Observations'), ('Chicauser', 'Edit Patients'), 
+('Chicauser', 'Manage Implementation Id'), ('Chicauser', 'Manage Tokens'), ('Chicauser', 'View Concept Classes'), 
+('Chicauser', 'View Concept Datatypes'), ('Chicauser', 'View Concept Sources'), ('Chicauser', 'View Concepts'), 
+('Chicauser', 'View Encounters'), ('Chicauser', 'View Forms'), ('Chicauser', 'View Identifier Types'), 
+('Chicauser', 'View Observations'), ('Chicauser', 'View Patient Identifiers'), ('Chicauser', 'View Patients'), 
+('Chicauser', 'View People'), ('Chicauser', 'View Person Attribute Types'), ('Chicauser', 'View Users');
+
 </sql>
 </diff>
 <diff>
@@ -2763,7 +2775,7 @@ from chirdlutilbackports_state where name='PSF_process') and b.name='Export';
 		Added hl7 export functionality
 		</description>
 	<sql>
-		CREATE TABLE  `openmrs`.`chica_hl7_export_status` (
+		CREATE TABLE `chica_hl7_export_status` (
   		`hl7_export_status_id` int(11) NOT NULL,
   		`description` varchar(200) DEFAULT NULL,
   		PRIMARY KEY (`hl7_export_status_id`),
@@ -3025,7 +3037,7 @@ values ('unfilteredMedicationFile', 'Configuration file listing medications that
 		</description>
 	<sql>
 	
-	CREATE TABLE  IF NOT EXISTS `openmrs`.`chica_hl7_export_map` (
+	CREATE TABLE  IF NOT EXISTS `chica_hl7_export_map` (
   	`hl7_export_map_id` int(11) NOT NULL auto_increment,
   	`hl7_export_queue_id` int(11) NOT NULL,
   	`value` varchar(255) NOT NULL,
@@ -4017,14 +4029,12 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         <author>David Ely</author>
         <date>May 23, 2016</date>
         <description>
-            CHICA-706 Add new concept_source records for ethnicity
+            CHICA-706 Add new concept_reference_source records for ethnicity
         </description>
         <sql>
-            INSERT INTO `concept_source` (`name`, `description`, `hl7_code`, `creator`, `date_created`, `retired`, `uuid`)
-			VALUES ('Eskenazi Ethnicity Codes', 'Ethnicity codes received from Eskenazi', ' ', '1', NOW(), 0, UUID());
-			
-			INSERT INTO `concept_source` (`name`, `description`, `hl7_code`, `creator`, `date_created`, `retired`, `uuid`)
-			VALUES ('IUH Ethnicity Codes', 'Ethnicity codes received from IUH', ' ', '1', NOW(), 0, UUID());
+            INSERT INTO concept_reference_source (`name`, `description`, `hl7_code`, `creator`, `date_created`, `retired`, `uuid`)
+			VALUES ('Eskenazi Ethnicity Codes', 'Ethnicity codes received from Eskenazi', null, '1', NOW(), 0, UUID()),
+			('IUH Ethnicity Codes', 'Ethnicity codes received from IUH', null, '1', NOW(), 0, UUID());
         </sql>
     </diff>
     
@@ -4099,6 +4109,104 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
   			(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
          </sql>
 	</diff>
+	<diff>
+        <version>1.8.7</version>
+        <author>David Ely</author>
+        <date>January 24, 2017</date>
+        <description>
+            CHICA-221 Migrate data from person_attribute to provider.identifier column
+        </description>
+        <sql>
+            Update provider p
+			Inner Join person_attribute pa ON p.person_id = pa.person_id
+			Set p.identifier = pa.value
+			Where pa.person_attribute_type_id = (Select person_attribute_type_id From person_attribute_type Where name = 'Provider ID') And pa.voided = false;
+        </sql>
+    </diff>
+    <diff>
+        <version>1.8.8</version>
+        <author>David Ely</author>
+        <date>January 25, 2017</date>
+        <description>
+            CHICA-221 Set concepts to allow precision
+        </description>
+        <sql>
+           	UPDATE concept_numeric
+			SET precise = 1
+			WHERE concept_id IN (SELECT concept_id FROM concept_name WHERE name IN ('TEMPERATURE CHICA', 'HEIGHT', 'WEIGHT', 'HC', 'HCCENTILE', 'HTCENTILE', 'WTCENTILE', 'BMICENTILE', 'BMI CHICA')); 
+        </sql>
+    </diff>
+    <diff>
+        <version>1.8.9</version>
+        <author>David Ely</author>
+        <date>January 25, 2017</date>
+        <description>
+            CHICA-221 Add role_privilege records for Chicauser
+        </description>
+        <sql>
+           	INSERT INTO role_privilege(role, privilege)
+			VALUES('Chicauser','Manage Providers'), ('Chicauser','Manage Encounter Roles'), ('Chicauser','Get Encounter Roles');
+        </sql>
+    </diff>
+    <diff>
+        <version>1.9.0</version>
+        <author>David Ely</author>
+        <date>January 27, 2017</date>
+        <description>
+            CHICA-221 Update global property so that CHICA can accept whatever patient name the EHR sends
+        </description>
+        <sql>
+           	Update global_property
+			Set property_value = ''
+			Where property = 'patient.nameValidationRegex';
+        </sql>
+    </diff>
+    <diff>
+        <version>1.9.1</version>
+        <author>David Ely</author>
+        <date>February, 15 2017</date>
+        <description>
+            CHICA-937 Remove old scheduled tasks.
+        </description>
+        <sql>
+           	Delete From scheduler_task_config_property
+			Where task_config_id = (Select task_config_id From scheduler_task_config Where schedulable_class = 'org.openmrs.module.chica.ChicaProvidersCron');
+
+			Delete From scheduler_task_config
+			Where schedulable_class = 'org.openmrs.module.chica.ChicaProvidersCron';
+
+			Delete From scheduler_task_config_property
+			Where task_config_id = (Select task_config_id From scheduler_task_config Where schedulable_class = 'org.openmrs.module.chica.hl7.mckesson.HL7Exporter');
+
+			Delete From scheduler_task_config
+			Where schedulable_class = 'org.openmrs.module.chica.hl7.mckesson.HL7Exporter';
+
+			Delete From scheduler_task_config_property
+			Where task_config_id = (Select task_config_id From scheduler_task_config Where schedulable_class = 'org.openmrs.module.chirdlutil.AppointmentVoiceCalls');
+
+			Delete From scheduler_task_config
+			Where schedulable_class = 'org.openmrs.module.chirdlutil.AppointmentVoiceCalls';
+
+			Delete From scheduler_task_config_property
+			Where task_config_id = (Select task_config_id From scheduler_task_config Where name = 'CheckinProcessor');
+
+			Delete From scheduler_task_config
+			Where name = 'CheckinProcessor';
+        </sql>
+    </diff>
+    <diff>
+    <version>1.9.2</version>
+        <author>David Ely</author>
+        <date>February 15, 2017</date>
+        <description>
+            CHICA-929 Update global property to turn off case sensitive searches
+        </description>
+        <sql>
+           	Update global_property
+			Set property_value = 'false'
+			Where property = 'search.caseSensitiveDatabaseStringComparison';
+        </sql>
+    </diff>
 </sqldiff>
 
 

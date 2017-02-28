@@ -81,7 +81,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		{
 			obx = oru.getRESPONSE().getORDER_OBSERVATION(orderRep)
 					.getOBSERVATION(obRep).getOBX();
-		} catch (HL7Exception e)
+		} catch (Exception e)
 		{
 			log.error(e.getMessage());
 			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
@@ -97,7 +97,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		try
 		{
 			obr = oru.getRESPONSE().getORDER_OBSERVATION(orderRep).getOBR();
-		} catch (HL7Exception e)
+		} catch (Exception e)
 		{
 			log.error(e.getMessage());
 			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));

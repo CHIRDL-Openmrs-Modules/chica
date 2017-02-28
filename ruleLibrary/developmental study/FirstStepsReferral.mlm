@@ -69,9 +69,7 @@ If ('Grossmotor_Delay' is in ASQMonthAssessment) OR ('Finemotor_Delay' is in ASQ
 If ('Problemsolving_Delay' is in ASQMonthAssessment) then || Sel_Cognitive || = "X";
 If ('Personalsocial_Delay' is in ASQMonthAssessment) then || Sel_Social_Emotional || = "X";
 
-If ('Communication_Delay' is in ASQMonthAssessment) OR ('Grossmotor_Delay' is in ASQMonthAssessment) OR
-   ('Finemotor_Delay' is in ASQMonthAssessment) OR ('Problemsolving_Delay' is in ASQMonthAssessment) OR
-   ('Personalsocial_Delay' is in ASQMonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
+If ('Communication_Delay' is in ASQMonthAssessment) OR ('Grossmotor_Delay' is in ASQMonthAssessment) OR ('Finemotor_Delay' is in ASQMonthAssessment) OR ('Problemsolving_Delay' is in ASQMonthAssessment) OR ('Personalsocial_Delay' is in ASQMonthAssessment) then || Sel_Suspected_Dev_Delay || = "X";
 
 
 

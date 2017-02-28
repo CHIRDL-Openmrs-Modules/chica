@@ -604,7 +604,7 @@ public class PatientMatching {
 					}
 
 				}
-			} catch (HL7Exception e) {
+			} catch (Exception e) {
 				log.error("Exception logging response", e);
 			}
 			return;
