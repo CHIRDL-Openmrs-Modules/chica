@@ -110,7 +110,10 @@ public class CheckinProcessor extends AbstractTask
 				// Openmrs added multiple calls to SchedulerUtil.startUp() which could potentially
 				// allow multiple instances of this task to run at the same time or causes errors when starting
 				// the second instance which would cause zero instances to be running since the first one will eventually shutdown
+				// CHICA-961 Add shutdownNow() to allow the application to shutdown faster
+				server.getExecutorService().shutdownNow();
 				this.server.stopAndWait();
+				
 				
 				// Adding this delay due to limitations with Hapi. Hapi does not call AcceptorThread.stopAndWait().
 				// AcceptorThread.stop() is used which does not guarantee that the socket has had time to close
@@ -120,6 +123,6 @@ public class CheckinProcessor extends AbstractTask
 		{
 			this.log.error(e.getMessage());
 			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
-		}
+		}	
 	}
 }
