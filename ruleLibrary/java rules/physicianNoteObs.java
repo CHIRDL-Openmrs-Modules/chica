@@ -323,10 +323,12 @@ public class physicianNoteObs implements Rule {
 					}
 				}
 				
-				noteBuffer.append("\n\n");
+				noteBuffer.append("\n");
     		}
     		
     	}
+    	
+    	noteBuffer.append("\n");
     }
     
     /**
