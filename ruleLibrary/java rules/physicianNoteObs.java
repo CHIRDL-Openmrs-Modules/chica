@@ -305,7 +305,7 @@ public class physicianNoteObs implements Rule {
     		return;
     	}
     	
-    	noteBuffer.append(heading);
+    	noteBuffer.append("==" + heading + "==");
     	noteBuffer.append("\n");
     	Iterator<String> iter = ruleIdOrder.iterator();
     	while (iter.hasNext()) {
