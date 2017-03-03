@@ -34,11 +34,9 @@ Priority:   ;;
 Logic:
 If (mode = PRODUCE) then
 
-If (PreferredLanguage = "Spanish") then 
-  || Language_Text || = "**Spanish Speaking**";
-Else 
-  || Language_Text || = "";
-endif;
+If (PreferredLanguage = "Spanish") then || Language_Text || = "**Spanish Speaking**";
+If (PreferredLanguage = "English") then || Language_Text || = "English";
+If NOT(PreferredLanguage = "Spanish") AND NOT(PreferredLanguage = "English") then || Language_Text || = "Unknown";
 
 Conclude True;
 
