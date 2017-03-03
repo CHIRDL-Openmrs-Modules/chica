@@ -147,15 +147,13 @@
 	<classpathentry kind="lib" path="/chirdlutil/dist"/>
 	<classpathentry kind="lib" path="/chirdlutilbackports/dist"/>
 	<classpathentry kind="lib" path="lib-common/cache/cache-api-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/chirdlutil-1.12.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.6.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/dss-2.31.3.jar"/>
-	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.7.0.jar"/>
-	<classpathentry kind="lib" path="lib-common/atd-2.8.1.jar"/>
-	<classpathentry kind="output" path="build"/>
-	
-	<!-- CHICA-221 Adding these for spring-aop, which is used in TriggerPatientAfterAdvice. I did not see these included with openmrs -->
 	<classpathentry kind="lib" path="lib/aspectj-weaver.jar"/>
 	<classpathentry kind="lib" path="lib/jamon-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/atd-2.9.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/chirdlutil-1.13.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/dss-2.32.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.8.0.jar"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>
