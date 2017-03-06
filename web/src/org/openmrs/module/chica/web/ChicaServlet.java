@@ -140,9 +140,9 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_FORCE_PRINT_JITS_END = "</forcePrintJITs>";
 	private static final String XML_FORCE_PRINT_JIT_START = "<forcePrintJIT>";
 	private static final String XML_FORCE_PRINT_JIT_END = "</forcePrintJIT>";
+	private static final String XML_GROUP_START = "<group ";
+	private static final String XML_GROUP_END = "</group>";
 	private static final String XML_DISPLAY_NAME = "displayName";
-	private static final String XML_DISPLAY_GROUP_START = "<displayFrmGp>";
-	private static final String XML_DISPLAY_GROUP_END = "</displayFrmGp>";
 	private static final String XML_PATIENT_ROWS_START = "<patientRows>";
 	private static final String XML_PATIENT_ROWS_END = "</patientRows>";
 	private static final String XML_GREASEBOARD_START = "<greaseboard>";
@@ -758,30 +758,93 @@ public class ChicaServlet extends HttpServlet {
 		if (defaultOutputType == null) {
 			defaultOutputType = "";
 		}
+		
+		List<String> generalFrmsArray = new ArrayList<String>();
+		HashMap<String, List<String>> groupMap = new HashMap<String, List<String>>();
+		
 		for (FormDisplay formDisplay: printableJits) {
-			pw.write(XML_FORCE_PRINT_JIT_START);
-			ServletUtil.writeTag(XML_FORM_ID, formDisplay.getFormId(), pw);
-			ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(formDisplay.getDisplayName()), pw);
-			FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
-				outputTypeAttr, locationTagId, locationId);
 			FormAttributeValue displayGpHeader = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
 				displayGpHeaderAttr, locationTagId, locationId);
-			pw.write(XML_DISPLAY_GROUP_START);
-			
-			if (displayGpHeader != null && displayGpHeader.getValue() != null && !displayGpHeader.getValue().isEmpty()) {
-				pw.write(displayGpHeader.getValue());
-			} 
-			pw.write(XML_DISPLAY_GROUP_END);
-			pw.write(XML_OUTPUT_TYPE_START);
+			FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
+				outputTypeAttr, locationTagId, locationId);
+			String strOutputType = null;
 			if (outputType != null && outputType.getValue() != null && !outputType.getValue().isEmpty()) {
-				pw.write(outputType.getValue());
+				strOutputType = outputType.getValue();
 			} else {
-				pw.write(defaultOutputType);
+				strOutputType = defaultOutputType;
 			}
-			pw.write(XML_OUTPUT_TYPE_END);
-			pw.write(XML_FORCE_PRINT_JIT_END);
+			String strFormDisplay = formDisplay.getFormId()+","+formDisplay.getDisplayName()+","+strOutputType;
+			if (displayGpHeader != null && displayGpHeader.getValue() != null && !displayGpHeader.getValue().isEmpty()) {
+				if (!groupMap.containsKey(displayGpHeader.getValue())) { 
+					List<String> list = new ArrayList<String>();
+				    list.add(strFormDisplay);
+				    groupMap.put(displayGpHeader.getValue(), list);
+				}  else {
+					groupMap.get(displayGpHeader.getValue()).add(strFormDisplay);
+				}
+			} else {
+				generalFrmsArray.add(strFormDisplay);
+			}
 		}
 		
+		List<String> generalFormNames = new ArrayList<String>();
+		Map<String, String> generalMap = new HashMap<String, String>();
+		
+		for (String value : generalFrmsArray) {
+			String[] values = value.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+			generalFormNames.add(values[1]);
+			generalMap.put(values[1], values[0]+","+values[2]);
+		}
+		
+		List<String> keys = new ArrayList<String>();
+		if (groupMap != null) {
+			for (String key: groupMap.keySet()){ 
+				keys.add(key);
+			}
+		}			
+		
+		List<String> frmHeaderLst = new ArrayList<String>();
+		frmHeaderLst.addAll(generalFormNames);
+		frmHeaderLst.addAll(keys);
+		Collections.sort(frmHeaderLst);
+		
+		for (String value : frmHeaderLst) {
+			if (generalFormNames.contains(value)) {
+				pw.write(XML_GROUP_START+">"); 
+				pw.write(XML_FORCE_PRINT_JIT_START);
+				String[] generalValues = generalMap.get(value).split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+				ServletUtil.writeTag(XML_FORM_ID, generalValues[0], pw);
+				ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(value), pw);
+				pw.write(XML_OUTPUT_TYPE_START);
+				pw.write(generalValues[1]);
+				pw.write(XML_OUTPUT_TYPE_END);
+				pw.write(XML_FORCE_PRINT_JIT_END);
+				pw.write(XML_GROUP_END);
+			} else {
+				List<String> groupForms  = groupMap.get(value);
+				List<String> displayName = new ArrayList<String>();
+				Map<String, String> branchMap = new HashMap<String, String>();
+				
+				pw.write(XML_GROUP_START+"name=\""+value+"\">"); 
+				for (String gpForm : groupForms) {
+					String[] gpFrmValues = gpForm.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+					displayName.add(gpFrmValues[1]);
+					branchMap.put(gpFrmValues[1], gpFrmValues[0]+","+gpFrmValues[2]);
+				}
+				Collections.sort(displayName);
+				for (String name : displayName) {
+					String[] formSplit = branchMap.get(name).split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+					pw.write(XML_FORCE_PRINT_JIT_START);
+					ServletUtil.writeTag(XML_FORM_ID, formSplit[0], pw);
+					ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(name), pw);
+					pw.write(XML_OUTPUT_TYPE_START);
+					pw.write(formSplit[1]);
+					pw.write(XML_OUTPUT_TYPE_END);
+					pw.write(XML_FORCE_PRINT_JIT_END);
+				}
+				pw.write(XML_GROUP_END);
+			}
+		}
 		ageUnitsMinMap.clear();
 		ageUnitsMaxMap.clear();
 		formAttrValAgeMinMap.clear();
@@ -790,6 +853,7 @@ public class ChicaServlet extends HttpServlet {
 		formAttrValAgeMaxUnitsMap.clear();
 		
 		pw.write(XML_FORCE_PRINT_JITS_END);
+		
 	}
 	
 	/**

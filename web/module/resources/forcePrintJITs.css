@@ -149,7 +149,6 @@
 
 button.accordion {
     background-color: #eee;
-    margin: 3px;
     color: #444;
     cursor: pointer;
     padding: 0.4em;
@@ -199,4 +198,7 @@ div.panel {
 
 .hide{
   display:none;  
+}
+div.divider {
+	margin: 4px;
 }
