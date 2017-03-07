@@ -140,7 +140,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_FORCE_PRINT_JITS_END = "</forcePrintJITs>";
 	private static final String XML_FORCE_PRINT_JIT_START = "<forcePrintJIT>";
 	private static final String XML_FORCE_PRINT_JIT_END = "</forcePrintJIT>";
-	private static final String XML_GROUP_START = "<group ";
+	private static final String XML_GROUP = "group";
+	private static final String XML_GROUP_NAME = "name";
 	private static final String XML_GROUP_END = "</group>";
 	private static final String XML_DISPLAY_NAME = "displayName";
 	private static final String XML_PATIENT_ROWS_START = "<patientRows>";
@@ -810,7 +811,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		for (String value : frmHeaderLst) {
 			if (generalFormNames.contains(value)) {
-				pw.write(XML_GROUP_START+">"); 
+				pw.write(ChirdlUtilConstants.XML_START_TAG + XML_GROUP + ChirdlUtilConstants.XML_END_TAG);
 				pw.write(XML_FORCE_PRINT_JIT_START);
 				String[] generalValues = generalMap.get(value).split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
 				ServletUtil.writeTag(XML_FORM_ID, generalValues[0], pw);
@@ -825,7 +826,7 @@ public class ChicaServlet extends HttpServlet {
 				List<String> displayName = new ArrayList<String>();
 				Map<String, String> branchMap = new HashMap<String, String>();
 				
-				pw.write(XML_GROUP_START+"name=\""+value+"\">"); 
+				pw.write(ChirdlUtilConstants.XML_START_TAG + XML_GROUP + " " + XML_GROUP_NAME + "=\"" + value + "\"" + ChirdlUtilConstants.XML_END_TAG);
 				for (String gpForm : groupForms) {
 					String[] gpFrmValues = gpForm.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
 					displayName.add(gpFrmValues[1]);
