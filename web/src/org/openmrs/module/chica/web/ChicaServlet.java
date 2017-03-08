@@ -762,7 +762,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		List<String> generalFrmsArray = new ArrayList<String>();
 		HashMap<String, List<String>> groupMap = new HashMap<String, List<String>>();
-		
+
 		for (FormDisplay formDisplay: printableJits) {
 			FormAttributeValue displayGpHeader = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
 				displayGpHeaderAttr, locationTagId, locationId);
@@ -797,16 +797,11 @@ public class ChicaServlet extends HttpServlet {
 			generalMap.put(values[1], values[0]+","+values[2]);
 		}
 		
-		List<String> keys = new ArrayList<String>();
-		if (groupMap != null) {
-			for (String key: groupMap.keySet()){ 
-				keys.add(key);
-			}
-		}			
-		
 		List<String> frmHeaderLst = new ArrayList<String>();
 		frmHeaderLst.addAll(generalFormNames);
-		frmHeaderLst.addAll(keys);
+		if (groupMap != null) {
+		 frmHeaderLst.addAll(groupMap.keySet());
+		}
 		Collections.sort(frmHeaderLst);
 		
 		for (String value : frmHeaderLst) {

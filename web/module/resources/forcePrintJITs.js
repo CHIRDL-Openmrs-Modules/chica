@@ -278,16 +278,16 @@ function forcePrint_parseAvailableForms(responseXML) {
     	$(".force-print-form-container").hide();
     	$(".force-print-no-forms").show();
     } else {
-		$('.accordion').remove();
-		$('.panel').remove();
-		$('.divider').remove();
+		$('.force-print-accordion').remove();
+		$('.force-print-panel').remove();
+		$('.force-print-divider').remove();
 		$(responseXML).find("group").each(function () {
 			foundForms = true;
 			var groupName = $(this).attr('name');
 			if (groupName != null) {
-				$('<button class="accordion">' + groupName + '</button><div id="formGp" class="panel"></div><div class="divider"></div>').appendTo($('#force-print-form-list')); 
+				$('<button class="force-print-accordion">' + groupName + '</button><div id="formGp" class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
 				$(responseXML).find('group[name="'+groupName+'"]').children().each(function(){
-					$('.panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="ui-widget-content">' + $(this).find("displayName").text() + '</li>');
+					$('.force-print-panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="ui-widget-content">' + $(this).find("displayName").text() + '</li>');
 				});
 			} else {
 				$('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '">' + $(this).find("displayName").text() + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
@@ -479,7 +479,7 @@ function updateForcePrintDimensions() {
 
 
 function togglePrintJITs() {
-	var acc = document.getElementsByClassName("accordion");
+	var acc = document.getElementsByClassName("force-print-accordion");
 	var i;
 	for (i = 0; i < acc.length; i++) {
 	  acc[i].onclick = function() {

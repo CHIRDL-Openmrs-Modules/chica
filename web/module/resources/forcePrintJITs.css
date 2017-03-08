@@ -147,7 +147,7 @@
 	padding-top: 0.4em;
 }
 
-button.accordion {
+button.force-print-accordion {
     background-color: #eee;
     color: #444;
     cursor: pointer;
@@ -164,16 +164,11 @@ button.accordion {
 
 }
 
-button.accordion.active, button.accordion:hover {
+button.force-print-accordion.active, button.force-print-accordion:hover {
     background-color: #ddd;
 }
 
-.active { 
-    background: #000;
-    color: white;
-}
-
-button.accordion:after {
+button.force-print-accordion:after {
     content: '\002B';
     color: #777;
     font-weight: bold;
@@ -181,24 +176,21 @@ button.accordion:after {
     margin-left: 5px;
 }
 
-button.accordion.active:after {
+button.force-print-accordion.active:after {
     content: "\2212";
 }
 
-div.panel {
+div.force-print-panel {
     max-height: 0;
     overflow: hidden;
 	border: 0;
     transition: max-height 0.2s ease-out;
 }
 
-.panel li {
+.force-print-panel li {
 	background: #ece0d4;
 }
 
-.hide{
-  display:none;  
-}
-div.divider {
+div.force-print-divider {
 	margin: 4px;
 }
