@@ -29,19 +29,16 @@ Priority:   ;;
 Logic:
 
 If (mode = PRODUCE) then
-psfnote := call physicianNotePSFResults;
 physiciannoteExtras := call physicianNoteExtras;
 physiciannote := call physicianNoteObs;
-assessmentAndPlanNote := call PhysicianNoteTextNote with "Assessment and Plan Note";
-historyAndPhysicalNote := call PhysicianNoteTextNote with "History and Physical Note";
-call physicianNoteSaveToDisk with "historyAndPhysicalNote","psfnote","physiciannoteExtras","physiciannote","assessmentAndPlanNote";
+call physicianNoteSaveToDisk with "physiciannoteExtras","physiciannote";
 
 conclude True;
 endif
 
 ;;
 Action:
-write ("|| historyAndPhysicalNote |||| psfnote_value |||| physiciannoteExtras |||| physiciannote_value |||| assessmentAndPlanNote ||");
+write ("|| physiciannoteExtras |||| physiciannote_value ||");
 ;;
 Age_Min: 0 days;;
 Age_Max: 21 years;;

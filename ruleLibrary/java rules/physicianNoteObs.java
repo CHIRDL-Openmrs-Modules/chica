@@ -152,7 +152,7 @@ public class physicianNoteObs implements Rule {
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0 && latestEncounter == null; i--) {
 			Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PWS");
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
 			if (stats == null || stats.size() == 0) {
 				continue;
 			}
@@ -305,7 +305,7 @@ public class physicianNoteObs implements Rule {
     		return;
     	}
     	
-    	noteBuffer.append(heading);
+    	noteBuffer.append("==" + heading + "==");
     	noteBuffer.append("\n");
     	Iterator<String> iter = ruleIdOrder.iterator();
     	while (iter.hasNext()) {
@@ -323,10 +323,12 @@ public class physicianNoteObs implements Rule {
 					}
 				}
 				
-				noteBuffer.append("\n\n");
+				noteBuffer.append("\n");
     		}
     		
     	}
+    	
+    	noteBuffer.append("\n");
     }
     
     /**

@@ -60,7 +60,7 @@ String.prototype.format = function() {
       logout_url: null,
       logout_redirect_url: '/',
       restart_on_yes: true,
-      dialog_width: 350
+      dialog_width: 400
     }    
 
     $.extend(settings, options);

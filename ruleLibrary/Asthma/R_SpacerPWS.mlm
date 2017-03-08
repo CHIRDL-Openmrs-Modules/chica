@@ -30,7 +30,7 @@ VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
 Spacer := read Last {UsesMDISpacer from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 endif
 ;;
-Priority: 173;;
+Priority: 178;;
 	Evoke:		;;
 Logic:
 If (mode = PRODUCE) then

@@ -1,382 +1,33 @@
 body {
-    /*font-family:Verdana, Geneva, sans-serif;*/
-    font-size:14px;
-    /*background-color:#61380B;*/
-    background: #b24926;
-}
-
-.recommended-forms {
-	width:100%;
-	height:100%;
-	margin: 0;
-	padding: 0;
-}
-
-#formContainer {
-    width:820px;
-    height:1035px; /* Changed 1109 -> 1035 */
-    margin:0 auto;
-    border: 1px solid black;
-    background-color:#F5FBEF;
-    box-shadow: 10px 10px 5px #2E2E2E;
-    -webkit-box-shadow: 10px 10px 5px #2E2E2E;
-    -moz-box-shadow: 10px 10px 5px #2E2E2E;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    margin-bottom:40px;
-}
-
-#titleContainer {
-    width:810px;
-    height:50px;
-    position: relative;
-    padding:5px;
-    margin-right:10px;
-    border-bottom: 1px solid black;
-}
-
-#title, 
-#mrn,
-#submitFormTop {
-    width: 820px;
-    height: 100%;
-    text-align:center;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#title {
-	font-size:16px;
-}
-
-#mrn {
-    z-index: 10;
-    text-align:right;
-    margin-left:-5px;
-    font-size:16px;
-}
-
-#submitFormTop {
-    z-index: 20;
-    text-align:left;
-}
-
-#infoLeft {
-    width:452px; /* This width is necessary to handle long names */
-    height: 53px;
-    float:left;
-    padding:2px 2px 2px 5px;
-    border-bottom: 1px solid black;
-}
-
-#infoCenter { 
-    width:182px;
-    height: 53px;
-    float:left;
-    padding:2px;
-    border-bottom: 1px solid black;
-}
-
-#infoRight {
-    width:171px;
-    height: 53px;
-    float:left;
-    padding:2px;
-    border-bottom: 1px solid black;
-}
-
-@-moz-document url-prefix() {
-    #vitals {
-        height: 290px;
-    }
-}
-
-.flagCell {
-    width:15px;
-    text-align:center;
-    float:left;
-    color:red;
-    
-    font-size: small; /* Adding to correct an issue when zooming */
-}
-
-.vitalsNames {
-    float:left;
-    width:85px;
-    height: 18px;
-    text-align:right;
-    border-left:1px solid black;
-}
-
-.vitalsValues {
-    float:left;
-    width:151px;
-    height: 18px;
-    margin-left:5px;
-    text-align:left;
-}
-
-#exam {
-    border-bottom: 1px solid black;
-    float:left;
-    width:545px;
-    height:330px;
-    margin-top:-220px;
-    padding:22px 2px 22px 5px; /* Changed 2 2 2 5 -> 22 2 22 5 */
-}
-
-@-moz-document url-prefix() {
-    #exam {
-        margin-top:-225px;
-        height: 346px;
-    }
-}
-
-#physicalExam {
-    float:left;
-    width:155px;
-    height:350px;
-    margin-top: -10px;
-}
-
-#examTitle {
-    float:left;
-    text-align:left;
-    width:175px;
-    height:15px;
-}
-
-.examNames {
-    float:left;
-    width:80px;
-    height:19px;
-    text-align:left;
-}
-
-.examHeader {
-    float:left;
-    width:30px;
-    height:19px;
-    text-align:center;
-}
-
-.examFlag {
-    float:left;
-    width:15px;
-    height:19px;
-    text-align:center;
-    color:red;
-}
-
-#examLegend {
-    float:left;
-    text-align:center;
-    width:175px;
-    height:15px;
-    font-size:0.8em;
-}
-
-#examExtras {
-    float:left;
-    width:200px;
-    height:337px;
-    margin-left:65px;
-}
-
-#medTable {
-    border-bottom: 1px solid black;
-    color: #000;
-    width:100%;
-}
-
-#problemTable {
-    color: #000;
-    width:100%;
-}
-
-#submitContainer {
-    width:820px;
-    height:50px;
-    text-align:center;
-    bottom: 0;
-}
-
-#submitButtonBottom, #saveDraftButtonBottom {
-    margin-top:16px;
-}
-
-#submitButtonTop {
-    margin-top:15px;
-    margin-left:5px;
-}
-
-#saveDraftButtonTop {
-	margin-top:15px;
-}
-
-#confirmText {
-    text-align:center;
-    color:#000;
-    padding-bottom:20px;
-}
-
-#submitWaitText {
-    text-align:center;
-    color:#000;
-}
-
-#submitWaitDialog, #saveDraftWaitDialog {
-    border: 4px solid #FA8258;
-}
-
-#printButtonPanel { 
-    margin:0 auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-#formServerError { 
-    margin:0 auto;
-    text-align: center;
-    color: red;
-}
-
-#formInfoPanel {
-    margin:0 auto;
-    text-align: center;
-    font-style: italic;
-    font-size: .8em; 
-    color: #000;
-}
-
-#printButton {
-    width: 125px;
-}
-
-#formLoadingPanel {
-    text-align: center;
-    margin: 0 auto;
-    width: 100%;
-    height: 75px;
-    color: #000;
-}
-
-#formLoading {
-    text-align: center;
-    margin: 0 auto;
-    width: 100%;
-    height: 100%;
-}
-
-#noForms {
-	text-align: center;
-    margin: 0 auto;
-    color: #000;
-}
-
-#formSelectionDialogContainer {
-	width: 100%;
-    height: 100%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    overflow-y: hidden;
-}
-
-#formServerErrorText {
-	height: 60px;
-	line-height: 60px;
-}
-
-.examExtraCheckbox {
-    width:260px;
-}
-
-.examExtraData {
-    width:200px;
-    padding-left:2px;
-    margin: 1px 0 1px 0;
-}
-
-.medicalPerformed {
-    width: 480px;
-    margin-left: -1px;
-	margin-right: -1px;
-}
-
-.questionContainer {
-    float:left;
-    width:411px;
-    height:160px;
-    font-size:0.88em;
-    padding-top:10px;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    margin-left:-4px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
+    font-family: Helvetica,Arial,sans-serif;
+    background-color: #b24926;
     margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    font-size: 14px;
 }
-
-.questionStem {
-    padding:2px 5px 2px 5px;
-    width:400px;
-    height:65px;
-    
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-.answerContainer {
-    float:left;
-    padding:2px;
-    width:203px;
-    height:88px;
-    
-    margin-left:-1px;
-    margin-right: -1px; /* Adding this so that the question container looks correct when zooming out*/
-}
-
-.answerCheckbox {
-    width:210px;
-}
-
-.buttonsData {
-    width:260px;
-    padding-top:5px;
-    display:block;
-    text-align: center;
-    margin: 0 auto;
-}
-
-.tdBorderTop {
-    border-top: 1px solid black;
-}
-
-.tdBorderBottom {
+header {
+    width: 100%;
+    height: 30px;
+    background-color: #555555;
     border-bottom: 1px solid black;
-    padding:5px;
+    display: block;
+    border-radius: 10px 10px 0px 0px;
 }
-
-.trAlignLeft {
-    text-align:left;
+header h4 {
+    margin-bottom: 0px;
 }
-
-.padding5 {
-    padding:5px;
+header a div {
+    height: 100%;
+    width: 5%;
+    vertical-align: middle;
+    float: right;
+    margin-top: 7px;
 }
-
-.noTitle .ui-header a {
-    display: none; 
+section {
+    border-radius: 0px 0px 10px 10px;
 }
-
-.ui-dialog-shadow { 
-    box-shadow: 10px 10px 5px #2E2E2E;
-}
-
 a.icon-button {
     padding: 0 0 .4em 5px;
     text-decoration: none;
@@ -391,15 +42,315 @@ a.icon-button span.ui-icon {
     margin-top: -9px;
 }
 
+.pws_prompts_table {
+    border-spacing: 0px;
+    border-top: 1px solid #000000;
+}
+.pws_leaves_table, .pws_leaves_table_padded {
+    border-spacing: 0px;
+}
+.pws_leaves_table_padded {
+    padding-bottom: 10px;
+}
+.patient_container, .patient_information_container, .handouts_container {
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #CACACA;
+    float: left;
+    padding: 2px;
+    min-width: 500px;
+    min-height:0px;
+    height: 165px;
+    max-width: 500px;
+}
+.patient_information_container {
+    width: 700px;
+    max-width: 700px;
+}
+.handouts_container {
+    min-width: 300px;
+    max-width: 300px;
+}
+.psf_container {
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+    background-color: #CACACA;
+    float: left;
+    padding: 2px;
+    width: 1004px;
+    min-width: 475px;
+    max-width: 1004px;
+    min-height: 0px;
+}
+.pws_container {
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+    background-color: #CACACA;
+    float: left;
+    padding: 2px;
+    width: 1004px;
+    min-width: 475px;
+    max-width: 1004px;
+    min-height: 0px;
+}
+.psf_results_container {
+    width: 99%;
+    height: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+    max-height: 150px;
+}
+.psf_results_container pre {
+	font-family: Helvetica,Arial,sans-serif;
+	font-size: 14px;
+}
+.mrn_container {
+    width: 32%;
+    font-size: 25px;
+    color: #FFFFFF;
+    float: left;
+    text-align: right;
+    margin-top: 12px;
+    text-align: left;
+    padding-left: 5px;
+}
+.top_button_container {
+    width: 33%;
+    height: 100%;
+    float: right;
+    text-align: right;
+    padding-right: 5px;
+    margin-top: 2px;
+}
+.bottom_button_container {
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+    background-color: #CACACA;
+    float: left;
+    padding: 2px;
+    width: 1004px;
+    min-width: 475px;
+    max-width: 1004px;
+    min-height: 30px;
+}
+.bottom_button_section {
+    background-color: #F5FBEF;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow: auto;
+    width: 100%;
+    min-height: 30px;
+    border-radius: 10px;
+    text-align: right;
+}
+.main_header_container {
+    width: 100%;
+    height: 50px;
+    margin: auto;
+}
+.main_header_title {
+    width: 34%;
+    font-size: 30px;
+    float: left;
+    height: 50px;
+    text-align: center;
+    color: #FFFFFF;
+    margin-top: 9px;
+    margin-bottom: -9px;
+}
 .mediumButton {
-	width: 110px;
+    font-size: 14px;
+    width: 120px;
 }
-
+.vitals_legend {
+    margin: auto;
+    color: black;
+    width: 100%;
+    float: left;
+    text-align: center;
+    padding-top: 10px;
+}
+.medication_education_container {
+    margin: auto;
+    color: black;
+    width: 100%;
+    float: left;
+    text-align: center;
+    padding-top: 10px;
+}
+.main_container {
+    width: 1009px;
+    margin: auto;
+    overflow: auto;
+    background-color: #CACACA;
+    font-size: 14px;
+    border-radius: 10px 10px 0px 0px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 1px;
+    box-shadow: 10px 10px 5px #2E2E2E;
+    -webkit-box-shadow: 10px 10px 5px #2E2E2E;
+    -moz-box-shadow: 10px 10px 5px #2E2E2E;
+}
+.page_container {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    overflow: auto;
+    background-color: #b24926;
+}
+.main_header {
+    width: 100%;
+    height: 50px;
+    background-color: #555555;
+    border-bottom: 1px solid black;
+    display: block;
+    border-radius: 10px 10px 0px 0px;
+}
+.main_header div h4 {
+    color: #fff;
+    font-weight: bold;
+    text-align: undefined;
+    padding-top: 12px;
+    height: 30px;
+}
+.logo, .handouts_logo {
+    color: #fff;
+    font-weight: bold;
+    text-align: undefined;
+    width: 91%;
+    height: 85%;
+    float: left;
+    margin-top: 8px;
+    margin-left: 25px;
+}
+.handouts_logo {
+    width: 250px;
+}
+.patient_name_header {
+    color: black;
+    text-align: left;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    padding-left: 5px;
+    font-weight: bold;
+    font-size: 20px;
+}
+.text_color {
+    color: black;
+}
+.patient_name {
+    background-color: #F5FBEF;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow: auto;
+    width: 100%;
+    min-height: 142px;
+    margin: auto;
+}
+.psf_results {
+    background-color: #F5FBEF;
+    padding-bottom: 10px;
+    overflow: auto;
+    width: 100%;
+    min-height: 0px;
+}
+.fixed_height_section {
+    background-color: #F5FBEF;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow: auto;
+    width: 100%;
+    height: 110px;
+}
+.handouts_buttons_container {
+    margin-top: 13px;
+}
+.left_border {
+    border-left: 1px solid black;
+}
+.pws_prompts {
+    background-color: #F5FBEF;
+    overflow: auto;
+    width: 100%;
+    min-height: 0px;
+    font-size: 13px;
+}
+.pws_prompt_text {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-top: 10px;
+}
+.pws_leaf_cell {
+    padding: 0px;
+    border-spacing: 0px;
+}
+.patient_info_container {
+    color: black;
+    float: left;
+    margin: auto;
+}
+.buttonsData {
+    width:260px;
+    padding-top:5px;
+    display:block;
+    text-align: center;
+    margin: 0 auto;
+}
 .largeButton {
-	width: 220px;
+    width: 220px;
+}
+.ui-icon.white { 
+	background-image: url(images/ui-icons_ffffff_256x240.png); 
+}
+.round_corners {
+	border-radius: 10px 10px 10px 10px;
+}
+.recommendedHandoutsMultiselect {
+    color: #FFFFFF;
+    font-size: 0.7em;
+    margin-top: 4px;
+}
+.recommendedHandoutsFormListContainer {
+    width: 99%;
+    overflow-y:auto;
+}
+.recommendedHandoutsCombineButtonPanel {
+    height: 15%;
+    padding-top: 0.4em;
+}
+.recommendedHandoutContainer {
+    height: 99%;
+    width: 550px;
+    float: left;
+    padding-left: 10px;
+    overflow-x:auto;
+}
+.recommendedHandoutObject {
+    width:550px;
+    height: 100%;
+    background-color:#F5FBEF;
+    float: left;
 }
 
-.pws-force-print-content {
+#submitButtonTop, #saveDraftButtonTop {
+    margin-top:8px;
+}
+#saveDraftButtonTop {
+    margin-left:5px;
+}
+#submitWaitDialog, #saveDraftWaitDialog {
+    border: 4px solid #FA8258;
+    text-align: center;
+}
+#formSelectionDialogContainer {
     width: 100%;
     height: 100%;
     display: block;
@@ -408,274 +359,43 @@ a.icon-button span.ui-icon {
     text-align: center;
     overflow-y: hidden;
 }
-
-.ui-tabs-vertical { 
-	width: 55em; 
+#confirmText {
+    text-align:center;
+    color:#000;
+    padding-bottom:20px;
 }
-
-.ui-tabs-vertical .ui-tabs-nav { 
-	padding: .2em .1em .2em .2em; 
-	float: left; 
-	width: 12em; 
+#submitWaitText {
+    text-align:center;
+    color:#000;
 }
-
-.ui-tabs-vertical .ui-tabs-nav li { 
-	clear: left; 
-	width: 100%; 
-	border-bottom-width: 1px !important; 
-	border-right-width: 0 !important; 
-	margin: 0 -1px .2em 0; 
-}
-
-.ui-tabs-vertical .ui-tabs-nav li a { 
-	display:block; 
-}
-
-.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { 
-	padding-bottom: 0; 
-	
-	/* Adding border-right and changing padding-right
-    from .1em to 10px along with div#tabs .ui-tabs-nav-li width
-    will allow the selected tab to appear to flow into the pdf div */
-    border-right: thin none;
-	padding-right: 10px; 
-	border-right-width: 1px;
-	width: 260px; 
-}
-
-.ui-tabs-vertical .ui-tabs-panel { 
-	padding: 1em; 
-	float: right; 
-	width: 40em;
-}
-
-.ui-tabs-anchor {
-   white-space: nowrap;
-   max-width: 220px;
-   overflow: hidden;
-   text-overflow: ellipsis;
-   padding: 0px 0px 0px 0px; 
-}
-
-div#tabs {
-    position: relative;
-    padding-left: 250px;
-}
- 
-div#tabs > div {
-    min-height: 300px;
-}
- 
-div#tabs .ui-tabs-nav {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    bottom: 0px;
-    width: 260px;
-    padding: 0px 0px 0px 0px; 
-}
- 
-div#tabs .ui-tabs-nav li {
-    left: 0px;
-    width: 250px; /* Allow the non-selected tabs to be smaller*/
-    border-right: none;
-    overflow: hidden;
-    margin-bottom: 2px;
-}
- 
-div#tabs .ui-tabs-nav li a {
-    float: left; 
-    width: 100%;
-    text-align: left; 
-    vertical-align: middle;
-}
- 
-div#tabs .ui-tabs-nav li.ui-tabs-selected {
-    border: none;
-    border-right: solid 1px #fff;
-    background: none;
-    background-color: #fff;
-    width: 260px;
-}
-
-.ui-tabs .ui-tabs-nav {
-    background: #cc9966;
-    overflow: inherit;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-
-/* */
-.tabsLeftCell {
-    vertical-align: middle;
-    width: 25px;
-    padding: 3px 0 0 0;
+#formLoading {
     text-align: center;
-}
-
-.tabsRightCell{
-	float: left;
-	width: 215px;
-	text-align: left;
-	padding: 3px 0 0 0px;
-	vertical-align: middle;
-}
-
-.ui-tabs .ui-tabs-nav .ui-tabs-anchor{
-    float:left;
-    padding: .5em 1em .5em 5px !important;
-    text-decoration:none
-}
-
-/* Adjust this so that the down arrow would be displayed on the vertical scroll bar*/
-.ui-tabs-panel{
-	position: relative !important;
-	height:97% !important;
-}
-
-.tabsTable{
-	border-spacing: 0px 0px 0px 0px;
-}
-
-div#tabs div{
-    float:left;
-    height:100%
-}
-
-.selectAllCell{
-	text-decoration: underline; 
-	cursor: pointer;
-}
-
-/*
-********** CHICA Notes dialog css
-*/
-#notesDialogContainer {
-    width:100%;
-    height:99%;
-    padding-bottom:3px;
-    overflow-x: hidden;
-    overflow-y: hidden;
-}
-
-#notesTabContainer{
-	height: 100%;
-	width: 100%;
-	overflow-x: hidden;
-    overflow-y: hidden;
-}
-
-div#notesTabs {
-    position: relative;
-    padding-left: 250px;
-    height: 97%;
-    width: 70%;
-}
- 
-div#notesTabs > div {
-	float: left;
-    min-height: 300px;
-    height: 97%;
-}
-
-div#notesTabs .ui-tabs-nav {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    bottom: 0px;
-    width: 260px;
-    padding: 0px 0px 0px 0px;
-}
- 
-div#notesTabs .ui-tabs-nav li {
-    left: 0px;
-    width: 250px;
-    border-right: none;
-    overflow: hidden;
-    margin-bottom: 2px;
-}
- 
-div#notesTabs .ui-tabs-nav li a {
-    float: left;
-    width: 100%;
-    text-align: left;
-    vertical-align: middle;
-}
- 
-div#notesTabs .ui-tabs-nav li.ui-tabs-selected {
-    border: none;
-    border-right: solid 1px #fff;
-    background: none;
-    background-color: #fff;
-    width: 260px;
-}
-
-.notesTextArea{
-	width: 100%;
-	height: 94%;
-	padding: 5px 5px 5px 5px;
-	/*overflow: hidden; We need to be able to scroll */ 
-	resize: none;
-	-webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
-
-div#notesTabs .ui-tabs-vertical .ui-tabs-panel { 
-    /*padding: 1em; */
-    float: left; 
-    width: 100%;
-}
-
-div#notesTabs .ui-tabs-panel{
-	height: 94%;
-	width: 94%;
-}
-
-.textCount{
-	font-size: .75em;
-	color:#000000;
-}
-
-.awaitingClass{
-	color:red;
-}
-
-#recommendedHandoutsFormList .ui-selecting { 
-    background: #81F781; 
-    color: black;
-}
-
-#recommendedHandoutsFormList .ui-selected { 
-    background: #81F781; 
-    color: black; 
-}
-
-#recommendedHandoutsFormList { 
-    list-style-type: none; 
-    margin: 0; 
-    padding: 0; 
+    margin: 0 auto;
     width: 100%;
     height: 100%;
 	text-align: left;
 }
-
-#recommendedHandoutsFormList li { 
-    margin: 3px; 
-    padding: 0.4em;  
-    height: 18px; 
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+#formLoadingPanel {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 75px;
+    color: #000;
 }
-
-.recommendedHandoutsFormListContainer {
-    width: 99%;
-    overflow-y:auto;
+#formServerError { 
+    margin:0 auto;
+    text-align: center;
+    color: red;
 }
-
+#formServerErrorText {
+    height: 60px;
+    line-height: 60px;
+}
+#noForms {
+    text-align: center;
+    margin: 0 auto;
+    color: #000;
+}
 #recommendedHandoutsContainer {
     text-align: center;
     margin: 0 auto;
@@ -687,36 +407,26 @@ div#notesTabs .ui-tabs-panel{
     border-radius: 7px;
     padding-top: 0px;
 }
-
-.recommendedHandoutsMultiselect {
-    color: #FFFFFF;
-    font-size: 0.7em;
-    margin-top: 4px;
+#recommendedHandoutsFormList .ui-selecting { 
+    background: #81F781; 
+    color: black;
 }
-
-.recommendedHandoutsCombineButtonPanel {
-    height: 15%;
-    padding-top: 0.4em;
+#recommendedHandoutsFormList .ui-selected { 
+    background: #81F781; 
+    color: black; 
 }
-
-.recommendedHandoutContainer {
-    height: 99%;
-    width: 550px;
-    float: left;
-    padding-left: 10px;
-    overflow-x:auto;
-}
-
-.recommendedHandoutObject {
-    width:550px;
+#recommendedHandoutsFormList { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0; 
+    width: 100%;
     height: 100%;
-    background-color:#F5FBEF;
-    float: left;
 }
-
-#questionAnswerContainer {
-   width: 819px;
-   height: 512px;
-   float: left;
-   margin-left: 3px;
+#recommendedHandoutsFormList li { 
+    margin: 3px; 
+    padding: 0.4em;  
+    height: 18px; 
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
