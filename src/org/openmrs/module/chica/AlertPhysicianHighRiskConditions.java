@@ -3,6 +3,7 @@
  */
 package org.openmrs.module.chica;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +44,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	private static final String LOC_TAG_ATTR_HIGH_RISK_CONTACT = "HighRiskContact";
+	private static final String SUICIDE_CONCEPT = "suicide_concerns";
 	
 	@Override
 	public void execute() {
@@ -53,6 +55,10 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		final String DV_NOTIFICATION_TEXT = this.taskDefinition.getProperty("DV_NOTIFICATION_TEXT");
 		final String FROM_EMAIL = this.taskDefinition.getProperty("FROM_EMAIL");
 		final String SUBJECT = this.taskDefinition.getProperty("SUBJECT");
+		
+		final String ABUSE_CONCEPT = "Abuse_Concern";
+		final String DV_CONCEPT = "Domest_Violence_Concern";
+		
 		Integer NUM_DAYS = null;
 		try {
 			NUM_DAYS = Integer.parseInt(this.taskDefinition.getProperty("NUM_DAYS"));
@@ -87,17 +93,18 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ArrayList<String> ruleNames = new ArrayList<String>();
 		ruleNames.add("Depression_SuicidePWS");
 		ruleNames.add("bf_suicide_PWS");
-		createAndSendNotifications(encounters, ruleNames, SUICIDE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT);
+		
+		createAndSendNotifications(encounters, ruleNames, SUICIDE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, SUICIDE_CONCEPT);
 		
 		//get abuse observations
 		ruleNames = new ArrayList<String>();
 		ruleNames.add("Abuse_Concern_PWS");
-		createAndSendNotifications(encounters, ruleNames, ABUSE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT);
+		createAndSendNotifications(encounters, ruleNames, ABUSE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, ABUSE_CONCEPT);
 		
 		//get domestic violence observations
 		ruleNames = new ArrayList<String>();
 		ruleNames.add("Dom_Viol_PWS");
-		createAndSendNotifications(encounters, ruleNames, DV_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT);
+		createAndSendNotifications(encounters, ruleNames, DV_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, DV_CONCEPT);
 		
 		Context.closeSession();
 		
@@ -111,14 +118,15 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param notificationText
 	 * @param fromEmail
 	 * @param subject
+	 * @param riskConceptName
 	 */
 	private void createAndSendNotifications(List<org.openmrs.Encounter> encounters, ArrayList<String> ruleNames,
-	                                        String notificationText, String fromEmail, String subject) {
+	                                        String notificationText, String fromEmail, String subject,String riskConceptName) {
 		LocationService locationService = Context.getLocationService();
 		org.openmrs.module.chica.service.EncounterService chicaEncounterService = Context
 		        .getService(org.openmrs.module.chica.service.EncounterService.class);
 		DssService dssService = Context.getService(DssService.class);
-		
+		ObsService obsService = Context.getObsService();
 		HashSet<org.openmrs.Encounter> notificationSet = new HashSet<org.openmrs.Encounter>();
 		
 		for (String ruleName : ruleNames) {
@@ -129,13 +137,34 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		//send notification emails
 		for (org.openmrs.Encounter encounter : notificationSet) {
 			Encounter chicaEncounter = (Encounter) chicaEncounterService.getEncounter(encounter.getEncounterId());
+			Date riskDate = null;
 			Integer locationId = chicaEncounter.getLocation().getLocationId();
 			String printerLocation = chicaEncounter.getPrinterLocation();
 			if (printerLocation != null) {
 				LocationTag locTag = locationService.getLocationTagByName(printerLocation.trim());
 				if (locTag != null) {
 					Integer locationTagId = locTag.getLocationTagId();
-					sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail, subject);
+					
+					List<Person> patientList = new ArrayList<Person>();
+					patientList.add(encounter.getPatient());
+					List<Concept> questionList = new ArrayList<Concept>();
+					ConceptService conceptService = Context.getConceptService();
+					Concept riskConcept = conceptService.getConceptByName(riskConceptName);
+					if (riskConcept != null) {
+						questionList.add(riskConcept);
+						List<String> sort = new ArrayList<String>();
+						sort.add("obsDatetime");
+						
+						List<Obs> riskObs = obsService.getObservations(patientList, null, questionList, null, null, null,
+						    sort, 1, null, null, null, false);
+						if (riskObs != null && riskObs.size() > 0) {
+							Obs obs = riskObs.get(0);
+							riskDate = obs.getObsDatetime();
+						}
+					}
+					
+					
+					sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail, subject,riskDate);
 				}
 			}
 		}
@@ -150,9 +179,10 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param riskText
 	 * @param fromEmail
 	 * @param subject
+	 * @param riskDate
 	 */
 	private void sendEmailNotification(Integer locationId, Integer locationTagId, Encounter chicaEncounter, String riskText,
-	                                   String fromEmail, String subject) {
+	                                   String fromEmail, String subject, Date riskDate) {
 		ChirdlUtilBackportsService cub = Context.getService(ChirdlUtilBackportsService.class);
 		LocationTagAttributeValue lav = cub.getLocationTagAttributeValue(locationTagId, LOC_TAG_ATTR_HIGH_RISK_CONTACT,
 		    locationId);
@@ -198,8 +228,16 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 									        + "We do not have a record in CHICA of the patient's provider addressing this issue.\n"
 									        + "We recommend checking the patient's medical record to make sure the issue was addressed.\n\n";
 									
-									body += "mrn: " + patient.getPatientIdentifier() + "\tname: " + patient.getGivenName()
-									        + " " + patient.getFamilyName();
+									String riskDateString = "unknown";
+									
+									if(riskDate != null){
+										String pattern = "M/d/yyyy";
+										SimpleDateFormat dateForm = new SimpleDateFormat(pattern);
+										riskDateString = dateForm.format(riskDate);
+									}
+									
+									body += "mrn: " + patient.getPatientIdentifier() + "\nname: " + patient.getGivenName()
+									        + " " + patient.getFamilyName()+"\ndate risk factor identified: "+riskDateString;
 									
 									Properties mailProps = new Properties();
 									mailProps.put("mail.smtp.host", smtpMailHost);
@@ -233,7 +271,8 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	                           Integer ruleId, String ruleName) {
 		ATDService atdService = Context.getService(ATDService.class);
 		ObsService obsService = Context.getObsService();
-		
+		ConceptService conceptService = Context.getConceptService();
+
 		for (org.openmrs.Encounter encounter : encounters) {
 			Integer encounterId = encounter.getEncounterId();
 			
@@ -248,18 +287,19 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 			
 			//if there are no boxes checked, add the encounter to the notification list
 			if (!oneBoxChecked) {
+				List<Person> patientList = new ArrayList<Person>();
+				patientList.add(encounter.getPatient());
+				List<String> sort = new ArrayList<String>();
+				sort.add("obsDatetime");
 				
 				//special processing for combined suicide/depression rule
+				//limit notifications to only those with suicide
 				if (ruleName.equals("Depression_SuicidePWS")) {
-					List<Person> patientList = new ArrayList<Person>();
-					patientList.add(encounter.getPatient());
 					List<Concept> questionList = new ArrayList<Concept>();
-					ConceptService conceptService = Context.getConceptService();
-					Concept suicideConcept = conceptService.getConceptByName("suicide_concerns");
+					Concept suicideConcept = conceptService.getConceptByName(SUICIDE_CONCEPT);
+					
 					if (suicideConcept != null) {
 						questionList.add(suicideConcept);
-						List<String> sort = new ArrayList<String>();
-						sort.add("obsDatetime");
 						
 						List<Obs> suicideObs = obsService.getObservations(patientList, null, questionList, null, null, null,
 						    sort, 1, null, null, null, false);
@@ -270,7 +310,58 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 							}
 						}
 					}
-				} else {
+					//special processing for dv rule
+					//don't notify if Spanish is preferred language, Not_Safe_in_Relationship is stored,
+					//and Kick_Hit_Slap is not present
+					//The spanish translation of the "Safe in relationship" question is causing false positives
+					//when that is the only PSF question that triggers the PWS
+				} else if (ruleName.equals("Dom_Viol_PWS")){
+					boolean ignoreNotification = false;
+					List<Concept> questionList = new ArrayList<Concept>();
+					Concept dvConcept = conceptService.getConceptByName("Domest_Violence_Concern");
+					org.openmrs.Encounter dvEncounter = null;
+							
+					if (dvConcept != null) {
+						questionList.add(dvConcept);
+						
+						boolean notSafeRelationship = false;
+						boolean kickHitSlap = false;
+						List<Obs> dvObs = obsService.getObservations(patientList, null, questionList, null, null, null,
+						    sort, 2, null, null, null, false);
+						if (dvObs != null && dvObs.size() > 0) {
+							for(Obs obs:dvObs){
+								if(obs.getValueCoded().getName().getName().equalsIgnoreCase("Not_Safe_in_Relationship")){
+									notSafeRelationship = true;
+									dvEncounter = obs.getEncounter();
+								}else if(obs.getValueCoded().getName().getName().equalsIgnoreCase("Kick_Hit_Slap")){
+									kickHitSlap = true;
+								}
+							}
+							
+							if(notSafeRelationship&&!kickHitSlap&&dvEncounter!= null){
+								List<org.openmrs.Encounter> dvEncounters = new ArrayList<org.openmrs.Encounter>();
+								dvEncounters.add(dvEncounter);
+								questionList = new ArrayList<Concept>();
+								Concept preferredLangConcept = conceptService.getConceptByName("preferred_language");
+								questionList.add(preferredLangConcept);
+								List<Obs> preferredLangObs = obsService.getObservations(null, dvEncounters, questionList, null,
+								    null, null, sort, 1, null, null, null, false);
+								if (preferredLangObs != null && preferredLangObs.size() > 0) {
+									
+									Obs obs = preferredLangObs.get(0);
+									if(obs.getValueCoded().getName().getName().equalsIgnoreCase("spanish")){
+										ignoreNotification = true;
+									}
+								}
+							}
+							
+						}
+					}
+					if(!ignoreNotification){
+						notificationSet.add(encounter);
+					}
+					
+				}else{
 					notificationSet.add(encounter);
 				}
 			}
