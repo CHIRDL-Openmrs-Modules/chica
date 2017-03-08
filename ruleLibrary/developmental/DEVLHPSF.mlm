@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Lifts head while prone.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "GM_Passed","Lift Head";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not lift head while prone.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "GM_Failed","Lift Head";
 endif;
 

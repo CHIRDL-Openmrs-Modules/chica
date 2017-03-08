@@ -47,9 +47,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Has sickle cell disease, but is not taking antibiotics appropriately.*", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "sickle_cell_prophylaxis","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Has sickle cell disease, and is taking antibiotics appropriately.", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "sickle_cell_prophylaxis","False";
 endif;
 

@@ -71,6 +71,7 @@ If (mode = CONSUME) then
 Age := call ChicaAgeRule with "years";
 
 If  (Box1=true) then
+	CALL storeNote With "*Child has trouble paying attention to tasks or play*", "INFORMANT: MEDICAL HISTORY";
   AnxietyInterventionSite := call LocationAttributeLookup With "isAnxietyInterventionLocation";
 
   If (AnxietyInterventionSite = "true") then
@@ -86,6 +87,7 @@ If  (Box1=true) then
  CALL storeObs With "CHICA_ADHD_SX","Hard_time_paying_attention";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Child does not have attention problems.", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "CHICA_ADHD_SX","no_Hard_time_paying_attention";
 endif;
 

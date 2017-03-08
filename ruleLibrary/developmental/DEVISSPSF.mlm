@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Imitates speech sounds.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Passed","Imitate Speech Sounds";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not imitate speech sounds.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Failed","Imitate Speech Sounds";
 endif;
 

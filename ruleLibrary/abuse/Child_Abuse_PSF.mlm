@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "***Expressed concern someone has threatened or hurt child.***", "INFORMANT: RED FLAGS";
  CALL storeObs With "Abuse_Concern","yes_parent";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Has no concerns about abuse.", "INFORMANT: SOCIAL HISTORY";
  CALL storeObs With "Abuse_Concern","no";
 endif;
 

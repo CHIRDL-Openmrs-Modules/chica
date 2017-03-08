@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Household products out of child's reach.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "household_products_out_of_reach","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Household products are not all out of child's reach.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "household_products_out_of_reach","no";
 endif;
 

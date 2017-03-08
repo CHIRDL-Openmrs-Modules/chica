@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Has close friends who use marijuana, drugs, or inhalents.*", "INFORMANT: HEADSS";
  CALL storeObs With "friends_use_drugs","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No close friends who use drugs or inhalants.", "INFORMANT: HEADSS";
  CALL storeObs With "friends_use_drugs","no";
 endif;
 

@@ -68,9 +68,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*In home built before 1950.*", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "ENVIRONMENTAL HISTORY","HOME BUILT BEFORE 1950";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Not in home built before 1950.", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","HOME BUILT BEFORE 1950";
 endif;
 

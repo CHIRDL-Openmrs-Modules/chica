@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Can put some clothes on.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Passed","Put on Clothing";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Cannot put any clothes on.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Failed","Put on Clothing";
 endif;
 

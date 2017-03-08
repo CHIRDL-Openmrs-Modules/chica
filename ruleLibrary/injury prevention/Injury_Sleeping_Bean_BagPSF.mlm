@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Child has laid on soft surface.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "sleeps_unsafe_soft_surface","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Child does not lay on soft surface.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "sleeps_unsafe_soft_surface","no";
 endif;
 

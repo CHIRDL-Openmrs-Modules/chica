@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Child has slept on stomach.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "slept_on_stomach_ever","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Child does not sleep on stomach.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "slept_on_stomach_ever","no";
 endif;
 

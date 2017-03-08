@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Outdoor play area has a safe surface.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "play_equipment_protected","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Outdoor play area does not have a safe surface.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "play_equipment_protected","no";
 endif;
 

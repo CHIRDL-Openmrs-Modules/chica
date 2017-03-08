@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Has family history of alcohol or drug problems.*", "INFORMANT: FAMILY HISTORY";
  CALL storeObs With "family_substance_abuse","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies family history of alcohol or drug problems.", "INFORMANT: FAMILY HISTORY";
  CALL storeObs With "family_substance_abuse","no";
 endif;
 

@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Plastic bags and wrappers kept out of child's reach.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "plastic_wrappers_secured","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Plastic bags/wrappers are not kept out of child's reach.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "plastic_wrappers_secured","no";
 endif;
 

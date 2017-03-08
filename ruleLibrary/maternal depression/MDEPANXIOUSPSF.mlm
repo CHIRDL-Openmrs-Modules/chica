@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Endorses anxiety in past 7 days.*", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "Maternal_Depression_Concern","Anxious";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No anxiety in past 7 days.", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "Maternal_Depression_Concern","Not_Anxious";
 endif;
 

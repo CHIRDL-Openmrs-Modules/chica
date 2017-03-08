@@ -45,6 +45,7 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Smoker in home has quit.", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "any_household_members_smoke","former";
 endif;
 

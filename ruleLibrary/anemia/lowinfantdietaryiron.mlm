@@ -58,9 +58,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Diet includes iron (fortified cereals, fruits, vegies, juices, meats).", "INFORMANT: NUTRITION";
  CALL storeObs With "NEGATIVE NUTRITION HISTORY","LOW DIETARY IRON";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Diet is poor in iron rich foods.*", "INFORMANT: NUTRITION";
  CALL storeObs With "NUTRITION HISTORY","LOW DIETARY IRON";
 endif;
 

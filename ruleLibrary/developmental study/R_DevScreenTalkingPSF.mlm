@@ -81,10 +81,12 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Parental concerns about speech development.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "CHICA_DevScreen_Sx","Talking_Concern";
  CALL storeObs With "CHICA_DevScreen_Status","Survey_Pos";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No parental concerns about speech.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "CHICA_DevScreen_Sx","no_Talking_Concern";
 endif;
 

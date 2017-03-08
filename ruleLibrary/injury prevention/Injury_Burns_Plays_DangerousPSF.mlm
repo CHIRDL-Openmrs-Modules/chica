@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Child plays near hot objects.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "plays_dangerpus_items","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Child never plays around hot objects.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "plays_dangerpus_items","no";
 endif;
 

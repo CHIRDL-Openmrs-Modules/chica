@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*** Patient reports seriously considering or attempting suicide.***", "INFORMANT: RED FLAGS";
  CALL storeObs With "suicide_concerns","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient denies suicidal ideation.", "INFORMANT: HEADSS";
  CALL storeObs With "suicide_concerns","False";
 endif;
 

@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Admits to misusing over the counter medications.*", "INFORMANT: HEADSS";
  CALL storeObs With "abuse_OTC","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies misusing over the counter medications.", "INFORMANT: HEADSS";
  CALL storeObs With "abuse_OTC","no";
 endif;
 

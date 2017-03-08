@@ -44,9 +44,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Child has been left alone on elevated surfaces.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "baby_left_alone_could_fall","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Child has not been left alone on elevated surfaces.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "baby_left_alone_could_fall","no";
 endif;
 

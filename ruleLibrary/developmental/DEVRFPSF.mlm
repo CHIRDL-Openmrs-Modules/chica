@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Attends to face.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Passed","Regard Face";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Reported does not attend to faces.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Failed","Regard Face";
 endif;
 

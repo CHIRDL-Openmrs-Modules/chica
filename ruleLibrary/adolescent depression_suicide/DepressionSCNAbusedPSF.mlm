@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "***Patient reports history of abuse.***", "INFORMANT: RED FLAGS";
  CALL storeObs With "abuse_ever","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient denies history of abuse.", "INFORMANT: HEADSS";
  CALL storeObs With "abuse_ever","False";
 endif;
 

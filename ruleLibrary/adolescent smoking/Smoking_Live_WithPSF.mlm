@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Lives with a smoker.*", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "cigarettes_snuff_live_with","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No one at home smokes.", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "cigarettes_snuff_live_with","False";
 endif;
 

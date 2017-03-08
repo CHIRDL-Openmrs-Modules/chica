@@ -44,9 +44,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Parent reports child has been alone in or near bodies of water.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "left_alone_in_water","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Parent denies child has been alone in or near bodies of water.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "left_alone_in_water","no";
 endif;
 

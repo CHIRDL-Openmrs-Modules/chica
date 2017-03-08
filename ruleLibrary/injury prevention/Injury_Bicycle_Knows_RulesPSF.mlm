@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Knows the rules of the road.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "knows_rules_of_road","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not know traffic rules.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "knows_rules_of_road","no";
 endif;
 

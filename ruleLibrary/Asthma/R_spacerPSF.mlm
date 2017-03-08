@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Uses a spacer with inhaler.", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "UsesMDISpacer","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not use a spacer with inhaler.*", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "UsesMDISpacer","no";
 endif;
 
