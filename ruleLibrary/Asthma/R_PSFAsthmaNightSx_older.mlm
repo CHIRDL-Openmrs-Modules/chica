@@ -46,6 +46,10 @@ If  (Box1=true) then
  CALL storeObs With "AsthmaSymptoms","Nighttime 3 or More Per Mo";
 endif;
 
+If  (Box2=true) then
+    CALL storeNote With "Nighttime asthma symptoms less than 3 times per month.", "INFORMANT: DISEASE MANAGEMENT";
+endif;
+
 
 endif
 ;;

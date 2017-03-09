@@ -55,6 +55,10 @@ If  (Box1=true) then
 
 endif;
 
+If  (Box2=true) then
+    CALL storeNote With "*Child has reportedly not met treatment target for ADHD.*", "INFORMANT: DISEASE MANAGEMENT";
+endif;
+
 
 endif
 ;;
