@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Parents reports all medications and toxic products have safety caps.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "safety_caps_on_bottles","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Parent denies all medications and toxic products have safety caps.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "safety_caps_on_bottles","no";
 endif;
 

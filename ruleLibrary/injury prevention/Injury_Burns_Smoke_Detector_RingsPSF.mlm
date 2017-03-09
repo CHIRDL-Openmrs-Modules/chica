@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Child knows what to do if smoke alarm rings.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "smoke_alarm_knows_what_to_do","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Child does not know what to do if smoke alarm rings.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "smoke_alarm_knows_what_to_do","no";
 endif;
 

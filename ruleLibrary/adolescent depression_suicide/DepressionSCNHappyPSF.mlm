@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Patient reports generally being happy.", "INFORMANT: HEADSS";
  CALL storeObs With "happy_how_things_going","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Patient is not happy with the way things are going.*", "INFORMANT: HEADSS";
  CALL storeObs With "happy_how_things_going","False";
 endif;
 

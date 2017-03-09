@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Has two word sentences.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Passed","Combine Words";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not have two word sentences.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Failed","Combine Words";
 endif;
 

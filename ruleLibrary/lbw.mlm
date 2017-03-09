@@ -53,9 +53,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Low birth weight (<2500g).*", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "PAST MEDICAL HISTORY CHICA","LOW BIRTH WEIGHT";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Did not have low birth weight (>2500g).", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "NEGATIVE PAST MEDICAL HISTORY","LOW BIRTH WEIGHT";
 endif;
 

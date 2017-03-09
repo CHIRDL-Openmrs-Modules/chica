@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Brushes own teeth with toothpaste.", "INFORMANT: ORAL HEALTH";
  CALL storeObs With "PS_Passed","Brush Teeth, No Help";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Not brushing teeth correctly.*", "INFORMANT: ORAL HEALTH";
  CALL storeObs With "PS_Failed","Brush Teeth, No Help";
 endif;
 

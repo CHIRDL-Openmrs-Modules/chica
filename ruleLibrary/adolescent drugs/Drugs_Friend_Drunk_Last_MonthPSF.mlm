@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Has close friends who were drunk in the last month.*", "INFORMANT: HEADSS";
  CALL storeObs With "friend_drunk_last_month","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No close friends who have been drunk in the last month.", "INFORMANT: HEADSS";
  CALL storeObs With "friend_drunk_last_month","no";
 endif;
 

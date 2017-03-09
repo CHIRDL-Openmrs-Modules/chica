@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Patient reports getting drunk in the last month.*", "INFORMANT: HEADSS";
  CALL storeObs With "drunk_last_month","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient denies getting drunk in the last month.", "INFORMANT: HEADSS";
  CALL storeObs With "drunk_last_month","no";
 endif;
 

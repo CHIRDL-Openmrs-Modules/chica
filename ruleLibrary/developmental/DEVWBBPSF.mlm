@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Waves bye-bye.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Passed","Wave Bye-Bye";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not wave bye-bye.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Failed","Wave Bye-Bye";
 endif;
 

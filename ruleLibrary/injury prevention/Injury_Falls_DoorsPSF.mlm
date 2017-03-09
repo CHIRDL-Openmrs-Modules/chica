@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Doors in home are childproofed.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "doors_secure","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Doors in home are not childproofed.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "doors_secure","no";
 endif;
 

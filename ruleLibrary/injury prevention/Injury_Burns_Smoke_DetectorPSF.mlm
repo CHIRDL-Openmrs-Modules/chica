@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Has a working smoke detector.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "has_smoke_detector","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not have a working smoke detector.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "has_smoke_detector","no";
 endif;
 

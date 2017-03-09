@@ -50,8 +50,13 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Child reports meeting treatment target for ADHD.", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "CHICA_ADHD_Targets","Target_Met";
 
+endif;
+
+If  (Box2=true) then
+    CALL storeNote With "*Child reports not meeting treatment target for ADHD.*", "INFORMANT: DISEASE MANAGEMENT";
 endif;
 
 

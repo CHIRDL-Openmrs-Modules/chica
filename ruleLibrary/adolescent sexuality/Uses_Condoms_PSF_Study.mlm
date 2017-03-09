@@ -46,9 +46,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Patient reports always using a condom with sex.", "INFORMANT: HEADSS";
  CALL storeObs With "always_uses_condoms","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Patient does not always use a condom with sex.*", "INFORMANT: HEADSS";
  CALL storeObs With "always_uses_condoms","no";
 endif;
 

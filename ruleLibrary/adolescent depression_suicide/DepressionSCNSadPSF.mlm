@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Patient reports often feeling sad or down in the past few weeks.*", "INFORMANT: HEADSS";
  CALL storeObs With "sad_past_few_weeks","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient denies often feeling sad or down in the past few weeks.", "INFORMANT: HEADSS";
  CALL storeObs With "sad_past_few_weeks","False";
 endif;
 

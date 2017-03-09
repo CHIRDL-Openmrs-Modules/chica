@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "**Endorses medication allergies.**", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "MEDICATION ALLERGIES","FAMILY REPORTED";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No medication allergies.", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "MEDICATION ALLERGIES","NONE";
  CALL storeObs With "MEDICATION ALLERGIES CAREWEB","no known allergies";
 endif;

@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Child swims or plays around water without adult supervision.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "unsupervised_near_water","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Child is supervised when swimming or playing around water.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "unsupervised_near_water","no";
 endif;
 

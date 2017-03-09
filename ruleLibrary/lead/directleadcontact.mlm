@@ -66,9 +66,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "**Direct lead contact.**", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "ENVIRONMENTAL HISTORY","SIBLING OR FRIEND WITH LEAD TOXICITY";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No direct lead contact.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","SIBLING OR FRIEND WITH LEAD TOXICITY";
 endif;
 

@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Reports sickle cell disease.*", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "PSFSickleCell","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies sickle cell disease.", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "PSFSickleCell","no";
 endif;
 
