@@ -680,6 +680,13 @@ public class ChicaServlet extends HttpServlet {
 			locationId, locationTagId);
 		Map<Integer, String> formAttrValAgeMaxUnitsMap = getFormAttributeValues(chirdlutilbackportsService, ageMaxUnitsAttr.getFormAttributeId(), 
 			locationId, locationTagId);
+		Map<Integer, String> formAttrValDisplayNameMap = getFormAttributeValues(chirdlutilbackportsService, displayNameAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+		Map<Integer, String> formAttrValDisplayGpHeaderMap = getFormAttributeValues(chirdlutilbackportsService, displayGpHeaderAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+		Map<Integer, String> formAttrValOutputTypeMap = getFormAttributeValues(chirdlutilbackportsService, outputTypeAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+
 		String defaultOutputType = Context.getAdministrationService().getGlobalProperty(
 			ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
 		if (defaultOutputType == null) {
@@ -695,25 +702,20 @@ public class ChicaServlet extends HttpServlet {
 					FormDisplay formDisplay = new FormDisplay();
 					formDisplay.setFormName(form.getName());
 					formDisplay.setFormId(form.getFormId());
-					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						displayNameAttr, locationTagId, locationId);
-					if (attributeValue == null || attributeValue.getValue() == null) {
+					String displayName = formAttrValDisplayNameMap.get(formId);
+					if (displayName == null || displayName.trim().length() == 0) {
 						formDisplay.setDisplayName(form.getName());
 					} else {
-						formDisplay.setDisplayName(attributeValue.getValue());
+						formDisplay.setDisplayName(displayName);
 					}
-	
-					FormAttributeValue displayGpHeader = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						displayGpHeaderAttr, locationTagId, locationId);
-					if (displayGpHeader != null && displayGpHeader.getValue() != null && !displayGpHeader.getValue().isEmpty()) {
-						formDisplay.setDisplayGpHeader(displayGpHeader.getValue());
+					String displayGpHeader = formAttrValDisplayGpHeaderMap.get(formId);
+					if (displayGpHeader != null && displayGpHeader.trim().length() != 0) {
+						formDisplay.setDisplayGpHeader(displayGpHeader);
 					} 
-					
-					FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						outputTypeAttr, locationTagId, locationId);
 					String strOutputType = null;
-					if (outputType != null && outputType.getValue() != null && !outputType.getValue().isEmpty()) {
-						strOutputType = outputType.getValue();
+					String outputType = formAttrValOutputTypeMap.get(formId);
+					if (outputType != null && outputType.trim().length() != 0) {
+						strOutputType = outputType;
 					} else {
 						strOutputType = defaultOutputType;
 					}
@@ -773,7 +775,6 @@ public class ChicaServlet extends HttpServlet {
 				}
 			}
 		}
-		
 		List<String> generalFrmsArray = new ArrayList<String>();
 		HashMap<String, List<String>> groupMap = new HashMap<String, List<String>>();
 		for (FormDisplay formDisplay: printableJits) {
