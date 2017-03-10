@@ -21,16 +21,16 @@ $(document).ready(function () {
         return false;
     });
     $("#Temperature_Method_Oral").click(function () {
-    	$("#Temperature_Method_Rectal").attr("checked", false).checkboxradio("refresh");
-    	$("#Temperature_Method_Axillary").attr("checked", false).checkboxradio("refresh");
+    	$("#Temperature_Method_Rectal").prop("checked", false).checkboxradio("refresh");
+    	$("#Temperature_Method_Axillary").prop("checked", false).checkboxradio("refresh");
     });
     $("#Temperature_Method_Rectal").click(function () {
-    	$("#Temperature_Method_Oral").attr("checked", false).checkboxradio("refresh");
-        $("#Temperature_Method_Axillary").attr("checked", false).checkboxradio("refresh");
+    	$("#Temperature_Method_Oral").prop("checked", false).checkboxradio("refresh");
+        $("#Temperature_Method_Axillary").prop("checked", false).checkboxradio("refresh");
     });
     $("#Temperature_Method_Axillary").click(function () {
-    	$("#Temperature_Method_Rectal").attr("checked", false).checkboxradio("refresh");
-        $("#Temperature_Method_Oral").attr("checked", false).checkboxradio("refresh");
+    	$("#Temperature_Method_Rectal").prop("checked", false).checkboxradio("refresh");
+        $("#Temperature_Method_Oral").prop("checked", false).checkboxradio("refresh");
     });
     $("#height").blur(function() {
     	var height = document.getElementById("height").value.trim();
