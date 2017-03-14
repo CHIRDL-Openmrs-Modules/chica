@@ -285,7 +285,7 @@ function forcePrint_parseAvailableForms(responseXML) {
 			foundForms = true;
 			var groupName = $(this).attr('name');
 			if (groupName != null) {
-				$('<button class="force-print-accordion">' + groupName + '</button><div id="formGp" class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
+				$('<button class="force-print-accordion">' + groupName + '</button><div class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
 				$(responseXML).find('group[name="'+groupName+'"]').children().each(function(){
 					$('.force-print-panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="ui-widget-content">' + $(this).find("displayName").text() + '</li>');
 				});
@@ -488,7 +488,7 @@ function togglePrintJITs() {
 		if (panel.style.maxHeight){
 		  panel.style.maxHeight = null;
 		} else {
-		  panel.style.maxHeight = panel.scrollHeight + "px";
+		  panel.style.maxHeight = panel.scrollHeight -3 + "px";
 		} 
 	  }
 	}

@@ -149,9 +149,8 @@
 
 button.force-print-accordion {
     background-color: #eee;
-    color: #444;
     cursor: pointer;
-    padding: 0.4em;
+    padding: 0.5em;
     width: 98%;
     border: none;
     text-align: left;
@@ -160,8 +159,8 @@ button.force-print-accordion {
     overflow: hidden;
     text-overflow: ellipsis;
 	white-space: nowrap;   
-	font-weight: bold;		
-
+	font-weight: bold;	
+	font-family: inherit;
 }
 
 button.force-print-accordion.active, button.force-print-accordion:hover {
@@ -170,10 +169,10 @@ button.force-print-accordion.active, button.force-print-accordion:hover {
 
 button.force-print-accordion:after {
     content: '\002B';
-    color: #777;
     font-weight: bold;
     float: right;
     margin-left: 5px;
+    font-family: inherit;   
 }
 
 button.force-print-accordion.active:after {
@@ -192,5 +191,5 @@ div.force-print-panel {
 }
 
 div.force-print-divider {
-	margin: 4px;
+	margin: 2px;
 }
