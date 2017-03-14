@@ -829,9 +829,9 @@ function parseManualCheckinInfo(responseXML) {
     	doctors.find("doctor").each(function () {
     		var firstName = $(this).find("firstName").text();
     		var lastName = $(this).find("lastName").text();
-    		var userId = $(this).find("userId").text();
+    		var providerId = $(this).find("providerId").text();
     		if ("Other" === lastName) {
-    			var text = "<option value='" + userId + "' selected>" + lastName;
+    			var text = "<option value='" + providerId + "' selected>" + lastName;
     			if (firstName != null && firstName.trim() != "") {
     				text += ", " + firstName;
     			}
@@ -839,7 +839,7 @@ function parseManualCheckinInfo(responseXML) {
     			text += "</option>";
     			options.push(text);
     		} else {
-    			var text = "<option value='" + userId + "'>" + lastName;
+    			var text = "<option value='" + providerId + "'>" + lastName;
     			if (firstName != null && firstName.trim() != "") {
     				text += ", " + firstName;
     			}
