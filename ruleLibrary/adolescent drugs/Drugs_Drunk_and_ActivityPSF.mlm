@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Reports having engaged in driving, swimming, boating, fighting, using tools, or doing something later regretted after drinking alcohol.*", "INFORMANT: HEADSS";
  CALL storeObs With "drunk_and_activity","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies engaging in risky behaviors after drinking alcohol.", "INFORMANT: HEADSS";
  CALL storeObs With "drunk_and_activity","no";
 endif;
 

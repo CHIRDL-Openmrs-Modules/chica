@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*There is sharp-edged furniture where child plays.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "sharp_edged_furniture","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No sharp edged furniture where child plays.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "sharp_edged_furniture","no";
 endif;
 

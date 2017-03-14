@@ -44,9 +44,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Reportedly compliant with asthma controller meds.", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "AsthmaStatus","Persistent-controller";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Reports not using asthma controller meds every day.*", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "AsthmaStatus","Persistent-non-adherent";
 endif;
 

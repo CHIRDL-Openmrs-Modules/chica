@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Child's home has gates on stairways.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "has_stairway_gates","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Child's home does not have gates on all stairways.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "has_stairway_gates","no";
 endif;
 

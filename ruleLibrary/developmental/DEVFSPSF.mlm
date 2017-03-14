@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Feeds self cracker or cookie.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Passed","Feed Self";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Cannot feed self crackers or cookies.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Failed","Feed Self";
 endif;
 

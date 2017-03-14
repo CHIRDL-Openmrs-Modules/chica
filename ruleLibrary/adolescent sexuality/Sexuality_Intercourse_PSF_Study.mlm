@@ -45,9 +45,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Patient reports having had sexual intercourse.*", "INFORMANT: HEADSS";
  CALL storeObs With "has_had_intercourse","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient denies sexual intercourse.", "INFORMANT: HEADSS";
  CALL storeObs With "has_had_intercourse","no";
 endif;
 

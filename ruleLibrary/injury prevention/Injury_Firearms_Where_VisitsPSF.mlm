@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "No firearms where child visits or is cared for.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "firearms_where_visits","no";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Unsure if firearms present where child visits or is cared for.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "firearms_where_visits","yes";
 endif;
 

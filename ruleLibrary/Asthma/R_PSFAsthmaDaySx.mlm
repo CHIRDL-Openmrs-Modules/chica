@@ -42,7 +42,12 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Has asthma symptoms at least 3 times per week.*", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "AsthmaSymptoms","Daytime 3 or More Per Wk";
+endif;
+
+If  (Box2=true) then
+    CALL storeNote With "Asthma symptoms less than 3 times per week.", "INFORMANT: DISEASE MANAGEMENT";
 endif;
 
 

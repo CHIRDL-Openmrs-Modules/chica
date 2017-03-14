@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Poison center contact information in phone.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "poison_center_on_phone","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Poison center contact information not in phone.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "poison_center_on_phone","no";
 endif;
 

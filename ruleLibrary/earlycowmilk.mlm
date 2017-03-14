@@ -61,9 +61,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Infant has drinks other than formula or milk.*", "INFORMANT: NUTRITION";
  CALL storeObs With "NUTRITION HISTORY","EARLY COW MILK INTRODUCTION";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Only drinks formula or milk.", "INFORMANT: NUTRITION";
  CALL storeObs With "NEGATIVE NUTRITION HISTORY","EARLY COW MILK INTRODUCTION";
 endif;
 

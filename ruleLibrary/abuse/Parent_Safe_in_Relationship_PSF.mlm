@@ -44,9 +44,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Parent reports feeling safe in current relationship.", "INFORMANT: SOCIAL HISTORY";
  CALL storeObs With "Domest_Violence_Concern","Safe_in_Relationship";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "***Parent reports not feeling safe in current relationship.***", "INFORMANT: RED FLAGS";
  CALL storeObs With "Domest_Violence_Concern","Not_Safe_in_Relationship";
 endif;
 

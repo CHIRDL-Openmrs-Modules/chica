@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Repeats sounds.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Passed","Combine Syllables";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Is not repeating sounds.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Failed","Combine Syllables";
 endif;
 

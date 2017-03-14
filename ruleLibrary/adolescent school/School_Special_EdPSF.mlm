@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Patient is in special education classes.*", "INFORMANT: SCHOOL";
  CALL storeObs With "special_education_classes","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient is in regular classes.", "INFORMANT: SCHOOL";
  CALL storeObs With "special_education_classes","False";
 endif;
 

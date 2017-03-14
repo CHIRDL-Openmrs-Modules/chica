@@ -127,7 +127,6 @@
 	<classpathentry kind="lib" path="lib-common/axis2/neethi-2.0.4.jar"/>
 	<classpathentry kind="lib" path="lib-common/axis2/wsdl4j-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib-common/axis2/XmlSchema-1.4.3.jar"/>
-	<classpathentry kind="lib" path="lib-common/logic-0.5.0.1.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-api-1.12.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-api-1.12.1-SNAPSHOT-tests.jar"/>
 	<classpathentry kind="lib" path="lib-common/openmrs-tests.jar"/>
@@ -155,5 +154,6 @@
 	<classpathentry kind="lib" path="lib-common/chirdlutilbackports-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/dss-2.32.0.jar"/>
 	<classpathentry kind="lib" path="lib-common/sockethl7listener-1.8.0.jar"/>
+	<classpathentry kind="lib" path="lib-common/logic-0.5.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

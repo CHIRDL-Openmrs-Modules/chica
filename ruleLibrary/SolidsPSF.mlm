@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Eating solid foods.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "taking_solid_food","1";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Not eating solid foods.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "taking_solid_food","0";
 endif;
 

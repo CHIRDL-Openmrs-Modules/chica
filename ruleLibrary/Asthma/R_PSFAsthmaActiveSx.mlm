@@ -44,7 +44,12 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Asthma symptoms interfere with usual activities at home and school.*", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "AsthmaSymptoms","Prevent Usual Activities";
+endif;
+
+If  (Box2=true) then
+    CALL storeNote With "Asthma symptoms do not interfere with usual activities.", "INFORMANT: DISEASE MANAGEMENT";
 endif;
 
 

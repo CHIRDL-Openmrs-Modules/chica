@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Parent reports safety latches are installed in home.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "safety_latches_installed","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Parent denies having safety latches in home.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "safety_latches_installed","no";
 endif;
 

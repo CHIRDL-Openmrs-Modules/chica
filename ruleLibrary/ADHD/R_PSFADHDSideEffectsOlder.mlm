@@ -49,9 +49,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Patient reports side effects of ADHD medication.*", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "CHICA_ADHD_Side_Effects","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient denies side effects from ADHD treatment.", "INFORMANT: DISEASE MANAGEMENT";
  CALL storeObs With "CHICA_ADHD_Side_Effects","no";
 endif;
 

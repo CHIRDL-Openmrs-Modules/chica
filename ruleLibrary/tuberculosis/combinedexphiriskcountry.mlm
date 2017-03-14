@@ -60,9 +60,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Household member with recent time in TB-endemic country.*", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "ENVIRONMENTAL HISTORY","FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No household members with recent time in TB-endemic countries.", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
 endif;
 
