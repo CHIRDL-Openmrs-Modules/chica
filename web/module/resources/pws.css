@@ -420,6 +420,7 @@ a.icon-button span.ui-icon {
     padding: 0; 
     width: 100%;
     height: 100%;
+	text-align: left;
 }
 #recommendedHandoutsFormList li { 
     margin: 3px; 

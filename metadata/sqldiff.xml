@@ -4161,7 +4161,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			Where property = 'patient.nameValidationRegex';
         </sql>
     </diff>
-    <diff>
+	 <diff>
         <version>1.9.1</version>
         <author>David Ely</author>
         <date>February, 15 2017</date>
@@ -4207,6 +4207,20 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			Where property = 'search.caseSensitiveDatabaseStringComparison';
         </sql>
     </diff>
+        <diff>
+        <version>1.9.3</version>  
+        <author>Seema Sarala</author>  
+        <date>February 09, 2017</date>  
+        <description>  
+        	Add new form attribute 'displayGroupHeader' for grouping forms in Print JIT list
+        </description>  
+        <sql> 
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('displayGroupHeader', 'Header for grouping forms in Print JIT list.');
+         </sql>
+	 </diff>
 </sqldiff>
 
 

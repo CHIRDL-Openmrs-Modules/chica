@@ -22,6 +22,8 @@ public class FormDisplay implements Comparable{
 	private String formName = null;
 	private String displayName = null;
 	private Integer formId = null;
+	private String displayGpHeader = null;
+	private String outputType = null;
 	
     /**
      * @return the formName
@@ -59,6 +61,34 @@ public class FormDisplay implements Comparable{
     	
     	return this.displayName.compareTo(((FormDisplay) arg0).displayName);
 	   
+    }
+    
+    /**
+     * @return the displayGpHeader
+     */
+    public String getDisplayGpHeader() {
+    	return this.displayGpHeader;
+    }
+	
+    /**
+     * @param displayGpHeader the displayGpHeader to set
+     */
+    public void setDisplayGpHeader(String displayGpHeader) {
+    	this.displayGpHeader = displayGpHeader;
+    }
+    
+    /**
+     * @return the outputType
+     */
+    public String getOutputType() {
+    	return this.outputType;
+    }
+	
+    /**
+     * @param outputType the outputType to set
+     */
+    public void setOutputType(String outputType) {
+    	this.outputType = outputType;
     }
     
     /**

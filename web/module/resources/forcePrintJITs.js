@@ -2,7 +2,7 @@ var isChromeSafari = false;
 var previousForcePrintSelection = -1;
 var hasUpdatedForcePrintDimensions = false;
 var type = "application/pdf";
-$(function() {
+$(function() { 
 	$(".force-print-no-forms").hide();
 	isChromeSafari = forcePrint_checkForChromeSafari();
 
@@ -278,15 +278,25 @@ function forcePrint_parseAvailableForms(responseXML) {
     	$(".force-print-form-container").hide();
     	$(".force-print-no-forms").show();
     } else {
-    	$(responseXML).find("forcePrintJIT").each(function () {
-    		foundForms = true;
-        	var formName = $(this).find("displayName").text();
-            var formId = $(this).find("formId").text();
-            var outputType = $(this).find("outputType").text();
-            $('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
-        });
+		$('.force-print-accordion').remove();
+		$('.force-print-panel').remove();
+		$('.force-print-divider').remove();
+		$(responseXML).find("group").each(function () {
+			foundForms = true;
+			var groupName = $(this).attr('name');
+			if (groupName != null) {
+				$('<button class="force-print-accordion">' + groupName + '</button><div id="formGp" class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
+				$(responseXML).find('group[name="'+groupName+'"]').children().each(function(){
+					$('.force-print-panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="ui-widget-content">' + $(this).find("displayName").text() + '</li>');
+				});
+			} else {
+				$('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '">' + $(this).find("displayName").text() + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+				
+			}
+		});
+		togglePrintJITs();
     }
-    
+   
     $(".force-print-form-list").css({"max-width":"325px"});
 
   	$(".force-print-forms-loading").hide();
@@ -296,15 +306,18 @@ function forcePrint_parseAvailableForms(responseXML) {
   		$(".force-print-forms-container").hide();
   		$(".force-print-no-forms").show();
   	}
+
   	$("#force-print-form-list").selectable({
-  	  selecting: function(e, ui) { // on select
+	  filter: "LI",
+  	  selecting: function(e, ui) { 
           var curr = $(ui.selecting.tagName, e.target).index(ui.selecting); // get selecting item index
-          if(e.shiftKey && previousForcePrintSelection > -1) { // if shift key was pressed and there is previous - select them all
-              $(ui.selecting.tagName, e.target).slice(Math.min(previousForcePrintSelection, curr), 1 + Math.max(previousForcePrintSelection, curr)).addClass('ui-selected');
-              previousForcePrintSelection = -1; // and reset prev
-          } else {
-        	  previousForcePrintSelection = curr; // othervise just save prev
-          }
+		  var tagName = ui.selecting.tagName;
+		  if(e.shiftKey && previousForcePrintSelection > -1) { // if shift key was pressed and there is previous - select them all
+			  $(ui.selecting.tagName, e.target).slice(Math.min(previousForcePrintSelection, curr), 1 + Math.max(previousForcePrintSelection, curr)).addClass('ui-selected');
+			  previousForcePrintSelection = -1; // and reset prev
+		  } else {
+			  previousForcePrintSelection = curr; // othervise just save prev
+		  }
         }
   	});
 
@@ -462,3 +475,22 @@ function updateForcePrintDimensions() {
     $(".force-print-create-button-panel").css({"height":(divHeight - instructHeight - nameHeight - newDivHeight - 30) + "px"});
     hasUpdatedForcePrintDimensions = true;
 }
+
+
+
+function togglePrintJITs() {
+	var acc = document.getElementsByClassName("force-print-accordion");
+	var i;
+	for (i = 0; i < acc.length; i++) {
+	  acc[i].onclick = function() {
+		this.classList.toggle("active");
+		var panel = this.nextElementSibling;
+		if (panel.style.maxHeight){
+		  panel.style.maxHeight = null;
+		} else {
+		  panel.style.maxHeight = panel.scrollHeight + "px";
+		} 
+	  }
+	}
+}
+
