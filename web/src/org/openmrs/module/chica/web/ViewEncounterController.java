@@ -370,11 +370,11 @@ public class ViewEncounterController extends SimpleFormController {
 							.getPatientIdentifierTypeByName("MRN_OTHER");
 					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 					identifierTypes.add(identifierType);
-					List<Patient> patients = patientService.getPatients(null, mrn,
-							identifierTypes,true);
+					List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
+							identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 					if (patients.size() == 0){
-						patients = patientService.getPatients(null, "0" + mrn,
-								identifierTypes,true);
+						patients = patientService.getPatientsByIdentifier(null, "0" + mrn,
+								identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 					}
 
 					if (patients.size() > 0)
