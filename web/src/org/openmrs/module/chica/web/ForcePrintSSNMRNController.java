@@ -78,7 +78,7 @@ public class ForcePrintSSNMRNController extends SimpleFormController {
 		if (valid) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("mrnLookup", mrn);
-			List<Patient> patients = patientService.getPatients(null, mrn, null, true);
+			List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 			
 			Integer patientId = null;
 			

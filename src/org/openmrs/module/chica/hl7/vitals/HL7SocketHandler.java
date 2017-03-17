@@ -295,7 +295,7 @@ public class HL7SocketHandler implements Application {
 			PatientIdentifierType mrnIdentifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 			List<PatientIdentifierType>  typeList = new ArrayList<PatientIdentifierType>();
 			typeList.add(mrnIdentifierType);
-			List<Patient> patients = patientService.getPatients(null, mrn, typeList, false); // Do not match identifier exactly
+			List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, typeList, false); // Do not match identifier exactly // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 			if (patients != null && patients.size() > 0) {
 				patient = patients.get(0);
 			}

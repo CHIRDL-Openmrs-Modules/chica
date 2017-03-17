@@ -286,7 +286,7 @@ public class ExternalFormController extends SimpleFormController {
 		List<PatientIdentifierType> types = new ArrayList<PatientIdentifierType>();
 	    types.add(patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN));
 	    mrn = org.openmrs.module.chirdlutil.util.Util.removeLeadingZeros(mrn);
-	    List<Patient> patients = patientService.getPatients(null, mrn, types, true);
+	    List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, types, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 	    if (patients.size() > 0) {
 	    	Patient patient = patients.get(0);
 	    	return patient;
@@ -302,7 +302,7 @@ public class ExternalFormController extends SimpleFormController {
 	    		String firstPart = mrn.substring(0, position);
 	    		String lastPart = mrn.substring(position, length);
 	    		String newMrn = firstPart + ChirdlUtilConstants.GENERAL_INFO_DASH + lastPart;
-	    		patients = patientService.getPatients(null, newMrn, types, true);
+	    		patients = patientService.getPatientsByIdentifier(null, newMrn, types, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 			    if (patients.size() > 0) {
 			    	Patient patient = patients.get(0);
 			    	return patient;
