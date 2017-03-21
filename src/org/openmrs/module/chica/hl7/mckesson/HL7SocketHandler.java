@@ -768,8 +768,9 @@ public class HL7SocketHandler extends
 				if (newName.getUuid() == null) {
 					UUID uuid = UUID.randomUUID();
 					newName.setUuid(uuid.toString());
-					currentPatient.addName(newName);
 				}
+				
+				currentPatient.addName(newName);
 			}
 			
 			Set<PersonName> names = currentPatient.getNames();
