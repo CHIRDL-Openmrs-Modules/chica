@@ -23,9 +23,7 @@
                                     &nbsp;
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${Height}" />&nbsp;
-                                    <c:out value="${HeightSUnits}" />&nbsp;(
-                                    <c:out value="${HeightP}" />%)
+                                    <c:out value="${Height}" />&nbsp;<c:out value="${HeightSUnits}" />&nbsp;(<c:out value="${HeightP}" />%)
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -38,8 +36,7 @@
                                     &nbsp;
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${WeightKG}" />&nbsp;kg.&nbsp;(
-                                    <c:out value="${WeightP}" />%)
+                                    <c:out value="${WeightKG}" />&nbsp;kg.&nbsp;(<c:out value="${WeightP}" />%)
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -52,8 +49,7 @@
                                     &nbsp;
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${BMI}" />&nbsp;(
-                                    <c:out value="${BMIP}" />%)
+                                    <c:out value="${BMI}" />&nbsp;(<c:out value="${BMIP}" />%)
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -85,8 +81,7 @@
                                     &nbsp;
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${HC}" /> cm. (
-                                    <c:out value="${HCP}" />%)
+                                    <c:out value="${HC}" />&nbsp;cm.&nbsp;(<c:out value="${HCP}" />%)
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -99,11 +94,14 @@
                                     &nbsp;
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${Temperature}" />&nbsp;&nbsp;
-                                    <c:if test="${not empty Temperature_Method}">
-                                        (
-                                        <c:out value="${Temperature_Method}" />)
-                                    </c:if>
+                                    <c:choose>
+		                                <c:when test="${not empty Temperature_Method}">
+		                                    <c:out value="${Temperature}" />&nbsp;(<c:out value="${Temperature_Method}" />)
+		                                </c:when>
+		                                <c:otherwise>
+		                                    <c:out value="${Temperature}" />
+		                                </c:otherwise>
+		                            </c:choose>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -161,8 +159,7 @@
                                     &nbsp;
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${BP}" /> (
-                                    <c:out value="${BPP}" />)
+                                    <c:out value="${BP}" />&nbsp;(<c:out value="${BPP}" />)
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -222,8 +219,7 @@
                                     &nbsp;
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${PrevWeight}" />&nbsp;(
-                                    <c:out value="${PrevWeightDate}" />)
+                                    <c:out value="${PrevWeight}" />&nbsp;(<c:out value="${PrevWeightDate}" />)
                                 </c:otherwise>
                             </c:choose>
                         </td>
