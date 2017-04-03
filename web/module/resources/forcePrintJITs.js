@@ -285,12 +285,13 @@ function forcePrint_parseAvailableForms(responseXML) {
 			foundForms = true;
 			var groupName = $(this).attr('name');
 			if (groupName != null) {
-				$('<button class="force-print-accordion">' + groupName + '</button><div class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
+				$('<button class="force-print-accordion">' + groupName + '</button><div id="' + groupName + '" class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
 				$(responseXML).find('group[name="'+groupName+'"]').children().each(function(){
-					$('.force-print-panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="ui-widget-content">' + $(this).find("displayName").text() + '</li>');
+					$('.force-print-panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="selectList ui-widget-content">' + $(this).find("displayName").text() + '</li>');
 				});
+				$("#"+groupName+"").hide();
 			} else {
-				$('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '">' + $(this).find("displayName").text() + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+				$('<li class="selectList" id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '">' + $(this).find("displayName").text() + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
 				
 			}
 		});
@@ -308,18 +309,22 @@ function forcePrint_parseAvailableForms(responseXML) {
   	}
 
   	$("#force-print-form-list").selectable({
-	  filter: "LI",
-  	  selecting: function(e, ui) { 
-          var curr = $(ui.selecting.tagName, e.target).index(ui.selecting); // get selecting item index
-		  var tagName = ui.selecting.tagName;
-		  if(e.shiftKey && previousForcePrintSelection > -1) { // if shift key was pressed and there is previous - select them all
-			  $(ui.selecting.tagName, e.target).slice(Math.min(previousForcePrintSelection, curr), 1 + Math.max(previousForcePrintSelection, curr)).addClass('ui-selected');
-			  previousForcePrintSelection = -1; // and reset prev
-		  } else {
-			  previousForcePrintSelection = curr; // othervise just save prev
-		  }
-        }
-  	});
+	  filter: "LI"
+	});
+	var prevChecked = null;
+	var end;
+	$('.selectList').click(function(e) {
+		if(!prevChecked) {
+			prevChecked = this;
+			return;
+		}
+		if(e.shiftKey) {
+			var startIndex = $('.selectList').index(this);
+			endIndex = $('.selectList').index(prevChecked);
+			$('.selectList').slice(Math.min(startIndex,endIndex), 1 + Math.max(startIndex,endIndex)).addClass('ui-selected');
+		}
+		prevChecked = this;
+	});
 
   	if (!hasUpdatedForcePrintDimensions) {
   		updateForcePrintDimensions();
@@ -484,10 +489,13 @@ function togglePrintJITs() {
 	for (i = 0; i < acc.length; i++) {
 	  acc[i].onclick = function() {
 		this.classList.toggle("active");
-		var panel = this.nextElementSibling;
+		var panel = this.nextElementSibling; 
+		var id = panel.id;
 		if (panel.style.maxHeight){
 		  panel.style.maxHeight = null;
+		  $("#"+id+"").hide();
 		} else {
+		  $("#"+id+"").show();
 		  panel.style.maxHeight = panel.scrollHeight -3 + "px";
 		} 
 	  }
