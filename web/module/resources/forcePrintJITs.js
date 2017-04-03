@@ -1,5 +1,4 @@
 var isChromeSafari = false;
-var previousForcePrintSelection = -1;
 var hasUpdatedForcePrintDimensions = false;
 var type = "application/pdf";
 $(function() { 
@@ -56,7 +55,6 @@ $(function() {
     
     $("#force-print-dialog").dialog({
         open: function() { 
-        	previousForcePrintSelection = -1;
         	$(".force-print-form-container").hide();
             forcePrint_removeForms();
             forcePrint_loadForms();
@@ -312,7 +310,6 @@ function forcePrint_parseAvailableForms(responseXML) {
 	  filter: "LI"
 	});
 	var prevChecked = null;
-	var end;
 	$('.selectList').click(function(e) {
 		if(!prevChecked) {
 			prevChecked = this;
@@ -320,7 +317,7 @@ function forcePrint_parseAvailableForms(responseXML) {
 		}
 		if(e.shiftKey) {
 			var startIndex = $('.selectList').index(this);
-			endIndex = $('.selectList').index(prevChecked);
+			var endIndex = $('.selectList').index(prevChecked);
 			$('.selectList').slice(Math.min(startIndex,endIndex), 1 + Math.max(startIndex,endIndex)).addClass('ui-selected');
 		}
 		prevChecked = this;
