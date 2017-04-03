@@ -158,7 +158,6 @@ button.force-print-accordion {
     transition: 0.4s;
     overflow: hidden;
     text-overflow: ellipsis;
-	white-space: nowrap;   
 	font-weight: bold;	
 	font-family: inherit;
 }
