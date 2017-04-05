@@ -91,11 +91,16 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		date.add(Calendar.DAY_OF_YEAR, 1);
 		Date endDate = date.getTime();
 		
-		Calendar dateThreshold = Calendar.getInstance();
-		dateThreshold.set(Calendar.HOUR_OF_DAY, 0);
-		dateThreshold.set(Calendar.MINUTE, 0);
-		dateThreshold.set(Calendar.SECOND, 0);
-		dateThreshold.add(Calendar.MONTH, - RISK_MONTHS);
+		Date dateThreshold = null;
+		
+		if (RISK_MONTHS != null) {
+			Calendar dateCal = Calendar.getInstance();
+			dateCal.set(Calendar.HOUR_OF_DAY, 0);
+			dateCal.set(Calendar.MINUTE, 0);
+			dateCal.set(Calendar.SECOND, 0);
+			dateCal.add(Calendar.MONTH, -RISK_MONTHS);
+			dateThreshold = dateCal.getTime();
+		}
 		
 		EncounterService encounterService = Context.getEncounterService();
 		
@@ -108,17 +113,17 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ruleNames.add("Depression_SuicidePWS");
 		ruleNames.add("bf_suicide_PWS");
 		
-		createAndSendNotifications(encounters, ruleNames, SUICIDE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, SUICIDE_CONCEPT, dateThreshold.getTime());
+		createAndSendNotifications(encounters, ruleNames, SUICIDE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, SUICIDE_CONCEPT, dateThreshold);
 		
 		//get abuse observations
 		ruleNames = new ArrayList<String>();
 		ruleNames.add("Abuse_Concern_PWS");
-		createAndSendNotifications(encounters, ruleNames, ABUSE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, ABUSE_CONCEPT, dateThreshold.getTime());
+		createAndSendNotifications(encounters, ruleNames, ABUSE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, ABUSE_CONCEPT, dateThreshold);
 		
 		//get domestic violence observations
 		ruleNames = new ArrayList<String>();
 		ruleNames.add("Dom_Viol_PWS");
-		createAndSendNotifications(encounters, ruleNames, DV_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, DV_CONCEPT, dateThreshold.getTime());
+		createAndSendNotifications(encounters, ruleNames, DV_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, DV_CONCEPT, dateThreshold);
 		
 		Context.closeSession();
 		
@@ -133,6 +138,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param fromEmail
 	 * @param subject
 	 * @param riskConceptName
+	 * @param dateThreshold
 	 */
 	private void createAndSendNotifications(List<org.openmrs.Encounter> encounters, ArrayList<String> ruleNames,
 	                                        String notificationText, String fromEmail, String subject,String riskConceptName,
