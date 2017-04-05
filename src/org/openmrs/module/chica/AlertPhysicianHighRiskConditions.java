@@ -67,6 +67,14 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 			log.error("Error generated", e);
 		}
 		
+		Integer RISK_MONTHS = null;
+		try {
+			RISK_MONTHS = Integer.parseInt(this.taskDefinition.getProperty("RISK_MONTHS"));
+		}
+		catch (Exception e) {
+			log.error("Error generated", e);
+		}
+		
 		if (SUICIDE_NOTIFICATION_TEXT == null || ABUSE_NOTIFICATION_TEXT == null || FROM_EMAIL == null
 		        || DV_NOTIFICATION_TEXT == null || SUBJECT == null || NUM_DAYS == null) {
 			log.error("One or more required properties for AlertPhysicianHighRiskCondition are not set");
@@ -83,6 +91,12 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		date.add(Calendar.DAY_OF_YEAR, 1);
 		Date endDate = date.getTime();
 		
+		Calendar dateThreshold = Calendar.getInstance();
+		dateThreshold.set(Calendar.HOUR_OF_DAY, 0);
+		dateThreshold.set(Calendar.MINUTE, 0);
+		dateThreshold.set(Calendar.SECOND, 0);
+		dateThreshold.add(Calendar.MONTH, - RISK_MONTHS);
+		
 		EncounterService encounterService = Context.getEncounterService();
 		
 		//get encounters that should have been submitted but have not been processed by the task
@@ -94,17 +108,17 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		ruleNames.add("Depression_SuicidePWS");
 		ruleNames.add("bf_suicide_PWS");
 		
-		createAndSendNotifications(encounters, ruleNames, SUICIDE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, SUICIDE_CONCEPT);
+		createAndSendNotifications(encounters, ruleNames, SUICIDE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, SUICIDE_CONCEPT, dateThreshold.getTime());
 		
 		//get abuse observations
 		ruleNames = new ArrayList<String>();
 		ruleNames.add("Abuse_Concern_PWS");
-		createAndSendNotifications(encounters, ruleNames, ABUSE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, ABUSE_CONCEPT);
+		createAndSendNotifications(encounters, ruleNames, ABUSE_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, ABUSE_CONCEPT, dateThreshold.getTime());
 		
 		//get domestic violence observations
 		ruleNames = new ArrayList<String>();
 		ruleNames.add("Dom_Viol_PWS");
-		createAndSendNotifications(encounters, ruleNames, DV_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, DV_CONCEPT);
+		createAndSendNotifications(encounters, ruleNames, DV_NOTIFICATION_TEXT, FROM_EMAIL, SUBJECT, DV_CONCEPT, dateThreshold.getTime());
 		
 		Context.closeSession();
 		
@@ -121,7 +135,8 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	 * @param riskConceptName
 	 */
 	private void createAndSendNotifications(List<org.openmrs.Encounter> encounters, ArrayList<String> ruleNames,
-	                                        String notificationText, String fromEmail, String subject,String riskConceptName) {
+	                                        String notificationText, String fromEmail, String subject,String riskConceptName,
+	                                        Date dateThreshold) {
 		LocationService locationService = Context.getLocationService();
 		org.openmrs.module.chica.service.EncounterService chicaEncounterService = Context
 		        .getService(org.openmrs.module.chica.service.EncounterService.class);
@@ -164,7 +179,15 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 					}
 					
 					
-					sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail, subject,riskDate);
+					if (dateThreshold != null) {
+						if (riskDate.compareTo(dateThreshold) >= 0) {
+							sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail,
+							    subject, riskDate);
+						}
+					} else {
+						sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail,
+						    subject, riskDate);
+					}
 				}
 			}
 		}
