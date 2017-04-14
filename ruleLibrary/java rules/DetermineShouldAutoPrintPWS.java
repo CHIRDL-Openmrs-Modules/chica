@@ -18,15 +18,19 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
  */
 public class DetermineShouldAutoPrintPWS implements Rule
 {
+	private static final String LOCATION_TEPS = "TEPS";
+	
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException 
 	{
 		Object psfSubmittedObj = parameters.get(ChirdlUtilConstants.PARAMETER_1);
 		Object vitalsProcessedObj = parameters.get(ChirdlUtilConstants.PARAMETER_2);
 		Object printedFromGreaseBoardObj = parameters.get(ChirdlUtilConstants.PARAMETER_3);
+		Object locationNameObj = parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION);
 		
 		String psfSubmitted = "";
 		String vitalsProcessed = "";
 		String printedFromGreaseBoard = "";
+		String locationName = "";
 		
 		if (psfSubmittedObj != null && psfSubmittedObj instanceof String)
 		{
@@ -41,6 +45,17 @@ public class DetermineShouldAutoPrintPWS implements Rule
 		if (printedFromGreaseBoardObj != null && printedFromGreaseBoardObj instanceof String)
 		{
 			printedFromGreaseBoard = (String) printedFromGreaseBoardObj;
+		}
+		
+		if (locationNameObj != null && locationNameObj instanceof String) 
+		{
+			locationName = (String) locationNameObj;
+		}
+		
+		// Don't auto print if it's from 38th Street (TEPS), but still do if it's from the GreaseBoard
+		if (locationName.equalsIgnoreCase(LOCATION_TEPS) && !printedFromGreaseBoard.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)) 
+		{
+			return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
 		}
 	
 		// Auto print if the PSF AND vitals have been submitted OR this is a force print from the GreaseBoard
