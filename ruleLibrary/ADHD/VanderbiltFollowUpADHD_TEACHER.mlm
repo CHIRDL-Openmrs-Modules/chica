@@ -46,7 +46,7 @@ If (mode = CONSUME) then
 
 /* don't do anything if all the scores don't exist */
 If (TeacherAssessFollowupSymptomTotal = NULL) then 
-call CREATE_JIT with "Form Incomplete", "", "true";
+call CREATE_JIT with "Form Incomplete", "", "true", "true";
 conclude false;
 endif;
 If  (TeacherAssessPredomInattentiveCount >= 6) AND (TeacherAssessPerformanceCount >=1 ) then
@@ -66,7 +66,7 @@ If  (TeacherAssessPredomInattentiveCount >= 6) AND (TeacherAssessPerformanceCoun
 Else
 CALL storeObs With "TeacherAssessmentScale","NegativeADHDCombinedInattentionHyperactivity";
 endif;
-call CREATE_JIT with "TeacherSummaryReport", "", "true";
+call CREATE_JIT with "TeacherSummaryReport", "", "true", "true";
 
 endif
 ;;

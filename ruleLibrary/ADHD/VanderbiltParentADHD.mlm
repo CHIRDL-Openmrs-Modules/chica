@@ -48,7 +48,7 @@ If (mode = CONSUME) then
 
 /* don't do anything if all the scores don't exist */
 If (ParentAssessPredomInattentiveCount = NULL) then 
-call CREATE_JIT with "Form Incomplete", "", "true";
+call CREATE_JIT with "Form Incomplete", "", "true", "true";
 conclude false;
 endif;
 
@@ -95,7 +95,7 @@ Else
  CALL storeObs With "ParentAssessmentScale","NegativeAnxietyDepressionScreen";
 endif;
 
-call CREATE_JIT with "ParentSummaryReport", "", "true";
+call CREATE_JIT with "ParentSummaryReport", "", "true", "true";
 
 endif
 ;;
