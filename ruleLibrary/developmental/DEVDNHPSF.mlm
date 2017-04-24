@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Can pick out clothes and dress without help.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Passed","Dress, No Help";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Cannot pick out clothes and dress self.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Failed","Dress, No Help";
 endif;
 

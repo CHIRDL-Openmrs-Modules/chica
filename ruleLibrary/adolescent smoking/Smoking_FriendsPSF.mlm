@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Has close friends who use tobacco products.*", "INFORMANT: HEADSS";
  CALL storeObs With "cigarettes_snuff_friend","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies friends use tobacco products.", "INFORMANT: HEADSS";
  CALL storeObs With "cigarettes_snuff_friend","False";
 endif;
 

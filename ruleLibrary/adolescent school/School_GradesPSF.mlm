@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Patient's grades have gotten worse this year.*", "INFORMANT: SCHOOL";
  CALL storeObs With "grades_dropped_lately","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient's grades have not gone down.", "INFORMANT: SCHOOL";
  CALL storeObs With "grades_dropped_lately","False";
 endif;
 

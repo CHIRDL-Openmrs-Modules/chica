@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Regards own hand.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Passed","Regard Own Hand";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not regard own hand.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "PS_Failed","Regard Own Hand";
 endif;
 

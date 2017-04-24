@@ -1,7 +1,7 @@
 <div id="force-print-dialog" title="Available Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
     <div class="force-print-content">
          <div class="force-print-forms-loading">
-             <span id="force-print-forms-loading-panel"><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
+             <span id="force-print-forms-loading-panel"><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
          </div>
          <div class="force-print-forms-server-error">
              <div class="force-print-forms-server-error-text ui-state-error"></div>
@@ -21,13 +21,14 @@
              </div>
          </div>
          <div class="force-print-form-container">
-            <object class="force-print-form-object" data="" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();" type="application/pdf">
+         	<!-- CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page. -->
+            <object class="force-print-form-object" onreadystatechange="return forcePrint_formLoaded();" onload="forcePrint_formLoaded();">
                <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
                <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
             </object>
          </div>
          <div class="force-print-form-loading">
-            <span><img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
+            <span><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Creating form...</span>
          </div>
          <input type="hidden" id="patientId" />
          <input type="hidden" id="sessionId" />

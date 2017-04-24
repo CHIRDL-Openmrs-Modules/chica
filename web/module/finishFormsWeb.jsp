@@ -20,7 +20,7 @@
     </div>
 
     <div>
-	    <div><p>Submission successful!  There are no more forms to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
+	    <div><p>Successfully signed!  There are no more forms to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
 	    <br/>
 	    <div>Please close this window at your convenience.</div>
     </div>

@@ -143,7 +143,7 @@ function finishForm(patientId, encounterId, sessionId, ageInYears, firstName) {
 
 function checkPasscode() {
     var passcode = $("#passcode").val();
-    var url = "/openmrs/moduleServlet/chica/chicaMobile";
+    var url = ctx + "/moduleServlet/chica/chicaMobile";
     var action = "action=verifyPasscode&passcode=" + passcode;
     var token = getAuthenticationToken();
     $.ajax({
@@ -165,7 +165,7 @@ function checkPasscode() {
 
 function populateList() {
 	var showAllPatients = $("#showAllCheckbox").is(':checked'); // DWE CHICA-761
-    var url = "/openmrs/moduleServlet/chica/chicaMobile";
+    var url = ctx + "/moduleServlet/chica/chicaMobile";
     var token = getAuthenticationToken();
     $.ajax({
     	beforeSend: function (xhr) {

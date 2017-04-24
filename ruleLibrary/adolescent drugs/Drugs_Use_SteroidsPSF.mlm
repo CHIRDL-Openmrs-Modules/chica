@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Admits to using anabolic steroids.*", "INFORMANT: HEADSS";
  CALL storeObs With "abuse_steroids","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies using anabolic steroids.", "INFORMANT: HEADSS";
  CALL storeObs With "abuse_steroids","no";
 endif;
 

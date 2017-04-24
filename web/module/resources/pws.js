@@ -1,9 +1,11 @@
-var chicaServletUrl = "/openmrs/moduleServlet/chica/chica?";
+var chicaServletUrl = ctx + "/moduleServlet/chica/chica?";
 var recommendedHandoutsAction = "action=getPatientJITs&formInstances=";
 var pageOptions = "#page=1&view=FitH,top&navpanes=0";
 var previousRecommendedHandoutSelection = -1;
 var timeoutDialog = null;
-var keepAliveURL = "/openmrs/moduleServlet/chica/chica?action=keepAlive";
+var keepAliveURL = ctx + "/moduleServlet/chica/chica?action=keepAlive";
+var saveDraftURL = chicaServletUrl + "action=saveFormDraft";
+var type = "application/pdf";
 
 function handleGetAvailableJITsError(xhr, textStatus, error) {
 	$("#noForms").hide();
@@ -50,6 +52,7 @@ function combineSelected(selectedForms)
 	var newobj = obj.clone();
 	obj.remove();
 	newobj.attr("data", newUrl);
+	newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
 	$(".recommendedHandoutContainer").show();
 	
 	container.append(newobj);
@@ -115,13 +118,8 @@ function getAvailableJits() {
 
 $(function() {
 	$("button, input:submit, input:button").button();
-	$("#submitButtonTop").button();
-	$("#submitButtonBottom").button();
-	$("#formPrintButton").button();
-	$("#problemButton").button();
-	$("#forcePrintButton").button();
-	$("#retryButton").button();
-	$("#notesButton").button();
+	$("#submitButtonTop, #submitButtonBottom, #saveDraftButtonTop, #saveDraftButtonBottom").button();
+	$("#retryButton, #notesButton, #formPrintButton, #problemButton, #forcePrintButton").button();
 	
 	getAvailableJits();
 	
@@ -204,14 +202,16 @@ $(function() {
         ]
     });
 	
-	 $("#historyAndPhysicalText").keyup(function() {
-		 updateCount('historyAndPhysicalText');
-	    });
+//	updateCount("historyAndPhysicalText");
+//	updateCount("assessmentAndPlanText");
+	$("#historyAndPhysicalText").keyup(function() {
+		updateCount('historyAndPhysicalText');
+	});
 	 
-	 $("#assessmentAndPlanText").keyup(function() {
-		 updateCount('assessmentAndPlanText');
+	$("#assessmentAndPlanText").keyup(function() {
+		updateCount('assessmentAndPlanText');
 	    	
-	    });
+	});
 	
 	// Append the notes dialog to the parent form so that it can be submitted
 	$('#notesDialog').parent().appendTo($("form:first"));
@@ -252,13 +252,13 @@ $(function() {
         ]
     })
 	
-	$("#submitButtonBottom").click(function(event) {
+	$("#submitButtonBottom, #submitButtonTop").click(function(event) {
 		$("#confirmSubmitDialog").dialog("open");
 		event.preventDefault();
 	});
 	
-	$("#submitButtonTop").click(function(event) {
-		$("#confirmSubmitDialog").dialog("open");
+	$("#saveDraftButtonBottom, #saveDraftButtonTop").click(function(event) {
+		saveDraft();
 		event.preventDefault();
 	});
 	
@@ -268,6 +268,24 @@ $(function() {
 	});
 	
 	$("#submitWaitDialog").dialog({
+		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
+        autoOpen: false,
+        modal: true,
+        maxWidth: 100,
+        maxHeight: 50,
+        width: 100,
+        height: 50,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          }
+    }).dialog("widget").find(".ui-dialog-titlebar").hide();
+	
+	$("#saveDraftWaitDialog").dialog({
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
         modal: true,
@@ -299,7 +317,10 @@ $(function() {
         	var container = obj.parent();
         	var newobj = obj.clone();
         	obj.remove();
-        	newobj.attr("data", "");
+        	
+        	// CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page.
+			newobj.removeAttr("data");
+			newobj.removeAttr("type");
         	container.append(newobj);
     	},
     	close: function() { 
@@ -365,6 +386,67 @@ $(function() {
         }
     });
 	
+	$("#saveDraftErrorDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	$("#saveDraftSuccessDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	$("#serverErrorDialog").dialog({
+        resizable: false,
+        modal: true,
+        autoOpen: false,
+        show: {
+            effect: "fade",
+            duration: 500
+          },
+          hide: {
+            effect: "fade",
+            duration: 500
+          },
+        buttons: {
+          "Close": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+	
+	if ($("#serverErrorMessage").html() != null && $("#serverErrorMessage").html().length > 0) {
+		$("#serverErrorDialog").dialog("open");
+	}
+	
     $("#formSelectionDialogContainer").css("background", "#f4f0ec"); 
 	
 	$("#forcePrintButton").click(function(event) {
@@ -429,6 +511,7 @@ $(function() {
 	    	var newobj = obj.clone();
 	    	obj.remove();
 	    	newobj.attr("data", newUrl);
+	    	newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
 	    	$(".recommendedHandoutContainer").show();
 	    	
 	    	container.append(newobj);
@@ -454,7 +537,7 @@ $(function() {
 	});
     
     if (timeoutDialog === null) {
-    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: '/openmrs/logout', logout_redirect_url: '/openmrs/module/chica/sessionTimeout.form', 
+    	$.timeoutDialog({timeout: $("#sessionTimeout").val(), countdown: $("#sessionTimeoutWarning").val(), logout_url: ctx + '/logout', logout_redirect_url: ctx + '/module/chica/sessionTimeout.form', 
     		keep_alive_url: keepAliveURL, dialog_width: '400', title: 'Your CHICA session is about to expire'});
     	timeoutDialog = getTimeoutDialog();
     	
@@ -466,6 +549,137 @@ $(function() {
     		$("object").show();
     	});
     }
+	$("#patient_header a").click(function(event) {
+		if ($("#patient_name").is(":visible")) {
+			$("#patient_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#patient_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#patient_name").slideUp("slow", function() {
+				if (!$("#handouts").is(":visible")) {
+					$("#patient_container").addClass("patient_container_collapse");
+					$("#handouts_container").addClass("patient_container_collapse");
+					$("#patient_container").animate({
+						height: '30px'
+					}, 500);
+					$("#handouts_container").animate({
+						height: '30px'
+					}, 500);
+				}
+				$("#patient_header").addClass("round_corners");
+  			});
+		} else {
+			$("#patient_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#patient_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#patient_name").slideDown("slow");
+			$("#patient_header").removeClass("round_corners");
+			$("#patient_container").removeClass("patient_container_collapse");
+			$("#handouts_container").removeClass("patient_container_collapse");
+			$("#patient_container").animate({
+						height: '165px'
+					}, 500);
+					$("#handouts_container").animate({
+						height: '165px'
+					}, 500);
+		}
+    	event.preventDefault();
+	});
+	
+	$("#handouts_header a").click(function(event) {
+		if ($("#handouts").is(":visible")) {
+			$("#handouts_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#handouts_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#handouts").slideUp("slow", function() {
+				if (!$("#patient_name").is(":visible")) {
+					$("#handouts_container").addClass("patient_container_collapse");
+					$("#handouts_container").addClass("patient_container_collapse");
+					$("#handouts_container").animate({
+						height: '30px'
+					}, 500);
+					$("#patient_container").animate({
+						height: '30px'
+					}, 500);
+				}
+				$("#handouts_header").addClass("round_corners");
+  			});
+		} else {
+			$("#handouts_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#handouts_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#handouts").slideDown("slow");
+			$("#handouts_header").removeClass("round_corners");
+			$("#handouts_container").removeClass("patient_container_collapse");
+			$("#handouts_container").removeClass("patient_container_collapse");
+			$("#handouts_container").animate({
+						height: '165px'
+					}, 500);
+					$("#patient_container").animate({
+						height: '165px'
+					}, 500);
+		}
+    	event.preventDefault();
+	});
+	
+	$("#vitals_header a").click(function(event) {
+		if ($("#vitals").is(":visible")) {
+			$("#vitals_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#vitals_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#vitals").slideUp("slow", function() {
+				$("#vitals_header").addClass("round_corners");
+  			});
+		} else {
+			$("#vitals_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#vitals_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#vitals").slideDown("slow");
+			$("#vitals_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
+	
+	$("#quality_indicators_header a").click(function(event) {
+		if ($("#quality_indicators").is(":visible")) {
+			$("#quality_indicators_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#quality_indicators_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#quality_indicators").slideUp("slow", function() {
+				$("#quality_indicators_header").addClass("round_corners");
+  			});
+		} else {
+			$("#quality_indicators_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#quality_indicators_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#quality_indicators").slideDown("slow");
+			$("#quality_indicators_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
+	
+	$("#psf_results_header a").click(function(event) {
+		if ($("#psf_results").is(":visible")) {
+			$("#psf_results_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#psf_results_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#psf_results").slideUp("slow", function() {
+				$("#psf_results_header").addClass("round_corners");
+  			});
+		} else {
+			$("#psf_results_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#psf_results_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#psf_results").slideDown("slow");
+			$("#psf_results_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
+	
+	$("#pws_prompts_header a").click(function(event) {
+		if ($("#pws_prompts").is(":visible")) {
+			$("#pws_prompts_header div").removeClass("ui-icon ui-icon-minusthick white");
+			$("#pws_prompts_header div").addClass("ui-icon ui-icon-plusthick white");
+    		$("#pws_prompts").slideUp("slow", function() {
+				$("#pws_prompts_header").addClass("round_corners");
+  			});
+		} else {
+			$("#pws_prompts_header div").removeClass("ui-icon ui-icon-plusthick white");
+			$("#pws_prompts_header div").addClass("ui-icon ui-icon-minusthick white");
+			$("#pws_prompts").slideDown("slow");
+			$("#pws_prompts_header").removeClass("round_corners");
+		}
+    	event.preventDefault();
+	});
   });
  
 
@@ -529,6 +743,7 @@ function displayFirstJIT()
 		var newobj = obj.clone();
 		obj.remove();
 		newobj.attr("data", newUrl);
+		newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
 		$(".recommendedHandoutContainer").show();;
 		
 		container.append(newobj);
@@ -598,4 +813,33 @@ function renewSession() {
             }
            }
      	});
+}
+
+function saveDraft() {
+	$("#saveDraftWaitDialog").dialog("open");
+	processCheckboxes();
+	var submitForm = $("#pwsForm"); 
+    $.ajax({
+    	"cache": false,
+        "data": submitForm.serialize(),
+        "type": "POST",
+        "url": saveDraftURL,
+        "timeout": 30000, // optional if you want to handle timeouts (which you should)
+        "error": handleSaveDraftError, // this sets up jQuery to give me errors
+        "success": function (text) {
+        	$("#saveDraftWaitDialog").dialog("close");
+        	if (text === "success") {
+	        	$("#saveDraftSuccessDialog").dialog("open");
+        	} else {
+        		$("#saveDraftErrorMessage").html(text);
+        		$("#saveDraftErrorDialog").dialog("open");
+        	}
+        }
+    });
+}
+
+function handleSaveDraftError(xhr, textStatus, error) {
+	$("#saveDraftWaitDialog").dialog("close");
+	$("#saveDraftErrorMessage").html("<p><b>An error occurred saving the draft: " + error + "</b></p>");
+	$("#saveDraftErrorDialog").dialog("open");
 }

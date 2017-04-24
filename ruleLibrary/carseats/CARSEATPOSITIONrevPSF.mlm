@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Child's car seat is incorrectly facing forward.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "Car_Seat_Position_0-1","forward";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Child's car seat is appropriately not forward facing.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "Car_Seat_Position_0-1","rearfacing";
 endif;
 

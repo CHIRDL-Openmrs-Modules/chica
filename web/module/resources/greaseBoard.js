@@ -10,7 +10,7 @@ $(function() {
     
     $("#manualCheckinDob").datepicker({
     	showOn: "button",
-    	buttonImage: "/openmrs/moduleResources/chica/images/calendar.gif",
+    	buttonImage: ctx + "/moduleResources/chica/images/calendar.gif",
     	buttonImageOnly: true,
     	buttonText: "Select date of birth",
     	changeMonth:true,
@@ -46,7 +46,7 @@ $(function() {
     });
     
     $("#viewBadScans").click(function() {
-    	displayBadScans("/openmrs",$("#badScans").val())
+    	displayBadScans(ctx,$("#badScans").val())
     });
     
     $("#listErrorDialog").dialog({
@@ -426,7 +426,7 @@ $(function() {
 
 function checkMRN() {
 	$("#mrnError").hide();
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	  $.ajax({
 		  beforeSend: function(){
 			  $("#mrnLoading").show();
@@ -451,7 +451,7 @@ function checkMRN() {
 
 function checkEncounterMRN() {
 	$("#encounterMrnError").hide();
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	var newTab = window.open ('', '_blank');
 	  $.ajax({
 		  beforeSend: function(){
@@ -477,7 +477,7 @@ function checkEncounterMRN() {
 
 function checkPrintHandoutsMRN() {
 	$("#printHandoutsMrnError").hide();
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	  $.ajax({
 		  beforeSend: function(){
 			  $("#printHandoutsMRNOKButton").button("disable");
@@ -502,7 +502,7 @@ function checkPrintHandoutsMRN() {
 
 function getManualCheckinInfo() {
 	$("#mrnError").hide();
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	  $.ajax({
 		  beforeSend: function(){
 			  $("#manualCheckinLoading").show();
@@ -573,7 +573,7 @@ function startTimer(period) {
 }
 
 function populateList() {
-  var url = "/openmrs/moduleServlet/chica/chica";
+  var url = ctx + "/moduleServlet/chica/chica";
   $.ajax({
 	  beforeSend: function(){
 		  $("#overlay").fadeIn();
@@ -745,11 +745,18 @@ function verifyEncounterMRN(responseXML, newTab) {
         $("#encounterMrnError").show("highlight", 750);
     } else {
     	var result = $(responseXML).find("result").text();
-        if (result == "true") {
+		var validEncounter = $(responseXML).find("validEncounter").text();
+        if (result == "true" && validEncounter == "true") {
         	$("#viewEncountersMRNDialog").dialog("close");
         	popupfull("viewEncounter.form?mrn=" + $("#encounterMrnLookup").val(), newTab);
-        } else {
+        } else if (result == "false"){
+			newTab.close();
         	$("#encounterMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the encounters.</b></p>");
+            $("#encounterMrnError").show("highlight", 750);
+        } else { 
+			newTab.close();
+			var mrn = $("#encounterMrnLookup").val();
+        	$("#encounterMrnMessage").html("<p><b>Patient "+ mrn +" does not exist in the CHICA system with a valid encounter.<br>Please re-enter the MRN #. </b></p>");
             $("#encounterMrnError").show("highlight", 750);
         }
     }
@@ -822,9 +829,9 @@ function parseManualCheckinInfo(responseXML) {
     	doctors.find("doctor").each(function () {
     		var firstName = $(this).find("firstName").text();
     		var lastName = $(this).find("lastName").text();
-    		var userId = $(this).find("userId").text();
+    		var providerId = $(this).find("providerId").text();
     		if ("Other" === lastName) {
-    			var text = "<option value='" + userId + "' selected>" + lastName;
+    			var text = "<option value='" + providerId + "' selected>" + lastName;
     			if (firstName != null && firstName.trim() != "") {
     				text += ", " + firstName;
     			}
@@ -832,7 +839,7 @@ function parseManualCheckinInfo(responseXML) {
     			text += "</option>";
     			options.push(text);
     		} else {
-    			var text = "<option value='" + userId + "'>" + lastName;
+    			var text = "<option value='" + providerId + "'>" + lastName;
     			if (firstName != null && firstName.trim() != "") {
     				text += ", " + firstName;
     			}
@@ -1163,7 +1170,7 @@ function submitManualCheckin() {
     		$("#manualCheckinAddCheckinButton").button("disable");
     		$("#manualCheckinCheckinButton").button("disable");
     		$("#manualCheckin").hide();
-    		$("#savingContainer").html('<img src="/openmrs/moduleResources/chica/images/ajax-loader.gif"/>Checking in patient ' + $("#manualCheckinFirstName").val() + ' ' + $("#manualCheckinLastName").val() + '...');
+    		$("#savingContainer").html('<img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif"/>Checking in patient ' + $("#manualCheckinFirstName").val() + ' ' + $("#manualCheckinLastName").val() + '...');
     		$("#manualCheckinSaving").show();
         },
         complete: function(){
@@ -1221,7 +1228,7 @@ function sendPage() {
 		return;
 	}
 	
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	var reporter = $("#pagerName").val();
 	var message = $("#pagerDescription").val();
 	$.ajax({

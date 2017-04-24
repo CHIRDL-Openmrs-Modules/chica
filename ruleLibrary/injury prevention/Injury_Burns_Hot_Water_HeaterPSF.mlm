@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Hot water heater set <120 degrees F.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "hot_water_heater_adjusted","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Hot water heater not set below 120 degrees F.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "hot_water_heater_adjusted","no";
 endif;
 

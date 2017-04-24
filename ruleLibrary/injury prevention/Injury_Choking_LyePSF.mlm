@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*There is lye drain cleaner in the child's home.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "lye_drain_cleaners_in_house","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No lye drain cleaner in the home.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "lye_drain_cleaners_in_house","no";
 endif;
 

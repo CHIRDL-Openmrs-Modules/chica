@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.jfree.util.Log;
 import org.openmrs.PersonAddress;
 import org.openmrs.module.chirdlutil.util.Util;
 
@@ -33,7 +32,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class HL7PatientHandler25 extends
 		org.openmrs.module.sockethl7listener.HL7PatientHandler25
 {
-
+	
 	//------get additional person attributes for chica patients
 	public String getSSN(Message message)
 	{
@@ -141,7 +140,7 @@ public class HL7PatientHandler25 extends
 				}
 
 			}
-		} catch (HL7Exception e)
+		} catch (Exception e)
 		{
 			logger.error(e.getMessage());
 			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
@@ -247,7 +246,7 @@ public class HL7PatientHandler25 extends
 			Terser terser = new Terser(newMessage);
 			pid = terser.get("/.PID-3-1");
 		} catch (Exception e) {
-			Log.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
+			logger.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
 		} 
 		return pid;
 	}

@@ -46,9 +46,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "***Patient thinks she might be pregnant.***", "INFORMANT: RED FLAGS";
  CALL storeObs With "might_be_pregnant","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient says she is not pregnant.", "INFORMANT: HEADSS";
  CALL storeObs With "might_be_pregnant","no";
 endif;
 

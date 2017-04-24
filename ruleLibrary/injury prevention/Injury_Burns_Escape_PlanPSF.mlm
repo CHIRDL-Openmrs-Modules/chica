@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Knows fire escape plan.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "escape_plan_for_fire","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not know fire escape plan for the house.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "escape_plan_for_fire","no";
 endif;
 

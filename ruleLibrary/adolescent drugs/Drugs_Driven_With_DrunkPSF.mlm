@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Reports having ridden in a car with an impaired driver.*", "INFORMANT: HEADSS";
  CALL storeObs With "driven_with_drunk","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies ever riding in a car with an impaired driver.", "INFORMANT: HEADSS";
  CALL storeObs With "driven_with_drunk","no";
 endif;
 

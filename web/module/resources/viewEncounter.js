@@ -110,7 +110,7 @@ function exitForm() {
 
 function checkEncounterMRN() {
 	$("#encounterMrnError").hide();
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	  $.ajax({
 		  beforeSend: function(){
 			  $("#viewEncountersMRNOKButton").button("disable");
@@ -150,12 +150,17 @@ function verifyEncounterMRN(responseXML) {
         $("#encounterMrnError").show("highlight", 750);
     } else {
     	var result = $(responseXML).find("result").text();
-        if (result == "true") {
+		validEncounter = $(responseXML).find("validEncounter").text();
+		if (result == "true" && validEncounter == "true") {
         	$("#loadingDialog").dialog("open");
         	$("#viewEncountersMRNDialog").dialog("close");
         	document.location.href = "viewEncounter.form?mrn=" + $("#encounterMrnLookup").val();
-        } else {
+        } else if (result == "false"){
         	$("#encounterMrnMessage").html("<p><b>MRN is not valid.<br>Retype the MRN #. Press OK to display the encounters.</b></p>");
+            $("#encounterMrnError").show("highlight", 750);
+        } else { 
+			var mrn = $("#encounterMrnLookup").val();
+        	$("#encounterMrnMessage").html("<p><b>Patient "+ mrn +" does not exist in the CHICA system with a valid encounter.<br>Please re-enter the MRN #. </b></p>");
             $("#encounterMrnError").show("highlight", 750);
         }
     }

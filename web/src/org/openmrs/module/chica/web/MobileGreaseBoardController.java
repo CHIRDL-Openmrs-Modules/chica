@@ -19,7 +19,7 @@ import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -142,7 +142,7 @@ public class MobileGreaseBoardController extends SimpleFormController {
 				if (location != null)
 				{
 					ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-					LocationAttributeValue locationAttributeValue = 
+					ChirdlLocationAttributeValue locationAttributeValue = 
 							chirdlUtilBackportsService.getLocationAttributeValue(location.getLocationId(), ChirdlUtilConstants.LOCATION_ATTR_DISPLAY_CONFIDENTIALITY_NOTICE);
 					
 					if(locationAttributeValue != null)

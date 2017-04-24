@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Says syllables.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Passed","Single Syllables";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not say syllables.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Failed","Single Syllables";
 endif;
 

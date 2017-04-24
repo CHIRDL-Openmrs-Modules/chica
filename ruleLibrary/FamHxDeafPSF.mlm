@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Positive family history of deafness.*", "INFORMANT: FAMILY HISTORY";
  CALL storeObs With "fhx_deafness","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No family history of deafness.", "INFORMANT: FAMILY HISTORY";
  CALL storeObs With "fhx_deafness","False";
 endif;
 

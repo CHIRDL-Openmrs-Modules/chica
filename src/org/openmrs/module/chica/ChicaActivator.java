@@ -9,6 +9,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 
 /**
  * Checks that all global properties for this module have been set.
@@ -28,6 +29,8 @@ public class ChicaActivator extends BaseModuleActivator {
 		
 		//check that all the required global properties are set
 		checkGlobalProperties();
+		
+		ApplicationCacheManager.getInstance(); // CHICA-963 Prevent errors on shutdown by initializing on startup. This has to be in the ChicaActivator since the cache depends on classes found in the chica module
 	}
 
 	private void checkGlobalProperties()
@@ -35,9 +38,7 @@ public class ChicaActivator extends BaseModuleActivator {
 		try
 		{
 			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService
-				.getGlobalProperty("scheduler.username"), adminService
-				.getGlobalProperty("scheduler.password"));
+			 
 			Iterator<GlobalProperty> properties = adminService
 					.getAllGlobalProperties().iterator();
 			GlobalProperty currProperty = null;

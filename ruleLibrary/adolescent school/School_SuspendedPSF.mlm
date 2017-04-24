@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Patient has been suspended from school this year.*", "INFORMANT: SCHOOL";
  CALL storeObs With "school_suspension_this_year","True";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient has not been suspended from school.", "INFORMANT: SCHOOL";
  CALL storeObs With "school_suspension_this_year","False";
 endif;
 

@@ -46,9 +46,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Reportedly has asthma or chronic/recurrent asthma symptoms.*", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "AsthmaStatus","Symptoms";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No asthma or asthma-like symptoms.", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "AsthmaStatus","NoSymptoms";
 endif;
 

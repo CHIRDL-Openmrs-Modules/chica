@@ -16,7 +16,6 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.MedicationListLookup;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -24,7 +23,6 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.rgccd.Medication;
 
 /**
  * @author tmdugan
@@ -111,34 +109,6 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 					" locationTagAttribute does not exist for locationTagId: "+
 					locationTagId+" locationId: "+locationId);
 			return;
-		}
-		
-		FormService formService = Context.getFormService();
-		Form form = formService.getForm(formId);
-		long startTime = System.currentTimeMillis();
-		AdministrationService adminService = Context.getAdministrationService();
-		String queryMeds = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_QUERY_MEDS);
-		if(form.getName().equals("PWS") && ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(queryMeds)){
-			List<Medication> drugs = MedicationListLookup.getMedicationList(patientId);
-			EncounterService encounterService = Context.getService(EncounterService.class);
-			Encounter encounter = encounterService.getEncounter(encounterId);
-			//if there is no drug list, call the ccd service again
-			//to get the drug list
-			if(drugs == null){
-				State queryMedListState = chirdlutilbackportsService.getStateByName("Query medication list");
-				PatientState state = chirdlutilbackportsService.addPatientState(patient, queryMedListState, 
-					sessionId, locationTagId, locationId, null);
-				try {
-	                MedicationListLookup.queryMedicationList(encounter,true);
-                }
-                catch (Exception e) {
-	               
-	                log.error("Medication Query failed", e);
-                }
-				state.setEndTime(new java.util.Date());
-				chirdlutilbackportsService.updatePatientState(patientState);
-			}
-			System.out.println("Produce: query medication list: "+(System.currentTimeMillis()-startTime));
 		}
 	}
 }

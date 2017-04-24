@@ -1,7 +1,7 @@
 var isChromeSafari = false;
-var previousForcePrintSelection = -1;
 var hasUpdatedForcePrintDimensions = false;
-$(function() {
+var type = "application/pdf";
+$(function() { 
 	$(".force-print-no-forms").hide();
 	isChromeSafari = forcePrint_checkForChromeSafari();
 
@@ -55,7 +55,6 @@ $(function() {
     
     $("#force-print-dialog").dialog({
         open: function() { 
-        	previousForcePrintSelection = -1;
         	$(".force-print-form-container").hide();
             forcePrint_removeForms();
             forcePrint_loadForms();
@@ -69,7 +68,10 @@ $(function() {
         	var container = obj.parent();
         	var newobj = obj.clone();
         	obj.remove();
-        	newobj.attr("data", "");
+        	
+        	// CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page.
+			newobj.removeAttr("data");
+			newobj.removeAttr("type");
         	container.append(newobj);
         },
         close: function(event, ui) { 
@@ -241,7 +243,7 @@ function forcePrint_loadForms() {
 		action = "action=getForcePrintForms&patientId=" + patientId + "&sessionId=" + sessionId + "&locationId=" + 
 			locationId + "&locationTagId=" + locationTagId;
 	}
-	var url = "/openmrs/moduleServlet/chica/chica";
+	var url = ctx + "/moduleServlet/chica/chica";
 	$.ajax({
 	  "cache": false,
 	  "dataType": "xml",
@@ -274,15 +276,26 @@ function forcePrint_parseAvailableForms(responseXML) {
     	$(".force-print-form-container").hide();
     	$(".force-print-no-forms").show();
     } else {
-    	$(responseXML).find("forcePrintJIT").each(function () {
-    		foundForms = true;
-        	var formName = $(this).find("displayName").text();
-            var formId = $(this).find("formId").text();
-            var outputType = $(this).find("outputType").text();
-            $('<li id="' + formId + '" title="' + formName + '" outputType="' + outputType + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
-        });
+		$('.force-print-accordion').remove();
+		$('.force-print-panel').remove();
+		$('.force-print-divider').remove();
+		$(responseXML).find("group").each(function () {
+			foundForms = true;
+			var groupName = $(this).attr('name');
+			if (groupName != null) {
+				$('<button class="force-print-accordion">' + groupName + '</button><div id="' + groupName + '" class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
+				$(responseXML).find('group[name="'+groupName+'"]').children().each(function(){
+					$('.force-print-panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="selectList ui-widget-content">' + $(this).find("displayName").text() + '</li>');
+				});
+				$("#"+groupName+"").hide();
+			} else {
+				$('<li class="selectList" id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '">' + $(this).find("displayName").text() + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
+				
+			}
+		});
+		togglePrintJITs();
     }
-    
+   
     $(".force-print-form-list").css({"max-width":"325px"});
 
   	$(".force-print-forms-loading").hide();
@@ -292,17 +305,23 @@ function forcePrint_parseAvailableForms(responseXML) {
   		$(".force-print-forms-container").hide();
   		$(".force-print-no-forms").show();
   	}
+
   	$("#force-print-form-list").selectable({
-  	  selecting: function(e, ui) { // on select
-          var curr = $(ui.selecting.tagName, e.target).index(ui.selecting); // get selecting item index
-          if(e.shiftKey && previousForcePrintSelection > -1) { // if shift key was pressed and there is previous - select them all
-              $(ui.selecting.tagName, e.target).slice(Math.min(previousForcePrintSelection, curr), 1 + Math.max(previousForcePrintSelection, curr)).addClass('ui-selected');
-              previousForcePrintSelection = -1; // and reset prev
-          } else {
-        	  previousForcePrintSelection = curr; // othervise just save prev
-          }
-        }
-  	});
+	  filter: "LI"
+	});
+	var prevChecked = null;
+	$('.selectList').click(function(e) {
+		if(!prevChecked) {
+			prevChecked = this;
+			return;
+		}
+		if(e.shiftKey) {
+			var startIndex = $('.selectList').index(this);
+			var endIndex = $('.selectList').index(prevChecked);
+			$('.selectList').slice(Math.min(startIndex,endIndex), 1 + Math.max(startIndex,endIndex)).addClass('ui-selected');
+		}
+		prevChecked = this;
+	});
 
   	if (!hasUpdatedForcePrintDimensions) {
   		updateForcePrintDimensions();
@@ -329,7 +348,7 @@ function forcePrint_loadForm() {
 			locationId + "&locationTagId=" + locationTagId + "&formIds=" + formIds + "&randomNumber=" + randomNumber;
 	}
 	
-	var url = "/openmrs/moduleServlet/chica/chica?";
+	var url = ctx + "/moduleServlet/chica/chica?";
 	$.ajax({
 		  "cache": false,
 		  "dataType": "xml",
@@ -387,13 +406,14 @@ function forcePrint_parseForcePrintedForms(responseXML) {
     				forcePrintedForms.toString() + "&randomNumber=" + randomNumber +  "#view=fit&navpanes=0";
     		}
     		
-    		var url = "/openmrs/moduleServlet/chica/chica?";
+    		var url = ctx + "/moduleServlet/chica/chica?";
     		var obj = $(".force-print-form-object");
     		var container = obj.parent();
     		var newUrl = url + action;
     		var newobj = obj.clone();
     		obj.remove();
     		newobj.attr("data", newUrl);
+    		newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
     		newobj.on("load", function () {
     			$(".force-print-form-loading").hide();
     			$(".force-print-form-container").show();
@@ -457,3 +477,25 @@ function updateForcePrintDimensions() {
     $(".force-print-create-button-panel").css({"height":(divHeight - instructHeight - nameHeight - newDivHeight - 30) + "px"});
     hasUpdatedForcePrintDimensions = true;
 }
+
+
+
+function togglePrintJITs() {
+	var acc = document.getElementsByClassName("force-print-accordion");
+	var i;
+	for (i = 0; i < acc.length; i++) {
+	  acc[i].onclick = function() {
+		this.classList.toggle("active");
+		var panel = this.nextElementSibling; 
+		var id = panel.id;
+		if (panel.style.maxHeight){
+		  panel.style.maxHeight = null;
+		  $("#"+id+"").hide();
+		} else {
+		  $("#"+id+"").show();
+		  panel.style.maxHeight = panel.scrollHeight -3 + "px";
+		} 
+	  }
+	}
+}
+

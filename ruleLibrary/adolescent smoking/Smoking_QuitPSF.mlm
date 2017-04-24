@@ -49,6 +49,7 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Teen wants to quit tobacco.*", "INFORMANT: HEADSS";
  CALL storeObs With "ready_to_quit","True";
 endif;
 If  (Box2=true) then

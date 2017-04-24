@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "***Parent reports violence by partner.***", "INFORMANT: RED FLAGS";
  CALL storeObs With "Domest_Violence_Concern","Kick_Hit_Slap";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Parent denies violence by partner.", "INFORMANT: SOCIAL HISTORY";
  CALL storeObs With "Domest_Violence_Concern","No_Kick_Hit_Slap";
 endif;
 

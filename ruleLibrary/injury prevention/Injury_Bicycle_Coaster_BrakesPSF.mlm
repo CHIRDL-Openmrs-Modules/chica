@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Rides bike with coaster brakes.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "bike_has_coaster_brakes","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Bike does not have coaster breaks.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "bike_has_coaster_brakes","no";
 endif;
 

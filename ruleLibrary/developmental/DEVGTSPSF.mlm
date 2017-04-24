@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Gets into a sitting position without help.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "GM_Passed","Get to Sitting";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Cannot get into a sitting position without help.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "GM_Failed","Get to Sitting";
 endif;
 

@@ -46,9 +46,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Patient reports using birth control.", "INFORMANT: HEADSS";
  CALL storeObs With "uses_birth_control","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Patient does not use birth control.", "INFORMANT: HEADSS";
  CALL storeObs With "uses_birth_control","no";
 endif;
 

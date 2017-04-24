@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "**Has pain today.**", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "PAIN QUALITATIVE","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "No pain today.", "INFORMANT: MEDICAL HISTORY";
  CALL storeObs With "PAIN QUALITATIVE","no";
  CALL storeObs With "PAIN QUALITATIVE CAREWEB","0";
 endif;

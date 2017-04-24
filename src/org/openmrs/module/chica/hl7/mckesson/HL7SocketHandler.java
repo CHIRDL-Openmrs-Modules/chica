@@ -185,12 +185,12 @@ public class HL7SocketHandler extends
 		String mrn = patientIdentifier.getIdentifier();
 		PatientService patientService = Context.getPatientService();
 		
-		List<Patient> lookupPatients = patientService.getPatients(null, mrn,
-				null, true);
+		List<Patient> lookupPatients = patientService.getPatientsByIdentifier(null, mrn,
+				null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		
 		if (lookupPatients == null || lookupPatients.size() == 0){
-			lookupPatients = patientService.getPatients(null, LEADING_ZERO + mrn,
-					null, true);
+			lookupPatients = patientService.getPatientsByIdentifier(null, LEADING_ZERO + mrn,
+					null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		}
 
 		if (lookupPatients != null && lookupPatients.size() > 0) {
@@ -201,7 +201,7 @@ public class HL7SocketHandler extends
 		PatientIdentifier ssnIdent = hl7Patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN);
 		if (ssnIdent != null) {
 			String ssn = ssnIdent.getIdentifier();
-			lookupPatients = patientService.getPatients(null, ssn, null, true);
+			lookupPatients = patientService.getPatientsByIdentifier(null, ssn, null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 			if (lookupPatients != null && lookupPatients.size() > 0) {
 				Iterator<Patient> i = lookupPatients.iterator();
 				while (i.hasNext()) {
@@ -768,8 +768,9 @@ public class HL7SocketHandler extends
 				if (newName.getUuid() == null) {
 					UUID uuid = UUID.randomUUID();
 					newName.setUuid(uuid.toString());
-					currentPatient.addName(newName);
 				}
+				
+				currentPatient.addName(newName);
 			}
 			
 			Set<PersonName> names = currentPatient.getNames();
@@ -924,8 +925,8 @@ public class HL7SocketHandler extends
 		// If another patient owns the SSN, do NOT void and add identifier
 		// Instead, store the attempted SSN as an attribute for record
 
-		List<Patient> lookupPatients = patientService.getPatients(null, newSSN
-				.getIdentifier(), null, true);
+		List<Patient> lookupPatients = patientService.getPatientsByIdentifier(null, newSSN
+				.getIdentifier(), null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		if (lookupPatients != null && lookupPatients.size() > 0) {
 			if (personAttrType != null) {
 				PersonAttribute personAttr = new PersonAttribute(
@@ -1469,8 +1470,8 @@ public class HL7SocketHandler extends
 				List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 				identifierTypes.add(identifier.getIdentifierType());
 
-				List<Patient> patients = patientService.getPatients(null,
-						identifier.getIdentifier(), identifierTypes, true);
+				List<Patient> patients = patientService.getPatientsByIdentifier(null,
+						identifier.getIdentifier(), identifierTypes, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 
 				if (patients != null && patients.size() == 1) {
 					return patients.get(0);
@@ -1542,8 +1543,8 @@ public class HL7SocketHandler extends
 				return;
 			}
 
-			List<Patient> existingPatients = patientService.getPatients(null,
-					Util.removeLeadingZeros(identifier), null, false);
+			List<Patient> existingPatients = patientService.getPatientsByIdentifier(null,
+					Util.removeLeadingZeros(identifier), null, false); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 			
 			for (Patient existingPatient : existingPatients){
 				

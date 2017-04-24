@@ -29,6 +29,7 @@ import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -502,18 +503,20 @@ public class Util {
 				// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
 				String checkin = DateUtil.formatDate(encounter.getEncounterDatetime(), ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
 				
-				List<User> providers = Context.getUserService().getUsersByPerson(encounter.getProvider(), true);
+				// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
+				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+				
 				String mdName = "";
-				if (providers != null && providers.size() > 0) {
-					User provider = providers.get(0);
-					String firstInit = org.openmrs.module.chirdlutil.util.Util.toProperCase(provider.getGivenName());
+				if (provider != null) {
+					Person person = provider.getPerson();
+					String firstInit = org.openmrs.module.chirdlutil.util.Util.toProperCase(person.getGivenName());
 					if (firstInit != null && firstInit.length() > 0) {
 						firstInit = firstInit.substring(0, 1);
 					} else {
 						firstInit = "";
 					}
 					
-					String middleInit = org.openmrs.module.chirdlutil.util.Util.toProperCase(encounter.getProvider().getMiddleName());
+					String middleInit = org.openmrs.module.chirdlutil.util.Util.toProperCase(person.getMiddleName());
 					if (middleInit != null && middleInit.length() > 0) {
 						middleInit = middleInit.substring(0, 1);
 					} else {
@@ -528,7 +531,7 @@ public class Util {
 					if (mdName.length() > 0) {
 						mdName += " ";
 					}
-					String familyName = org.openmrs.module.chirdlutil.util.Util.toProperCase(provider.getFamilyName());
+					String familyName = org.openmrs.module.chirdlutil.util.Util.toProperCase(person.getFamilyName());
 					if (familyName == null) {
 						familyName = "";
 					}
@@ -906,5 +909,26 @@ public class Util {
 			}
 		}
 		return strOutput;
+	}
+	
+	/**
+	 * Gets the time frame for form from global property settings
+	 * 
+	 * @return formTimeLimit returns form time limit.
+	 */
+	public static Integer getFormTimeLimit() {
+		Integer formTimeLimit = null;
+		String formTimeLimitStr = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT);
+		if (formTimeLimitStr == null || formTimeLimitStr.trim().length() == 0) {
+			log.error("No value set for global property: "+ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT+". A default of 2 days will be used.");
+			formTimeLimitStr = "2";
+		}
+		try {
+			formTimeLimit = Integer.parseInt(formTimeLimitStr);
+		} catch (NumberFormatException e) {
+			log.error("Invalid number format for global property "+ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT+". A default of 2 days will be used.");
+			formTimeLimit = 2;
+		}
+		return formTimeLimit;
 	}
 }

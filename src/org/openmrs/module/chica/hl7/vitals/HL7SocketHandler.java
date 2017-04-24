@@ -86,13 +86,12 @@ public class HL7SocketHandler implements Application {
 	}
 	
 	/**
-	 * Always returns true,assuming that the router calling this handler will only call this handler
-	 * with ORU_R01 messages.
+	 *  Returns true if the message is not null and is an instance of ORU_R01
 	 * 
 	 * @returns true
 	 */
 	public boolean canProcess(Message message) {
-		return message != null && "ORU_R01".equals(message.getName());
+		return message != null && message instanceof ca.uhn.hl7v2.model.v23.message.ORU_R01;
 	}
 	
 	private void writeMessageToFile(String mrn, String incomingMessage) {
@@ -296,7 +295,7 @@ public class HL7SocketHandler implements Application {
 			PatientIdentifierType mrnIdentifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 			List<PatientIdentifierType>  typeList = new ArrayList<PatientIdentifierType>();
 			typeList.add(mrnIdentifierType);
-			List<Patient> patients = patientService.getPatients(null, mrn, typeList, false); // Do not match identifier exactly
+			List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, typeList, false); // Do not match identifier exactly // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 			if (patients != null && patients.size() > 0) {
 				patient = patients.get(0);
 			}

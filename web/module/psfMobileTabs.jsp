@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script>
+var ctx = "${pageContext.request.contextPath}";
 $(document).bind("mobileinit", function(){
     $('#confirm_page').on('pageshow', function (event, ui) {
     	$("#confirm_page_tab").addClass('ui-btn-active');

@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "*Reports swimming in fast-moving water.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "swims_fast_moving_water","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies swimming in fast-moving water.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "swims_fast_moving_water","no";
 endif;
 

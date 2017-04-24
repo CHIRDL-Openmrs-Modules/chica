@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Says at least 6 words other than 'mama' and 'dada'.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Passed","6 Words";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Not saying at least 6 words other than 'mama' and 'dada'.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Failed","6 Words";
 endif;
 

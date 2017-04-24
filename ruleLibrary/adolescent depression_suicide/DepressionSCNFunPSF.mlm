@@ -43,9 +43,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Patient reports having fun in the last two weeks.", "INFORMANT: HEADSS";
  CALL storeObs With "fun_in_past_two_weeks","true";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Patient reports not having fun in the past two weeks.*", "INFORMANT: HEADSS";
  CALL storeObs With "fun_in_past_two_weeks","false";
 endif;
 

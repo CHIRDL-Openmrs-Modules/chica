@@ -70,9 +70,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "**Direct TB contact.**", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "ENVIRONMENTAL HISTORY","DIRECT TUBERCULOSIS CONTACT";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "Denies direct TB contact.", "INFORMANT: ENVIRONMENT";
  CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","DIRECT TUBERCULOSIS CONTACT";
 endif;
 

@@ -18,11 +18,10 @@ import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.User;
+import org.openmrs.Person;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
-import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
@@ -371,11 +370,11 @@ public class ViewEncounterController extends SimpleFormController {
 							.getPatientIdentifierTypeByName("MRN_OTHER");
 					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 					identifierTypes.add(identifierType);
-					List<Patient> patients = patientService.getPatients(null, mrn,
-							identifierTypes,true);
+					List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
+							identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 					if (patients.size() == 0){
-						patients = patientService.getPatients(null, "0" + mrn,
-								identifierTypes,true);
+						patients = patientService.getPatientsByIdentifier(null, "0" + mrn,
+								identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 					}
 
 					if (patients.size() > 0)
@@ -467,13 +466,9 @@ public class ViewEncounterController extends SimpleFormController {
 					}
 				}
 
-				// Calculate age at visit
-				UserService userService = Context.getUserService();
-				List<User> providers = userService.getUsersByPerson(enct.getProvider(), true);
-				User provider = null;
-				if(providers != null&& providers.size()>0){
-					provider = providers.get(0);
-				}
+				// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
+				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(enct);
+				
 				String providerName = getProviderName(provider);
 				String station = enct.getPrinterLocation();
 				
@@ -628,17 +623,18 @@ public class ViewEncounterController extends SimpleFormController {
 		return map;
 	}
 
-	private String getProviderName(User prov) {
+	private String getProviderName(org.openmrs.Provider prov) {
 		String mdName = "";
 		if (prov != null) {
-			String firstInit = Util.toProperCase(prov.getGivenName());
+			Person person = prov.getPerson();
+			String firstInit = Util.toProperCase(person.getGivenName());
 			if (firstInit != null && firstInit.length() > 0) {
 				firstInit = firstInit.substring(0, 1);
 			} else {
 				firstInit = "";
 			}
 
-			String middleInit = Util.toProperCase(prov.getPerson().getMiddleName());
+			String middleInit = Util.toProperCase(person.getMiddleName());
 			if (middleInit != null && middleInit.length() > 0) {
 				middleInit = middleInit.substring(0, 1);
 			} else {
@@ -653,7 +649,7 @@ public class ViewEncounterController extends SimpleFormController {
 			if (mdName.length() > 0) {
 				mdName += " ";
 			}
-			String familyName = Util.toProperCase(prov.getFamilyName());
+			String familyName = Util.toProperCase(person.getFamilyName());
 			if (familyName == null) {
 				familyName = "";
 			}

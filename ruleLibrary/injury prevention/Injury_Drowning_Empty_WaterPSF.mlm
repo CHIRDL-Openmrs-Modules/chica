@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Parent empties tubs and water containers immediately after use.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "empty_container_after_use","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Parent does not empty tubs and water containers immediately after use.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "empty_container_after_use","no";
 endif;
 

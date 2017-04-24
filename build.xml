@@ -13,9 +13,9 @@
          <filter token="MODULE_VERSION" value="${module.version}"/>
          <filter token="MODULE_PACKAGE" value="${module.package}"/>
       </filterset>
-      <path id="classpath"><!--<fileset dir="lib">
+      <path id="classpath"><fileset dir="lib">
 				<include name="**/*.jar"/>
-			</fileset>--><fileset dir="lib-common">
+			</fileset><fileset dir="lib-common">
             <include name="**/*.jar"/>
          </fileset>
          <pathelement location="build"/>

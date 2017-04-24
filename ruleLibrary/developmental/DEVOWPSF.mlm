@@ -41,9 +41,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Has at least one word beyond 'mama' and 'dada'.", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Passed","One Word";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Does not have words beyond 'mama' and 'dada'.*", "INFORMANT: DEVELOPMENT";
  CALL storeObs With "LG_Failed","One Word";
 endif;
 

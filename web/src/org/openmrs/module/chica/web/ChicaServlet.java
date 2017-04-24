@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import javax.cache.Cache;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,13 +24,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Field;
+import org.openmrs.FieldType;
 import org.openmrs.Form;
+import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
@@ -37,6 +43,11 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.atd.TeleformTranslator;
+import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.atd.util.AtdConstants;
+import org.openmrs.module.atd.xmlBeans.Record;
+import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -91,6 +102,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
 	private static final String KEEP_ALIVE = "keepAlive";
 	private static final String CLEAR_CACHE = "clearCache";
+	private static final String CLEAR_FORM_INSTANCE_FROM_FORM_CACHE = "clearFormInstanceFromFormCache";
+	private static final String SAVE_FORM_DRAFT = "saveFormDraft";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -109,6 +122,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String PARAM_CACHE_NAME = "cacheName";
 	private static final String PARAM_CACHE_KEY_TYPE = "cacheKeyType";
 	private static final String PARAM_CACHE_VALUE_TYPE = "cacheValueType";
+	private static final String PARAM_PROVIDER_ID = "providerId";
 	
 	private static final String RESULT_SUCCESS = "success";
 	
@@ -126,6 +140,9 @@ public class ChicaServlet extends HttpServlet {
 	private static final String XML_FORCE_PRINT_JITS_END = "</forcePrintJITs>";
 	private static final String XML_FORCE_PRINT_JIT_START = "<forcePrintJIT>";
 	private static final String XML_FORCE_PRINT_JIT_END = "</forcePrintJIT>";
+	private static final String XML_GROUP = "group";
+	private static final String XML_GROUP_NAME = "name";
+	private static final String XML_GROUP_END = "</group>";
 	private static final String XML_DISPLAY_NAME = "displayName";
 	private static final String XML_PATIENT_ROWS_START = "<patientRows>";
 	private static final String XML_PATIENT_ROWS_END = "</patientRows>";
@@ -151,6 +168,8 @@ public class ChicaServlet extends HttpServlet {
 	private static final String MAX_CACHE_AGE = "600";
 	
 	private static final String WILL_KEEP_ALIVE = "OK";
+	
+	private static final String PROVIDER_SAVE_DRAFT = "_provider_save_draft";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
@@ -214,6 +233,10 @@ public class ChicaServlet extends HttpServlet {
 			keepAlive(response);
 		} else if (CLEAR_CACHE.equals(action)) {
 			clearCache(request, response);
+		} else if (SAVE_FORM_DRAFT.equals(action)) {
+			saveFormDraft(request, response);
+		} else if (CLEAR_FORM_INSTANCE_FROM_FORM_CACHE.equals(action)) {
+			clearFormInstaceFromFormDraftCache(request, response);
 		}
 	}
 	
@@ -647,6 +670,7 @@ public class ChicaServlet extends HttpServlet {
 		FormAttribute ageMaxUnitsAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX_UNITS);
 		FormAttribute displayNameAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME);
 		FormAttribute outputTypeAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_OUTPUT_TYPE);
+		FormAttribute displayGpHeaderAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTRIBUTE_DISPLAY_GP_HEADER);
 		
 		Map<Integer, String> formAttrValAgeMinMap = getFormAttributeValues(chirdlutilbackportsService, ageMinAttr.getFormAttributeId(), 
 			locationId, locationTagId);
@@ -656,6 +680,18 @@ public class ChicaServlet extends HttpServlet {
 			locationId, locationTagId);
 		Map<Integer, String> formAttrValAgeMaxUnitsMap = getFormAttributeValues(chirdlutilbackportsService, ageMaxUnitsAttr.getFormAttributeId(), 
 			locationId, locationTagId);
+		Map<Integer, String> formAttrValDisplayNameMap = getFormAttributeValues(chirdlutilbackportsService, displayNameAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+		Map<Integer, String> formAttrValDisplayGpHeaderMap = getFormAttributeValues(chirdlutilbackportsService, displayGpHeaderAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+		Map<Integer, String> formAttrValOutputTypeMap = getFormAttributeValues(chirdlutilbackportsService, outputTypeAttr.getFormAttributeId(), 
+			locationId, locationTagId);
+
+		String defaultOutputType = Context.getAdministrationService().getGlobalProperty(
+			ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
+		if (defaultOutputType == null) {
+			defaultOutputType = "";
+		}
 		for (FormAttributeValue attribute : attributes) {
 			if (attribute.getValue().equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE) && 
 					attribute.getLocationId().equals(locationId) && 
@@ -666,13 +702,24 @@ public class ChicaServlet extends HttpServlet {
 					FormDisplay formDisplay = new FormDisplay();
 					formDisplay.setFormName(form.getName());
 					formDisplay.setFormId(form.getFormId());
-					FormAttributeValue attributeValue = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), 
-						displayNameAttr, locationTagId, locationId);
-					if (attributeValue == null || attributeValue.getValue() == null) {
+					String displayName = formAttrValDisplayNameMap.get(formId);
+					if (displayName == null || displayName.trim().length() == 0) {
 						formDisplay.setDisplayName(form.getName());
 					} else {
-						formDisplay.setDisplayName(attributeValue.getValue());
+						formDisplay.setDisplayName(displayName);
 					}
+					String displayGpHeader = formAttrValDisplayGpHeaderMap.get(formId);
+					if (displayGpHeader != null && displayGpHeader.trim().length() != 0) {
+						formDisplay.setDisplayGpHeader(displayGpHeader);
+					} 
+					String strOutputType = null;
+					String outputType = formAttrValOutputTypeMap.get(formId);
+					if (outputType != null && outputType.trim().length() != 0) {
+						strOutputType = outputType;
+					} else {
+						strOutputType = defaultOutputType;
+					}
+					formDisplay.setOutputType(strOutputType);
 					
 					String ageMin = formAttrValAgeMinMap.get(formId);
 					if (ageMin == null || ageMin.trim().length() == 0) {
@@ -724,35 +771,81 @@ public class ChicaServlet extends HttpServlet {
 					catch(NumberFormatException e){
 						continue;
 					}
-
 					printableJits.add(formDisplay);
 				}
 			}
 		}
-		
-		String defaultOutputType = Context.getAdministrationService().getGlobalProperty(
-			ChirdlUtilConstants.GLOBAL_PROP_DEFAULT_OUTPUT_TYPE);
-		if (defaultOutputType == null) {
-			defaultOutputType = "";
-		}
-		
+		List<String> generalFrmsArray = new ArrayList<String>();
+		HashMap<String, List<String>> groupMap = new HashMap<String, List<String>>();
 		for (FormDisplay formDisplay: printableJits) {
-			pw.write(XML_FORCE_PRINT_JIT_START);
-			ServletUtil.writeTag(XML_FORM_ID, formDisplay.getFormId(), pw);
-			ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(formDisplay.getDisplayName()), pw);
-			FormAttributeValue outputType = chirdlutilbackportsService.getFormAttributeValue(formDisplay.getFormId(), 
-				outputTypeAttr, locationTagId, locationId);
-			pw.write(XML_OUTPUT_TYPE_START);
-			if (outputType != null && outputType.getValue() != null && !outputType.getValue().isEmpty()) {
-				pw.write(outputType.getValue());
-			} else {
-				pw.write(defaultOutputType);
-			}
 			
-			pw.write(XML_OUTPUT_TYPE_END);
-			pw.write(XML_FORCE_PRINT_JIT_END);
+			String strFormDisplay = formDisplay.getFormId()+","+formDisplay.getDisplayName()+","+formDisplay.getOutputType();
+			if (formDisplay.getDisplayGpHeader() != null && !formDisplay.getDisplayGpHeader().isEmpty()) {
+				if (!groupMap.containsKey(formDisplay.getDisplayGpHeader())) { 
+					List<String> list = new ArrayList<String>();
+				    list.add(strFormDisplay);
+				    groupMap.put(formDisplay.getDisplayGpHeader(), list);
+				}  else {
+					groupMap.get(formDisplay.getDisplayGpHeader()).add(strFormDisplay);
+				}
+			} else {
+				generalFrmsArray.add(strFormDisplay);
+			}
 		}
 		
+		List<String> generalFormNames = new ArrayList<String>();
+		Map<String, String> generalMap = new HashMap<String, String>();
+		
+		for (String value : generalFrmsArray) {
+			String[] values = value.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+			generalFormNames.add(values[1]);
+			generalMap.put(values[1], values[0]+","+values[2]);
+		}
+		
+		List<String> frmHeaderLst = new ArrayList<String>();
+		frmHeaderLst.addAll(generalFormNames);
+		if (groupMap != null) {
+		 frmHeaderLst.addAll(groupMap.keySet());
+		}
+		Collections.sort(frmHeaderLst);
+		
+		for (String value : frmHeaderLst) {
+			if (generalFormNames.contains(value)) {
+				pw.write(ChirdlUtilConstants.XML_START_TAG + XML_GROUP + ChirdlUtilConstants.XML_END_TAG);
+				pw.write(XML_FORCE_PRINT_JIT_START);
+				String[] generalValues = generalMap.get(value).split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+				ServletUtil.writeTag(XML_FORM_ID, generalValues[0], pw);
+				ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(value), pw);
+				pw.write(XML_OUTPUT_TYPE_START);
+				pw.write(generalValues[1]);
+				pw.write(XML_OUTPUT_TYPE_END);
+				pw.write(XML_FORCE_PRINT_JIT_END);
+				pw.write(XML_GROUP_END);
+			} else {
+				List<String> groupForms  = groupMap.get(value);
+				List<String> displayName = new ArrayList<String>();
+				Map<String, String> branchMap = new HashMap<String, String>();
+				
+				pw.write(ChirdlUtilConstants.XML_START_TAG + XML_GROUP + " " + XML_GROUP_NAME + "=\"" + value + "\"" + ChirdlUtilConstants.XML_END_TAG);
+				for (String gpForm : groupForms) {
+					String[] gpFrmValues = gpForm.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+					displayName.add(gpFrmValues[1]);
+					branchMap.put(gpFrmValues[1], gpFrmValues[0]+","+gpFrmValues[2]);
+				}
+				Collections.sort(displayName);
+				for (String name : displayName) {
+					String[] formSplit = branchMap.get(name).split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+					pw.write(XML_FORCE_PRINT_JIT_START);
+					ServletUtil.writeTag(XML_FORM_ID, formSplit[0], pw);
+					ServletUtil.writeTag(XML_DISPLAY_NAME, ServletUtil.escapeXML(name), pw);
+					pw.write(XML_OUTPUT_TYPE_START);
+					pw.write(formSplit[1]);
+					pw.write(XML_OUTPUT_TYPE_END);
+					pw.write(XML_FORCE_PRINT_JIT_END);
+				}
+				pw.write(XML_GROUP_END);
+			}
+		}
 		ageUnitsMinMap.clear();
 		ageUnitsMaxMap.clear();
 		formAttrValAgeMinMap.clear();
@@ -761,6 +854,7 @@ public class ChicaServlet extends HttpServlet {
 		formAttrValAgeMaxUnitsMap.clear();
 		
 		pw.write(XML_FORCE_PRINT_JITS_END);
+		
 	}
 	
 	/**
@@ -924,6 +1018,8 @@ public class ChicaServlet extends HttpServlet {
 			String formName = form.getName();
 			parameters.put(ChirdlUtilConstants.PARAMETER_1, formName);
 			parameters.put(ChirdlUtilConstants.PARAMETER_2, ChirdlUtilConstants.FORM_INST_ATTR_VAL_FORCE_PRINT);
+			parameters.put(ChirdlUtilConstants.PARAMETER_3, ChirdlUtilConstants.GENERAL_INFO_FALSE);
+			parameters.put(ChirdlUtilConstants.PARAMETER_4, ChirdlUtilConstants.GENERAL_INFO_TRUE);
 			Result result = logicService.eval(patientId, ChirdlUtilConstants.RULE_CREATE_JIT, parameters);
 			
 			// Check the output type
@@ -1017,11 +1113,11 @@ public class ChicaServlet extends HttpServlet {
 				.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 		List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 		identifierTypes.add(identifierType);
-		List<Patient> patients = patientService.getPatients(null, mrn,
-				identifierTypes,true);
+		List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
+				identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		if (patients.size() == 0){
-			patients = patientService.getPatients(null, "0" + mrn,
-					identifierTypes,true);
+			patients = patientService.getPatientsByIdentifier(null, "0" + mrn,
+					identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		}
 
 		if (patients.size() > 0) {
@@ -1514,5 +1610,223 @@ public class ChicaServlet extends HttpServlet {
     	}
     	
     	pw.write(RESULT_SUCCESS);
+	}
+    
+    /**
+     * Saves a draft of a form. Text written to the response will indicate if the procedure completed
+     * successfully.  The procedure executed normally if "success" is returned in the response.  
+     * A message containing an error message to display to the client will be returned otherwise.
+     * 
+     * @param request The request from the client
+     * @param response The response that will be sent back to the client
+     * @throws IOException
+     */
+    private void saveFormDraft(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		
+    	PrintWriter pw = response.getWriter();
+    	Integer formId = null;
+		
+		//parse out the location_id,form_id,location_tag_id, and form_instance_id
+		//from the selected form
+		String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
+		FormInstanceTag formInstTag = null;
+		if (formInstance != null && formInstance.trim().length() > 0) {
+			formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+			formId = formInstTag.getFormId();
+		} else {
+			String messagePart1 = "Error saving form draft: form instance tag parameter not found.";
+			String messagePart2 = "Please contact support.";
+			ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(formId);
+		
+		ATDService atdService = Context.getService(ATDService.class);
+		Records records = null;
+		try {
+			records = atdService.getFormRecords(formInstTag);
+		} catch (Exception e) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+			String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+			ServletUtil.writeHtmlErrorMessage(pw, e, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		if (records == null) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+    		String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+    		ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		Record record = records.getRecord();
+		if (record == null) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+    		String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+    		ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		Map<String, org.openmrs.module.atd.xmlBeans.Field> recordFieldMap = org.openmrs.module.atd.util.Util.createRecordFieldMap(records);
+		Set<FormField> formFields = form.getFormFields();
+		TeleformTranslator translator = new TeleformTranslator();
+		FieldType exportFieldType = translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
+		for (FormField formField : formFields) {
+			Field currField = formField.getField();
+			FieldType fieldType = currField.getFieldType();
+			if (fieldType != null && fieldType.equals(exportFieldType)) {
+				String fieldName = currField.getName();
+				org.openmrs.module.atd.xmlBeans.Field recordField = recordFieldMap.get(fieldName);
+				String value = request.getParameter(fieldName);
+				if (recordField != null) {
+					recordField.setValue(value);
+				} else {
+					org.openmrs.module.atd.xmlBeans.Field field = new org.openmrs.module.atd.xmlBeans.Field();
+					field.setId(fieldName);
+					field.setValue(value);
+					record.addField(field);
+				}
+			}
+		}
+		
+		try {
+			atdService.saveFormRecordsDraft(formInstTag, records);
+		} catch (Exception e) {
+			String messagePart1 = "Error saving form draft: unable to load form from disk.";
+			String messagePart2 = "Please contact support with the following information: Form ID: " + formId + 
+					" Form Instance ID: " + formInstTag.getFormInstanceId() + " Location ID: " + 
+					formInstTag.getLocationId() + " Location Tag ID: " + formInstTag.getLocationTagId();
+			ServletUtil.writeHtmlErrorMessage(pw, e, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		String providerId = request.getParameter(PARAM_PROVIDER_ID);
+		String patientId = request.getParameter(PARAM_PATIENT_ID);
+		String encounterId = request.getParameter(PARAM_ENCOUNTER_ID);
+		// Save who created a draft.
+		if (providerId != null && providerId.trim().length() > 0 && patientId != null && patientId.trim().length() > 0 && 
+				encounterId != null && encounterId.trim().length() > 0) {
+			try {
+				saveProviderDraft(Integer.parseInt(patientId), Integer.parseInt(encounterId), providerId, formInstTag);
+			} catch (NumberFormatException e) {
+				log.error("Error saving provider ID for draft form ID: " + formId + " patient ID: " + patientId + 
+					" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
+						formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
+						" location tag ID: " + formInstTag.getLocationTagId());
+			}
+		} else {
+			log.error("Cannot log who is saving a draft for form ID: " + formId + " patient ID: " + patientId + 
+				" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
+					formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
+					" location tag ID: " + formInstTag.getLocationTagId());
+		}
+		
+		pw.write(RESULT_SUCCESS);
+    }
+    
+    /**
+	 * Saves the user's provider ID to an observation for saving a draft.
+	 * 
+	 * @param patientId The ID of the patient who owns the form.
+	 * @param formId The ID of the form being viewed.
+	 * @param encounterId The encounter ID of the encounter where the form was created.
+	 * @param providerId The ID of the provider to be stored.
+	 * @param formInstTag The form instance tag information
+	 */
+	private void saveProviderDraft(Integer patientId, Integer encounterId, String providerId, FormInstanceTag formInstTag) {
+		Form form = Context.getFormService().getForm(formInstTag.getFormId());
+		String conceptName = form.getName() + PROVIDER_SAVE_DRAFT;
+		saveProviderInfo(patientId, encounterId, providerId, conceptName, formInstTag);
+	}
+	
+	/**
+	 * Saves the submitter's provider ID to an observation.
+	 * 
+	 * @param patient The ID of the patient who owns the form.
+	 * @param formId The ID of the form being viewed.
+	 * @param encounterId The encounter ID of the encounter where the form was created.
+	 * @param providerId The ID of the provider to be stored.
+	 * @param conceptName The name of the concept.
+	 * @param formInstTag The form instance tag information
+	 */
+	private void saveProviderInfo(Integer patientId, Integer encounterId, String providerId, String conceptName, FormInstanceTag formInstTag) {
+		PatientService patientService = Context.getPatientService();
+		Patient patient = patientService.getPatient(patientId);
+		if (patient == null) {
+			log.error("Could not log provider info.  Patient " + patientId + " not found.");
+			return;
+		}
+		
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConceptByName(conceptName);
+		if (concept == null) {
+			log.error("Could not log provider info.  Concept " + conceptName + " not found.");
+			return;
+		}
+		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(),formInstTag.getFormId(),formInstTag.getFormInstanceId());
+		org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, encounterId, providerId, formInstance, null, formInstTag.getLocationTagId(), null);
+	}
+	
+	/**
+	 * Clears an individual form instance from the form draft cache.
+	 * 
+	 * @param request The request from the client
+     * @param response The response that will be sent back to the client
+	 * @throws IOException
+	 */
+	private void clearFormInstaceFromFormDraftCache(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		
+    	PrintWriter pw = response.getWriter();
+		
+		// parse out the location_id, form_id, location_tag_id, and form_instance_id from the selected form
+		String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
+		FormInstanceTag formInstTag = null;
+		if (formInstance != null && formInstance.trim().length() > 0) {
+			try {
+				formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+			} catch (Exception e) {
+				String message = "Error clearing form instance " + formInstance + " from the " + AtdConstants.CACHE_FORM_DRAFT + 
+						" cache.  Cannot successfully parse the form instance provided.";
+	    		log.error(message, e);
+	    		pw.write(message);
+			}
+		} else {
+			String messagePart1 = "Error clearing form instance from the " + AtdConstants.CACHE_FORM_DRAFT + 
+					" cache: form instance tag parameter not found.";
+			String messagePart2 = "Please contact support.";
+			ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
+    		return;
+		}
+		
+		ApplicationCacheManager cacheManager = ApplicationCacheManager.getInstance();
+		try {
+			Cache<FormInstanceTag, Records> formCache = cacheManager.getCache(AtdConstants.CACHE_FORM_DRAFT, 
+																			  AtdConstants.CACHE_FORM_DRAFT_KEY_CLASS, 
+																			  AtdConstants.CACHE_FORM_DRAFT_VALUE_CLASS);
+			if (formCache != null) {
+				boolean existed = formCache.remove(formInstTag);
+				pw.write(String.valueOf(existed));
+			} else {
+				String message = "The " + AtdConstants.CACHE_FORM_DRAFT + " cache cannot be located.";
+				log.error(message);
+	    		pw.write(message);
+			}
+		} catch (Exception e) {
+			String message = "Error clearing form instance " + formInstance + " from the " + AtdConstants.CACHE_FORM_DRAFT + " cache.";
+    		log.error(message, e);
+    		pw.write(message);
+		}
 	}
 }

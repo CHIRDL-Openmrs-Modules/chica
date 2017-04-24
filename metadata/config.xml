@@ -6,7 +6,7 @@
     <!-- Chica Module Properties -->
     <id>chica</id>
     <name>Chica</name>
-    <version>1.74.4</version>
+    <version>1.75.0</version>
     <package>org.openmrs.module.@MODULE_ID@</package>
     <author>Vibha Anand and Tammy Dugan</author>
     <description>
@@ -19,12 +19,11 @@
     
     <require_version>1.1.10.2283</require_version>
     <require_modules>
-        <require_module version="2.31.3">org.openmrs.module.dss</require_module>
-        <require_module version="2.8.1">org.openmrs.module.atd</require_module>
-        <require_module version="1.7.0">org.openmrs.module.sockethl7listener</require_module>
-        <require_module version="1.2.0">org.openmrs.module.rgccd</require_module>
-        <require_module version="1.12.0">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.6.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+        <require_module version="2.32.0">org.openmrs.module.dss</require_module>
+        <require_module version="2.9.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.8.0">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="1.13.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.7.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.chica.extension.html.AdminList</class>
@@ -432,6 +431,12 @@
         <property>chica.vitalsUseVisitNumberLookupEncounter</property>
         <defaultValue>false</defaultValue>
         <description>Used to determine if the visit number received in PV1-19 should be used to lookup the encounter when processing vitals.
+        </description>
+    </globalProperty>
+	<globalProperty>
+        <property>chica.formTimeLimit</property>
+        <defaultValue>2</defaultValue>
+        <description>Timeout for forms (in days).
         </description>
     </globalProperty>
    

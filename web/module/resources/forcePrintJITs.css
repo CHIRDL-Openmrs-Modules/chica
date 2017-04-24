@@ -84,7 +84,7 @@
 
 .force-print-patient-name {
 	color: #FFFFFF;
-	height: 7%;
+	height: 9%;
 	min-height: 40px;
 }
 
@@ -132,6 +132,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	text-align: left;
 }
 
 .force-print-form-list-container {
@@ -144,4 +145,50 @@
 	height: 15%;
 	min-height: 40px;
 	padding-top: 0.4em;
+}
+
+button.force-print-accordion {
+    background-color: #eee;
+    cursor: pointer;
+    padding: 0.5em;
+    width: 98%;
+    border: none;
+    text-align: left;
+    outline: none;
+    transition: 0.4s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	font-weight: bold;	
+	font-family: inherit;
+}
+
+button.force-print-accordion.active, button.force-print-accordion:hover {
+    background-color: #ddd;
+}
+
+button.force-print-accordion:after {
+    content: '\002B';
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+    font-family: inherit;   
+}
+
+button.force-print-accordion.active:after {
+    content: "\2212";
+}
+
+div.force-print-panel {
+    max-height: 0;
+    overflow: hidden;
+	border: 0;
+    transition: max-height 0.2s ease-out;
+}
+
+.force-print-panel li {
+	background: #ece0d4;
+}
+
+div.force-print-divider {
+	margin: 2px;
 }

@@ -13,9 +13,10 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/ISQMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
+<script>var ctx = "${pageContext.request.contextPath}";</script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/ISQMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 </head>
 <c:set var="search" value="'" />

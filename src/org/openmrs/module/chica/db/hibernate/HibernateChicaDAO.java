@@ -16,7 +16,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
@@ -858,7 +857,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		
 		
 		Criteria crit = sessionFactory.getCurrentSession().createCriteria(ChicaHL7ExportStatus.class).add(
-			    Expression.eq("name", name));
+			    Restrictions.eq("name", name));
 			try {
 				if (crit.list().size() < 1) {
 					log.warn("No export status found with name: " + name);
@@ -1084,10 +1083,10 @@ public class HibernateChicaDAO implements ChicaDAO
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConceptMap.class, "map");
 		if (sourceName != null){
 			criteria.createAlias("source", "conceptSource");
-			criteria.add(Expression.eq("conceptSource.name", sourceName));
+			criteria.add(Restrictions.eq("conceptSource.name", sourceName));
 		}
 		
-		criteria.add(Expression.eq("concept", concept));
+		criteria.add(Restrictions.eq("concept", concept));
 		List<ConceptMap> conceptMaps = (List<ConceptMap>) criteria.list();
 		return conceptMaps;
 	}

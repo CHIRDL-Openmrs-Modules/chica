@@ -42,9 +42,11 @@ endif
 If (mode = CONSUME) then
 
 If  (Box1=true) then
+	CALL storeNote With "Matches and lighters out of child's reach.", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "matches_lighters_safe","yes";
 endif;
 If  (Box2=true) then
+	CALL storeNote With "*Matches and lighters not kept out of child's reach.*", "INFORMANT: INJURY PREVENTION";
  CALL storeObs With "matches_lighters_safe","no";
 endif;
 

@@ -53,7 +53,7 @@ import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -709,7 +709,7 @@ public class HL7Exporter extends AbstractTask {
 			locTag = locationService.getLocationTagByName(printerLocation);
 		}
 		if (printerLocation == null) {
-			LocationAttributeValue locAttrValue = chirdlutilbackportsService.getLocationAttributeValue(
+			ChirdlLocationAttributeValue locAttrValue = chirdlutilbackportsService.getLocationAttributeValue(
 					locId, "defaultPrinterLocation");
 			if (locAttrValue != null) {
 				String locTagStr = locAttrValue.getValue();
