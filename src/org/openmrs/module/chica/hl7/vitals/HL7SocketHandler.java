@@ -18,6 +18,7 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
@@ -381,7 +382,14 @@ public class HL7SocketHandler implements Application {
 									obs.setConcept(mappedConcept);
 									obs.setLocation(location); 
 									obs.setEncounter(encounter);
-									obsService.saveObs(obs, null);
+									
+									try{
+										obsService.saveObs(obs, null);
+									}catch(APIException apie){
+										// CHICA-1017 Catch the exception and log it so that we can continue processing the message
+										logger.error("APIException while saving obs.", apie);
+									}
+									
 								}
 							}
 
