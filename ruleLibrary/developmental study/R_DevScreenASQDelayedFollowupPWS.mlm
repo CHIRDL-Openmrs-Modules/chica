@@ -43,6 +43,9 @@ If  (VisitType = SickVisit) then conclude false;
 
 If (StatusExists = True) then conclude False;
 
+If (Gender = M) then || heshe || = "He";
+If (Gender = F) then || heshe || = "She";
+
 If (CurrentStatus = "Delayed") then conclude True;
 
 conclude False;
@@ -89,7 +92,7 @@ endif
 Action:
 
 call CREATE_JIT with "Developmental_Care_Plan";
-write ("|| firstname || has been previously diagnosed with developmental delay. || he/she || should continue to receive developmental services.  Please confirm the following:");
+write ("|| firstname || has been previously diagnosed with developmental delay. || heshe || should continue to receive developmental services.  Please confirm the following:");
 
 write ("Patient still delayed-->");	
 write ("Care plan given");
