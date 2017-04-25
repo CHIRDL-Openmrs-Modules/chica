@@ -28,6 +28,7 @@ import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
@@ -230,8 +231,14 @@ public class HL7StoreObsRunnable implements Runnable {
 					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedVitalsConcept);
 					currObs.setConcept(mappedVitalsConcept);
 					currObs.setLocation(location);
-					obsService.saveObs(currObs, null);
-					savedToDB = true;
+					
+					try{
+						obsService.saveObs(currObs, null);
+						savedToDB = true;
+					}catch(APIException apie){
+						// CHICA-1017 Catch the exception and log it so that we can continue processing the message
+						log.error("APIException while saving obs.", apie);
+					}
 				}
 				
 			}
