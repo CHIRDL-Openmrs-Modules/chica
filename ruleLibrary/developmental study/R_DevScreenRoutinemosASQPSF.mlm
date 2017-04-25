@@ -41,7 +41,7 @@ ASQDone36:= read exist {ASQ36MonthAssessment from CHICA};
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 endif
 ;;
-Priority: 16;;
+Priority: ;;
  Evoke: ;;
 
 Logic:
@@ -94,8 +94,6 @@ endif
 ;;
 Action:
 call CHOOSE_ASQ_JIT;
-write ("Please fill out the ASQ form about || firstname ||'s development.");
-write ("Por favor llene el formulario ASQ acerca del desarrollo de || firstname ||.") At Spanish;                                                                                                                                                                                                                                                                            
 ;;
 Age_Min: 9          months     ;;
 Age_Max: 39         months     ;;
