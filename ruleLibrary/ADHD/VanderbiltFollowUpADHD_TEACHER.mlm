@@ -48,7 +48,7 @@ If (mode = CONSUME) then
 If (TeacherAssessFollowupSymptomTotal = NULL) then 
 call CREATE_JIT with "Form Incomplete", "", "true", "true";
 conclude false;
-endif;
+
 If  (TeacherAssessPredomInattentiveCount >= 6) AND (TeacherAssessPerformanceCount >=1 ) then
  CALL storeObs With "TeacherAssessmentScale","PredominantlyInattentiveSubtype";
 Else
