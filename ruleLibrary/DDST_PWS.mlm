@@ -71,18 +71,16 @@ If (referral = Made) then conclude False;
 
 AgeInMonths := call ChicaAgeRule with "months";
 AgeInDays := call ChicaAgeRule with "days";
-asqInterventionSite := call LocationAttributeLookup With "isASQInterventionLocation";
-asqInterventionSitePartTwo := call LocationAttributeLookup With "isASQInterventionLocationPart2";
 
 /** suppress the prompt if ASQ was not completed for the age range so there
-are not two developmental PWS prompts (intervention sites only) **/
-If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths = 9) AND NOT('ASQ_9m_Done' is in devStatus) then conclude False;
-If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 17) and (AgeInMonths < 19) AND NOT('ASQ_18m_Done' is in devStatus) then conclude False;
-If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 23) and (AgeInMonths < 39) AND NOT('ASQ_24m_Done' is in devStatus) AND NOT('ASQ_27m_Done' is in devStatus) AND NOT('ASQ_30m_Done' is in devStatus) AND NOT('ASQ_33m_Done' is in devStatus) AND NOT('ASQ_36m_Done' is in devStatus) then conclude False;
+are not two developmental PWS prompts **/
+If (AgeInMonths = 9) AND NOT('ASQ_9m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND NOT('ASQ_18m_Done' is in devStatus) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND NOT('ASQ_24m_Done' is in devStatus) AND NOT('ASQ_27m_Done' is in devStatus) AND NOT('ASQ_30m_Done' is in devStatus) AND NOT('ASQ_33m_Done' is in devStatus) AND NOT('ASQ_36m_Done' is in devStatus) then conclude False;
 
-If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths = 9) AND NOT(ASQDone9 = True) then conclude False;
-If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 17) and (AgeInMonths < 19) AND NOT(ASQDone18 = True) then conclude False;
-If (asqInterventionSite = "true") AND (asqInterventionSitePartTwo = "true") AND (AgeInMonths >= 23) and (AgeInMonths < 39) AND NOT(ASQDone24 = True) AND NOT(ASQDone27 = True) AND NOT(ASQDone30 = True) AND NOT(ASQDone33 = True) AND NOT(ASQDone36 = True) then conclude False;
+If (AgeInMonths = 9) AND NOT(ASQDone9 = True) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 19) AND NOT(ASQDone18 = True) then conclude False;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND NOT(ASQDone24 = True) AND NOT(ASQDone27 = True) AND NOT(ASQDone30 = True) AND NOT(ASQDone33 = True) AND NOT(ASQDone36 = True) then conclude False;
 
 Conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
