@@ -48,7 +48,6 @@ If (mode = CONSUME) then
 If (TeacherAssessPredomInattentiveCount = NULL) then 
 call CREATE_JIT with "Form Incomplete", "", "true", "true";
 conclude false;
-endif;
 
 /* write this observation if Workup_underway doesn't exist because nothing
 was checked on the screen positive prompt */
