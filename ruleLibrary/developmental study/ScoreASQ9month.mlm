@@ -48,7 +48,6 @@ If (mode = CONSUME) then
 If (ASQ9CommunicationSubscore = NULL) then 
 call CREATE_JIT with "FormIncompleteASQ";
 conclude false;
-endif;
 
 If  (ASQ9CommunicationSubscore <= 13.97) then
  CALL storeObs With "ASQ9MonthAssessment","Communication_Delay";
