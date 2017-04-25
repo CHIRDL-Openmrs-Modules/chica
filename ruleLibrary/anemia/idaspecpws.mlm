@@ -90,7 +90,7 @@ If (mode = CONSUME) then
 If (Gender = M) then || heshe || = "he";
 If (Gender = F) then || heshe || = "she";
 /* This section defines the variables used when calling the storeNotes function. */
-If  (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "Records indicated that || firstname || is at high risk for iron deficiency because || heshe || || Risk_Factor ||.";
+If  (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "Records indicated that || firstname || is at high risk for iron deficiency because || heshe || || Risk_Factor ||";
 /* */
 
 If (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
