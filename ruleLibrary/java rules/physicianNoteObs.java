@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -262,15 +263,22 @@ public class physicianNoteObs implements Rule {
 		if (addtnlObs.size() > 0) {
 			int counter = 1;
 			noteBuffer.append("ADDITIONAL OBSERVATIONS\n");
+			Set<String> noteSet = new HashSet<String>();
 			for (Obs ob : addtnlObs) {
 				String value = ob.getValueText();
 				if (value != null && value.trim().length() > 0) {
-					noteBuffer.append(counter++);
-					noteBuffer.append(". ");
-					noteBuffer.append(value);
-					noteBuffer.append("\n");
+					value = replaceRiskIndicators(value);
+					boolean newAddition = noteSet.add(value);
+					if (newAddition) {
+						noteBuffer.append(counter++);
+						noteBuffer.append(". ");
+						noteBuffer.append(value);
+						noteBuffer.append("\n");
+					}
 				}
 			}
+			
+			noteSet.clear();
 		}
     	
     	return noteBuffer.toString();
@@ -312,17 +320,20 @@ public class physicianNoteObs implements Rule {
     		String ruleId = iter.next();
     		List<Obs> obsList = obsMap.get(ruleId);
     		if (obsList != null && obsList.size() > 0) {
-				// int counter = 1;
+    			Set<String> noteSet = new HashSet<String>();
 				for (Obs ob : obsList) {
 					String value = ob.getValueText();
 					if (value != null && value.trim().length() > 0) {
-						// noteBuffer.append(counter++);
-						// noteBuffer.append(". ");
-						noteBuffer.append(value);
-						noteBuffer.append("  ");
+						value = replaceRiskIndicators(value);
+						boolean newAddition = noteSet.add(value);
+						if (newAddition) {
+							noteBuffer.append(value);
+							noteBuffer.append("  ");
+						}
 					}
 				}
 				
+				noteSet.clear();
 				noteBuffer.append("\n");
     		}
     		
@@ -368,5 +379,40 @@ public class physicianNoteObs implements Rule {
     	
     	return physicianNoteConfig;
 	}
+    
+    /**
+     * Replaces the high risk indicator symbols around a note.
+     * 
+     * @param note The String that will have the indicators replaced.
+     * @return String with the indicators replaced.
+     */
+    private String replaceRiskIndicators(String note) {
+    	if (note == null) {
+    		return null;
+    	}
+    	
+    	if (note.startsWith("***")) {
+    		note = note.replaceFirst("\\*\\*\\*", "+++");
+    	}
+    	else if (note.startsWith("**")) {
+    		note = note.replaceFirst("\\*\\*", "++");
+    	}
+    	else if (note.startsWith("*")) {
+    		note = note.replaceFirst("\\*", "+");
+    	}
+    	
+    	if (note.endsWith("***")) {
+			note = note.substring(0, note.length() - 3);
+			note = note + "+++";
+		} else if (note.endsWith("**")) {
+			note = note.substring(0, note.length() - 2);
+			note = note + "++";
+		} else if (note.endsWith("*")) {
+			note = note.substring(0, note.length() - 1);
+			note = note + "+";
+		}
+    	
+    	return note;
+    }
 	
 }
