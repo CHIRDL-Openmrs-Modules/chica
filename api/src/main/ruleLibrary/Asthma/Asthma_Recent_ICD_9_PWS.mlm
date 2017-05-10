@@ -1,0 +1,138 @@
+Maintenance:
+	Title:		Asthma Recent ICD-9 Based PWS                              ;;
+	Filename:		Asthma_Recent_ICD_9_PWS                                    ;;
+	Version:	1.0       ;;
+	Institution:	Indiana University School of Medicine             ;;
+	Author:		Steve Downs                                       ;;
+	Specialist:	Pediatrics;;
+	Date:		2012-11-21 11:00:00;;
+	Validation:	;;
+Library:
+	Purpose:		PWS prompt to alert doc to confirm and grade asthma based on the presence of an ICD-9 equals 493.* that happened in the last year. ;;
+	Explanation:	This will identify children with a previous ICD Dx of asthma that occured in the last year and remind the doc to grade it.  It will not fire if the childs asthma status has never been checked.  Another rule does that. ;;
+	Keywords:	asthma ICD ICD-9 ICD-10 PWS   ;;
+	Citations:	      ;;
+	Links:	  ;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+
+If (mode = PRODUCE) then    
+LastStatus := Read Last {AsthmaStatus from CHICA};
+EverAsthmaStatus :=  Read Exist {AsthmaStatus from CHICA};
+RecentAsthmaStatus := Read Exist {AsthmaStatus from CHICA} Where it Occurred Within Past 365 Days;
+clinic_billing_dx:= read {CLINIC BILLING DIAGNOSIS from RMRS} Where it Occurred Within Past 365 Days;
+dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd_dx:= read {HOSP ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
+primary_care_dx:= read {PRIMARY CARE DX from RMRS} Where it Occurred Within Past 365 Days;
+ Insurance := read Last {Insurance from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+hosp_icd10_dx:= read {HOSP ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;   
+endif
+;;
+Priority: 206;;
+	Evoke:		;;
+
+Logic:
+If (mode = PRODUCE) then
+If NOT(LastStatus = none) then conclude false; /* If CHICA knows child has asthma, no need to check ICD-9 codes */
+If (EverAsthmaStatus = False) then conclude false; /* Another rule deals with no previous asthma status. */
+If (RecentAsthmaStatus = True) then conclude false; /* This rule looks for asthma status in the last year. */
+
+  /* Fire if an ICD-9 OR ICD-10 for asthma occured in the last year.  */
+If ('493.90' is in clinic_billing_dx) OR ('493.90' is in dx_and_complaints) OR ('493.90' is in hosp_icd_dx) OR ('493.90' is in admit_icd_dx) OR ('493.90' is in axis_discharge_dx) OR ('493.90' is in primary_care_dx) then conclude True;
+If ('493.01' is in clinic_billing_dx) OR ('493.01' is in dx_and_complaints) OR ('493.01' is in hosp_icd_dx) OR ('493.01' is in admit_icd_dx) OR ('493.01' is in axis_discharge_dx) OR ('493.01' is in primary_care_dx) then conclude True;
+If ('493.92' is in clinic_billing_dx) OR ('493.92' is in dx_and_complaints) OR ('493.92' is in hosp_icd_dx) OR ('493.92' is in admit_icd_dx) OR ('493.92' is in axis_discharge_dx) OR ('493.92' is in primary_care_dx) then conclude True;
+If ('493.91' is in clinic_billing_dx) OR ('493.91' is in dx_and_complaints) OR ('493.91' is in hosp_icd_dx) OR ('493.91' is in admit_icd_dx) OR ('493.91' is in axis_discharge_dx) OR ('493.91' is in primary_care_dx) then conclude True;
+If ('493.20' is in clinic_billing_dx) OR ('493.20' is in dx_and_complaints) OR ('493.20' is in hosp_icd_dx) OR ('493.20' is in admit_icd_dx) OR ('493.20' is in axis_discharge_dx) OR ('493.20' is in primary_care_dx) then conclude True;
+If ('493.00' is in clinic_billing_dx) OR ('493.00' is in dx_and_complaints) OR ('493.00' is in hosp_icd_dx) OR ('493.00' is in admit_icd_dx) OR ('493.00' is in axis_discharge_dx) OR ('493.00' is in primary_care_dx) then conclude True;
+If ('493.10' is in clinic_billing_dx) OR ('493.10' is in dx_and_complaints) OR ('493.10' is in hosp_icd_dx) OR ('493.10' is in admit_icd_dx) OR ('493.10' is in axis_discharge_dx) OR ('493.10' is in primary_care_dx) then conclude True;
+If ('493.01' is in clinic_billing_dx) OR ('493.01' is in dx_and_complaints) OR ('493.01' is in hosp_icd_dx) OR ('493.01' is in admit_icd_dx) OR ('493.01' is in axis_discharge_dx) OR ('493.01' is in primary_care_dx) then conclude True;
+If ('493.11' is in clinic_billing_dx) OR ('493.11' is in dx_and_complaints) OR ('493.11' is in hosp_icd_dx) OR ('493.11' is in admit_icd_dx) OR ('493.11' is in axis_discharge_dx) OR ('493.11' is in primary_care_dx) then conclude True;
+If ('493.02' is in clinic_billing_dx) OR ('493.02' is in dx_and_complaints) OR ('493.02' is in hosp_icd_dx) OR ('493.02' is in admit_icd_dx) OR ('493.02' is in axis_discharge_dx) OR ('493.02' is in primary_care_dx) then conclude True;
+If ('493.12' is in clinic_billing_dx) OR ('493.12' is in dx_and_complaints) OR ('493.12' is in hosp_icd_dx) OR ('493.12' is in admit_icd_dx) OR ('493.12' is in axis_discharge_dx) OR ('493.12' is in primary_care_dx) then conclude True;
+If ('493.21' is in clinic_billing_dx) OR ('493.21' is in dx_and_complaints) OR ('493.21' is in hosp_icd_dx) OR ('493.21' is in admit_icd_dx) OR ('493.21' is in axis_discharge_dx) OR ('493.21' is in primary_care_dx) then conclude True;
+If ('493.22' is in clinic_billing_dx) OR ('493.22' is in dx_and_complaints) OR ('493.22' is in hosp_icd_dx) OR ('493.22' is in admit_icd_dx) OR ('493.22' is in axis_discharge_dx) OR ('493.22' is in primary_care_dx) then conclude True;
+If ('493.81' is in clinic_billing_dx) OR ('493.81' is in dx_and_complaints) OR ('493.81' is in hosp_icd_dx) OR ('493.81' is in admit_icd_dx) OR ('493.81' is in axis_discharge_dx) OR ('493.81' is in primary_care_dx) then conclude True;
+If ('493.82' is in clinic_billing_dx) OR ('493.82' is in dx_and_complaints) OR ('493.82' is in hosp_icd_dx) OR ('493.82' is in admit_icd_dx) OR ('493.82' is in axis_discharge_dx) OR ('493.82' is in primary_care_dx) then conclude True;
+If ('J44.0' is in clinic_billing_dx) OR ('J44.0' is in dx_and_complaints) OR ('J44.0' is in hosp_icd10_dx) OR ('J44.0' is in admit_icd10_dx) OR ('J44.0' is in axis_discharge_dx) OR ('J44.0' is in primary_care_dx) then conclude True;
+If ('J44.1' is in clinic_billing_dx) OR ('J44.1' is in dx_and_complaints) OR ('J44.1' is in hosp_icd10_dx) OR ('J44.1' is in admit_icd10_dx) OR ('J44.1' is in axis_discharge_dx) OR ('J44.1' is in primary_care_dx) then conclude True;
+If ('J44.9' is in clinic_billing_dx) OR ('J44.9' is in dx_and_complaints) OR ('J44.9' is in hosp_icd10_dx) OR ('J44.9' is in admit_icd10_dx) OR ('J44.9' is in axis_discharge_dx) OR ('J44.9' is in primary_care_dx) then conclude True;
+If ('J45.20' is in clinic_billing_dx) OR ('J45.20' is in dx_and_complaints) OR ('J45.20' is in hosp_icd10_dx) OR ('J45.20' is in admit_icd10_dx) OR ('J45.20' is in axis_discharge_dx) OR ('J45.20' is in primary_care_dx) then conclude True;
+If ('J45.21' is in clinic_billing_dx) OR ('J45.21' is in dx_and_complaints) OR ('J45.21' is in hosp_icd10_dx) OR ('J45.21' is in admit_icd10_dx) OR ('J45.21' is in axis_discharge_dx) OR ('J45.21' is in primary_care_dx) then conclude True;
+If ('J45.22' is in clinic_billing_dx) OR ('J45.22' is in dx_and_complaints) OR ('J45.22' is in hosp_icd10_dx) OR ('J45.22' is in admit_icd10_dx) OR ('J45.22' is in axis_discharge_dx) OR ('J45.22' is in primary_care_dx) then conclude True;
+If ('J45.901' is in clinic_billing_dx) OR ('J45.901' is in dx_and_complaints) OR ('J45.901' is in hosp_icd10_dx) OR ('J45.901' is in admit_icd10_dx) OR ('J45.901' is in axis_discharge_dx) OR ('J45.901' is in primary_care_dx) then conclude True;
+If ('J45.902' is in clinic_billing_dx) OR ('J45.902' is in dx_and_complaints) OR ('J45.902' is in hosp_icd10_dx) OR ('J45.902' is in admit_icd10_dx) OR ('J45.902' is in axis_discharge_dx) OR ('J45.902' is in primary_care_dx) then conclude True;
+If ('J45.909' is in clinic_billing_dx) OR ('J45.909' is in dx_and_complaints) OR ('J45.909' is in hosp_icd10_dx) OR ('J45.909' is in admit_icd10_dx) OR ('J45.909' is in axis_discharge_dx) OR ('J45.909' is in primary_care_dx) then conclude True;
+If ('J45.990' is in clinic_billing_dx) OR ('J45.990' is in dx_and_complaints) OR ('J45.990' is in hosp_icd10_dx) OR ('J45.990' is in admit_icd10_dx) OR ('J45.990' is in axis_discharge_dx) OR ('J45.990' is in primary_care_dx) then conclude True;
+If ('J45.991' is in clinic_billing_dx) OR ('J45.991' is in dx_and_complaints) OR ('J45.991' is in hosp_icd10_dx) OR ('J45.991' is in admit_icd10_dx) OR ('J45.991' is in axis_discharge_dx) OR ('J45.991' is in primary_care_dx) then conclude True;
+If ('J45.998' is in clinic_billing_dx) OR ('J45.998' is in dx_and_complaints) OR ('J45.998' is in hosp_icd10_dx) OR ('J45.998' is in admit_icd10_dx) OR ('J45.998' is in axis_discharge_dx) OR ('J45.998' is in primary_care_dx) then conclude True;
+
+conclude False;
+
+endif;
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || has a billing diagnosis of asthma in the last year.";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description", "DISEASE MANAGEMENT";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "AsthmaStatus","Intermittent";
+ CALL storeNote With "Based on my H&P, the patient has intermittent asthma.", "DISEASE MANAGEMENT";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "I have prescribed albuterol as needed.", "DISEASE MANAGEMENT";
+endif;
+
+If (Box3=true) AND (Box4=true) then 
+ CALL storeObs With "AsthmaStatus","Persistent-controller";
+ CALL storeNote With "The patient's asthma is persistent, and I have prescribed a controller.", "DISEASE MANAGEMENT";
+endif;
+
+If  (Box3=true) AND NOT(Box4=true) then
+ CALL storeObs With "AsthmaStatus","Persistent-no-controller";
+ CALL storeNote With "The patient's asthma is persistent.", "DISEASE MANAGEMENT";
+endif;
+
+If  (Box5=true) then
+ CALL storeObs With "PatientHandout","AsthmaActionPlan";
+ CALL storeNote With "I gave the patient an asthma action plan for home and school.", "DISEASE MANAGEMENT";
+endif;
+
+If  (Box6=true) then
+ CALL storeObs With "AsthmaStatus","None";
+ CALL storeNote With "Based on my H&P, the patient does not have asthma.", "DISEASE MANAGEMENT";
+endif;
+
+endif
+;;
+Action:  
+
+call CREATE_JIT with "ASTHMA_JIT","Insurance_value";
+
+write ("|| firstname || has a billing diagnosis of asthma in the last year. Please indicate || firstname ||'s asthma status.");
+write ("Intermittent asthma ->");
+write ("Albuterol PRN");		
+write ("Persistent asthma ->");
+write ("Rx Controller");
+write ("Given action plan");
+write ("Does NOT have asthma");
+;;
+Age_Min: 5 years ;;
+Age_Max: 21 years ;;
+end:
+

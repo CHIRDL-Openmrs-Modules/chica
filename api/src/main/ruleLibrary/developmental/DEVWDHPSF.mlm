@@ -1,0 +1,65 @@
+Maintenance:
+	Title:		Development  Wash & Dry Hands PSF;;
+	Filename:		DEVWDHPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-30T09:34:17-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child both washing and drying hands.                                                                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 120;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || text || = "himself";
+If (Gender = F) then || text || = "herself";
+If (Gender = M) then || himher || = "him";
+If (Gender = F) then || himher || = "her";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Washes own hands.", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "PS_Passed","Wash & Dry Hands";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Does not wash own hands.*", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "PS_Failed","Wash & Dry Hands";
+endif;
+
+
+endif
+;;
+Action:
+write ("Can || firstname || wash and dry || hisher || hands well enough so you don't have to do them over?  If you do not allow || himher || to wash and dry || hisher || hands by || text ||, fill in NO.");
+write ("¿Puede || firstname || lavarse las manos y secárselas sin que usted tenga que volverlo hacer? Si usted no permite que se lave las manos o secárselas marque No") At Spanish;                                                                                                                           
+;;
+Age_Min: 1141 days;;
+Age_Max: 1300 days;;
+end:

@@ -1,0 +1,67 @@
+Maintenance:
+	Title:		Sickle Cell Prophylaxis PSF;;
+	Filename:		SCDProphylaxisOlderPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-17T04:27:06-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Proper maintenance of sickle cell disease involves prophylaxis with antibiotics.  This prompt ask parents/patients if prophylaxis is being given.                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Explanation:	Thie PSF asks parents/patients if prophylaxis is being given.                                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Keywords:	sickle, cell, prophylaxis, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+proph := read exist {sickle_cell_prophylaxis from CHICA} Where it Occurred Within Past 90 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+pws := read Last {PWSSickleCell from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority: 248;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "él";
+If (Gender = F) then || spanishgender || = "ella";
+If (Gender = M) then || text || = "he";
+If (Gender = F) then || text || = "she";
+If (pws = yes) and (proph = False) then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Has sickle cell disease, but is not taking antibiotics appropriately.*", "INFORMANT: DISEASE MANAGEMENT";
+ CALL storeObs With "sickle_cell_prophylaxis","True";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "Has sickle cell disease, and is taking antibiotics appropriately.", "INFORMANT: DISEASE MANAGEMENT";
+ CALL storeObs With "sickle_cell_prophylaxis","False";
+endif;
+
+
+endif
+;;
+Action:
+write ("You have sickle cell disease (HbSS).  Are you taking antibiotics twice a day, every day?");
+write ("Tiene Ud. la enfermedad de células falciformes.  ¿Toma Ud. antibióticos dos veces al día, cada día?") At Spanish;                                                                                                                                                                                                                             
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

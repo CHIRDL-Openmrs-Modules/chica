@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Falls Play Area Fenced PSF;;
+	Filename:		Injury_Falls_Play_AreaPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-12T11:51:49-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF screens whether a child's play area is fenced in.                                                                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Explanation:	Ideally, a child's play area should be fenced.  If not, a child must be taught proper boundaries.  Outdoor play should always be supervised by a responsible person.                                                                                                                                                                                                                                                                                                                                                ;;
+	Keywords:	injury, falls, infant, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/pubserv/backyd.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+fence := read Last {play_area_fenced from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+endif
+;;
+Priority: 672;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (fence = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Outdoor play area is fenced.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "play_area_fenced","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Outdoor play area is not fenced.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "play_area_fenced","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Is || firstname ||'s outdoor play area fenced in?");
+write("¿El área en donde || firstname || juega afuera, esta cercado?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                    
+;;
+Age_Min: 1 years;;
+Age_Max: 10 years;;
+end:

@@ -1,0 +1,58 @@
+Maintenance:
+	Title:		Qualitative Pain;;
+	Filename:		Pain;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Meaghan Zore;;
+	Specialist:	Pediatrics;;
+	Date:		2005-06-27T12:23:38-0400;;
+	Validation:	;;
+Library:
+	Purpose:		;;
+	Explanation:	;;
+	Keywords:	Pain;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+pq := read Last {PAIN QUALITATIVE from CHICA} Where it Occurred Within Past 1 Days;
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (pq = no) then || Pain_Text || = "0";
+
+If (pq = yes) then || Pain_Text || = "pain documented in note";
+
+If (pq = NULL) then || Pain_Text || = "unknown";
+Conclude True;
+
+endif
+
+;;
+Action:
+write ("|| Pain_Text ||") At Pain;
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 21 years;;
+end:

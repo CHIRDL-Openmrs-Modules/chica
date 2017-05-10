@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Burns Smoke Detector Batteries PSF;;
+	Filename:		Injury_Burns_Smoke_Detector_BatteriesPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-11-13T03:09:12-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the smoke detector batteries are checked monthly                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	The AAP recommends monthly battery checks on smoke detectors because approximately 50% of smoke detectors are no longer functional 12 months after installation                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	injury, burns, infant, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=10835082&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+batteries := read Last {tested_smoke_detector from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority: 700;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (batteries = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Checks smoke detector batteries monthly.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "tested_smoke_detector","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Does not check smoke detector batteries monthly.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "tested_smoke_detector","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you test your smoke detector's batteries monthly?");
+write("¿Usted chequea las pilas al detector de humo todos los meses?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                  
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

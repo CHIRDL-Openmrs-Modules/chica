@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Firearms At Home PSF;;
+	Filename:		Injury_Firearms_At_HomePSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:31:18-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if there are any firearms in the child's home.                                                                                                                                                                                                                                                                                                                                                                                                                                               ;;
+	Explanation:	The 1992 position of the American Academy of Pediatrics is that the absence of guns from children's homes and communities is the most reliable and effective measure to prevent firearm-related injuries in children and adolescents.  The AAP further recommends that firearms are stored locked and unloaded separate from ammunition.                                                                                                                                                                            ;;
+	Keywords:	injury, firearms, home, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=10742344&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+gunsinhome := read Last {firearms_at_home from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+endif
+;;
+Priority: 548;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (gunsinhome = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Child's home has firearms.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "firearms_at_home","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "No firearms in child's home.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "firearms_at_home","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Are any firearms or guns kept in || firstname ||'s home?");
+write("¿Guarda usted armas de fuego o pistolas en la casa de || firstname ||?") At Spanish;                                                                                                                                                               
+;;
+Age_Min: 1 years;;
+Age_Max: 12 years;;
+end:

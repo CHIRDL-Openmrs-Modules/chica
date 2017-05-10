@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Depression  Maternal Depression Anhedonia PSF;;
+	Filename:		MDEPANXIOUSPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2010-04-05T03:38:06-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Screening for maternal depression.  This question assesses anhedonia.  Togerher with another PSF question about depressed mood, there is a 96% sensitivity for major depression.;;
+	Explanation:	This question is asked up to monthly for 3 months, then every 3 months until age 15 months.;;
+	Keywords:	depression, PSF, study, maternal, mom;;
+	Citations:		Brody DS, Hahn SR, Spitzer RL, et al, Arch Intern Med. 1998; 158:2469-75;;
+	Links:		http://medicine.ucsf.edu/resources/guidelines/guide5.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Depr_concern_3mo := read Exist {Maternal_Depression_Concern from CHICA} Where it Occurred Within Past 60 Days;
+endif
+;;
+Priority: 368;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Depr_concern_3mo = True) then conclude False;
+Else conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Endorses anxiety in past 7 days.*", "INFORMANT: MEDICAL HISTORY";
+ CALL storeObs With "Maternal_Depression_Concern","Anxious";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "No anxiety in past 7 days.", "INFORMANT: MEDICAL HISTORY";
+ CALL storeObs With "Maternal_Depression_Concern","Not_Anxious";
+endif;
+
+
+endif
+;;
+Action:
+write ("In the past 7 days, have you been anxious or worried for no good reason?");
+write ("En los últimos 7 días, ¿usted ha estado ansiosa y preocupada sin motivo?") At Spanish;
+;;
+Age_Min: 0 days;;
+Age_Max: 15 months;;
+end:

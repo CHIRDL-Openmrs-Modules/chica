@@ -1,0 +1,10 @@
+@import 'pws.css';
+
+#vitalsLegendIUHCerner {
+	display: none;
+}
+
+/* Hide hearing and vision for Eskenazi */
+.hearing, .vision{
+    display: none;
+}

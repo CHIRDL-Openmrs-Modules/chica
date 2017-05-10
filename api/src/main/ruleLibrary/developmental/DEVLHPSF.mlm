@@ -1,0 +1,65 @@
+Maintenance:
+	Title:		Development  Lifts Head PSF;;
+	Filename:		DEVLHPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-30T09:43:29-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child lifting his or her head.                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 104;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "él";
+If (Gender = F) then || spanishgender || = "ella";
+If (Gender = M) then || text || = "he";
+If (Gender = F) then || text || = "she";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Lifts head while prone.", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "GM_Passed","Lift Head";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Does not lift head while prone.*", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "GM_Failed","Lift Head";
+endif;
+
+
+endif
+;;
+Action:
+write ("When || firstname || is on || hisher || stomach on a flat surface, can || text || lift || hisher || head at least half way off the table?");
+write ("¿Cuando || firstname || se acuesta boca abajo puede || spanishgender ||  levantar su cabeza por lo menos hasta la mitad de la altura de la mesa?") At Spanish;                                                                                                                                                                                        
+;;
+Age_Min: 22 days;;
+Age_Max: 70 days;;
+end:

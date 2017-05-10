@@ -1,0 +1,195 @@
+Maintenance:
+ Title: Research DevScreen SurveyPos 3-5 PWS                                                                         ;;
+ Filename: CHOOSE_ASQ_JIT;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author:Aaron Carroll                                       ;;
+Specialist:Pediatrics;;
+Date:2010-06-09 10:00:00;;
+Validation:;;
+Library:
+Purpose:PWS prompt to alert doc to do ASQ if surveillance is positive.                                                                                                                                                                                                                                                                                                                                                     ;;
+Explanation:Patient should get ASQ because surveillance was positive.                                                                                                                                                                                                                                                                                                                                                                    ;;
+Keywords:Developmental Screening ASQ                                                  ;;
+Citations:                                                                                   ;;
+Links:                                            ;;
+Knowledge:
+Type:data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+;;
+Priority:0       ;;
+Evoke:;;
+
+Logic:
+If (mode = PRODUCE) then
+
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+
+If (AgeInMonths >= 1) and (AgeInMonths < 3) then 
+
+asq_created := call hasJITBeenCreated with "ASQ_2";
+
+If (asq_created = "yes") then Conclude False;
+
+call CREATE_JIT with "ASQ_2", "", "true";
+conclude false;
+
+
+If (AgeInMonths >= 3) and (AgeInMonths < 5) then 
+asq_created := call hasJITBeenCreated with "ASQ_4";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_4", "", "true";
+conclude false;
+
+
+If (AgeInMonths >= 5) and (AgeInMonths < 7) then 
+asq_created := call hasJITBeenCreated with "ASQ_6";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_6", "", "true";
+conclude false;
+
+
+If (AgeInMonths >= 7) and (AgeInMonths < 9) then 
+asq_created := call hasJITBeenCreated with "ASQ_8";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_8", "", "true";
+conclude false;
+
+
+If (AgeInMonths = 9) then 
+asq_created := call hasJITBeenCreated with "ASQ_9";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_9", "", "true";
+conclude false;
+
+
+If (AgeInMonths = 10) then 
+asq_created := call hasJITBeenCreated with "ASQ_10";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_10", "", "true";
+conclude false;
+
+
+If (AgeInMonths >= 11) and (AgeInMonths < 13) then 
+asq_created := call hasJITBeenCreated with "ASQ_12";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_12", "", "true";
+conclude false;
+
+If (AgeInMonths >= 13) and (AgeInMonths < 15) then 
+asq_created := call hasJITBeenCreated with "ASQ_14";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_14", "", "true";
+conclude false;
+  
+If (AgeInMonths >= 15) and (AgeInMonths < 17) then 
+asq_created := call hasJITBeenCreated with "ASQ_16";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_16", "", "true";
+conclude false;
+
+If (AgeInMonths >= 17) and (AgeInMonths < 19) then 
+asq_created := call hasJITBeenCreated with "ASQ_18";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_18", "", "true";
+conclude false;
+
+If (AgeInMonths >= 19) and (AgeInMonths < 21) then 
+asq_created := call hasJITBeenCreated with "ASQ_20";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_20", "", "true";
+conclude false;
+
+If (AgeInMonths >= 21) and (AgeInMonths < 23) then 
+asq_created := call hasJITBeenCreated with "ASQ_22";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_22", "", "true";
+conclude false;
+
+If (AgeInMonths >= 23) and (AgeInDays < 776) then 
+asq_created := call hasJITBeenCreated with "ASQ_24";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_24", "", "true";
+conclude false;
+
+If (AgeInDays >= 776) and (AgeInDays < 866) then 
+asq_created := call hasJITBeenCreated with "ASQ_27";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_27", "", "true";
+conclude false;
+
+If (AgeInDays >= 866) and (AgeInDays < 959) then 
+asq_created := call hasJITBeenCreated with "ASQ_30";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_30", "", "true";
+conclude false;
+
+If (AgeInDays >= 959) and (AgeInDays < 1050) then 
+asq_created := call hasJITBeenCreated with "ASQ_33";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_33", "", "true";
+conclude false;
+
+If (AgeInDays >= 1050) and (AgeInMonths < 39) then 
+asq_created := call hasJITBeenCreated with "ASQ_36";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_36", "", "true";
+conclude false;
+
+If (AgeInMonths >= 39) and (AgeInMonths < 45) then 
+asq_created := call hasJITBeenCreated with "ASQ_42";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_42", "", "true";
+conclude false;
+
+If (AgeInMonths >= 45) and (AgeInMonths < 51) then 
+asq_created := call hasJITBeenCreated with "ASQ_48";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_48", "", "true";
+conclude false;
+
+If (AgeInMonths >= 51) and (AgeInMonths < 57) then 
+asq_created := call hasJITBeenCreated with "ASQ_54";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_54", "", "true";
+conclude false;
+
+If (AgeInMonths >= 57) and (AgeInMonths < 66) then 
+asq_created := call hasJITBeenCreated with "ASQ_60";
+
+If (asq_created = "yes") then Conclude False;
+call CREATE_JIT with "ASQ_60", "", "true";
+conclude false;
+
+endif;
+
+;;
+Action:
+;;
+Age_Min: 0          months     ;;
+Age_Max: 66         months     ;;
+end:
+

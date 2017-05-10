@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Choking Safety Latches PSF;;
+	Filename:		Injury_Choking_Safety_LatchesPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:27:54-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether safety latches are installed on drawers and cupboards.                                                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Explanation:	The AAP recommens the use of safety latches or locks on drawers and cabinets where dangerour items are kept.                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Keywords:	injury, choking, latches, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/1to2yrs.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+latches := read Last {safety_latches_installed from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority: 724;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (latches= yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Parent reports safety latches are installed in home.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "safety_latches_installed","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Parent denies having safety latches in home.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "safety_latches_installed","no";
+endif;
+
+
+endif
+;;
+Action:
+write("Have safety latches been installed on drawers and cupboards in || firstname ||'s home?");
+write("¿Ha puesto usted cerraduras en todas las gavetas y los gabinetes?") At Spanish;                                                                                                                                                                                                                                                                                                                           
+;;
+Age_Min: 6 months;;
+Age_Max: 6 years;;
+end:

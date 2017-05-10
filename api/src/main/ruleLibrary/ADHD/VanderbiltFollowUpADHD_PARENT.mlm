@@ -1,0 +1,76 @@
+Maintenance:
+	Title:		VanderbiltFollowUpADHD_PARENT;;
+	Filename:		VanderbiltFollowUpADHD_PARENT;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ADHD;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = CONSUME) then
+
+checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
+scoreJit := CALL ScoreJit;
+
+ParentAssessFollowupSymptomTotal:= read Last {ParentAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;
+ParentAssessPredomInattentiveCount := read Last {ParentAssessPredomInattentiveCount} Where it Occurred Within Past 1 Day;
+ParentAssessPerformanceCount := read Last {ParentAssessPerformanceCount} Where it Occurred Within Past 1 Day;
+ParentAssessPredomHyperImpulsiveCount := read Last {ParentAssessPredomHyperImpulsiveCount} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+/* don't do anything if all the scores don't exist */
+If (ParentAssessFollowupSymptomTotal= NULL) then 
+call CREATE_JIT with "Form Incomplete", "", "true", "true";
+conclude false;
+
+If  (ParentAssessPredomInattentiveCount >= 6) AND (ParentAssessPerformanceCount >=1 ) then
+ CALL storeObs With "ParentAssessmentScale","PredominantlyInattentiveSubtype";
+Else
+ CALL storeObs With "ParentAssessmentScale","NegativePredominantlyInattentiveSubtype";
+endif;
+
+If  (ParentAssessPredomHyperImpulsiveCount >= 6) AND (ParentAssessPerformanceCount >=1 ) then
+ CALL storeObs With "ParentAssessmentScale","PredominantlyHyperactiveImpulsiveSubtype";
+Else
+ CALL storeObs With "ParentAssessmentScale","NegativePredominantlyHyperactiveImpulsiveSubtype";
+endif;
+
+If  (ParentAssessPredomInattentiveCount >= 6) AND (ParentAssessPerformanceCount >=1 ) and (ParentAssessPredomHyperImpulsiveCount >= 6) AND (ParentAssessPerformanceCount >=1 ) then
+ CALL storeObs With "ParentAssessmentScale","ADHDCombinedInattentionHyperactivity";
+Else
+ CALL storeObs With "ParentAssessmentScale","NegativeADHDCombinedInattentionHyperactivity";
+endif;
+call CREATE_JIT with "ParentSummaryReport", "", "true", "true";
+
+endif
+;;
+Action:
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

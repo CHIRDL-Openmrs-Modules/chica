@@ -1,0 +1,80 @@
+Maintenance:
+	Title:		Family and new baby PWS;;
+	Filename:		FamilyBabyPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-12-17T11:41:04-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Trigger to discuss family adjusting to new baby                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	Fills space on early PWS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	Sibling family newborn noevidence;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority:		977;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then || description || = "Older siblings and family members may have trouble adjusting to a baby in the house.  I discussed some topics with || firstname ||'s family.";
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then
+ CALL storeNote With "description","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I asked about who lives at home.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "I discussed siblings and what ages they are.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "I asked about Dad's involvement.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I asked about pets in the home.","ANTICIPATORY GUIDANCE";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "I discussed the baby's safety around other children.","ANTICIPATORY GUIDANCE";
+endif;
+
+endif
+
+;;
+Action:
+write ("Older siblings and family members may have trouble adjusting to a baby in the house.  Some topics to discuss with || firstname ||'s family");                                                                                                                                                       
+write ("Who lives at home");
+write ("Siblings and their ages");
+write ("Dad's involvement");
+write ("Pets in the house");
+write ("Baby's safety with other children");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 12 months;;
+end:

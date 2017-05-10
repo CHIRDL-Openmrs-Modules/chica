@@ -1,0 +1,90 @@
+Maintenance:
+	Title:		Vision  Screening PWS Reminder (311yo);;
+	Filename:		VISPWSSCN3TO11;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2005-09-02T12:03:01-0400;;
+	Validation:	;;
+Library:
+	Purpose:		The following rule will remind physicians to perform a vision screening examination via the PWS.                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Explanation:	According to the AAP periodicity guidelines, children between 3 and 11 should have their vision tested objectively, via examination every year.                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	PWS, vision;;
+	Citations:		;;
+	Links:		http://www.aap.org/policy/periodicity.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+visionl := read Exist {VisionL from CHICA} Where it Occurred Within Past 300 Days;visionr := read Exist {VisionR from CHICA} Where it Occurred Within Past 300 Days;vision_status := read Last {VisionScreen from CHICA} Where it Occurred Within Past 300 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+endif
+;;
+Priority:		301;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If  (VisitType = SickVisit) then conclude false;
+If (visionl = True) AND (visionr = True) then conclude False;If (vision_status = referral) OR (vision_status = failed) OR (vision_status = alreadyreferred) OR (vision_status = passed) then conclude False;conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "Although || firstname || should have had vision screening today, we had no record of the screen.";
+If  (Box2=true) then || note2 || = "|| firstname || passed the vision screen.";
+If  (Box4=true) then || note4 || = "|| firstname || failed the vision screen.";
+If  (Box5=true) then || note5 || = "We were unable to perform the screen on || firstname ||.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","SCREENING";
+endif;
+
+If  (Box1=true) then
+ CALL storeNote With "I therefore ordered a vision screen be performed.","SCREENING";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "VisionScreen","passed";
+ CALL storeNote With "note2","SCREENING";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "VisionScreen","failed";
+ CALL storeNote With "note4","SCREENING";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "VisionScreen","unable";
+ CALL storeNote With "note5","SCREENING";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "VisionScreen","refused";
+ CALL storeNote With "I determined a vision screen was not needed.","SCREENING";
+endif;
+
+
+endif
+;;
+Action:
+write ("According to AAP guidelines, || firstname || should have vision screening today, but we have no record. Please screen vision now.") ;                                                                                                                                                                                                                                                                                                                                                                       
+write ("Screen done ---->");
+write ("Passed");
+write ("");
+write ("Failed");
+write ("Unable to screen");
+write ("Not indicated");
+;;
+Age_Min: 3 years;;
+Age_Max: 11 years;;
+end:

@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		PWSHighlightRule;;
+	Filename:		PWSHighlightRule;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Tammy Dugan;;
+	Specialist:	Pediatrics;;
+	Date:		2012-02-23T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Highlight appropriate PWS prompts                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	PWS highlight;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+
+promptPosition:=read {promptPosition from Parameters};
+
+endif
+;;
+Priority:		;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+If (promptPosition = "1") then || Prompt1_HL || = "ggggggggggggggggggggggggggggg";
+If (promptPosition = "2") then || Prompt2_HL || = "ggggggggggggggggggggggggggggg";
+If (promptPosition = "3") then || Prompt3_HL || = "ggggggggggggggggggggggggggggg";
+If (promptPosition = "4") then || Prompt4_HL || = "ggggggggggggggggggggggggggggg";
+If (promptPosition = "5") then || Prompt5_HL || = "ggggggggggggggggggggggggggggg";
+If (promptPosition = "6") then || Prompt6_HL || = "ggggggggggggggggggggggggggggg";
+
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+;;
+Action:
+
+write ("|| Prompt1_HL ||") At Prompt1_HL;
+write ("|| Prompt2_HL ||") At Prompt2_HL;
+write ("|| Prompt3_HL ||") At Prompt3_HL;
+write ("|| Prompt4_HL ||") At Prompt4_HL;
+write ("|| Prompt5_HL ||") At Prompt5_HL;
+write ("|| Prompt6_HL ||") At Prompt6_HL;
+
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

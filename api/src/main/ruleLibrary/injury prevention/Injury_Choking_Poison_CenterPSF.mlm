@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Choking Poison Center PSF;;
+	Filename:		Injury_Choking_Poison_CenterPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:28:29-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the Poison Center number is attached to the phone.                                                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Explanation:	The AAP recommends the local or national Poison Help Line number be attached to your phone. The national phone number is 800-222-1222.                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Keywords:	injury, choking, center, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=6493901&dopt=Abstract;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+poisoncenter := read Last {poison_center_on_phone from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority: 464;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (poisoncenter = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Poison center contact information in phone.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "poison_center_on_phone","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Poison center contact information not in phone.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "poison_center_on_phone","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Have you entered the Poison Center phone number into the phone used in || firstname ||'s home?");
+write ("¿Ha guardado el numero del Centro de veneno en el teléfono usado en la casa de || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                                            
+;;
+Age_Min: 6 months;;
+Age_Max: 6 years;;
+end:

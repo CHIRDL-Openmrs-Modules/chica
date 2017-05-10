@@ -1,0 +1,194 @@
+.force-print-content {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    overflow-y: hidden;
+}
+
+.force-print-forms-server-error { 
+    margin:0 auto;
+    text-align: center;
+    color: red;
+}
+
+.force-print-forms-server-error-text {
+    height: 60px;
+    line-height: 60px;
+}
+
+.force-print-forms-container, .force-print-button-panel {
+    text-align: center;
+    margin: 0 auto;
+    color: #000;
+    height: 96%;
+    width: 330px;
+    background: #cc9966;
+    float: left;
+    border-radius: 7px;
+    padding-top: 0px;
+}
+
+.force-print-form-loading {
+	text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    color: #000;
+}
+
+.force-print-forms-loading {
+	text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 75px;
+    color: #000;
+}
+
+.force-print-fieldset {
+    border: 0;
+}
+
+.force-print-forms {
+	width: 305px;
+}
+
+.force-print-forms option {
+    width: 200px !important;   
+}
+
+.force-print-body {
+    font-size:14px;
+    background: #b24926;
+}
+
+.force-print-form-object {
+    width:550px;
+    height: 100%;
+    background-color:#F5FBEF;
+    float: left;
+}
+
+.overflow {
+	height: 400px;
+}
+
+.force-print-black-text {
+	color: #000;
+}
+
+.force-print-blue-text {
+    color: blue;
+}
+
+.force-print-patient-name {
+	color: #FFFFFF;
+	height: 9%;
+	min-height: 40px;
+}
+
+.force-print-multiple-select {
+	color: #FFFFFF;
+	font-size: 0.7em;
+	margin-top: 4px;
+	height: 10px;
+	min-height: 10px;
+}
+
+.force-print-form-container {
+	height: 99%;
+	width: 550px;
+	float: left;
+	padding-left: 10px;
+	overflow-x:auto;
+}
+
+.ui-selectmenu-menu li { 
+	max-width: 270px;
+}
+
+#force-print-form-list .ui-selecting { 
+	background: #81F781; 
+	color: black;
+}
+
+#force-print-form-list .ui-selected { 
+	background: #81F781; 
+	color: black; 
+}
+
+#force-print-form-list { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 100%;
+	height: 100%; 
+}
+
+#force-print-form-list li { 
+	margin: 3px; 
+	padding: 0.4em;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-align: left;
+}
+
+.force-print-form-list-container {
+	overflow-y:auto;
+	height: 75%;
+	width: 99%;
+}
+
+.force-print-create-button-panel {
+	height: 15%;
+	min-height: 40px;
+	padding-top: 0.4em;
+}
+
+button.force-print-accordion {
+    background-color: #eee;
+    cursor: pointer;
+    padding: 0.5em;
+    width: 98%;
+    border: none;
+    text-align: left;
+    outline: none;
+    transition: 0.4s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	font-weight: bold;	
+	font-family: inherit;
+}
+
+button.force-print-accordion.active, button.force-print-accordion:hover {
+    background-color: #ddd;
+}
+
+button.force-print-accordion:after {
+    content: '\002B';
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+    font-family: inherit;   
+}
+
+button.force-print-accordion.active:after {
+    content: "\2212";
+}
+
+div.force-print-panel {
+    max-height: 0;
+    overflow: hidden;
+	border: 0;
+    transition: max-height 0.2s ease-out;
+}
+
+.force-print-panel li {
+	background: #ece0d4;
+}
+
+div.force-print-divider {
+	margin: 2px;
+}

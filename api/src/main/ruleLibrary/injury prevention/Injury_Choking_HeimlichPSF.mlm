@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Choking Heimlich PSF;;
+	Filename:		Injury_Choking_HeimlichPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:26:49-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether a caregiver knows what to do to save the life of a choking child.                                                                                                                                                                                                                                                                                                                                                                                                                           ;;
+	Explanation:	The AAP encourages parents to participate in either the American Heart Association's Pediatric Basic Life Support Course or the American Red Cross' Infant and Child CPR Course                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	injury, choking, heimlich, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/policy/570.html;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+heimlich := read Last {know_how_to_save_choking_child from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+endif
+;;
+Priority: 468;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (heimlich = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Parent knows what to do if child is choking.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "know_how_to_save_choking_child","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Parent does not know what to do if child is choking.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "know_how_to_save_choking_child","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you know what to do if || firstname || is choking?");
+write ("¿Sabe usted que hacer si || firstname || se está ahogando con algo?") At Spanish;                                                                                                                                                                                                                                                                                                                                                      
+;;
+Age_Min: 0 months;;
+Age_Max: 4 years;;
+end:

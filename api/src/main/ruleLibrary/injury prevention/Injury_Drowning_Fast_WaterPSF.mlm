@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Drowning Fast Water PSF;;
+	Filename:		Injury_Drowning_Fast_WaterPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:31:06-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if the child ever swims in fast moving water.                                                                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Explanation:	The AAP recommends that children are never allowed to swim in areas with fast-moving water                                                                                                                                                                                                                                                                                                                                                                                                                          ;;
+	Keywords:	injury, drowning, fast water, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+fast := read Last {swims_fast_moving_water from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+endif
+;;
+Priority: 836;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (fast = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Reports swimming in fast-moving water.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "swims_fast_moving_water","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "Denies swimming in fast-moving water.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "swims_fast_moving_water","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || ever swim in canals, streams, or any fast-moving water?");
+write("¿|| firstname || nada en canales, rios o en corrientes de aguas rápidas?") At Spanish;                                                                                                                                                                                                                                                                                                                              
+;;
+Age_Min: 8 years;;
+Age_Max: 12 years;;
+end:

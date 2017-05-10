@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chirdlutilbackports">
+
+	<class name="org.openmrs.module.chirdlutilbackports.hibernateBeans.StateMapping" table="chirdlutilbackports_state_mapping">
+
+		<id name="stateMappingId" type="java.lang.Integer" column="state_mapping_id">
+			<generator class="native" />
+		</id>
+		<property name="programId" type="java.lang.Integer" column="program_id" />	
+		
+		<many-to-one name="initialState" class="org.openmrs.module.chirdlutilbackports.hibernateBeans.State">
+			<column name="initial_state" />
+		</many-to-one>
+		<many-to-one name="nextState" class="org.openmrs.module.chirdlutilbackports.hibernateBeans.State">
+			<column name="next_state" />
+		</many-to-one>
+				<property name="dateChanged" type="java.util.Date"
+			column="date_changed" length="19" />
+
+		<many-to-one name="changedBy" class="org.openmrs.User" column="changed_by" />
+
+		<property name="dateCreated" type="java.util.Date"
+			column="date_created" />
+
+		<many-to-one name="creator" class="org.openmrs.User" />
+	</class>
+	
+</hibernate-mapping>

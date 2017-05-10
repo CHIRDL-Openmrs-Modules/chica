@@ -1,0 +1,59 @@
+Maintenance:
+	Title:		Domestic Violence  Safe at home PSF;;
+	Filename:		Parent_Safe_at_Home_PSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2004-01-01T09:21:53-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Ask parent feels safe at home                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	Ask annually if domestic violence concern has not already been addressed                                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	abuse violence screening;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Dom_Viol := read Exist {Domest_Violence_Concern from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "seguro";If (Gender = F) then || spanishgender || = "segura";If (Dom_Viol = True) then conclude False;Else conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+ CALL storeObs With "Domest_Violence_Concern","Safe_at_Home";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "Domest_Violence_Concern","Not_Safe_Home";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you feel safe in your home?");
+write ("¿Se siente seguro en su casa?") At Spanish;                                                                                                                                                                                                              
+;;
+Age_Min: 0 days;;
+Age_Max: 12 years;;
+end:

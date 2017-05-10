@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Drowning Pool PSF;;
+	Filename:		Injury_Drowning_PoolPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:29:56-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if there is a pool at the child's house.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	Counsel parent that the AAP and USPSTF recommend a 4-sided fence that isolates the pool from the house and the yard.                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Keywords:	injury, drowning, pool, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=11433058&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+pool := read Last {pool_at_house from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority: 604;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (pool = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Reports a pool at home.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "pool_at_house","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "No pool at home.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "pool_at_house","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname ||'s home have a pool?");
+write("¿|| firstname || tiene una piscina en su casa?") At Spanish;                                                                                                                                                                                    
+;;
+Age_Min: 6 months;;
+Age_Max: 6 years;;
+end:

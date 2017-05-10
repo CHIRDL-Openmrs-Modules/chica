@@ -1,0 +1,105 @@
+Maintenance:
+	Title:		Pain  Identified Qualitiatve Pain PWS Assessment;;
+	Filename:		PAINPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2005-04-28T11:37:28-0400;;
+	Validation:	;;
+Library:
+	Purpose:		The purpose of this PWS is to respond to a patient who was identified with pain on screening.  A more granular quantification of the pain is captured by the physician.                                                                                                                                                                                                                                                                                                                                             ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	pain, PWS;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+pain := read Last {PAIN QUALITATIVE from CHICA} Where it Occurred Within Past 2 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+endif
+;;
+Priority:		1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (pain = yes) then conclude True;conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If (Gender = M) then || heshe || = "he";
+If (Gender = F) then || heshe || = "she";
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "According to information collected today on screening, || firstname || seemed to be in pain.";
+If  (Box1=true) then || note1 || = "I confirmed || hisher || pain score was 1-2.";
+If  (Box2=true) then || note2 || = "I confirmed || hisher || pain score was 3-4.";
+If  (Box3=true) then || note3 || = "I confirmed || hisher || pain score was 5-6.";
+If  (Box4=true) then || note4 || = "I confirmed || hisher || pain score was 7-8.";
+If  (Box5=true) then || note5 || = "I confirmed || hisher || pain score was 9-10.";
+If  (Box6=true) then || note6 || = "I confirmed || heshe || was not in pain, though.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+CALL storeNote With "description","HISTORY";
+endif;
+
+/* To prevent PWS scan errors */
+
+If  (Box1=true) AND (Box2=true) AND (Box3=true) AND (Box4=true) AND (Box5=true)AND (Box6=true) then
+CALL storeObs With "PWS READ ERROR", "MISSCAN";
+conclude False;
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "PAIN QUANTITATIVE","1-2";
+ CALL storeNote With "note1","HISTORY";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "PAIN QUANTITATIVE","3-4";
+ CALL storeNote With "note2","HISTORY";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "PAIN QUANTITATIVE","5-6";
+ CALL storeNote With "note3","HISTORY";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "PAIN QUANTITATIVE","7-8";
+ CALL storeNote With "note4","HISTORY";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "PAIN QUANTITATIVE","9-10";
+ CALL storeNote With "note5","HISTORY";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "PAIN QUANTITATIVE","0";
+ CALL storeNote With "note6","HISTORY";
+endif;
+
+
+endif
+;;
+Action:
+write ("* ATTENTION *  According to information collected today on screening, || firstname || seems to be in pain.  Please rate pain on a scale of 1-10 below and counsel appropriately:");                                                                                                                 
+write ("Score: 1 - 2");
+write ("Score: 3 - 4");
+write ("Score: 5 - 6");
+write ("Score: 7 - 8");
+write ("Score: 9 - 10");
+write ("Not in pain");
+;;
+Age_Min: 0 days;;
+Age_Max: 21 years;;
+end:

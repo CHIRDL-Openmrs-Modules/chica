@@ -1,0 +1,58 @@
+Maintenance:
+ Title: Vision Screening Notification;;
+ Filename: VIS_Scrn_Notification;;
+ Version: 1.0;;
+ Institution: Indiana University School of Medicine;;
+ Author: Tammy Dugan;;
+ Specialist: Pediatrics;;
+ Date: 2015-07-12 12:00:00;;
+ Validation: ;;
+Library:
+ Purpose: Notify MA a patient needs a vision screening.;;
+ Explanation: Fires for patients who are over 3 and have not had a vision screening.;;
+ Keywords: Vision;;
+ Citations: ;;
+ Links: ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = PRODUCE) then
+
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+vision_status_older := read Exist {VisionScreen from CHICA} Where it Occurred Within Past 1000 Days; 
+vision_status_younger := read Exist {VisionScreen from CHICA} Where it Occurred Within Past 300 Days; 
+
+endif
+;;
+
+Priority: ;;
+Evoke: ;;
+
+Logic:
+
+If (mode = PRODUCE) then
+
+If (VisitType = SickVisit) then conclude False;
+
+Age := call ChicaAgeRule with "years";
+
+If (vision_status_younger = True) AND (Age < 11) then conclude False;
+If (vision_status_older = True) AND (Age >= 11) then conclude False;
+
+conclude True;
+
+endif
+;; 
+Action:
+	// The following will display on the tablet:
+	// 1. || firstname || is due for a vision screening. Please screen now.
+
+	write ("|| firstname || is due for a vision screening. Please screen now.");
+;;
+Age_Min: 3 years;;
+Age_Max: 21 years;;
+end:
+

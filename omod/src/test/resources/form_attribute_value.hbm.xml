@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chirdlutilbackports">
+
+	<class name="org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue" table="chirdlutilbackports_form_attribute_value">
+		
+		<id name="formAttributeValueId" type="java.lang.Integer" column="form_attribute_value_id">
+			<generator class="native" />
+		</id>
+	
+		<property name="formId" type="java.lang.Integer" column="form_id" />
+		<property name="formAttributeId" type="java.lang.Integer" column="form_attribute_id" />
+		<property name="value" type="java.lang.String" column="value" />
+		<property name="locationTagId" type="java.lang.Integer" column="location_tag_id" />
+		<property name="locationId" type="java.lang.Integer" column="location_id" />
+		
+	</class>
+	
+</hibernate-mapping>

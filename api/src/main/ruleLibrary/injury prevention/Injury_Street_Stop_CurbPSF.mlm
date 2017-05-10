@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Street Stop Curb PSF;;
+	Filename:		Injury_Street_Stop_CurbPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:31:33-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the fchild has been taught to stop a the curb and never cross the street alone.                                                                                                                                                                                                                                                                                                                                                                                                             ;;
+	Explanation:	The AAP recommends counseling parents to teach their young children to stop at the curb and never cross the street without an adult.                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Keywords:	injury, street, cross, curb, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/5years.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+curb := read Last {stop_at_curb from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+endif
+;;
+Priority: 540;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (curb = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Knows to cross the street with grown-up.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "stop_at_curb","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Does not know to cross the street with grown-up.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "stop_at_curb","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || know to always stop at the curb and never cross the street without a grown-up?");
+write("¿Sabe || firstname || que siempre debe de pararse en el borde de la calle y nunca debe de cruzar la calle sin un adulto?") At Spanish;                                                                                                                                                                                                                                                       
+;;
+Age_Min: 3 years;;
+Age_Max: 8 years;;
+end:

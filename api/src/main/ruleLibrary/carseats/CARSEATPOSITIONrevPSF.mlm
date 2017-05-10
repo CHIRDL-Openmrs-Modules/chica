@@ -1,0 +1,63 @@
+Maintenance:
+	Title:		Injury  Car Safety Seat Position 01 PSF;;
+	Filename:		CARSEATPOSITIONrevPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2011-10-15T04:09:06-0400;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question to assess whether parent uses correct car seat position and location.  Question asked is intentionally misleading to assure proper understanding of facts.                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	USPTF, AAP, and Bright Futures all recommend that car safety seats be placed in the rear seat facing the cushion until child is 2yo                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, injury, car safety, seat;;
+	Citations:		Pediatrics 2011;127;e1050-e1066;;
+	Links:		http://www.aap.org/family/carseatguide.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+csp := read Exist {Car_Seat_Position_0-1 from CHICA} Where it Occurred Within Past 90 Days;                                     
+cspresult := read Last {Car_Seat_Position_0-1 from CHICA} Where it Occurred Within Past 90 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+endif
+;;
+Priority: 416;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+If (cspresult = forward) then conclude True;
+If (csp = True) then conclude False;
+If (csp = False) then conclude True;                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Child's car seat is incorrectly facing forward.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "Car_Seat_Position_0-1","forward";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "Child's car seat is appropriately not forward facing.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "Car_Seat_Position_0-1","rearfacing";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname ||'s car seat face forward?");
+write ("¿La silla de carro de || firstname || mira hacia adelante?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                          
+;;
+Age_Min: 0 days;;
+Age_Max: 2 years;;
+end:

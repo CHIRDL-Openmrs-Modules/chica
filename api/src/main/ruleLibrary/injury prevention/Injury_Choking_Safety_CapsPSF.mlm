@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Choking Safety Caps PSF;;
+	Filename:		Injury_Choking_Safety_CapsPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:28:15-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether safety caps are on all medications and toxic household products.                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	The AAP and USPSTF recommend that household chemicals and drugs be stored in child-resistant safety packaging.                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Keywords:	injury, choking, lye, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=6493901&dopt=Abstract;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+safetycaps := read Last {safety_caps_on_bottles from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority: 840;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (safetycaps = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Parents reports all medications and toxic products have safety caps.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "safety_caps_on_bottles","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Parent denies all medications and toxic products have safety caps.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "safety_caps_on_bottles","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Are there safety caps on all medications and toxic household products in || firstname ||'s home?");
+write("¿Hay tapas de seguridad en todas la medicinas y quimicos toxicos en la casa de || firstname ||?") At Spanish;                                                                                                                                                                                                                                                                                   
+;;
+Age_Min: 6 months;;
+Age_Max: 8 years;;
+end:

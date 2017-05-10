@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Drowning Arms Length PSF;;
+	Filename:		Injury_Drowning_Arms_LengthPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:30:12-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks to see if adults are within arm's length when children are around water.                                                                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Explanation:	Whenever infants or toddlers are in or around water, a supervising adult should be within an arm's length providing "touch supervision."                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	injury, drowning, arms length, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=retrieve&db=pubmed&list_uids=11433058&dopt=Abstrac;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+armslength := read Last {arms_length_around_water from CHICA} Where it Occurred Within Past 1 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+endif
+;;
+Priority: 480;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (armslength = no) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Child has been further than arm's length from an adult when near water.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "arms_length_around_water","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "Child has been within arm's length of adult when near water.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "arms_length_around_water","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Has || firstname || ever been around water when an adult has not been within an arm's length?");
+write("¿Alguna || firstname || vez  ha estado cerca del agua sin supervisión de un adulto?") At Spanish;                                                                                          
+;;
+Age_Min: 2 years;;
+Age_Max: 4 years;;
+end:

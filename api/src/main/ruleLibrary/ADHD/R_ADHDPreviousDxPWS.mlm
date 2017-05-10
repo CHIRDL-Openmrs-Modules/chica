@@ -1,0 +1,144 @@
+Maintenance:
+ Title: Research ADHD Previous Diagnosis PWS                                                                         ;;
+ Filename: R_ADHDPreviousDxPWS;;
+ Version: 1.0       ;;
+ Institution: Indiana University School of Medicine             ;;
+ Author: Steve Downs                                       ;;
+ Specialist: Pediatrics;;
+ Date: 2010-04-02 09:00:00;;
+ Validation: ;;
+Library:
+	Purpose:		PWS promt to alert MD of previous ADHD Dx and put into maintainence mode.;;
+ Explanation: If an ICD-9 OR ICD-10 Dx of ADHD exists in RMRS, alert the MD and assure f/u with Vanderbilts.;                                                                                                                                                                                                                                                                                                                                                                    ;;
+ Keywords: ADHD PWS Vanderbilt                                                  ;;
+ Citations:                                                                                    ;;
+ Links:                                             ;;
+Knowledge:
+ Type: data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+
+clinic_billing_dx:= read {CLINIC BILLING DIAGNOSIS from RMRS} Where it Occurred Within Past 365 Days;
+dx_and_complaints:= read {DX and COMPLAINTS from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd_dx:= read {HOSP ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd_dx:= read {ADMITTING ICD9 DX from RMRS} Where it Occurred Within Past 365 Days;
+axis_discharge_dx:= read {Axis I Discharge Dx from RMRS} Where it Occurred Within Past 365 Days;
+hosp_icd10_dx:= read {HOSP ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
+admit_icd10_dx:= read {ADMITTING ICD10 DX from RMRS} Where it Occurred Within Past 365 Days;
+
+CurrentStatus := read last {CHICA_ADHD_DX from CHICA} Where it Occurred Within Past 365 Days ;    
+ParentVanderbilt := read exist {ParentAssessmentScale from CHICA}; 
+TeacherVanderbilt := read exist {TeacherAssessmentScale from CHICA}; 
+preferred_language:= read last {preferred_language from CHICA};   
+rxStatus := read {CHICA_ADHD_RX from CHICA};
+currRxStatus := read last {CHICA_ADHD_RX from CHICA} ; 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+endif
+;;
+Priority: 199;;
+ Evoke: ;;
+
+Logic:
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (ParentVanderbilt = True) OR (TeacherVanderbilt = True) then conclude False;
+If (CurrentStatus = yes) OR (CurrentStatus = no) OR (CurrentStatus = Workup_underway) OR (CurrentStatus = Workup_underway_inferred)  then conclude False;
+If ('Medication' is in rxStatus) then conclude False; 
+If (currRxStatus = "Chronic_Care") then conclude False;
+If ('314.0' is in clinic_billing_dx) OR ('314.0' is in dx_and_complaints) OR ('314.0' is in hosp_icd_dx) OR ('314.0' is in admit_icd_dx) OR ('314.0' is in axis_discharge_dx) then conclude True;
+If ('314.00' is in clinic_billing_dx) OR ('314.00' is in dx_and_complaints)  OR ('314.00' is in hosp_icd_dx)  OR ('314.00' is in admit_icd_dx)  OR ('314.00' is in axis_discharge_dx) then conclude True;
+If ('314.01' is in clinic_billing_dx) OR ('314.01' is in dx_and_complaints) OR ('314.01' is in hosp_icd_dx) OR ('314.01' is in admit_icd_dx) OR ('314.01' is in axis_discharge_dx) then conclude True;
+If ('314.1' is in clinic_billing_dx) OR ('314.1' is in dx_and_complaints)  OR ('314.1' is in hosp_icd_dx)  OR ('314.1' is in admit_icd_dx)  OR ('314.1' is in axis_discharge_dx) then conclude True;
+If ('314.2' is in clinic_billing_dx) OR ('314.2' is in dx_and_complaints)  OR ('314.2' is in hosp_icd_dx)  OR ('314.2' is in admit_icd_dx)  OR ('314.2' is in axis_discharge_dx) then conclude True;
+If ('314.8' is in clinic_billing_dx) OR ('314.8' is in dx_and_complaints)  OR ('314.8' is in hosp_icd_dx)  OR ('314.8' is in admit_icd_dx)  OR ('314.8' is in axis_discharge_dx) then conclude True;
+If ('314.9' is in clinic_billing_dx) OR ('314.9' is in dx_and_complaints)  OR ('314.9' is in hosp_icd_dx)  OR ('314.9' is in admit_icd_dx)  OR ('314.9' is in axis_discharge_dx) then conclude True;
+If ('F90.0' is in clinic_billing_dx) OR ('F90.0' is in dx_and_complaints)  OR ('F90.0' is in hosp_icd10_dx)  OR ('F90.0' is in admit_icd10_dx)  OR ('F90.0' is in axis_discharge_dx) then conclude True;
+If ('F90.1' is in clinic_billing_dx) OR ('F90.1' is in dx_and_complaints)  OR ('F90.1' is in hosp_icd10_dx)  OR ('F90.1' is in admit_icd10_dx)  OR ('F90.1' is in axis_discharge_dx) then conclude True;
+If ('F90.2' is in clinic_billing_dx) OR ('F90.2' is in dx_and_complaints)  OR ('F90.2' is in hosp_icd10_dx)  OR ('F90.2' is in admit_icd10_dx)  OR ('F90.2' is in axis_discharge_dx) then conclude True;
+If ('F90.8' is in clinic_billing_dx) OR ('F90.8' is in dx_and_complaints)  OR ('F90.8' is in hosp_icd10_dx)  OR ('F90.8' is in admit_icd10_dx)  OR ('F90.8' is in axis_discharge_dx) then conclude True;
+If ('F90.9' is in clinic_billing_dx) OR ('F90.9' is in dx_and_complaints)  OR ('F90.9' is in hosp_icd10_dx)  OR ('F90.9' is in admit_icd10_dx)  OR ('F90.9' is in axis_discharge_dx) then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "The patient's record has a billing diagnosis of ADHD.", "DEVELOPMENT";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "CHICA_ADHD_DX","yes";
+ CALL storeNote With "This is correct. The patient has ADHD.", "DEVELOPMENT";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "CHICA_ADHD_RX","Medication";
+ CALL storeNote With "The patient is currently on ADHD medication.", "DEVELOPMENT";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "ADHD_Workup","Parent_Vanderbilt_done";
+ CALL storeNote With "I administered a parent Vanderbilt today.", "DEVELOPMENT";
+endif;
+If  (Box4=true) then
+ CALL storeObs With "ADHD_Workup","Teacher_Vanderbilt_sent";
+ CALL storeNote With "I gave the family a teacher Vanderbilt to take to school.", "DEVELOPMENT";
+endif;
+If  (Box5=true) then
+ CALL storeNote With "Vanderbilt forms have been completed within the last 6 months.", "DEVELOPMENT";
+endif;
+If  (Box6=true) then
+ CALL storeObs With "CHICA_ADHD_DX","no";
+ CALL storeNote With "The child does not have ADHD.", "DEVELOPMENT";
+endif
+
+endif
+;;
+Action:
+parentJITCreated := call hasJITBeenCreated with "ADHD PFU";
+parentSpanishJITCreated := call hasJITBeenCreated with "ADHD PSFU";
+teacherJITCreated := call hasJITBeenCreated with "ADHD TFU";
+
+If(ParentVanderbilt = False) AND (preferred_language = Spanish) AND NOT (parentSpanishJITCreated = "yes") then
+call CREATE_JIT with "ADHD PSFU";
+endif;
+
+If(ParentVanderbilt = False) AND (preferred_language = English) AND NOT (parentJITCreated = "yes") then
+call CREATE_JIT with "ADHD PFU";
+endif;
+
+If(ParentVanderbilt = False) AND (preferred_language = null) AND NOT (parentJITCreated = "yes") then
+call CREATE_JIT with "ADHD PFU";
+endif;
+
+If(ParentVanderbilt = False) AND (preferred_language = null) AND NOT (parentSpanishJITCreated = "yes") then
+call CREATE_JIT with "ADHD PSFU";
+endif;
+
+If(TeacherVanderbilt = False) AND NOT (teacherJITCreated = "yes") then
+call CREATE_JIT with "ADHD TFU";
+endif;
+
+call CREATE_JIT with "ADHD_Knowledge";
+
+
+write ("|| firstname || has a record of ADHD or other hyperkinetic disorder. Vanderbilts at least annually are recommended. CPT 96110");                                                                                                                                                                                                                                                                                                                   
+write ("Has ADHD");
+write ("On medication");
+write ("Parent Vanderbilt and scan now                   ");
+write ("Teacher Vanderbilt to fax                  ");
+write ("Vandrblt done in last 6m");
+write ("Does not have ADHD                          ");
+;;
+Age_Min: 5          years     ;;
+Age_Max: 13         years     ;;
+end:

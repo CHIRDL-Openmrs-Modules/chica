@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.InsuranceMapping" table="chica_insurance_mapping">
+	
+		<id name="insuranceId" type="java.lang.Integer" column="insurance_id">
+			<generator class="native" />
+		</id>
+	
+		<property name="insCode" type="java.lang.String" column="ins_code" />
+		<property name="category" type="java.lang.String" column="category" />
+		<property name="insName" type="java.lang.String" column="ins_name" />
+		<property name="carrierCode" type="java.lang.String" column="carrier_code" />
+		<property name="planCode" type="java.lang.String" column="plan_code" />
+		<property name="sendingApplication" type="java.lang.String" column="sending_application" />
+		<property name="sendingFacility" type="java.lang.String" column="sending_facility" />
+	</class>
+</hibernate-mapping>

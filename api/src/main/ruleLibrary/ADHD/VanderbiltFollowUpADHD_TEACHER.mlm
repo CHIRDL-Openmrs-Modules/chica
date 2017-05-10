@@ -1,0 +1,78 @@
+Maintenance:
+	Title:		VanderbiltFollowUpADHD_TEACHER;;
+	Filename:		VanderbiltFollowUpADHD_TEACHER;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:		                                                                                                                                                                                                                                                                                                                                                                                                ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	ADHD;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+
+If (mode = CONSUME) then
+
+checkIncompleteScoringJit := CALL CheckIncompleteScoringJit;
+scoreJit := CALL ScoreJit;
+
+TeacherAssessFollowupSymptomTotal:= read Last {TeacherAssessFollowupSymptomTotal} Where it Occurred Within Past 1 Day;
+TeacherAssessPredomInattentiveCount := read Last {TeacherAssessPredomInattentiveCount} Where it Occurred Within Past 1 Day;
+TeacherAssessPerformanceCount := read Last {TeacherAssessPerformanceCount} Where it Occurred Within Past 1 Day;
+TeacherAssessPredomHyperImpulsiveCount := read Last {TeacherAssessPredomHyperImpulsiveCount} Where it Occurred Within Past 1 Day;
+
+endif
+;;
+Priority:		0;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+
+If (mode = CONSUME) then
+
+/* don't do anything if all the scores don't exist */
+If (TeacherAssessFollowupSymptomTotal = NULL) then 
+call CREATE_JIT with "Form Incomplete", "", "true", "true";
+conclude false;
+
+If  (TeacherAssessPredomInattentiveCount >= 6) AND (TeacherAssessPerformanceCount >=1 ) then
+ CALL storeObs With "TeacherAssessmentScale","PredominantlyInattentiveSubtype";
+Else
+ CALL storeObs With "TeacherAssessmentScale","NegativePredominantlyInattentiveSubtype";
+endif;
+
+If  (TeacherAssessPredomHyperImpulsiveCount >= 6) AND (TeacherAssessPerformanceCount >=1 ) then
+ CALL storeObs With "TeacherAssessmentScale","PredominantlyHyperactiveImpulsiveSubtype";
+Else
+ CALL storeObs With "TeacherAssessmentScale","NegativePredominantlyHyperactiveImpulsiveSubtype";
+endif;
+
+If  (TeacherAssessPredomInattentiveCount >= 6) AND (TeacherAssessPerformanceCount >=1 ) and (TeacherAssessPredomHyperImpulsiveCount >= 6) AND (TeacherAssessPerformanceCount >=1 ) then
+ CALL storeObs With "TeacherAssessmentScale","ADHDCombinedInattentionHyperactivity";
+Else
+CALL storeObs With "TeacherAssessmentScale","NegativeADHDCombinedInattentionHyperactivity";
+endif;
+call CREATE_JIT with "TeacherSummaryReport", "", "true", "true";
+
+endif
+;;
+Action:
+
+;;
+Age_Min: 0 years;;
+Age_Max: 21 years;;
+end:

@@ -1,0 +1,63 @@
+Maintenance:
+	Title:		Drug Abuse  Use Drugs PSF;;
+	Filename:		Drugs_UsePSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-05-07T11:16:43-0400;;
+	Validation:	;;
+Library:
+	Purpose:		GAPS screening question asks if patient uses drugs.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	Most adolescents will use alcohol or other drugs before age 21.                                                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Keywords:	GAPS, adolescent, drugs, alcohol, PSF;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+uses := read Exist {uses_drugs from CHICA} Where it Occurred Within Past 330 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+endif
+;;
+Priority: 648;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+adolescentInterventionSite := call LocationAttributeLookup With "isAdolescentInterventionLocation";
+If(adolescentInterventionSite = "true") then conclude False;
+If (uses = True) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Admits to using marijuana, other drugs or inhalents.*", "INFORMANT: HEADSS";
+ CALL storeObs With "uses_drugs","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "Denies using marijuana, other drugs or inhalants.", "INFORMANT: HEADSS";
+ CALL storeObs With "uses_drugs","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you ever use marijuana, other drugs, or inhalants?");
+write ("¿Usted usa marihuana, u otras drogas o inhalantes?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                          
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

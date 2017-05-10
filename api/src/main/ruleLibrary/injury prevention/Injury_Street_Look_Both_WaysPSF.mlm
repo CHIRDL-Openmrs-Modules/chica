@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Street Look Both Ways PSF;;
+	Filename:		Injury_Street_Look_Both_WaysPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-16T10:32:35-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF checks whether the child has been taught to look both ways before crossing the street.                                                                                                                                                                                                                                                                                                                                                                                                                     ;;
+	Explanation:	Counsel parents to teach their children to stop at the curb, then look to the left, to the right, and then back to the left before crossing a street.  Encourage play in a park or playground.                                                                                                                                                                                                                                                                                                                      ;;
+	Keywords:	injury, street, look, PSF;;
+	Citations:		;;
+	Links:		http://www.aap.org/family/6years.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+both := read Last {look_both_ways from CHICA};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+endif
+;;
+Priority: 544;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (both = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Knows how to safely cross the street.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "look_both_ways","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Does not know how to safely cross the street.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "look_both_ways","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Does || firstname || know to stop at the curb, then look to the left, to the right, and back to the left again?");
+write("¿Sabe || firstname || que siempre tiene que parase en el borde, mirar a la izquierda a la derecha y otra vez a la izquierda?") At Spanish;                                                                                                                                                                                                                                       
+;;
+Age_Min: 6 years;;
+Age_Max: 10 years;;
+end:

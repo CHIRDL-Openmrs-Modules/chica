@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//OpenMRS//DTD OpenMRS Config 1.0//EN" "http://resources.openmrs.org/doctype/config-1.0.dtd">
+
+<module configVersion="1.0">
+    
+    <!-- Chica Module Properties -->
+    <id>@MODULE_ID@</id>
+    <name>@MODULE_NAME@</name>
+    <version>@MODULE_VERSION@</version>
+    <package>@MODULE_PACKAGE@</package>
+    <author>Vibha Anand and Tammy Dugan</author>
+    <description>
+            Runs CHICA specific tasks.
+    </description>
+
+    <activator>@MODULE_PACKAGE@.ChicaActivator</activator>
+    
+    <!-- /Chica Module Properties -->
+    
+    <require_version>1.1.10.2283</require_version>
+    <require_modules>
+        <require_module version="2.32.0">org.openmrs.module.dss</require_module>
+        <require_module version="2.9.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.8.0">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="1.13.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.7.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+    <extension>
+        <point>org.openmrs.admin.list</point>
+        <class>org.openmrs.module.chica.extension.html.AdminList</class>
+    </extension>
+    
+    <advice>
+        <point>org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService</point>
+        <class>@MODULE_PACKAGE@.advice.TriggerPatientAfterAdvice</class>
+    </advice>
+    <advice>
+        <point>org.openmrs.module.atd.service.ATDService</point>
+        <class>@MODULE_PACKAGE@.advice.TriggerPatientAfterAdvice</class>
+    </advice>
+    <globalProperty>
+        <property>chica.statsConfigFile</property>
+        <description>This file contains configuration for chica statistics.
+        This file can be found at metadata/stats_config.xml
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.kiteHost</property>
+        <defaultValue>134.68.32.31</defaultValue>
+        <description>Host address to query for mrf dump and aliases.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.kitePort</property>
+        <defaultValue>17094</defaultValue>
+        <description>Port to query for mrf dump and aliases.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.kiteTimeout</property>
+        <defaultValue>5</defaultValue>
+        <description>Timeout for mrf dump and alias queries (in seconds).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.mrfArchiveDirectory</property>
+        <description>Directory where a copy of the mrf dump is stored.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.aliasArchiveDirectory</property>
+        <description>Directory where a copy of the alias query result is stored.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.greaseBoardRefresh</property>
+        <defaultValue>15</defaultValue>
+        <description>Refresh period is seconds for the grease board refresh.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.mrfParseErrorDirectory</property>
+        <description>Directory where a copy of an mrf query result that couldn't be parsed is stored.
+        </description>
+    </globalProperty>   
+    <globalProperty>
+        <property>chica.smsParseErrorDirectory</property>
+        <description>Directory where a copy of an sms checkin hl7 message that couldn't be parsed is stored.
+        </description>
+    </globalProperty>   
+    <globalProperty>
+        <property>chica.mckessonParseErrorDirectory</property>
+        <description>Directory where a copy of an mckesson checkin hl7 message that couldn't be parsed is stored.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outboundHl7ArchiveDirectory</property>
+        <description>Location to archive constructed outbound hl7 messages
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outboundHl7Directory</property>
+        <description>Location to store constructed outbound hl7 messages to be sent by mirth
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.pagerBaseURL</property>
+        <defaultValue>http://www.ipnpaging.com/page.html</defaultValue>
+        <description>Base URL of the pager service
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.pagerNumber</property>
+        <defaultValue>3175431631</defaultValue>
+        <description>Number for support pager for CHICA clinic.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.pagerUrlMessageParam</property>
+        <defaultValue>message</defaultValue>
+        <description>Name for the URL parameter containing the message text.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.pagerUrlNumberParam</property>
+        <defaultValue>pin</defaultValue>
+        <description>Name for the URL parameter containing the pager number.
+        </description>
+    </globalProperty>   
+    <globalProperty>
+        <property>chica.retireProvidersPeriod</property>
+        <defaultValue>90</defaultValue>
+        <description>Time period in days before inactive providers (no encounters) are voided by a cron job</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.greaseboardCheckoutState</property>
+        <defaultValue>FINISHED</defaultValue>
+        <description>State that tells us to remove the patient from the greaseboard</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.pagerWaitTimeBeforeRepage</property>
+        <defaultValue>15</defaultValue>
+        <description>How long to wait before the GET HELP NOW sends another page request from Greaseboard</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.medicationListTimeout</property>
+        <defaultValue>5</defaultValue>
+        <description>Timeout for medication list queries (in seconds).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.genericProviderId</property>
+        <description>Generic provider id to use for medication query when no other provider id.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.immunizationInputDirectory</property>
+        <description>Directory containing results of immunization queries of mrf dump. Becomes input to immunization forecasting.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.immunizationOutputDirectory</property>
+        <description>Directory containing results of the immunization forecasting.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.immunXSLT</property>
+        <description>Directory containing xslt transform needed for immunization query result xml.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.immunizationListTimeout</property>
+        <defaultValue>1</defaultValue>
+        <description>Timeout for immunization list queries (in seconds).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.stylesheetDirectory</property>
+        <description>Directory where XSLT stylesheets are contained.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.growthChartConfigFile</property>
+        <description>Location of the growth chart configuration file.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.growthChartPlotImage</property>
+        <description>Location of the image used to make plots on the growth charts.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisMapUrl</property>
+        <description>The base URL to generate a CHICA GIS map.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisDataUrl</property>
+        <description>The base URL to generate a CHICA GIS data.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisTutorRadius</property>
+        <defaultValue>3</defaultValue>
+        <description>The map radius (in miles)of the tutoring resources for the CHICA GIS map generation.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisExerciseRadius</property>
+        <defaultValue>3</defaultValue>
+        <description>The map radius (in miles)of the exercise resources for the CHICA GIS map generation.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisDentalRadius</property>
+        <defaultValue>3</defaultValue>
+        <description>The map radius (in miles)of the dental resources for the CHICA GIS map generation.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisToppingFilter</property>
+        <defaultValue>6</defaultValue>
+        <description>The maximum number of search result giving by the CHICA GIS service.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisTimeout</property>
+        <defaultValue>10</defaultValue>
+        <description>The timeout for CHICA GIS queries (in seconds).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisMaxRadius</property>
+        <defaultValue>10</defaultValue>
+        <description>The maximum radius to search for GIS data.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisConnectionTimeout</property>
+        <defaultValue>3</defaultValue>
+        <description>The connection timeout for CHICA GIS queries (in seconds).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisMinAge</property>
+        <defaultValue>1</defaultValue>
+        <description>The minimum age (in years) for the GIS query.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.presnetConnectionTimeout</property>
+        <defaultValue>5</defaultValue>
+        <description>The connection timeout for Presnet connections (in seconds).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.presnetReadTimeout</property>
+        <defaultValue>5</defaultValue>
+        <description>The read timeout for Presnet connections (in seconds).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.gisMinimumSearchResults</property>
+        <defaultValue>3</defaultValue>
+        <description>The minimum number of search results to be met before results are displayed on the forms.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.passcode</property>
+        <description>Passcode used by mobile products to view CHICA data.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.allowableHL7MessageSources</property>
+        <defaultValue>ECW</defaultValue>
+        <description>Comma delimited list of allowable sources for hl7 ADT messages.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryActivated</property>
+        <defaultValue>true</defaultValue>
+        <description>Activate query to CHIRP registry
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryConfigFile</property>
+        <description>Location the configuration file for the hl7 immunization query.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryPassword</property>
+        <description>Password to CHIRP registry.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryURL</property>
+        <description>CHIRP URL
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationQueryUserId</property>
+        <description>Userid for access to CHIRP.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.chica.activateVXU</property>
+        <defaultValue>false</defaultValue>
+        <description>Allow hl7 VXU update to CHIRP immunization registry</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.ImmunizationOutputDirectory</property>
+        <description>CHIRP hl7 query and response file directory
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.activateVXUToCreatePatient</property>
+        <description>Activate VXU to create a patient in the CHIRP registry.
+        </description>
+    </globalProperty>
+     <globalProperty>
+        <property>chica.filterHL7RegistrationOnPriorCheckin</property>
+        <defaultValue>false</defaultValue>
+        <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.showBadScans</property>
+        <defaultValue>false</defaultValue>
+        <description>Whether or not to display a notice on the greaseboard of bad scans.  Valid values are 'true' and 'false'.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.g3EncryptionKey</property>
+        <description>Encryption key used to decrypt information sent from the G3 application.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.queryMeds</property>
+        <defaultValue>true</defaultValue>
+        <description>Boolean indicator for querying for the medication list.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.iuHealthCernerEncryptionKey</property>
+        <description>Encryption key used to decrypt information sent from the IU Health Cerner application.
+        </description>
+    </globalProperty>
+     <globalProperty>
+        <property>chica.vitalsArchiveDirectory</property>
+        <description>Directory to store IU Health Vitals files.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.vitalsDelay</property>
+        <defaultValue>5</defaultValue>
+        <description>Number of seconds to wait for IU Health vitals before creating PWS
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.mrfQueryConfigFile</property>
+     	<description>MRF query web service configuration file location.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.MRFQueryPassword</property>
+     	<description>MRF query web service password.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.MRFQueryTargetEndpoint</property>
+     	<description>MRF query web service target endpoint
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.performMRFQuery</property>
+     	<description>Turn on/off performing the MRF Query
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.MRFQueryNamespace</property>
+     	<description>Namespace for MRF query service
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.encryptionKey</property>
+        <description>Encryption key used to decrypt information sent from a third party application.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.enableManualCheckin</property>
+        <defaultValue>false</defaultValue>
+        <description>Whether or not the manual checkin option is available on the patient greaseboard.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteHost</property>
+        <defaultValue>localhost</defaultValue>
+        <description>IP address of where to send the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNotePort</property>
+        <defaultValue>0</defaultValue>
+        <description>Port to send the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteIncludePV1</property>
+        <defaultValue>false</defaultValue>
+        <description>Set to true to allow a PV1 segment to be added to the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteTXADocumentAvailabilityStatus</property>
+        <defaultValue>UV</defaultValue>
+        <description>Value to include in TXA-19 of the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.outgoingNoteTXAUniqueDocumentNumber</property>
+        <defaultValue>uniqueId</defaultValue>
+        <description>Value to include in TXA-16 of the outgoing physician note.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.sessionTimeoutWarning</property>
+        <defaultValue>180</defaultValue>
+        <description>Number of seconds remaining in the session before the session timeout warning dialog is displayed.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.vitalsUseVisitNumberLookupEncounter</property>
+        <defaultValue>false</defaultValue>
+        <description>Used to determine if the visit number received in PV1-19 should be used to lookup the encounter when processing vitals.
+        </description>
+    </globalProperty>
+	<globalProperty>
+        <property>chica.formTimeLimit</property>
+        <defaultValue>2</defaultValue>
+        <description>Timeout for forms (in days).
+        </description>
+    </globalProperty>
+   
+    <!-- Servlets -->
+    <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
+    <servlet>
+        <servlet-name>chicaMobile</servlet-name>
+        <servlet-class>@MODULE_PACKAGE@.web.ChicaMobileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>chica</servlet-name>
+        <servlet-class>@MODULE_PACKAGE@.web.ChicaServlet</servlet-class>
+    </servlet>
+    
+    <!-- Internationalization -->
+    <!-- All message codes should start with @MODULE_ID@.* -->
+    <messages>
+        <lang>en</lang>
+        <file>messages.properties</file>
+    </messages>
+    <!-- /Internationalization -->
+    
+    <mappingFiles>
+        hcageinf.hbm.xml
+        lenageinf.hbm.xml
+        wtageinf.hbm.xml
+        bmiage.hbm.xml
+        encounter.hbm.xml
+        study.hbm.xml
+        study_attribute.hbm.xml
+        study_attribute_value.hbm.xml
+        old_rule.hbm.xml
+        chica1_patient.hbm.xml
+        chica1_patient_obsv.hbm.xml
+        chica1_appointments.hbm.xml
+        insurance_mapping.hbm.xml
+        family.hbm.xml
+        patient_family.hbm.xml
+        chica_hl7_export.hbm.xml
+        ddst.hbm.xml
+        high_bp.hbm.xml
+        chica_hl7_export_map.hbm.xml
+        chica_hl7_export_status.hbm.xml
+        study_subject.hbm.xml
+    </mappingFiles>
+    
+   
+</module>
+

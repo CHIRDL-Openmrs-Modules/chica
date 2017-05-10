@@ -1,0 +1,66 @@
+Maintenance:
+	Title:		Research Asthma Case Finding PSF;;
+	Filename:		R_Asthma_Find_older_PSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2005-05-12T03:13:53-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Screen annually for a diiagnosis or symptoms of asthma                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;;
+	Explanation:	Checks to see if asthma status is known and has been checked in the last year.  If not, askes family of child has diagnosis or symptoms of asthma                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	asthma PSF case finding symptoms cough wheeze;;
+	Citations:		NHLBI guidelines;;
+	Links:		http://www.nhlbi.nih.gov/guidelines/asthma/asthgdln.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+AsthmaKnown := read Exist {AsthmaStatus from CHICA} ;
+CheckedThisYear := read Exist {AsthmaStatus from CHICA} Where it Occurred Within Past 365 Days;
+CurrentStatus := read Last {AsthmaStatus from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+endif
+;;
+Priority: 493;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (AsthmaKnown = False) then conclude True;
+If (CurrentStatus = None) AND (CheckedThisYear = False) then conclude True;
+If (CurrentStatus = NoSymptoms) AND (CheckedThisYear = False) then conclude True;
+Else conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Reportedly has asthma or chronic/recurrent asthma symptoms.*", "INFORMANT: MEDICAL HISTORY";
+ CALL storeObs With "AsthmaStatus","Symptoms";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "No asthma or asthma-like symptoms.", "INFORMANT: MEDICAL HISTORY";
+ CALL storeObs With "AsthmaStatus","NoSymptoms";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you have asthma or wheezing, cough or breathing problems that won't go away or keep coming back?");
+write ("¿Tienes tos, te silba el pecho, tienes problemas al respirar que no te curen o que reincidan?") At Spanish;                                                                                                                                                                                                                                                     
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

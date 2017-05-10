@@ -1,0 +1,110 @@
+Maintenance:
+	Title:		Car Safety Seat Inspection PWS;;
+	Filename:		CARSAFETY0_2PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2003-10-15T02:53:08-0400;;
+	Validation:	;;
+Library:
+	Purpose:		PWS prompt to alert practitioners when parents have yet to obtain a car safety seat installation inspection.  Provides the practitioner with information to pass on to parents if interested.                                                                                                                                                                                                                                                                                                                       ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	PWS, injury, car safety;;
+	Citations:		Pediatrics 2011;127;e1050-e1066;;
+	Links:		http://www.aap.org/family/carseatguide.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) OR (mode = CONSUME) then
+csp := read Last {Car_Seat_Position_0-1 from CHICA};
+endif
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+cis := read Last {Car_Seat_Inspection from CHICA} Where it Occurred Within Past 2 Years;  
+handout := read {PatientHandout from CHICA} Where it Occurred Within Past 2 Years;          
+        
+
+endif
+;;
+Priority:		630;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) OR (mode = CONSUME) then
+If (csp = forward) then || positionText || = "**Parent reports FORWARD FACING car seat. Should be rearfacing until age 2. ";
+endif
+
+If (mode = PRODUCE) then
+If  (VisitType = SickVisit) then conclude false;
+
+If (csp = forward) then conclude True;
+If (cis = Yes) or (cis = declined) then conclude False;
+If ('Car_seat_position' is in handout) then conclude False;
+conclude True;                                                                                                                                                                               
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNotes function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then || description || = "|| positionText |||| firstname ||'s parents have not had a car seat installation inspection, as recommended by the AAP.";
+If  (Box1=true) then || note1 || = "|| firstname ||'s parent was interested in information.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) then
+CALL storeNote With "description","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box1=true) then
+CALL storeNote With "note1","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box2=true) then
+CALL storeObs With "Car_Seat_Inspection","Yes";
+CALL storeNote With "I provided contact information for the car seat safety program.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box3=true) then
+CALL storeNote With "I advised that the car seat should be rear facing.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box4=true) then
+CALL storeObs With "PatientHandout","Car_seat_position";
+CALL storeNote With "I provided them with a brochure.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box5=true) then
+CALL storeObs With "Car_Seat_Inspection","declined";
+CALL storeNote With "They were not interested in information on the car seat program.","ANTICIPATORY GUIDANCE";
+endif;
+
+If  (Box6=true) then
+endif;
+
+
+endif
+
+;;
+Action:
+call CREATE_JIT with "CARSEAT_JIT";
+write ("|| positionText |||| firstname ||'s parents have not had a car seat installation inspection, as recommended by the AAP.  They can call the Car Seat Safety Program at (317) 944-2977 or 1-800-kid-n-car (543-6227).");                                                                                
+write ("Parent was interested in info->");
+write ("Provided contact information");
+write ("Advise rear facing");
+write ("Provided brochure");
+write ("Parent not interested in info");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 2 years;;
+end:

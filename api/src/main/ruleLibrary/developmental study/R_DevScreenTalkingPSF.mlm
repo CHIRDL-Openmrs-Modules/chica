@@ -1,0 +1,102 @@
+Maintenance:
+	Title:		Research DevScreen Talking;;
+	Filename:		R_DevScreenTalkingPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2010-06-04T09:00:00-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Assess whether parent has concerns about talking or speech sounds.                                                                                                                                                                                                                                                                                                                                                                                                                                        ;;
+	Explanation:	       Glascoe parent evaluations of development status                                                                                                                                                                                                                                                                                                                                                                            ;;
+	Keywords:	Development Screening ASQ;;
+	Citations:		Glascoe;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+CurrentStatus := read last {CHICA_DevScreen_Status from CHICA} ;
+devStatus := read {CHICA_DevScreen_Status from CHICA} ;
+RecentlyAsked := read {CHICA_DevScreen_Sx from CHICA} Where it Occurred Within Past 3 Months;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+CurrentReferral := read last {CHICA_DevScreen_DevRefer from CHICA};
+ASQDone24:= read exist {ASQ24MonthAssessment from CHICA}; 
+ASQDone27:= read exist {ASQ27MonthAssessment from CHICA};    
+ASQDone30:= read exist {ASQ30MonthAssessment from CHICA}; 
+ASQDone33:= read exist {ASQ33MonthAssessment from CHICA}; 
+ASQDone36:= read exist {ASQ36MonthAssessment from CHICA}; 
+asqStatus:= read {CHICA_DevScreen_ASQ from CHICA} Where it Occurred Within Past 3 Months;
+endif
+;;
+Priority: 60;;
+	Evoke:		;;
+Logic:
+
+If (mode = PRODUCE) then
+AgeInMonths := call ChicaAgeRule with "months";
+AgeInDays := call ChicaAgeRule with "days";
+
+/** If the child ever had a delay, don't ask surveillance again **/
+If ('Delayed' is in devStatus) then conclude False;
+
+/** If an ASQ has been completed in the past 3 months, don't show prompt **/
+If 'Completed' is in asqStatus then conclude False;
+
+/** If the parent or physician suspects a delay, suppress the surveillance because the child is in the middle of a workup. We don't need to check "Not_Delayed" explicitly because it will be the last CHICA_DevScreen_Status value if it was checked **/
+If (CurrentStatus = Survey_Pos) OR (CurrentStatus = Suspect_delay) OR (CurrentReferral = FirstSteps) OR (CurrentReferral = SchoolSystem) then conclude False;
+If ('Talking_Concern' is in RecentlyAsked) OR ('no_Talking_Concern' is in RecentlyAsked) then conclude False;
+
+/** Suppress this rule if the child is in the age range for the routine ASQ **/
+If (AgeInMonths >= 8) and (AgeInMonths < 11) then conclude False;
+If (AgeInMonths >= 17) and (AgeInMonths < 20) then conclude False;
+/** Suppress the surveillance if no evidence of 24 to 36 month ASQ for routine "30" month **/
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone24 = True) then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone27 = True)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone30 = True) then conclude True; 
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone33 = True)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND (ASQDone36 = True)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_24m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_27m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_30m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_33m_Done' is in devStatus)  then conclude True;
+If (AgeInMonths >= 23) and (AgeInMonths < 39) AND ('ASQ_36m_Done' is in devStatus)  then conclude True;
+
+If (AgeInMonths >= 23) and (AgeInMonths < 39) then conclude False;
+
+conclude true;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Parental concerns about speech development.*", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "CHICA_DevScreen_Sx","Talking_Concern";
+ CALL storeObs With "CHICA_DevScreen_Status","Survey_Pos";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "No parental concerns about speech.", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "CHICA_DevScreen_Sx","no_Talking_Concern";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you have any concerns about how || firstname || talks or makes speech sounds?");
+write ("¿Tiene Usted alguna preocupación acerca de la manera en la que || firstname || habla o hace sonidos?") At Spanish;                                                                                                                                                                                                                                                                            
+;;
+Age_Min: 2 months;;
+Age_Max: 66 months;;
+end:

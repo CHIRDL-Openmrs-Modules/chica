@@ -1,0 +1,60 @@
+Maintenance:
+	Title:		Medication Allergies Highlight PWS;;
+	Filename:		Med_Allergies_HL_PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2008-02-02T09:17:23-0500;;
+	Validation:	;;
+Library:
+	Purpose:		Assess medication allergies;;
+	Explanation:	;;
+	Keywords:	PWS, allergy, medication, allergies;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+allergies := read Last {MEDICATION ALLERGIES from CHICA} ;
+endif
+;;
+Priority:	;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (allergies = none) then || Allergy_Text || = " NONE";
+
+If (allergies = "FAMILY REPORTED") then || Allergy_Text || = "patient reports allergy (see below)";
+
+If (allergies = "PHYSICIAN CONFIRMED") then || Allergy_Text || = "allergy documented in note ";
+
+If (allergies = NULL) then || Allergy_Text || = "unknown";
+Conclude True;
+
+endif
+
+;;
+Action:
+write ("|| Allergy_Text ||") At Allergy;
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 21 years;;
+end:

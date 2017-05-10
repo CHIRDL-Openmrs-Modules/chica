@@ -1,0 +1,65 @@
+Maintenance:
+	Title:		Development  Regard Face PSF;;
+	Filename:		DEVRFPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2003-12-18T02:56:50-0500;;
+	Validation:	;;
+Library:
+	Purpose:		PSF question which asks family whether they've noticed their child regarding faces.                                                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	This is a parent reportable Denver Developmental II milestone.  Criteria for form population is strictly age based.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	PSF, development;;
+	Citations:		;;
+	Links:		http://www.ichsr.org/CHICA/ddst.pdf;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 164;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (Gender = M) then || spanishgender || = "él";
+If (Gender = F) then || spanishgender || = "ella";
+If (Gender = M) then || text || = "he";
+If (Gender = F) then || text || = "she";
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Attends to face.", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "PS_Passed","Regard Face";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Reported does not attend to face.*", "INFORMANT: DEVELOPMENT";
+ CALL storeObs With "PS_Failed","Regard Face";
+endif;
+
+
+endif
+;;
+Action:
+write ("When || firstname || is lying on || gender || back, does || text || look at you and watch your face?");
+write ("¿Cuándo || firstname || esta boca arriba, || spanishgender || mira su cara?") At Spanish;                                                                                          
+;;
+Age_Min: 30 days;;
+Age_Max: 60 days;;
+end:

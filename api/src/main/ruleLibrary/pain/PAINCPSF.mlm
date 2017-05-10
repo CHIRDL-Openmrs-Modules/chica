@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Pain  Qualitative Child PSF Assessment;;
+	Filename:		PAINCPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2005-04-28T01:15:12-0400;;
+	Validation:	;;
+Library:
+	Purpose:		The purpose of this PSF is to screen children for the presence of any pain.  Positive answers trigger a physician prompt that collects more detail.                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	pain, PSF, child;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+endif
+;;
+Priority: 1000;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "**Has pain today.**", "INFORMANT: MEDICAL HISTORY";
+ CALL storeObs With "PAIN QUALITATIVE","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "No pain today.", "INFORMANT: MEDICAL HISTORY";
+ CALL storeObs With "PAIN QUALITATIVE","no";
+ CALL storeObs With "PAIN QUALITATIVE CAREWEB","0";
+endif;
+
+
+endif
+;;
+Action:
+write ("Is || firstname || having pain today?");
+write ("¿Tiene || firstname || dolor hoy?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                           
+;;
+Age_Min: 0 days;;
+Age_Max: 12 years;;
+end:

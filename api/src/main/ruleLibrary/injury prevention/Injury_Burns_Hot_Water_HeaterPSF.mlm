@@ -1,0 +1,62 @@
+Maintenance:
+	Title:		Injury  Burns Hot Water Heater PSF;;
+	Filename:		Injury_Burns_Hot_Water_HeaterPSF;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2003-11-13T02:58:37-0500;;
+	Validation:	;;
+Library:
+	Purpose:		This PSF screens whether the hot water heater is set to less than 120F or 49C.                                                                                                                                                                                                                                                                                                                                                                                                                                      ;;
+	Explanation:	The AAP and USPSTF recommend that setting hot water temperature to a maximum of 120F or 49C have lead to decrease in scald burns                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	injury, burns, infant, PSF;;
+	Citations:		;;
+	Links:		http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=9651449&dopt=Abstract;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+heater := read Last {hot_water_heater_adjusted from CHICA} Where it Occurred Within Past 2 Years;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+endif
+;;
+Priority: 424;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (heater = yes) then conclude False;
+conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "Hot water heater set <120 degrees F.", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "hot_water_heater_adjusted","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "*Hot water heater not set below 120 degrees F.*", "INFORMANT: INJURY PREVENTION";
+ CALL storeObs With "hot_water_heater_adjusted","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Have you set your hot water heater to less than 120 degrees F or 49 degrees C?");
+write ("¿Usted tiene el calentador de agua a menos de 120 grados Fahrenheit o 49 grados Celsius?") At Spanish;                                                                                                                                                                                                                                                                                                           
+;;
+Age_Min: 0 years;;
+Age_Max: 3 years;;
+end:

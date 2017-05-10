@@ -1,1 +1,0 @@
-Both versions of antlr must exist. Spring 3.2.7 requires antlr-runtime-3.4. Hibernate requires antlr_2.7.6.jar. These can both exist because they are packaged different.

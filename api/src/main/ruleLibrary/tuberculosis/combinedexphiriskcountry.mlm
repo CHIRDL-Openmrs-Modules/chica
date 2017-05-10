@@ -1,0 +1,80 @@
+Maintenance:
+	Title:		Patient or Family Exposure to High Risk Country;;
+	Filename:		combinedexphiriskcountry.mlm;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Steve Downs;;
+	Specialist:	Pediatrics;;
+	Date:		2012-01-29 15:41:26;;
+	Validation:	;;
+Library:
+	Purpose:		PSF screening question that assesses whether close relatives or the patient have visited a high risk country, which is a risk factor for TB exposure as well as other infections.  This replaces two PSFs written by Biondich in 2007, combining patient and relative risk exposure assessments.  It introduces a new observation value 'FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA' ;;
+	Explanation:	Uses new EXIST modifier.. need to discuss with group.;;
+	Keywords:	PSF, TB, tuberculosis, exposure;;
+	Citations:		2004 Pediatric Tuberculosis Collaborative Group Report - AAP;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+Pos_Risk := read  {ENVIRONMENTAL HISTORY from CHICA} Where it Occurred Within Past 1 Year;
+Neg_Risk := read  {NEGATIVE ENVIRONMENTAL HISTORY from CHICA} Where it Occurred Within Past 1 Year;
+PPD := read Exist {PPD - QUALITATIVE from CHICA} Where it Occurred Within Past 1 Year;
+Pos := read {PPD - QUALITATIVE from CHICA};
+Study := read LAST {K22STUDY1};
+endif
+;;
+Priority: 552;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If 'DIRECT TUBERCULOSIS CONTACT' is in Pos_Risk then conclude False;
+If 'FAMILY MEMBER WITH POTENTIAL TUBERCULOSIS EXPOSURE' is in Pos_Risk then conclude False;
+
+If 'FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Pos_Risk then conclude False;
+If 'FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Pos_Risk then conclude False;
+If 'TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Pos_Risk then conclude False;
+
+If 'FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Neg_Risk then conclude False;
+If 'FAMILY MEMBER TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Neg_Risk then conclude False;
+If 'TRAVEL TO ENDEMIC TUBERCULOSIS AREA' is in Neg_Risk then conclude False;
+
+If (PPD = True) then conclude False;
+
+If 'POSITIVE' is in Pos then conclude False;
+
+conclude True;
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "*Household member with recent time in TB-endemic country.*", "INFORMANT: ENVIRONMENT";
+ CALL storeObs With "ENVIRONMENTAL HISTORY","FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "No household members with recent time in TB-endemic countries.", "INFORMANT: ENVIRONMENT";
+ CALL storeObs With "NEGATIVE ENVIRONMENTAL HISTORY","FAMILY OR PATIENT TRAVEL TO ENDEMIC TUBERCULOSIS AREA";
+endif;
+
+
+endif
+;;
+Action:
+write ("Has || firstname || or anyone in || firstname ||'s home recently spent more than a week in Asia, Africa, Latin America or Eastern Europe?");
+write("¿Hay alguien en la casa de || firstname || que ha pasado más de una semana en Asia, África, Latinoamérica, o Europa del Este?") At Spanish;
+;;
+Age_Min: 11 months;;
+Age_Max: 12 years;;
+end:

@@ -1,0 +1,55 @@
+Maintenance:
+	Title:		   ImmunizationSchedule;;
+	Filename:      ImmunizationSchedule;;
+	Version:       1.0;;
+	Institution:   Indiana University School of Medicine;;
+	Author:        Meena Sheley;;
+	Specialist:	   Pediatrics;;
+	Date:		   2013-08-16T11:38:57-0400;;
+	Validation:	;;
+Library:
+	Purpose:       Fill in ImmunizationSchedule.                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ;;
+	Keywords:	 Developmental;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;	
+    Data:
+
+        mode:=read {mode from Parameters};
+
+ 
+    ;;
+    Priority:		0;;
+	Evoke:		;;
+    Logic:
+
+	If (Gender = M) then || sex || = "M";
+	If (Gender = F) then || sex || = "F";
+	
+        If (mode = CONSUME) then
+            VXUResult := CALL createVXUMessage; 
+            CALL sendCHIRPUpdate with "VXUResult";
+        endif
+
+        If (mode = PRODUCE) then
+           chirpStatus := CALL queryCHIRP;  /* Re-queries CHIRP if this is a force print and if previous query was unsuccessful*/
+            If (chirpStatus = not_in_chirp_registry ) then 
+                 || Text || = "This child does not exist in CHIRP.  Please fill out any immunization information you have. A new CHIRP record can be created when scanned.";
+			If (chirpStatus = CHIRP_match_not_found ) then
+				|| Text || = "This patient is not an exact match to a patient in CHIRP so immunization records are not available. Any updates to this form will not be updated in CHIRP.";
+			If (chirpStatus = CHIRP_not_available) then
+				|| Text || = "We are unable to contact CHIRP at this time. Please update the patient's records at www.chirp.in.gov";
+            conclude True;                                                                                                                                                                                                             
+        endif
+    ;;
+    Action:
+        write ("");  /* Intentionally write an empty string for the prioritized merge field "Config1" */
+        write ("|| Text ||") At CHIRP_Status;
+		write ("|| sex ||" ) At Sex_2;
+		write ("|| sex ||" ) At Sex;
+    ;;
+    Age_Min: 0 years;;
+    Age_Max: 7 years;;
+end:

@@ -1,0 +1,66 @@
+Maintenance:
+	Title:		Sexuality  Pregnant PSF Study;;
+	Filename:		MIght_be_Pregnant_PSF_Study;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-07-30T04:30:24-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This is a GAPS PSF that checks if the patient thinks she might be pregnant.                                                                                                                                                                                                                                                                                                                                                                                                                                         ;;
+	Explanation:	Adolescents who are sexually active are at risk for pregnancy and STDs.  It is important to find out if a patient is sexually active so that we can help to prevent these outcomes.                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	GAPS, adolescent, sex, pregnancy, STD, HIV;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+intercourse := read Last {has_had_intercourse from CHICA} ;
+pregnant := read Exist {might_be_pregnant from CHICA} Where it Occurred Within Past 330 Days;
+study := read Last {SexualityStudy from CHICA} ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+endif
+;;
+Priority: 624;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (study = Control) then conclude False;
+If (Gender = M) then conclude False;
+If (pregnant = False) and (intercourse = yes) then conclude True;
+conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+endif
+
+If (mode = CONSUME) then
+
+If  (Box1=true) then
+	CALL storeNote With "***Patient thinks she might be pregnant.***", "INFORMANT: RED FLAGS";
+ CALL storeObs With "might_be_pregnant","yes";
+endif;
+If  (Box2=true) then
+	CALL storeNote With "Patient says she is not pregnant.", "INFORMANT: HEADSS";
+ CALL storeObs With "might_be_pregnant","no";
+endif;
+
+
+endif
+;;
+Action:
+write ("Do you think you might be pregnant?");
+write ("¿Hay una posibilidad que esta embarazada?") At Spanish;                                                                                                                                                                                                                                                                                                                                                                                                     
+;;
+Age_Min: 12 years;;
+Age_Max: 21 years;;
+end:

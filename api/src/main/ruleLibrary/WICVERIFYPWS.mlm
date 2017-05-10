@@ -1,0 +1,92 @@
+Maintenance:
+	Title:		WIC Verficiation PWS Reminder;;
+	Filename:		WICVERIFYPWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Paul Biondich;;
+	Specialist:	Pediatrics;;
+	Date:		2004-07-23T10:22:08-0400;;
+	Validation:	;;
+Library:
+	Purpose:		Physician prompt that alerts to potential WIC eligibility and asks physician to verify this status.                                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	This rule needs some discussion..                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ;;
+	Keywords:	WIC, PWS;;
+	Citations:		;;
+	Links:		http://www.fns.usda.gov/wic/content/howtoapply/eligibilityrequirements.htm;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+VisitType := read Last {VisitType} Where it Occurred Within Past 1 Day;
+lbw := read Last {LowBirthWeight from CHICA};
+insurance := read Last {Insurance from CHICA} ;
+wicactive := read Last {WICMember from CHICA} Where it Occurred Within Past 365 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+endif
+;;
+Priority: 241;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If  (VisitType = SickVisit) then conclude false;
+If (wicactive = no) then conclude False;
+If (wicactive = yes) then conclude False;
+If (wicactive = eligible) then conclude True;
+If (insurance = Indigent) OR (insurance = Self-Pay) OR (insurance = Medicaid) then conclude True;
+If (lbw = yes) then conclude True;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) then || description || = "|| firstname || was identified as potentially eligible for the WIC program.";
+If  (Box1=true) then || note1 || = "I determined that || firstname || is already on WIC.";
+If  (Box2=true) then || note2 || = "I determined that || firstname || is ineligible for WIC.";
+If  (Box4=true) then || note4 || = "|| firstname ||'s parent was not interested in WIC.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","DIET AND NUTRITION";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "WICMember","yes";
+ CALL storeNote With "note1","DIET AND NUTRITION";
+endif;
+If  (Box3=true) then
+ CALL storeObs With "WICMember","eligible";
+ CALL storeNote With "I recommended enrollment in WIC.","DIET AND NUTRITION";
+endif;
+If  (Box2=true) then
+ CALL storeObs With "WICMember","no";
+ CALL storeNote With "note2","DIET AND NUTRITION";
+endif;
+If  (Box4=true) then
+CALL storeNote With "note4","DIET AND NUTRITION";
+endif;
+
+
+endif
+;;
+Action:
+write ("This patient has been identified by either the system and/or the child's parent as potentially eligible for the WIC program. Share list of WIC locations. Support staff can help.");                                                                                                                
+write ("Currently on WIC");
+write ("Known to be ineligible");
+write ("Recommended enrollment");
+write ("Parent not interested");
+write ("");
+write ("");
+;;
+Age_Min: 0 days;;
+Age_Max: 5 years;;
+end:

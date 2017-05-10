@@ -1,0 +1,91 @@
+Maintenance:
+	Title:		Sexuality  Possible Pregnancy PWS;;
+	Filename:		Sexuality_Possible_Pregnancy_PWS;;
+	Version:	1.0;;
+	Institution:	Indiana University School of Medicine;;
+	Author:		Aaron E. Carroll;;
+	Specialist:	Pediatrics;;
+	Date:		2004-06-24T04:40:32-0400;;
+	Validation:	;;
+Library:
+	Purpose:		This is a GAPS PWS for concerns pt may be pregnant.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ;;
+	Explanation:	Adolescents who are sexually active are at risk for pregnancy and STDs.  It is important to find out if a patient is sexually active so that we can help to prevent these outcomes.                                                                                                                                                                                                                                                                                                                                 ;;
+	Keywords:	GAPS, adolescent, sex, pregnancy, STD, HIV, PWS;;
+	Citations:		;;
+	Links:		;;
+Knowledge:
+	Type:		data_driven;;
+Data:
+
+mode:=read {mode from Parameters};
+Box1:=read {box1 from Parameters};
+Box2:=read {box2 from Parameters};
+Box3:=read {box3 from Parameters};
+Box4:=read {box4 from Parameters};
+Box5:=read {box5 from Parameters};
+Box6:=read {box6 from Parameters};
+
+If (mode = PRODUCE) then
+pregnant := read Last {might_be_pregnant from CHICA} Where it Occurred Within Past 14 Days;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+endif
+;;
+Priority:		18;;
+	Evoke:		;;
+Logic:
+If (mode = PRODUCE) then
+
+If (pregnant = yes) then conclude True;conclude False;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+endif
+
+If (mode = CONSUME) then
+
+/* This section defines the variables used when calling the storeNote function. */
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then || description || = "|| firstname || thinks she may be pregnant.  I tested for pregnancy and counseled her.";
+If  (Box1=true) then || note1 || = "|| firstname || had a positive pregnancy test.";
+If  (Box2=true) then || note2 || = "I referred || firstname || to OB/GYN for prenatal care.";
+If  (Box3=true) then || note3 || = "I discussed disclosing pregnancy to || firstname ||'s family.";
+If  (Box5=true) then || note5 || = "|| firstname || had a negative pregnancy test.";
+If  (Box6=true) then || note6 || = "I counseled || firstname || about how to prevent unwanted pregnancy and sexually transmitted infection.";
+/* */
+
+If  (Box1=true) OR (Box2=true) OR (Box3=true) OR (Box4=true) OR (Box5=true) OR (Box6=true) then
+ CALL storeNote With "description","PSYCHOSOCIAL";
+endif;
+
+If  (Box1=true) then
+ CALL storeObs With "pregnancy_test_performed","yes";
+ CALL storeNote With "note1","PSYCHOSOCIAL";
+endif;
+If  (Box2=true) then
+ CALL storeNote With "note2","PSYCHOSOCIAL";
+endif;
+If  (Box3=true) then
+ CALL storeNote With "note3","PSYCHOSOCIAL";
+endif;
+If  (Box4=true) then
+ CALL storeNote With "I reviewed options including emergency contraception and family planning.","PSYCHOSOCIAL";
+endif;
+If  (Box5=true) then
+ CALL storeObs With "pregnancy_test_performed","yes";
+ CALL storeNote With "note5","PSYCHOSOCIAL";
+endif;
+If  (Box6=true) then
+ CALL storeNote With "note6","PSYCHOSOCIAL";
+endif;
+
+
+endif
+;;
+Action:
+write ("|| firstname || thinks she may be pregnant.  Please do a pregnancy test and then review the following:");                                                                                                                                                                                           
+write ("Pregnancy test positive ->");
+write ("Refer to OB/Gyn");
+write ("Discuss disclosure to family");
+write ("Review options");
+write ("Pregnancy test negative ->");
+write ("Discuss prevention");
+;;
+Age_Min: 11 years;;
+Age_Max: 21 years;;
+end:
