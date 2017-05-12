@@ -134,7 +134,12 @@
 				<version>5.1.2</version>
 				<scope>provided</scope>
 			</dependency>
-
+			<dependency>
+				<groupId>com.biscom</groupId>
+				<artifactId>faxws-client</artifactId>
+				<version>1.0.0</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>

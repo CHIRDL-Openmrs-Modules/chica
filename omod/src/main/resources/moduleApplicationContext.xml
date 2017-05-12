@@ -47,6 +47,7 @@
                 <prop key="/module/@MODULE_ID@/sessionTimeout.form">sessionTimeout</prop>
                 <prop key="/module/@MODULE_ID@/PSQMobile.form">PSQMobile</prop>
                 <prop key="/module/@MODULE_ID@/cacheConfiguration.form">cacheConfiguration</prop>
+                <prop key="/module/@MODULE_ID@/faxStatus.form">faxStatus</prop>
             </props>
         </property>
     </bean>
@@ -244,6 +245,11 @@
         <property name="commandName"><value>cacheConfiguration</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/cacheConfiguration</value></property>
         <property name="successView"><value>cacheConfiguration.form</value></property>
+    </bean>
+    <bean id="faxStatus" class="@MODULE_PACKAGE@.web.FaxStatusController">
+        <property name="commandName"><value>faxStatus</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/faxStatus</value></property>
+        <property name="successView"><value>faxStatus.form</value></property>
     </bean>
     <bean parent="serviceContext">
         <property name="moduleService">
