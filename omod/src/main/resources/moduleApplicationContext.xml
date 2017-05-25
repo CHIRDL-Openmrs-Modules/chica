@@ -7,8 +7,7 @@
     
     <bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
-            <props>
-                <prop key="/module/@MODULE_ID@/testCheckin.form">testCheckin</prop>
+            <props>            
                 <prop key="/module/@MODULE_ID@/parseDictionary.form">parseDictionary</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoard.form">greaseBoard</prop>
                 <prop key="/module/@MODULE_ID@/weeklyReports.form">weeklyReports</prop>
@@ -47,11 +46,6 @@
                 <prop key="/module/@MODULE_ID@/cacheConfiguration.form">cacheConfiguration</prop>
             </props>
         </property>
-    </bean>
-    <bean id="testCheckin" class="org.openmrs.module.chica.web.TestCheckinController">
-        <property name="commandName"><value>testCheckinObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/testCheckin</value></property>
-        <property name="successView"><value>testCheckin.form</value></property>
     </bean>
     <bean id="parseDictionary" class="org.openmrs.module.chica.web.ParseDictionaryController">
         <property name="commandName"><value>parseDictionaryObject</value></property>
@@ -315,6 +309,9 @@
     </bean>
     -->
     
+    <!-- CHICA-990 Remove Test checkin through AOP link on Admin page. This was being triggered when messageProcessed() was
+    	 called from the TestCheckinController. TriggerPatientAfterAdvice is still used in other areas, such as HL7SocketHandler, 
+    	 but is configured in the CHICA config.xml
     <bean id="triggerPatientAfterAdviceMethodBean" class="org.openmrs.module.chica.advice.TriggerPatientAfterAdvice" />
 
 	<bean id="testCheckinProxy"
@@ -328,4 +325,5 @@
 			</list>
 		</property>
 	</bean>
+	-->
 </beans>

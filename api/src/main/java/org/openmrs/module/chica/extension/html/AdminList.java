@@ -26,8 +26,7 @@ public class AdminList extends AdministrationSectionExt {
 	public Map<String, String> getLinks() {
 		
 		Map<String, String> map = new HashMap<String, String>();
-		
-		map.put("module/chica/testCheckin.form", "Test checkin through AOP");
+				
 		map.put("module/chica/parseDictionary.form", "Parse dictionary file");
 		map.put("module/chica/greaseBoard.form", "Grease Board");
 		map.put("module/chica/viewPatient.form", "View Encounters");
