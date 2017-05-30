@@ -15,8 +15,6 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.FaxStatus;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -27,22 +25,24 @@ import com.biscom.FAXCOMX0020Service;
 import com.biscom.FAXCOMX0020ServiceSoap;
 import com.biscom.MessageStatus;
 
+
 /**
- * Controller for handling the functionality of making changes to application caches.
+ * Controller for handling fax status display.
  *
- * @author Steve McKee
+ * @author Meena Sheley
  */
 @SuppressWarnings("deprecation")
 public class FaxStatusController extends SimpleFormController {
 	
 	private final Log log = LogFactory.getLog(getClass());
 	
-	private static final String PARAM_ERROR_MESSAGE = "errorMessage";
 	private static final boolean ASCENDING = false;
-	private static final int DEFAULT_COUNT = 300;
-	private static final int DEFAULT_START_COUNT = 1;
+	private static final int DEFAULT_COUNT = 100;
+	private static final int DEFAULT_START_COUNT = 0;
 	private static final int SORT_COLUMN = 2;
 	private static final int USER_TYPE = 2;
+
+
 	
 	/**
 	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
@@ -72,7 +72,7 @@ public class FaxStatusController extends SimpleFormController {
 	@Override
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		User user = Context.getUserContext().getAuthenticatedUser();
-		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (user == null) {
 			return null;
@@ -94,49 +94,12 @@ public class FaxStatusController extends SimpleFormController {
 			port = service.getFAXCOMX0020ServiceSoap();
 			ArrayOfMessageStatus statuses = port.loginAndGetMessageStatuses("", username, password, USER_TYPE, 
 					SORT_COLUMN, ASCENDING, DEFAULT_START_COUNT, DEFAULT_COUNT);
-			List<MessageStatus> faxComStatuses = statuses.getMessageStatus();
-			List<FaxStatus> rows = new ArrayList<FaxStatus>();
-			
-			for (MessageStatus faxComStatus : faxComStatuses){
-				FaxStatus status = new FaxStatus();
-				status.setFaxNumber(faxComStatus.getFaxNumber());
-				status.setTransmitTime(faxComStatus.getTransmitTime());
-				status.setSubject(faxComStatus.getSubject());
-				status.setStatusText(faxComStatus.getStatusText());
-				status.setAttachmentCount(faxComStatus.getAttachmentCount());
-				status.setId(faxComStatus.getID());
-				status.setNumberOfAttempts(faxComStatus.getNumberOfAttempts());
-				status.setLocation("");
-				String formInstanceString = faxComStatus.getIDTag();
-				status.setFormInstanceString(formInstanceString);
-				String [] formInstanceSubstrings = formInstanceString.split("_");
-				if (formInstanceSubstrings.length < 3){
-					//there is not a real form instance
-				}
-				//FormInstance formInstance = new FormInstance();
-				//parse form instance
-				
-				//chirdlUtilBackportsService.getPatientStatesByFormInstance(formInstance,false);
-				
-				/* TODO find a way of linking to form instance either our input to idtag at time of send fax
-				 * or saving unique id from faxcom as a form instance attribute.
-				 */					
-				
-				Integer patientId = null;
-				status.setPatientId(patientId);
-				status.setPagesTransmitted(faxComStatus.getPagesTransmitted());
-				status.setStatusName(faxComStatus.getStatusName());
-				status.setUniqueJobID(faxComStatus.getUniqueJobID());
-				status.setIdTag(faxComStatus.getIDTag());
-				status.setId(faxComStatus.getID());
-				status.setTransmissionStatus(faxComStatus.getTransmissionStatus());
-				status.setConnectTime(faxComStatus.getConnectTime());
-
-				rows.add(status);
-			}
 			port.releaseSession();
-			
+			List<MessageStatus> faxComStatuses = statuses.getMessageStatus();
+			Integer patientId = null;
+			List<FaxStatus> rows = getFaxStatusByPatient(faxComStatuses, patientId);
 			map.put("faxStatusRows", rows);
+			
 		} catch (Exception e) {
 			log.error("Exception when checking fax status.", e);
 		} finally{
@@ -146,6 +109,45 @@ public class FaxStatusController extends SimpleFormController {
 		
 		return map;
 	}
+	
+	private List<FaxStatus>  getFaxStatusByPatient(List<MessageStatus> faxComStatuses, Integer patientId){
+		
+		
+		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
+		
+		for (MessageStatus faxComStatus : faxComStatuses){
+
+			FaxStatus status = new FaxStatus();
+			status.setFormInstanceByIdTag(faxComStatus.getIDTag());
+			status.setImageLocation(faxComStatus.getIDTag());
+			status.setFaxNumber(faxComStatus.getFaxNumber());
+			status.setTransmitTime(faxComStatus.getTransmitTime());
+			status.setTransmitTimeAsString(faxComStatus.getTransmitTime(), "MM/dd/yyyy HH:MM:ss");
+			status.setSubject(faxComStatus.getSubject());
+			status.setStatusText(faxComStatus.getStatusText());
+			status.setAttachmentCount(faxComStatus.getAttachmentCount());
+			status.setId(faxComStatus.getID());
+			status.setNumberOfAttempts(faxComStatus.getNumberOfAttempts());
+			status.setPagesTransmitted(faxComStatus.getPagesTransmitted());
+			status.setStatusName(faxComStatus.getStatusName());
+			status.setUniqueJobID(faxComStatus.getUniqueJobID());
+			status.setIdTag(faxComStatus.getIDTag());
+			status.setId(faxComStatus.getID());
+			status.setTransmissionStatus(faxComStatus.getTransmissionStatus());
+			status.setConnectTime(faxComStatus.getConnectTime());
+			
+			//If a patientId is requested, filter on patientId
+			//If no patientId is requested, add to list.
+			if (patientId == null ||patientId == status.getPatientId()){
+				statuses.add(status);		
+			}
+			
+		}
+		return statuses;
+	}
+	
+	
+	
 	
 	
 	

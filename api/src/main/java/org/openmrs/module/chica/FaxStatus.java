@@ -1,18 +1,51 @@
+
 package org.openmrs.module.chica;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
+/**
+ * Fax status object for faxes sent via web service.
+ *
+ * @author Meena Sheley
+ */
 public class FaxStatus {
 
+	private Log log = LogFactory.getLog(this.getClass());
 	public short id;
     private XMLGregorianCalendar transmitTime;
-    private String faxNumber;
-    private String formInstanceString;
-    private FormInstance formInstance;
-    
-	private String location;
+    private String transmitTimeAsString;
+    /**
+	 * @return the transmitTimeAsString
+	 */
+	public String getTransmitTimeAsString() {
+		return transmitTimeAsString;
+	}
+	/**
+	 * @param transmitTimeAsString the transmitTimeAsString to set
+	 */
+	public void setTransmitTimeAsString(String transmitTimeAsString) {
+		this.transmitTimeAsString = transmitTimeAsString;
+	}
+	private String faxNumber;
+
 	private short numberOfAttempts;
     private String recipientName;
     private String subject;
@@ -35,7 +68,104 @@ public class FaxStatus {
     private String uniqueJobID;
     private boolean isSelected;
     private Integer patientId;
+    private String patientMRN;
+    private Integer formId;
+    private String formName;
+    private String patientFirstName;
+    private String patientLastName;
+    private String formInstanceString;
+    private FormInstance formInstance;
+    private Integer locationId;
+	private String location;
     /**
+	 * @return the locationId
+	 */
+	public Integer getLocationId() {
+		return locationId;
+	}
+	/**
+	 * @param locationId the locationId to set
+	 */
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
+	}
+	/**
+	 * @return the formId
+	 */
+	public Integer getFormId() {
+		return formId;
+	}
+	/**
+	 * @param formId the formId to set
+	 */
+	public void setFormId(Integer formId) {
+		this.formId = formId;
+	}
+	/**
+	 * @return the formName
+	 */
+	public String getFormName() {
+		return formName;
+	}
+	/**
+	 * @param formName the formName to set
+	 */
+	public void setFormName(String formName) {
+		this.formName = formName;
+	}
+	/**
+	 * @return the patientFirstName
+	 */
+	public String getPatientFirstName() {
+		return patientFirstName;
+	}
+	/**
+	 * @param patientFirstName the patientFirstName to set
+	 */
+	public void setPatientFirstName(String patientFirstName) {
+		this.patientFirstName = patientFirstName;
+	}
+	/**
+	 * @return the patientLastName
+	 */
+	public String getPatientLastName() {
+		return patientLastName;
+	}
+	/**
+	 * @param patientLastName the patientLastName to set
+	 */
+	public void setPatientLastName(String patientLastName) {
+		this.patientLastName = patientLastName;
+	}
+	/**
+	 * @return the patientMRN
+	 */
+	public String getPatientMRN() {
+		return patientMRN;
+	}
+	/**
+	 * @param patientMRN
+	 */
+	public void setPatientMRN(String patientMRN) {
+		this.patientMRN = patientMRN;
+	}
+	/**
+	 * @param patientMRN the patientMRN to set
+	 */
+	private void setPatientMRN(Integer patientId) {
+
+		patientMRN = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
+
+		PatientService patientService = Context.getPatientService();
+		Patient patient = patientService.getPatient(patientId);
+		if (patient != null) {
+			PatientIdentifier patientIdentifier = patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
+			if (patientIdentifier != null) {
+				patientMRN = patientIdentifier.getIdentifier();
+			}
+		}
+	}
+	/**
 	 * @return the patient_id
 	 */
 	public Integer getPatientId() {
@@ -61,6 +191,8 @@ public class FaxStatus {
 		this.formInstance = formInstance;
 	}
 	
+	
+	
 	/**
 	 * @return the id
 	 */
@@ -84,6 +216,15 @@ public class FaxStatus {
 	 */
 	public void setTransmitTime(XMLGregorianCalendar transmitTime) {
 		this.transmitTime = transmitTime;
+	}
+	 /**
+	 * @param transmitTime
+	 * @param format
+	 */
+	public void setTransmitTimeAsString(XMLGregorianCalendar transmitTime, String format) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		Date date = transmitTime.toGregorianCalendar().getTime();
+		this.transmitTimeAsString = dateFormat.format(date);
 	}
 	/**
 	 * @return the faxNumber
@@ -388,9 +529,94 @@ public class FaxStatus {
 	private Short faxStateFlags;
 
 
-   
+	public void setLocationByFormInstance(FormInstance formInstance){
+		
+		try {
+			if (formInstance != null){
+				if ((locationId =formInstance.getLocationId())!= null){
+					Location location = Context.getLocationService().getLocation(locationId);
+					if (location != null){
+						this.location = location.getName();
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error("Unable to extract fax location (clinic) from fax id tag", e);
+		}
+		
+	}
+	
+	public void setFormNameByFormInstance(FormInstance formInstance){
+		
+		if (formInstance != null ){
+			formId = formInstance.getFormId();
+			Form form = Context.getFormService().getForm(formId);
+			if (form != null ){
+				formName = form.getName();
+			}
+		}
+	}
+	
+	public void setPatientByByFormInstance(FormInstance formInstance) {
 
+		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		List<PatientState> states = new ArrayList<PatientState>();
+		try {
+			if (formInstance != null){
+				states = chirdlUtilBackportsService.getPatientStatesByFormInstance(formInstance, false);
+			}
 
+			if (states == null || states.isEmpty()) {
+				return;
+			}
+			patientId = states.get(0).getPatientId();
+			Patient patient = Context.getPatientService().getPatient(patientId);
+			if (patient != null) {
+				patientFirstName = patient.getGivenName();
+				patientLastName = patient.getFamilyName();
+				setPatientMRN(patientId);
+			}
+		} catch (Exception e) {
+			log.error("Error setting fax patient information from form instance.", e);
+		}
+
+	}
+	
+	public void  setFormInstanceByIdTag(String idTag){
+		
+		
+		try {
+			if (idTag == null){
+				return;
+
+			}
+			String [] formInstanceSubstrings = idTag.split("[^a-zA-Z0-9']+");
+			if (formInstanceSubstrings != null && formInstanceSubstrings.length >= 3){
+				
+				Integer locationId = Integer.valueOf(formInstanceSubstrings[0]);
+				Integer formId = Integer.valueOf(formInstanceSubstrings[1]);
+				Integer formInstanceId = Integer.valueOf(formInstanceSubstrings[2]);
+				this.formInstance = new FormInstance(locationId, formId, formInstanceId);	
+				this.formInstanceString = formInstance.toString();
+				setLocationByFormInstance(formInstance);
+				setPatientByByFormInstance(formInstance);
+				setFormNameByFormInstance(formInstance);
+			}
+			
+			
+		} catch (Exception e) {
+			//The fax id tag was not a correct form instance id format.  No need for stack trace.
+			log.info("Unable to determine form instance from fax status because " + idTag + " is not a valid form instance format");
+		}
+		
+		return;
+				
+	}
+
+	public void setImageLocation(String idTag){
+		//get the image directory from attributes
+		// get the form file based on directory and idTag
+	}
 	
 	
 }
