@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.web;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.User;
+import org.openmrs.Form;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.atd.util.FormAttributeValueDescriptor;
+import org.openmrs.module.atd.util.Util;
 import org.openmrs.module.chica.FaxStatus;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -58,29 +65,31 @@ public class FaxStatusController extends SimpleFormController {
 	@Override
 	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
 	                                BindException errors) throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();
-		
-		
-		
 		
 		return new ModelAndView(new RedirectView(getSuccessView()));
 	}
+	
+	
+	
 	
 	/**
 	 * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
-		User user = Context.getUserContext().getAuthenticatedUser();
 		
+		LocationService locService = Context.getLocationService();
 		Map<String, Object> map = new HashMap<String, Object>();
-		if (user == null) {
-			return null;
-			
-			
-		}
-		int priority = ChirdlUtilConstants.FAX_PRIORITY_NORMAL; //Default
-		int resolution = ChirdlUtilConstants.FAX_RESOLUTION_HIGH; //Default
+		
+		List<FaxStatus> faxStatuses = getFaxStatusList(request, map);
+		map.put("faxStatusRows",faxStatuses);
+		
+		return map;
+	}
+	
+	
+	
+	private List<FaxStatus> getFaxStatusList (HttpServletRequest request, Map<String, Object> map) {
 		
 		AdministrationService administrationService = Context.getAdministrationService();
 		String password = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_PASSWORD);
@@ -88,32 +97,26 @@ public class FaxStatusController extends SimpleFormController {
 		
 		FAXCOMX0020Service service = null;
 		FAXCOMX0020ServiceSoap port = null;
-		try {
-			service = new FAXCOMX0020Service();
+		
+		service = new FAXCOMX0020Service();
 
-			port = service.getFAXCOMX0020ServiceSoap();
-			ArrayOfMessageStatus statuses = port.loginAndGetMessageStatuses("", username, password, USER_TYPE, 
-					SORT_COLUMN, ASCENDING, DEFAULT_START_COUNT, DEFAULT_COUNT);
-			port.releaseSession();
-			List<MessageStatus> faxComStatuses = statuses.getMessageStatus();
-			Integer patientId = null;
-			List<FaxStatus> rows = getFaxStatusByPatient(faxComStatuses, patientId);
-			map.put("faxStatusRows", rows);
-			
-		} catch (Exception e) {
-			log.error("Exception when checking fax status.", e);
-		} finally{
-			port.releaseSession();
-		}
+		port = service.getFAXCOMX0020ServiceSoap();
+		ArrayOfMessageStatus statuses = port.loginAndGetMessageStatuses("", username, password, USER_TYPE, 
+				SORT_COLUMN, ASCENDING, DEFAULT_START_COUNT, DEFAULT_COUNT);
+		port.releaseSession();
+		List<MessageStatus> faxComStatusList = statuses.getMessageStatus();
+		map.put("faxComStatusList", faxComStatusList);
 		
+		return filterFaxStatuses(request, map);
 		
-		return map;
 	}
 	
-	private List<FaxStatus>  getFaxStatusByPatient(List<MessageStatus> faxComStatuses, Integer patientId){
+	@SuppressWarnings("unchecked")
+	private List<FaxStatus>  filterFaxStatuses(HttpServletRequest request, Map<String, Object> map){
 		
 		
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
+		List<MessageStatus> faxComStatuses = (List<MessageStatus>) map.get("faxComStatusList");
 		
 		for (MessageStatus faxComStatus : faxComStatuses){
 
@@ -135,12 +138,7 @@ public class FaxStatusController extends SimpleFormController {
 			status.setId(faxComStatus.getID());
 			status.setTransmissionStatus(faxComStatus.getTransmissionStatus());
 			status.setConnectTime(faxComStatus.getConnectTime());
-			
-			//If a patientId is requested, filter on patientId
-			//If no patientId is requested, add to list.
-			if (patientId == null ||patientId == status.getPatientId()){
-				statuses.add(status);		
-			}
+			statuses.add(status);		
 			
 		}
 		return statuses;

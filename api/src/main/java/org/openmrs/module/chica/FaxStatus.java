@@ -606,7 +606,8 @@ public class FaxStatus {
 			
 		} catch (Exception e) {
 			//The fax id tag was not a correct form instance id format.  No need for stack trace.
-			log.info("Unable to determine form instance from fax status because " + idTag + " is not a valid form instance format");
+			log.info("Status idTag is not a valid form instance format:" + idTag);
+			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 		
 		return;
