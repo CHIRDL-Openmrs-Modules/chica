@@ -16,7 +16,6 @@
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
                 <prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
                 <prop key="/module/@MODULE_ID@/displayTiff.form">displayTiff</prop>
-                <prop key="/module/@MODULE_ID@/viewPatient.form">viewPatient</prop>
 				<prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
 				<prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
 				<prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
@@ -86,11 +85,6 @@
         <property name="commandName"><value>forcePrintSSNMRNObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/forcePrintSSNMRN</value></property>
         <property name="successView"><value>forcePrintJITs.form</value></property>
-    </bean>
-    <bean id="viewPatient" class="@MODULE_PACKAGE@.web.ViewPatientController">
-        <property name="commandName"><value>viewPatientObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/viewPatient</value></property>
-        <property name="successView"><value>viewEncounter.form</value></property>
     </bean>
     <bean id="forcePrintJITs" class="@MODULE_PACKAGE@.web.ForcePrintJITsController">
         <property name="commandName"><value>forcePrintJITsObject</value></property>
