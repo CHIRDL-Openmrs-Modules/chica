@@ -1,4 +1,4 @@
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
 import java.util.HashMap;
 import java.util.List;
