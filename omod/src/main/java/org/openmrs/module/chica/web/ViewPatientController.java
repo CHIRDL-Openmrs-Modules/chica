@@ -71,7 +71,7 @@ public class ViewPatientController
 		
 		if (mrn != null)
 		{
-			mrn = Util.removeLeadingZeros(mrn); // CHICA-1052 Remove leading zeros
+			mrn = Util.removeLeadingZeros(mrn); // CHICA-1025 Remove leading zeros
 			if(!mrn.contains("-") && mrn.length() > 1){
 				mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length()-1);
 			}
