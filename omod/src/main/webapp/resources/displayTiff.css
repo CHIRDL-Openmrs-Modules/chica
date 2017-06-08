@@ -1,0 +1,85 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    font-size: 12px;
+}
+
+.main_container {
+	height: 100%;
+	width: 100%;
+	background-color: #F5FBEF;
+	overflow: auto;
+}
+
+.form_info_container {
+	display: table; 
+	table-layout: fixed; 
+	height: 5%; 
+	width: 100%
+}
+
+.forms_container {
+	display: table; 
+	table-layout: fixed; 
+	height: 95%; 
+	width: 100%;
+}
+
+.table_container {
+	display: table; 
+	table-layout: fixed; 
+	height: 100%; 
+	width: 100%;
+}
+
+.print_table_container {
+	display: table; 
+	table-layout: fixed; 
+	width: 100%;
+}
+
+.row_container {
+	display: table-row; 
+	height: 100%; 
+	width: 100%;
+}
+
+.forms_row_container {
+	display: table-row;
+}
+
+.cell_container {
+	display: table-cell; 
+	vertical-align: middle; 
+	height: 100%;
+}
+
+.forms_row_cell_container {
+	display: table-cell; 
+	vertical-align: top;
+	width: 50%;
+}
+
+.form_container {
+	height: 100%;
+}
+
+.form_object {
+	width: 100%; 
+	height: 100%
+}
+
+.pdf_error {
+	color: #000;
+}
+
+.link {
+	color:blue;
+}

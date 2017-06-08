@@ -53,7 +53,7 @@ public class DisplayTiffController extends SimpleFormController {
 			HttpServletResponse response, Object command, BindException errors)
 			throws Exception {
 
-		return new ModelAndView(new RedirectView("displayTiff.form"));
+		return new ModelAndView(new RedirectView(getFormView()));
 
 	}
 
@@ -74,7 +74,7 @@ public class DisplayTiffController extends SimpleFormController {
 	}
 	
 	private void setImageLocation(String defaultImageDirectory,String imageFormIdString, String imageLocationIdString, 
-	                              String imageFormInstanceIdString, Integer locationTagId, String na,Map map,
+	                              String imageFormInstanceIdString, Integer locationTagId, Map<String,Object> map,
 	                              String filenameParameterName,Integer encounterId, String stylesheet, 
 	                              String htmlOutputParameterName){
 		String imageDir = null;
@@ -141,15 +141,10 @@ public class DisplayTiffController extends SimpleFormController {
 				FormInstanceAttributeValue fiav = service.getFormInstanceAttributeValue(
 					imageFormId, imageFormInstanceId, imageLocationId, "medium");
 				if (fiav != null && "electronic".equals(fiav.getValue())) {
-					imageFilename = defaultImageDirectory + "NotAvailableTablet.tif";
 					String strOutput = org.openmrs.module.chica.util.Util.displayStylesheet(imageFormId, locationTagId, imageLocationId, imageFormInstanceId, 
 																							stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
 					map.put(htmlOutputParameterName, strOutput);
 				}
-			}
-			
-			if (imageFilename == null) {
-				imageFilename = defaultImageDirectory + na + ".tif";
 			}
 		}else{
 			imageFilename = imagefile.getPath();
@@ -163,14 +158,13 @@ public class DisplayTiffController extends SimpleFormController {
 	 * @return
 	 */
 	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception {
+	protected Map<String,Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		AdministrationService adminService = Context.getAdministrationService();
 		String defaultImageDirectory = adminService.getGlobalProperty("atd.defaultTifImageDirectory");
 
 		try {
 			// default 
-			String na = "notavailable";
 			String encounterIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 
 			String leftImageFormInstanceIdString = request
@@ -211,11 +205,11 @@ public class DisplayTiffController extends SimpleFormController {
 			}
 			Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounterId);
 			setImageLocation(defaultImageDirectory,leftImageFormIdString,leftImageLocationIdString,
-				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename",encounterId,leftStylesheet,
+				leftImageFormInstanceIdString,locationTagId,map,"leftImagefilename",encounterId,leftStylesheet,
 				"leftHtmlOutput");
 			
 			setImageLocation(defaultImageDirectory,rightImageFormIdString,rightImageLocationIdString,
-				rightImageFormInstanceIdString,locationTagId,na,map,"rightImagefilename",encounterId,rightStylesheet,
+				rightImageFormInstanceIdString,locationTagId,map,"rightImagefilename",encounterId,rightStylesheet,
 				"rightHtmlOutput");
 
 			map.put("patientId", request.getParameter("patientId"));

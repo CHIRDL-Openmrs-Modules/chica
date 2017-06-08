@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -50,6 +51,7 @@ import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
@@ -104,6 +106,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String CLEAR_CACHE = "clearCache";
 	private static final String CLEAR_FORM_INSTANCE_FROM_FORM_CACHE = "clearFormInstanceFromFormCache";
 	private static final String SAVE_FORM_DRAFT = "saveFormDraft";
+	private static final String CONVERT_TIFF_TO_PDF = "convertTiffToPDF";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -123,6 +126,7 @@ public class ChicaServlet extends HttpServlet {
 	private static final String PARAM_CACHE_KEY_TYPE = "cacheKeyType";
 	private static final String PARAM_CACHE_VALUE_TYPE = "cacheValueType";
 	private static final String PARAM_PROVIDER_ID = "providerId";
+	private static final String PARAM_TIFF_FILE_LOCATION = "tiffFileLocation";
 	
 	private static final String RESULT_SUCCESS = "success";
 	
@@ -237,6 +241,8 @@ public class ChicaServlet extends HttpServlet {
 			saveFormDraft(request, response);
 		} else if (CLEAR_FORM_INSTANCE_FROM_FORM_CACHE.equals(action)) {
 			clearFormInstaceFromFormDraftCache(request, response);
+		} else if (CONVERT_TIFF_TO_PDF.equals(action)) {
+			convertTiffToPDF(request, response);
 		}
 	}
 	
@@ -1827,6 +1833,45 @@ public class ChicaServlet extends HttpServlet {
 			String message = "Error clearing form instance " + formInstance + " from the " + AtdConstants.CACHE_FORM_DRAFT + " cache.";
     		log.error(message, e);
     		pw.write(message);
+		}
+	}
+	
+	/**
+	 * Converts a Tiff image into a PDF document and writes it to the response's output stream.
+	 * 
+	 * @param request The request object containing the parameter with the location of the Tiff image.
+	 * @param response The response object where the PDF will be written.
+	 * @throws IOException
+	 */
+	private void convertTiffToPDF(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
+		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
+		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_CACHE_CONTROL_PUBLIC + ", " + 
+				ChirdlUtilConstants.HTTP_CACHE_CONTROL_MAX_AGE + "=" + MAX_CACHE_AGE);
+		
+		String tiffFileLocation = request.getParameter(PARAM_TIFF_FILE_LOCATION);
+		if (StringUtils.isBlank(tiffFileLocation)) {
+			try {
+				IOUtil.createFormNotAvailablePDF(response.getOutputStream(), null);
+			}
+			catch (Exception e) {
+				log.error("Error creating Form Not Available PDF", e);
+			}
+			
+			return;
+		}
+		
+		try {
+			IOUtil.convertTifToPDF(tiffFileLocation, response.getOutputStream());
+		}
+		catch (Exception e) {
+			log.error("Error converting tiff to PDF: " + tiffFileLocation, e);
+			try {
+				IOUtil.createFormNotAvailablePDF(response.getOutputStream(), tiffFileLocation);
+			}
+			catch (Exception e1) {
+				log.error("Error creating Form Not Available PDF", e1);
+			}
 		}
 	}
 }
