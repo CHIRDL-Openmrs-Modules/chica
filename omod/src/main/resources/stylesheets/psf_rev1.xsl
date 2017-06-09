@@ -21,13 +21,13 @@
 					}
 
 					#patientInfoLeft {
-						width: 480px;
+						width: 50%;
 						float: left;
 						padding: 5px 2px 2px 5px;
 					}
 					
 					#patientInfoRight {
-						width: 237px;
+						width: 47%;
 						float: right;
 						padding: 2px;
 					}

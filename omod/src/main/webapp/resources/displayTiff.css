@@ -83,3 +83,7 @@ body {
 .link {
 	color:blue;
 }
+
+.cell_padding {
+	padding: 5px;
+}

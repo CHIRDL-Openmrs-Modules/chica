@@ -11,6 +11,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/displayTiff.js"></script>
+<title>Encounter Forms</title>
 </head>
 <body>
 <div class="main_container">
@@ -19,7 +20,7 @@
             <div class="cell_container">
                 <div class="table_container">
                    <div class="row_container">
-                        <div class="cell_container">
+                        <div class="cell_container cell_padding">
                             <a href="#" id="exitButton" onclick="history.go(-1);return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Exit</a>
                         </div>
                         <div class="cell_container displayLeftTiffHeaderSegment">
@@ -66,7 +67,7 @@
                             <div id="divLeft" class="row_container">
                                 <div class="cell_container">
                                     <div class="row_container">
-		                                <div class="cell_container">
+		                                <div class="cell_container cell_padding">
 		                                    <a href="#" id="printLeftButton" onclick="printSelection(document.getElementById('divLeft'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 		                                </div>
 		                            </div>
@@ -92,7 +93,7 @@
                            <div id="divRight" class="row_container">
                                <div class="cell_container">
                                 <div class="row_container">
-	                               <div class="cell_container">
+	                               <div class="cell_container cell_padding">
 	                                   <a href="#" id="printRightButton" onclick="printSelection(document.getElementById('divRight'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 	                               </div>
 	                            </div>
