@@ -83,50 +83,57 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class ChicaServlet extends HttpServlet {
 	
-	private static final String WEEKS = "weeks";
-	private static final String DAYS = "days";
-	private static final String MONTHS = "months";
-	private static final String YEARS = "years";
+	protected static final String CHICA_SERVLET_URL = "/moduleServlet/chica/chica";
+	protected static final String CHICA_SERVLET_PDF_PARAMS = "#view=fit&navpanes=0";
+	
+	protected static final String WEEKS = "weeks";
+	protected static final String DAYS = "days";
+	protected static final String MONTHS = "months";
+	protected static final String YEARS = "years";
 
+	protected static final String IS_AUTHENTICATED = "isAuthenticated";
+	protected static final String AUTHENTICATE_USER = "authenticateUser";
+	protected static final String GET_PATIENT_JITS = "getPatientJITs";
+	protected static final String GET_AVAILABLE_PATIENT_JITS = "getAvailablePatientJITs";
+	protected static final String GET_FORCE_PRINT_FORMS = "getForcePrintForms";
+	protected static final String FORCE_PRINT_FORMS = "forcePrintForms";
+	protected static final String GET_GREASEBOARD_PATIENTS = "getGreaseboardPatients";
+	protected static final String VERIFY_MRN = "verifyMRN";
+	protected static final String GET_MANUAL_CHECKIN = "getManualCheckin";
+	protected static final String SAVE_MANUAL_CHECKIN = "saveManualCheckin";
+	protected static final String SEND_PAGE_REQUEST = "sendPageRequest";
+	protected static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
+	protected static final String KEEP_ALIVE = "keepAlive";
+	protected static final String CLEAR_CACHE = "clearCache";
+	protected static final String CLEAR_FORM_INSTANCE_FROM_FORM_CACHE = "clearFormInstanceFromFormCache";
+	protected static final String SAVE_FORM_DRAFT = "saveFormDraft";
+	protected static final String CONVERT_TIFF_TO_PDF = "convertTiffToPDF";
+	protected static final String TRANSFORM_FORM_XML = "transformFormXML";
+	
+	protected static final String PARAM_ENCOUNTER_ID = "encounterId";
+	protected static final String PARAM_SESSION_ID = "sessionId";
+	protected static final String PARAM_FORM_IDS = "formIds";
+	protected static final String PARAM_LOCATION_ID = "locationId";
+	protected static final String PARAM_LOCATION_TAG_ID = "locationTagId";
+	protected static final String PARAM_FORM_INSTANCES = "formInstances";
+	protected static final String PARAM_FORM_INSTANCE = "formInstance";
+	protected static final String PARAM_PATIENT_ID = "patientId";
+	protected static final String PARAM_MRN = "mrn";
+	protected static final String PARAM_PATIENT_ROWS = "patientRows";
+	protected static final String PARAM_NEED_VITALS = "needVitals";
+	protected static final String PARAM_WAITING_FOR_MD = "waitingForMD";
+	protected static final String PARAM_BAD_SCANS = "badScans";
+	protected static final String PARAM_CACHE_NAME = "cacheName";
+	protected static final String PARAM_CACHE_KEY_TYPE = "cacheKeyType";
+	protected static final String PARAM_CACHE_VALUE_TYPE = "cacheValueType";
+	protected static final String PARAM_PROVIDER_ID = "providerId";
+	protected static final String PARAM_ACTION = "action";
+	protected static final String PARAM_FORM_ID = "formId";
+	protected static final String PARAM_FORM_INSTANCE_ID = "formInstanceId";
+	protected static final String PARAM_TIFF_FILE_LOCATION = "tiffFileLocation";
+	protected static final String STYLESHEET = "stylesheet";
+	
 	private static final long serialVersionUID = 1L;
-	
-	private static final String IS_AUTHENTICATED = "isAuthenticated";
-	private static final String AUTHENTICATE_USER = "authenticateUser";
-	private static final String GET_PATIENT_JITS = "getPatientJITs";
-	private static final String GET_AVAILABLE_PATIENT_JITS = "getAvailablePatientJITs";
-	private static final String GET_FORCE_PRINT_FORMS = "getForcePrintForms";
-	private static final String FORCE_PRINT_FORMS = "forcePrintForms";
-	private static final String GET_GREASEBOARD_PATIENTS = "getGreaseboardPatients";
-	private static final String VERIFY_MRN = "verifyMRN";
-	private static final String GET_MANUAL_CHECKIN = "getManualCheckin";
-	private static final String SAVE_MANUAL_CHECKIN = "saveManualCheckin";
-	private static final String SEND_PAGE_REQUEST = "sendPageRequest";
-	private static final String DISPLAY_FORCE_PRINT_FORMS = "displayForcePrintForms";
-	private static final String KEEP_ALIVE = "keepAlive";
-	private static final String CLEAR_CACHE = "clearCache";
-	private static final String CLEAR_FORM_INSTANCE_FROM_FORM_CACHE = "clearFormInstanceFromFormCache";
-	private static final String SAVE_FORM_DRAFT = "saveFormDraft";
-	private static final String CONVERT_TIFF_TO_PDF = "convertTiffToPDF";
-	
-	private static final String PARAM_ACTION = "action";
-	private static final String PARAM_ENCOUNTER_ID = "encounterId";
-	private static final String PARAM_SESSION_ID = "sessionId";
-	private static final String PARAM_FORM_IDS = "formIds";
-	private static final String PARAM_LOCATION_ID = "locationId";
-	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
-	private static final String PARAM_FORM_INSTANCES = "formInstances";
-	private static final String PARAM_FORM_INSTANCE = "formInstance";
-	private static final String PARAM_PATIENT_ID = "patientId";
-	private static final String PARAM_MRN = "mrn";
-	private static final String PARAM_PATIENT_ROWS = "patientRows";
-	private static final String PARAM_NEED_VITALS = "needVitals";
-	private static final String PARAM_WAITING_FOR_MD = "waitingForMD";
-	private static final String PARAM_BAD_SCANS = "badScans";
-	private static final String PARAM_CACHE_NAME = "cacheName";
-	private static final String PARAM_CACHE_KEY_TYPE = "cacheKeyType";
-	private static final String PARAM_CACHE_VALUE_TYPE = "cacheValueType";
-	private static final String PARAM_PROVIDER_ID = "providerId";
-	private static final String PARAM_TIFF_FILE_LOCATION = "tiffFileLocation";
 	
 	private static final String RESULT_SUCCESS = "success";
 	
@@ -243,6 +250,8 @@ public class ChicaServlet extends HttpServlet {
 			clearFormInstaceFromFormDraftCache(request, response);
 		} else if (CONVERT_TIFF_TO_PDF.equals(action)) {
 			convertTiffToPDF(request, response);
+		} else if (TRANSFORM_FORM_XML.equals(action)) {
+			transformFormXMLToHTML(request, response);
 		}
 	}
 	
@@ -1873,5 +1882,78 @@ public class ChicaServlet extends HttpServlet {
 				log.error("Error creating Form Not Available PDF", e1);
 			}
 		}
+	}
+	
+	/**
+	 * Transforms a form XML into HTML.
+	 * 
+	 * @param request The request object containing the parameters to perform the transformation.
+	 * @param response The response object where the HTML will be written.
+	 * @throws IOException
+	 */
+	private void transformFormXMLToHTML(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
+		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		
+		PrintWriter pw = response.getWriter();
+		Integer formId = null;
+		Integer locationTagId = null;
+		Integer locationId = null;
+		Integer formInstanceId = null;
+		String stylesheet = null;
+		String errorHtml = "<!DOCTYPE html><html><body style=\"font-size:6em;font-weight:bold;text-align:center;\"><p>Form</p><p>Not</p><p>Available</p></body></html>";
+		
+		String formIdStr = request.getParameter(PARAM_FORM_ID);
+		try {
+			formId = Integer.parseInt(formIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Parameter " + PARAM_FORM_ID + " is invalid: " + formIdStr, e);
+			pw.write(errorHtml);
+			return;
+		}
+		
+		String locationTagIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
+		try {
+			locationTagId = Integer.parseInt(locationTagIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + " is invalid: " + locationTagIdStr, e);
+			pw.write(errorHtml);
+			return;
+		}
+		
+		String locationIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID);
+		try {
+			locationId = Integer.parseInt(locationIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_ID + " is invalid: " + locationIdStr, e);
+			pw.write(errorHtml);
+			return;
+		}
+		
+		String formInstanceIdStr = request.getParameter(PARAM_FORM_INSTANCE_ID);
+		try {
+			formInstanceId = Integer.parseInt(formInstanceIdStr);
+		} catch (NumberFormatException e) {
+			log.error("Parameter " + PARAM_FORM_INSTANCE_ID + " is invalid: " + formInstanceIdStr, e);
+			pw.write(errorHtml);
+			return;
+		}
+		
+		stylesheet = request.getParameter(STYLESHEET);
+		if (StringUtils.isBlank(stylesheet)) {
+			log.error("Parameter " + STYLESHEET + " is invalid: " + stylesheet);
+			pw.write(errorHtml);
+			return;
+		}
+		
+		String output = org.openmrs.module.chica.util.Util.displayStylesheet(formId, locationTagId, locationId, formInstanceId, 
+			stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
+		if (StringUtils.isBlank(output)) {
+			log.error("Transformation is empty");
+			pw.write(errorHtml);
+			return;
+		}
+		
+		pw.write(output);
 	}
 }

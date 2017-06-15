@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
-
+<!DOCTYPE html>
+<openmrs:require allPrivileges="View Encounters, View Patients" otherwise="/login.htm" redirect="/module/chica/displayTiff.form" />
 <html>
 <head>
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
@@ -55,12 +56,10 @@
             <div class="forms_row_cell_container">
                 <c:choose>
                     <c:when test="${empty leftHtmlOutput}">
-                        <div class="form_container">
-                            <object id="left_pdf_display" class="form_object">
-                               <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
-                               <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-                            </object>
-                        </div>
+	                    <iframe id="left_pdf_display" class="form_pdf_object" src="${pageContext.request.contextPath}${leftImagefilename}">
+	                       <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+	                       <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+	                    </iframe>
                     </c:when>
                     <c:otherwise>
                         <div class="print_table_container">
@@ -71,7 +70,10 @@
 		                                    <a href="#" id="printLeftButton" onclick="printSelection(document.getElementById('divLeft'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 		                                </div>
 		                            </div>
-                                    ${leftHtmlOutput}
+                                    <iframe id="left_html_display" class="form_html_object" src="${pageContext.request.contextPath}${leftHtmlOutput}">
+			                           <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+			                           <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+			                        </iframe>
                                 </div>
                             </div>
                         </div>
@@ -81,12 +83,10 @@
             <div class="forms_row_cell_container">
                 <c:choose>
                     <c:when test="${empty rightHtmlOutput}">
-                        <div class="form_container">
-                            <object id="right_pdf_display" class="form_object">
-                               <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
-                               <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-                            </object>
-                        </div>
+	                    <iframe id="right_pdf_display" class="form_pdf_object" src="${pageContext.request.contextPath}${rightImagefilename}">
+	                       <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+	                       <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+	                    </iframe>
                     </c:when>
                     <c:otherwise>
                        <div class="print_table_container">
@@ -97,7 +97,10 @@
 	                                   <a href="#" id="printRightButton" onclick="printSelection(document.getElementById('divRight'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 	                               </div>
 	                            </div>
-                                ${rightHtmlOutput}
+                                <iframe id="right_html_display" class="form_html_object" src="${pageContext.request.contextPath}${rightHtmlOutput}">
+                                   <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+                                   <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+                                </iframe>
                                </div>
                            </div>
                        </div>

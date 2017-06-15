@@ -36,8 +36,8 @@
 					    height: 80%;
 					    text-align:center;
 					    position: absolute;
-					    top: -15;
 					    left: 0;
+					    margin-top: -18px;
 					}
 					
 					#title {

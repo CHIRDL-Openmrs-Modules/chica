@@ -73,13 +73,14 @@ body {
 	overflow: auto;
 }
 
-.form_container {
-	height: 100%;
+.form_pdf_object {
+	width: 99%; 
+	height: 93vh;
 }
 
-.form_object {
-	width: 100%; 
-	height: 100%
+.form_html_object {
+    width: 99%; 
+    height: 87vh;
 }
 
 .pdf_error {

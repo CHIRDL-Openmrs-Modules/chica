@@ -1,6 +1,9 @@
 package org.openmrs.module.chica.web;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -141,13 +144,27 @@ public class DisplayTiffController extends SimpleFormController {
 				FormInstanceAttributeValue fiav = service.getFormInstanceAttributeValue(
 					imageFormId, imageFormInstanceId, imageLocationId, "medium");
 				if (fiav != null && "electronic".equals(fiav.getValue())) {
-					String strOutput = org.openmrs.module.chica.util.Util.displayStylesheet(imageFormId, locationTagId, imageLocationId, imageFormInstanceId, 
-																							stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
-					map.put(htmlOutputParameterName, strOutput);
+					String transformUrl = ChicaServlet.CHICA_SERVLET_URL + ChirdlUtilConstants.GENERAL_INFO_QUESTION_MARK + ChicaServlet.PARAM_ACTION + 
+							ChirdlUtilConstants.GENERAL_INFO_EQUAL + ChicaServlet.TRANSFORM_FORM_XML + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
+							ChicaServlet.PARAM_FORM_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageFormId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
+							ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + locationTagId + 
+							ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChirdlUtilConstants.PARAMETER_LOCATION_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + 
+							imageLocationId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChicaServlet.PARAM_FORM_INSTANCE_ID + 
+							ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageFormInstanceId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
+							ChicaServlet.STYLESHEET + ChirdlUtilConstants.GENERAL_INFO_EQUAL + stylesheet;
+					map.put(htmlOutputParameterName, transformUrl);
 				}
 			}
 		}else{
-			imageFilename = imagefile.getPath();
+			try {
+				imageFilename = ChicaServlet.CHICA_SERVLET_URL + ChirdlUtilConstants.GENERAL_INFO_QUESTION_MARK + ChicaServlet.PARAM_ACTION + 
+						ChirdlUtilConstants.GENERAL_INFO_EQUAL + ChicaServlet.CONVERT_TIFF_TO_PDF + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
+						ChicaServlet.PARAM_TIFF_FILE_LOCATION + ChirdlUtilConstants.GENERAL_INFO_EQUAL + 
+						URLEncoder.encode(imagefile.getPath(), Charset.defaultCharset().name()) + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
+			}
+			catch (UnsupportedEncodingException e) {
+				log.error("Unsupported encoding", e);
+			}
 		}
 
 		map.put(filenameParameterName, imageFilename);
