@@ -70,7 +70,7 @@ public class ExportObs implements ProcessStateAction
 			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 			
 			ThreadManager threadManager = ThreadManager.getInstance();
-			threadManager.execute(new HL7ExportObsRunnable(patient, encounterId, CONCEPT_SOURCE_OUTBOUND_OBS, host, port), encounter.getLocation().getLocationId());
+			threadManager.execute(new HL7ExportObsRunnable(patient.getPatientId(), encounterId, CONCEPT_SOURCE_OUTBOUND_OBS, host, port), encounter.getLocation().getLocationId());
 		}
 		catch(Exception e)
 		{

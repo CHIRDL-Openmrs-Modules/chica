@@ -13,6 +13,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
@@ -31,22 +32,22 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 {
 	private Log log = LogFactory.getLog(this.getClass());
 	private Integer encounterId = null;
-	private Patient patient = null;
+	private Integer patientId = null;
 	private String conceptSourceString = null;
 	private String host = null;
 	private Integer port = null;
 	
 	/**
 	 * Constructor
-	 * @param patient
+	 * @param patientId
 	 * @param encounterId
 	 * @param conceptSourceString - the name of the concept source used to determine which obs to create OBX segments for, such as "Outbound Obs"
 	 * @param host - the host destination, the HL7OutboundHandler will query by destination and port
 	 * @param port - port to send to, the HL7OutboundHandler will query by destination and port
 	 */
-	public HL7ExportObsRunnable(Patient patient, Integer encounterId, String conceptSourceString, String host, Integer port)
+	public HL7ExportObsRunnable(Integer patientId, Integer encounterId, String conceptSourceString, String host, Integer port)
 	{
-		this.patient = patient;
+		this.patientId = patientId;
 		this.encounterId = encounterId;
 		this.conceptSourceString = conceptSourceString;
 		this.host = host;
@@ -93,6 +94,9 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 	{
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		PatientService patientService = Context.getPatientService();
+		Patient patient = patientService.getPatient(patientId);
+		
 		int orderRep = 0;
 		HL7ORU hl7ORU = new HL7ORU(patient, encounter);
 		hl7ORU.addSegmentMSH();
