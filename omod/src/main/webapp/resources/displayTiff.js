@@ -6,13 +6,8 @@ $(function() {
 
 function printSelection(node){
 
-  var content=node.innerHTML
-  var pwin=window.open('','print_content','width=300,height=300');
-
-  pwin.document.open();
-  pwin.document.write('<html><body onload="window.print()">'+content+'</body></html>');
-  pwin.document.close();
- 
-  setTimeout(function(){pwin.close();},1000);
+  var frame = document.getElementById(node); 
+  frame.contentWindow.focus(); 
+  frame.contentWindow.print();
 
 }

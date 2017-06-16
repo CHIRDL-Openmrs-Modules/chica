@@ -128,8 +128,6 @@ public class ChicaServlet extends HttpServlet {
 	protected static final String PARAM_CACHE_VALUE_TYPE = "cacheValueType";
 	protected static final String PARAM_PROVIDER_ID = "providerId";
 	protected static final String PARAM_ACTION = "action";
-	protected static final String PARAM_FORM_ID = "formId";
-	protected static final String PARAM_FORM_INSTANCE_ID = "formInstanceId";
 	protected static final String PARAM_TIFF_FILE_LOCATION = "tiffFileLocation";
 	protected static final String STYLESHEET = "stylesheet";
 	
@@ -1903,11 +1901,11 @@ public class ChicaServlet extends HttpServlet {
 		String stylesheet = null;
 		String errorHtml = "<!DOCTYPE html><html><body style=\"font-size:6em;font-weight:bold;text-align:center;\"><p>Form</p><p>Not</p><p>Available</p></body></html>";
 		
-		String formIdStr = request.getParameter(PARAM_FORM_ID);
+		String formIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_ID);
 		try {
 			formId = Integer.parseInt(formIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Parameter " + PARAM_FORM_ID + " is invalid: " + formIdStr, e);
+			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_ID + " is invalid: " + formIdStr, e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -1930,11 +1928,11 @@ public class ChicaServlet extends HttpServlet {
 			return;
 		}
 		
-		String formInstanceIdStr = request.getParameter(PARAM_FORM_INSTANCE_ID);
+		String formInstanceIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID);
 		try {
 			formInstanceId = Integer.parseInt(formInstanceIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Parameter " + PARAM_FORM_INSTANCE_ID + " is invalid: " + formInstanceIdStr, e);
+			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID + " is invalid: " + formInstanceIdStr, e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -1949,7 +1947,8 @@ public class ChicaServlet extends HttpServlet {
 		String output = org.openmrs.module.chica.util.Util.displayStylesheet(formId, locationTagId, locationId, formInstanceId, 
 			stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
 		if (StringUtils.isBlank(output)) {
-			log.error("Transformation is empty");
+			log.error("Transformation is empty for form ID: " + formIdStr + " location tag ID: " + locationTagIdStr + 
+				" location ID: " + locationIdStr + " form instance ID: " + formInstanceIdStr + " stylesheet: " + stylesheet);
 			pw.write(errorHtml);
 			return;
 		}

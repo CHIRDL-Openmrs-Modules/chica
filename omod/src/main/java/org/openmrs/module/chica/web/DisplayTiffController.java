@@ -24,7 +24,6 @@ import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -146,10 +145,11 @@ public class DisplayTiffController extends SimpleFormController {
 				if (fiav != null && "electronic".equals(fiav.getValue())) {
 					String transformUrl = ChicaServlet.CHICA_SERVLET_URL + ChirdlUtilConstants.GENERAL_INFO_QUESTION_MARK + ChicaServlet.PARAM_ACTION + 
 							ChirdlUtilConstants.GENERAL_INFO_EQUAL + ChicaServlet.TRANSFORM_FORM_XML + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
-							ChicaServlet.PARAM_FORM_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageFormId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
-							ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + locationTagId + 
-							ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChirdlUtilConstants.PARAMETER_LOCATION_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + 
-							imageLocationId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChicaServlet.PARAM_FORM_INSTANCE_ID + 
+							ChirdlUtilConstants.PARAMETER_FORM_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageFormId + 
+							ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + 
+							ChirdlUtilConstants.GENERAL_INFO_EQUAL + locationTagId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
+							ChirdlUtilConstants.PARAMETER_LOCATION_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageLocationId + 
+							ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID + 
 							ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageFormInstanceId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
 							ChicaServlet.STYLESHEET + ChirdlUtilConstants.GENERAL_INFO_EQUAL + stylesheet;
 					map.put(htmlOutputParameterName, transformUrl);

@@ -66,7 +66,7 @@
                                 <div class="cell_container">
                                     <div class="row_container">
 		                                <div class="cell_container cell_padding">
-		                                    <a href="#" id="printLeftButton" onclick="printSelection(document.getElementById('divLeft'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
+		                                    <a href="#" id="printLeftButton" onclick="printSelection('left_html_display');return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 		                                </div>
 		                            </div>
                                     <iframe id="left_html_display" class="form_html_object" src="${pageContext.request.contextPath}${leftHtmlOutput}">
@@ -93,7 +93,7 @@
                                <div class="cell_container">
                                 <div class="row_container">
 	                               <div class="cell_container cell_padding">
-	                                   <a href="#" id="printRightButton" onclick="printSelection(document.getElementById('divRight'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
+	                                   <a href="#" id="printRightButton" onclick="printSelection('right_html_display');return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
 	                               </div>
 	                            </div>
                                 <iframe id="right_html_display" class="form_html_object" src="${pageContext.request.contextPath}${rightHtmlOutput}">
