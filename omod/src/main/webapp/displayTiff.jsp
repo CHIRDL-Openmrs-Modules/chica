@@ -108,10 +108,6 @@
             </div>
         </div>
     </div>
-    <input id="leftImageLocation" name="leftImageLocation" type="hidden" value="${leftImagefilename}"/>
-    <input id="rightImageLocation" name="rightImageLocation" type="hidden" value="${rightImagefilename}"/>
-    <input id="leftHtmlLength" name="leftHtml" type="hidden" value="${fn:length(leftHtmlOutput)}"/>
-    <input id="rightHtmlLength" name="rightHtml" type="hidden" value="${fn:length(rightHtmlOutput)}"/>
 </div>
 </body>
 </html>
