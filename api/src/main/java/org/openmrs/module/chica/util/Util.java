@@ -31,7 +31,6 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
-import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
@@ -943,9 +942,9 @@ public class Util {
 	 * @param encounterId
 	 * @param host
 	 * @param port
-	 * @throws APIException
+	 * @throws Exception
 	 */
-	public static void createHL7OutboundRecord(String message, Integer encounterId, String host, Integer port) throws APIException
+	public static void createHL7OutboundRecord(String message, Integer encounterId, String host, Integer port) throws Exception
 	{
 			EncounterService encounterService = Context.getService(EncounterService.class);
 			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);

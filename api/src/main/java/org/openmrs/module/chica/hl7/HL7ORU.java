@@ -279,7 +279,7 @@ public class HL7ORU
 		}
 		catch(Exception e)
 		{
-			log.error("Exception constructing OBX segment for concept: " + conceptMap.getConcept().getName().getName(), e);
+			log.error("Exception constructing OBX segment for concept: " + conceptMap.getConcept().getConceptId(), e);
 		}
 		
 		return obx;

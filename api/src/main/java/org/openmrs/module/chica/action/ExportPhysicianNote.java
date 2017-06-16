@@ -79,8 +79,6 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	private static final String DEFAULT_HOST = "localhost";
-	private static final Integer DEFAULT_PORT = 0;
 	private static final String TXA_ID = "1";
 	private static final String PV1_PATIENT_CLASS = "Outpatient";
 	private static final String DEFAULT_TXA_19 = "AV";
@@ -457,14 +455,14 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		// If host and port are not set, allow the record to be created with localhost and port 0
 		if (host == null || host.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record. Host has not been set.");
-			host = DEFAULT_HOST;
+			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
+			host = ChirdlUtilConstants.DEFAULT_HOST;
 		}
 		
 		if(portString == null || portString.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record. Port has not been set.");
-			port = DEFAULT_PORT;
+			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+			port = ChirdlUtilConstants.DEFAULT_PORT;
 		}
 		
 		try
@@ -473,8 +471,8 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		}
 		catch(NumberFormatException e)
 		{
-			log.error("Error creating HL7Outbound record. Port is not in a valid numeric format.");
-			return;
+			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + ").");
+			port = ChirdlUtilConstants.DEFAULT_PORT;
 		}
 		
 		try

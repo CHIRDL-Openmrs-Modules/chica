@@ -147,7 +147,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		}
 		catch(HL7Exception e)
 		{
-			log.error("Exception parsing HL7 message.", e);
+			log.error("Exception parsing HL7 message for encounter: " + encounterId + ".", e);
 		}
 		
 		return message;

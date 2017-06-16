@@ -1,6 +1,8 @@
 package org.openmrs.module.chica.action;
 
 import java.util.HashMap;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
@@ -44,15 +46,15 @@ public class ExportObs implements ProcessStateAction
 			Integer port;
 			
 			// If host and port are not set, allow the record to be created with localhost and port 0
-			if (host == null || host.isEmpty())
+			if(StringUtils.isBlank(host))
 			{
-				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has not been set.");
+				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
 				host = ChirdlUtilConstants.DEFAULT_HOST;
 			}
 			
-			if(portString == null || portString.isEmpty())
+			if(StringUtils.isBlank(portString))
 			{
-				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has not been set.");
+				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
@@ -62,7 +64,7 @@ public class ExportObs implements ProcessStateAction
 			}
 			catch(NumberFormatException e)
 			{
-				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format.");
+				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + ").");
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
