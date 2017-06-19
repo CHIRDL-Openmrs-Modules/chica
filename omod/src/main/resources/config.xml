@@ -439,6 +439,18 @@
         <description>Timeout for forms (in days).
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.exportObsHost</property>
+        <defaultValue>localhost</defaultValue>
+        <description>IP address of where to send obs (HL7 ORU).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.exportObsPort</property>
+        <defaultValue>0</defaultValue>
+        <description>Port to send obs (HL7 ORU).
+        </description>
+    </globalProperty>
    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
