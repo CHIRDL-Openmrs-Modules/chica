@@ -1,9 +1,7 @@
 package org.openmrs.module.chica.web;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.api.APIAuthenticationException;
@@ -143,27 +142,38 @@ public class DisplayTiffController extends SimpleFormController {
 				FormInstanceAttributeValue fiav = service.getFormInstanceAttributeValue(
 					imageFormId, imageFormInstanceId, imageLocationId, "medium");
 				if (fiav != null && "electronic".equals(fiav.getValue())) {
-					String transformUrl = ChicaServlet.CHICA_SERVLET_URL + ChirdlUtilConstants.GENERAL_INFO_QUESTION_MARK + ChicaServlet.PARAM_ACTION + 
-							ChirdlUtilConstants.GENERAL_INFO_EQUAL + ChicaServlet.TRANSFORM_FORM_XML + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
-							ChirdlUtilConstants.PARAMETER_FORM_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageFormId + 
-							ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + 
-							ChirdlUtilConstants.GENERAL_INFO_EQUAL + locationTagId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
-							ChirdlUtilConstants.PARAMETER_LOCATION_ID + ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageLocationId + 
-							ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID + 
-							ChirdlUtilConstants.GENERAL_INFO_EQUAL + imageFormInstanceId + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
-							ChicaServlet.STYLESHEET + ChirdlUtilConstants.GENERAL_INFO_EQUAL + stylesheet;
+					String transformUrl = null;
+					try {
+						URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
+						uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.TRANSFORM_FORM_XML);
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_ID, String.valueOf(imageFormId));
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, String.valueOf(locationTagId));
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID, String.valueOf(imageLocationId));
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID, String.valueOf(imageFormInstanceId));
+						uriBuilder.addParameter(ChicaServlet.STYLESHEET, stylesheet);
+						
+						transformUrl = uriBuilder.toString();
+					}
+					catch (URISyntaxException e) {
+						log.error("Error generating URI for form image location for action: " + ChicaServlet.TRANSFORM_FORM_XML + 
+							" form ID: " + imageFormId + " location tag ID: " + locationTagId + " location ID " + imageLocationId + 
+							" form instance ID: " + imageFormInstanceId + " stylesheet: " + stylesheet, e);
+					}
+					
 					map.put(htmlOutputParameterName, transformUrl);
 				}
 			}
 		}else{
 			try {
-				imageFilename = ChicaServlet.CHICA_SERVLET_URL + ChirdlUtilConstants.GENERAL_INFO_QUESTION_MARK + ChicaServlet.PARAM_ACTION + 
-						ChirdlUtilConstants.GENERAL_INFO_EQUAL + ChicaServlet.CONVERT_TIFF_TO_PDF + ChirdlUtilConstants.GENERAL_INFO_AMPERSAND + 
-						ChicaServlet.PARAM_TIFF_FILE_LOCATION + ChirdlUtilConstants.GENERAL_INFO_EQUAL + 
-						URLEncoder.encode(imagefile.getPath(), Charset.defaultCharset().name()) + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
+				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
+				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
+				uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
+				
+				imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 			}
-			catch (UnsupportedEncodingException e) {
-				log.error("Unsupported encoding", e);
+			catch (URISyntaxException e) {
+				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF + 
+					" tiff file location: " + imagefile.getPath(), e);
 			}
 		}
 
