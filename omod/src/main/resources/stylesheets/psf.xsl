@@ -11,7 +11,7 @@
             </head>
             <body>
                 <table align="center" cellpadding="1" cellspacing="1"
-                    style="BORDER: black solid 1px; page-break-after: always;">
+                    style="BORDER: black solid 1px; page-break-after: always; width:90%;">
                     <tbody>
                         <tr style="">
                             <td>
@@ -1300,7 +1300,7 @@
                     </tbody>
                 </table>
                 <table align="center" cellpadding="1" cellspacing="1"
-                    style="BORDER: black solid 1px;">
+                    style="BORDER: black solid 1px; width:90%;">
                     <tbody>
                         <tr>
                             <td style="BORDER-BOTTOM: solid black 1px">

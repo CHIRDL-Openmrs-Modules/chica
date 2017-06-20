@@ -1,7 +1,7 @@
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
 import java.io.File;
-import java.util.HashMap;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.api.APIAuthenticationException;
@@ -18,43 +19,33 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chica.web.ChicaServlet;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
-import org.springframework.validation.BindException;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class DisplayTiffController extends SimpleFormController {
+@Controller
+@RequestMapping(value = "module/chica/displayTiff.form")
+public class DisplayTiffController {
 	
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
+	
+	private static final String FORM_VIEW = "/module/chica/displayTiff";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject
-	 * (javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request)
-			throws Exception {
-		return "testing";
-	}
-
-	@Override
-	protected ModelAndView onSubmit(HttpServletRequest request,
-			HttpServletResponse response, Object command, BindException errors)
-			throws Exception {
-
-		return new ModelAndView(new RedirectView("displayTiff.form"));
-
+	@RequestMapping(method = RequestMethod.POST)
+	protected ModelAndView processSubmit(HttpServletRequest request,
+			HttpServletResponse response, Object command) throws Exception {
+		return new ModelAndView(new RedirectView(FORM_VIEW));
 	}
 
 	private Integer parseString(String idString){
@@ -74,7 +65,7 @@ public class DisplayTiffController extends SimpleFormController {
 	}
 	
 	private void setImageLocation(String defaultImageDirectory,String imageFormIdString, String imageLocationIdString, 
-	                              String imageFormInstanceIdString, Integer locationTagId, String na,Map map,
+	                              String imageFormInstanceIdString, Integer locationTagId, Map<String,Object> map,
 	                              String filenameParameterName,Integer encounterId, String stylesheet, 
 	                              String htmlOutputParameterName){
 		String imageDir = null;
@@ -141,36 +132,51 @@ public class DisplayTiffController extends SimpleFormController {
 				FormInstanceAttributeValue fiav = service.getFormInstanceAttributeValue(
 					imageFormId, imageFormInstanceId, imageLocationId, "medium");
 				if (fiav != null && "electronic".equals(fiav.getValue())) {
-					imageFilename = defaultImageDirectory + "NotAvailableTablet.tif";
-					String strOutput = org.openmrs.module.chica.util.Util.displayStylesheet(imageFormId, locationTagId, imageLocationId, imageFormInstanceId, 
-																							stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
-					map.put(htmlOutputParameterName, strOutput);
+					String transformUrl = null;
+					try {
+						URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
+						uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.TRANSFORM_FORM_XML);
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_ID, String.valueOf(imageFormId));
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, String.valueOf(locationTagId));
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID, String.valueOf(imageLocationId));
+						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID, String.valueOf(imageFormInstanceId));
+						uriBuilder.addParameter(ChicaServlet.STYLESHEET, stylesheet);
+						
+						transformUrl = uriBuilder.toString();
+					}
+					catch (URISyntaxException e) {
+						log.error("Error generating URI for form image location for action: " + ChicaServlet.TRANSFORM_FORM_XML + 
+							" form ID: " + imageFormId + " location tag ID: " + locationTagId + " location ID " + imageLocationId + 
+							" form instance ID: " + imageFormInstanceId + " stylesheet: " + stylesheet, e);
+					}
+					
+					map.put(htmlOutputParameterName, transformUrl);
 				}
 			}
-			
-			if (imageFilename == null) {
-				imageFilename = defaultImageDirectory + na + ".tif";
-			}
 		}else{
-			imageFilename = imagefile.getPath();
+			try {
+				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
+				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
+				uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
+				
+				imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
+			}
+			catch (URISyntaxException e) {
+				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF + 
+					" tiff file location: " + imagefile.getPath(), e);
+			}
 		}
 
 		map.put(filenameParameterName, imageFilename);
 	}
 	
-	/* @param request 
-	 * @should return the form id for existing file
-	 * @return
-	 */
-	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
+	@RequestMapping(method = RequestMethod.GET)
+	protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
 		AdministrationService adminService = Context.getAdministrationService();
 		String defaultImageDirectory = adminService.getGlobalProperty("atd.defaultTifImageDirectory");
 
 		try {
 			// default 
-			String na = "notavailable";
 			String encounterIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 
 			String leftImageFormInstanceIdString = request
@@ -211,11 +217,11 @@ public class DisplayTiffController extends SimpleFormController {
 			}
 			Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounterId);
 			setImageLocation(defaultImageDirectory,leftImageFormIdString,leftImageLocationIdString,
-				leftImageFormInstanceIdString,locationTagId,na,map,"leftImagefilename",encounterId,leftStylesheet,
+				leftImageFormInstanceIdString,locationTagId,map,"leftImagefilename",encounterId,leftStylesheet,
 				"leftHtmlOutput");
 			
 			setImageLocation(defaultImageDirectory,rightImageFormIdString,rightImageLocationIdString,
-				rightImageFormInstanceIdString,locationTagId,na,map,"rightImagefilename",encounterId,rightStylesheet,
+				rightImageFormInstanceIdString,locationTagId,map,"rightImagefilename",encounterId,rightStylesheet,
 				"rightHtmlOutput");
 
 			map.put("patientId", request.getParameter("patientId"));
@@ -231,6 +237,6 @@ public class DisplayTiffController extends SimpleFormController {
 			this.log.error(Util.getStackTrace(e));
 		}
 
-		return map;
+		return FORM_VIEW;
 	}
 }

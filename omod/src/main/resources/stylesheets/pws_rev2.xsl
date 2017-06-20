@@ -36,8 +36,8 @@
 					    height: 80%;
 					    text-align:center;
 					    position: absolute;
-					    top: -15;
 					    left: 0;
+					    margin-top: -18px;
 					}
 					
 					#title {
@@ -275,7 +275,8 @@
 						border-bottom: 1px solid black;	
 						border-right: 1px solid black;
 						border-left: 1px solid black;					
-						margin-left:-1px;															
+						margin-left:-1px;
+						margin-top: 40px;														
 					}
 					
 					#textNotesContainer div{
@@ -285,7 +286,7 @@
 					.notesTextArea {				
 					    border: 1px solid black;
 					    resize: none;
-					    width: 585px;					   					    
+					    width: 581px;					   					    
 					    height: 250px;					    
 					    margin-right:10px;
 					    border-bottom: 1px solid black;

@@ -1,122 +1,113 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
-
-<html height="100%">
+<!DOCTYPE html>
+<openmrs:require allPrivileges="View Encounters, View Patients" otherwise="/login.htm" redirect="/module/chica/displayTiff.form" />
+<html>
 <head>
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/moduleResources/chica/displayTiff.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
-<script type="text/javascript">
-$(function() {
-    $("#exitButton").button();
-    $("#printLeftButton").button();
-    $("#printRightButton").button();
-});
-
-function printSelection(node){
-
-  var content=node.innerHTML
-  var pwin=window.open('','print_content','width=300,height=300');
-
-  pwin.document.open();
-  pwin.document.write('<html><body onload="window.print()">'+content+'</body></html>');
-  pwin.document.close();
- 
-  setTimeout(function(){pwin.close();},1000);
-
-}
-</script>
-<style>
-html {
-    height: 100%;
-    width: 100%;
-}
-
-body {
-    height: 100%;
-    width: 100%;
-    padding: 0px;
-    margin: 0px;
-    font-size: 12px;
-}
-</style>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/displayTiff.js"></script>
+<title>Encounter Forms</title>
 </head>
 <body>
-<div style="height:100%;overflow:scroll;background-color:#F5FBEF;">
-<form height="100%" name="input" action="displayTiff.form" method="get">
-
-	<table height="5%" width="100%"
-		class="displayTiffHeader chicaBackground">
-		<tr width="100%">
-			<td width="25%">
-			 <a href="#" id="exitButton" onclick="history.go(-1);return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Exit</a>
-			</td>
-			<td width="25%" class="displayLeftTiffHeaderSegment"><c:if
-					test="${!empty leftImageFormname}">
-					<b>${leftImageFormname}:&nbsp;${leftImageForminstance}</b>
-				</c:if> <c:if test="${empty leftImageFormname}">
-N/A
-</c:if></td>
-			<td width="50%" class="displayRighttiffHeaderSegment"><b> <c:if
-						test="${!empty rightImageFormname}">
-${rightImageFormname}:&nbsp;${rightImageForminstance}
-</c:if> <c:if test="${empty rightImageFormname}">
-N/A
-</c:if> </b></td>
-		</tr>
-	</table>
-
-	<table width="100%" height="95%" class="tiffs">
-		<tr height="90%">
-			<td width="50%">
-			    <c:choose>
-			        <c:when test="${empty leftHtmlOutput}">
-					    <object width="100%" height="100%"
-							classid="CLSID:106E49CF-797A-11D2-81A2-00E02C015623">
-							<param name="src" value="${leftImagefilename}"/>
-		
-							<embed width="100%" height="100%" src="${leftImagefilename}"
-								type="image/tiff"/>
-						</object>
-					</c:when>
-					<c:otherwise>
-					   <div style="width:100%">
-					       <a href="#" id="printLeftButton" onclick="printSelection(document.getElementById('divLeft'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
-					   </div>
-					   <hr/>
-					   <div id="divLeft" style="height:100%; width:100%; position:relative; overflow:scroll">
-                            ${leftHtmlOutput}
+<div class="main_container">
+    <div class="form_info_container chicaBackground">
+        <div class="row_container">
+            <div class="cell_container">
+                <div class="table_container">
+                   <div class="row_container">
+                        <div class="cell_container cell_padding">
+                            <a href="#" id="exitButton" onclick="history.go(-1);return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Exit</a>
+                        </div>
+                        <div class="cell_container displayLeftTiffHeaderSegment">
+                            <c:if test="${!empty leftImageFormname}">
+                                <b>${leftImageFormname}:&nbsp;${leftImageForminstance}</b>
+                            </c:if> 
+                            <c:if test="${empty leftImageFormname}">
+                                N/A
+                            </c:if>
                        </div>
-					</c:otherwise>
-				</c:choose>
-		    </td>
-			<td width="50%">
-			    <c:choose>
-			        <c:when test="${empty rightHtmlOutput}">
-					    <object width="100%" height="100%"
-							classid="CLSID:106E49CF-797A-11D2-81A2-00E02C015623">
-							<param name="src" value="${rightImagefilename}"/>
-		
-							<embed width="100%" height="100%" src="${rightImagefilename}"
-								type="image/tiff"/>
-						</object>
-					</c:when>
-					<c:otherwise>
-					   <div style="width:100%">
-					       <a href="#" id="printRightButton" onclick="printSelection(document.getElementById('divRight'));return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
+                   </div>
+                </div>
+            </div>
+            <div class="cell_container">
+                <div class="table_container chicaBackground">
+                    <div class="row_container">
+                        <div class="cell_container displayRighttiffHeaderSegment">
+                            <c:if test="${!empty rightImageFormname}">
+                                <b>${rightImageFormname}:&nbsp;${rightImageForminstance}</b>
+                            </c:if> 
+                            <c:if test="${empty rightImageFormname}">
+                                N/A
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="forms_container">
+        <div class="forms_row_container">
+            <div class="forms_row_cell_container">
+                <c:choose>
+                    <c:when test="${empty leftHtmlOutput}">
+	                    <iframe id="left_pdf_display" class="form_pdf_object" src="${pageContext.request.contextPath}${leftImagefilename}">
+	                       <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+	                       <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+	                    </iframe>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="print_table_container">
+                            <div id="divLeft" class="row_container">
+                                <div class="cell_container">
+                                    <div class="row_container">
+		                                <div class="cell_container cell_padding">
+		                                    <a href="#" id="printLeftButton" onclick="printSelection('left_html_display');return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
+		                                </div>
+		                            </div>
+                                    <iframe id="left_html_display" class="form_html_object" src="${pageContext.request.contextPath}${leftHtmlOutput}">
+			                           <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+			                           <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+			                        </iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <div class="forms_row_cell_container">
+                <c:choose>
+                    <c:when test="${empty rightHtmlOutput}">
+	                    <iframe id="right_pdf_display" class="form_pdf_object" src="${pageContext.request.contextPath}${rightImagefilename}">
+	                       <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+	                       <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+	                    </iframe>
+                    </c:when>
+                    <c:otherwise>
+                       <div class="print_table_container">
+                           <div id="divRight" class="row_container">
+                               <div class="cell_container">
+                                <div class="row_container">
+	                               <div class="cell_container cell_padding">
+	                                   <a href="#" id="printRightButton" onclick="printSelection('right_html_display');return false;" class="icon-button-medium ui-state-default ui-corner-all"><span class="ui-icon ui-icon-print"></span>Print</a>
+	                               </div>
+	                            </div>
+                                <iframe id="right_html_display" class="form_html_object" src="${pageContext.request.contextPath}${rightHtmlOutput}">
+                                   <span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+                                   <a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+                                </iframe>
+                               </div>
+                           </div>
                        </div>
-                       <hr/>
-					   <div id="divRight" style="height:100%; width:100%; position:relative; overflow:scroll">
-                            ${rightHtmlOutput}
-                       </div>
-					</c:otherwise>
-				</c:choose>
-		    </td>
-		</tr>
-	</table>
-</form>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
