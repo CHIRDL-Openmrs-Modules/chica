@@ -15,7 +15,6 @@
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
                 <prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
-                <prop key="/module/@MODULE_ID@/displayTiff.form">displayTiff</prop>
 				<prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
 				<prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
 				<prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
@@ -60,11 +59,6 @@
         <property name="commandName"><value>chicaNoteTesterObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/chicaNoteTester</value></property>
         <property name="successView"><value>chicaNoteTester.form</value></property>
-    </bean>
-    <bean id="displayTiff" class="org.openmrs.module.chica.web.DisplayTiffController">
-        <property name="commandName"><value>displayTiffObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/displayTiff</value></property>
-        <property name="successView"><value>displayTiff.form</value></property>
     </bean>
     <bean id="greaseBoard" class="@MODULE_PACKAGE@.web.GreaseBoardController">
         <property name="commandName"><value>greaseBoardObject</value></property>

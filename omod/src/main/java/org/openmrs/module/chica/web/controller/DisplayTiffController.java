@@ -1,8 +1,7 @@
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,42 +19,33 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chica.web.ChicaServlet;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
-import org.springframework.validation.BindException;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class DisplayTiffController extends SimpleFormController {
+@Controller
+@RequestMapping(value = "module/chica/displayTiff.form")
+public class DisplayTiffController {
 	
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
+	
+	private static final String FORM_VIEW = "/module/chica/displayTiff";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject
-	 * (javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request)
-			throws Exception {
-		return "testing";
-	}
-
-	@Override
-	protected ModelAndView onSubmit(HttpServletRequest request,
-			HttpServletResponse response, Object command, BindException errors)
-			throws Exception {
-
-		return new ModelAndView(new RedirectView(getFormView()));
-
+	@RequestMapping(method = RequestMethod.POST)
+	protected ModelAndView processSubmit(HttpServletRequest request,
+			HttpServletResponse response, Object command) throws Exception {
+		return new ModelAndView(new RedirectView(FORM_VIEW));
 	}
 
 	private Integer parseString(String idString){
@@ -180,13 +170,8 @@ public class DisplayTiffController extends SimpleFormController {
 		map.put(filenameParameterName, imageFilename);
 	}
 	
-	/* @param request 
-	 * @should return the form id for existing file
-	 * @return
-	 */
-	@Override
-	protected Map<String,Object> referenceData(HttpServletRequest request) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
+	@RequestMapping(method = RequestMethod.GET)
+	protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
 		AdministrationService adminService = Context.getAdministrationService();
 		String defaultImageDirectory = adminService.getGlobalProperty("atd.defaultTifImageDirectory");
 
@@ -252,6 +237,6 @@ public class DisplayTiffController extends SimpleFormController {
 			this.log.error(Util.getStackTrace(e));
 		}
 
-		return map;
+		return FORM_VIEW;
 	}
 }
