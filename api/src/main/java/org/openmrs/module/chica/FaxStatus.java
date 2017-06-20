@@ -14,6 +14,8 @@ import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -530,11 +532,11 @@ public class FaxStatus {
 
 
 	public void setLocationByFormInstance(FormInstance formInstance){
-		
+		LocationService locationService = Context.getLocationService();
 		try {
 			if (formInstance != null){
 				if ((locationId =formInstance.getLocationId())!= null){
-					Location location = Context.getLocationService().getLocation(locationId);
+					Location location = locationService.getLocation(locationId);
 					if (location != null){
 						this.location = location.getName();
 					}
@@ -547,10 +549,10 @@ public class FaxStatus {
 	}
 	
 	public void setFormNameByFormInstance(FormInstance formInstance){
-		
+		FormService formService = Context.getFormService();
 		if (formInstance != null ){
 			formId = formInstance.getFormId();
-			Form form = Context.getFormService().getForm(formId);
+			Form form = formService.getForm(formId);
 			if (form != null ){
 				formName = form.getName();
 			}
@@ -558,7 +560,8 @@ public class FaxStatus {
 	}
 	
 	public void setPatientByByFormInstance(FormInstance formInstance) {
-
+		
+		PatientService patientService = Context.getPatientService();
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		List<PatientState> states = new ArrayList<PatientState>();
 		try {
@@ -570,7 +573,7 @@ public class FaxStatus {
 				return;
 			}
 			patientId = states.get(0).getPatientId();
-			Patient patient = Context.getPatientService().getPatient(patientId);
+			Patient patient = patientService.getPatient(patientId);
 			if (patient != null) {
 				patientFirstName = patient.getGivenName();
 				patientLastName = patient.getFamilyName();

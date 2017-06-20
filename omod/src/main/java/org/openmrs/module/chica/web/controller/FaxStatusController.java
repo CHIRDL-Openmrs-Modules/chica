@@ -1,6 +1,5 @@
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,20 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Form;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.FormService;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.util.FormAttributeValueDescriptor;
-import org.openmrs.module.atd.util.Util;
 import org.openmrs.module.chica.FaxStatus;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.springframework.validation.BindException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.biscom.ArrayOfMessageStatus;
@@ -38,11 +32,14 @@ import com.biscom.MessageStatus;
  *
  * @author Meena Sheley
  */
-@SuppressWarnings("deprecation")
-public class FaxStatusController extends SimpleFormController {
+@Controller
+@RequestMapping(value = "module/chica/faxStatus.form") 
+public class FaxStatusController {
 	
 	private final Log log = LogFactory.getLog(getClass());
 	
+	private static final String FORM_VIEW = "/module/chica/faxStatus";
+	private static final String SUCCESS_FORM_VIEW = "faxStatus.form"; 
 	private static final boolean ASCENDING = false;
 	private static final int DEFAULT_COUNT = 100;
 	private static final int DEFAULT_START_COUNT = 0;
@@ -50,46 +47,26 @@ public class FaxStatusController extends SimpleFormController {
 	private static final int USER_TYPE = 2;
 
 
+	@RequestMapping(method = RequestMethod.GET)
+	protected String initForm(HttpServletRequest request,ModelMap map) throws Exception {
 	
-	/**
-	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request) throws Exception {
-		return "testing";
-	}
-	
-	/**
-	 * @see org.springframework.web.servlet.mvc.SimpleFormController#onSubmit(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
-	 */
-	@Override
-	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
-	                                BindException errors) throws Exception {
-		
-		return new ModelAndView(new RedirectView(getSuccessView()));
-	}
-	
-	
-	
-	
-	/**
-	 * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
-		
-		LocationService locService = Context.getLocationService();
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		List<FaxStatus> faxStatuses = getFaxStatusList(request, map);
+	List<FaxStatus> faxStatuses = getFaxStatusList( map);
 		map.put("faxStatusRows",faxStatuses);
 		
-		return map;
+		return FORM_VIEW;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception{
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<FaxStatus> faxStatuses = getFaxStatusList( map);
+		map.put("faxStatusRows",faxStatuses);
+		map.put("application", "Get Fax Status");
+		return new ModelAndView(new RedirectView(SUCCESS_FORM_VIEW));
 	}
 	
 	
-	
-	private List<FaxStatus> getFaxStatusList (HttpServletRequest request, Map<String, Object> map) {
+	private List<FaxStatus> getFaxStatusList ( Map<String, Object> map) {
 		
 		AdministrationService administrationService = Context.getAdministrationService();
 		String password = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_PASSWORD);
@@ -98,21 +75,39 @@ public class FaxStatusController extends SimpleFormController {
 		FAXCOMX0020Service service = null;
 		FAXCOMX0020ServiceSoap port = null;
 		
-		service = new FAXCOMX0020Service();
+		try {
+			service = new FAXCOMX0020Service();
 
-		port = service.getFAXCOMX0020ServiceSoap();
-		ArrayOfMessageStatus statuses = port.loginAndGetMessageStatuses("", username, password, USER_TYPE, 
-				SORT_COLUMN, ASCENDING, DEFAULT_START_COUNT, DEFAULT_COUNT);
-		port.releaseSession();
-		List<MessageStatus> faxComStatusList = statuses.getMessageStatus();
-		map.put("faxComStatusList", faxComStatusList);
+			port = service.getFAXCOMX0020ServiceSoap();
+			List<MessageStatus> statusList = new ArrayList<MessageStatus>();
+			ArrayOfMessageStatus faxCOMStatusList = port.loginAndGetMessageStatuses("", username, password, USER_TYPE, 
+					SORT_COLUMN, ASCENDING, DEFAULT_START_COUNT, DEFAULT_COUNT);
+			
+			if (faxCOMStatusList ==null || (statusList = faxCOMStatusList.getMessageStatus()) == null ){
+				map.put("faxComStatusList", new ArrayList<MessageStatus>());
+			} else{
+				map.put("faxComStatusList", statusList);
+			}
+			return filterFaxStatuses( map);
+				
+		} catch (Exception e) {
+			
+			log.error("Error connecting to web service. Check network connections. ", e);
+			map.put("noAccessToHost", true);
+			return new ArrayList<FaxStatus>();
+			
+		} finally{
+			if (port != null){
+				port.releaseSession();
+			}
+			
+		}
 		
-		return filterFaxStatuses(request, map);
-		
+	
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<FaxStatus>  filterFaxStatuses(HttpServletRequest request, Map<String, Object> map){
+	private List<FaxStatus>  filterFaxStatuses( Map<String, Object> map){
 		
 		
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
@@ -138,9 +133,10 @@ public class FaxStatusController extends SimpleFormController {
 			status.setId(faxComStatus.getID());
 			status.setTransmissionStatus(faxComStatus.getTransmissionStatus());
 			status.setConnectTime(faxComStatus.getConnectTime());
-			statuses.add(status);		
-			
+			statuses.add(status);	
 		}
+			
+		
 		return statuses;
 	}
 	
