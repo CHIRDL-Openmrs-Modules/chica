@@ -168,6 +168,18 @@ public class DisplayTiffController {
 		}
 
 		map.put(filenameParameterName, imageFilename);
+		if (map.get(filenameParameterName) == null && map.get(htmlOutputParameterName) == null) {
+			// We weren't able to locate the form. We still need to return something so an error page gets displayed.
+			try {
+				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
+				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
+				imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
+				map.put(filenameParameterName, imageFilename);
+			}
+			catch (URISyntaxException e) {
+				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF, e);
+			}
+		}
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
