@@ -23,8 +23,6 @@
 	<!-- Annotation based controllers -->
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
 	
-	<!-- TODO CHICA-1052 Add .controller to this path after code review and move affected controllers to the new folder -->
 	<context:component-scan base-package="org.openmrs.module.chica.web.controller" />
  
-		
 </beans>

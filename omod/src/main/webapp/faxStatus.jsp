@@ -12,7 +12,13 @@
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.js"></script>
-
+  <script>
+  $( function() {
+    $j( "#dialog" ).dialog();
+    $j("#viewimagebutton").button();
+    
+  } );
+  </script>
 
 <script LANGUAGE="JavaScript">
 	var statusTable;
@@ -42,6 +48,7 @@
        				 		"render": function (data, url, row, meta){
        				 			return imagedialog(data, url, row, meta);
        				 	}
+       				 	}],
        				 		
 				"jQueryUI": true, 
 				"pagingType": "full", 
@@ -155,7 +162,7 @@
 			<hr size="3" color="black"/>
 			
 			<table align="right">
-				<tr><td><input  type="Submit" name="queryStatus" id="queryStatus" value="Query Fax Status"/></td>
+				<tr><td><input  type="Submit" name="queryStatus" id="queryStatus" value="Refresh"/></td>
 					</tr>
 			</table>
 			<br/>

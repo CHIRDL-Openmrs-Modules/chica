@@ -59,6 +59,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
+import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 
 /**
  * @author Tammy Dugan
@@ -930,5 +932,37 @@ public class Util {
 			formTimeLimit = 2;
 		}
 		return formTimeLimit;
+	}
+	
+	/**
+	 * Store the HL7 message in the sockethl7listener_hl7_out_queue table
+	 * so that it can be sent by the scheduled task
+	 * 
+	 * @param message
+	 * @param encounterId
+	 * @param host
+	 * @param port
+	 * @throws Exception
+	 */
+	public static void createHL7OutboundRecord(String message, Integer encounterId, String host, Integer port) throws Exception
+	{
+			EncounterService encounterService = Context.getService(EncounterService.class);
+			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);
+			SocketHL7ListenerService socketHL7ListenerService = Context.getService(SocketHL7ListenerService.class);
+			
+			if(openmrsEncounter == null)
+			{
+				log.error("Error creating HL7Outbound record. Unable to locate encounterId: " + encounterId);
+				return;
+			}
+			
+			HL7Outbound hl7Outbound = new HL7Outbound();
+			hl7Outbound.setHl7Message(message);
+			hl7Outbound.setEncounter(openmrsEncounter);
+			hl7Outbound.setAckReceived(null);
+			hl7Outbound.setPort(port);
+			hl7Outbound.setHost(host); 
+			
+			socketHL7ListenerService.saveMessageToDatabase(hl7Outbound);
 	}
 }

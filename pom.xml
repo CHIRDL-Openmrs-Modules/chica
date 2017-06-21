@@ -135,6 +135,24 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.10</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4.5</version>
+                <scope>provided</scope>
+            </dependency>
+			<dependency>
 				<groupId>com.biscom</groupId>
 				<artifactId>faxws-client</artifactId>
 				<version>1.0.0</version>
