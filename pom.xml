@@ -152,12 +152,16 @@
                 <version>4.4.5</version>
                 <scope>provided</scope>
             </dependency>
+<<<<<<< HEAD
 			<dependency>
 				<groupId>com.biscom</groupId>
 				<artifactId>faxws-client</artifactId>
 				<version>1.0.0</version>
 				<scope>provided</scope>
 			</dependency>
+=======
+
+>>>>>>> branch 'Prod_Release_10.0' of https://github.com/CHIRDL-Openmrs-Modules/chica
 			<dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>
