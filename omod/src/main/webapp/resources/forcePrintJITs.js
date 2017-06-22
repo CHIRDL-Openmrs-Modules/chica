@@ -41,9 +41,9 @@ $(function() {
     			}
     		}
     		
-    		if (pdfCount > 0 && teleformCount > 0) {
+    		if (teleformCount > 0) { // CHICA-962 Display this message even if the only form selected is a teleform file
     			$(".force-print-form-container").hide();
-    			var message = "<p>The following form(s) will be automatically sent to the printer and will not be displayed here: " + 
+    			var message = "<p>The following " + (teleformCount > 1 ? 'forms' : 'form') + " will be automatically sent to the printer and will not be displayed here: " + 
     				teleformForms + "</p>";
     			$("#force-print-multiple-output-types-result-div").html(message);
     			$("#force-print-multiple-output-types-dialog").dialog("open");

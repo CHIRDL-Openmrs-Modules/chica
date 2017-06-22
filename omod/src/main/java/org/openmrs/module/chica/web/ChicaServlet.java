@@ -1467,6 +1467,12 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		message.append(".");
+		
+		// CHICA-962
+		message.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED)
+		.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED)
+		.append("Please pick the ").append(subject).append(" up at the printer. DO NOT print this page.");
+		
 		try {
             writePdfTextToResponse(message.toString(), response);
         }
