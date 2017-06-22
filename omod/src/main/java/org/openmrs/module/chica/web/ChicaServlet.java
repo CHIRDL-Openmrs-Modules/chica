@@ -1953,7 +1953,7 @@ public class ChicaServlet extends HttpServlet {
 		String output = org.openmrs.module.chica.util.Util.displayStylesheet(formId, locationTagId, locationId, formInstanceId, 
 			stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
 		if (StringUtils.isBlank(output)) {
-			log.error("Transformation is empty for form ID: " + formIdStr + " location tag ID: " + locationTagIdStr + 
+			log.info("Transformation is empty for form ID: " + formIdStr + " location tag ID: " + locationTagIdStr + 
 				" location ID: " + locationIdStr + " form instance ID: " + formInstanceIdStr + " stylesheet: " + stylesheet);
 			pw.write(errorHtml);
 			return;
