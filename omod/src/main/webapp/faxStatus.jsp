@@ -5,6 +5,8 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables_themeroller-1.10.6.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery-ui-1.11.4.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.css" type="text/css" rel="stylesheet" />
 
@@ -12,22 +14,20 @@
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.js"></script>
-  <script>
-  $( function() {
-    $j( "#dialog" ).dialog();
-    $j("#viewimagebutton").button();
-    
-  } );
-  </script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.js"></script>
+  
 
 <script LANGUAGE="JavaScript">
+
 	var statusTable;
 	
 	
 	$(document).ready(function() {
+		
+	
 		statusTable = $('#faxStatusTable').dataTable(
 				{ 
-
+					
 					
 				"columns": [ 
 		            {"mData": "transmitTimeAsString"},
@@ -45,9 +45,12 @@
 
 				"columnDefs" : [
        				 	{	"targets": 'image',
-       				 		"render": function (data, url, row, meta){
-       				 			return imagedialog(data, url, row, meta);
-       				 	}
+       				 	 	"render": function ( data, type, full, meta ) {
+       	                  //   var buttonID = "reset_"+full.id;
+       	                     return '<button id="viewImageButton">View</button><br><div id="test" title="viewImageDialog" hidden="hidden">Image</div>';
+       	                 	}
+       				 	
+       				 	//	"defaultContent": "<button> id='test'>View</button>"
        				 	}],
        				 		
 				"jQueryUI": true, 
@@ -63,7 +66,65 @@
 				 "order": [[ 0, "desc" ]]
 				});
 		
-	} );
+		 
+	   
+
+	    
+	    $j("#viewImageButton").click( showImageDialog);
+
+	    
+	    $('#faxStatusTable tbody').on( 'click', 'button', function () {
+	      
+	    	// $j("#viewImageDialog").dialog('open');
+	    } );
+
+	    $j("#viewImageDialog").dialog({
+	    resizable: true,
+	    autoOpen:false,
+	    modal: true,
+	    width:400,
+	    height:400,
+	    buttons: {
+	    Cancel: function() {
+	    $j(this).dialog('close');
+	    } //end cancel button
+	    }//end buttons
+
+	    });
+	    
+	    /*$j("#viewImageDialog").dialog({
+	        open: function() { 
+	        	
+	            $(".ui-dialog").addClass("ui-dialog-shadow"); 
+	        },
+	        close: function() { 
+	        	$("#mrnError").hide();
+	        },
+	        title: 'Fax Image',
+	        autoOpen: false,
+	        modal: true,
+	        resizable: false,
+	        show: {
+	          effect: "fade",
+	          duration: 500
+	        },
+	        hide: {
+	          effect: "fade",
+	          duration: 500
+	        }/*,
+	        buttons: [
+	          {
+	        	  id: "viewImageCancelButton",
+		          text:"Cancel",
+		          click: function() {
+		            $("#viewImageDialog").dialog("close");
+		          }
+	          }
+	        ]*/
+	      /* });*/
+		
+	});
+
 	
 	
 	function imagelink(data, type, row, meta){
@@ -86,10 +147,23 @@
 			//todo
 			
 		}
-		return text;
+	
+		buttontext = "<input type=\"button\" id=\"viewImageButton\" value=\"Open\">";
+		dialogtext = "<div id=\"viewImageDialog\" title=\"Title\" hidden=\"hidden\">Image</div>";
+		return buttontext + dialogtext;
 	}
+
+	var showImageDialog = function() {
+        //if the contents have been hidden with css, you need this
+ 
+        $j("#viewImageDialog").dialog('open');
+    	}	
 	
 	
+	
+
+	
+	    
 </script>
 
 
@@ -103,6 +177,9 @@
 
 
 <body>
+ <input type="button" id="viewImageButton" value="Open">
+ <!--  <button id="viewImageButton" class="icon-button-extra-large ui-state-default ui-corner-all">View Image</button> -->
+<div id="viewImageDialog" title="Title" hidden="hidden">Image</div>
 
 	<div id= "status_div"> 
 		<c:if test= "${error}=='serverError'">
