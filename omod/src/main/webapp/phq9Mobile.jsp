@@ -386,7 +386,7 @@
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Previous</a>
-        <a  href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Finish</a>
+        <a  href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continue</a>
     </div>
 </div>
 
@@ -435,7 +435,7 @@
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="finishForm()" style="width: 150px;">Finish</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="finishForm()" style="width: 150px;">Continue</a>
     </div>
 </div>
 
@@ -480,7 +480,7 @@
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(11)" style="width: 150px;">Previous</a>
-        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="finishForm()" style="width: 150px;">Finish</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="finishForm()" style="width: 150px;">Continue</a>
     </div>
 </div> -->
 
@@ -750,7 +750,7 @@
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Anterior</a>
-        <a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Acabado</a>
+        <a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continuar</a>
     </div>
 </div>
 
