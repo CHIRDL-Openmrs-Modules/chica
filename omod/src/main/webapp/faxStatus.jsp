@@ -20,11 +20,12 @@
 <script LANGUAGE="JavaScript">
 
 	var statusTable;
+	 
 	
 	
 	$(document).ready(function() {
-		
-	
+		var buttonID = " ";
+		var iframe = $('<iframe frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>');
 		statusTable = $('#faxStatusTable').dataTable(
 				{ 
 					
@@ -45,12 +46,11 @@
 
 				"columnDefs" : [
        				 	{	"targets": 'image',
-       				 	 	"render": function ( data, type, full, meta ) {
-       	                  //   var buttonID = "reset_"+full.id;
-       	                     return '<button id="viewImageButton">View</button><br><div id="test" title="viewImageDialog" hidden="hidden">Image</div>';
-       	                 	}
+       				 	   	"render": function ( data, type, row, meta ) {
+       	                     buttonID = row['idTag'];
+       	              	       return '<button id="' +buttonID+ '">' +buttonID+ '</button>';
+       				 	   	}
        				 	
-       				 	//	"defaultContent": "<button> id='test'>View</button>"
        				 	}],
        				 		
 				"jQueryUI": true, 
@@ -69,95 +69,41 @@
 		 
 	   
 
-	    
-	    $j("#viewImageButton").click( showImageDialog);
-
-	    
+	
 	    $('#faxStatusTable tbody').on( 'click', 'button', function () {
-	      
-	    	// $j("#viewImageDialog").dialog('open');
+	    	
+	    	 $j("#viewImageDialog").dialog('open');
 	    } );
 
+	 
 	    $j("#viewImageDialog").dialog({
-	    resizable: true,
-	    autoOpen:false,
-	    modal: true,
-	    width:400,
-	    height:400,
-	    buttons: {
-	    Cancel: function() {
-	    $j(this).dialog('close');
-	    } //end cancel button
-	    }//end buttons
+		    resizable: true,
+		    autoOpen:false,
+		    modal: true,
+		    width:400,
+		    height:400,
+		    
+		    buttons: {
+			    Cancel: function() {
+			   	 $j(this).dialog('close');
+			    } //end cancel button
+		    }//end buttons
 
 	    });
 	    
-	    /*$j("#viewImageDialog").dialog({
-	        open: function() { 
-	        	
-	            $(".ui-dialog").addClass("ui-dialog-shadow"); 
-	        },
-	        close: function() { 
-	        	$("#mrnError").hide();
-	        },
-	        title: 'Fax Image',
-	        autoOpen: false,
-	        modal: true,
-	        resizable: false,
-	        show: {
-	          effect: "fade",
-	          duration: 500
-	        },
-	        hide: {
-	          effect: "fade",
-	          duration: 500
-	        }/*,
-	        buttons: [
-	          {
-	        	  id: "viewImageCancelButton",
-		          text:"Cancel",
-		          click: function() {
-		            $("#viewImageDialog").dialog("close");
-		          }
-	          }
-	        ]*/
-	      /* });*/
+	    
+	   
 		
 	});
 
 	
 	
-	function imagelink(data, type, row, meta){
-		var idtag = row['idTag'];
-		var text = "";
-		if (idtag == "" || idtag.startsWith("V")){
-			text = '<span> Image not available </span>';
-		}else{
-			text = '<a href="#" class="view_image">View image</a>';
-		}
-		return text;
-	}
-	
-	function imagedialog(data, type, row, meta){
-		var idtag = row['idTag'];
-		var text = "";
-		if (idtag == "" || idtag.startsWith("V")){
-			text = '<span> Image not available </span>';
-		}else{
-			//todo
-			
-		}
-	
-		buttontext = "<input type=\"button\" id=\"viewImageButton\" value=\"Open\">";
-		dialogtext = "<div id=\"viewImageDialog\" title=\"Title\" hidden=\"hidden\">Image</div>";
-		return buttontext + dialogtext;
-	}
 
-	var showImageDialog = function() {
+//	var showImageDialog = function() {
         //if the contents have been hidden with css, you need this
  
-        $j("#viewImageDialog").dialog('open');
-    	}	
+  //      $j("#viewImageDialog").dialog('open');
+    //	}	
 	
 	
 	
@@ -179,7 +125,14 @@
 <body>
  <input type="button" id="viewImageButton" value="Open">
  <!--  <button id="viewImageButton" class="icon-button-extra-large ui-state-default ui-corner-all">View Image</button> -->
-<div id="viewImageDialog" title="Title" hidden="hidden">Image</div>
+<!--  <div id="viewImageDialog" title="Fax Image" hidden="hidden">Image iframe will go here</div> -->
+<div id="viewImageDialog" title="Fax Image">
+	<iframe id="imageDisplay" class="form_pdf_object" src="${pageContext.request.contextPath}${faxStatusResults.idTag}">
+	<span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+	<a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+	</iframe>
+
+</div>
 
 	<div id= "status_div"> 
 		<c:if test= "${error}=='serverError'">

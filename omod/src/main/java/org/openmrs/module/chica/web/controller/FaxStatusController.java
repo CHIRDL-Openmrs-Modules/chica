@@ -8,12 +8,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.FaxStatus;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,7 +92,7 @@ public class FaxStatusController {
 			} else{
 				map.put("faxComStatusList", statusList);
 			}
-			return filterFaxStatuses( map);
+			return createFaxStatusList( map);
 				
 		} catch (Exception e) {
 			
@@ -107,40 +111,78 @@ public class FaxStatusController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<FaxStatus>  filterFaxStatuses( Map<String, Object> map){
+	private List<FaxStatus>  createFaxStatusList( Map<String, Object> map){
 		
 		
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
 		List<MessageStatus> faxComStatuses = (List<MessageStatus>) map.get("faxComStatusList");
-		
-		for (MessageStatus faxComStatus : faxComStatuses){
-
-			FaxStatus status = new FaxStatus();
-			status.setFormInstanceByIdTag(faxComStatus.getIDTag());
-			status.setImageLocation(faxComStatus.getIDTag());
-			status.setFaxNumber(faxComStatus.getFaxNumber());
-			status.setTransmitTime(faxComStatus.getTransmitTime());
-			status.setTransmitTimeAsString(faxComStatus.getTransmitTime(), "MM/dd/yyyy HH:MM:ss");
-			status.setSubject(faxComStatus.getSubject());
-			status.setStatusText(faxComStatus.getStatusText());
-			status.setAttachmentCount(faxComStatus.getAttachmentCount());
-			status.setId(faxComStatus.getID());
-			status.setNumberOfAttempts(faxComStatus.getNumberOfAttempts());
-			status.setPagesTransmitted(faxComStatus.getPagesTransmitted());
-			status.setStatusName(faxComStatus.getStatusName());
-			status.setUniqueJobID(faxComStatus.getUniqueJobID());
-			status.setIdTag(faxComStatus.getIDTag());
-			status.setId(faxComStatus.getID());
-			status.setTransmissionStatus(faxComStatus.getTransmissionStatus());
-			status.setConnectTime(faxComStatus.getConnectTime());
-			statuses.add(status);	
+		if (faxComStatuses != null){
+			for (MessageStatus faxComStatus : faxComStatuses){
+				
+				FaxStatus status = new FaxStatus();
+				status.setFormInstance(faxComStatus.getIDTag());
+				status.setPatient(faxComStatus.getIDTag());
+				status.setLocation(faxComStatus.getIDTag());
+				status.setFaxNumber(faxComStatus.getFaxNumber());
+				status.setTransmitTime(faxComStatus.getTransmitTime());
+				status.setTransmitTimeAsString(faxComStatus.getTransmitTime(), "MM/dd/yyyy HH:MM:ss");
+				status.setSubject(faxComStatus.getSubject());
+				status.setStatusText(faxComStatus.getStatusText());
+				status.setAttachmentCount(faxComStatus.getAttachmentCount());
+				status.setId(faxComStatus.getID());
+				status.setNumberOfAttempts(faxComStatus.getNumberOfAttempts());
+				status.setPagesTransmitted(faxComStatus.getPagesTransmitted());
+				status.setStatusName(faxComStatus.getStatusName());
+				status.setUniqueJobID(faxComStatus.getUniqueJobID());
+				status.setIdTag(faxComStatus.getIDTag());
+				status.setId(faxComStatus.getID());
+				status.setTransmissionStatus(faxComStatus.getTransmissionStatus());
+				status.setConnectTime(faxComStatus.getConnectTime());
+				statuses.add(status);	
+			}
 		}
-			
 		
 		return statuses;
 	}
 	
+	private void setImageLocation(FaxStatus faxStatus, String defaultImageDirectory, Integer locationTagId, Map<String,Object> map,
+            String filenameParameterName,Integer encounterId, String stylesheet, 
+            String htmlOutputParameterName){
+		
+		/*if (faxStatus == null || StringUtils.isBlank(faxStatus.getIdTag()){
+			return;
+		}
 	
+		
+		String imageDir = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(faxStatus.getFormId(),
+			    "imageDirectory", locationTagId, faxStatus.getLocationId()));
+		}
+	
+		String imagefile = IOUtil.searchForImageFile(faxStatus.get,imageDir);
+		
+		LocationService locationService = Context.getLocationService();
+		Location location = locationService.getLocation(imageLocationId);
+		String locationName = location.getName();
+		
+		//check for formInstance.tif format if from Pecar
+		if (!imagefile.exists()) {
+			
+			if (locationName.equals("PEPS")) {
+				imageFilename = imageFormInstanceId.toString();
+				
+				imagefile = IOUtil.searchForImageFile(imageFilename, imageDir);
+				
+				if (!imagefile.exists()) {
+					imagefile = null;
+				} 
+			}else{
+				imagefile = null;
+			}
+		}
+	}
+}*/
+
+	}
 	
 	
 	

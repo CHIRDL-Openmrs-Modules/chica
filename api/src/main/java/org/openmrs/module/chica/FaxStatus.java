@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
@@ -19,6 +20,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -75,7 +77,6 @@ public class FaxStatus {
     private String formName;
     private String patientFirstName;
     private String patientLastName;
-    private String formInstanceString;
     private FormInstance formInstance;
     private Integer locationId;
 	private String location;
@@ -240,18 +241,7 @@ public class FaxStatus {
 	public void setFaxNumber(String faxNumber) {
 		this.faxNumber = faxNumber;
 	}
-	/**
-	 * @return the formInstance
-	 */
-	public String getFormInstanceString() {
-		return formInstanceString;
-	}
-	/**
-	 * @param formInstance the formInstance to set
-	 */
-	public void setFormInstanceString(String formInstanceString) {
-		this.formInstanceString = formInstanceString;
-	}
+	
 	/**
 	 * @return the location
 	 */
@@ -261,8 +251,30 @@ public class FaxStatus {
 	/**
 	 * @param location the location to set
 	 */
-	public void setLocation(String location) {
-		this.location = location;
+	public void setLocation(String idTag) {
+		location = "";
+		if (formInstance == null ){
+			setFormInstance(idTag);
+			if (formInstance == null){
+				return;
+			}
+		}
+		
+		LocationService locationService = Context.getLocationService();
+		try {
+			if (formInstance != null){
+				if ((locationId =formInstance.getLocationId())!= null){
+					Location location = locationService.getLocation(locationId);
+					if (location != null){
+						this.location = location.getName();
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error("Unable to extract fax location (clinic) from fax id tag", e);
+		}
+		
+		
 	}
 	/**
 	 * @return the numberOfAttempts
@@ -531,22 +543,6 @@ public class FaxStatus {
 	private Short faxStateFlags;
 
 
-	public void setLocationByFormInstance(FormInstance formInstance){
-		LocationService locationService = Context.getLocationService();
-		try {
-			if (formInstance != null){
-				if ((locationId =formInstance.getLocationId())!= null){
-					Location location = locationService.getLocation(locationId);
-					if (location != null){
-						this.location = location.getName();
-					}
-				}
-			}
-		} catch (Exception e) {
-			log.error("Unable to extract fax location (clinic) from fax id tag", e);
-		}
-		
-	}
 	
 	public void setFormNameByFormInstance(FormInstance formInstance){
 		FormService formService = Context.getFormService();
@@ -559,8 +555,9 @@ public class FaxStatus {
 		}
 	}
 	
-	public void setPatientByByFormInstance(FormInstance formInstance) {
-		
+	public void setPatient(String idTag) {
+		setFormInstance(idTag);
+		if (formInstance == null) return;
 		PatientService patientService = Context.getPatientService();
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		List<PatientState> states = new ArrayList<PatientState>();
@@ -573,11 +570,13 @@ public class FaxStatus {
 				return;
 			}
 			patientId = states.get(0).getPatientId();
-			Patient patient = patientService.getPatient(patientId);
-			if (patient != null) {
-				patientFirstName = patient.getGivenName();
-				patientLastName = patient.getFamilyName();
-				setPatientMRN(patientId);
+			if (patientId != null){
+				Patient patient = patientService.getPatient(patientId);
+				if (patient != null) {
+					patientFirstName = patient.getGivenName();
+					patientLastName = patient.getFamilyName();
+					setPatientMRN(patientId);
+				}
 			}
 		} catch (Exception e) {
 			log.error("Error setting fax patient information from form instance.", e);
@@ -585,14 +584,15 @@ public class FaxStatus {
 
 	}
 	
-	public void  setFormInstanceByIdTag(String idTag){
-		
+	
+	public FormInstance setFormInstance(String idTag){
 		
 		try {
-			if (idTag == null){
-				return;
-
+			// Exist if the form instance already exists.  
+			if (formInstance != null || StringUtils.isBlank(idTag)){
+				return null;
 			}
+			
 			String [] formInstanceSubstrings = idTag.split("[^a-zA-Z0-9']+");
 			if (formInstanceSubstrings != null && formInstanceSubstrings.length >= 3){
 				
@@ -600,10 +600,7 @@ public class FaxStatus {
 				Integer formId = Integer.valueOf(formInstanceSubstrings[1]);
 				Integer formInstanceId = Integer.valueOf(formInstanceSubstrings[2]);
 				this.formInstance = new FormInstance(locationId, formId, formInstanceId);	
-				this.formInstanceString = formInstance.toString();
-				setLocationByFormInstance(formInstance);
-				setPatientByByFormInstance(formInstance);
-				setFormNameByFormInstance(formInstance);
+				
 			}
 			
 			
@@ -613,13 +610,13 @@ public class FaxStatus {
 			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 		
-		return;
+		return formInstance;
 				
 	}
 
 	public void setImageLocation(String idTag){
-		//get the image directory from attributes
-		// get the form file based on directory and idTag
+		
+		
 	}
 	
 	
