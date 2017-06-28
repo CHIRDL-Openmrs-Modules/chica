@@ -28,27 +28,6 @@
 <mapping class="org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs" name="pws_prompt_answer_errs">
 <collection field="fields"/>
 </mapping>
-
-<mapping class="org.openmrs.module.chica.xmlBeans.ObsvDictionary" name="ObsvDictionary">
-<collection field="terms"/>
-</mapping>
-
-<mapping class="org.openmrs.module.chica.xmlBeans.FindObsvTerm" name="FindObsvTerm">
-<value name="OBSV_NAME" field="name"/>
-<value name="OBSV_DEF" field="description" usage="optional"/>
-<value name="OBSV_TYPE" field="type"/>
-<value name="OBSV_EXPORT" field="export" usage="optional" />
-<value name="ANSWERS" field="answers" usage="optional" />
-<value name="UNITS" field="units" usage="optional" />
-</mapping>
-
-<mapping class="org.openmrs.module.chica.xmlBeans.UnfilteredMedications" name="unfilteredMedications">
-    <collection item-type="org.openmrs.module.chica.xmlBeans.Medication" get-method="getUnfilteredMedications" set-method="setUnfilteredMedications" create-type="java.util.ArrayList"/>
-  </mapping>
-  <mapping class="org.openmrs.module.chica.xmlBeans.Medication" name="medication">
-    <value style="attribute" name="name" get-method="getName" set-method="setName"/>
-    <value style="attribute" name="system" get-method="getSystem" set-method="setSystem"/>
-  </mapping>
   
   <mapping class="org.openmrs.module.chica.xmlBeans.growthcharts.GrowthChartConfig" name="growthChartConfig">
     <structure field="growthCharts" usage="optional"/>

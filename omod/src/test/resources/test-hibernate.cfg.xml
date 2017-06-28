@@ -19,7 +19,6 @@
 		<mapping resource="high_bp.hbm.xml" />
 		<mapping resource="insurance_mapping.hbm.xml" />
 		<mapping resource="lenageinf.hbm.xml" />
-		<mapping resource="old_rule.hbm.xml" />
 		<mapping resource="patient_family.hbm.xml" />
 		<mapping resource="study_attribute_value.hbm.xml" />
 		<mapping resource="study_attribute.hbm.xml" />

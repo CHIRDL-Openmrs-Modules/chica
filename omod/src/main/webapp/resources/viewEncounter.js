@@ -98,11 +98,6 @@ function resizeContent() {
 	$("#middle").css("height", windowHeight - 230);
 }
 
-function lookupPatient() {
-	document.location.href = "viewPatient.form";
-	return false;
-}
-
 function exitForm() {
 	document.location.href = "greaseBoard.form";
 	return false;
