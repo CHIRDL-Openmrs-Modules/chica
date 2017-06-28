@@ -3947,7 +3947,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </description>  
         <sql>
             insert into chirdlutilbackports_program (name, description, version, start_state, end_state) values('chica_epic', 'Program for electronic version of chica for use with Epic', '1.0', (select state_id from chirdlutilbackports_state where name = 'CHECKIN'), (select state_id from chirdlutilbackports_state where name = 'FINISHED'));
-
+			insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Query CDA', 'Query the CDA service', 'org.openmrs.module.chica.action.QueryCDA');
             INSERT INTO chirdlutilbackports_state_action (action_name, action_description, action_class)
                 SELECT 'Processed Vitals HL7', 'Finishes processing after HL7 of vitals received', 'org.openmrs.module.chica.action.ProcessedVitalsHL7' from dual
                 WHERE NOT EXISTS (
