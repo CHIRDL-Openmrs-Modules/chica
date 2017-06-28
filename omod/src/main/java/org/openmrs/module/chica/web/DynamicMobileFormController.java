@@ -131,8 +131,6 @@ public class DynamicMobileFormController extends SimpleFormController {
 			Patient patient = Context.getPatientService().getPatient(patientId);
 			formAccess.saveExportElements(new FormInstance(locationId, formId, formInstanceId), locationTagId, encounterId, 
 				patient, parameterMap, parameterHandler);
-			// Calculate all the percentiles
-			org.openmrs.module.chica.util.Util.calculatePercentiles(encounterId, patient, locationTagId);
 			
 			// Run null priority rules
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
