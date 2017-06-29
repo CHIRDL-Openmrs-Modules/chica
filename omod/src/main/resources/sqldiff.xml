@@ -2274,6 +2274,11 @@ VALUES
 INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
+   ('QUERY KITE', 'Query kite.regenstrief.org for patient information');
+   
+INSERT INTO chirdlutilbackports_state_action
+   (`action_name`, `action_description`)
+VALUES
    ('REPRINT', 'Reprints a form');
 
 INSERT INTO chirdlutilbackports_state_action
@@ -2908,6 +2913,10 @@ where action_name='REPRINT';
 update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.Randomize'
 where action_name='RANDOMIZE';
+
+update chirdlutilbackports_state_action
+set action_class='org.openmrs.module.chica.action.GenericAction'
+where action_name='QUERY KITE';
 
 update chirdlutilbackports_state_action
 set action_class='org.openmrs.module.chica.action.LoadHL7ExportQueue'
