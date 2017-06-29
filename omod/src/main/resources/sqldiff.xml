@@ -2915,7 +2915,7 @@ set action_class='org.openmrs.module.chica.action.Randomize'
 where action_name='RANDOMIZE';
 
 update chirdlutilbackports_state_action
-set action_class='org.openmrs.module.chica.action.GenericAction'
+set action_class='org.openmrs.module.chica.action.QueryKite'
 where action_name='QUERY KITE';
 
 update chirdlutilbackports_state_action
@@ -4261,15 +4261,26 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			WHERE location_attribute_id = (SELECT location_attribute_id FROM chirdlutilbackports_location_attribute
                                WHERE name = 'medicationListQueryUser');                                
             DELETE FROM chirdlutilbackports_location_attribute WHERE name = 'medicationListQueryUser';
-            DELETE FROM chirdlutilbackports_error_category WHERE name = 'Query Medication List Connection';
-            DELETE FROM chirdlutilbackports_state WHERE name = 'Query medication list';
             DELETE FROM chirdlutilbackports_location_attribute_value 
 			WHERE location_attribute_id IN (SELECT location_attribute_id FROM chirdlutilbackports_location_attribute
 			                               WHERE name IN ('GISDirectory', 'isGISInterventionLocation'));    
 			DELETE FROM chirdlutilbackports_location_attribute WHERE name IN ('GISDirectory', 'isGISInterventionLocation');
-			DELETE FROM chirdlutilbackports_error_category WHERE name = 'GIS Clinic Address Used';
+        </sql>
+    </diff>
+    <diff>
+        <version>1.9.6</version>
+        <author>Seema Sarala</author>
+        <date>June 29, 2017</date>
+        <description>
+        	CHICA-1037 Update action_class in chirdlutilbackports_state_action table with GenericAction
+        </description>
+        <sql>
+        	update chirdlutilbackports_state_action
+			set action_class='org.openmrs.module.chica.action.GenericAction'
+			where action_name='QUERY KITE';
         </sql>
     </diff>
 </sqldiff>
+
 
 
