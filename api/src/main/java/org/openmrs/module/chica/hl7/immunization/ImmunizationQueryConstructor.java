@@ -1186,22 +1186,14 @@ public class ImmunizationQueryConstructor extends
 				vxu.getORCRXARXROBXNTE(rep).getRXA()
 						.getAdministeringProvider(0).getGivenName().setValue(
 								providerFN);
-				List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
-				encounters.add(encounter);
-				List<Person> persons = new ArrayList<Person>();
-				persons.add(new Person(encounter.getPatientId()));
-				obsService.getObservations(persons, null, null, null, null, null, null, null, null, dateGiven, dateGiven, includeLocation);
-				ConceptService conceptService = Context.getConceptService();
-				List<Concept> concepts = new ArrayList<Concept>();
-				Concept concept = conceptService.getConceptByName("PROVIDER_ID");
-				concepts.add(concept);
-				List<Obs> providerIdObs = obsService
-				.getObservations(persons, encounters, concepts, null, null,
-						null, null, null, null, null, null, false);
-				if (providerIdObs != null && providerIdObs.size() > 0 
-						&& providerIdObs.get(0) != null && providerIdObs.get(0) != null){
-				vxu.getORCRXARXROBXNTE(rep).getRXA()
-					.getAdministeringProvider(0).getIDNumber().setValue(providerIdObs.get(0).getValueText());
+				
+				// CHICA-925 Use provider.identifier instead of obs for PROVIDER_ID concept
+				// Use provider.identifier
+				org.openmrs.Provider openmrsProvider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+				if(openmrsProvider != null)
+				{
+					vxu.getORCRXARXROBXNTE(rep).getRXA()
+					.getAdministeringProvider(0).getIDNumber().setValue(openmrsProvider.getIdentifier());
 				}
 			}
 
