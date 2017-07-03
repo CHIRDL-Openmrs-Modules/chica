@@ -142,12 +142,6 @@
         <description>How long to wait before the GET HELP NOW sends another page request from Greaseboard</description>
     </globalProperty>
     <globalProperty>
-        <property>chica.medicationListTimeout</property>
-        <defaultValue>5</defaultValue>
-        <description>Timeout for medication list queries (in seconds).
-        </description>
-    </globalProperty>
-    <globalProperty>
         <property>chica.genericProviderId</property>
         <description>Generic provider id to use for medication query when no other provider id.
         </description>
@@ -189,64 +183,6 @@
         </description>
     </globalProperty>
     <globalProperty>
-        <property>chica.gisMapUrl</property>
-        <description>The base URL to generate a CHICA GIS map.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisDataUrl</property>
-        <description>The base URL to generate a CHICA GIS data.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisTutorRadius</property>
-        <defaultValue>3</defaultValue>
-        <description>The map radius (in miles)of the tutoring resources for the CHICA GIS map generation.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisExerciseRadius</property>
-        <defaultValue>3</defaultValue>
-        <description>The map radius (in miles)of the exercise resources for the CHICA GIS map generation.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisDentalRadius</property>
-        <defaultValue>3</defaultValue>
-        <description>The map radius (in miles)of the dental resources for the CHICA GIS map generation.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisToppingFilter</property>
-        <defaultValue>6</defaultValue>
-        <description>The maximum number of search result giving by the CHICA GIS service.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisTimeout</property>
-        <defaultValue>10</defaultValue>
-        <description>The timeout for CHICA GIS queries (in seconds).
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisMaxRadius</property>
-        <defaultValue>10</defaultValue>
-        <description>The maximum radius to search for GIS data.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisConnectionTimeout</property>
-        <defaultValue>3</defaultValue>
-        <description>The connection timeout for CHICA GIS queries (in seconds).
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisMinAge</property>
-        <defaultValue>1</defaultValue>
-        <description>The minimum age (in years) for the GIS query.
-        </description>
-    </globalProperty>
-    <globalProperty>
         <property>chica.presnetConnectionTimeout</property>
         <defaultValue>5</defaultValue>
         <description>The connection timeout for Presnet connections (in seconds).
@@ -256,12 +192,6 @@
         <property>chica.presnetReadTimeout</property>
         <defaultValue>5</defaultValue>
         <description>The read timeout for Presnet connections (in seconds).
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.gisMinimumSearchResults</property>
-        <defaultValue>3</defaultValue>
-        <description>The minimum number of search results to be met before results are displayed on the forms.
         </description>
     </globalProperty>
     <globalProperty>
@@ -480,7 +410,6 @@
         study.hbm.xml
         study_attribute.hbm.xml
         study_attribute_value.hbm.xml
-        old_rule.hbm.xml
         chica1_patient.hbm.xml
         chica1_patient_obsv.hbm.xml
         chica1_appointments.hbm.xml

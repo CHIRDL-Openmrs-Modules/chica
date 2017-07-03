@@ -8,9 +8,7 @@
     <bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>            
-                <prop key="/module/@MODULE_ID@/parseDictionary.form">parseDictionary</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoard.form">greaseBoard</prop>
-                <prop key="/module/@MODULE_ID@/weeklyReports.form">weeklyReports</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
@@ -45,11 +43,6 @@
             </props>
         </property>
     </bean>
-    <bean id="parseDictionary" class="org.openmrs.module.chica.web.ParseDictionaryController">
-        <property name="commandName"><value>parseDictionaryObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/parseDictionary</value></property>
-        <property name="successView"><value>parseDictionary.form</value></property>
-    </bean>
     <bean id="chicaRuleTester" class="org.openmrs.module.chica.web.ChicaRuleTesterController">
         <property name="commandName"><value>chicaRuleTesterObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/chicaRuleTester</value></property>
@@ -64,11 +57,6 @@
         <property name="commandName"><value>greaseBoardObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/greaseBoard</value></property>
         <property name="successView"><value>greaseBoard.form</value></property>
-    </bean>
-    <bean id="weeklyReports" class="@MODULE_PACKAGE@.web.WeeklyReportsController">
-        <property name="commandName"><value>weeklyReportsObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/weeklyReports</value></property>
-        <property name="successView"><value>weeklyReports.form</value></property>
     </bean>
     <bean id="viewEncounter" class="@MODULE_PACKAGE@.web.ViewEncounterController">
         <property name="commandName"><value>greaseBoardObject</value></property>
@@ -284,18 +272,6 @@
         </map>
         </property>
     </bean> 
-    
-    <!-- CHICA-961 Remove to allow for faster shutdown
-    <bean id="chicaRmiService" class="org.openmrs.module.chica.impl.ChicaRmiServiceImpl">
-    </bean>
-    
-    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-        <property name="serviceName" value="ChicaRmiService"/>
-        <property name="service" ref="chicaRmiService"/>
-        <property name="serviceInterface" value="org.openmrs.module.chica.service.ChicaRmiService"/>
-        <property name="registryPort" value="1197"/>
-    </bean>
-    -->
     
     <!-- CHICA-990 Remove Test checkin through AOP link on Admin page. This was being triggered when messageProcessed() was
     	 called from the TestCheckinController. TriggerPatientAfterAdvice is still used in other areas, such as HL7SocketHandler, 

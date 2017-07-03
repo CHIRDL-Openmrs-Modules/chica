@@ -32,58 +32,6 @@
                         </tr>
                     </table>
                 </div>
-                <div id="medDialog" title="Medication List" class="ui-dialog-titlebar ui-widget-header">
-                    <table id="medTable">
-                        <c:if test="${not empty Med1_A || not empty Med1_B }">
-                            <tr class="trAlignLeft">
-                                <td class="tdBorderTop"><c:out value="${Med1_A}"/></td>
-                            </tr>
-                            <tr class="trAlignLeft">
-                                <td><c:out value="${Med1_B}"/></td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty Med2_A || not empty Med2_B }">
-                            <tr class="trAlignLeft">
-                                <td class="tdBorderTop"><c:out value="${Med2_A}}"/></td>
-                            </tr>
-                            <tr class="trAlignLeft">
-                                <td><c:out value="${Med2_B}"/></td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty Med3_A || not empty Med3_B }">
-                            <tr class="trAlignLeft">
-                                <td class="tdBorderTop"><c:out value="${Med3_A}"/></td>
-                            </tr>
-                            <tr class="trAlignLeft">
-                                <td><c:out value="${Med3_B}"/></td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty Med4_A || not empty Med4_B }">
-                            <tr class="trAlignLeft">
-                                <td class="tdBorderTop"><c:out value="${Med4_A}"/></td>
-                            </tr>
-                            <tr class="trAlignLeft">
-                                <td><c:out value="${Med4_B}"/></td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty Med5_A || not empty Med5_B }">
-                            <tr class="trAlignLeft">
-                                <td class="tdBorderTop"><c:out value="${Med5_A}"/></td>
-                            </tr>
-                            <tr class="trAlignLeft">
-                                <td><c:out value="${Med5_B}"/></td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty Med6_A || not empty Med6_B }">
-                            <tr class="trAlignLeft">
-                                <td class="tdBorderTop"><c:out value="${Med6_A}"/></td>
-                            </tr>
-                            <tr class="trAlignLeft">
-                                <td><c:out value="${Med6_B}"/></td>
-                            </tr>
-                        </c:if>
-                    </table>
-                </div>
                 <div id="confirmSubmitDialog" title="Confirm" class="ui-overlay">
                     <div id="confirmText">
                         <span>Click OK to sign the form.</span>

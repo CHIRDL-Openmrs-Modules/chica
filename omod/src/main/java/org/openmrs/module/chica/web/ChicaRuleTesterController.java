@@ -16,7 +16,6 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
-import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.dss.hibernateBeans.Rule;
@@ -90,14 +89,6 @@ public class ChicaRuleTesterController extends SimpleFormController
 							&& currRule.checkAgeRestrictions(patient))
 					{
 						currRule.setParameters(parameters);
-						try
-						{
-							QueryKite.mrfQuery(mrn, patient,false);
-						} catch (Exception e)
-						{
-							//ignore the error if the kite query fails
-							//since this is just testing rules
-						}
 						// query and add to
 						// datasource
 												

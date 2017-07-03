@@ -2275,7 +2275,7 @@ INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
    ('QUERY KITE', 'Query kite.regenstrief.org for patient information');
-
+   
 INSERT INTO chirdlutilbackports_state_action
    (`action_name`, `action_description`)
 VALUES
@@ -3956,8 +3956,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </description>  
         <sql>
             insert into chirdlutilbackports_program (name, description, version, start_state, end_state) values('chica_epic', 'Program for electronic version of chica for use with Epic', '1.0', (select state_id from chirdlutilbackports_state where name = 'CHECKIN'), (select state_id from chirdlutilbackports_state where name = 'FINISHED'));
-
-            insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Query CDA', 'Query the CDA service', 'org.openmrs.module.chica.action.QueryCDA');
+			insert into chirdlutilbackports_state_action (action_name, action_description, action_class) values ('Query CDA', 'Query the CDA service', 'org.openmrs.module.chica.action.QueryCDA');
             INSERT INTO chirdlutilbackports_state_action (action_name, action_description, action_class)
                 SELECT 'Processed Vitals HL7', 'Finishes processing after HL7 of vitals received', 'org.openmrs.module.chica.action.ProcessedVitalsHL7' from dual
                 WHERE NOT EXISTS (
@@ -4245,6 +4244,43 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
         </sql>
     </diff>
+    <diff>
+        <version>1.9.5</version>
+        <author>Seema Sarala</author>
+        <date>June 28, 2017</date>
+        <description>
+        	CHICA-1037 Remove the unused chica.gis global properties, chica.medicationListTimeout global properties, medication list lookup configuration and CHICA GIS configuration.
+        </description>
+        <sql>
+        	DELETE FROM global_property 
+        	WHERE property IN ('chica.gisConnectionTimeout', 'chica.gisDataUrl', 'chica.gisDentalRadius', 
+                                               'chica.gisExerciseRadius', 'chica.gisMapUrl', 'chica.gisMaxRadius', 'chica.gisMinAge', 
+                                               'chica.gisMinimumSearchResults', 'chica.gisTimeout', 'chica.gisToppingFilter', 'chica.gisTutorRadius') ;
+            DELETE FROM global_property WHERE property = 'chica.medicationListTimeout';   
+            DELETE FROM chirdlutilbackports_location_attribute_value 
+			WHERE location_attribute_id = (SELECT location_attribute_id FROM chirdlutilbackports_location_attribute
+                               WHERE name = 'medicationListQueryUser');                                
+            DELETE FROM chirdlutilbackports_location_attribute WHERE name = 'medicationListQueryUser';
+            DELETE FROM chirdlutilbackports_location_attribute_value 
+			WHERE location_attribute_id IN (SELECT location_attribute_id FROM chirdlutilbackports_location_attribute
+			                               WHERE name IN ('GISDirectory', 'isGISInterventionLocation'));    
+			DELETE FROM chirdlutilbackports_location_attribute WHERE name IN ('GISDirectory', 'isGISInterventionLocation');
+        </sql>
+    </diff>
+    <diff>
+        <version>1.9.6</version>
+        <author>Seema Sarala</author>
+        <date>June 29, 2017</date>
+        <description>
+        	CHICA-1037 Update action_class in chirdlutilbackports_state_action table with GenericAction
+        </description>
+        <sql>
+        	update chirdlutilbackports_state_action
+			set action_class='org.openmrs.module.chica.action.GenericAction'
+			where action_name='QUERY KITE';
+        </sql>
+    </diff>
 </sqldiff>
+
 
 
