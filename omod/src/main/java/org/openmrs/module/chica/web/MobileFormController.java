@@ -352,12 +352,12 @@ public class MobileFormController extends SimpleFormController {
 		if(submittedFormInstancesObj == null)
 		{
 			submittedFormInstances = new ArrayList<String>();
-			submittedFormInstances.add(formInstance.toString());
+			submittedFormInstances.add(formInstance);
 		}
 		else if(submittedFormInstancesObj != null && submittedFormInstancesObj instanceof List)
 		{
 			submittedFormInstances =  (List<String>) submittedFormInstancesObj;
-			submittedFormInstances.add(formInstance.toString());
+			submittedFormInstances.add(formInstance);
 		}
 		session.setAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES, submittedFormInstances);
 	}
