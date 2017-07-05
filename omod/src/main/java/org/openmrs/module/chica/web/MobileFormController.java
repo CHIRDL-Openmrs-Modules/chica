@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,10 +9,13 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -24,9 +28,13 @@ import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -52,6 +60,8 @@ public class MobileFormController extends SimpleFormController {
 	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
 	private static final String PARAM_ERROR_MESSAGE = "errorMessage";
 	private static final String PARAM_SESSION_TIMEOUT_WARNING = "sessionTimeoutWarning";
+	private static final String PARAM_ERROR_PREVIOUS_SUBMISSION = "errorPreviousSubmission";
+	private static final String SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES = "submittedFormInstances";
 	
 	/*
 	 * (non-Javadoc)
@@ -122,6 +132,8 @@ public class MobileFormController extends SimpleFormController {
 		
 		map.put(PARAM_PATIENT_ID, patientIdStr);
 		
+		addSubmittedFormInstance(request, formInstance); // CHICA-1004 Add the submitted form instance to the session
+		
 		return new ModelAndView(new RedirectView(view), map);
 	}
 	
@@ -157,6 +169,15 @@ public class MobileFormController extends SimpleFormController {
 		map.put(PARAM_FORM_INSTANCE_ID, formInstanceId);
 		map.put(PARAM_LOCATION_ID, locationId);
 		map.put(PARAM_LOCATION_TAG_ID, locationTagId);
+		
+		// CHICA-1004 Check for previous form submission by checking the session variable
+		// This will prevent the user from accessing a submitted form using the browser's back arrow
+		if(checkForPreviousSubmission(request, formInstance))
+		{
+			map.put(PARAM_ERROR_PREVIOUS_SUBMISSION, true);
+			map.put(PARAM_PATIENT_ID, patientIdStr);
+			return;
+		}
 		
 		//Run this to show the form
 		try {
@@ -322,5 +343,54 @@ public class MobileFormController extends SimpleFormController {
 		}
 		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(),formInstTag.getFormId(),formInstTag.getFormInstanceId());
 		org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, encounterId, providerId, formInstance, null, formInstTag.getLocationTagId(), null);
+	}
+	
+	/**
+	 * CHICA-1004 Store previously submitted form instance in the user's session
+	 * @param request
+	 */
+	@SuppressWarnings("unchecked")
+	private void addSubmittedFormInstance(HttpServletRequest request, String formInstance)
+	{
+		HttpSession session = request.getSession();
+		List<String> submittedFormInstances = null;
+		Object submittedFormInstancesObj = session.getAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
+		if(submittedFormInstancesObj == null)
+		{
+			submittedFormInstances = new ArrayList<String>();
+			submittedFormInstances.add(formInstance.toString());
+		}
+		else if(submittedFormInstancesObj != null && submittedFormInstancesObj instanceof List)
+		{
+			submittedFormInstances =  (List<String>) submittedFormInstancesObj;
+			submittedFormInstances.add(formInstance.toString());
+		}
+		session.setAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES, submittedFormInstances);
+	}
+	
+	/**
+	 * CHICA-1004 Check for previous form submission by checking the session variable to see if the form instance exists
+	 * 
+	 * @param request
+	 * @param formInstance
+	 * @return returns true if the formInstance exists in the submittedFormInstances session variable
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean checkForPreviousSubmission(HttpServletRequest request, String formInstance)
+	{
+		HttpSession session = request.getSession();
+		List<String> submittedFormInstances = null;
+		Object submittedFormInstancesObj = session.getAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
+
+		if(submittedFormInstancesObj != null && submittedFormInstancesObj instanceof List)
+		{
+			submittedFormInstances =  (List<String>) submittedFormInstancesObj;
+			if(submittedFormInstances.contains(formInstance))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
