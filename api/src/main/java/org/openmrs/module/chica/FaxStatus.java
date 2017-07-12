@@ -20,7 +20,6 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -32,65 +31,141 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class FaxStatus {
 
-	private Log log = LogFactory.getLog(this.getClass());
-	public short id;
-    private XMLGregorianCalendar transmitTime;
-    private String transmitTimeAsString;
-    /**
-	 * @return the transmitTimeAsString
-	 */
-	public String getTransmitTimeAsString() {
-		return transmitTimeAsString;
-	}
-	/**
-	 * @param transmitTimeAsString the transmitTimeAsString to set
-	 */
-	public void setTransmitTimeAsString(String transmitTimeAsString) {
-		this.transmitTimeAsString = transmitTimeAsString;
-	}
-	private String faxNumber;
 
+	private Log log = LogFactory.getLog(this.getClass());
+
+	public short id;
+	private XMLGregorianCalendar transmitTime;
+	private String transmitTimeAsString;  
+	private String faxNumber;
 	private short numberOfAttempts;
-    private String recipientName;
-    private String subject;
-    private int pagesTransmitted;
-    private int transferRate;  
-    private boolean fallBack;
-    private int transmissionStatus;
-    private String statusText;
-    private String statusName;
-    private int connectTime;
-    private String csi;
-    private int portNumber;
-    private int totalPages;
-    private int attachmentCount;
-    private String envelopeName;
-    private String renderedImagePath;
-    private int index;
-    private String idTag;
-    private short assignedID;
-    private String uniqueJobID;
-    private boolean isSelected;
-    private Integer patientId;
-    private String patientMRN;
-    private Integer formId;
-    private String formName;
-    private String patientFirstName;
-    private String patientLastName;
-    private FormInstance formInstance;
-    private Integer locationId;
-	private String location;
-    /**
-	 * @return the locationId
+	private String recipientName;
+	private String subject;
+	private int pagesTransmitted;
+	private int transferRate;  
+	private boolean fallBack;
+	private int transmissionStatus;
+	private String statusText;
+	private String statusName;
+	private int connectTime;
+	private String csi;
+	private int portNumber;
+	private int totalPages;
+	private int attachmentCount;
+	private String envelopeName;
+	private String renderedImagePath;
+	private int index;
+	private String idTag;
+	private short assignedID;
+	private String uniqueJobID;
+	private boolean isSelected;
+	private Integer patientId;
+	private String patientMRN;
+	private Integer formId;
+	private String formName;
+	private String patientFirstName;
+	private String patientLastName;
+	private FormInstance formInstance;
+	private Integer locationId;
+	private Integer locationTagId;
+	private String locationName;
+	private Location location;
+	private String imageFileLocation;
+
+
+
+	private Short faxStateFlags;
+
+	public FaxStatus(String idTag) {
+
+		LocationService locationService = Context.getLocationService();
+		this.idTag = idTag;
+		if ("".equalsIgnoreCase(idTag)){
+			return;
+		}
+		setFormInstance(idTag);
+		if (formInstance == null) return;
+		setFormNameByFormInstance(formInstance);
+		setLocation(formInstance);
+
+		PatientService patientService = Context.getPatientService();
+		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		List<PatientState> states = new ArrayList<PatientState>();
+		try {
+			if (formInstance != null){
+				states = chirdlUtilBackportsService.getPatientStatesByFormInstance(formInstance, false);
+			}
+
+			if (states == null || states.isEmpty()) {
+				return;
+			}
+			patientId = states.get(0).getPatientId();
+			locationTagId = states.get(0).getLocationTagId();
+			if (patientId != null){
+				Patient patient = patientService.getPatient(patientId);
+				if (patient != null) {
+					patientFirstName = patient.getGivenName();
+					patientLastName = patient.getFamilyName();
+					setPatientMRN(patientId);
+				}
+			}
+
+			Location location = locationService.getLocation(formInstance.getLocationId());
+			if (location != null){
+				locationName = location.getName();
+			}
+			//Get the image location
+
+			//setImageLocation(locationId, locationTagId, formInstance, ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY);
+
+		} catch (Exception e) {
+			log.error("Error setting fax patient information from form instance.", e);
+		}
+	}
+
+	/**
+	 * @return the assignedID
 	 */
-	public Integer getLocationId() {
-		return locationId;
+	public short getAssignedID() {
+		return assignedID;
+	}
+
+	/**
+	 * @return the attachmentCount
+	 */
+	public int getAttachmentCount() {
+		return attachmentCount;
 	}
 	/**
-	 * @param locationId the locationId to set
+	 * @return the connectTime
 	 */
-	public void setLocationId(Integer locationId) {
-		this.locationId = locationId;
+	public int getConnectTime() {
+		return connectTime;
+	}
+
+	/**
+	 * @return the csi
+	 */
+	public String getCsi() {
+		return csi;
+	}
+	/**
+	 * @return the envelopeName
+	 */
+	public String getEnvelopeName() {
+		return envelopeName;
+	}
+	/**
+	 * @return the faxNumber
+	 */
+	public String getFaxNumber() {
+		return faxNumber;
+	}
+	/**
+	 * @return the faxStateFlags
+	 */
+	public Short getFaxStateFlags() {
+		return faxStateFlags;
 	}
 	/**
 	 * @return the formId
@@ -99,10 +174,10 @@ public class FaxStatus {
 		return formId;
 	}
 	/**
-	 * @param formId the formId to set
+	 * @return the formInstance
 	 */
-	public void setFormId(Integer formId) {
-		this.formId = formId;
+	public FormInstance getFormInstance() {
+		return formInstance;
 	}
 	/**
 	 * @return the formName
@@ -111,10 +186,59 @@ public class FaxStatus {
 		return formName;
 	}
 	/**
-	 * @param formName the formName to set
+	 * @return the id
 	 */
-	public void setFormName(String formName) {
-		this.formName = formName;
+	public short getId() {
+		return id;
+	}
+	/**
+	 * @return the idTag
+	 */
+	public String getIdTag() {
+		return idTag;
+	}
+	/**
+	 * @return the imageFileLocation
+	 */
+	public String getImageFileLocation() {
+		return imageFileLocation;
+	}
+	/**
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+	/**
+	 * @return the location
+	 */
+	public Location getLocation() {
+		return location;
+	}
+	/**
+	 * @return the locationId
+	 */
+	public Integer getLocationId() {
+		return locationId;
+	}
+	/**
+	 * @return the locationTagId
+	 */
+	public Integer getLocationTagId() {
+		return locationTagId;
+	}
+	/**
+	 * @return the numberOfAttempts
+	 */
+	public short getNumberOfAttempts() {
+		return numberOfAttempts;
+	}
+
+	/**
+	 * @return the pagesTransmitted
+	 */
+	public int getPagesTransmitted() {
+		return pagesTransmitted;
 	}
 	/**
 	 * @return the patientFirstName
@@ -122,11 +246,14 @@ public class FaxStatus {
 	public String getPatientFirstName() {
 		return patientFirstName;
 	}
+
+
+
 	/**
-	 * @param patientFirstName the patientFirstName to set
+	 * @return the patient_id
 	 */
-	public void setPatientFirstName(String patientFirstName) {
-		this.patientFirstName = patientFirstName;
+	public Integer getPatientId() {
+		return patientId;
 	}
 	/**
 	 * @return the patientLastName
@@ -135,22 +262,423 @@ public class FaxStatus {
 		return patientLastName;
 	}
 	/**
-	 * @param patientLastName the patientLastName to set
-	 */
-	public void setPatientLastName(String patientLastName) {
-		this.patientLastName = patientLastName;
-	}
-	/**
 	 * @return the patientMRN
 	 */
 	public String getPatientMRN() {
 		return patientMRN;
 	}
 	/**
+	 * @return the portNumber
+	 */
+	public int getPortNumber() {
+		return portNumber;
+	}
+	/**
+	 * @return the recipientName
+	 */
+	public String getRecipientName() {
+		return recipientName;
+	}
+	/**
+	 * @return the renderedImagePath
+	 */
+	public String getRenderedImagePath() {
+		return renderedImagePath;
+	}
+	/**
+	 * @return the statusName
+	 */
+	public String getStatusName() {
+		return statusName;
+	}
+
+	/**
+	 * @return the statusText
+	 */
+	public String getStatusText() {
+		return statusText;
+	}
+	/**
+	 * @return the subject
+	 */
+	public String getSubject() {
+		return subject;
+	}
+	/**
+	 * @return the totalPages
+	 */
+	public int getTotalPages() {
+		return totalPages;
+	}
+	/**
+	 * @return the transferRate
+	 */
+	public int getTransferRate() {
+		return transferRate;
+	}
+	/**
+	 * @return the transmissionStatus
+	 */
+	public int getTransmissionStatus() {
+		return transmissionStatus;
+	}
+	/**
+	 * @return the transmitTime
+	 */
+	public XMLGregorianCalendar getTransmitTime() {
+		return transmitTime;
+	}
+	/**
+	 * @return the transmitTimeAsString
+	 */
+	public String getTransmitTimeAsString() {
+		return transmitTimeAsString;
+	}
+	/**
+	 * @return the uniqueJobID
+	 */
+	public String getUniqueJobID() {
+		return uniqueJobID;
+	}
+	/**
+	 * @return the fallBack
+	 */
+	public boolean isFallBack() {
+		return fallBack;
+	}
+	/**
+	 * @return the isSelected
+	 */
+	public boolean isSelected() {
+		return isSelected;
+	}
+	/**
+	 * @param assignedID the assignedID to set
+	 */
+	public void setAssignedID(short assignedID) {
+		this.assignedID = assignedID;
+	}
+	/**
+	 * @param attachmentCount the attachmentCount to set
+	 */
+	public void setAttachmentCount(int attachmentCount) {
+		this.attachmentCount = attachmentCount;
+	}
+	/**
+	 * @param connectTime the connectTime to set
+	 */
+	public void setConnectTime(int connectTime) {
+		this.connectTime = connectTime;
+	}
+	/**
+	 * @param csi the csi to set
+	 */
+	public void setCsi(String csi) {
+		this.csi = csi;
+	}
+	/**
+	 * @param envelopeName the envelopeName to set
+	 */
+	public void setEnvelopeName(String envelopeName) {
+		this.envelopeName = envelopeName;
+	}
+	/**
+	 * @param fallBack the fallBack to set
+	 */
+	public void setFallBack(boolean fallBack) {
+		this.fallBack = fallBack;
+	}
+	/**
+	 * @param faxNumber the faxNumber to set
+	 */
+	public void setFaxNumber(String faxNumber) {
+		this.faxNumber = faxNumber;
+	}
+	/**
+	 * @param faxStateFlags the faxStateFlags to set
+	 */
+	public void setFaxStateFlags(Short faxStateFlags) {
+		this.faxStateFlags = faxStateFlags;
+	}
+	/**
+	 * @param formId the formId to set
+	 */
+	public void setFormId(Integer formId) {
+		this.formId = formId;
+	}
+	/**
+	 * @param formInstance the formInstance to set
+	 */
+	public void setFormInstance(FormInstance formInstance) {
+		this.formInstance = formInstance;
+	}
+	public FormInstance setFormInstance(String idTag){
+
+		try {
+			// Exist if the form instance already exists.  
+			if (formInstance != null || StringUtils.isBlank(idTag)){
+				return null;
+			}
+
+			String [] formInstanceSubstrings = idTag.split("[^a-zA-Z0-9']+");
+			if (formInstanceSubstrings != null && formInstanceSubstrings.length >= 3){
+
+				Integer locationId = Integer.valueOf(formInstanceSubstrings[0]);
+				Integer formId = Integer.valueOf(formInstanceSubstrings[1]);
+				Integer formInstanceId = Integer.valueOf(formInstanceSubstrings[2]);
+				this.formInstance = new FormInstance(locationId, formId, formInstanceId);	
+
+			}
+
+
+		} catch (Exception e) {
+			//The fax id tag was not a correct form instance id format.  No need for stack trace.
+			log.info("Status idTag is not a valid form instance format:" + idTag);
+			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
+		}
+
+		return formInstance;
+
+	}
+	/**
+	 * @param formName the formName to set
+	 */
+	public void setFormName(String formName) {
+		this.formName = formName;
+	}
+	public void setFormNameByFormInstance(FormInstance formInstance){
+		FormService formService = Context.getFormService();
+		if (formInstance != null ){
+			formId = formInstance.getFormId();
+			Form form = formService.getForm(formId);
+			if (form != null ){
+				formName = form.getName();
+			}
+		}
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(short id) {
+		this.id = id;
+	}
+	/**
+	 * @param idTag the idTag to set
+	 */
+	public void setIdTag(String idTag) {
+		this.idTag = idTag;
+	}
+	/**
+	 * @param imageFileLocation the imageFileLocation to set
+	 */
+	public void setImageFileLocation(String imageFileLocation) {
+		this.imageFileLocation = imageFileLocation;
+	}
+	/**
+	 * @param index the index to set
+	 */
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(FormInstance formInstance) {
+
+		if (formInstance == null ){
+			return;
+		}
+
+		LocationService locationService = Context.getLocationService();
+		try {
+
+			if ((locationId =formInstance.getLocationId())!= null){
+				Location location = locationService.getLocation(locationId);
+				if (location != null){
+					this.locationName = location.getName();
+				}
+			}
+
+		} catch (Exception e) {
+			log.error("Unable to extract fax location (clinic) from fax id tag", e);
+		}
+
+
+	}
+	/**
+	 * @param locationId the locationId to set
+	 */
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
+	}
+	/**
+	 * @param locationTagId the locationTagId to set
+	 */
+	public void setLocationTagId(Integer locationTagId) {
+		this.locationTagId = locationTagId;
+	}
+	/**
+	 * @param numberOfAttempts the numberOfAttempts to set
+	 */
+	public void setNumberOfAttempts(short numberOfAttempts) {
+		this.numberOfAttempts = numberOfAttempts;
+	}
+	/**
+	 * @param pagesTransmitted the pagesTransmitted to set
+	 */
+	public void setPagesTransmitted(int pagesTransmitted) {
+		this.pagesTransmitted = pagesTransmitted;
+	}
+	public void setPatient(String idTag) {
+		if ("".equalsIgnoreCase(idTag)){
+			return;
+		}
+		setFormInstance(idTag);
+		if (formInstance == null) return;
+		PatientService patientService = Context.getPatientService();
+		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		List<PatientState> states = new ArrayList<PatientState>();
+		try {
+			if (formInstance != null){
+				states = chirdlUtilBackportsService.getPatientStatesByFormInstance(formInstance, false);
+			}
+
+			if (states == null || states.isEmpty()) {
+				return;
+			}
+			patientId = states.get(0).getPatientId();
+			locationTagId = states.get(0).getLocationTagId();
+			if (patientId != null){
+				Patient patient = patientService.getPatient(patientId);
+				if (patient != null) {
+					patientFirstName = patient.getGivenName();
+					patientLastName = patient.getFamilyName();
+					setPatientMRN(patientId);
+				}
+			}
+
+		} catch (Exception e) {
+			log.error("Error setting fax patient information from form instance.", e);
+		}
+
+	}
+	/**
+	 * @param patientFirstName the patientFirstName to set
+	 */
+	public void setPatientFirstName(String patientFirstName) {
+		this.patientFirstName = patientFirstName;
+	}
+	/**
+	 * @param patient_id the patient_id to set
+	 */
+	public void setPatientId(Integer patientId) {
+		this.patientId = patientId;
+	}
+	/**
+	 * @param patientLastName the patientLastName to set
+	 */
+	public void setPatientLastName(String patientLastName) {
+		this.patientLastName = patientLastName;
+	}
+	/**
 	 * @param patientMRN
 	 */
 	public void setPatientMRN(String patientMRN) {
 		this.patientMRN = patientMRN;
+	}
+	/**
+	 * @param portNumber the portNumber to set
+	 */
+	public void setPortNumber(int portNumber) {
+		this.portNumber = portNumber;
+	}
+	/**
+	 * @param recipientName the recipientName to set
+	 */
+	public void setRecipientName(String recipientName) {
+		this.recipientName = recipientName;
+	}
+	/**
+	 * @param renderedImagePath the renderedImagePath to set
+	 */
+	public void setRenderedImagePath(String renderedImagePath) {
+		this.renderedImagePath = renderedImagePath;
+	}
+	/**
+	 * @param isSelected the isSelected to set
+	 */
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+	/**
+	 * @param statusName the statusName to set
+	 */
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
+	/**
+	 * @param statusText the statusText to set
+	 */
+	public void setStatusText(String statusText) {
+		this.statusText = statusText;
+	}
+	/**
+	 * @param subject the subject to set
+	 */
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+	/**
+	 * @param totalPages the totalPages to set
+	 */
+	public void setTotalPages(int totalPages) {
+		this.totalPages = totalPages;
+	}
+	/**
+	 * @param transferRate the transferRate to set
+	 */
+	public void setTransferRate(int transferRate) {
+		this.transferRate = transferRate;
+	}
+	/**
+	 * @param transmissionStatus the transmissionStatus to set
+	 */
+	public void setTransmissionStatus(int transmissionStatus) {
+		this.transmissionStatus = transmissionStatus;
+	}
+
+
+	/**
+	 * @param transmitTime the transmitTime to set
+	 */
+	public void setTransmitTime(XMLGregorianCalendar transmitTime) {
+		this.transmitTime = transmitTime;
+	}
+
+	/**
+	 * @param transmitTimeAsString the transmitTimeAsString to set
+	 */
+	public void setTransmitTimeAsString(String transmitTimeAsString) {
+		this.transmitTimeAsString = transmitTimeAsString;
+	}
+
+
+	/**
+	 * @param transmitTime
+	 * @param format
+	 */
+	public void setTransmitTimeAsString(XMLGregorianCalendar transmitTime, String format) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		Date date = transmitTime.toGregorianCalendar().getTime();
+		this.transmitTimeAsString = dateFormat.format(date);
+	}
+
+
+	/**
+	 * @param uniqueJobID the uniqueJobID to set
+	 */
+	public void setUniqueJobID(String uniqueJobID) {
+		this.uniqueJobID = uniqueJobID;
 	}
 	/**
 	 * @param patientMRN the patientMRN to set
@@ -168,456 +696,7 @@ public class FaxStatus {
 			}
 		}
 	}
-	/**
-	 * @return the patient_id
-	 */
-	public Integer getPatientId() {
-		return patientId;
-	}
-	/**
-	 * @param patient_id the patient_id to set
-	 */
-	public void setPatientId(Integer patientId) {
-		this.patientId = patientId;
-	}
-	
-	/**
-	 * @return the formInstance
-	 */
-	public FormInstance getFormInstance() {
-		return formInstance;
-	}
-	/**
-	 * @param formInstance the formInstance to set
-	 */
-	public void setFormInstance(FormInstance formInstance) {
-		this.formInstance = formInstance;
-	}
-	
-	
-	
-	/**
-	 * @return the id
-	 */
-	public short getId() {
-		return id;
-	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(short id) {
-		this.id = id;
-	}
-	/**
-	 * @return the transmitTime
-	 */
-	public XMLGregorianCalendar getTransmitTime() {
-		return transmitTime;
-	}
-	/**
-	 * @param transmitTime the transmitTime to set
-	 */
-	public void setTransmitTime(XMLGregorianCalendar transmitTime) {
-		this.transmitTime = transmitTime;
-	}
-	 /**
-	 * @param transmitTime
-	 * @param format
-	 */
-	public void setTransmitTimeAsString(XMLGregorianCalendar transmitTime, String format) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-		Date date = transmitTime.toGregorianCalendar().getTime();
-		this.transmitTimeAsString = dateFormat.format(date);
-	}
-	/**
-	 * @return the faxNumber
-	 */
-	public String getFaxNumber() {
-		return faxNumber;
-	}
-	/**
-	 * @param faxNumber the faxNumber to set
-	 */
-	public void setFaxNumber(String faxNumber) {
-		this.faxNumber = faxNumber;
-	}
-	
-	/**
-	 * @return the location
-	 */
-	public String getLocation() {
-		return location;
-	}
-	/**
-	 * @param location the location to set
-	 */
-	public void setLocation(String idTag) {
-		location = "";
-		if (formInstance == null ){
-			setFormInstance(idTag);
-			if (formInstance == null){
-				return;
-			}
-		}
-		
-		LocationService locationService = Context.getLocationService();
-		try {
-			if (formInstance != null){
-				if ((locationId =formInstance.getLocationId())!= null){
-					Location location = locationService.getLocation(locationId);
-					if (location != null){
-						this.location = location.getName();
-					}
-				}
-			}
-		} catch (Exception e) {
-			log.error("Unable to extract fax location (clinic) from fax id tag", e);
-		}
-		
-		
-	}
-	/**
-	 * @return the numberOfAttempts
-	 */
-	public short getNumberOfAttempts() {
-		return numberOfAttempts;
-	}
-	/**
-	 * @param numberOfAttempts the numberOfAttempts to set
-	 */
-	public void setNumberOfAttempts(short numberOfAttempts) {
-		this.numberOfAttempts = numberOfAttempts;
-	}
-	/**
-	 * @return the recipientName
-	 */
-	public String getRecipientName() {
-		return recipientName;
-	}
-	/**
-	 * @param recipientName the recipientName to set
-	 */
-	public void setRecipientName(String recipientName) {
-		this.recipientName = recipientName;
-	}
-	/**
-	 * @return the subject
-	 */
-	public String getSubject() {
-		return subject;
-	}
-	/**
-	 * @param subject the subject to set
-	 */
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-	/**
-	 * @return the pagesTransmitted
-	 */
-	public int getPagesTransmitted() {
-		return pagesTransmitted;
-	}
-	/**
-	 * @param pagesTransmitted the pagesTransmitted to set
-	 */
-	public void setPagesTransmitted(int pagesTransmitted) {
-		this.pagesTransmitted = pagesTransmitted;
-	}
-	/**
-	 * @return the transferRate
-	 */
-	public int getTransferRate() {
-		return transferRate;
-	}
-	/**
-	 * @param transferRate the transferRate to set
-	 */
-	public void setTransferRate(int transferRate) {
-		this.transferRate = transferRate;
-	}
-	/**
-	 * @return the fallBack
-	 */
-	public boolean isFallBack() {
-		return fallBack;
-	}
-	/**
-	 * @param fallBack the fallBack to set
-	 */
-	public void setFallBack(boolean fallBack) {
-		this.fallBack = fallBack;
-	}
-	/**
-	 * @return the transmissionStatus
-	 */
-	public int getTransmissionStatus() {
-		return transmissionStatus;
-	}
-	/**
-	 * @param transmissionStatus the transmissionStatus to set
-	 */
-	public void setTransmissionStatus(int transmissionStatus) {
-		this.transmissionStatus = transmissionStatus;
-	}
-	/**
-	 * @return the statusText
-	 */
-	public String getStatusText() {
-		return statusText;
-	}
-	/**
-	 * @param statusText the statusText to set
-	 */
-	public void setStatusText(String statusText) {
-		this.statusText = statusText;
-	}
-	/**
-	 * @return the statusName
-	 */
-	public String getStatusName() {
-		return statusName;
-	}
-	/**
-	 * @param statusName the statusName to set
-	 */
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
-	}
-	/**
-	 * @return the connectTime
-	 */
-	public int getConnectTime() {
-		return connectTime;
-	}
-	/**
-	 * @param connectTime the connectTime to set
-	 */
-	public void setConnectTime(int connectTime) {
-		this.connectTime = connectTime;
-	}
-	/**
-	 * @return the csi
-	 */
-	public String getCsi() {
-		return csi;
-	}
-	/**
-	 * @param csi the csi to set
-	 */
-	public void setCsi(String csi) {
-		this.csi = csi;
-	}
-	/**
-	 * @return the portNumber
-	 */
-	public int getPortNumber() {
-		return portNumber;
-	}
-	/**
-	 * @param portNumber the portNumber to set
-	 */
-	public void setPortNumber(int portNumber) {
-		this.portNumber = portNumber;
-	}
-	/**
-	 * @return the totalPages
-	 */
-	public int getTotalPages() {
-		return totalPages;
-	}
-	/**
-	 * @param totalPages the totalPages to set
-	 */
-	public void setTotalPages(int totalPages) {
-		this.totalPages = totalPages;
-	}
-	/**
-	 * @return the attachmentCount
-	 */
-	public int getAttachmentCount() {
-		return attachmentCount;
-	}
-	/**
-	 * @param attachmentCount the attachmentCount to set
-	 */
-	public void setAttachmentCount(int attachmentCount) {
-		this.attachmentCount = attachmentCount;
-	}
-	/**
-	 * @return the envelopeName
-	 */
-	public String getEnvelopeName() {
-		return envelopeName;
-	}
-	/**
-	 * @param envelopeName the envelopeName to set
-	 */
-	public void setEnvelopeName(String envelopeName) {
-		this.envelopeName = envelopeName;
-	}
-	/**
-	 * @return the renderedImagePath
-	 */
-	public String getRenderedImagePath() {
-		return renderedImagePath;
-	}
-	/**
-	 * @param renderedImagePath the renderedImagePath to set
-	 */
-	public void setRenderedImagePath(String renderedImagePath) {
-		this.renderedImagePath = renderedImagePath;
-	}
-	/**
-	 * @return the index
-	 */
-	public int getIndex() {
-		return index;
-	}
-	/**
-	 * @param index the index to set
-	 */
-	public void setIndex(int index) {
-		this.index = index;
-	}
-	/**
-	 * @return the idTag
-	 */
-	public String getIdTag() {
-		return idTag;
-	}
-	/**
-	 * @param idTag the idTag to set
-	 */
-	public void setIdTag(String idTag) {
-		this.idTag = idTag;
-	}
-	/**
-	 * @return the assignedID
-	 */
-	public short getAssignedID() {
-		return assignedID;
-	}
-	/**
-	 * @param assignedID the assignedID to set
-	 */
-	public void setAssignedID(short assignedID) {
-		this.assignedID = assignedID;
-	}
-	/**
-	 * @return the uniqueJobID
-	 */
-	public String getUniqueJobID() {
-		return uniqueJobID;
-	}
-	/**
-	 * @param uniqueJobID the uniqueJobID to set
-	 */
-	public void setUniqueJobID(String uniqueJobID) {
-		this.uniqueJobID = uniqueJobID;
-	}
-	/**
-	 * @return the isSelected
-	 */
-	public boolean isSelected() {
-		return isSelected;
-	}
-	/**
-	 * @param isSelected the isSelected to set
-	 */
-	public void setSelected(boolean isSelected) {
-		this.isSelected = isSelected;
-	}
-	/**
-	 * @return the faxStateFlags
-	 */
-	public Short getFaxStateFlags() {
-		return faxStateFlags;
-	}
-	/**
-	 * @param faxStateFlags the faxStateFlags to set
-	 */
-	public void setFaxStateFlags(Short faxStateFlags) {
-		this.faxStateFlags = faxStateFlags;
-	}
-	private Short faxStateFlags;
 
 
-	
-	public void setFormNameByFormInstance(FormInstance formInstance){
-		FormService formService = Context.getFormService();
-		if (formInstance != null ){
-			formId = formInstance.getFormId();
-			Form form = formService.getForm(formId);
-			if (form != null ){
-				formName = form.getName();
-			}
-		}
-	}
-	
-	public void setPatient(String idTag) {
-		setFormInstance(idTag);
-		if (formInstance == null) return;
-		PatientService patientService = Context.getPatientService();
-		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		List<PatientState> states = new ArrayList<PatientState>();
-		try {
-			if (formInstance != null){
-				states = chirdlUtilBackportsService.getPatientStatesByFormInstance(formInstance, false);
-			}
 
-			if (states == null || states.isEmpty()) {
-				return;
-			}
-			patientId = states.get(0).getPatientId();
-			if (patientId != null){
-				Patient patient = patientService.getPatient(patientId);
-				if (patient != null) {
-					patientFirstName = patient.getGivenName();
-					patientLastName = patient.getFamilyName();
-					setPatientMRN(patientId);
-				}
-			}
-		} catch (Exception e) {
-			log.error("Error setting fax patient information from form instance.", e);
-		}
-
-	}
-	
-	
-	public FormInstance setFormInstance(String idTag){
-		
-		try {
-			// Exist if the form instance already exists.  
-			if (formInstance != null || StringUtils.isBlank(idTag)){
-				return null;
-			}
-			
-			String [] formInstanceSubstrings = idTag.split("[^a-zA-Z0-9']+");
-			if (formInstanceSubstrings != null && formInstanceSubstrings.length >= 3){
-				
-				Integer locationId = Integer.valueOf(formInstanceSubstrings[0]);
-				Integer formId = Integer.valueOf(formInstanceSubstrings[1]);
-				Integer formInstanceId = Integer.valueOf(formInstanceSubstrings[2]);
-				this.formInstance = new FormInstance(locationId, formId, formInstanceId);	
-				
-			}
-			
-			
-		} catch (Exception e) {
-			//The fax id tag was not a correct form instance id format.  No need for stack trace.
-			log.info("Status idTag is not a valid form instance format:" + idTag);
-			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
-		}
-		
-		return formInstance;
-				
-	}
-
-	public void setImageLocation(String idTag){
-		
-		
-	}
-	
-	
 }

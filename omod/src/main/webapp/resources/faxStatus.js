@@ -1,66 +1,20 @@
+$(function() {
 
-
- 
-
-/* $("#selectPagerButton").click(function() {
-    	$("#pagerDialog").dialog("open");
+	$j("#viewImageDialog").dialog({
+	    resizable: true,
+	    autoOpen:false,
+	    modal: true,
+        width: $(window).width() * 0.75,
+        height: $(window).height() * 0.75,
+	    open: function(event, ui){
+	    },
+	    buttons: {
+		    Cancel: function() {
+		   	 $j(this).dialog('close');
+		    } //end cancel button
+	    }//end buttons
+	    
     });
+
+});
     
-    $("#checkMRNButton").click(function() {
-    	$("#listErrorDialog").dialog("close");
-    });
-    
-    $("#checkinButton").click(function() {
-    	$("#checkinMRNDialog").dialog("open");
-    });
-    
-    $("#viewEncountersButton").click(function() {
-    	$("#viewEncountersMRNDialog").dialog("open");
-    });
-    
-    $("#printHandoutsButton").click(function() {
-    	$("#printHandoutsMRNDialog").dialog("open");
-    });
-    
-    $("#viewBadScans").click(function() {
-    	displayBadScans(ctx,$("#badScans").val())
-    });
-    */
-    
- 
-  
-
-
-
-function checkMRN() {
-	
-}
-
-function checkEncounterMRN() {
-	
-}
-
-function checkPrintHandoutsMRN() {
-	
-}
-
-function getManualCheckinInfo() {
-	
-}
-
-function handleVerifyEncounterMRNAjaxError(xhr, textStatus, error) {
-    
-}
-
-function verifyEncounterMRN(responseXML) {
-   
-}
-
-
-
-
-
-
-
-
-

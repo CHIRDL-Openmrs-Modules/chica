@@ -21,7 +21,6 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
-import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
@@ -71,8 +70,6 @@ public interface ChicaDAO {
 	public List<Study> getActiveStudies();
 		
 	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
-
-	public List<OldRule> getAllOldRules();
 	
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,Integer patientId);
 	public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,Integer patientId);

@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
-import org.openmrs.module.chica.QueryKite;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -48,9 +47,6 @@ public class TestChicaObsDatasource extends BaseModuleContextSensitiveTest
 		Integer patientId = 30520;
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		String mrn = "999995";
-
-//		QueryKite.mrfQuery(mrn, patient,false);// query and add to datasource
-
 		ArrayList<Rule> ruleList = new ArrayList<Rule>();
 		Rule rule = new Rule();
 		HashMap<String, Object> parameters = new HashMap<String, Object>();

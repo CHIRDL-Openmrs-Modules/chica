@@ -1,12 +1,14 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp" %>
-
+<!DOCTYPE html>
+  <openmrs:require allPrivileges="View Encounters, View Patients" otherwise="/login.htm" redirect="/module/chica/faxStatus.form" />
+<html>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables_themeroller-1.10.6.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery-ui-1.11.4.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />  
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.css" type="text/css" rel="stylesheet" />
 
@@ -15,17 +17,16 @@
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.js"></script>
-  
+ 
+
 
 <script LANGUAGE="JavaScript">
 
 	var statusTable;
-	 
-	
 	
 	$(document).ready(function() {
 		var buttonID = " ";
-		var iframe = $('<iframe frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>');
+
 		statusTable = $('#faxStatusTable').dataTable(
 				{ 
 					
@@ -42,19 +43,25 @@
 		            {"mData": "idTag"},
 		            {"mData": "image"},
 		            {"mData": "uniqueJobID"}
-				            ],
+		            ],
+				       
 
 				"columnDefs" : [
        				 	{	"targets": 'image',
        				 	   	"render": function ( data, type, row, meta ) {
-       	                     buttonID = row['idTag'];
-       	              	       return '<button id="' +buttonID+ '">' +buttonID+ '</button>';
+       	                     idTag =  row['idTag'];
+       	                  	 filelocation = "${pageContext.request.contextPath}/moduleServlet/chica/chica?action=convertTiffToPDF&tiffFileLocation=%5C%5Clocalhost%5Cimages%5CFax%5CADHD+P%5C" + idTag + ".tif#view=fit&navpanes=0";
+       	              	     return '<input id="' +filelocation+ '" type = "button" name="' + filelocation + '" value="' + idTag + '"</input>';
+       	           
        				 	   	}
        				 	
-       				 	}],
+       				 	}
+       				 	
+       			],
        				 		
 				"jQueryUI": true, 
-				"pagingType": "full", 
+				"pagingType": "full_numbers",
+				"pageLength": 50,
 				"filter": true,
 				"sScrollY" : "500px",
 				"bProcessing" : true,
@@ -65,48 +72,26 @@
 				},
 				 "order": [[ 0, "desc" ]]
 				});
-		
-		 
-	   
-
 	
-	    $('#faxStatusTable tbody').on( 'click', 'button', function () {
-	    	
-	    	 $j("#viewImageDialog").dialog('open');
+		
+		$('#faxStatusTable tbody tr').on( 'click', 'input',  function () {
+			
+          // source = getFaxImageLocation(this.id);
+			$j('#imageDisplay').attr('src', this.id);
+	    	$j('#viewImageDialog').dialog('open');
+
 	    } );
+		
 
-	 
-	    $j("#viewImageDialog").dialog({
-		    resizable: true,
-		    autoOpen:false,
-		    modal: true,
-		    width:400,
-		    height:400,
-		    
-		    buttons: {
-			    Cancel: function() {
-			   	 $j(this).dialog('close');
-			    } //end cancel button
-		    }//end buttons
-
-	    });
-	    
-	    
-	   
+		   
 		
 	});
 
 	
 	
+	 
+	    
 
-//	var showImageDialog = function() {
-        //if the contents have been hidden with css, you need this
- 
-  //      $j("#viewImageDialog").dialog('open');
-    //	}	
-	
-	
-	
 
 	
 	    
@@ -123,14 +108,9 @@
 
 
 <body>
- <input type="button" id="viewImageButton" value="Open">
- <!--  <button id="viewImageButton" class="icon-button-extra-large ui-state-default ui-corner-all">View Image</button> -->
-<!--  <div id="viewImageDialog" title="Fax Image" hidden="hidden">Image iframe will go here</div> -->
-<div id="viewImageDialog" title="Fax Image">
-	<iframe id="imageDisplay" class="form_pdf_object" src="${pageContext.request.contextPath}${faxStatusResults.idTag}">
-	<span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
-	<a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-	</iframe>
+ 
+
+
 
 </div>
 
@@ -178,7 +158,7 @@
 										<td>${faxStatusResults.subject}</td>
 										<td>${faxStatusResults.statusText}</td>
 										<td>${faxStatusResults.idTag}</td>
-										<td></td>
+										<td>${faxStatusResults.imageFileLocation}</td>
 										<td>${faxStatusResults.uniqueJobID}</td>
 									</tr>
 								</c:forEach>
@@ -199,7 +179,15 @@
 			<br/>
 		</form>
 	</div>
-	 
+	
+	<div id="viewImageDialog" title="Fax image" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+
+		<iframe id="imageDisplay" class="form_pdf_object"  > 
+			<span class="pdf_error">It appears your Web browser is not configured to display PDF files. 
+			<a class="link" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
+		</iframe>
+	</div>
+	
 </form>
 </body>
 

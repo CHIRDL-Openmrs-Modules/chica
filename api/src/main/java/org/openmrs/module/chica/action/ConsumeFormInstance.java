@@ -78,7 +78,6 @@ public class ConsumeFormInstance implements ProcessStateAction
 	
 	public static void consume(Integer sessionId, FormInstance formInstance, Patient patient,
 	                           HashMap<String, Object> parameters, List<FormField> fieldsToConsume, Integer locationTagId) {
-		long startTime = System.currentTimeMillis();
 		AdministrationService adminService = Context.getAdministrationService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		ChicaService chicaService = Context.getService(ChicaService.class);
@@ -90,10 +89,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 		}
 		try {
 			InputStream input = new FileInputStream(exportFilename);
-			
-			startTime = System.currentTimeMillis();
 			chicaService.consume(input, patient, encounterId, formInstance, sessionId, fieldsToConsume, locationTagId);
-			startTime = System.currentTimeMillis();
 			input.close();
 		}
 		catch (Exception e) {
@@ -102,10 +98,6 @@ public class ConsumeFormInstance implements ProcessStateAction
 			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		
-		// save specific observations
-		Util.calculatePercentiles(encounterId, patient, locationTagId);
-		System.out.println("ConsumeFormInstance.consume: time of saveObs: " + (System.currentTimeMillis() - startTime));
-		startTime = System.currentTimeMillis();
 		// remove the parsed xml from the xml datasource
 		try {
 			Integer purgeXMLDatasourceProperty = null;

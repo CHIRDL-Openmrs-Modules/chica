@@ -1,5 +1,7 @@
 package org.openmrs.module.chica.web.controller;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,16 +10,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Location;
+import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.FaxStatus;
+import org.openmrs.module.chica.web.ChicaServlet;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,7 +56,7 @@ public class FaxStatusController {
 	@RequestMapping(method = RequestMethod.GET)
 	protected String initForm(HttpServletRequest request,ModelMap map) throws Exception {
 	
-	List<FaxStatus> faxStatuses = getFaxStatusList( map);
+		List<FaxStatus> faxStatuses = getFaxStatusList( map);
 		map.put("faxStatusRows",faxStatuses);
 		
 		return FORM_VIEW;
@@ -77,7 +79,7 @@ public class FaxStatusController {
 		String username = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_USERNAME); 
 		
 		FAXCOMX0020Service service = null;
-		FAXCOMX0020ServiceSoap port = null;
+			FAXCOMX0020ServiceSoap port = null;
 		
 		try {
 			service = new FAXCOMX0020Service();
@@ -119,10 +121,7 @@ public class FaxStatusController {
 		if (faxComStatuses != null){
 			for (MessageStatus faxComStatus : faxComStatuses){
 				
-				FaxStatus status = new FaxStatus();
-				status.setFormInstance(faxComStatus.getIDTag());
-				status.setPatient(faxComStatus.getIDTag());
-				status.setLocation(faxComStatus.getIDTag());
+				FaxStatus status = new FaxStatus(faxComStatus.getIDTag());
 				status.setFaxNumber(faxComStatus.getFaxNumber());
 				status.setTransmitTime(faxComStatus.getTransmitTime());
 				status.setTransmitTimeAsString(faxComStatus.getTransmitTime(), "MM/dd/yyyy HH:MM:ss");
@@ -138,6 +137,7 @@ public class FaxStatusController {
 				status.setId(faxComStatus.getID());
 				status.setTransmissionStatus(faxComStatus.getTransmissionStatus());
 				status.setConnectTime(faxComStatus.getConnectTime());
+				setImageLocation(status);
 				statuses.add(status);	
 			}
 		}
@@ -145,47 +145,40 @@ public class FaxStatusController {
 		return statuses;
 	}
 	
-	private void setImageLocation(FaxStatus faxStatus, String defaultImageDirectory, Integer locationTagId, Map<String,Object> map,
-            String filenameParameterName,Integer encounterId, String stylesheet, 
-            String htmlOutputParameterName){
-		
-		/*if (faxStatus == null || StringUtils.isBlank(faxStatus.getIdTag()){
+	public void setImageLocation(FaxStatus status){
+		FormInstance formInstance = status.getFormInstance();
+
+		Integer locationTagId = status.getLocationTagId();
+		if (formInstance == null || locationTagId == null){
 			return;
 		}
-	
-		
-		String imageDir = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(faxStatus.getFormId(),
-			    "imageDirectory", locationTagId, faxStatus.getLocationId()));
-		}
-	
-		String imagefile = IOUtil.searchForImageFile(faxStatus.get,imageDir);
-		
-		LocationService locationService = Context.getLocationService();
-		Location location = locationService.getLocation(imageLocationId);
-		String locationName = location.getName();
-		
-		//check for formInstance.tif format if from Pecar
-		if (!imagefile.exists()) {
-			
-			if (locationName.equals("PEPS")) {
-				imageFilename = imageFormInstanceId.toString();
-				
-				imagefile = IOUtil.searchForImageFile(imageFilename, imageDir);
-				
-				if (!imagefile.exists()) {
-					imagefile = null;
-				} 
-			}else{
-				imagefile = null;
+
+		String imageDir = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formInstance.getFormId(),
+				ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY, locationTagId, formInstance.getLocationId()));	
+
+		if (imageDir != null && !imageDir.equals("") ) {
+
+			File imagefile = IOUtil.searchForImageFile(status.getIdTag(),imageDir);
+
+			try {
+				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
+				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
+				uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
+
+				String imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
+				status.setImageFileLocation(imageFilename);
+			}
+			catch (URISyntaxException e) {
+				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF + 
+						" tiff file location: " + imagefile.getPath(), e);
 			}
 		}
-	}
-}*/
+
 
 	}
-	
-	
-	
+
 	
 
 }
+
+

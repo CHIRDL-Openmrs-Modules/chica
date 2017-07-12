@@ -11,10 +11,10 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 
 /**
- * Temporary placeholder for QueryCDA action
+ * Temporary placeholder for GenericAction action
  *
  */
-public class QueryCDA implements ProcessStateAction
+public class GenericAction implements ProcessStateAction
 {
 
 	/**

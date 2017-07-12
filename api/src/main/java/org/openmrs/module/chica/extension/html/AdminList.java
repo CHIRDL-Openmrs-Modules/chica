@@ -27,15 +27,11 @@ public class AdminList extends AdministrationSectionExt {
 		
 		Map<String, String> map = new HashMap<String, String>();
 				
-		map.put("module/chica/parseDictionary.form", "Parse dictionary file");
 		map.put("module/chica/greaseBoard.form", "Grease Board");
 		map.put("module/chica/viewPatient.form", "View Encounters");
 		map.put("module/chica/chicaRuleTester.form", "Rule Tester");
 		map.put("module/chica/chicaNoteTester.form", "Note Tester");
 		map.put("module/chica/cacheConfiguration.form", "Cache Configuration");
-		map.put("module/chica/faxStatus.form", "Fax Status");
-		// Removed weekly reports on 1/14/2013.  This process is no longer used.
-		//map.put("module/chica/weeklyReports.form", "Weekly Reports");
 		return map;
 	}
 	
