@@ -1,5 +1,6 @@
 $(function() {
-
+	$j("#exitButton").button();
+	
 	$j("#viewImageDialog").dialog({
 	    resizable: true,
 	    autoOpen:false,
@@ -15,6 +16,21 @@ $(function() {
 	    }//end buttons
 	    
     });
+	
+	$j("#datepickerStart").datepicker({
+    	changeMonth:true,
+    	changeYear:true,
+    	appendText: "(mm/dd/yyyy)",
+    	yearRange: "-3:+0"
+    });
+	$j("#datepickerStop").datepicker({
+    	changeMonth:true,
+    	changeYear:true,
+    	appendText: "(mm/dd/yyyy)",
+    	yearRange: "-3:+0"
+    });
 
 });
+
+
     

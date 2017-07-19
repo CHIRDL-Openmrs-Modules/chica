@@ -22,8 +22,10 @@ import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -51,35 +53,50 @@ public class FaxStatusController {
 	private static final int DEFAULT_START_COUNT = 0;
 	private static final int SORT_COLUMN = 2;
 	private static final int USER_TYPE = 2;
+	
 
-
+	@ModelAttribute("faxStatusRows")
+	public List<FaxStatus> getFaxStatuses(){
+		return new ArrayList<FaxStatus>();
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	protected String initForm(HttpServletRequest request,ModelMap map) throws Exception {
 	
-		List<FaxStatus> faxStatuses = getFaxStatusList( map);
-		map.put("faxStatusRows",faxStatuses);
+		return FORM_VIEW;
+	}
+	
+	@RequestMapping(value = "/submit" , method = RequestMethod.POST)
+	public String processSubmit(@RequestParam String count,HttpServletRequest request, ModelMap model) throws Exception{
+	
+		model.addAttribute("rowcount", count);
+		model.addAttribute("faxStatusRows", queryFaxStatus( model));
+		
 		
 		return FORM_VIEW;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception{
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<FaxStatus> faxStatuses = getFaxStatusList( map);
-		map.put("faxStatusRows",faxStatuses);
-		map.put("application", "Get Fax Status");
-		return new ModelAndView(new RedirectView(SUCCESS_FORM_VIEW));
-	}
 	
 	
-	private List<FaxStatus> getFaxStatusList ( Map<String, Object> map) {
+	
+	private List<FaxStatus> queryFaxStatus ( ModelMap model ) {
 		
 		AdministrationService administrationService = Context.getAdministrationService();
 		String password = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_PASSWORD);
 		String username = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_USERNAME); 
-		
+		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
+		Integer rowcount = DEFAULT_COUNT;
+	    String countEntry =  (String) model.get("rowcount");
 		FAXCOMX0020Service service = null;
 			FAXCOMX0020ServiceSoap port = null;
+			
+		try {
+			if (countEntry != null ){
+				rowcount = Integer.valueOf(countEntry);
+			}
+		} catch (NumberFormatException e1) {
+			model.addAttribute("numberNotInteger", true);
+		}
 		
 		try {
 			service = new FAXCOMX0020Service();
@@ -87,20 +104,21 @@ public class FaxStatusController {
 			port = service.getFAXCOMX0020ServiceSoap();
 			List<MessageStatus> statusList = new ArrayList<MessageStatus>();
 			ArrayOfMessageStatus faxCOMStatusList = port.loginAndGetMessageStatuses("", username, password, USER_TYPE, 
-					SORT_COLUMN, ASCENDING, DEFAULT_START_COUNT, DEFAULT_COUNT);
-			
-			if (faxCOMStatusList ==null || (statusList = faxCOMStatusList.getMessageStatus()) == null ){
-				map.put("faxComStatusList", new ArrayList<MessageStatus>());
-			} else{
-				map.put("faxComStatusList", statusList);
+					SORT_COLUMN, ASCENDING, DEFAULT_START_COUNT, rowcount);
+			statusList = faxCOMStatusList.getMessageStatus();
+			if (faxCOMStatusList != null ){
+				statusList = faxCOMStatusList.getMessageStatus();
 			}
-			return createFaxStatusList( map);
+			if (statusList != null){
+				statuses = createFaxStatusList( statusList);
+			}
+			return statuses;
 				
 		} catch (Exception e) {
 			
 			log.error("Error connecting to web service. Check network connections. ", e);
-			map.put("noAccessToHost", true);
-			return new ArrayList<FaxStatus>();
+			model.addAttribute("noAccessToHost", true);
+			return statuses;
 			
 		} finally{
 			if (port != null){
@@ -109,15 +127,15 @@ public class FaxStatusController {
 			
 		}
 		
+		
 	
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<FaxStatus>  createFaxStatusList( Map<String, Object> map){
+	private List<FaxStatus> createFaxStatusList( List<MessageStatus> faxComStatuses){
 		
 		
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
-		List<MessageStatus> faxComStatuses = (List<MessageStatus>) map.get("faxComStatusList");
 		if (faxComStatuses != null){
 			for (MessageStatus faxComStatus : faxComStatuses){
 				
@@ -141,6 +159,7 @@ public class FaxStatusController {
 				statuses.add(status);	
 			}
 		}
+		
 		
 		return statuses;
 	}
