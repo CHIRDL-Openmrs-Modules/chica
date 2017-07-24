@@ -2,22 +2,30 @@ package org.openmrs.module.chica.web.controller;
 
 import java.io.File;
 import java.net.URISyntaxException;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.FaxStatus;
 import org.openmrs.module.chica.web.ChicaServlet;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.springframework.stereotype.Controller;
@@ -67,10 +75,27 @@ public class FaxStatusController {
 	}
 	
 	@RequestMapping(value = "/submit" , method = RequestMethod.POST)
-	public String processSubmit(@RequestParam String count,HttpServletRequest request, ModelMap model) throws Exception{
+	public String processSubmit(@RequestParam("count") String count,   @RequestParam(value ="datepickerStart", required = false) String datepickerStart,
+			@RequestParam(value = "datepickerStop", required = false) String datepickerStop,
+			HttpServletRequest request, ModelMap model) throws Exception{
 	
-		model.addAttribute("rowcount", count);
-		model.addAttribute("faxStatusRows", queryFaxStatus( model));
+			int rowcount = DEFAULT_COUNT;
+			
+			try {
+				
+				if (count != null && ! count.trim().equals("") ){
+					rowcount = Integer.parseInt(count);
+					model.addAttribute("rowcount",rowcount);
+				}
+				model.addAttribute("startDate", datepickerStart);
+				model.addAttribute("stopDate", datepickerStop);
+				model.addAttribute("faxStatusRows", queryFaxStatus( rowcount, model));
+				model.addAttribute("validInteger", true);
+				
+				
+			} catch (NumberFormatException e) {
+				model.addAttribute("validInteger", false);
+			}
 		
 		
 		return FORM_VIEW;
@@ -79,24 +104,16 @@ public class FaxStatusController {
 	
 	
 	
-	private List<FaxStatus> queryFaxStatus ( ModelMap model ) {
+	private List<FaxStatus> queryFaxStatus ( int rowcount, ModelMap model ) {
 		
 		AdministrationService administrationService = Context.getAdministrationService();
 		String password = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_PASSWORD);
 		String username = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_USERNAME); 
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
-		Integer rowcount = DEFAULT_COUNT;
-	    String countEntry =  (String) model.get("rowcount");
+		
 		FAXCOMX0020Service service = null;
 			FAXCOMX0020ServiceSoap port = null;
 			
-		try {
-			if (countEntry != null ){
-				rowcount = Integer.valueOf(countEntry);
-			}
-		} catch (NumberFormatException e1) {
-			model.addAttribute("numberNotInteger", true);
-		}
 		
 		try {
 			service = new FAXCOMX0020Service();
@@ -110,7 +127,7 @@ public class FaxStatusController {
 				statusList = faxCOMStatusList.getMessageStatus();
 			}
 			if (statusList != null){
-				statuses = createFaxStatusList( statusList);
+				statuses = createFaxStatusList(model, statusList);
 			}
 			return statuses;
 				
@@ -132,13 +149,16 @@ public class FaxStatusController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<FaxStatus> createFaxStatusList( List<MessageStatus> faxComStatuses){
+	private List<FaxStatus> createFaxStatusList( ModelMap model, List<MessageStatus> faxComStatuses){
 		
-		
+		String startDate = (String) model.get("startDate");
+		String stopDate = (String) model.get("stopDate");
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
 		if (faxComStatuses != null){
 			for (MessageStatus faxComStatus : faxComStatuses){
-				
+				if (!validDate(faxComStatus.getTransmitTime(), startDate, stopDate)){
+					continue;
+				}
 				FaxStatus status = new FaxStatus(faxComStatus.getIDTag());
 				status.setFaxNumber(faxComStatus.getFaxNumber());
 				status.setTransmitTime(faxComStatus.getTransmitTime());
@@ -195,7 +215,33 @@ public class FaxStatusController {
 
 
 	}
-
+	
+	private boolean validDate(XMLGregorianCalendar transmitTime, String start, String stop){
+	
+		try {
+			Date transmitDate = transmitTime.toGregorianCalendar().getTime();
+			if (start != null && !start.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)){
+				Date startDate = DateUtil.parseDate(start, "MM/dd/yyyy");
+				if ( startDate != null && transmitDate.before(startDate)){
+					return false;
+				}
+			}
+			
+			if (stop != null && !stop.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)){
+				Date stopDate = DateUtil.parseDate(stop, "MM/dd/yyyy");
+				// With no time specified, the date assumes 00:00. We want to include the entire day for stop date.
+				stopDate = DateUtils.addDays(stopDate, 1); 
+				if ( stopDate != null && transmitDate.after(stopDate)){
+					return false;
+				}
+			}
+			
+		} catch (Exception e) {
+			log.error("Invalid date format for date fields to filter fax status query",e);
+		}
+		return true;
+	}
+	
 	
 
 }

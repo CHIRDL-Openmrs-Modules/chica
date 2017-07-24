@@ -5,7 +5,6 @@
 <html>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables_themeroller-1.10.6.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery-ui-1.11.4.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />  
@@ -19,7 +18,6 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.js"></script>
  
-
 
 <script LANGUAGE="JavaScript">
 
@@ -100,12 +98,10 @@
 			return '<p> ' + idTag + ' </p>';
 		}
 		image = ctx + image;
-	    //filelocation = "${pageContext.request.contextPath}/moduleServlet/chica/chica?action=convertTiffToPDF&tiffFileLocation=%5C%5Clocalhost%5Cimages%5CFax%5CADHD+P%5C" + idTag + ".tif#view=fit&navpanes=0";
-	 	return '<input id="' +image+ '" type = "button" name="' + image + '" value="' + idTag + '"</input>';
+	    return '<input id="' +image+ '" type = "button" name="' + image + '" value="' + idTag + '"</input>';
 
 	};
 	
-
 	
 </script>
 
@@ -117,6 +113,7 @@
 </head>
 
 <h3>Fax Service Status</h3>
+<h4>Status of fax server requests sent from CHICA to clinic fax numbers.</h4>
 
 
 <body>
@@ -135,17 +132,21 @@
 			     <span class="alert" style="font-size: 16px" >Error connecting to the network fax web service. Please check network connections to host!</span>
 	        </c:if>
 	        
-	        	<table  id = "searchCriteria">
+	        	<table  id = "searchCriteria" style="padding-left: 10px; padding-top: 10px;" >
 		        	<tbody>
 			        	<tr>
 		                    <td>Number of fax records ( Default = 100) </td>
-		                    <td><input type="text" name="count" class="ui-field-contain" </td>
+		                    <td><input type="text" name="count" class="ui-field-contain" value="${rowcount}" />
+		                    <c:if test="${validInteger == 'false'}">
+			     				<span class="alert" style="font-size: 16px" >Value entered is not numeric.</span>
+	        				</c:if>
+	        				</td>
 		                </tr>
 		          
 			        	
-	    				<tr> <p>Start Date: <input type="text" id="datepickerStart"></p>
+	    				<tr> <td>Start Date: </td><td><input type="text" name="datepickerStart" id="datepickerStart" value = "${startDate}"></td>
 	    				</tr>
-	    				<tr> <p>Stop Date: <input type="text" id="datepickerStop"></p>
+	    				<tr> <td>Stop Date: </td><td><input type="text" name="datepickerStop" id="datepickerStop" value = "${stopDate}"></td>
 	    				</tr>
 	    				
 					</tbody>

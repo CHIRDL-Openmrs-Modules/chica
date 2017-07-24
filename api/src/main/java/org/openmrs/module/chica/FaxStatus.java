@@ -112,7 +112,7 @@ public class FaxStatus {
 
 			Location location = locationService.getLocation(formInstance.getLocationId());
 			if (location != null){
-				locationName = location.getName();
+				setLocationName(location.getName());
 			}
 			//Get the image location
 
@@ -495,7 +495,7 @@ public class FaxStatus {
 			if ((locationId =formInstance.getLocationId())!= null){
 				Location location = locationService.getLocation(locationId);
 				if (location != null){
-					this.locationName = location.getName();
+					this.setLocationName(location.getName());
 				}
 			}
 
@@ -695,6 +695,14 @@ public class FaxStatus {
 				patientMRN = patientIdentifier.getIdentifier();
 			}
 		}
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
 	}
 
 
