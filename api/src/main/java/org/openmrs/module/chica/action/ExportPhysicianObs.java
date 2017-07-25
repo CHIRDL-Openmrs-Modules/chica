@@ -64,7 +64,7 @@ public class ExportPhysicianObs implements ProcessStateAction
 			}
 			catch(NumberFormatException e)
 			{
-				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + ").");
+				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + "). Port will be set to default value " + ChirdlUtilConstants.DEFAULT_PORT + ".");
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
