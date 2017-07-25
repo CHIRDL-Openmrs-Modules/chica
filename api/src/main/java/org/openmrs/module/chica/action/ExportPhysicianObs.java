@@ -24,10 +24,10 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 /**
  * CHICA-1070 Used to create HL7 ORU message and store in the sockethl7listener_hl7_out_queue table to be picked up by the HL7OutboundHandler task
  */
-public class ExportObs implements ProcessStateAction
+public class ExportPhysicianObs implements ProcessStateAction
 {
 	private Log log = LogFactory.getLog(this.getClass());
-	private static final String CONCEPT_SOURCE_OUTBOUND_OBS = "Outbound Obs";
+	private static final String CONCEPT_SOURCE_OUTBOUND_PHYSICIAN_OBS = "Outbound Physician Obs";
 	
 	@Override
 	public void processAction(StateAction stateAction, Patient patient, PatientState patientState, HashMap<String, Object> parameters) {
@@ -41,8 +41,8 @@ public class ExportObs implements ProcessStateAction
 		try
 		{
 			AdministrationService adminService = Context.getAdministrationService();
-			String host = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_HOST);
-			String portString = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_PORT);
+			String host = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_PHYSICIAN_OBS_HOST);
+			String portString = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_PHYSICIAN_OBS_PORT);
 			Integer port;
 			
 			// If host and port are not set, allow the record to be created with localhost and port 0
@@ -72,7 +72,7 @@ public class ExportObs implements ProcessStateAction
 			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 			
 			ThreadManager threadManager = ThreadManager.getInstance();
-			threadManager.execute(new HL7ExportObsRunnable(patient.getPatientId(), encounterId, CONCEPT_SOURCE_OUTBOUND_OBS, host, port), encounter.getLocation().getLocationId());
+			threadManager.execute(new HL7ExportObsRunnable(patient.getPatientId(), encounterId, CONCEPT_SOURCE_OUTBOUND_PHYSICIAN_OBS, host, port), encounter.getLocation().getLocationId());
 		}
 		catch(Exception e)
 		{
