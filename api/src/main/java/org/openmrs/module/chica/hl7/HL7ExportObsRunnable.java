@@ -136,7 +136,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		
 		if(hl7ORU.getORU().getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATIONReps() == 0)
 		{
-			log.error("Error creating ORU message. No OBX segments were created for encounterId: " + encounterId);
+			log.info("Error creating ORU message. No OBX segments were created for encounterId: " + encounterId + " conceptSource: " + conceptSourceString);
 			return null; // We don't want to send a message that doesn't have at least 1 OBX
 		}
 
