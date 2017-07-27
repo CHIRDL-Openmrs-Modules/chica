@@ -160,9 +160,10 @@ public class FaxStatusController {
 					continue;
 				}
 				FaxStatus status = new FaxStatus(faxComStatus.getIDTag());
+				status.setRecipientName(faxComStatus.getRecipientName());
 				status.setFaxNumber(faxComStatus.getFaxNumber());
 				status.setTransmitTime(faxComStatus.getTransmitTime());
-				status.setTransmitTimeAsString(faxComStatus.getTransmitTime(), "MM/dd/yyyy HH:MM:ss");
+				status.setTransmitTimeAsString(faxComStatus.getTransmitTime(), ChirdlUtilConstants.DATE_FORMAT_MM_dd_yyyy_hh_mm_ss);
 				status.setSubject(faxComStatus.getSubject());
 				status.setStatusText(faxComStatus.getStatusText());
 				status.setAttachmentCount(faxComStatus.getAttachmentCount());
@@ -184,20 +185,21 @@ public class FaxStatusController {
 		return statuses;
 	}
 	
-	public void setImageLocation(FaxStatus status){
+	public void setImageLocation(FaxStatus status) {
 		FormInstance formInstance = status.getFormInstance();
 
 		Integer locationTagId = status.getLocationTagId();
-		if (formInstance == null || locationTagId == null){
+		if (formInstance == null || locationTagId == null) {
 			return;
 		}
 
-		String imageDir = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formInstance.getFormId(),
-				ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY, locationTagId, formInstance.getLocationId()));	
+		String imageDir = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util
+				.getFormAttributeValue(formInstance.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY,
+						locationTagId, formInstance.getLocationId()));
 
-		if (imageDir != null && !imageDir.equals("") ) {
+		if (imageDir != null && !imageDir.equals("")) {
 
-			File imagefile = IOUtil.searchForImageFile(status.getIdTag(),imageDir);
+			File imagefile = IOUtil.searchForImageFile(status.getIdTag(), imageDir);
 
 			try {
 				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
@@ -206,42 +208,40 @@ public class FaxStatusController {
 
 				String imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 				status.setImageFileLocation(imageFilename);
-			}
-			catch (URISyntaxException e) {
-				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF + 
-						" tiff file location: " + imagefile.getPath(), e);
+			} catch (Exception e) {
+				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF
+						+ " tiff file location: " + imagefile.getPath(), e);
 			}
 		}
 
-
 	}
-	
-	private boolean validDate(XMLGregorianCalendar transmitTime, String start, String stop){
-	
+
+	private boolean validDate(XMLGregorianCalendar transmitTime, String start, String stop) {
+
 		try {
 			Date transmitDate = transmitTime.toGregorianCalendar().getTime();
-			if (start != null && !start.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)){
+			if (start != null && !start.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)) {
 				Date startDate = DateUtil.parseDate(start, "MM/dd/yyyy");
-				if ( startDate != null && transmitDate.before(startDate)){
+				if (startDate != null && transmitDate.before(startDate)) {
 					return false;
 				}
 			}
-			
-			if (stop != null && !stop.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)){
+
+			if (stop != null && !stop.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)) {
 				Date stopDate = DateUtil.parseDate(stop, "MM/dd/yyyy");
-				// With no time specified, the date assumes 00:00. We want to include the entire day for stop date.
-				stopDate = DateUtils.addDays(stopDate, 1); 
-				if ( stopDate != null && transmitDate.after(stopDate)){
+				// The date assumes a time of 00:00. We want to
+				// include all records until midnight of stopDate, so we will add one day.
+				stopDate = DateUtils.addDays(stopDate, 1);
+				if (stopDate != null && transmitDate.after(stopDate)) {
 					return false;
 				}
 			}
-			
+
 		} catch (Exception e) {
-			log.error("Invalid date format for date fields to filter fax status query",e);
+			log.error("Invalid date format for date fields to filter fax status query", e);
 		}
 		return true;
 	}
-	
 	
 
 }

@@ -5,16 +5,14 @@
 <html>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables_themeroller-1.10.6.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery-ui-1.11.4.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />  
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" /> 
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.css" type="text/css" rel="stylesheet" />
 
 <script>var ctx = "${pageContext.request.contextPath}";</script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.js"></script>
-<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.js"></script>
  
@@ -36,7 +34,8 @@
 		            {"mData": "patientMRN"},
 		            {"mData": "patientLastName"},
 		            {"mData": "patientFirstName"},
-		            {"mData": "location"},
+		            {"mData": "recipientName"},
+		            {"mData": "locationName"},
 		            {"mData": "faxNumber"},
 		            {"mData": "subject"},
 		            {"mData": "statusText"},
@@ -51,7 +50,7 @@
        				 	   	"render": renderImageLocation,
        				 	},
        				 	{
-       		                "targets": [8],
+       		                "targets": [9],
        		                "visible": false,
        		                "searchable": false
        		            },
@@ -75,7 +74,6 @@
 		
 		$('#faxStatusTable tbody tr').on( 'click', 'input',  function () {
 			
-          // source = getFaxImageLocation(this.id);
 			$j('#imageDisplay').attr('src', this.id);
 	    	$j('#viewImageDialog').dialog('open');
 
@@ -89,7 +87,7 @@
 		window.location = '${pageContext.request.contextPath}/admin/index.htm';
 	};
 	
-	//Create the checkbox column
+	//Create the image button
 	function renderImageLocation(data, type, full, meta)
 	{
 		idTag = full.idTag;
@@ -170,6 +168,7 @@
 									<th id="MRN">MRN</th>
 									<th id="lastName">Last Name</th>
 									<th id="firstName">First Name</th>
+									<th id="recipientName">Recipient Name</th>
 									<th id="location">Location</th>
 									<th id="faxNumber">Fax Number</th>
 									<th id="subject">Subject</th>
@@ -187,7 +186,8 @@
 										<td>${faxStatusResults.patientMRN }</td>
 										<td>${faxStatusResults.patientLastName}</td>
 										<td>${faxStatusResults.patientFirstName}</td>
-										<td>${faxStatusResults.location}</td>
+										<td>${faxStatusResults.recipientName}</td>
+										<td>${faxStatusResults.locationName}</td>
 										<td>${faxStatusResults.faxNumber}</td>
 										<td>${faxStatusResults.subject}</td>
 										<td>${faxStatusResults.statusText}</td>

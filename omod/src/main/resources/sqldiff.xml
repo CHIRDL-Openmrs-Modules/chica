@@ -4280,6 +4280,42 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			where action_name='QUERY KITE';
         </sql>
     </diff>
+    <diff>
+    	<version>1.9.7</version>
+        <author>David Ely</author>
+        <date>July 25th, 2017</date>
+        <description>
+            CHICA-1070 Add new state to export physician obs when the PWS is submitted
+        </description>
+        <sql>
+           	INSERT INTO chirdlutilbackports_state_action (action_name, action_description, action_class)
+			VALUES ('EXPORT PHYSICIAN OBS', 'Send obs to the EHR', 'org.openmrs.module.chica.action.ExportPhysicianObs');
+
+			INSERT INTO chirdlutilbackports_state (name, description, state_action_id)
+			VALUES ('EXPORT PHYSICIAN OBS', 'Send obs to the EHR after the PWS has been submitted', (select state_action_id from chirdlutilbackports_state_action where action_name = 'EXPORT PHYSICIAN OBS'));
+
+			UPDATE chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'EXPORT PHYSICIAN OBS')
+			WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'Export Physician Note')
+			AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_epic');
+
+			INSERT INTO chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
+			VALUES ((select state_id from chirdlutilbackports_state where name = 'EXPORT PHYSICIAN OBS')
+			,(select state_id from chirdlutilbackports_state where name = 'FINISHED')
+			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+        </sql>
+    </diff>
+    <diff>
+        <version>1.9.8</version>
+        <author>Meena Sheley</author>
+        <date>July 27, 2017</date>
+        <description>
+        	CHICA-959 Add page to query FAXCOM webservice for status of faxes to clinics.
+        </description>
+        <sql>
+        	insert into chirdlutilbackports_form_instance_attribute (name, description)
+			values('FaxId', 'Unique ID for faxes sent through Eskenazi FAXCOM webservice.');
+        </sql>
+    </diff>
 </sqldiff>
 
 
