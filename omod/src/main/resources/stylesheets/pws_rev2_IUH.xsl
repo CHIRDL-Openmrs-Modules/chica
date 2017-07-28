@@ -158,6 +158,7 @@
 					.pws_prompts_table {
 						border-spacing: 0px;
 						border-top: 1px solid #000000;
+						padding: 0 21px 0 0;
 					}
 					.pws_prompt_text {
 						padding-left: 5px;
