@@ -92,12 +92,12 @@
 						font-weight: bold;
 						font-size: 15px;
 					}
-					.info_container {
+					.vitals_container {
 						color: black;
 						float: left;
 						margin: auto;
 						font-size: 12px;
-						width: 24%;
+						width: 33%;
 					}
 					.patient_info_container {
 						color: black;
@@ -130,6 +130,7 @@
 						width: 100%;
 						float: left;
 						text-align: center;
+						padding-top: 3px;
 					}
 					.medication_education_container {
 						margin: auto;
@@ -247,11 +248,11 @@
 								<b>Vitals</b>
 							</div>
 							<div class="psf_results" id="vitals">
-								<div class="info_container">
-									<table width="181" border="0">
+								<div class="vitals_container">
+									<table width="225" border="0">
 										<tbody>
 											<tr>
-												<td align="right" width="50">
+												<td align="right" width="75">
 													<font color="red"> 
 														<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'HeightA']) != ''">
@@ -263,7 +264,7 @@
 														</xsl:choose>
 													</font>Height:
 												</td>
-												<td align="left" width="120">
+												<td align="left" width="155">
 													<xsl:choose>
 													<xsl:when test="normalize-space(Records/Record/Field[@id = 'Height']) = ''">
 														&#160;
@@ -275,7 +276,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="50">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'WeightA']) != ''">
@@ -287,7 +288,7 @@
 														</xsl:choose>
 													</font>Weight:
 												</td>
-												<td align="left" width="120">
+												<td align="left" width="155">
 													<xsl:choose>
 														 <xsl:when test="normalize-space(Records/Record/Field[@id = 'WeightKG']) = ''">
 															&#160;
@@ -299,31 +300,33 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="50">
-													<font color="red">
-														<xsl:choose>
-															<xsl:when test="normalize-space(Records/Record/Field[@id = 'BMIA']) != ''">
-																<b><xsl:value-of select="Records/Record/Field[@id = 'BMIA']"/></b>
-															</xsl:when>
-															<xsl:otherwise>
-																&#160;
-															</xsl:otherwise>
-														</xsl:choose>
-													</font>BMI:
-												</td>
-												<td align="left" width="120">
+												<td align="right" width="75">Weight:</td>
+												<td align="left" width="155">
 													<xsl:choose>
-														<xsl:when test="normalize-space(Records/Record/Field[@id = 'BMI']) = ''">
+														<xsl:when test="normalize-space(Records/Record/Field[@id = 'Weight']) = ''">
 															&#160;
 														</xsl:when>
 														<xsl:otherwise>
-															<xsl:value-of select="Records/Record/Field[@id = 'BMI']"/>&#160;(<xsl:value-of select="Records/Record/Field[@id = 'BMIP']"/>%)
+															<xsl:value-of select="Records/Record/Field[@id = 'Weight']"/>
 														</xsl:otherwise>
 													</xsl:choose>
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="53">
+												<td align="right" width="75">Prev Weight:</td>
+												<td align="left" width="155">
+													<xsl:choose>
+														<xsl:when test="normalize-space(Records/Record/Field[@id = 'PrevWeight']) = ''">
+															&#160;
+														</xsl:when>
+														<xsl:otherwise>
+															<xsl:value-of select="Records/Record/Field[@id = 'PrevWeight']"/>&#160;(<xsl:value-of select="Records/Record/Field[@id = 'PrevWeightDate']"/>)
+														</xsl:otherwise>
+													</xsl:choose>
+												</td>
+											</tr>
+											<tr>
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'HearA']) != ''">
@@ -335,7 +338,7 @@
 														</xsl:choose>
 													</font>Hear (L):
 												</td>
-												<td align="left" width="120">
+												<td align="left" width="155">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'HearL']) = ''">
 															&#160;
@@ -349,11 +352,35 @@
 										</tbody>
 									</table>
 								</div>
-								<div class="info_container">
-									<table width="170" border="0">
+								<div class="vitals_container">
+									<table width="225" border="0">
 										<tbody>
 											<tr>
-												<td align="right" width="74">
+												<td align="right" width="75">
+													<font color="red">
+														<xsl:choose>
+															<xsl:when test="normalize-space(Records/Record/Field[@id = 'BMIA']) != ''">
+																<b><xsl:value-of select="Records/Record/Field[@id = 'BMIA']"/></b>
+															</xsl:when>
+															<xsl:otherwise>
+																&#160;
+															</xsl:otherwise>
+														</xsl:choose>
+													</font>BMI:
+												</td>
+												<td align="left" width="150">
+													<xsl:choose>
+														<xsl:when test="normalize-space(Records/Record/Field[@id = 'BMI']) = ''">
+															&#160;
+														</xsl:when>
+														<xsl:otherwise>
+															<xsl:value-of select="Records/Record/Field[@id = 'BMI']"/>&#160;(<xsl:value-of select="Records/Record/Field[@id = 'BMIP']"/>%)
+														</xsl:otherwise>
+													</xsl:choose>
+												</td>
+											</tr>
+											<tr>
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'HCA']) != ''">
@@ -365,7 +392,7 @@
 														</xsl:choose>
 													</font>Head Circ:
 												</td>
-												<td align="left" width="96">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'HC']) = ''">
 															&#160;
@@ -377,7 +404,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="74">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'TempA']) != ''">
@@ -389,7 +416,7 @@
 														</xsl:choose>
 													</font>Temp:
 												</td>
-												<td align="left" width="96">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'Temperature']) = ''">
 															&#160;
@@ -401,7 +428,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="74">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'PulseA']) != ''">
@@ -413,7 +440,7 @@
 														</xsl:choose>
 													</font>Pulse:
 												</td>
-												<td align="left" width="96">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'Pulse']) = ''">
 															&#160;
@@ -425,7 +452,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="74">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'HearA']) != ''">
@@ -437,7 +464,7 @@
 														</xsl:choose>
 													</font>Hear (R):
 												</td>
-												<td align="left" width="96">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'HearR']) = ''">
 															&#160;
@@ -451,11 +478,11 @@
 										</tbody>
 									</table>
 								</div>
-								<div class="info_container">
-									<table width="163" border="0">
+								<div class="vitals_container">
+									<table width="225" border="0">
 										<tbody>
 											<tr>
-												<td align="right" width="35">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'RRA']) != ''">
@@ -467,7 +494,7 @@
 														</xsl:choose>
 													</font>RR:
 												</td>
-												<td align="left" width="135">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'RR']) = ''">
 															&#160;
@@ -479,7 +506,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="35">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'BPA']) != ''">
@@ -491,7 +518,7 @@
 														</xsl:choose>
 													</font>BP:
 												</td>
-												<td align="left" width="135">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'BP']) = ''">
 															&#160;
@@ -503,7 +530,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="90">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'PulseOxA']) != ''">
@@ -515,7 +542,7 @@
 														</xsl:choose>
 													</font>Pulse Ox:
 												</td>
-												<td align="left" width="110">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'PulseOx']) = ''">
 															&#160;
@@ -527,7 +554,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td align="right" width="35">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'VisionLA']) != ''">
@@ -539,7 +566,7 @@
 														</xsl:choose>
 													</font>Vision (L):
 												</td>
-												<td align="left" width="115">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'VisionL']) = ''">
 															&#160;
@@ -550,44 +577,8 @@
 													</xsl:choose>
 												</td>
 											</tr>
-										</tbody>
-									</table>
-								</div>
-								<div class="info_container">
-									<table width="195" border="0">
-										<tbody>
 											<tr>
-												<td align="right" width="25">Weight:</td>
-												<td align="left" width="146">
-													<xsl:choose>
-														<xsl:when test="normalize-space(Records/Record/Field[@id = 'Weight']) = ''">
-															&#160;
-														</xsl:when>
-														<xsl:otherwise>
-															<xsl:value-of select="Records/Record/Field[@id = 'Weight']"/>
-														</xsl:otherwise>
-													</xsl:choose>
-												</td>
-											</tr>
-											<tr>
-												<td align="right" width="132">Prev Weight:</td>
-												<td align="left" width="167">
-													<xsl:choose>
-														<xsl:when test="normalize-space(Records/Record/Field[@id = 'PrevWeight']) = ''">
-															&#160;
-														</xsl:when>
-														<xsl:otherwise>
-															<xsl:value-of select="Records/Record/Field[@id = 'PrevWeight']"/>&#160;(<xsl:value-of select="Records/Record/Field[@id = 'PrevWeightDate']"/>)
-														</xsl:otherwise>
-													</xsl:choose>
-												</td>
-											</tr>
-											<tr>
-												<td align="right" width="35">&#160;</td>
-												<td align="left" width="115">&#160;</td>
-											</tr>
-											<tr>
-												<td align="right" width="35">
+												<td align="right" width="75">
 													<font color="red">
 														<xsl:choose>
 															<xsl:when test="normalize-space(Records/Record/Field[@id = 'VisionRA']) != ''">
@@ -599,7 +590,7 @@
 														</xsl:choose>
 													</font>Vision (R):
 												</td>
-												<td align="left" width="115">
+												<td align="left" width="150">
 													<xsl:choose>
 														<xsl:when test="normalize-space(Records/Record/Field[@id = 'VisionR']) = ''">
 															&#160;
@@ -857,7 +848,7 @@
 											</xsl:choose>
 											<xsl:choose>
 												<xsl:when test="normalize-space(Records/Record/Field[@id = 'Prompt4_Text']) = ''">
-													<td width="320" valign="top" class="pws_prompt_text">&#160;</td>
+													<td width="320" valign="top" class="pws_prompt_text left_border">&#160;</td>
 												</xsl:when>
 												<xsl:otherwise>
 													<td width="320" valign="top" class="pws_prompt_text left_border">
