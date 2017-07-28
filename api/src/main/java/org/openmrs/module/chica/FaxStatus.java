@@ -106,7 +106,7 @@ public class FaxStatus {
 				if (patient != null) {
 					patientFirstName = patient.getGivenName();
 					patientLastName = patient.getFamilyName();
-					setPatientMRN(patientId);
+					setPatientMRN(patient);
 				}
 			}
 
@@ -114,12 +114,10 @@ public class FaxStatus {
 			if (location != null){
 				setLocationName(location.getName());
 			}
-			//Get the image location
 
-			//setImageLocation(locationId, locationTagId, formInstance, ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY);
 
 		} catch (Exception e) {
-			log.error("Error setting fax patient information from form instance.", e);
+			log.error("Error setting fax patient information from form instance " + formInstance.toString() + ".", e);
 		}
 	}
 
@@ -412,10 +410,16 @@ public class FaxStatus {
 	public void setFormInstance(FormInstance formInstance) {
 		this.formInstance = formInstance;
 	}
+	
+	
+	/**Create a form instance based on the fax idtag consisting of location id, form id, and form instance.
+	 * @param idTag
+	 * @return
+	 */
 	public FormInstance setFormInstance(String idTag){
 
 		try {
-			// Exist if the form instance already exists.  
+			// Exit if the form instance already exists.  
 			if (formInstance != null || StringUtils.isBlank(idTag)){
 				return null;
 			}
@@ -427,7 +431,6 @@ public class FaxStatus {
 				Integer formId = Integer.valueOf(formInstanceSubstrings[1]);
 				Integer formInstanceId = Integer.valueOf(formInstanceSubstrings[2]);
 				this.formInstance = new FormInstance(locationId, formId, formInstanceId);	
-
 			}
 
 
@@ -446,6 +449,10 @@ public class FaxStatus {
 	public void setFormName(String formName) {
 		this.formName = formName;
 	}
+	
+	/**Parse form_id from form instance and get form name
+	 * @param formInstance
+	 */
 	public void setFormNameByFormInstance(FormInstance formInstance){
 		FormService formService = Context.getFormService();
 		if (formInstance != null ){
@@ -500,7 +507,7 @@ public class FaxStatus {
 			}
 
 		} catch (Exception e) {
-			log.error("Unable to extract fax location (clinic) from fax id tag", e);
+			log.error("Unable to extract fax location (clinic) from form instance  " + formInstance.toString() + ".", e);
 		}
 
 
@@ -529,8 +536,11 @@ public class FaxStatus {
 	public void setPagesTransmitted(int pagesTransmitted) {
 		this.pagesTransmitted = pagesTransmitted;
 	}
+	/**Get the patient from the patient state table using location, form, and form instance
+	 * @param idTag
+	 */
 	public void setPatient(String idTag) {
-		if ("".equalsIgnoreCase(idTag)){
+		if (StringUtils.isBlank(idTag)){
 			return;
 		}
 		setFormInstance(idTag);
@@ -553,12 +563,12 @@ public class FaxStatus {
 				if (patient != null) {
 					patientFirstName = patient.getGivenName();
 					patientLastName = patient.getFamilyName();
-					setPatientMRN(patientId);
+					setPatientMRN(patient);
 				}
 			}
 
 		} catch (Exception e) {
-			log.error("Error setting fax patient information from form instance.", e);
+			log.error("Error setting fax patient information from form instance " + formInstance.toString() + "." , e);
 		}
 
 	}
@@ -680,15 +690,14 @@ public class FaxStatus {
 	public void setUniqueJobID(String uniqueJobID) {
 		this.uniqueJobID = uniqueJobID;
 	}
+	
 	/**
 	 * @param patientMRN the patientMRN to set
 	 */
-	private void setPatientMRN(Integer patientId) {
+	private void setPatientMRN(Patient patient) {
 
 		patientMRN = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 
-		PatientService patientService = Context.getPatientService();
-		Patient patient = patientService.getPatient(patientId);
 		if (patient != null) {
 			PatientIdentifier patientIdentifier = patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 			if (patientIdentifier != null) {
@@ -697,10 +706,16 @@ public class FaxStatus {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public String getLocationName() {
 		return locationName;
 	}
 
+	/**
+	 * @param locationName
+	 */
 	public void setLocationName(String locationName) {
 		this.locationName = locationName;
 	}

@@ -1,24 +1,17 @@
 package org.openmrs.module.chica.web.controller;
 
 import java.io.File;
-import java.net.URISyntaxException;
-
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -34,8 +27,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.biscom.ArrayOfMessageStatus;
 import com.biscom.FAXCOMX0020Service;
@@ -55,7 +46,6 @@ public class FaxStatusController {
 	private final Log log = LogFactory.getLog(getClass());
 	
 	private static final String FORM_VIEW = "/module/chica/faxStatus";
-	private static final String SUCCESS_FORM_VIEW = "faxStatus.form"; 
 	private static final boolean ASCENDING = false;
 	private static final int DEFAULT_COUNT = 100;
 	private static final int DEFAULT_START_COUNT = 0;
@@ -74,7 +64,16 @@ public class FaxStatusController {
 		return FORM_VIEW;
 	}
 	
-	@RequestMapping(value = "/submit" , method = RequestMethod.POST)
+	/** Query webservice for fax status
+	 * @param count 
+	 * @param datepickerStart
+	 * @param datepickerStop
+	 * @param request
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(method = RequestMethod.POST)
 	public String processSubmit(@RequestParam("count") String count,   @RequestParam(value ="datepickerStart", required = false) String datepickerStart,
 			@RequestParam(value = "datepickerStop", required = false) String datepickerStop,
 			HttpServletRequest request, ModelMap model) throws Exception{
@@ -83,15 +82,15 @@ public class FaxStatusController {
 			
 			try {
 				
-				if (count != null && ! count.trim().equals("") ){
+				if (StringUtils.isNotBlank(count) ){
 					rowcount = Integer.parseInt(count);
 					model.addAttribute("rowcount",rowcount);
 				}
+				
 				model.addAttribute("startDate", datepickerStart);
 				model.addAttribute("stopDate", datepickerStop);
 				model.addAttribute("faxStatusRows", queryFaxStatus( rowcount, model));
 				model.addAttribute("validInteger", true);
-				
 				
 			} catch (NumberFormatException e) {
 				model.addAttribute("validInteger", false);
@@ -148,11 +147,24 @@ public class FaxStatusController {
 	
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	private List<FaxStatus> createFaxStatusList( ModelMap model, List<MessageStatus> faxComStatuses){
 		
-		String startDate = (String) model.get("startDate");
-		String stopDate = (String) model.get("stopDate");
+		String start = (String) model.get("startDate");
+		String stop = (String) model.get("stopDate");
+		Date startDate = null;
+		Date stopDate = null;
+		
+		if (StringUtils.isNotBlank(start)){
+			startDate = DateUtil.parseDate(start, ChirdlUtilConstants.DATE_FORMAT_MM_dd_YYYY);
+		}
+		if (StringUtils.isNotBlank(start)){
+			stopDate = DateUtil.parseDate(stop, ChirdlUtilConstants.DATE_FORMAT_MM_dd_YYYY);
+			// The date assumes a time of 00:00. We want to
+			// include all records until midnight of stopDate, so we will add one day.
+			stopDate = DateUtils.addDays(stopDate, 1);
+		}
+		
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
 		if (faxComStatuses != null){
 			for (MessageStatus faxComStatus : faxComStatuses){
@@ -197,7 +209,7 @@ public class FaxStatusController {
 				.getFormAttributeValue(formInstance.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY,
 						locationTagId, formInstance.getLocationId()));
 
-		if (imageDir != null && !imageDir.equals("")) {
+		if (StringUtils.isNotBlank(imageDir)) {
 
 			File imagefile = IOUtil.searchForImageFile(status.getIdTag(), imageDir);
 
@@ -216,25 +228,15 @@ public class FaxStatusController {
 
 	}
 
-	private boolean validDate(XMLGregorianCalendar transmitTime, String start, String stop) {
+	private boolean validDate(XMLGregorianCalendar transmitTime, Date startDate, Date stopDate) {
 
 		try {
 			Date transmitDate = transmitTime.toGregorianCalendar().getTime();
-			if (start != null && !start.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)) {
-				Date startDate = DateUtil.parseDate(start, "MM/dd/yyyy");
-				if (startDate != null && transmitDate.before(startDate)) {
-					return false;
-				}
+			if (startDate != null && transmitDate.before(startDate)) {
+				return false;
 			}
-
-			if (stop != null && !stop.trim().equals(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING)) {
-				Date stopDate = DateUtil.parseDate(stop, "MM/dd/yyyy");
-				// The date assumes a time of 00:00. We want to
-				// include all records until midnight of stopDate, so we will add one day.
-				stopDate = DateUtils.addDays(stopDate, 1);
-				if (stopDate != null && transmitDate.after(stopDate)) {
-					return false;
-				}
+			if (stopDate != null && transmitDate.after(stopDate)) {
+				return false;
 			}
 
 		} catch (Exception e) {
