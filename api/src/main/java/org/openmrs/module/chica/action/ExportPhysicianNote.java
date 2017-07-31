@@ -14,16 +14,12 @@
 package org.openmrs.module.chica.action;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -41,7 +37,6 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
-import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -53,9 +48,6 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
-import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
-import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
-
 import ca.uhn.hl7v2.model.v25.datatype.TX;
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
@@ -87,8 +79,6 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	private static final String DEFAULT_HOST = "localhost";
-	private static final Integer DEFAULT_PORT = 0;
 	private static final String TXA_ID = "1";
 	private static final String PV1_PATIENT_CLASS = "Outpatient";
 	private static final String DEFAULT_TXA_19 = "AV";
@@ -140,51 +130,6 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		
 		BaseStateActionHandler
 		        .changeState(patient, sessionId, currState, stateAction, parameters, locationTagId, locationId);
-	}
-	
-	/**
-	 * 
-	 * The file will be picked up by MIRTH and sent
-	 * 
-	 * @param mrn
-	 * @param outgoingMessage
-	 */
-	private void writeHL7File(String outgoingMessage) {
-		
-		AdministrationService adminService = Context.getAdministrationService();
-		
-		// save outgoingHL7 dump to a file
-		String outgoingHL7Directory = IOUtil.formatDirectoryName(adminService.getGlobalProperty("chica.outboundHl7Directory"));
-		if (outgoingHL7Directory != null&&outgoingMessage!=null&&outgoingMessage.length()>0) {
-			String filename = "r" + org.openmrs.module.chirdlutil.util.Util.archiveStamp()+ ChirdlUtilConstants.FILE_EXTENSION_HL7;
-			
-			FileOutputStream outgoingHL7DumpFile = null;
-			try {
-				outgoingHL7DumpFile = new FileOutputStream(outgoingHL7Directory + "/" + filename);
-			}
-			catch (FileNotFoundException e1) {
-				log.error("Couldn't find file: " + outgoingHL7Directory + "/" + filename);
-			}
-			if (outgoingHL7DumpFile != null) {
-				try {
-					
-					ByteArrayInputStream outgoingHL7DumpInput = new ByteArrayInputStream(outgoingMessage.getBytes());
-					IOUtil.bufferedReadWrite(outgoingHL7DumpInput, outgoingHL7DumpFile);
-					outgoingHL7DumpFile.flush();
-					outgoingHL7DumpFile.close();
-				}
-				catch (Exception e) {
-					try {
-						outgoingHL7DumpFile.flush();
-						outgoingHL7DumpFile.close();
-					}
-					catch (Exception e1) {}
-					log.error("There was an error writing the dump file");
-					log.error(e.getMessage());
-					log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
-				}
-			}
-		}
 	}
 	
 	private String createOutgoingHL7(Integer encounterId, String note, String hl7Abbreviation, String conceptName,
@@ -510,14 +455,14 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		// If host and port are not set, allow the record to be created with localhost and port 0
 		if (host == null || host.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record. Host has not been set.");
-			host = DEFAULT_HOST;
+			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
+			host = ChirdlUtilConstants.DEFAULT_HOST;
 		}
 		
 		if(portString == null || portString.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record. Port has not been set.");
-			port = DEFAULT_PORT;
+			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+			port = ChirdlUtilConstants.DEFAULT_PORT;
 		}
 		
 		try
@@ -526,30 +471,14 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		}
 		catch(NumberFormatException e)
 		{
-			log.error("Error creating HL7Outbound record. Port is not in a valid numeric format.");
-			return;
+			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + ").");
+			port = ChirdlUtilConstants.DEFAULT_PORT;
 		}
 		
 		try
 		{
-			EncounterService encounterService = Context.getService(EncounterService.class);
-			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);
-			SocketHL7ListenerService socketHL7ListenerService = Context.getService(SocketHL7ListenerService.class);
-			
-			if(openmrsEncounter == null)
-			{
-				log.error("Error creating HL7Outbound record. Unable to locate encounterId: " + encounterId);
-				return;
-			}
-			
-			HL7Outbound hl7Outbound = new HL7Outbound();
-			hl7Outbound.setHl7Message(message);
-			hl7Outbound.setEncounter(openmrsEncounter);
-			hl7Outbound.setAckReceived(null);
-			hl7Outbound.setPort(port);
-			hl7Outbound.setHost(host); 
-			
-			socketHL7ListenerService.saveMessageToDatabase(hl7Outbound);
+			// CHICA-1070 Replaced with new util method
+			org.openmrs.module.chica.util.Util.createHL7OutboundRecord(message, encounterId, host, port);
 		}
 		catch(Exception e)
 		{

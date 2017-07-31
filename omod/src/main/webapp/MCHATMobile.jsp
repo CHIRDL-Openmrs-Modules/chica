@@ -438,7 +438,7 @@
 				
 				<div data-role="footer" style="text-align:center; padding-bottom:20px; padding-top:20px;">
 					<a href="#" onClick="changePage(4)" data-role="button" data-inline="true" data-theme="b" style="width:150px;">Previous</a>
-					<a href="#" onClick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width:150px;">Finish</a>
+					<a href="#" onClick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width:150px;">Continue</a>
 				</div>
 			</div>
 			
@@ -821,7 +821,7 @@
 				
 				<div data-role="footer" style="text-align:center; padding-bottom:20px; padding-top:20px;">
 					<a href="#" onClick="changePage(4)" data-role="button" data-inline="true" data-theme="b" style="width:150px;">Anterior</a>
-					<a href="#" onClick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width:150px;">Acabado</a>
+					<a href="#" onClick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width:150px;">Continuar</a>
 				</div>
 			</div>
 			

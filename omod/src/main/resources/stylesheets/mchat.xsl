@@ -97,7 +97,6 @@
                     .questionContainer,
                     .emptyQuestionContainer {
                         width:100%;
-                        border: 1px solid red;
                     }
                     
                     .emptyQuestionContainer {
@@ -157,6 +156,7 @@
                     </div>
                     <div class="titleContainer">
                         <div class="emptyTitle">
+							&#160;
                         </div>
                         <div class="title">
                             <h3>M-CHAT</h3>

@@ -180,4 +180,4 @@
 <input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
 <input type="hidden" name="ageInYears" id="ageInYears" value="${AgeInYears}" />
 <input type="hidden" name="displayConfidentialityNotice" id="displayConfidentialityNotice" value="${DisplayConfidentialityNotice}" />
-<input type="hidden" name="patientFirstName" id="patientFirstName" value="${newFirstName}" />
+<input type="hidden" name="patientFirstName" id="patientFirstName" value="${patient.givenName}" />

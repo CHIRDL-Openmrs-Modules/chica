@@ -53,7 +53,6 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
-import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
@@ -379,7 +378,7 @@ public class ChicaServiceImpl implements ChicaService
 
 					if (patientATD != null)
 					{
-						Rule rule = patientATD.getRule();
+						Rule rule = patientATD.getRule(); 
 
 						if (answer == null || answer.length() == 0)
 						{
@@ -621,11 +620,6 @@ public class ChicaServiceImpl implements ChicaService
 			String studyAttributeName)
 	{
 		return getChicaDAO().getStudyAttributeValue(study, studyAttributeName);
-	}
-
-	public List<OldRule> getAllOldRules()
-	{
-		return getChicaDAO().getAllOldRules();
 	}
 
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,

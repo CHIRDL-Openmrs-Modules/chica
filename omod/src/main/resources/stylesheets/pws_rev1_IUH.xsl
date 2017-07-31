@@ -36,8 +36,8 @@
 					    height: 80%;
 					    text-align:center;
 					    position: absolute;
-					    top: -15;
 					    left: 0;
+					    margin-top: -18px;
 					}
 					
 					#title {
@@ -349,7 +349,14 @@
 		                		<b>Time:</b> <xsl:value-of select="Records/Record/Field[@id = 'VisitTime']"/>
 		                	</div>
 							<div class="infoRightItem">
-								<xsl:value-of select="Records/Record/Field[@id = 'Language']"/>
+								<xsl:choose>
+									<xsl:when test="normalize-space(Records/Record/Field[@id = 'Language']) = ''">
+										&#160;
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="Records/Record/Field[@id = 'Language']"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</div>
 		                </div>
 		                <div id="vitals">
@@ -358,12 +365,14 @@
 		                    </div>
 							<div id="vitalsRowA">
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HeightA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'HeightA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HeightA']"/></b>
+									</xsl:if>
 									Height:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'Height'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'Height']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -372,12 +381,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'WeightA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'WeightA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'WeightA']"/></b>
+									</xsl:if>
 									Weight:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										 <xsl:when test="Records/Record/Field[@id = 'WeightKG'] = ''">
+										 <xsl:when test="normalize-space(Records/Record/Field[@id = 'WeightKG']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -386,12 +397,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-								<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'BMIA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'BMIA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'BMIA']"/></b>
+									</xsl:if>
 									BMI:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'BMI'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'BMI']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -400,12 +413,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HCA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'HCA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HCA']"/></b>
+									</xsl:if>
 									Head Circ:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'HC'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'HC']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -414,12 +429,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'TempA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'TempA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'TempA']"/></b>
+									</xsl:if>
 									Temp:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'Temperature'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'Temperature']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -428,12 +445,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'PulseA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'PulseA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'PulseA']"/></b>
+									</xsl:if>
 									Pulse:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'Pulse'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'Pulse']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -442,12 +461,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'RRA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'RRA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'RRA']"/></b>
+									</xsl:if>
 									RR:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'RR'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'RR']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -456,12 +477,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'BPA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'BPA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'BPA']"/></b>
+									</xsl:if>
 									BP:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'BP'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'BP']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -472,12 +495,14 @@
 							</div>
 							<div id="vitalsRowB">
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'PulseOxA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'PulseOxA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'PulseOxA']"/></b>
+									</xsl:if>
 									Pulse Ox:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'PulseOx'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'PulseOx']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -486,12 +511,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'HearA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b>
+									</xsl:if>
 									Hear (L):<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'HearL'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'HearL']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -500,12 +527,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'HearA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'HearA']"/></b>
+									</xsl:if>
 									Hear (R):<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'HearR'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'HearR']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -514,12 +543,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'VisionLA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'VisionLA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'VisionLA']"/></b>
+									</xsl:if>
 									Vision (L):<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'VisionL'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'VisionL']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -528,12 +559,14 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'VisionRA']"/></b>
+									<xsl:if test="normalize-space(Records/Record/Field[@id = 'VisionRA']) != ''">
+										<b style="color:red"><xsl:value-of select="Records/Record/Field[@id = 'VisionRA']"/></b>
+									</xsl:if>
 									Vision (R):<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'VisionR'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'VisionR']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -542,12 +575,11 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"></b>
 									Weight:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'Weight'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'Weight']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -556,12 +588,11 @@
 									</xsl:choose>
 								</div>
 								<div class="vitalsNames">
-									<b style="color:red"></b>
 									Prev WT:<br/>
 								</div>
 								<div class="vitalsValues">
 									<xsl:choose>
-										<xsl:when test="Records/Record/Field[@id = 'PrevWeight'] = ''">
+										<xsl:when test="normalize-space(Records/Record/Field[@id = 'PrevWeight']) = ''">
 											&#160;
 										</xsl:when>
 										<xsl:otherwise>
@@ -578,7 +609,7 @@
 		                </div>
 		                <div class="questionContainer">
 		                    <xsl:choose>
-		                        <xsl:when test="Records/Record/Field[@id = 'Prompt1_Text'] = ''">
+		                        <xsl:when test="normalize-space(Records/Record/Field[@id = 'Prompt1_Text']) = ''">
 		                            &#160;
 		                        </xsl:when>
 		                        <xsl:otherwise>
@@ -654,7 +685,7 @@
 		                </div>
 		                <div class="questionContainer">
 		                    <xsl:choose>
-		                        <xsl:when test="Records/Record/Field[@id = 'Prompt2_Text'] = ''">
+		                        <xsl:when test="normalize-space(Records/Record/Field[@id = 'Prompt2_Text']) = ''">
 		                            &#160;
 		                        </xsl:when>
 		                        <xsl:otherwise>
@@ -730,7 +761,7 @@
 		                </div>
 		                <div class="questionContainer">
 		                    <xsl:choose>
-		                        <xsl:when test="Records/Record/Field[@id = 'Prompt3_Text'] = ''">
+		                        <xsl:when test="normalize-space(Records/Record/Field[@id = 'Prompt3_Text']) = ''">
 		                            &#160;
 		                        </xsl:when>
 		                        <xsl:otherwise>
@@ -806,7 +837,7 @@
 		                </div>
 		                <div class="questionContainer">
 		                    <xsl:choose>
-		                        <xsl:when test="Records/Record/Field[@id = 'Prompt4_Text'] = ''">
+		                        <xsl:when test="normalize-space(Records/Record/Field[@id = 'Prompt4_Text']) = ''">
 		                            &#160;
 		                        </xsl:when>
 		                        <xsl:otherwise>
@@ -882,7 +913,7 @@
 		                </div>
 		                <div class="questionContainer">
 		                    <xsl:choose>
-		                        <xsl:when test="Records/Record/Field[@id = 'Prompt5_Text'] = ''">
+		                        <xsl:when test="normalize-space(Records/Record/Field[@id = 'Prompt5_Text']) = ''">
 		                            &#160;
 		                        </xsl:when>
 		                        <xsl:otherwise>
@@ -958,7 +989,7 @@
 		                </div>
 		                <div class="questionContainer">
 		                    <xsl:choose>
-		                        <xsl:when test="Records/Record/Field[@id = 'Prompt6_Text'] = ''">
+		                        <xsl:when test="normalize-space(Records/Record/Field[@id = 'Prompt6_Text']) = ''">
 		                            &#160;
 		                        </xsl:when>
 		                        <xsl:otherwise>
@@ -1032,19 +1063,6 @@
 		                        </xsl:otherwise>
 		                    </xsl:choose>		                    
 		                </div>
-		              		             	               	               	 
-		               <table class="textNotesTable" border="0" cellpadding="0" cellspacing="0">
-		               	<tr><td><div id="textNotesContainer">
-		                	<div id="historyAndPhysicalDiv">
-		                    	<b>History and Physical Note:</b><br />
-		                    	<textarea class="notesTextArea" id="historyAndPhysicalText" name="historyAndPhysicalText" readonly="readonly" ><xsl:value-of select="Records/Record/Field[@id = 'historyAndPhysicalText']"/></textarea>		                   	
-		                    </div>
-		                    <div id="assessmentAndPlanDiv">
-		                    	<b>Assessment and Plan Note:</b><br />
-		                    	<textarea class="notesTextArea" id="assessmentAndPlanText" name="assessmentAndPlanText" readonly="readonly" ><xsl:value-of select="Records/Record/Field[@id = 'assessmentAndPlanText']"/></textarea>
-		                    </div>	                	
-		                </div></td></tr>
-		               </table>
 		              		                
 		            </form>
 		        </div>

@@ -44,7 +44,6 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
-import org.openmrs.module.chica.hibernateBeans.OldRule;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
@@ -85,24 +84,6 @@ public class HibernateChicaDAO implements ChicaDAO
 	public void setSessionFactory(SessionFactory sessionFactory)
 	{
 		this.sessionFactory = sessionFactory;
-	}
-
-	
-
-	public List<OldRule> getAllOldRules()
-	{
-		try
-		{
-			String sql = "select * from chica_old_rule";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.addEntity(OldRule.class);
-			return qry.list();
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
 	}
 
 	public Percentile getWtageinf(double ageMos, int sex)
