@@ -1,6 +1,7 @@
 package org.openmrs.module.chica.web.controller;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -103,20 +104,31 @@ public class FaxStatusController {
 	
 	
 	
+	/**Query fax webservice for fax request history
+	 * @param rowcount
+	 * @param model
+	 * @return
+	 */
 	private List<FaxStatus> queryFaxStatus ( int rowcount, ModelMap model ) {
 		
 		AdministrationService administrationService = Context.getAdministrationService();
 		String password = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_PASSWORD);
 		String username = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_USERNAME); 
+		String wsdlURLString = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_WSDL_LOCATION);
+		
 		List<FaxStatus> statuses = new ArrayList<FaxStatus>();
-		
+		URL wsdlURL = null;
 		FAXCOMX0020Service service = null;
-			FAXCOMX0020ServiceSoap port = null;
-			
-		
+		FAXCOMX0020ServiceSoap port = null;
+				
 		try {
-			service = new FAXCOMX0020Service();
-
+			if (StringUtils.isNotBlank(wsdlURLString)){
+				wsdlURL = new URL(wsdlURLString);
+				service = new FAXCOMX0020Service(wsdlURL);
+			}else{
+				service = new FAXCOMX0020Service();
+			}
+			
 			port = service.getFAXCOMX0020ServiceSoap();
 			List<MessageStatus> statusList = new ArrayList<MessageStatus>();
 			ArrayOfMessageStatus faxCOMStatusList = port.loginAndGetMessageStatuses("", username, password, USER_TYPE, 
@@ -142,12 +154,15 @@ public class FaxStatusController {
 			}
 			
 		}
-		
-		
 	
 	}
 	
 	
+	/**Create a list of fax statuses filtered by date
+	 * @param model
+	 * @param faxComStatuses
+	 * @return
+	 */
 	private List<FaxStatus> createFaxStatusList( ModelMap model, List<MessageStatus> faxComStatuses){
 		
 		String start = (String) model.get("startDate");
@@ -158,7 +173,7 @@ public class FaxStatusController {
 		if (StringUtils.isNotBlank(start)){
 			startDate = DateUtil.parseDate(start, ChirdlUtilConstants.DATE_FORMAT_MM_dd_YYYY);
 		}
-		if (StringUtils.isNotBlank(start)){
+		if (StringUtils.isNotBlank(stop)){
 			stopDate = DateUtil.parseDate(stop, ChirdlUtilConstants.DATE_FORMAT_MM_dd_YYYY);
 			// The date assumes a time of 00:00. We want to
 			// include all records until midnight of stopDate, so we will add one day.
@@ -197,6 +212,9 @@ public class FaxStatusController {
 		return statuses;
 	}
 	
+	/**Use the IdTag from each status record to locate the fax image
+	 * @param status
+	 */
 	public void setImageLocation(FaxStatus status) {
 		FormInstance formInstance = status.getFormInstance();
 
@@ -228,6 +246,12 @@ public class FaxStatusController {
 
 	}
 
+	/**Check if fax status record date time is within start and stop date
+	 * @param transmitTime
+	 * @param startDate
+	 * @param stopDate
+	 * @return
+	 */
 	private boolean validDate(XMLGregorianCalendar transmitTime, Date startDate, Date stopDate) {
 
 		try {
