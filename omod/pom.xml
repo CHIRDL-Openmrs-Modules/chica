@@ -88,6 +88,10 @@
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+			<groupId>com.biscom</groupId>
+			<artifactId>faxws-client</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
