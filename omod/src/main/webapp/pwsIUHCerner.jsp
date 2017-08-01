@@ -23,6 +23,9 @@
     </head>
 
     <body>
+    	<c:if test="${errorPreviousSubmission == 'true'}">
+        	<c:redirect url="/module/chica/finishFormsWeb.form?patientId=${patient.patientId}"/>
+        </c:if>
         <div class="page_container">
             <div class="main_container">
                 <form id="pwsForm" name="pwsForm" action="pws.form" method="post">

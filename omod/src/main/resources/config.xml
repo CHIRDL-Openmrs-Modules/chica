@@ -19,11 +19,11 @@
     
     <require_version>1.1.10.2283</require_version>
     <require_modules>
-        <require_module version="2.32.0">org.openmrs.module.dss</require_module>
-        <require_module version="2.9.0">org.openmrs.module.atd</require_module>
-        <require_module version="1.8.0">org.openmrs.module.sockethl7listener</require_module>
-        <require_module version="1.13.0">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.7.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+        <require_module version="2.33.0">org.openmrs.module.dss</require_module>
+        <require_module version="2.11.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.9.0">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="1.15.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.8.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.chica.extension.html.AdminList</class>
@@ -379,6 +379,18 @@
         <property>chica.exportObsPort</property>
         <defaultValue>0</defaultValue>
         <description>Port to send obs (HL7 ORU).
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.exportPhysicianObsHost</property>
+        <defaultValue>localhost</defaultValue>
+        <description>IP address of where to send obs (HL7 ORU) when the physician worksheet is submitted.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.exportPhysicianObsPort</property>
+        <defaultValue>0</defaultValue>
+        <description>Port to send obs (HL7 ORU) when the physician worksheet is submitted.
         </description>
     </globalProperty>
    
