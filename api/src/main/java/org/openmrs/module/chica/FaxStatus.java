@@ -433,11 +433,13 @@ public class FaxStatus {
 				this.formInstance = new FormInstance(locationId, formId, formInstanceId);	
 			}
 
-
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			//The fax id tag was not a correct form instance id format.  No need for stack trace.
-			log.info("Status idTag is not a valid form instance format:" + idTag);
+			//There are past faxes that have the FAXCOM unique id in that field.  
+			//Do not print to log.
 			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
+		} catch (Exception e2){
+			log.error("Unable to determine fax status form instance from idTag " + idTag, e2);
 		}
 
 		return formInstance;
