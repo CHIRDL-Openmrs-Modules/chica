@@ -102,6 +102,7 @@ function renderImageLocation(data, type, full, meta)
 {
 	idTag = full.idTag;
 	image = full.image;
+	
 	if (image == ""){
 		return '<p> ' + idTag + ' </p>';
 	}

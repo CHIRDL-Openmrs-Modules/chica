@@ -475,7 +475,7 @@ public class FaxStatus {
 	 * @param idTag the idTag to set
 	 */
 	public void setIdTag(String idTag) {
-		this.idTag = idTag;
+		this.idTag = StringUtils.strip(idTag, "_");
 	}
 	/**
 	 * @param imageFileLocation the imageFileLocation to set
