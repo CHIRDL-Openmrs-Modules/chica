@@ -1,3 +1,6 @@
+
+
+
 $(function() {
 	
 	$j("#exitButton").button();
@@ -90,11 +93,13 @@ $(document).ready(function() {
     } );
 	
 	
+	
 });
+
 
 function backToAdminPage()
 {
-	window.location = '${pageContext.request.contextPath}/admin/index.htm';
+	window.location = ctx + "/admin/index.htm";
 };
 
 //Create the image button

@@ -424,7 +424,7 @@ public class FaxStatus {
 				return null;
 			}
 
-			String [] formInstanceSubstrings = idTag.split("[^a-zA-Z0-9']+");
+			String [] formInstanceSubstrings = StringUtils.strip(idTag,"_").split("[^a-zA-Z0-9']+");
 			if (formInstanceSubstrings != null && formInstanceSubstrings.length >= 3){
 
 				Integer locationId = Integer.valueOf(formInstanceSubstrings[0]);
