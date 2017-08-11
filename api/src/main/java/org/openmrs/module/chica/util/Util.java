@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -85,6 +88,8 @@ public class Util {
 	
 	private static final String START_STATE = "start_state";
 	private static final String END_STATE = "end_state";
+	
+	private static final Double WEIGHT_THRESHOLD = 1.0d;
 	
 	/**
 	 * 
@@ -327,13 +332,14 @@ public class Util {
 		else
 		{
 			for (Integer locationTagId : locationTagIds) {
-				Program program = chirdlUtilBackportsService.getProgram(locationTagId, locationId);
 				if (sessionIdMatch != null) {
 					PatientState patientState = chirdlUtilBackportsService.getLastPatientState(sessionIdMatch);
 					if (patientState != null) {
 						unfinishedStates.add(patientState);
+						break;
 					}
 				} else {
+					Program program = chirdlUtilBackportsService.getProgram(locationTagId, locationId);
 					List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
 						todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
 					if (currUnfinishedStates != null) {
@@ -402,6 +408,9 @@ public class Util {
 				patientEncounterRowMap.put(patientId + "_" + encounterId, row);
 			}
 			
+			Double accumWeight = 0.0d;
+			Map<Integer, Double> formWeightMap = new HashMap<Integer, Double>();
+			Set<Integer> completedFormIds = new HashSet<Integer>();
 			for (MobileForm mobileForm : mobileFormsList) {
 				State startState;
 				State endState;
@@ -433,6 +442,10 @@ public class Util {
 				Integer formId = form.getFormId();
 				boolean containsStartState = formPatientStateCreateMap.containsKey(formId);
 				boolean containsEndState = formPatientStateProcessMap.containsKey(formId);
+				
+				Double formWeight = userClient.getSecondaryFormWeight(mobileForm.getId());
+				formWeightMap.put(formId, formWeight);
+				
 				if (containsStartState) {
 					List<PatientState> patientStates = null;
 					if (!containsEndState) {
@@ -450,6 +463,7 @@ public class Util {
 					} else {
 						patientStates = formPatientStateProcessMap.get(formId);
 						if (patientStates != null) {
+							boolean addWeight = false;
 							for (PatientState patientState : patientStates) {
 								if (patientState.getEndTime() == null) {
 									FormInstance formInstance = patientState.getFormInstance();
@@ -458,6 +472,16 @@ public class Util {
 										addedForm = true;
 										break;
 									}
+								} else {
+									completedFormIds.add(formId);
+									addWeight = true;
+								}
+							}
+							
+							// Only add weight for forms that have already been completed
+							if (addWeight && !addedForm) {
+								if (formWeight != null) {
+									accumWeight += formWeight;
 								}
 							}
 						}
@@ -470,6 +494,40 @@ public class Util {
 			if (!addedForm || row.getFormInstances() == null || row.getFormInstances().size() == 0) {
 				continue;
 			}
+			
+			if (accumWeight >= WEIGHT_THRESHOLD) {
+				// We can't display any more secondary forms
+				row.getFormInstances().clear();
+				continue;
+			}
+			
+			// Filter out forms based on weight
+			Set<FormInstance> formInstances = new LinkedHashSet<FormInstance>(row.getFormInstances());
+			row.getFormInstances().clear();
+			Iterator<FormInstance> iter = formInstances.iterator();
+			while (iter.hasNext() && accumWeight < WEIGHT_THRESHOLD) {
+				FormInstance formInstance = iter.next();
+				Integer formId = formInstance.getFormId();
+				Double formWeight = formWeightMap.get(formId);
+				// If a version of the form has already been completed, we do not want to add it 
+				// to the accumulated weight because it's already been accounted for.
+				if (formWeight != null && !completedFormIds.contains(formId)) {
+					Double newWeight = accumWeight + formWeight;
+					if (newWeight > WEIGHT_THRESHOLD) {
+						// Break out of the loop.  We want to stop even though there may be a form with a 
+						// lower weight after this one.  It wouldn't make sense to display a form with 
+						// a lower priority if the one before it is filtered out due to weight.
+						break;
+					} else {
+						accumWeight += formWeight;
+					}
+				}
+				
+				row.addFormInstance(formInstance);
+			}
+			
+			formWeightMap.clear();
+			completedFormIds.clear();
 			
 			Patient patient = currState.getPatient();
 			String lastName = org.openmrs.module.chirdlutil.util.Util.toProperCase(patient.getFamilyName());
