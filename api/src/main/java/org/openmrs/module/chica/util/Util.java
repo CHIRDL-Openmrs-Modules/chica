@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -390,6 +391,7 @@ public class Util {
 		}
 		
 		Map<String, PatientRow> patientEncounterRowMap = new HashMap<String, PatientRow>();
+		DecimalFormat decimalFormat = new DecimalFormat("#.#");
 		for (PatientState currState : unfinishedStates) {
 			boolean addedForm = false;
 			Integer sessionId = currState.getSessionId();
@@ -463,7 +465,7 @@ public class Util {
 					} else {
 						patientStates = formPatientStateProcessMap.get(formId);
 						if (patientStates != null) {
-							boolean addWeight = false;
+							int initialCompletedFormsSize = completedFormIds.size();
 							for (PatientState patientState : patientStates) {
 								if (patientState.getEndTime() == null) {
 									FormInstance formInstance = patientState.getFormInstance();
@@ -474,15 +476,13 @@ public class Util {
 									}
 								} else {
 									completedFormIds.add(formId);
-									addWeight = true;
 								}
 							}
 							
 							// Only add weight for forms that have already been completed
-							if (addWeight && !addedForm) {
-								if (formWeight != null) {
-									accumWeight += formWeight;
-								}
+							if ((completedFormIds.size() > initialCompletedFormsSize) && (!addedForm) && (formWeight != null)) {
+								accumWeight += formWeight;
+								accumWeight = Double.parseDouble(decimalFormat.format(accumWeight));
 							}
 						}
 					}
@@ -513,13 +513,14 @@ public class Util {
 				// to the accumulated weight because it's already been accounted for.
 				if (formWeight != null && !completedFormIds.contains(formId)) {
 					Double newWeight = accumWeight + formWeight;
+					newWeight = Double.parseDouble(decimalFormat.format(newWeight));
 					if (newWeight > WEIGHT_THRESHOLD) {
 						// Break out of the loop.  We want to stop even though there may be a form with a 
 						// lower weight after this one.  It wouldn't make sense to display a form with 
 						// a lower priority if the one before it is filtered out due to weight.
 						break;
 					} else {
-						accumWeight += formWeight;
+						accumWeight = newWeight;
 					}
 				}
 				
