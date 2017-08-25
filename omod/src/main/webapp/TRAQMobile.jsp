@@ -18,6 +18,8 @@
 <script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/TRAQMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
+
+
 </head>
 <c:set var="search" value="'" />
 <c:set var="replace" value="\\'" />
@@ -134,25 +136,16 @@
         <c:set var="QNumber" value="1"/>
         <c:set var="question" value='Do you fill a prescription if you need to?'/>
         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-	    <strong>${quest1}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
-	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN" value="2" data-theme="b" />
-	            <label for="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN">No, but I want to learn.</label>
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_LEARNING" value="3" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_LEARNING">No, but I am learning to do this.</label>
-                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>
-                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
+	            <stript>testFunction()</stript>
 	        </fieldset>
 	    </div>
 	    <c:set var="QNumber" value="2"/>
 	    <c:set var="question" value='Do you know what to do if you are having a bad reaction to your medications?'/>
         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-	    <strong>${quest2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -203,9 +196,9 @@
 	        </fieldset>
 	    </div>
 	    <c:set var="QNumber" value="4"/>
-	    <c:set var="quest4" value='Do you reorder medications before they run out?'/>
+	    <c:set var="question" value='Do you reorder medications before they run out?'/>
         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-	    <strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest4}")'></a>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -235,47 +228,55 @@
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
-    <div id="content_3" data-role="content">
-        <div><h3>Appointment Keeping:</h3><hr/><br/></div>
-        <c:set var="QNumber" value="5"/>
-        <c:set var="quest5" value='Do you call the doctor&#39s office to make an appointment&#63'/>
-        <input id="TRAQQuestion_5" name="TRAQQuestion_5" type="hidden" value="${quest5}"/>
-	    <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
-	    <div data-role="fieldcontain" style="margin-top:0px;">
-	        <fieldset data-role="controlgroup" data-type="vertical">
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
-	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN" value="2" data-theme="b" />
-	            <label for="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN">No, but I want to learn.</label>
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_LEARNING" value="3" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_LEARNING">No, but I am learning to do this.</label>
-                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>
-                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
-	        </fieldset>
-	    </div>
-	    <c:set var="QNumber" value="6"/>
-	    <c:set var="quest6" value='Do you follow-up on any referral for tests, check-ups or labs?'/>
-        <input id="TRAQQuestion_6" name="TRAQQuestion_6" type="hidden" value="${quest6}"/>
-	    <strong>${quest6}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
-	    <div data-role="fieldcontain" style="margin-top:0px;">
-	        <fieldset data-role="controlgroup" data-type="vertical">
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
-	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN" value="2" data-theme="b" />
-	            <label for="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN">No, but I want to learn.</label>
-	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_LEARNING" value="3" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_LEARNING">No, but I am learning to do this.</label>
-                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>
-                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />
-                <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
-	        </fieldset>
-	    </div>
-        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
-    </div>
-    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+			<div id="content_3" data-role="content">
+				<div>
+					<h3>Appointment Keeping:</h3>
+					<hr />
+					<br />
+				</div>
+				<c:set var="QNumber" value="5" />
+				<c:set var="question"
+					value='Do you call the doctor&#39s office to make an appointment&#63' />
+				<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}" /> 
+				<strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+				<div data-role="fieldcontain" style="margin-top: 0px;">
+					<fieldset data-role="controlgroup" data-type="vertical">
+			            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
+			            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
+			            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN" value="2" data-theme="b" />
+			            <label for="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN">No, but I want to learn.</label>
+			            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_LEARNING" value="3" data-theme="b" />
+		                <label for="TRAQQuestionEntry_${QNumber}_LEARNING">No, but I am learning to do this.</label>
+		                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />
+		                <label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>
+		                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />
+		                <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
+	       			 </fieldset>
+				</div>
+				<c:set var="QNumber" value="6" />
+				<c:set var="question"
+					value='Do you follow-up on any referral for tests, check-ups or labs?' />
+				<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}" /> 
+					<strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+					<div data-role="fieldcontain" style="margin-top: 0px;">
+						<fieldset data-role="controlgroup" data-type="vertical">
+				            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
+				            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
+				            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN" value="2" data-theme="b" />
+				            <label for="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN">No, but I want to learn.</label>
+				            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_LEARNING" value="3" data-theme="b" />
+			                <label for="TRAQQuestionEntry_${QNumber}_LEARNING">No, but I am learning to do this.</label>
+			                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />
+			                <label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>
+			                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />
+			                <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
+		       			 </fieldset>
+					</div>
+				<div style="float: right;">
+					<span style="float: right; font-size: 50%;">${copyright}</span>
+				</div>
+			</div>
+			<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Next</a>
     </div>
@@ -294,9 +295,9 @@
     <div id="content_4" data-role="content">
         <div><h3>Appointment Keeping:</h3><hr/><br/></div>
         <c:set var="QNumber" value="7"/>
-        <c:set var="quest7" value='Do you arrange for your ride to medical appointments&#63'/>
-        <input id="TRAQQuestion_7" name="TRAQQuestion_7" type="hidden" value="${quest7}"/>
-	    <strong>${quest7}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest7}")'></a>
+        <c:set var="question" value='Do you arrange for your ride to medical appointments&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -312,9 +313,9 @@
 	        </fieldset>
 	    </div>
 	    <c:set var="QNumber" value="8"/>
-	    <c:set var="quest8" value='Do you call the doctor about unusual changes in your health &#40For example&#58 Allergic reactions&#41&#63'/>
-        <input id="TRAQQuestion_8" name="TRAQQuestion_8" type="hidden" value="${quest8}"/>
-	    <strong>${quest8}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest8}")'></a>
+	    <c:set var="question" value='Do you call the doctor about unusual changes in your health &#40For example&#58 Allergic reactions&#41&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -347,10 +348,10 @@
     <div id="content_5" data-role="content">
         <div><h3>Appointment Keeping:</h3><hr/><br/></div>
         <c:set var="QNumber" value="9"/>
-        <c:set var="quest9" value='Do you apply for health insurance if you lose your current coverage&#63'/>
-        <input id="TRAQQuestion_9" name="TRAQQuestion_9" type="hidden" value="${quest9}"/>
-	    <strong>${quest9}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest9}")'></a>
-	   <div data-role="fieldcontain" style="margin-top:0px;">
+        <c:set var="question" value='Do you apply for health insurance if you lose your current coverage&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
 	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
@@ -365,10 +366,10 @@
 	        </fieldset>
 	    </div>
 	    <c:set var="QNumber" value="10"/>
-	    <c:set var="quest10" value='Do you know what your current health insurance covers&#63'/>
-        <input id="TRAQQuestion_10" name="TRAQQuestion_10" type="hidden" value="${quest10}"/>
-	    <strong>${quest10}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest10}")'></a>
-	   <div data-role="fieldcontain" style="margin-top:0px;">
+	    <c:set var="question" value='Do you know what your current health insurance covers&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
 	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
@@ -400,9 +401,9 @@
     <div id="content_6" data-role="content">
         <div><h3>Appointment Keeping:</h3><hr/><br/></div>
         <c:set var="QNumber" value="11"/>
-        <c:set var="quest11" value='Do you manage your money & budget household expenses &#40For example&#58 use checking&#47debit card&#41&#63'/>
-        <input id="TRAQQuestion_11" name="TRAQQuestion_11" type="hidden" value="${quest11}"/>
-	    <strong>${quest11}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest11}")'></a>
+        <c:set var="question" value='Do you manage your money & budget household expenses &#40For example&#58 use checking&#47debit card&#41&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -419,10 +420,10 @@
 	    </div>
 	    <div><h3>Tracking Health Issues&#58</h3><hr/><br/></div>
 	    <c:set var="QNumber" value="12"/>
-	    <c:set var="quest12" value='Do you fill out the medical history form&#44 including a list of your allergies&#63'/>
-        <input id="TRAQQuestion_12" name="TRAQQuestion_12" type="hidden" value="${quest12}"/>
-	    <strong>${quest12}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest12}")'></a>
-	   <div data-role="fieldcontain" style="margin-top:0px;">
+	    <c:set var="question" value='Do you fill out the medical history form&#44 including a list of your allergies&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
 	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
@@ -454,9 +455,9 @@
     <div id="content_7" data-role="content">
         <div><h3>Tracking Health Issues&#58</h3><hr/><br/></div>
         <c:set var="QNumber" value="13"/>
-        <c:set var="quest13" value='Do you keep a calendar or list of medical and other appointments&#63'/>
-        <input id="TRAQQuestion_13" name="TRAQQuestion_13" type="hidden" value="${quest13}"/>
-	    <strong>${quest13}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest13}")'></a>
+        <c:set var="question" value='Do you keep a calendar or list of medical and other appointments&#63'/>
+       	<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -472,9 +473,9 @@
 	        </fieldset>
 	    </div>
 	    <c:set var="QNumber" value="14"/>
-	    <c:set var="quest14" value='Do you make a list of questions before the doctor&#39s visit&#63'/>
-        <input id="TRAQQuestion_14" name="TRAQQuestion_14" type="hidden" value="${quest14}"/>
-	    <strong>${quest14}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest14}")'></a>
+	    <c:set var="question" value='Do you make a list of questions before the doctor&#39s visit&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -507,9 +508,9 @@
     <div id="content_8" data-role="content">
         <div><h3>Tracking Health Issues&#58</h3><hr/><br/></div>
         <c:set var="QNumber" value="15"/>
-        <c:set var="quest15" value='Do you get financial help with school or work&#63'/>
-        <input id="TRAQQuestion_15" name="TRAQQuestion_15" type="hidden" value="${quest15}"/>
-	    <strong>${quest15}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest15}")'></a>
+        <c:set var="question" value='Do you get financial help with school or work&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -525,9 +526,10 @@
 	        </fieldset>
 	    </div>
 	     <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
-	    <c:set var="quest16" value='Do you tell the doctor or nurse what you are feeling&#63'/>
-        <input id="TRAQQuestion_16" name="TRAQQuestion_16" type="hidden" value="${quest16}"/>
-	    <strong>${quest16}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest16}")'></a>
+	     <c:set var="QNumber" value="16"/>
+	    <c:set var="question" value='Do you tell the doctor or nurse what you are feeling&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -559,10 +561,10 @@
     </div>
     <div id="content_9" data-role="content">
         <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
-        <c:set var="QNumber" value="15"
-        <c:set var="quest15" value='Do you answer questions that are asked by the doctor&#44 nurse&#44 or clinic staff&#63'/>
-        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${quest15}"/>
-	    <strong>${quest15}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest15}")'></a>
+        <c:set var="QNumber" value="17"/>
+        <c:set var="question" value='Do you answer questions that are asked by the doctor&#44 nurse&#44 or clinic staff&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -577,9 +579,11 @@
                 <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
 	        </fieldset>
 	    </div>
-	    <c:set var="quest16" value='Do you tell the doctor or nurse what you are feeling&#63'/>
-        <input id="TRAQQuestion_16" name="TRAQQuestion_16" type="hidden" value="${quest16}"/>
-	    <strong>${quest16}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest16}")'></a>
+	    <div><h3>Managing Daily Activities&#58</h3><hr/><br/></div>
+	    <c:set var="QNumber" value="18"/>
+	    <c:set var="question" value='Do you help plan or prepare meals&#47food&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
 	        <fieldset data-role="controlgroup" data-type="vertical">
 	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
@@ -601,6 +605,61 @@
         <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Next</a>
     </div>
 </div>
+
+<div id="question_page_10" data-role="page" data-theme="b" type="question_page">
+    <div data-role="header" >
+        <h1>Transition Readiness Assessment Questionnaire:</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="langPage10Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+    </div>
+    <div id="content_10" data-role="content">
+        <div><h3>Managing Daily Activities&#58</h3><hr/><br/></div>
+        <c:set var="QNumber" value="19"/>
+        <c:set var="question" value='Do you keep home&#47room clean or clean-up after meals&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	    <div data-role="fieldcontain" style="margin-top:0px;">
+	        <fieldset data-role="controlgroup" data-type="vertical">
+	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
+	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
+	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN" value="2" data-theme="b" />
+	            <label for="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN">No, but I want to learn.</label>
+	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_LEARNING" value="3" data-theme="b" />
+                <label for="TRAQQuestionEntry_${QNumber}_LEARNING">No, but I am learning to do this.</label>
+                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />
+                <label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>
+                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />
+                <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
+	        </fieldset>
+	    </div>
+	    
+	    <c:set var="QNumber" value="20"/>
+	    <c:set var="question" value='Do you use neighborhood stores and services &#40For example&#58 Grocery stores and pharmacy stores&#41&#63'/>
+        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
+	    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	    <div data-role="fieldcontain" style="margin-top:0px;">
+	        <fieldset data-role="controlgroup" data-type="vertical">
+	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW" value="1" data-theme="b" />
+	            <label for="TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW">No, I do not know how.</label>
+	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN" value="2" data-theme="b" />
+	            <label for="TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN">No, but I want to learn.</label>
+	            <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_LEARNING" value="3" data-theme="b" />
+                <label for="TRAQQuestionEntry_${QNumber}_LEARNING">No, but I am learning to do this.</label>
+                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />
+                <label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>
+                <input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />
+                <label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>
+	        </fieldset>
+	    </div>
+        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
+        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="onclick="attemptFinishForm()" style="width: 150px;">Next</a>
+    </div>
+</div>
+
 
 
 
