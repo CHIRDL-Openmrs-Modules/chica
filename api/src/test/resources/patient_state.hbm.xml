@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chirdlutilbackports" auto-import="false">
+
+	<class name="org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState" table="chirdlutilbackports_patient_state">
+		<id name="patientStateId" type="java.lang.Integer" column="patient_state_id">
+			<generator class="native" />
+		</id>
+	
+		<property name="patientId" type="java.lang.Integer" column="patient_id" insert="false" update="false"  lazy="false"/>
+		<property name="startTime" type="java.util.Date" column="start_time"/>
+		<property name="endTime" type="java.util.Date" column="end_time"/>
+		<property name="sessionId" type="java.lang.Integer" column="session_id"/>
+		<property name="formInstanceId" type="java.lang.Integer" column="form_instance_id"/>
+		<property name="formId" type="java.lang.Integer" column="form_id"/>
+		<property name="locationTagId" type="java.lang.Integer" column="location_tag_id"/>
+		<property name="locationId" type="java.lang.Integer" column="location_id"/>
+		<property name="retired" type="boolean" 
+			column="retired" length="1" not-null="true"/>
+		<property name="dateRetired" type="java.util.Date" column="date_retired"/>
+			
+		<many-to-one name="state" class="org.openmrs.module.chirdlutilbackports.hibernateBeans.State">
+			<column name="state" />
+		</many-to-one>
+		<many-to-one name="patient" class="org.openmrs.Patient">
+			<column name="patient_id" />
+		</many-to-one>
+	</class>
+	
+</hibernate-mapping>

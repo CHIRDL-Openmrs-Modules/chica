@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chirdlutilbackports">
+
+	<class name="org.openmrs.module.chirdlutilbackports.hibernateBeans.Session" table="chirdlutilbackports_session">
+
+		<id name="sessionId" type="java.lang.Integer" column="session_id">
+			<generator class="native" />
+		</id>
+			<property name="encounterId" type="java.lang.Integer" column="encounter_id"/>
+	</class>
+	
+</hibernate-mapping>

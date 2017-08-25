@@ -90,8 +90,6 @@ public class Util {
 	private static final String START_STATE = "start_state";
 	private static final String END_STATE = "end_state";
 	
-	private static final Double WEIGHT_THRESHOLD = 1.0d;
-	
 	/**
 	 * 
 	 * @param patient
@@ -392,6 +390,7 @@ public class Util {
 		
 		Map<String, PatientRow> patientEncounterRowMap = new HashMap<String, PatientRow>();
 		DecimalFormat decimalFormat = new DecimalFormat("#.#");
+		Double maxWeight = userClient.getMaxSecondaryFormWeight();
 		for (PatientState currState : unfinishedStates) {
 			boolean addedForm = false;
 			Integer sessionId = currState.getSessionId();
@@ -445,7 +444,7 @@ public class Util {
 				boolean containsStartState = formPatientStateCreateMap.containsKey(formId);
 				boolean containsEndState = formPatientStateProcessMap.containsKey(formId);
 				
-				Double formWeight = userClient.getSecondaryFormWeight(mobileForm.getId());
+				Double formWeight = mobileForm.getWeight();
 				formWeightMap.put(formId, formWeight);
 				
 				if (containsStartState) {
@@ -495,7 +494,7 @@ public class Util {
 				continue;
 			}
 			
-			if (accumWeight >= WEIGHT_THRESHOLD) {
+			if (accumWeight >= maxWeight) {
 				// We can't display any more secondary forms
 				row.getFormInstances().clear();
 				continue;
@@ -505,7 +504,7 @@ public class Util {
 			Set<FormInstance> formInstances = new LinkedHashSet<FormInstance>(row.getFormInstances());
 			row.getFormInstances().clear();
 			Iterator<FormInstance> iter = formInstances.iterator();
-			while (iter.hasNext() && accumWeight < WEIGHT_THRESHOLD) {
+			while (iter.hasNext() && accumWeight < maxWeight) {
 				FormInstance formInstance = iter.next();
 				Integer formId = formInstance.getFormId();
 				Double formWeight = formWeightMap.get(formId);
@@ -514,7 +513,7 @@ public class Util {
 				if (formWeight != null && !completedFormIds.contains(formId)) {
 					Double newWeight = accumWeight + formWeight;
 					newWeight = Double.parseDouble(decimalFormat.format(newWeight));
-					if (newWeight > WEIGHT_THRESHOLD) {
+					if (newWeight > maxWeight) {
 						// Break out of the loop.  We want to stop even though there may be a form with a 
 						// lower weight after this one.  It wouldn't make sense to display a form with 
 						// a lower priority if the one before it is filtered out due to weight.

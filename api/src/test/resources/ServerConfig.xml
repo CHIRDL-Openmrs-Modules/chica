@@ -1,0 +1,62 @@
+<serverConfig>
+    <mobileClients>
+        <mobileClient user="user1" primaryFormId="form1" maxSecondaryFormWeight="1.0">
+            <secondaryForm id="form2" priority="3"/>
+            <secondaryForm id="form3" priority="2"/>
+            <secondaryForm id="form4" priority="1"/>
+        </mobileClient>
+        <mobileClient user="user2" primaryFormId="form1" maxSecondaryFormWeight="0.8">
+            <secondaryForm id="form2" priority="3"/>
+            <secondaryForm id="form3" priority="1"/>
+            <secondaryForm id="form4" priority="2"/>
+        </mobileClient>
+    </mobileClients>
+    <formConfig>
+        <form id="form1">
+            <name>Form1</name>
+            <startState>JIT_mobile_create</startState>
+            <endState>JIT_FINISHED</endState>
+            <pageUrl>/openmrs/module/chica/form1.form</pageUrl>
+            <weight>0.5</weight>
+        </form>
+        <form id="form2">
+            <name>Form2</name>
+            <startState>JIT_mobile_create</startState>
+            <endState>JIT_FINISHED</endState>
+            <pageUrl>/openmrs/module/chica/form2.form</pageUrl>
+            <weight>0.3</weight>
+        </form>
+        <form id="form3">
+            <name>Form3</name>
+            <startState>JIT_mobile_create</startState>
+            <endState>JIT_FINISHED</endState>
+            <pageUrl>/openmrs/module/chica/form3.form</pageUrl>
+            <weight>0.4</weight>
+        </form>
+        <form id="form4">
+            <name>Form4</name>
+            <startState>JIT_mobile_create</startState>
+            <endState>JIT_FINISHED</endState>
+            <pageUrl>/openmrs/module/chica/form4.form</pageUrl>
+            <weight>0.5</weight>
+        </form>
+    </formConfig>
+    <pdfImageMerge>
+        <imageForm name="imageForm">
+            <imageMerge>
+                <fieldName>PCX_FilenameFront</fieldName>
+                <pageNumber>1</pageNumber>
+                <positionX>0f</positionX>
+                <positionY>0f</positionY>
+                <rotation>0f</rotation>
+            </imageMerge>
+            <imageMerge>
+                <fieldName>PCX_FilenameBack</fieldName>
+                <pageNumber>2</pageNumber>
+                <positionX>3f</positionX>
+                <positionY>4f</positionY>
+                <rotation>180f</rotation>
+            </imageMerge>
+        </imageForm>
+    </pdfImageMerge>
+</serverConfig>
