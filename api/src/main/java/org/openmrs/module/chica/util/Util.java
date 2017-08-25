@@ -370,6 +370,7 @@ public class Util {
 		FormService formService = Context.getFormService();
 		Map<String, Form> formMap = new HashMap<String, Form>();
 		Map<String, HashMap<String, State>> mobileFormStartEndStateMap = new HashMap<String, HashMap<String, State>>();
+		Map<String, State> stateNameToStateMap = new HashMap<String, State>();
 		for (MobileForm mobileForm : mobileFormsList)
 		{
 			Form form = formService.getForm(mobileForm.getName());
@@ -379,13 +380,26 @@ public class Util {
 			}
 			formMap.put(mobileForm.getName(), form);
 			HashMap<String, State> startEndStateMap = new HashMap<String, State>();
-			State startState = chirdlUtilBackportsService.getStateByName(mobileForm.getStartState());
-			State endState = chirdlUtilBackportsService.getStateByName(mobileForm.getEndState());
+			String startStateName = mobileForm.getStartState();
+			String endStateName = mobileForm.getEndState();
+			State startState = stateNameToStateMap.get(startStateName);
+			if (startState == null) {
+				startState = chirdlUtilBackportsService.getStateByName(startStateName);
+				stateNameToStateMap.put(startStateName, startState);
+			}
+			
+			State endState = stateNameToStateMap.get(endStateName);
+			if (endState == null) {
+				endState = chirdlUtilBackportsService.getStateByName(endStateName);
+				stateNameToStateMap.put(endStateName, endState);
+			}
+			
 			startEndStateMap.put(START_STATE, startState);
 			startEndStateMap.put(END_STATE, endState);
 			mobileFormStartEndStateMap.put(mobileForm.getName(), startEndStateMap);	
 		}
 		
+		stateNameToStateMap.clear();
 		Map<String, PatientRow> patientEncounterRowMap = new HashMap<String, PatientRow>();
 		DecimalFormat decimalFormat = new DecimalFormat("#.#");
 		Double maxWeight = userClient.getMaxSecondaryFormWeight();
