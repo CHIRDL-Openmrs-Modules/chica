@@ -360,9 +360,7 @@ public class Util {
 			break;
 		case SECONDARY_FORMS:
 			List<MobileForm> mobileForms = config.getSecondaryForms(username);
-			if (mobileForms != null) {
-				mobileFormsList.addAll(mobileForms);
-			}
+			mobileFormsList.addAll(mobileForms);
 
 			break;
 		}
