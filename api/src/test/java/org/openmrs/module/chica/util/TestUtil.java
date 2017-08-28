@@ -36,7 +36,6 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void testGetPatientsWithForms() throws Exception {
-		initializeInMemoryDatabase();
 		executeDataSet(org.openmrs.module.chica.test.TestUtil.PATIENT_FORMS_FILE);
 		Context.authenticate("user1", "testpassword");
 		Context.getAdministrationService().setGlobalProperty("chirdlutil.serverConfigFile", "src/test/resources/ServerConfig.xml");
