@@ -28,7 +28,6 @@ import org.openmrs.logic.op.Operator;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.gis.Placemark;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttributeValue;
