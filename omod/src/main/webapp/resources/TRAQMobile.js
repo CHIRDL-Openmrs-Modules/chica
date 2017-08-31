@@ -1,5 +1,15 @@
 var english = false;
 var formInstance = null;
+var ntilde = "\xF1";
+var eacute = "\xE9";
+var aacute = "\xE1";
+var Ntilde = "\xD1";
+var oacute = "\xF3";
+var openParen = "\x28";
+var closeParen = "\x29";
+var comma = "\x2C";
+
+ 
 
 $(document).on("pageinit", function() {
     // Initialize all pages because radio button reset will not work properly.
@@ -29,6 +39,8 @@ function init(patientName, birthdate, formInst, language) {
 	if (!showVitals) {
 		$(".vitalsButton").hide();
 	}
+	
+	insertChoices(1);
 }
 
 function submitEmptyForm() {
@@ -46,9 +58,41 @@ function setLanguageField() {
 
 function setLanguage(patientName, birthdate) {
 	english = !english;
+	//Strings with spanish characters need hex code
+	//HTML with spanish characters can use HTML codes
+	
+    var langButtonText = "Espa" + ntilde + "ol";
+    var instructions = "<p>Please check the box that best describes your skill level in the following areas that "
+    	+ "are important for transition to adult health care. There is no right or wrong answer and your answers  "
+    	+ "will remain confidential and private.</p>";
+    var startButtonText = "Start";
+    var vitalsButtonText = "Staff";
+    var formTitleText = "Transition Readiness Assessment Questionnaire " + openParen + "TRAQ" + closeParen;
+    if (!english) {
+        langButtonText = "English"; 
+         instructions = "<p>Por favor marc" + aacute + " con una cruz la opci" + oacute + "n que mejor describa tu "
+         + "capacidad para cada una de las siguientes áreas que son importantes para la transici" + oacute + "n del "
+         + "cuidado de tu salud a la medicina del adulto. No hay respuestas correctas ni incorrectas y las respuestas "
+         + "ser" + aacute + "n confidenciales y privadas</p>";
+        startButtonText = "Comienzo";
+        vitalsButtonText = "Personal";
+        formTitleText = "Cuestionario de Evaluaci" + oacute + "n para la Preparaci" + oacute + "n de la Transici" 
+        + oacute + "n " + openParen + "TRAQ" + closeParen;
+    }
+    
+    $("#confirmLangButton .ui-btn-text").text(langButtonText);
+    $("#instructions").html(instructions);
+    $("#startButton .ui-btn-text").text(startButtonText);
+    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $("#formTitle").text(formTitleText);
+}
+
+/*function setLanguage(patientName, birthdate) {
+	english = !english;
     var langButtonText = "Español";
     var additionalQuestions = "Please check the box that best describes your skill level in the following areas that are important for transition to adult health care.";
     var instructions = '<p>There is no right or wrong answer and your answers will remain confidential and private.</p>';
+    var informantCheck = '<p>Check here if you are a parent or caregiver completing this form.</p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Staff";
     var formTitleText = "Transition Readiness Assessment Questionnaire:";
@@ -64,10 +108,11 @@ function setLanguage(patientName, birthdate) {
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#additionalQuestions").text(additionalQuestions);
     $("#instructions").html(instructions);
+    $("#informantCheck").html(informantCheck);
     $("#startButton .ui-btn-text").text(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
     $("#formTitle").text(formTitleText);
-}
+}*/
 
 function changePage(newPageNum) {
     var newPage = "#question_page_" + newPageNum;
@@ -168,6 +213,66 @@ function areAllQuestionsAnswered() {
 	}
 	
 	return true;
+}
+
+function insertChoices(questionNumber){
+	
+	var choiceDoNotKnow = "No, I do not know how.";
+	var choiceNoButWantToLearn = "No, but I want to learn.";
+	var choiceNoButLearning = "No, but I am learning to do this.";
+	var choiceYesStarted = "I have started doing this.";
+	var choiceYesAlways = "Yes, I always do this when I need to.";
+	if (!english) {
+		choiceDoNotKnow  = "No, no s" + eacute + " c" + oacute + "mo hacerlo.";
+		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
+		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
+		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
+		choiceYesAlways  = "Si, lo hago siempre que lo necesito."; 
+	}
+	
+	
+	var $label1 = $("<label>").text( choiceDoNotKnow);
+	var $label2 = $("<label>").text( choiceNoButWantToLearn);
+	var $label3 = $("<label>").text( choiceNoButLearning);
+	var $label4 = $("<label>").text( choiceYesStarted);
+	var $label5 = $("<label>").text( choiceYesAlways);
+	var $input1 = $('<input type="radio">').attr(
+			{	id: 'TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW',
+				name: 'TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW',
+				value: '1'
+			});
+	var $input2 = $('<input type="radio">').attr(
+			{	id: 'TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN',
+				name: 'TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN',
+				value: '2'
+			});
+	var $input3 = $('<input type="radio">').attr(
+			{	id: 'TRAQQuestionEntry_' + questionNumber + '_LEARNING',
+				name: 'TRAQQuestionEntry_' + questionNumber + '_LEARNING',
+				value: '3'
+			});
+	var $input4 = $('<input type="radio">').attr(
+			{	id: 'TRAQQuestionEntry_' + questionNumber + '_STARTED',
+				name: 'TRAQQuestionEntry_' + questionNumber + '_STARTED',
+				value: '4'
+			});
+	var $input5 = $('<input type="radio">').attr(
+			{	id: 'TRAQQuestionEntry_' + questionNumber + '_ALWAYS',
+				name: 'TRAQQuestionEntry_' + questionNumber + '_ALWAYS',
+				value: '5'
+			});
+	$input1.appendTo($label1);
+	$input2.appendTo($label2);
+	$input3.appendTo($label3);
+	$input4.appendTo($label4);
+	$input5.appendTo($label5);
+	$(".choices").append($label1);
+	$(".choices").append($label2);
+	$(".choices").append($label3);
+	$(".choices").append($label4);
+	$(".choices").append($label5);
+
+	
 }
 
 function showBlockingMessage() {
