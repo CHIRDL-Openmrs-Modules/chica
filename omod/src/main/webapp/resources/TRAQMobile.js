@@ -40,7 +40,7 @@ function init(patientName, birthdate, formInst, language) {
 		$(".vitalsButton").hide();
 	}
 	
-	insertChoices(1);
+	//insertChoices();
 }
 
 function submitEmptyForm() {
@@ -215,7 +215,7 @@ function areAllQuestionsAnswered() {
 	return true;
 }
 
-function insertChoices(questionNumber){
+function insertChoices1(){
 	
 	var choiceDoNotKnow = "No, I do not know how.";
 	var choiceNoButWantToLearn = "No, but I want to learn.";
@@ -236,29 +236,30 @@ function insertChoices(questionNumber){
 	var $label3 = $("<label>").text( choiceNoButLearning);
 	var $label4 = $("<label>").text( choiceYesStarted);
 	var $label5 = $("<label>").text( choiceYesAlways);
+	
 	var $input1 = $('<input type="radio">').attr(
-			{	id: 'TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW',
-				name: 'TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW',
+			{	id: 'TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW',
+				name: 'TRAQQuestionEntry_${QNumber}_DO_NOT_KNOW',
 				value: '1'
 			});
 	var $input2 = $('<input type="radio">').attr(
-			{	id: 'TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN',
-				name: 'TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN',
+			{	id: 'TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN',
+				name: 'TRAQQuestionEntry_${QNumber}_WANT_TO_LEARN',
 				value: '2'
 			});
 	var $input3 = $('<input type="radio">').attr(
-			{	id: 'TRAQQuestionEntry_' + questionNumber + '_LEARNING',
-				name: 'TRAQQuestionEntry_' + questionNumber + '_LEARNING',
+			{	id: 'TRAQQuestionEntry_${QNumber}_LEARNING',
+				name: 'TRAQQuestionEntry_${QNumber}_LEARNING',
 				value: '3'
 			});
 	var $input4 = $('<input type="radio">').attr(
-			{	id: 'TRAQQuestionEntry_' + questionNumber + '_STARTED',
-				name: 'TRAQQuestionEntry_' + questionNumber + '_STARTED',
+			{	id: 'TRAQQuestionEntry_${QNumber}_STARTED',
+				name: 'TRAQQuestionEntry_${QNumber}_STARTED',
 				value: '4'
 			});
 	var $input5 = $('<input type="radio">').attr(
-			{	id: 'TRAQQuestionEntry_' + questionNumber + '_ALWAYS',
-				name: 'TRAQQuestionEntry_' + questionNumber + '_ALWAYS',
+			{	id: 'TRAQQuestionEntry_${QNumber}_ALWAYS',
+				name: 'TRAQQuestionEntry_${QNumber}_ALWAYS',
 				value: '5'
 			});
 	$input1.appendTo($label1);
@@ -271,9 +272,101 @@ function insertChoices(questionNumber){
 	$(".choices").append($label3);
 	$(".choices").append($label4);
 	$(".choices").append($label5);
+	$(".choices").trigger("create");
 
 	
 }
+
+
+
+function insertChoices_2(){
+	
+	var choiceDoNotKnow = "No, I do not know how.";
+	var choiceNoButWantToLearn = "No, but I want to learn.";
+	var choiceNoButLearning = "No, but I am learning to do this.";
+	var choiceYesStarted = "I have started doing this.";
+	var choiceYesAlways = "Yes, I always do this when I need to.";
+	if (!english) {
+		choiceDoNotKnow  = "No, no s" + eacute + " c" + oacute + "mo hacerlo.";
+		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
+		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
+		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
+		choiceYesAlways  = "Si, lo hago siempre que lo necesito."; 
+	}
+	
+	
+	fieldSetElement = $(document.createElement("fieldset"));
+	fieldSetElement.attr({
+		"data-role": "controlgroup",
+		"data-type": "vertical"
+	});
+	
+	var fieldSet = '';
+	//fieldSet += '<fieldset data-role="controlgroup" data-type="vertical">';
+	fieldSet += '<input type="radio" name="TRAQQuestionEntry_\$\{QNumber\}" id="TRAQQuestionEntry_\$\{QNumber\}_DO_NOT_KNOW" value="1" data-theme="b" />';
+	fieldSet += '<label for="TRAQQuestionEntry_\$\{QNumber\}_DO_NOT_KNOW">No, I do not know how.</label>';
+	fieldSet += '<input type="radio" name="TRAQQuestionEntry_\$\{QNumber\}" id="TRAQQuestionEntry_\$\{QNumber\}_WANT_TO_LEARN" value="2" data-theme="b" />';
+	fieldSet += '<label for="TRAQQuestionEntry_\$\{QNumber\}_WANT_TO_LEARN">No, but I want to learn.</label>';
+	fieldSet += '<input type="radio" name="TRAQQuestionEntry_\$\{QNumber\}" id="TRAQQuestionEntry_\${\QNumber\}_LEARNING" value="3" data-theme="b" />';
+    fieldSet += '<label for="TRAQQuestionEntry_\$\{QNumber\}_LEARNING">No, but I am learning to do this.</label>';
+    fieldSet += '<input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_STARTED" value="4" data-theme="b" />';
+    fieldSet += '<label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>';
+    fieldSet += '<input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />';
+    fieldSet += '<label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>';
+	//fieldSet += '</fieldset>'
+    
+    fieldSetElement.append(fieldSet);
+   
+	$(".choices").append(fieldSetElement);
+	$(".choices").trigger("create");
+	
+	
+}
+
+function insertChoices(questionNumber){
+	
+	var choiceDoNotKnow = "No, I do not know how.";
+	var choiceNoButWantToLearn = "No, but I want to learn.";
+	var choiceNoButLearning = "No, but I am learning to do this.";
+	var choiceYesStarted = "I have started doing this.";
+	var choiceYesAlways = "Yes, I always do this when I need to.";
+	if (!english) {
+		choiceDoNotKnow  = "No, no s" + eacute + " c" + oacute + "mo hacerlo.";
+		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
+		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
+		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
+		choiceYesAlways  = "Si, lo hago siempre que lo necesito."; 
+	}
+	
+	
+	fieldSetElement = $(document.createElement("fieldset"));
+	fieldSetElement.attr({
+		"data-role": "controlgroup",
+		"data-type": "vertical"
+	});
+	
+	var fieldSet = '';
+	//fieldSet += '<fieldset data-role="controlgroup" data-type="vertical">';
+	fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW" value="1" data-theme="b" />';
+	fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW">No, I do not know how.</label>';
+	fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber +'" id="TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN" value="2" data-theme="b" />';
+	fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN">No, but I want to learn.</label>';
+	fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_LEARNING" value="3" data-theme="b" />';
+    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_LEARNING">No, but I am learning to do this.</label>';
+    fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_STARTED" value="4" data-theme="b" />';
+    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_STARTED">Yes, I have started doing this.</label>';
+    fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_ALWAYS" value="5" data-theme="b" />';
+    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_ALWAYS">Yes, I always do this when I need to.</label>';
+	//fieldSet += '</fieldset>'
+    
+    fieldSetElement.append(fieldSet);
+   
+	$(".choice"+questionNumber).append(fieldSetElement);
+	$(".choice"+questionNumber).trigger("create");
+	
+	
+}
+
 
 function showBlockingMessage() {
 	var message = "Saving Answers...";
