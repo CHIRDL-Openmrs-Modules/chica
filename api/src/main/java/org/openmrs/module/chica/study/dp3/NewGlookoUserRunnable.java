@@ -109,7 +109,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 	 */
 	private void addGlookoCodePersonAttribute(Patient patient){
 		
-		PersonAttributeType attributeType = Context.getPersonService().getPersonAttributeTypeByName("GlookoId"); // TODO CHICA-1063 Add constant CHANGE THIS TO GlookoCode
+		PersonAttributeType attributeType = Context.getPersonService().getPersonAttributeTypeByName(ChirdlUtilConstants.PERSON_ATTRIBUTE_GLOOKO_CODE);
 
 		if (attributeType == null)
 		{

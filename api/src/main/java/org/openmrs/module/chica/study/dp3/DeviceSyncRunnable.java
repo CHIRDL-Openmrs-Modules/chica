@@ -1,6 +1,7 @@
 package org.openmrs.module.chica.study.dp3;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,6 +16,9 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
+import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -28,7 +32,10 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 	private Log log = LogFactory.getLog(this.getClass());
 	private String glookoCode;
 	private String syncTimestamp;
-	private String dataType; // TODO CHICA-1063 Store this in an encounter attribute
+	private String dataType;
+	
+	private static final String STATE_QUERY_GLOOKO = "QUERY GLOOKO";
+	private static final String ENCOUNTER_ATTRIBUTE_DEVICE_DATA_TYPE = "Device Data Type";
 	
 	/**
 	 * @param glookoCode
@@ -61,7 +68,7 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 			
 			// Look up the patient using the glookoCode
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class); 
-			PersonAttribute personAttribute = chirdlutilbackportsService.getPersonAttributeByValue("GlookoId", glookoCode); // TODO CHICA-1063 Add constant CHANGE THIS TO GlookoCode
+			PersonAttribute personAttribute = chirdlutilbackportsService.getPersonAttributeByValue(ChirdlUtilConstants.PERSON_ATTRIBUTE_GLOOKO_CODE, glookoCode);
 			if(personAttribute != null)
 			{
 				Patient patient = Context.getPatientService().getPatient(personAttribute.getPerson().getId());
@@ -81,6 +88,14 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 						// we should be working off of the most recent encounter for the day
 						org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounters.get(0);
 						
+						// Store the data type as an encounter attribute
+						// We could pass this through to the state action,
+						// but it might be nice to keep track of what type of
+						// device (meter, pump, etc.) the data came from at each visit, 
+						// although this may not be likely to change from one visit to the next 
+						// example data types include readings (from a meter), readings_pump, etc.
+						Util.storeEncounterAttributeAsValueText(chicaEncounter, ENCOUNTER_ATTRIBUTE_DEVICE_DATA_TYPE, dataType);
+						
 						List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(chicaEncounter.getEncounterId());
 						if(sessions != null && sessions.size() > 0)
 						{
@@ -90,12 +105,15 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 								Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter);
 
 								// Create patient state. Once the state has been created, CHICA will query Glooko for device data
-								State state = chirdlutilbackportsService.getStateByName("QUERY GLOOKO"); // TODO CHICA-1063 Add constant
+								State state = chirdlutilbackportsService.getStateByName(STATE_QUERY_GLOOKO);
 								
 								// We could check to see if any open states exist without an end time. 
 								// However, lets just create a new state in case new data has actually been 
 								// upload between sync notifications					
-								chirdlutilbackportsService.addPatientState(patient, state, sessions.get(0).getSessionId(), locationTagId, location.getLocationId(), null);									
+								chirdlutilbackportsService.addPatientState(patient, state, sessions.get(0).getSessionId(), locationTagId, location.getLocationId(), null);
+								
+								StateManager.runState(patient, sessions.get(0).getSessionId(), state, new HashMap<String,Object>(),
+										locationTagId, location.getLocationId(), BaseStateActionHandler.getInstance());
 							}
 							else
 							{
