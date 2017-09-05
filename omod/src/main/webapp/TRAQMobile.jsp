@@ -31,8 +31,27 @@
 <c:set var="openParen" value="&#40"/>
 <c:set var="closeParen" value="&#41"/>
 <c:set var="colon" value="&#58"/>
+<c:set var="questionMark" value="&#63"/>
+<c:set var="apostrophe" value="&#39"/>
+<c:set var="comma" value="&#44"/>
+<c:set var="slash" value="&#47"/>
+
 <c:set var="formName" value="Transition Readiness Assessment Questionnaire${openParen}TRAQ${closeParen}"/>
 <c:set var="formName_sp" value="Cuestionario de Evaluación para la Preparación de la Transición:"/>
+
+<c:set var="question1"  value='aDo you fill a prescription if you need to${questionMark}' scope="request"/>
+<c:set var="question2"  value='aDo you know what to do if you are having a bad reaction to your medications${questionMark}' scope="request"/>
+<c:set var="question3"  value='aDo you take medications correctly and on your own${questionMark}' scope="request"/>
+<c:set var="question4"  value='aDo you reorder medications before they run out${questionMark}' scope="request"/>
+<c:set var="question5"  value='aDo you call the doctor${apostrophe}s office to make an appointment${questionMark}' scope="request" />
+<c:set var="question6"  value='aDo you follow-up on any referral for tests${comma} check-ups or labs?' scope="request" />
+<c:set var="question7"  value='aDo you arrange for your ride to medical appointments${questionMark}' scope="request"/>
+<c:set var="question8"  value='aDo you call the doctor about unusual changes in your health ${openParen}For example${colon} Allergic reactions${closeParen}${questionMark}' scope="request"/>
+<c:set var="question9"  value='aDo you apply for health insurance if you lose your current coverage${questionMark}' scope="request"/>
+<c:set var="question10" value='aDo you know what your current health insurance covers${questionMark}' scope="request"/>
+<c:set var="question11" value='aDo you manage your money & budget household expenses ${openParen}For example${colon} use checking${slash}debit card${closeParen}${questionMark}' scope="request"/>
+<c:set var="question12" value='aDo you fill out the medical history form&#44${comma} including a list of your allergies${questionMark}' scope="request"/>
+<c:set var="question13" value='aDo you keep a calendar or list of medical and other appointments${questionMark}' scope="request"/>
 
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="TRAQForm" method="POST" action="TRAQMobile.form" method="post" enctype="multipart/form-data">
@@ -148,19 +167,19 @@
 	    <div id="content_1" data-role="content">
 	        <div><h3>Managing Medications:</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="1"/>
-	        <c:set var="question" value='Do you fill a prescription if you need to?'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
 		    	<script>
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
 		    <c:set var="QNumber" value="2"/>
-		    <c:set var="question" value='Do you know what to do if you are having a bad reaction to your medications?'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-		     <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
 		    	<script>
 		    		insertChoices("${QNumber}");
 		    	</script>
@@ -185,19 +204,19 @@
 	    <div id="content_2" data-role="content">
 	        <div><h3>Managing Medications:</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="3"/>
-	        <c:set var="question" value='Do you take medications correctly and on your own?'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	       	<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
 		    	<script>
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
 		    <c:set var="QNumber" value="4"/>
-		    <c:set var="question" value='Do you reorder medications before they run out?'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-		     <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
 		    	<script>
 		    		insertChoices("${QNumber}");
 		    	</script>
@@ -219,36 +238,34 @@
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" 
 	        		data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
-				<div id="content_3" data-role="content">
-					<div>
-						<h3>Appointment Keeping:</h3>
-						<hr />
-						<br />
-					</div>
-					<c:set var="QNumber" value="5" />
-					<c:set var="question"
-						value='Do you call the doctor&#39s office to make an appointment&#63' />
-					<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}" /> 
-					<strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-					 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    			<script>
-		    				insertChoices("${QNumber}");
-		    			</script>
-		    		</div>
-					<c:set var="QNumber" value="6" />
-					<c:set var="question"
-						value='Do you follow-up on any referral for tests, check-ups or labs?' />
-					<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}" /> 
-						<strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-					 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    			<script>
-		    				insertChoices("${QNumber}");
-		    			</script>
-		    		</div>
-					<div style="float: right;">
-						<span style="float: right; font-size: 50%;">${copyright}</span>
-					</div>
-				</div>
+		<div id="content_3" data-role="content">
+			<div>
+				<h3>Appointment Keeping:</h3>
+				<hr />
+				<br />
+			</div>
+			<c:set var="QNumber" value="5" />
+			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+	    		<script>
+	    			insertChoices("${QNumber}");
+	    		</script>
+	    	</div>
+			<c:set var="QNumber" value="6" />
+			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+    			<script>
+    				insertChoices("${QNumber}");
+    			</script>
+    		</div>
+			<div style="float: right;">
+				<span style="float: right; font-size: 50%;">${copyright}</span>
+			</div>
+		</div>
 				<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Next</a>
@@ -267,19 +284,19 @@
 	    <div id="content_4" data-role="content">
 	        <div><h3>Appointment Keeping:</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="7"/>
-	        <c:set var="question" value='Do you arrange for your ride to medical appointments&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-					 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    			<script>
-		    				insertChoices("${QNumber}");
-		    			</script>
-		    		</div>
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+		    	<script>
+		    		insertChoices("${QNumber}");
+		    	</script>
+		    </div>
 		    <c:set var="QNumber" value="8"/>
-		    <c:set var="question" value='Do you call the doctor about unusual changes in your health ${openParen}For example${colon} Allergic reactions&#41&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-					 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
 		    			<script>
 		    				insertChoices("${QNumber}");
 		    			</script>
@@ -304,19 +321,19 @@
 	    <div id="content_5" data-role="content">
 	        <div><h3>Appointment Keeping:</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="9"/>
-	        <c:set var="question" value='Do you apply for health insurance if you lose your current coverage&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-			 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
     			<script>
     				insertChoices("${QNumber}");
     			</script>
     		</div>
 		    <c:set var="QNumber" value="10"/>
-		    <c:set var="question" value='Do you know what your current health insurance covers&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-			 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
     			<script>
     				insertChoices("${QNumber}");
     			</script>
@@ -339,20 +356,20 @@
 	    <div id="content_6" data-role="content">
 	        <div><h3>Appointment Keeping:</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="11"/>
-	        <c:set var="question" value='Do you manage your money & budget household expenses &#40For example&#58 use checking&#47debit card&#41&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-			 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
     			<script>
     				insertChoices("${QNumber}");
     			</script>
     		</div>
 		    <div><h3>Tracking Health Issues&#58</h3><hr/><br/></div>
 		    <c:set var="QNumber" value="12"/>
-		    <c:set var="question" value='Do you fill out the medical history form&#44 including a list of your allergies&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-			 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
+		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
     			<script>
     				insertChoices("${QNumber}");
     			</script>
@@ -375,9 +392,9 @@
 	    <div id="content_7" data-role="content">
 	        <div><h3>Tracking Health Issues&#58</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="13"/>
-	        <c:set var="question" value='Do you keep a calendar or list of medical and other appointments&#63'/>
-	       	<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+	        <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
 		    	<script>
 		    		insertChoices("${QNumber}");
@@ -517,8 +534,9 @@
 	    </div>
 	    <div id="content_1_sp" data-role="content">
 	        <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
-	        <c:set var="quest1_2" value='&iquest;Cu&aacute;nto tiempo en promedio tarda generalmente su beb&eacute; en disponerse a dormir?'/>
-	        <input id="TRAQQuestion_1_2" name="TRAQQuestion_1_2" type="hidden" value="${quest1_2}"/>
+	        <c:set var="QNumber" value="1_2"/>
+	        <c:set var="question" value='&iquest;Cu&aacute;nto tiempo en promedio tarda generalmente su beb&eacute; en disponerse a dormir?'/>
+	        <input id="TRAQQuestion_1_2" name="TRAQQuestion_1_2" type="hidden" value="${question}"/>
 	        <strong>${quest1_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest1_2}")'></a>
 					 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
 		    			<script>

@@ -9,6 +9,14 @@ var openParen = "\x28";
 var closeParen = "\x29";
 var comma = "\x2C";
 
+var openParen = "&#40";
+var closeParen = "&#41";
+var colon = "&#58";
+var questionMark = "&#63";
+var apostrophe = "&#39";
+var comma = "&#44";
+var slash = "&#47";
+
  
 
 $(document).on("pageinit", function() {
