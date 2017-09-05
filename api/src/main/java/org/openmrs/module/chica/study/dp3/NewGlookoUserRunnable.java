@@ -1,15 +1,19 @@
 package org.openmrs.module.chica.study.dp3;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
@@ -58,9 +62,10 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
 
 			List<Patient> patients = Context.getPatientService().getPatients(firstName + ChirdlUtilConstants.GENERAL_INFO_COMMA + lastName, null, null, false);
-			List<Patient> possibleMatches = new ArrayList<Patient>();
 			if(patients != null && patients.size() > 0)
 			{
+				List<Patient> possibleMatches = new ArrayList<Patient>();
+				
 				// Look through the list to find possible matches
 				Date glookoDOB = DateUtil.parseDate(dateOfBirth, ChirdlUtilConstants.DATE_FORMAT_yyyy_MM_dd);
 				for(Patient patient : patients)
@@ -68,25 +73,57 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 					if(firstName.equalsIgnoreCase(patient.getPersonName().getGivenName()) && lastName.equalsIgnoreCase(patient.getPersonName().getFamilyName()) && patient.getBirthdate().compareTo(glookoDOB) == 0)
 					{
 						possibleMatches.add(patient);
+					}	
+				}
+					
+				Patient matchedPatient = null;
+				if(possibleMatches.size() == 1)
+				{
+					matchedPatient = possibleMatches.get(0);
+				}
+				else if(possibleMatches.size() > 1)
+				{
+					// More than one possible match. Try to match by locating a patient that has an encounter for the day
+					EncounterService encounterService = Context.getEncounterService();
+					List<Patient> matches = new ArrayList<Patient>();
+					
+					for(Patient patient : possibleMatches)
+					{
+						// Look for encounters for today for this patient
+						Calendar todaysDate = Calendar.getInstance();
+						todaysDate.set(Calendar.HOUR_OF_DAY, 0);
+						todaysDate.set(Calendar.MINUTE, 0);
+						todaysDate.set(Calendar.SECOND, 0);
+						
+						List<Encounter> encounters = encounterService.getEncounters(patient, null, todaysDate.getTime(), null, null, null, null, null, null, false);
+						
+						if(encounters.size() > 0)
+						{
+							// Found an encounter for the day, add to the list of matches
+							matches.add(patient);
+						}
 					}
-
-
-					// TODO CHICA-1063 Should we continue looking? One possible solution would
-					// be to build the list of all possible matches, then look for a match based on 
-					// patients that have an encounter for today. This would only work if the patient has
-					// already been registered. The work flow for the device sync has yet to be determined.
-					// The sync could happen prior to registration. Although very unlikely.
-					//								if(possibleMatches.size() > 1)
-					//								{
-					//									// We have more than one possible match, no need to continue looking
-					//									// We don't receive any further information from Glooko to match on
-					//									break;
-					//								}
+					
+					if(matches.size() == 1)
+					{
+						matchedPatient = matches.get(0);
+					}
+				}
+				
+				if(matchedPatient != null)
+				{
+					// Create person attribute to store GlookoId
+					addGlookoCodePersonAttribute(matchedPatient);
+				}
+				else
+				{
+					log.error("New Glooko user notification was received. Unable to locate patient match for: " + lastName + ", " + firstName);
 				}
 			}
-
-			// Create person attribute to store GlookoId
-			addGlookoCodePersonAttribute(possibleMatches.get(0)); // TODO CHICA-1063 Don't just use the first one in the list
+			else
+			{
+				log.error("New Glooko user notification was received. Unable to locate possible patient matches for: " + lastName + ", " + firstName);
+			}	
 		}
 		catch(ContextAuthenticationException e)
 		{
@@ -100,29 +137,35 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 		{
 			Context.closeSession();
 		}		
-
 	}
 	
 	/**
 	 * Add the GlookoCode person attribute
 	 * @param patient
 	 */
-	private void addGlookoCodePersonAttribute(Patient patient){
-		
-		PersonAttributeType attributeType = Context.getPersonService().getPersonAttributeTypeByName(ChirdlUtilConstants.PERSON_ATTRIBUTE_GLOOKO_CODE);
-
-		if (attributeType == null)
+	private void addGlookoCodePersonAttribute(Patient patient)
+	{
+		try
 		{
-			// TODO CHICA-1063 log
-			return;
+			PersonAttributeType attributeType = Context.getPersonService().getPersonAttributeTypeByName(ChirdlUtilConstants.PERSON_ATTRIBUTE_GLOOKO_CODE);
+
+			if (attributeType == null)
+			{
+				log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId() + " Person attribute type does not exist.");
+				return;
+			}
+			
+			PersonAttribute attr = new PersonAttribute(attributeType, glookoCode);
+			attr.setDateCreated(new Date());
+			attr.setCreator(Context.getAuthenticatedUser());
+			patient.addAttribute(attr);
+			
+			Context.getPatientService().savePatient(patient);
 		}
-		
-		PersonAttribute attr = new PersonAttribute(attributeType, glookoCode);
-		attr.setDateCreated(new Date());
-		attr.setCreator(Context.getAuthenticatedUser());
-		patient.addAttribute(attr);
-		
-		Context.getPatientService().savePatient(patient);
+		catch(APIException e)
+		{
+			log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId(), e);
+		}	
 	}
 
 	/**

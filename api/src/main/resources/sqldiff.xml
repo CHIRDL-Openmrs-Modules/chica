@@ -4303,6 +4303,18 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			,(select state_id from chirdlutilbackports_state where name = 'FINISHED')
 			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
         </sql>
+    </diff>   
+    <diff>
+    	<version>1.9.8</version>
+        <author>David Ely</author>
+        <date>September 5th, 2017</date>
+        <description>
+            CHICA-1063 Add new person attribute that will be used to store the Glooko code/id
+        </description>
+        <sql>
+           	INSERT INTO person_attribute_type (name, description, format, searchable, creator, date_created, uuid)
+			VALUES ('GlookoCode', 'Person attribute used to store the code/id for Glooko', 'java.lang.String', 1, 1, NOW(), UUID());
+        </sql>
     </diff>
 </sqldiff>
 
