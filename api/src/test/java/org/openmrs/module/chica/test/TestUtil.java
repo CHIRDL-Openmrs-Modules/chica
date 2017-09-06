@@ -32,6 +32,7 @@ public class TestUtil
 	public static final String BMI_AGE_FILE = "dbunitFiles/bmiAgeCalculation.xml";
 	public static final String CONCEPTS_FILE = "dbunitFiles/concepts.xml";
 	public static final String RULES_FILE = "dbunitFiles/rules.xml";
+	public static final String PATIENT_FORMS_FILE = "dbunitFiles/patientForms.xml";
 
 	/**
 	 * Turns database table into dbunit xml
