@@ -4304,6 +4304,30 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
         </sql>
     </diff>
+    <diff>
+        <version>1.9.8</version>  
+        <author>Seema Sarala</author>  
+        <date>August 23, 2017</date>  
+        <description>  
+        Add new form attributes 'url', 'startState' and 'endState'
+        </description>  
+        <sql> 
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('url', 'Attribute to look up the form.');
+            
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('startState', 'Start State to lookup the form.');
+            
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('endState', 'End State to look up the form.');
+        </sql>
+    </diff>
 </sqldiff>
 
 
