@@ -137,7 +137,7 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 			}
 			else
 			{
-				log.error("Device sync was received, but unable to person attribute for GlookoCode: " + glookoCode);
+				log.error("Device sync was received, but unable to locate person attribute for GlookoCode: " + glookoCode);
 			}
 			
 		}
