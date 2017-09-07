@@ -8,14 +8,8 @@ var oacute = "\xF3";
 var openParen = "\x28";
 var closeParen = "\x29";
 var comma = "\x2C";
-
-var openParen = "&#40";
-var closeParen = "&#41";
-var colon = "&#58";
-var questionMark = "&#63";
-var apostrophe = "&#39";
-var comma = "&#44";
-var slash = "&#47";
+var numberOfQuestions = 20;
+var questionMark ="&#63";
 
  
 
@@ -48,7 +42,7 @@ function init(patientName, birthdate, formInst, language) {
 		$(".vitalsButton").hide();
 	}
 	
-	//insertChoices();
+
 }
 
 function submitEmptyForm() {
@@ -93,34 +87,9 @@ function setLanguage(patientName, birthdate) {
     $("#startButton .ui-btn-text").text(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
     $("#formTitle").text(formTitleText);
-}
-
-/*function setLanguage(patientName, birthdate) {
-	english = !english;
-    var langButtonText = "Español";
-    var additionalQuestions = "Please check the box that best describes your skill level in the following areas that are important for transition to adult health care.";
-    var instructions = '<p>There is no right or wrong answer and your answers will remain confidential and private.</p>';
-    var informantCheck = '<p>Check here if you are a parent or caregiver completing this form.</p>';
-    var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
-    var formTitleText = "Transition Readiness Assessment Questionnaire:";
-    if (!english) {
-        langButtonText = "English";
-        additionalQuestions = " Por favor marcá con una cruz la opción que mejor describa tu capacidad para cada una de las siguientes áreas que son importantes para la transición del cuidado de tu salud a la medicina del adulto.";
-        instructions = '<p> No hay respuestas correctas ni incorrectas y las respuestas serán confidenciales y privadas.</p>';
-        startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
-        formTitleText = "Cuestionario de Evaluación para la Preparación de la Transición:";
-    }
     
-    $("#confirmLangButton .ui-btn-text").text(langButtonText);
-    $("#additionalQuestions").text(additionalQuestions);
-    $("#instructions").html(instructions);
-    $("#informantCheck").html(informantCheck);
-    $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
-    $("#formTitle").text(formTitleText);
-}*/
+    
+}
 
 function changePage(newPageNum) {
     var newPage = "#question_page_" + newPageNum;
@@ -137,7 +106,7 @@ function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
     // Transfer the answers for the 10 questions
-    for (var i = 1; i < 11; i++) {
+    for (var i = 1; i < numberOfQuestions; i++) {
     	if (english) {
 	    	setQuestionCheckboxes("TRAQQuestionEntry_" + i + "_2", "TRAQQuestionEntry_" + i);
 	    } else {
@@ -310,7 +279,7 @@ function insertChoices_2(){
 	});
 	
 	var fieldSet = '';
-	//fieldSet += '<fieldset data-role="controlgroup" data-type="vertical">';
+	fieldSet += '<fieldset data-role="controlgroup" data-type="vertical">';
 	fieldSet += '<input type="radio" name="TRAQQuestionEntry_\$\{QNumber\}" id="TRAQQuestionEntry_\$\{QNumber\}_DO_NOT_KNOW" value="1" data-theme="b" />';
 	fieldSet += '<label for="TRAQQuestionEntry_\$\{QNumber\}_DO_NOT_KNOW">No, I do not know how.</label>';
 	fieldSet += '<input type="radio" name="TRAQQuestionEntry_\$\{QNumber\}" id="TRAQQuestionEntry_\$\{QNumber\}_WANT_TO_LEARN" value="2" data-theme="b" />';
@@ -321,7 +290,7 @@ function insertChoices_2(){
     fieldSet += '<label for="TRAQQuestionEntry_${QNumber}_STARTED">Yes, I have started doing this.</label>';
     fieldSet += '<input type="radio" name="TRAQQuestionEntry_${QNumber}" id="TRAQQuestionEntry_${QNumber}_ALWAYS" value="5" data-theme="b" />';
     fieldSet += '<label for="TRAQQuestionEntry_${QNumber}_ALWAYS">Yes, I always do this when I need to.</label>';
-	//fieldSet += '</fieldset>'
+	fieldSet += '</fieldset>'
     
     fieldSetElement.append(fieldSet);
    
@@ -332,20 +301,19 @@ function insertChoices_2(){
 }
 
 function insertChoices(questionNumber){
-	
+	var spanishExtension = "_2";
 	var choiceDoNotKnow = "No, I do not know how.";
 	var choiceNoButWantToLearn = "No, but I want to learn.";
 	var choiceNoButLearning = "No, but I am learning to do this.";
 	var choiceYesStarted = "I have started doing this.";
 	var choiceYesAlways = "Yes, I always do this when I need to.";
-	if (!english) {
+	if (questionNumber.endsWith(spanishExtension)) {
 		choiceDoNotKnow  = "No, no s" + eacute + " c" + oacute + "mo hacerlo.";
 		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
 		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
 		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
 		choiceYesAlways  = "Si, lo hago siempre que lo necesito."; 
 	}
-	
 	
 	fieldSetElement = $(document.createElement("fieldset"));
 	fieldSetElement.attr({
@@ -354,18 +322,18 @@ function insertChoices(questionNumber){
 	});
 	
 	var fieldSet = '';
-	//fieldSet += '<fieldset data-role="controlgroup" data-type="vertical">';
+	
 	fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW" value="1" data-theme="b" />';
-	fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW">No, I do not know how.</label>';
+	fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_DO_NOT_KNOW">' + choiceDoNotKnow + '</label>';
 	fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber +'" id="TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN" value="2" data-theme="b" />';
-	fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN">No, but I want to learn.</label>';
+	fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_WANT_TO_LEARN">' + choiceNoButWantToLearn + '</label>';
 	fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_LEARNING" value="3" data-theme="b" />';
-    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_LEARNING">No, but I am learning to do this.</label>';
+    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_LEARNING">' + choiceNoButLearning + '</label>';
     fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_STARTED" value="4" data-theme="b" />';
-    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_STARTED">Yes, I have started doing this.</label>';
+    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_STARTED">' + choiceYesStarted + '</label>';
     fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_ALWAYS" value="5" data-theme="b" />';
-    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_ALWAYS">Yes, I always do this when I need to.</label>';
-	//fieldSet += '</fieldset>'
+    fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_ALWAYS">' + choiceYesStarted + '</label>';
+	
     
     fieldSetElement.append(fieldSet);
    
