@@ -3,11 +3,13 @@ package org.openmrs.module.chica.study.dp3;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.AdministrationService;
@@ -110,8 +112,6 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 								// We could check to see if any open states exist without an end time. 
 								// However, lets just create a new state in case new data has actually been 
 								// upload between sync notifications					
-								chirdlutilbackportsService.addPatientState(patient, state, sessions.get(0).getSessionId(), locationTagId, location.getLocationId(), null);
-								
 								StateManager.runState(patient, sessions.get(0).getSessionId(), state, new HashMap<String,Object>(),
 										locationTagId, location.getLocationId(), BaseStateActionHandler.getInstance());
 							}
