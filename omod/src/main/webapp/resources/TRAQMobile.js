@@ -1,16 +1,38 @@
 var english = false;
 var formInstance = null;
-var ntilde = "\xF1";
-var eacute = "\xE9";
-var aacute = "\xE1";
-var Ntilde = "\xD1";
-var oacute = "\xF3";
+var numberOfQuestions = 20;
+var eAcute = "\xE9";
+var aAcute = "\xE1";
+var oAcute = "\xE1";
+var NTilde = "\xD1";
+var nTilde = "\xF1"
+var oAcute = "\xF3";
 var openParen = "\x28";
 var closeParen = "\x29";
 var comma = "\x2C";
-var numberOfQuestions = 20;
-var questionMark ="&#63";
 
+//html codes
+/*var openParen = "&#40";
+var closeParen = "&#41";
+var nTilde = "&#180";
+var colon ="&#58";
+var comma = "&#44";
+var slash = "&#47";
+var semicolon = "&#58";
+var questionMark ="&#63";
+var apostrophe = "&#39";
+var slash = "&#47";
+var oAcute = "&#243";
+var aAcute = "&#225";
+var eAcute = "&#233";
+var uAcute = "&#250";
+var iAcute = "&#";
+var invQuestionMark = "&#191";
+var copyrightSymbol = "&#169";
+var ampersand = "&#38";
+var hyphen = "$#45";
+var NTilde = "&#181";
+var period = "&#46";*/
  
 
 $(document).on("pageinit", function() {
@@ -63,7 +85,7 @@ function setLanguage(patientName, birthdate) {
 	//Strings with spanish characters need hex code
 	//HTML with spanish characters can use HTML codes
 	
-    var langButtonText = "Espa" + ntilde + "ol";
+    var langButtonText = "Espa" + nTilde + "ol";
     var instructions = "<p>Please check the box that best describes your skill level in the following areas that "
     	+ "are important for transition to adult health care. There is no right or wrong answer and your answers  "
     	+ "will remain confidential and private.</p>";
@@ -72,14 +94,14 @@ function setLanguage(patientName, birthdate) {
     var formTitleText = "Transition Readiness Assessment Questionnaire " + openParen + "TRAQ" + closeParen;
     if (!english) {
         langButtonText = "English"; 
-         instructions = "<p>Por favor marc" + aacute + " con una cruz la opci" + oacute + "n que mejor describa tu "
-         + "capacidad para cada una de las siguientes áreas que son importantes para la transici" + oacute + "n del "
+         instructions = "<p>Por favor marc" + aAcute + " con una cruz la opci" + oAcute + "n que mejor describa tu "
+         + "capacidad para cada una de las siguientes " + aAcute + "reas que son importantes para la transici" + oAcute + "n del "
          + "cuidado de tu salud a la medicina del adulto. No hay respuestas correctas ni incorrectas y las respuestas "
-         + "ser" + aacute + "n confidenciales y privadas</p>";
+         + "ser" + aAcute + "n confidenciales y privadas</p>";
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";
-        formTitleText = "Cuestionario de Evaluaci" + oacute + "n para la Preparaci" + oacute + "n de la Transici" 
-        + oacute + "n " + openParen + "TRAQ" + closeParen;
+        formTitleText = "Cuestionario de Evaluaci" + oAcute + "n para la Preparaci" + oAcute + "n de la Transici" 
+        + oAcute + "n " + openParen + "TRAQ" + closeParen;
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
@@ -200,7 +222,7 @@ function insertChoices1(){
 	var choiceYesStarted = "I have started doing this.";
 	var choiceYesAlways = "Yes, I always do this when I need to.";
 	if (!english) {
-		choiceDoNotKnow  = "No, no s" + eacute + " c" + oacute + "mo hacerlo.";
+		choiceDoNotKnow  = "No, no s" + eAcute + " c" + oAcute + "mo hacerlo.";
 		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
 		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
 		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
@@ -264,7 +286,7 @@ function insertChoices_2(){
 	var choiceYesStarted = "I have started doing this.";
 	var choiceYesAlways = "Yes, I always do this when I need to.";
 	if (!english) {
-		choiceDoNotKnow  = "No, no s" + eacute + " c" + oacute + "mo hacerlo.";
+		choiceDoNotKnow  = "No, no s" + eAcute + " c" + oAcute + "mo hacerlo.";
 		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
 		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
 		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
@@ -308,7 +330,7 @@ function insertChoices(questionNumber){
 	var choiceYesStarted = "I have started doing this.";
 	var choiceYesAlways = "Yes, I always do this when I need to.";
 	if (questionNumber.endsWith(spanishExtension)) {
-		choiceDoNotKnow  = "No, no s" + eacute + " c" + oacute + "mo hacerlo.";
+		choiceDoNotKnow  = "No, no s" + eAcute + " c" + oAcute + "mo hacerlo.";
 		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
 		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
 		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
