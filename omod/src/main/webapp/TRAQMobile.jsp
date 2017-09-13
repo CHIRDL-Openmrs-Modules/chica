@@ -30,28 +30,28 @@
 <c:set var="replace" value="\\'" />
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-<c:set var openParen value="&#40"/>
-<c:set var closeParen value="&#41"/>
-<c:set var nTilde value="&#180"/>
-<c:set var colon value="&#58"/>
-<c:set var apostrophe value="&#39"/>
-<c:set var comma value="&#44"/>
-<c:set var slash value="&#47"/>
-<c:set var semicolon value="&#58"/>
-<c:set var questionMark value="&#63"/>
-<c:set var apostrophe value="&#39"/>
-<c:set var slash value="&#47"/>
-<c:set var oAcute value="&#243"/>
-<c:set var aAcute value="&#225"/>
-<c:set var eAcute value="&#233"/>
-<c:set var uAcute value="&#250"/>
-<c:set var iAcute value="&#237"/>
-<c:set var invQuestionMark value="&#191"/>
-<c:set var copyrightSymbol value="&#169"/>
-<c:set var ampersand value="&#38"/>
-<c:set var hyphen value="&#45"/>
-<c:set var NTilde value="&#181"/>
-<c:set var period value="&#46"/>
+<c:set var="openParen" value="&#40"/>
+<c:set var="closeParen" value="&#41"/>
+<c:set var="nTilde" value ="&#241"/>
+<c:set var="colon" value="&#58"/>
+<c:set var="apostrophe" value="&#39"/>
+<c:set var="comma" value="&#44"/>
+<c:set var="slash" value="&#47"/>
+<c:set var="semicolon" value="&#58"/>
+<c:set var="questionMark" value="&#63"/>
+<c:set var="apostrophe" value="&#39"/>
+<c:set var="slash" value="&#47"/>
+<c:set var="oAcute" value="&#243"/>
+<c:set var="aAcute" value="&#225"/>
+<c:set var="eAcute" value="&#233"/>
+<c:set var="uAcute" value="&#250"/>
+<c:set var="iAcute" value="&#237"/>
+<c:set var="invQuestionMark" value="&#191"/>
+<c:set var="copyrightSymbol" value="&#169"/>
+<c:set var="ampersand" value="&#38"/>
+<c:set var="hyphen" value="&#45"/>
+<c:set var="NTilde" value="&#181"/>
+<c:set var="period" value="&#46"/>
 
 <!-- Titles/Headers/Footers/Buttons/Copyright -->
 <c:set var="fmName" value='Transition Readiness Assessment Questionnaire${openParen}TRAQ${closeParen}'/>
@@ -87,7 +87,7 @@
 <c:set var="question13" value='Do you keep a calendar or list of medical and other appointments${questionMark}' scope="request"/>
 <c:set var="question14" value='Do you make a list of questions before the doctor${apostrophe}s visit${questionMark}' scope="request"/>
 <c:set var="question15" value='Do you get financial help with school or work${questionMark}' scope="request"/>
-<c:set var="question16" value='Do you tell the doctor or nurse what you are feeling${questionMark} scope="request"'/>
+<c:set var="question16" value='Do you tell the doctor or nurse what you are feeling${questionMark}' scope="request"/>
 <c:set var="question17" value='Do you answer questions that are asked by the doctor${comma} nurse${comma} or clinic staff${questionMark}' scope="request"/>
 <c:set var="question18" value='Do you help plan or prepare meals${slash}food${questionMark}' scope="request"/>
 <c:set var="question19" value='Do you keep home${slash}room clean or clean-up after meals${questionMark}'  scope="request"/>
@@ -228,7 +228,7 @@
 	        		data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_1" data-role="content">
-	        <div><h3>${headerManageMedication}</h3></div>
+	        <div><h3>${headerManageMedication}</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="1"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -247,7 +247,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Next</a>
@@ -284,7 +284,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Previous</a>
@@ -302,11 +302,7 @@
 	        		data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 		<div id="content_3" data-role="content">
-			<div>
-				<h3>${headerApptKeeping}</h3>
-				<hr />
-				<br />
-			</div>
+			<div><h3>${headerApptKeeping}</h3><hr/><br/></div>
 			<c:set var="QNumber" value="5" />
 			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -326,7 +322,7 @@
     			</script>
     		</div>
 			<div style="float: right;">
-				<span style="float: right; font-size: 50%;">${copyright}</span>
+				<span style="float: right; font-size: 75%;">${copyright}</span>
 			</div>
 		</div>
 				<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -364,7 +360,7 @@
 		    				insertChoices("${QNumber}");
 		    			</script>
 		    		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
@@ -401,7 +397,7 @@
     				insertChoices("${QNumber}");
     			</script>
     		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Previous</a>
@@ -437,7 +433,7 @@
     				insertChoices("${QNumber}");
     			</script>
     		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Previous</a>
@@ -472,7 +468,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Previous</a>
@@ -508,7 +504,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Previous</a>
@@ -544,7 +540,7 @@
 		    				insertChoices("${QNumber}");
 		    			</script>
 		    		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Previous</a>
@@ -579,7 +575,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
@@ -606,7 +602,6 @@
 			    		insertChoices("${QNumber}");
 			    	</script>
 			    </div>
-		        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
 		    </div>
 		    <c:set var="QNumber" value="2_2"/>
 		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -617,7 +612,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>      
 		    </div>
@@ -641,7 +636,6 @@
 			    		insertChoices("${QNumber}");
 			    	</script>
 			    </div>
-		        <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>
 		    </div>
 		    <c:set var="QNumber" value="4_2"/>
 		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -652,9 +646,10 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>      
+		    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Anterior</a>
+		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Proximo</a>      
 		    </div>
 		</div> 
 		
@@ -669,11 +664,7 @@
 	        		data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 		<div id="content_3" data-role="content">
-			<div>
-				<h3>${headerApptKeeping}</h3>
-				<hr />
-				<br />
-			</div>
+			<div><h3>${headerApptKeeping}</h3><hr/><br/></div>
 			<c:set var="QNumber" value="5_2" />
 			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -693,12 +684,12 @@
     			</script>
     		</div>
 			<div style="float: right;">
-				<span style="float: right; font-size: 50%;">${copyright}</span>
+				<span style="float: right; font-size: 75%;">${copyright}</span>
 			</div>
 		</div>
 				<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Next</a>
+	       	    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Anterior</a>
+		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
@@ -732,11 +723,11 @@
 		    				insertChoices("${QNumber}");
 		    			</script>
 		    		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Next</a>
+	       	  <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Anterior</a>
+		      <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
@@ -769,11 +760,11 @@
     				insertChoices("${QNumber}");
     			</script>
     		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Previous</a>
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Next</a>
+	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Anterior</a>
+		   <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
@@ -806,11 +797,11 @@
     				insertChoices("${QNumber}");
     			</script>
     		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Next</a>
+	      	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Anterior</a>
+		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
@@ -841,11 +832,11 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Next</a>
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Anterior</a>
+		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
@@ -877,11 +868,11 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Next</a>
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Anterior</a>
+		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
@@ -913,11 +904,11 @@
 		    				insertChoices("${QNumber}");
 		    			</script>
 		    		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Next</a>
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Anterior</a>
+		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
@@ -948,11 +939,11 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-	        <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
+          	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Anterior</a>
+        	<a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continuar</a>
 	    </div>
 	</div>
 	
