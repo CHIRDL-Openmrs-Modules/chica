@@ -266,6 +266,15 @@ public class ExternalFormController extends SimpleFormController {
 			encounter = (org.openmrs.module.chica.hibernateBeans.Encounter) getEncounterWithoutScannedTimeStamp(encounterList, backportsService, map, vendor);//, form.getFormId());  //do we need tot return
 
 		} 
+		
+		if (encounterList == null || encounter == null ) {
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_ENCOUNTER, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			
+			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
+			return new ModelAndView(view, map);
+		}
+		
 		Form form = Context.getFormService().getForm((String) map.get(ChirdlUtilConstants.PARAMETER_FORM_NAME)); //formName);
 		if (form == null) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
@@ -287,13 +296,7 @@ public class ExternalFormController extends SimpleFormController {
 			return new ModelAndView(view, map);
 		}
 		
-		if (encounterList == null || encounter == null ) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_MISSING_ENCOUNTER, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			
-			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
-			return new ModelAndView(view, map);
-		}
+		 String ggg = map.get(ChirdlUtilConstants.PARAMETER_FORM_PAGE));
  
 		
 		
@@ -396,9 +399,11 @@ public class ExternalFormController extends SimpleFormController {
 	private Encounter getEncounterWithoutScannedTimeStamp (List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService, Map<String, Object> map, Vendor vendor) { //, Integer formId) {
 		for (int i = encounters.size() - 1; i >= 0; i--) {
 			
-			getURLAttributes((org.openmrs.module.chica.hibernateBeans.Encounter) encounters.get(i), vendor, map);
-
 			Encounter encounter = encounters.get(i);
+			getURLAttributes((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, vendor, map);
+			if (map.get(ChirdlUtilConstants.PARAMETER_FORM_PAGE) == null || map.get(ChirdlUtilConstants.PARAMETER_START_STATE) == null || map.get(ChirdlUtilConstants.PARAMETER_END_STATE) == null) {
+    			return encounter; 
+    		}
 			Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<Integer, List<PatientState>>();
 	    	Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<Integer, List<PatientState>>();
 	    	Integer encounterId = encounter.getEncounterId();
@@ -560,13 +565,10 @@ public class ExternalFormController extends SimpleFormController {
     	LocationTag locationTag = locationService.getLocationTagByName(locationTagString);
     	Location location = encounter.getLocation();
     	//Integer locId = location.getLocationId();
-    	if(location == null){
-			//log.error("Location "+locationString+" does not exist. Cannot process this message.");
-			
-		}
     	LocationTagAttributeValue locationTagAttributeValueForm = null;
+    	
      	if (locationTag != null && location != null) {
-    		locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTag.getLocationTagId(), 
+     		locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTag.getLocationTagId(), 
         			ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM,location.getLocationId());
      	}
 
@@ -574,26 +576,40 @@ public class ExternalFormController extends SimpleFormController {
     	String formPage = null;
     	String startStateStr = null;
     	String endStateStr = null;
+    	Form form = null;
+    	
     	if (locationTagAttributeValueForm != null && !locationTagAttributeValueForm.equals("") ) {
     		formName = locationTagAttributeValueForm.getValue(); 
     		
-    		Form form = Context.getFormService().getForm(formName);
+    		form = Context.getFormService().getForm(formName);
     		
     		FormAttributeValue formAttributeValueURL = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_URL, locationTag.getLocationTagId(), location.getLocationId());
     		FormAttributeValue formAttributeValueStartState = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, locationTag.getLocationTagId(), location.getLocationId());
     		FormAttributeValue formAttributeValueEndState = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, locationTag.getLocationTagId(), location.getLocationId());
     		
     		//Form form = formService.getForm(formInstance.getFormId());
-    		formPage = formAttributeValueURL.getValue();
-    		startStateStr = formAttributeValueStartState.getValue();
-    		endStateStr = formAttributeValueEndState.getValue();
+    		if (formAttributeValueURL != null && !formAttributeValueURL.equals("") ) { //if formAttribute values are null
+    			formPage = formAttributeValueURL.getValue();
+    		} 
+    		if (formAttributeValueStartState != null && !formAttributeValueStartState.equals("") ) {
+    			startStateStr = formAttributeValueStartState.getValue();
+    		}
+    		if (formAttributeValueEndState != null && !formAttributeValueEndState.equals("") ) {
+    			endStateStr = formAttributeValueEndState.getValue();
+    		}
+    		
+    		
+    		
     		
     		//formPage = locationTagAttributeValuePage.getValue();
     	} else {
+    		
+    		/*
     		formName = vendor.getFormName();
+    		form = Context.getFormService().getForm(formName);
         	formPage = vendor.getFormPage();   
         	startStateStr = vendor.getStartState();
-        	endStateStr = vendor.getEndState();
+        	endStateStr = vendor.getEndState();*/
         	//Form form = Context.getFormService().getForm(formName);
 
     		/*if (form == null) {

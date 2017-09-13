@@ -49,6 +49,7 @@
                 <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
                 <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
+                <prop key="/module/@MODULE_ID@/pwsPed2.form">pwsPed2</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsWeb.form">finishFormsWeb</prop>
                 <prop key="/module/@MODULE_ID@/externalFormLoader.form">externalFormLoader</prop>
                 <prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
@@ -131,6 +132,11 @@
     <bean id="pws" class="@MODULE_PACKAGE@.web.MobileFormController">
         <property name="commandName"><value>pwsObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/pws</value></property>
+        <property name="successView"><value>finishFormsWeb.form</value></property>
+    </bean>
+    <bean id="pwsPed2" class="@MODULE_PACKAGE@.web.MobileFormController">
+        <property name="commandName"><value>pwsPed2Object</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/pwsPed2</value></property>
         <property name="successView"><value>finishFormsWeb.form</value></property>
     </bean>
     <bean id="pwsIUHCerner" class="@MODULE_PACKAGE@.web.MobileFormController">

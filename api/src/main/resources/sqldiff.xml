@@ -4304,6 +4304,75 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
         </sql>
     </diff>
+    <diff>
+        <version>1.9.8</version>  
+        <author>Seema Sarala</author>  
+        <date>August 23, 2017</date>  
+        <description>  
+        	CHICA-1098 Add new form attributes 'url', 'startState' and 'endState'
+        </description>  
+        <sql> 
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('url', 'Attribute to look up the form.');
+            
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('startState', 'Start State to lookup the form.');
+            
+        INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('endState', 'End State to look up the form.');
+        </sql>
+    </diff>
+    <diff>
+    	<version>1.9.9</version>  
+        <author>Seema Sarala</author>  
+        <date>Septemer 08, 2017</date>  
+        <description>  
+       		CHICA-1098 Add default form attribute values and location tag attribute values for chica_epic and chica_iuh_cerner
+        </description>  
+        <sql> 
+        	INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'pws.form', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'url' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'PWS_create', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'startState' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'PWS_process', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'endState' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_location_tag_attribute (name,description) 
+        	VALUES ( 'primaryPhysicianForm', 'Primary Physician Form.');
+			
+			INSERT INTO chirdlutilbackports_location_tag_attribute_value (location_tag_id, value, location_tag_attribute_id, location_id) 
+			SELECT b.location_tag_id, 'PWS', c.location_tag_attribute_id, b.location_id  
+			FROM location a, location_tag_map b, chirdlutilbackports_location_tag_attribute c
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND c.name='primaryPhysicianForm' AND b.location_id=a.location_id 
+			GROUP BY b.location_tag_id,b.location_id;
+			
+        </sql>
+    </diff>
 </sqldiff>
 
 
