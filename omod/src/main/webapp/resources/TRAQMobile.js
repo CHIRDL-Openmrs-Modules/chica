@@ -1,6 +1,7 @@
 var english = false;
 var formInstance = null;
 var numberOfQuestions = 20;
+var finishAttempts = 0;
 //var eAcute = "\xE9";
 //var iAcute = "\xED";
 //var aAcute = "\xE1";
@@ -153,7 +154,7 @@ function setLanguageFromForm(patientName, birthdate) {
     changePage(1);
 }
 
-function attemptFinishForm() {
+/*function attemptFinishForm() {
 	if (areAllQuestionsAnswered()) {
 		finishForm();
 	}else {
@@ -163,7 +164,27 @@ function attemptFinishForm() {
     		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
     	}
 	}
+}*/
+
+function attemptFinishForm() {
+	finishAttempts++;
+	if (areAllQuestionsAnswered()) {
+		finishForm();
+	} else if (finishAttempts == 1) {
+    	if (english) {
+    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
+    	} else {
+    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
+    	}
+	} else if (finishAttempts >= 2) {
+		if (english) {
+    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
+    	} else {
+    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
+    	}
+	}
 }
+
 
 function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
@@ -219,7 +240,7 @@ function areAllQuestionsAnswered() {
 	}
 	
 	var questionName = "TRAQQuestionEntry_";
-	for (var i = 1; i < 11; i++) {
+	for (var i = 1; i < 21; i++) {
 		if(!$("input[name='" + questionName + i + spanishChar + "']").is(':checked')){
 		   return false;
 		}
@@ -242,8 +263,8 @@ function insertChoices(questionNumber){
 		choiceDoNotKnow  = "No, no s" + eAcute + " c" + oAcute + "mo hacerlo.";
 		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
 		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
-		choiceYesStarted  = "Si, ya he comendzado a hacerlo."; 
-		choiceYesAlways  = "Si, lo hago siempre que lo necesito."; 
+		choiceYesStarted  = "S" + iAcute + ", ya he comendzado a hacerlo."; 
+		choiceYesAlways  = "S" + iAcute + ", lo hago siempre que lo necesito."; 
 	}
 	
 	fieldSetElement = $(document.createElement("fieldset"));
