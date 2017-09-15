@@ -2,20 +2,8 @@ var english = false;
 var formInstance = null;
 var numberOfQuestions = 20;
 var finishAttempts = 0;
-//var eAcute = "\xE9";
-//var iAcute = "\xED";
-//var aAcute = "\xE1";
-//var oAcute = "\xE1";
-//var NTilde = "\xD1";
-//var nTilde = "\xF1"
-//var oAcute = "\xF3";
-//var openParen = "\x28";
-//var closeParen = "\x29";
-//var comma = "\x2C";
-//var colon = "\x3A";
-//var slash = "\x2F";
+var formTitleText = "";
 
-//html codes
 var openParen = "&#40";
 var closeParen = "&#41";
 var nTilde = "&#241";
@@ -37,6 +25,7 @@ var ampersand = "&#38";
 var hyphen = "$#45";
 var NTilde = "&#181";
 var period = "&#46";
+
  
 
 $(document).on("pageinit", function() {
@@ -89,30 +78,36 @@ function setLanguage(patientName, birthdate) {
 	//Strings with spanish characters need hex code
 	//HTML with spanish characters can use HTML codes
 	
+	var formTitleText = "Transition Readiness Assessment Questionnaire " + openParen + "TRAQ" + closeParen;
 	var langButtonText = "Espa" + nTilde + "ol";
-    var instructions = "<p><em>Directions to Youth and Young Adults</em>: Please check the box that best describes <i>your</i> skill level in the following areas that "
-    	+ "are important for transition to adult health care. There is no right or wrong answer and your answers  "
-    	+ "will remain confidential and private.</p>";
+	var startButtonText = "Start";
+    var vitalsButtonText = "Staff";
+    
+    var instructions = "<p><em>Directions to Youth and Young Adults</em>: Please check the box that best describes <i>your</i> "
+    	+ "skill level in the following areas that are important for transition to adult health care. There is no right or wrong "
+    	+ "answer and your answers will remain confidential and private.</p>";
     
     instructions += "<p><em>Directions to Caregivers" + slash + "Parents</em>" + colon + " If your youth or young adult is unable to "
     		+ "complete the tasks below on their own, please check the box that best describes <i>your</i> skill level.</p>";
-    var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
-    var formTitleText = "Transition Readiness Assessment Questionnaire " + openParen + "TRAQ" + closeParen;
+    
+    
     if (!english) {
+    	
+    	formTitleText = "Cuestionario de Evaluaci" + oAcute + "n para la Preparaci" + oAcute + "n de la Transici" + oAcute + "n " + openParen + "TRAQ" + closeParen;
         langButtonText = "English"; 
-         instructions = "<p><em>Instrucciones para los j" + oAcute + "venes</em>" + colon + " Por favor marc" + aAcute + " con una cruz la opci" + oAcute + "n que mejor describa tu "
-         + "capacidad para cada una de las siguientes " + aAcute + "reas que son importantes para la transici" + oAcute + "n del "
-         + "cuidado de tu salud a la medicina del adulto. No hay respuestas correctas ni incorrectas y las respuestas "
-         + "ser" + aAcute + "n confidenciales y privadas.</p>";
-         
-         instructions += "<p><em>Instrucciones para padres/cuidadores</em>" + colon + " Si el joven que est" + aAcute + " a su cuidado no tiene la capacidad "
-         + " de comprender el signiﬁcado por s" + iAcute + " mismo de las preguntas que se mencionan m" + aAcute + "s abajo, por favor, resp" + oAcute + "ndalas en "
-         + " forma conjunta y marque con una cruz el casillero que mejor describa la capacidad del joven para realizarlas.</p>";
-         
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";
-        formTitleText = "Cuestionario de Evaluaci" + oAcute + "n para la Preparaci" + oAcute + "n de la Transici" + oAcute + "n " + openParen + "TRAQ" + closeParen;
+        
+         instructions = "<p><em>Instrucciones para los j" + oAcute + "venes</em>" + colon + " Por favor marc" + aAcute 
+         + " con una cruz la opci" + oAcute + "n que mejor describa tu capacidad para cada una de las siguientes " + aAcute 
+         + "reas que son importantes para la transici" + oAcute + "n del cuidado de tu salud a la medicina del adulto. "
+         + "No hay respuestas correctas ni incorrectas y las respuestas ser" + aAcute + "n confidenciales y privadas.</p>";
+         
+         instructions += "<p><em>Instrucciones para padres/cuidadores</em>" + colon + " Si el joven que est" + aAcute 
+         + " a su cuidado no tiene la capacidad de comprender el signiﬁcado por s" + iAcute + " mismo de las preguntas que se mencionan m" + aAcute 
+         + "s abajo, por favor, resp" + oAcute + "ndalas en forma conjunta y marque con una cruz el casillero que mejor describa la capacidad "
+         + "del joven para realizarlas.</p>";
+         
     }
     
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
@@ -120,13 +115,7 @@ function setLanguage(patientName, birthdate) {
     $("#startButton .ui-btn-text").html(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
     $("#formTitle").html(formTitleText);
-    
-    
-    
-  
 }
-
-
 
 function changePage(newPageNum) {
     var newPage = "#question_page_" + newPageNum;
@@ -136,8 +125,6 @@ function changePage(newPageNum) {
     
     $.mobile.changePage(newPage, { transition: "none", reverse: false });
 }
-
-
 
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
@@ -153,18 +140,6 @@ function setLanguageFromForm(patientName, birthdate) {
         
     changePage(1);
 }
-
-/*function attemptFinishForm() {
-	if (areAllQuestionsAnswered()) {
-		finishForm();
-	}else {
-		if (english) {
-    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
-    	}
-	}
-}*/
 
 function attemptFinishForm() {
 	finishAttempts++;
@@ -249,9 +224,6 @@ function areAllQuestionsAnswered() {
 	return true;
 }
 
-
-
-
 function insertChoices(questionNumber){
 	var spanishExtension = "_2";
 	var choiceDoNotKnow = "No, I do not know how.";
@@ -286,7 +258,6 @@ function insertChoices(questionNumber){
     fieldSet += '<input type="radio" name="TRAQQuestionEntry_' + questionNumber + '" id="TRAQQuestionEntry_' + questionNumber + '_ALWAYS" value="5" data-theme="b" />';
     fieldSet += '<label for="TRAQQuestionEntry_' + questionNumber + '_ALWAYS">' + choiceYesAlways + '</label>';
 	
-    
     fieldSetElement.append(fieldSet);
    
 	$(".choice"+questionNumber).append(fieldSetElement);
@@ -294,7 +265,6 @@ function insertChoices(questionNumber){
 	
 	
 }
-
 
 function showBlockingMessage() {
 	var message = "Saving Answers...";

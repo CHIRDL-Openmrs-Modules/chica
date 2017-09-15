@@ -22,39 +22,36 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/TRAQMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 
-
 </head>
-
-
 <c:set var="search" value="'" />
 <c:set var="replace" value="\\'" />
 <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-<c:set var="openParen" value="&#40"/>
-<c:set var="closeParen" value="&#41"/>
-<c:set var="nTilde" value ="&#241"/>
-<c:set var="colon" value="&#58"/>
-<c:set var="apostrophe" value="&#39"/>
-<c:set var="comma" value="&#44"/>
-<c:set var="slash" value="&#47"/>
-<c:set var="semicolon" value="&#58"/>
-<c:set var="questionMark" value="&#63"/>
-<c:set var="apostrophe" value="&#39"/>
-<c:set var="slash" value="&#47"/>
-<c:set var="oAcute" value="&#243"/>
-<c:set var="aAcute" value="&#225"/>
-<c:set var="eAcute" value="&#233"/>
-<c:set var="uAcute" value="&#250"/>
-<c:set var="iAcute" value="&#237"/>
-<c:set var="invQuestionMark" value="&#191"/>
-<c:set var="copyrightSymbol" value="&#169"/>
-<c:set var="ampersand" value="&#38"/>
-<c:set var="hyphen" value="&#45"/>
-<c:set var="NTilde" value="&#181"/>
-<c:set var="period" value="&#46"/>
+<!-- <c:set var="openParen" value="&#40"/> -->
+<!--<c:set var="closeParen" value="&#41"/>
+<!--<c:set var="nTilde" value ="&#241"/>
+<!--<c:set var="colon" value="&#58"/>
+<!--<c:set var="apostrophe" value="&#39"/>
+<!--<c:set var="comma" value="&#44"/>
+<!--<c:set var="slash" value="&#47"/>
+<!--<c:set var="semicolon" value="&#58"/>
+<!--<c:set var="questionMark" value="&#63"/>
+<!--<c:set var="apostrophe" value="&#39"/>
+<!--<c:set var="slash" value="&#47"/>
+<!--<c:set var="oAcute" value="&#243"/>
+<!--<c:set var="aAcute" value="&#225"/>
+<!--<c:set var="eAcute" value="&#233"/>
+<!--<c:set var="uAcute" value="&#250"/>
+<!--<c:set var="iAcute" value="&#237"/>
+<!--<c:set var="invQuestionMark" value="&#191"/>
+<!--<c:set var="copyrightSymbol" value="&#169"/>
+<!--<c:set var="ampersand" value="&#38"/>
+<!--<c:set var="hyphen" value="&#45"/>
+<!--<c:set var="NTilde" value="&#181"/>
+<!--<c:set var="period" value="&#46"/>
 
 <!-- Titles/Headers/Footers/Buttons/Copyright -->
-<c:set var="fmName" value='Transition Readiness Assessment Questionnaire${openParen}TRAQ${closeParen}'/>
+<c:set var="formName" value='Transition Readiness Assessment Questionnaire${openParen}TRAQ${closeParen}'/>
 <c:set var="formName_sp" value='Cuestionario de Evaluaci${oAcute}n para la Preparaci${oAcute}n de la Transici${oAcute}n ${openParen}TRAQ${closeParen}:'/>
 <c:set var="headerManageMedication" value='Managing Medications${colon}'/>
 <c:set var="headerManageMedication_sp" value='Manejo de la medicaci${oAcute}n ${openParen}para pacientes que han tomado o toman medicaci${oAcute}n${closeParen}'/>
@@ -82,7 +79,7 @@
 <c:set var="question8"  value='Do you call the doctor about unusual changes in your health ${openParen}For example${colon} Allergic reactions${closeParen}${questionMark}' scope="request"/>
 <c:set var="question9"  value='Do you apply for health insurance if you lose your current coverage${questionMark}' scope="request"/>
 <c:set var="question10" value='Do you know what your current health insurance covers${questionMark}' scope="request"/>
-<c:set var="question11" value='Do you manage your money & budget household expenses ${openParen}For example${colon} use checking${slash}debit card${closeParen}${questionMark}' scope="request"/>
+<c:set var="question11" value='Do you manage your money ${ampersand} budget household expenses ${openParen}For example${colon} use checking${slash}debit card${closeParen}${questionMark}' scope="request"/>
 <c:set var="question12" value='Do you fill out the medical history form${comma} including a list of your allergies${questionMark}' scope="request"/>
 <c:set var="question13" value='Do you keep a calendar or list of medical and other appointments${questionMark}' scope="request"/>
 <c:set var="question14" value='Do you make a list of questions before the doctor${apostrophe}s visit${questionMark}' scope="request"/>
@@ -118,8 +115,8 @@
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="TRAQForm" method="POST" action="TRAQMobile.form" method="post" enctype="multipart/form-data">
 	<c:if test="${errorMessage != null}">
-	    <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none"
-	    		 data-dismissible="false" data-theme="b" data-overlay-theme="c">
+	    <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false"
+	        data-theme="b" data-overlay-theme="c">
 	        <div data-role="header" data-theme="b">
 	            <h1>Error</h1>
 	        </div>
@@ -133,546 +130,638 @@
 	</c:if>
 
 	<div data-role="page" id="instruction_page" data-theme="b">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1 id="formTitle">${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        	onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" 
-	        	data-icon="forward" data-transition="pop">${staffButtonText}</a>
+	        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">${staffButtonText}</a>
 	    </div>
 	
-	   <div data-role="content" >
+	    <div data-role="content">
 	        <strong><span id="instructions"></span></strong>
-	        <div><br/></div> 
-	   </div>
-		    
+	        <div><br/></div>
+	    </div>
+	
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	        <a id="startButton" href="#" data-role="button" data-theme="b" onclick="changePage(1)" style="width: 150px;">Start</a>
 	    </div>
-	    
+	
 	</div>
-
 	
 <!-- Form pages (English) - two questions per page -->	
 	<div id="question_page_1" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" 
-	        		data-icon="forward" data-transition="pop">Staff</a>
+	        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_1" data-role="content">
-	        <div><h3>${headerManageMedication}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="1"/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
-		    <c:set var="QNumber" value="2"/>
-		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
+	        <div>
+	            <h3>${headerManageMedication}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="1" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <c:set var="QNumber" value="2" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Next</a>
 	    </div>
-	    
+	
 	</div>
 
 	<div id="question_page_2" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right"
-	        		 data-icon="forward" data-transition="pop">Staff</a>
+	        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_2" data-role="content">
-	        <div><h3>${headerManageMedication}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="3"/>
-	       	<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
-		    <c:set var="QNumber" value="4"/>
-		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
+	        <div>
+	            <h3>${headerManageMedication}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="3" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <c:set var="QNumber" value="4" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
 	<div id="question_page_3" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" 
-	        		data-icon="forward" data-transition="pop">Staff</a>
+	        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
-		<div id="content_3" data-role="content">
-			<div><h3>${headerApptKeeping}</h3><hr/><br/></div>
-			<c:set var="QNumber" value="5" />
-			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-	    		<script>
-	    			insertChoices("${QNumber}");
-	    		</script>
-	    	</div>
-			<c:set var="QNumber" value="6" />
-			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-    			<script>
-    				insertChoices("${QNumber}");
-    			</script>
-    		</div>
-			<div style="float: right;">
-				<span style="float: right; font-size: 75%;">${copyright}</span>
-			</div>
-		</div>
-				<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
+	    <div id="content_3" data-role="content">
+	        <div>
+	            <h3>${headerApptKeeping}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="5" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <c:set var="QNumber" value="6" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <div style="float: right;">
+	            <span style="float: right; font-size: 75%;">${copyright}</span>
+	        </div>
+	    </div>
+	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
-
+	
 	<div id="question_page_4" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" 
-	        		data-icon="forward" data-transition="pop">Staff</a>
+	        <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
-	    <div id="content_4" data-role="content">
-	        <div><h3>${headerApptKeeping}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="7"/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
-		    <c:set var="QNumber" value="8"/>
-		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    			<script>
-		    				insertChoices("${QNumber}");
-		    			</script>
-		    		</div>
-	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+	    <div id="content_3" data-role="content">
+	        <div>
+	            <h3>${headerApptKeeping}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="7" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <c:set var="QNumber" value="8" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button"
+	            onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <div style="float: right;">
+	            <span style="float: right; font-size: 75%;">${copyright}</span>
+	        </div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
 	<div id="question_page_5" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" 
-	        		data-icon="forward" data-transition="pop">Staff</a>
+	        <a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_5" data-role="content">
-	        <div><h3>${headerApptKeeping}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="9"/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-    			<script>
-    				insertChoices("${QNumber}");
-    			</script>
-    		</div>
-		    <c:set var="QNumber" value="10"/>
-		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-    			<script>
-    				insertChoices("${QNumber}");
-    			</script>
-    		</div>
+	    
+	        <div>
+	            <h3>${headerApptKeeping}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="9" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <c:set var="QNumber" value="10" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Previous</a>
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Next</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
 	<div id="question_page_6" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage6Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_6" data-role="content">
-	        <div><h3>${headerApptKeeping}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="11"/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-    			<script>
-    				insertChoices("${QNumber}");
-    			</script>
-    		</div>
-		    <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
-		    <c:set var="QNumber" value="12"/>
-		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-    			<script>
-    				insertChoices("${QNumber}");
-    			</script>
-    		</div>
+	    
+	        <div>
+	            <h3>${headerApptKeeping}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="11" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <div>
+	            <h3>${headerTrackingHealthIssues}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="12" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
 	<div id="question_page_7" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage7Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_7" data-role="content">
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="13"/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
-		    <c:set var="QNumber" value="14"/>
-		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
+	    
+	        <div>
+	            <h3>${headerTrackingHealthIssues}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="13" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <c:set var="QNumber" value="14" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
 	<div id="question_page_8" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage8Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        	onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" 
-	        	data-transition="pop">Staff</a>
+	        <a id="langPage8Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_8" data-role="content">
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="15"/>
-	         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
-		     <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
-		     <c:set var="QNumber" value="16"/>
-		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
+	    
+	        <div>
+	            <h3>${headerTrackingHealthIssues}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="15" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <div>
+	            <h3>Talking with Providers&#58</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="16" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
-
+	
+	
 	<div id="question_page_9" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage9Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        	onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" 
-	        	data-transition="pop">Staff</a>
+	        <a id="langPage9Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_9" data-role="content">
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="17"/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
-		    <div><h3>${headerManagingDailyActivities}</h3><hr/><br/></div>
-		    <c:set var="QNumber" value="18"/>
-		    <c:set var="question" value='Do you help plan or prepare meals&#47food&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
-					 <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    			<script>
-		    				insertChoices("${QNumber}");
-		    			</script>
-		    		</div>
+	    
+	        <div>
+	            <h3>${headerTrackingHealthIssues}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="17" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <div>
+	            <h3>${headerManagingDailyActivities}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="18" />
+	        <c:set var="question" value='Do you help plan or prepare meals&#47food&#63' />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}" />
+	        <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
 	<div id="question_page_10" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage10Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_10" data-role="content">
-	        <div><h3>${headerManagingDailyActivities}</h3><hr/><br/></div>
-	        <c:set var="QNumber" value="19"/>
-	         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
-		    <c:set var="QNumber" value="20"/>
-		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-		    	<script>
-		    		insertChoices("${QNumber}");
-		    	</script>
-		    </div>
+	    
+	        <div>
+	            <h3>${headerManagingDailyActivities}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="19" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <c:set var="QNumber" value="20" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+			<div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+		         <div data-role="header" data-theme="b">
+		             <h1>Not Completed</h1>
+		         </div>
+		         <div data-role="content">
+		             <span>This form is not complete.  Please complete before continuing.</span>
+		             <div style="margin: 0 auto;text-align: center;">
+		                 <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Close</a>
+		             </div>
+		         </div>
+		     </div>
+     
+		     <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
+		         <div data-role="header" data-theme="b">
+		             <h1>Not Completed</h1>
+		         </div>
+		         <div data-role="content">
+		             <span>This form is still not complete.  Are you sure you want to continue?</span>
+		             <div style="margin: 0 auto;text-align: center;">
+		                 <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Yes</a>
+		                 <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
+		             </div>
+		         </div>
+		     </div>
+			        
+	        <div id="finish_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+	            <div data-role="header" data-theme="b">
+	                <h1>Error</h1>
+	            </div>
+	            <div data-role="content">
+	                <span>There was an error submitting the form.  Please press 'OK' to try again.</span>
+	                <div style="margin: 0 auto;text-align: center;">
+	                    <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
+	                </div>
+            	</div>
+        	</div>
+        	
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
-	                <div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Not Completed</h1>
-            </div>
-            <div data-role="content">
-                <span>This form is not complete.  Please complete before continuing.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Close</a>
-                </div>
-            </div>
-        </div>
-        <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Not Completed</h1>
-            </div>
-            <div data-role="content">
-                <span>This form is still not complete.  Are you sure you want to continue?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href=""  onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Yes</a>
-                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
-        </div>
-        <div id="finish_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Error</h1>
-            </div>
-            <div data-role="content">
-                <span>There was an error submitting the form.  Please press 'OK' to try again.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">OK</a>
-                </div>
-            </div>
-        </div>
-    	</div>
-		<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	
+	    </div>
+	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
 	    </div>
 	</div>
 
 <!-- Form pages (Spanish) - two questions per page -->
-	  <div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
-		    <div data-role="header" >
-		        <h1>${formName_sp}</h1>
-		        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-		        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-		        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
-		    </div>
-		    <div id="content_1_sp" data-role="content">
-		        <div><h3>${headerManageMedication_sp}</h3><hr/><br/></div>
-		        <c:set var="QNumber" value="1_2"/>
-		         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-		        <c:set var="questionName"  value="question${QNumber}"/>
-			    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-			    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-			    	<script>
-			    		insertChoices("${QNumber}");
-			    	</script>
-			    </div>
-		    
-			    <c:set var="QNumber" value="2_2"/>
-			     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-		        <c:set var="questionName"  value="question${QNumber}"/>
-			    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-			    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-			    	<script>
-			    		insertChoices("${QNumber}");
-			    	</script>
-			    </div>
-		        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+	<div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
+	    <div data-role="header">
+	        <h1>${formName_sp}</h1>
+	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+	        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Personal</a>
+	    </div>
+	    <div id="content_1_sp" data-role="content">
+	
+	        <div>
+	            <h3>${headerManageMedication_sp}</h3>
+	            <hr/><br/></div>
+	
+	        <c:set var="QNumber" value="1_2" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
 	        </div>
-		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>      
-		    </div>
-		</div> 
-		
-		<div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
-		    <div data-role="header" >
-		        <h1>${formName_sp}</h1>
-		        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-		        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-		        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
-		    </div>
-		    <div id="content_2_sp" data-role="content">
-		        <div><h3>${headerManageMedication_sp}</h3><hr/><br/></div>
-		        <c:set var="QNumber" value="3_2"/>
-		         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-		        <c:set var="questionName"  value="question${QNumber}"/>
-			    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-			    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-			    	<script>
-			    		insertChoices("${QNumber}");
-			    	</script>
-			    </div>
-		    
-			    <c:set var="QNumber" value="4_2"/>
-			     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-		        <c:set var="questionName"  value="question${QNumber}"/>
-			    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-			    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-			    	<script>
-			    		insertChoices("${QNumber}");
-			    	</script>
-			    </div>
-		        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
-	         </div>
-		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-		    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Anterior</a>
-		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Proximo</a>      
-		    </div>
-		</div> 
+	
+	        <c:set var="QNumber" value="2_2" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+	    </div>
+	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>
+	    </div>
+	</div>
 		
 		
-		<div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
-	    <div data-role="header" >
+	<div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
+	    <div data-role="header">
+	        <h1>${formName_sp}</h1>
+	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+	        <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Personal</a>
+	    </div>
+	    <div id="content_2_sp" data-role="content">
+	    
+	        <div>
+	            <h3>${headerManageMedication_sp}</h3>
+	            <hr/><br/></div>
+	            
+	        <c:set var="QNumber" value="3_2" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	
+	        <c:set var="QNumber" value="4_2" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	        
+	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+	    </div>
+	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Anterior</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Proximo</a>
+	    </div>
+	</div>
+		
+		
+	<div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
+	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-	        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
-	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" 
-	        		data-icon="forward" data-transition="pop">Staff</a>
+	        <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
+	            data-transition="pop">Staff</a>
 	    </div>
-		<div id="content_3" data-role="content">
-			<div><h3>${headerApptKeeping_sp}</h3><hr/><br/></div>
-			<c:set var="QNumber" value="5_2" />
-			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-	    		<script>
-	    			insertChoices("${QNumber}");
-	    		</script>
-	    	</div>
-			<c:set var="QNumber" value="6_2" />
-			<input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
-	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;" >
-    			<script>
-    				insertChoices("${QNumber}");
-    			</script>
-    		</div>
-			<div style="float: right;">
-				<span style="float: right; font-size: 75%;">${copyright}</span>
-			</div>
-		</div>
-				<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       	    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Anterior</a>
-		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Proximo</a>    
+	    <div id="content_3" data-role="content">
+	
+	        <div>
+	            <h3>${headerApptKeeping_sp}</h3>
+	            <hr/><br/></div>
+	
+	        <c:set var="QNumber" value="5_2" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	
+	        <c:set var="QNumber" value="6_2" />
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+	            <script>
+	                insertChoices("${QNumber}");
+	            </script>
+	        </div>
+	
+	        <div style="float: right;">
+	            <span style="float: right; font-size: 75%;">${copyright}</span>
+	        </div>
+	    </div>
+	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Anterior</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
 	
 	
 	<div id="question_page_4_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
-	        <h1>${formName}</h1>
+	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
 	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
@@ -680,7 +769,10 @@
 	        		data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_4" data-role="content">
-	        <div><h3>${headerApptKeeping_sp}</h3><hr/><br/></div>
+	    
+	        <div><h3>${headerApptKeeping_sp}</h3>
+	        <hr/><br/></div>
+	        
 	        <c:set var="QNumber" value="7_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -690,6 +782,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
+		    
 		    <c:set var="QNumber" value="8_2"/>
 		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -709,7 +802,7 @@
 	
 	<div id="question_page_5_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
-	        <h1>${formName}</h1>
+	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" 
 	        		onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
@@ -747,7 +840,7 @@
 	
 	<div id="question_page_6_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
-	        <h1>${formName}</h1>
+	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage6Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
@@ -763,7 +856,7 @@
     				insertChoices("${QNumber}");
     			</script>
     		</div>
-		    <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+		    <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
 		    <c:set var="QNumber" value="12_2"/>
 		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -783,13 +876,13 @@
 	
 	<div id="question_page_7_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
-	        <h1>${formName}</h1>
+	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage7Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_7" data-role="content">
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="13_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -818,13 +911,13 @@
 	
 	<div id="question_page_8_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
-	        <h1>${formName}</h1>
+	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage8Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_8" data-role="content">
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="15_2"/>
 	         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -854,13 +947,13 @@
 	
 	<div id="question_page_9_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
-	        <h1>${formName}</h1>
+	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage9Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_9" data-role="content">
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="17_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -870,7 +963,7 @@
 		    		insertChoices("${QNumber}");
 		    	</script>
 		    </div>
-		    <div><h3>${headerManagingDailyActivities}</h3><hr/><br/></div>
+		    <div><h3>${headerManagingDailyActivities_sp}</h3><hr/><br/></div>
 		    <c:set var="QNumber" value="18_2"/>
 		    <c:set var="question" value='Do you help plan or prepare meals&#47food&#63'/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
@@ -890,13 +983,13 @@
 	
 	<div id="question_page_10_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
-	        <h1>${formName}</h1>
+	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 	        <a id="langPage10Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
 	    </div>
 	    <div id="content_10" data-role="content">
-	        <div><h3>${headerManagingDailyActivities}</h3><hr/><br/></div>
+	        <div><h3>${headerManagingDailyActivities_sp}</h3><hr/><br/></div>
 	        <c:set var="QNumber" value="19_2"/>
 	         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
