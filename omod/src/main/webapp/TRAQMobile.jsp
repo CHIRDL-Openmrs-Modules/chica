@@ -9,8 +9,7 @@
 <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/TRAQMobile.css">
+
 
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
@@ -21,6 +20,9 @@
 <script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/TRAQMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/TRAQMobile.css">
 
 </head>
 <c:set var="search" value="'" />
@@ -138,9 +140,15 @@
 	            data-transition="pop">${staffButtonText}</a>
 	    </div>
 	
-	    <div data-role="content">
+	    <div data-role="content" id="informationContent">
 	        <strong><span id="instructions"></span></strong>
-	        <div><br/></div>
+	        <div class="ui-block-a">
+				<div >	
+				   <input type="checkbox" data-theme="b" name="TRAQInformantCheckbox" id="TRAQInformantCheckbox"  data-mini="true" />
+	   <label id="TRAQInformantCheckboxLabel" for="TRAQInformantCheckbox" ></label>
+	</div>
+    		</div>
+            
 	    </div>
 	
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -150,7 +158,8 @@
 	</div>
 	
 <!-- Form pages (English) - two questions per page -->	
-	<div id="question_page_1" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="1" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -188,12 +197,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Next</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Next</a>
 	    </div>
 	
 	</div>
 
-	<div id="question_page_2" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="2" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -231,12 +241,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Next</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
-	<div id="question_page_3" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="3" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -276,12 +287,13 @@
 	        </div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Next</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 	
-	<div id="question_page_4" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="4" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -320,13 +332,14 @@
 	            <span style="float: right; font-size: 75%;">${copyright}</span>
 	        </div>
 	    </div>
-	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Next</a>
+	   <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
-	<div id="question_page_5" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="5" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -362,13 +375,14 @@
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
-	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Next</a>
+	   <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
-	<div id="question_page_6" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="6" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -409,12 +423,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Next</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
-	<div id="question_page_7" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="7" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -450,13 +465,14 @@
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
-	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Next</a>
+	   <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
-	<div id="question_page_8" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="8" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -496,14 +512,15 @@
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
-	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Next</a>
+	   <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 	
 	
-	<div id="question_page_9" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="9" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -543,13 +560,14 @@
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
-	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Next</a>
+	  <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
-	<div id="question_page_10" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="10" />
+	<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -624,13 +642,14 @@
 	
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Previous</a>
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(changePage(${PNumber}-1))" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
 	    </div>
 	</div>
 
 <!-- Form pages (Spanish) - two questions per page -->
-	<div id="question_page_1_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="1" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName_sp}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -666,12 +685,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
 		
 		
-	<div id="question_page_2_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="2" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName_sp}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -708,13 +728,14 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(1)" style="width: 150px;">Anterior</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Proximo</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
 		
 		
-	<div id="question_page_3_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="3" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header">
 	        <h1>${formName}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -753,13 +774,14 @@
 	        </div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Anterior</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Proximo</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
 	
 	
-	<div id="question_page_4_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="4" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
 	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -795,12 +817,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       	  <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(3)" style="width: 150px;">Anterior</a>
-		      <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Proximo</a>    
+	       	  <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+		      <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
-	<div id="question_page_5_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="5" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
 	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -832,13 +855,14 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(4)" style="width: 150px;">Anterior</a>
-		   <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Proximo</a>    
+	       <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+		   <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
 	
-	<div id="question_page_6_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="6" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
 	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -869,12 +893,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	      	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(5)" style="width: 150px;">Anterior</a>
-		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Proximo</a>    
+	      	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
-	<div id="question_page_7_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="7" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
 	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -904,12 +929,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(6)" style="width: 150px;">Anterior</a>
-		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Proximo</a>    
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
-	<div id="question_page_8_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="8" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
 	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -940,12 +966,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(7)" style="width: 150px;">Anterior</a>
-		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Proximo</a>    
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
-	<div id="question_page_9_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="9" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
 	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -976,12 +1003,13 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(8)" style="width: 150px;">Anterior</a>
-		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(10)" style="width: 150px;">Proximo</a>    
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+		    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
 	    </div>
 	</div>
 	
-	<div id="question_page_10_sp" data-role="page" data-theme="b" type="question_page">
+	<c:set var="PNumber" value="10" />
+	<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
 	    <div data-role="header" >
 	        <h1>${formTitleText}</h1>
 	        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
@@ -1011,7 +1039,7 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-          	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(9)" style="width: 150px;">Anterior</a>
+          	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1))" style="width: 150px;">Anterior</a>
         	<a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continuar</a>
 	    </div>
 	</div>
@@ -1033,6 +1061,7 @@
 	<input id="TRAQSevere" name="TRAQSevere" type="hidden"/>
 	<input id="TRAQResearch" name="TRAQResearch" type="hidden"/>
 	<input id="language" name="language" type="hidden" value="${language}"/>
+	<input id="TRAQInformant" name="TRAQInformant" type="hidden" value="N"/>
 </form>
 </body>
 </html>

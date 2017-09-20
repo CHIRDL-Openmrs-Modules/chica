@@ -3,6 +3,7 @@ var formInstance = null;
 var numberOfQuestions = 20;
 var finishAttempts = 0;
 var formTitleText = "";
+var TRAQInformantText = "";
 
 var openParen = "&#40";
 var closeParen = "&#41";
@@ -82,13 +83,14 @@ function setLanguage(patientName, birthdate) {
 	var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
     var vitalsButtonText = "Staff";
+    TRAQInformantText = "Check here if you are a parent " + slash + " caregiver completing this form."
+   
+    var instructions = "<p><em class=\"bolderNonItalic\">Directions to Youth and Young Adults</em>: <em class=\"underline\">Please check the box that best describes <em class=\"bolder\">your</em> "
+    	+ "skill level </em> in the following areas that are important for transition to adult health care. There is no right or wrong "
+    	+ "answer and your answers will remain confidential and private.</p><hr/>";
     
-    var instructions = "<p><em>Directions to Youth and Young Adults</em>: Please check the box that best describes <i>your</i> "
-    	+ "skill level in the following areas that are important for transition to adult health care. There is no right or wrong "
-    	+ "answer and your answers will remain confidential and private.</p>";
-    
-    instructions += "<p><em>Directions to Caregivers" + slash + "Parents</em>" + colon + " If your youth or young adult is unable to "
-    		+ "complete the tasks below on their own, please check the box that best describes <i>your</i> skill level.</p>";
+    instructions += "<p><em class=\"bolderNonItalic\">Directions to Caregivers" + slash + "Parents" + colon + "</em> If your youth or young adult is unable to "
+    		+ "complete the tasks below on their own, please check the box that best describes <em class=\"bolderNonItalic\">your</em> skill level.</p>";
     
     
     if (!english) {
@@ -98,15 +100,17 @@ function setLanguage(patientName, birthdate) {
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";
         
-         instructions = "<p><em>Instrucciones para los j" + oAcute + "venes</em>" + colon + " Por favor marc" + aAcute 
+         instructions = "<p><em class=\"bolderNonItalic\">Instrucciones para los j" + oAcute + "venes</em>" + colon + " Por favor marc" + aAcute 
          + " con una cruz la opci" + oAcute + "n que mejor describa tu capacidad para cada una de las siguientes " + aAcute 
          + "reas que son importantes para la transici" + oAcute + "n del cuidado de tu salud a la medicina del adulto. "
-         + "No hay respuestas correctas ni incorrectas y las respuestas ser" + aAcute + "n confidenciales y privadas.</p>";
+         + "No hay respuestas correctas ni incorrectas y las respuestas ser" + aAcute + "n confidenciales y privadas.</p><hr/>";
          
-         instructions += "<p><em>Instrucciones para padres/cuidadores</em>" + colon + " Si el joven que est" + aAcute 
+         instructions += "<p><em class=\"bolderNonItalic\">Instrucciones para padres" + slash + "cuidadores</em>" + colon + " Si el joven que est" + aAcute 
          + " a su cuidado no tiene la capacidad de comprender el signiﬁcado por s" + iAcute + " mismo de las preguntas que se mencionan m" + aAcute 
          + "s abajo, por favor, resp" + oAcute + "ndalas en forma conjunta y marque con una cruz el casillero que mejor describa la capacidad "
          + "del joven para realizarlas.</p>";
+         
+         TRAQInformantText = "Marque con una cruz, si usted es (padres " + slash + " cuidadores) quien est" + aAcute + " completando el formulario.";
          
     }
     
@@ -115,6 +119,8 @@ function setLanguage(patientName, birthdate) {
     $("#startButton .ui-btn-text").html(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
     $("#formTitle").html(formTitleText);
+    $("#TRAQInformantCheckboxLabel .ui-btn-text").html(TRAQInformantText);
+   
 }
 
 function changePage(newPageNum) {
