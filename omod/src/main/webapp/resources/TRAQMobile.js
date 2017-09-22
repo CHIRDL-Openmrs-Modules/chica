@@ -235,7 +235,7 @@ function insertChoices(questionNumber){
 	var choiceDoNotKnow = "No, I do not know how.";
 	var choiceNoButWantToLearn = "No, but I want to learn.";
 	var choiceNoButLearning = "No, but I am learning to do this.";
-	var choiceYesStarted = "I have started doing this.";
+	var choiceYesStarted = "Yes, I have started doing this.";
 	var choiceYesAlways = "Yes, I always do this when I need to.";
 	if (questionNumber.endsWith(spanishExtension)) {
 		choiceDoNotKnow  = "No, no s" + eAcute + " c" + oAcute + "mo hacerlo.";

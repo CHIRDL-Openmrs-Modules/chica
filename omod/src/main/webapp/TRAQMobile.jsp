@@ -81,7 +81,7 @@
 <c:set var="question8"  value='Do you call the doctor about unusual changes in your health ${openParen}For example${colon} Allergic reactions${closeParen}${questionMark}' scope="request"/>
 <c:set var="question9"  value='Do you apply for health insurance if you lose your current coverage${questionMark}' scope="request"/>
 <c:set var="question10" value='Do you know what your current health insurance covers${questionMark}' scope="request"/>
-<c:set var="question11" value='Do you manage your money ${ampersand} budget household expenses ${openParen}For example${colon} use checking${slash}debit card${closeParen}${questionMark}' scope="request"/>
+<c:set var="question11" value='Do you manage your money ${ampersand} budget household expenses ${openParen}For example${colon} use checking ${slash} debit card${closeParen}${questionMark}' scope="request"/>
 <c:set var="question12" value='Do you fill out the medical history form${comma} including a list of your allergies${questionMark}' scope="request"/>
 <c:set var="question13" value='Do you keep a calendar or list of medical and other appointments${questionMark}' scope="request"/>
 <c:set var="question14" value='Do you make a list of questions before the doctor${apostrophe}s visit${questionMark}' scope="request"/>
@@ -144,7 +144,7 @@
 	        <strong><span id="instructions"></span></strong>
 	        <div class="ui-block-a">
 				<div >	
-				   <input type="checkbox" data-theme="b" name="TRAQInformantCheckbox" id="TRAQInformantCheckbox"  data-mini="true" />
+				   <input type="checkbox" data-theme="b" name="TRAQInformantCheckbox" id="TRAQInformantCheckbox"  data-mini="true" value="Y"/>
 	   <label id="TRAQInformantCheckboxLabel" for="TRAQInformantCheckbox" ></label>
 	</div>
     		</div>
