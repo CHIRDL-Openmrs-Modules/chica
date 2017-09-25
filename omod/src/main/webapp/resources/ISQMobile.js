@@ -51,6 +51,7 @@ function setLanguage(patientName, birthdate) {
     var instructions = '<p>Please base your answers on what you have noticed over the last MONTH.</p>';
     var startButtonText = "Start";
     var vitalsButtonText = "Staff";
+    var TRAQInformantText = "";
     var formTitleText = "Infant Sleep Questionnaire:";
     if (!english) {
         langButtonText = "English";
