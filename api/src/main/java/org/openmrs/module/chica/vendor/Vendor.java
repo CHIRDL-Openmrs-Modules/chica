@@ -83,4 +83,11 @@ public interface Vendor {
 	 * @return The encryption key
 	 */
 	public String getEncryptionKey();
+	
+	/**
+	 * Retrieves FormName, FormPage, StartState and EndState 
+	 * 
+	 * @param encounter The patient's encounter.
+	 */
+	public void getURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter) ;
 }

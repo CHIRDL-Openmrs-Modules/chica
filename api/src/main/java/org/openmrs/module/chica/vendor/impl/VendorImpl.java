@@ -21,10 +21,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.vendor.Vendor;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 
 /**
@@ -46,6 +53,10 @@ public class VendorImpl implements Vendor {
 	private static final char CHARACTER_SPACE = ' ';
 	private static final String STRING_SPACE = " ";
 	private static final String REPLACEMENT_VALUE_ZERO = "0";
+	private String formName;
+	private String formPage;
+	private String startStateStr;
+	private String endStateStr;
 	
 	protected HttpServletRequest request = null;
 	
@@ -66,21 +77,21 @@ public class VendorImpl implements Vendor {
 	 * @see org.openmrs.module.chica.vendor.Vendor#getFormName()
 	 */
 	public String getFormName() {
-		return request.getParameter(PARAM_FORM_NAME);
+		return formName;
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getStartState()
 	 */
 	public String getStartState() {
-		return request.getParameter(PARAM_START_STATE);
+		return startStateStr;
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getEndState()
 	 */
 	public String getEndState() {
-		return request.getParameter(PARAM_END_STATE);
+		return endStateStr;
 	}
 	
 	/**
@@ -103,7 +114,7 @@ public class VendorImpl implements Vendor {
 	 * @see org.openmrs.module.chica.vendor.Vendor#getFormPage()
 	 */
 	public String getFormPage() {
-		return request.getParameter(PARAM_FORM_PAGE);
+		return formPage;
 	}
 	
 	/**
@@ -205,4 +216,55 @@ public class VendorImpl implements Vendor {
 		
 		return paramValue;
 	}
+	
+	/**
+	 * Retrieves FormName, FormPage, StartState and EndState 
+	 * @param encounter The patient's encounter.
+	 */
+	public void getURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter) {
+		
+		String locationTagString = encounter.getPrinterLocation();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTag locationTag = null;
+    	if (StringUtils.isNotBlank(locationTagString)) { 
+    		LocationService locationService = Context.getLocationService();
+    		locationTag = locationService.getLocationTagByName(locationTagString);
+		}
+    	
+    	Location location = encounter.getLocation();
+    	LocationTagAttributeValue locationTagAttributeValueForm = null;
+    	
+     	if (locationTag != null && location != null) {
+     		locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTag.getLocationTagId(), 
+        			ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM,location.getLocationId());
+     	}
+    	Form form = null;
+    	formName = null;
+    	formPage = null;
+    	startStateStr = null;
+    	endStateStr = null;
+    	
+    	if (locationTagAttributeValueForm != null && !locationTagAttributeValueForm.equals("") ) {
+    		formName = locationTagAttributeValueForm.getValue(); 
+    		
+    		form = Context.getFormService().getForm(formName);
+    		
+    		if (form != null && !form.equals("")) {
+    			FormAttributeValue formAttributeValueURL = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_URL, locationTag.getLocationTagId(), location.getLocationId());
+        		FormAttributeValue formAttributeValueStartState = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, locationTag.getLocationTagId(), location.getLocationId());
+        		FormAttributeValue formAttributeValueEndState = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, locationTag.getLocationTagId(), location.getLocationId());
+
+        		if (formAttributeValueURL != null && !formAttributeValueURL.equals("") ) { 
+        			formPage = formAttributeValueURL.getValue();
+        		} 
+        		if (formAttributeValueStartState != null && !formAttributeValueStartState.equals("") ) {
+        			startStateStr = formAttributeValueStartState.getValue();
+        		}
+        		if (formAttributeValueEndState != null && !formAttributeValueEndState.equals("") ) {
+        			endStateStr = formAttributeValueEndState.getValue();
+        		}
+    		}
+    	} 
+	}
+	
 }

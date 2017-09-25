@@ -50,7 +50,6 @@
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
                 <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsWeb.form">finishFormsWeb</prop>
-                <prop key="/module/@MODULE_ID@/externalFormLoader.form">externalFormLoader</prop>
                 <prop key="/module/@MODULE_ID@/displayBadScans.form">displayBadScans</prop>
                 <prop key="/module/@MODULE_ID@/MCHATMobile.form">MCHATMobile</prop>
                 <prop key="/module/@MODULE_ID@/pwsIUHCerner.form">pwsIUHCerner</prop>
@@ -177,11 +176,6 @@
         <property name="commandName"><value>finishFormsWebObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/finishFormsWeb</value></property>
         <property name="successView"><value>finishFormsWeb.form</value></property>
-    </bean>
-    <bean id="externalFormLoader" class="@MODULE_PACKAGE@.web.ExternalFormController">
-        <property name="commandName"><value>externalFormLoaderObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/externalFormLoader</value></property>
-        <property name="successView"><value>externalFormLoader.form</value></property>
     </bean>
     <bean id="displayBadScans" class="@MODULE_PACKAGE@.web.DisplayBadScansController">
         <property name="commandName"><value>displayBadScansObject</value></property>
