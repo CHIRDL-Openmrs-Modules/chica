@@ -4383,6 +4383,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         <sql>
            	INSERT INTO person_attribute_type (name, description, format, searchable, creator, date_created, uuid)
 			VALUES ('GlookoCode', 'Person attribute used to store the code/id for Glooko', 'java.lang.String', 1, 1, NOW(), UUID());
+		</sql>
     </diff>
 </sqldiff>
 
