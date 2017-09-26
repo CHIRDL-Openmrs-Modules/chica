@@ -59,10 +59,13 @@ import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.study.dp3.DeviceSyncRunnable;
+import org.openmrs.module.chica.study.dp3.NewGlookoUserRunnable;
 import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswers;
 import org.openmrs.module.chica.xmlBeans.StatsConfig;
+import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
@@ -1088,4 +1091,24 @@ public class ChicaServiceImpl implements ChicaService
     	{
     		return getChicaDAO().getReprintRescanStatesBySessionId(sessionId, optionalDateRestriction, locationTagIds, locationId);
     	}
+    	
+    	/**
+    	 * CHICA-1063
+    	 * @see org.openmrs.module.chica.service.ChicaService#createPatientStateQueryGlooko(String, String, String)
+    	 */
+    	public void createPatientStateQueryGlooko(String glookoCode, String syncTimestamp, String dataType)
+    	{
+    		ThreadManager threadManager = ThreadManager.getInstance();
+			threadManager.execute(new DeviceSyncRunnable(glookoCode, syncTimestamp, dataType), 0);
+    	}
+
+		/**
+		 * CHICA-1063
+		 * @see org.openmrs.module.chica.service.ChicaService#addGlookoCodePersonAttribute(String, String, String, String)
+		 */
+		public void addGlookoCodePersonAttribute(String firstName, String lastName, String dateOfBirth, String glookoCode) 
+		{
+			ThreadManager threadManager = ThreadManager.getInstance();
+			threadManager.execute(new NewGlookoUserRunnable(firstName, lastName, dateOfBirth, glookoCode), 0);
+		}
 }
