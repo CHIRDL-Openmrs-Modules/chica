@@ -14,8 +14,6 @@
 package org.openmrs.module.chica.vendor;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.openmrs.module.chica.vendor.impl.IUHCernerVendor;
 import org.openmrs.module.chica.vendor.impl.VendorImpl;
 
 
@@ -37,12 +35,9 @@ public class VendorFactory {
 	 * @return A Vendor object for the requested name or null if one cannot be found.
 	 */
 	public static Vendor getVendor(String vendorName, HttpServletRequest request) {
-		if (VENDOR_CERNER.equalsIgnoreCase(vendorName)) {
-			return new IUHCernerVendor(request);
-		} else if (VENDOR_EPIC.equalsIgnoreCase(vendorName)) {
+		if (VENDOR_EPIC.equalsIgnoreCase(vendorName) || VENDOR_CERNER.equalsIgnoreCase(vendorName)) {
 			return new VendorImpl(request);
-		}
-		
+		} 	
 		return null;
 	}
 }

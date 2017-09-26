@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -36,6 +37,7 @@ import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chica.vendor.Vendor;
 import org.openmrs.module.chica.vendor.VendorFactory;
@@ -47,9 +49,11 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chirdlutilbackports.util.PatientStateStartDateComparator;
-import org.springframework.validation.BindException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
 
@@ -58,82 +62,55 @@ import org.springframework.web.servlet.view.RedirectView;
  *
  * @author Steve McKee
  */
-public class ExternalFormController extends SimpleFormController {
-	
-	/**
-	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request) throws Exception {
-		return "testing";
-	}
-	
-	/**
-	 * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
+@Controller
+@RequestMapping(value = "module/chica/externalFormLoader.form")
+public class ExternalFormController {
+
+	@RequestMapping(method = RequestMethod.GET)
+    protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
 		
 		String vendorStr = request.getParameter(ChirdlUtilConstants.PARAMETER_VENDOR);
     	map.put(ChirdlUtilConstants.PARAMETER_VENDOR, vendorStr);
-    	if (vendorStr == null || vendorStr.trim().length() == 0) {
+    	if (StringUtils.isBlank(vendorStr)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
+			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
 		}
     	
     	Vendor vendor = VendorFactory.getVendor(vendorStr, request);
     	if (vendor == null) {
     		map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_INVALID_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
+			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
     	}
     	
-		String formName = vendor.getFormName();
-		String formPage = vendor.getFormPage();
 		String mrn = vendor.getMrn();
-		map.put(ChirdlUtilConstants.PARAMETER_FORM_NAME, formName);
-		map.put(ChirdlUtilConstants.PARAMETER_FORM_PAGE, formPage);
 		map.put(ChirdlUtilConstants.PARAMETER_MRN, mrn);
-		
-		if (formName == null || formName.trim().length() == 0) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_MISSING_FORM, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
-		}
-		
-		if (formPage == null || formPage.trim().length() == 0) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_MISSING_FORM_PAGE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
-		}
-		
-		if (mrn == null || mrn.trim().length() == 0) {
+		if (StringUtils.isBlank(mrn)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_MRN, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
+			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
 		}
 		
 		String username = vendor.getUsername();
-		if (username == null || username.trim().length() == 0) {
+		if (StringUtils.isBlank(username)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_USER, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
+			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
 		}
 		
 		String password = vendor.getPassword();
-		if (password == null || password.trim().length() == 0) {
+		if (StringUtils.isBlank(password)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PASSWORD, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
+			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
 		}
 		
 		String providerId = vendor.getProviderId();
-		if (providerId == null || providerId.trim().length() == 0) {
+		if (StringUtils.isBlank(providerId)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PROVIDER_ID, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
+			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
 		}
 		
 		try {
@@ -142,96 +119,50 @@ public class ExternalFormController extends SimpleFormController {
 			// username/password not valid
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_FAILED_AUTHENTICATION, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return map;
+			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
 		}
-		
-		return map;
-	}
 
-	/**
-     * @see org.springframework.web.servlet.mvc.SimpleFormController#onSubmit(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
-     */
-    @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
-                                    BindException errors) throws Exception {
+		return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
+		
     	Map<String, Object> map = new HashMap<String, Object>();
-    	String view = getFormView();
     	
     	String vendorStr = request.getParameter(ChirdlUtilConstants.PARAMETER_VENDOR);
     	map.put(ChirdlUtilConstants.PARAMETER_VENDOR, vendorStr);
-    	if (vendorStr == null || vendorStr.trim().length() == 0) {
+    	if (StringUtils.isBlank(vendorStr)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
 		}
     	
     	Vendor vendor = VendorFactory.getVendor(vendorStr, request);
     	if (vendor == null) {
     		map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_INVALID_VENDOR, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
     	}
-    	
-    	String formName = vendor.getFormName();
-    	String formPage = vendor.getFormPage();
+
     	String mrn = vendor.getMrn();
-    	String startStateStr = vendor.getStartState();
-    	String endStateStr = vendor.getEndState();
-    	String providerId = vendor.getProviderId();
-    	
-    	map.put(ChirdlUtilConstants.PARAMETER_FORM_NAME, formName);
-		map.put(ChirdlUtilConstants.PARAMETER_FORM_PAGE, formPage);
+    	String providerId = vendor.getProviderId(); 
+
 		map.put(ChirdlUtilConstants.PARAMETER_MRN, mrn);
-		map.put(ChirdlUtilConstants.PARAMETER_START_STATE, startStateStr);
-		map.put(ChirdlUtilConstants.PARAMETER_END_STATE, endStateStr);
 		map.put(ChirdlUtilConstants.PARAMETER_PROVIDER_ID, providerId);
 		map.put(ChirdlUtilConstants.PARAMETER_VENDOR, vendor);
-		
-		Form form = Context.getFormService().getForm(formName);
-		if (form == null) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_INVALID_FORM, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
-		}
 		
 		Patient patient = getPatientByMRN(mrn);
 		if (patient == null) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_INVALID_PATIENT, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
 		}
 		
-		if (startStateStr == null || startStateStr.trim().length() == 0) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_MISSING_START_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
-		}
-		
-		if (endStateStr == null || endStateStr.trim().length() == 0) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_MISSING_END_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
-		}
-		
-		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-		State startState = backportsService.getStateByName(startStateStr);
-		if (startState == null) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_INVALID_START_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
-		}
-		
-		State endState = backportsService.getStateByName(endStateStr);
-		if (endState == null) {
-			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_INVALID_END_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
-		}
-		
-		if (providerId == null || providerId.trim().length() == 0) {
+		if (StringUtils.isBlank(providerId)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PROVIDER_ID, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			return new ModelAndView(view, map);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
 		}
 		
 //		PersonAttribute pat = backportsService.getPersonAttributeByValue(PERSON_ATTR_TYPE_PROVIDER_ID, providerId);
@@ -242,17 +173,70 @@ public class ExternalFormController extends SimpleFormController {
 //		}
 		
 		map.put(ChirdlUtilConstants.PARAMETER_PATIENT_ID, patient.getPatientId());
-		
-		Encounter encounter = getRecentEncounter(
-			patient, backportsService, startState.getStateId(), endState.getStateId(), form.getFormId());
-		map.put(ChirdlUtilConstants.PARAMETER_FORM_TIME_LIMIT, (Util.getFormTimeLimit())*24);
-		if (encounter == null) {
+
+		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
+		List<Encounter> encounterList = getEncounterList(patient); 
+		org.openmrs.module.chica.hibernateBeans.Encounter encounter = null ;
+
+		if (encounterList!=null && encounterList.size() == 1) { 
+			encounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounterList.get(0); 
+			vendor.getURLAttributes(encounter);
+			setURLAttributes(vendor, map);
+		} else if (encounterList!=null && encounterList.size() > 1) {
+			encounter = (org.openmrs.module.chica.hibernateBeans.Encounter) getEncounterWithoutScannedTimeStamp(encounterList, backportsService, map, vendor);
+		} 
+		if (encounterList == null || encounter == null ) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_ENCOUNTER, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			
 			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
-			return new ModelAndView(view, map);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
 		}
+		
+		String formName = vendor.getFormName();
+		Form form = Context.getFormService().getForm(formName); 
+		if (form == null) {
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_FORM, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
+		}
+		
+		String startStateStr = vendor.getStartState();
+		if (StringUtils.isBlank(startStateStr)) {
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_START_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
+		}
+		
+		String endStateStr = vendor.getEndState();
+		if (StringUtils.isBlank(endStateStr)) {
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_END_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
+		}
+		
+		State startState = backportsService.getStateByName(startStateStr);
+		if (startState == null) {
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_START_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
+		}
+		
+		State endState = backportsService.getStateByName(endStateStr);
+		if (endState == null) {
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_INVALID_END_STATE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
+		}
+		
+		String formPage = vendor.getFormPage();
+		if (StringUtils.isBlank(formPage)) {
+			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_FORM_PAGE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
+		}
+ 	
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_TIME_LIMIT, (Util.getFormTimeLimit())*24);
 		
 		FormInstanceTag tag = getFormInstanceInfo(encounter.getEncounterId(), form.getFormId(), startState.getStateId(), 
 			endState.getStateId(), backportsService);
@@ -261,7 +245,7 @@ public class ExternalFormController extends SimpleFormController {
 			map.put(ChirdlUtilConstants.PARAMETER_MISSING_FORM_INSTANCE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			
 			addHandoutsInfo(backportsService, patient, encounter, mrn, map);
-			return new ModelAndView(view, map);
+			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
 		}
 		
 		List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
@@ -314,53 +298,67 @@ public class ExternalFormController extends SimpleFormController {
     }
     
     /**
-     * Retrieves the most recent encounter within the past two days that contains the provided start state but 
-     * not the end state for the provided form and patient.
-     * 
+     * Retrieves the most recent encounters as a List within the past two days
      * @param patient Patient object
-     * @param backportsService ChirdlUtilBackportsService object
-     * @param startStateId The start state identifier
-     * @param endStateId The end state identifier
-     * @param formId The form identifier
-     * @return Encounter object or null if one is not found.
+     * @return Encounter List or null if one is not found
      */
-    private Encounter getRecentEncounter(Patient patient, ChirdlUtilBackportsService backportsService, Integer startStateId, 
-                                         Integer endStateId, Integer formId) {
-    	// Get last encounter with last day
-		Calendar startCal = Calendar.getInstance();
+    private List<org.openmrs.Encounter> getEncounterList(Patient patient) {
+
+    	Calendar startCal = Calendar.getInstance();
 		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
 			null, null, false);
 		if (encounters == null || encounters.size() == 0) {
-			return null;
-		} else if (encounters.size() == 1) {
-			return encounters.get(0);
-		}
-		
-		// Do a check to find the latest encounters with observations without a scanned timestamp for the PWS.
+			return Collections.emptyList(); 
+		} 
+		return encounters;
+    }
+	
+	/**
+	 * Retrieves the  latest encounters with observations that contains the provided start state but 
+     * not the end state for the provided form and patient.
+	 * @param encounters encounters list of latest encounters
+	 * @param backportsService ChirdlUtilBackportsService object
+     * @param map Map that will be returned to the client
+     * @param vendor Vendor Object
+     * @return Encounter object or null if one is not found.
+	 */
+	private Encounter getEncounterWithoutScannedTimeStamp (List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService, Map<String, Object> map, Vendor vendor) { 
 		for (int i = encounters.size() - 1; i >= 0; i--) {
+			
 			Encounter encounter = encounters.get(i);
+			vendor.getURLAttributes((org.openmrs.module.chica.hibernateBeans.Encounter) encounter);
+			setURLAttributes(vendor, map);
+			if (StringUtils.isBlank(vendor.getFormName()) || StringUtils.isBlank(vendor.getFormPage()) || 
+					StringUtils.isBlank(vendor.getStartState()) || StringUtils.isBlank(vendor.getEndState())) {
+    			return encounter; 
+    		}
 			Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<Integer, List<PatientState>>();
 	    	Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<Integer, List<PatientState>>();
 	    	Integer encounterId = encounter.getEncounterId();
-	    	
-	    	Util.getPatientStatesByEncounterId(
-	    		backportsService, formIdToPatientStateMapStart, encounterId, startStateId, true);
-	    	Util.getPatientStatesByEncounterId(
-	    		backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, true);
-	    	
-	    	boolean containsStartState = formIdToPatientStateMapStart.containsKey(formId);
-			boolean containsEndState = formIdToPatientStateMapEnd.containsKey(formId);
-			
-			if (containsStartState && !containsEndState) {
-				return encounter;
-			}
+	    	State startState = backportsService.getStateByName(vendor.getStartState());
+	    	State endState = backportsService.getStateByName(vendor.getEndState());
+	    	if (startState != null && endState != null) {
+	    		Util.getPatientStatesByEncounterId(
+	    	    		backportsService, formIdToPatientStateMapStart, encounterId, startState.getStateId(), true);
+    	    	Util.getPatientStatesByEncounterId(
+    	    		backportsService, formIdToPatientStateMapEnd, encounterId, endState.getStateId(), true);
+	    	}
+	    	Form form = Context.getFormService().getForm(vendor.getFormName());
+	    	if (form != null) {
+	    		boolean containsStartState = formIdToPatientStateMapStart.containsKey(form.getFormId());
+				boolean containsEndState = formIdToPatientStateMapEnd.containsKey(form.getFormId());
+				
+				if (containsStartState && !containsEndState) {
+					return encounter;
+				}
+	    	}
 		}
 		
 		return null;
-    }
+	}
     
     /**
      * Retrieves the last encounter for a patient or null if one does not exist.
@@ -449,7 +447,7 @@ public class ExternalFormController extends SimpleFormController {
                                  Map<String, Object> map) {
     	if (encounter == null) {
 	    	// Check to see if the patient has at least one encounter to display the Handouts button on the page.
-			encounter = getLastEncounter(patient);
+			encounter = getLastEncounter(patient); 
     	}
     	
 		if (encounter != null) {
@@ -486,4 +484,16 @@ public class ExternalFormController extends SimpleFormController {
 			map.put(ChirdlUtilConstants.PARAMETER_SHOW_HANDOUTS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 		}
     }
-}
+    
+    /**
+     * Set URL attributes to Map
+     * @param vendor Vendor Object
+     * @param map Map that will be returned to the client.
+     */
+    private void setURLAttributes(Vendor vendor, Map<String, Object> map) {
+    	map.put(ChirdlUtilConstants.PARAMETER_FORM_NAME, vendor.getFormName());
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_PAGE, vendor.getFormPage());
+		map.put(ChirdlUtilConstants.PARAMETER_START_STATE, vendor.getStartState());
+		map.put(ChirdlUtilConstants.PARAMETER_END_STATE, vendor.getEndState());
+    }
+ }
