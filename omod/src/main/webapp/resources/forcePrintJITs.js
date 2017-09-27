@@ -284,11 +284,11 @@ function forcePrint_parseAvailableForms(responseXML) {
 			var groupName = $(this).attr('name');
 			if (groupName != null) {
 				var groupNameNoSpaces = groupName.replace(/\s/g,''); // CHICA-1122 group name is used as the ID which CANNOT contain spaces, see ticket for details
-				$('<button class="force-print-accordion">' + groupName + '</button><div id="' + groupName + '" class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
+				$('<button class="force-print-accordion">' + groupName + '</button><div id="' + groupNameNoSpaces + '" class="force-print-panel"></div><div class="force-print-divider"></div>').appendTo($('#force-print-form-list')); 
 				$(responseXML).find('group[name="'+groupName+'"]').children().each(function(){
 					$('.force-print-panel:last').append('<li id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '" class="selectList ui-widget-content">' + $(this).find("displayName").text() + '</li>');
 				});
-				$("#"+groupName+"").hide();
+				$("#"+groupNameNoSpaces+"").hide();
 			} else {
 				$('<li class="selectList" id="' + $(this).find("formId").text() + '" title="' + $(this).find("displayName").text() + '" outputType="' + $(this).find("outputType").text() + '">' + $(this).find("displayName").text() + '</li>').addClass('ui-widget-content').appendTo($('#force-print-form-list'));
 				
