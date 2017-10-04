@@ -20,6 +20,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,10 +29,12 @@ import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
-import org.openmrs.Person;
+import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.MailSender;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.scheduler.TaskDefinition;
@@ -46,7 +49,20 @@ import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
 public class CareTransitionFollowUpTask extends AbstractTask {
 	
 	private Log log = LogFactory.getLog(this.getClass());
-	private static final Integer DEFAULT_FOLLOW_UP_TIME_SPAN = 6;
+	
+	private static final Integer DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN = 6;
+	
+	private static final String CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT = "Care Transition Follow Up";
+	
+	private static final String LOCATION_ATTR_CARE_TRANSITION_FOLLOWUP_EMAIL_RECIPIENTS = "careTransitionFollowUpEmailRecipients";
+	
+	private static final String PROPERTY_CARE_TRANSITION_FOLLOW_UP_FROM_EMAIL_ADDRESS = "careTransitionFollowUpFromEmailAddress";
+	private static final String PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN = "careTransitionFollowUpSpan";
+	
+	private static final String CONCEPT_TRANSITION = "Transition";
+	private static final String CONCEPT_DISCUSSED_WITH_PATIENT = "Discussed with patient";
+	private static final String CONCEPT_PROVIDER_IDENTIFIED = "Provider identified";
+	private static final String CONCEPT_EMAIL_SENT = "email_sent";
 	
 	@Override
 	public void initialize(TaskDefinition config) {
@@ -57,18 +73,33 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	@Override
 	public void execute() {
 		Context.openSession();
-		List<EmailInfo> emailInfo = new ArrayList<EmailInfo>();
+		List<EmailInfo> emailInfoList = new ArrayList<EmailInfo>();
 		try {
-			emailInfo = getEmailInfo();
-			if (emailInfo.size() == 0) {
+			String mailHost = 
+					Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EMAIL_SMTP_HOST);
+			if (StringUtils.isBlank(mailHost)) {
+				log.error("SMTP mail host not specified in global property " + ChirdlUtilConstants.GLOBAL_PROP_EMAIL_SMTP_HOST + 
+					".  No Care Transition follow up emails will be sent.");
 				return;
 			}
-			/*****************************
-			 * TODO: Create and send emails here
-			 *****************************/
+			
+			String fromEmailAddress = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_FROM_EMAIL_ADDRESS);
+			if (StringUtils.isBlank(fromEmailAddress)) {
+				log.error("Task property " + PROPERTY_CARE_TRANSITION_FOLLOW_UP_FROM_EMAIL_ADDRESS + 
+					" does not contain a value.  No Care Transition follow up emails will be sent.");
+			}
+			
+			emailInfoList = getCareTransitionFollowUpEmailInfo();
+			if (emailInfoList.size() == 0) {
+				return;
+			}
+			
+			for (EmailInfo emailInfo : emailInfoList) {
+				sendCareTransitionEmail(emailInfo, mailHost, fromEmailAddress);
+			}
 		}
 		catch (Exception e) {
-			log.error("Error creating and sending emails", e);
+			log.error("Error creating and sending emails.", e);
 		}
 		finally {
 			Context.closeSession();
@@ -81,16 +112,6 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		log.info("Shutting down care transition follow up scheduled task.");
 	}
 	
-	/**
-	 * Retrieve all the emails to be send.
-	 * 
-	 * @return List of EmailInfo objects.
-	 */
-	private List<EmailInfo> getEmailInfo() {
-		List<EmailInfo> emailInfo = new ArrayList<EmailInfo>();
-		emailInfo.addAll(getCareTransitionFollowUpEmailInfo());
-		return emailInfo;
-	}
 	
 	/**
 	 * Retrieve the email information for the Care Transition Study.
@@ -101,25 +122,25 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		List<EmailInfo> emailInfo = new ArrayList<EmailInfo>();
 		
 		ConceptService conceptService = Context.getConceptService();
-		Concept transitionConcept = conceptService.getConceptByName("Transition");
+		Concept transitionConcept = conceptService.getConceptByName(CONCEPT_TRANSITION);
 		if (transitionConcept == null) {
-			log.error("No concept found with name: Transition.  No emails will be sent for Care Transition.");
+			log.error("No concept found with name: " + CONCEPT_TRANSITION + ".  No emails will be sent for Care Transition.");
 			return emailInfo;
 		}
 		
 		List<Concept> conceptList = new ArrayList<Concept>();
 		conceptList.add(transitionConcept);
 		
-		Concept discussedWithPatient = conceptService.getConceptByName("Discussed with patient");
+		Concept discussedWithPatient = conceptService.getConceptByName(CONCEPT_DISCUSSED_WITH_PATIENT);
 		if (discussedWithPatient == null) {
-			log.error("No concept found with name: Discussed with patient.  No emails will be sent for " +
+			log.error("No concept found with name: " + CONCEPT_DISCUSSED_WITH_PATIENT + ".  No emails will be sent for " +
 					"Care Transition.");
 			return emailInfo;
 		}
 		
-		Concept providerIdentified = conceptService.getConceptByName("Provider identified");
+		Concept providerIdentified = conceptService.getConceptByName(CONCEPT_PROVIDER_IDENTIFIED);
 		if (providerIdentified == null) {
-			log.error("No concept found with name: Provider identified.  No emails will be sent for " +
+			log.error("No concept found with name: " + CONCEPT_PROVIDER_IDENTIFIED + ".  No emails will be sent for " +
 					"Care Transition.");
 			return emailInfo;
 		}
@@ -129,20 +150,20 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		answerList.add(providerIdentified);
 		List<PERSON_TYPE> personTypeList = new ArrayList<PERSON_TYPE>();
 		personTypeList.add(PERSON_TYPE.PATIENT);
-		String timeSpanStr = getTaskDefinition().getProperty("careTransitionFollowUpSpan");
+		String timeSpanStr = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN);
 		Integer timeSpan = null;
 		if (timeSpanStr == null || timeSpanStr.trim().length() == 0) {
-			log.error("The task property 'careTransitionFollowUpSpan' does not exist.  The default value of " + 
-					DEFAULT_FOLLOW_UP_TIME_SPAN + " months will be used");
-			timeSpan = DEFAULT_FOLLOW_UP_TIME_SPAN;
+			log.error("The task property '" + PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN + "' does not exist.  " +
+					"The default value of " + DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN + " months will be used.");
+			timeSpan = DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN;
 		}
 		
 		try {
 			timeSpan = Integer.parseInt(timeSpanStr);
 		} catch (NumberFormatException e) {
-			log.error("The task property 'careTransitionFollowUpSpan' contains an invalid.  The default value of " + 
-					DEFAULT_FOLLOW_UP_TIME_SPAN + " months will be used");
-			timeSpan = DEFAULT_FOLLOW_UP_TIME_SPAN;
+			log.error("The task property '" + PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN + " contains an invalid value.  " +
+					"The default value of " + DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN + " months will be used.");
+			timeSpan = DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN;
 		}
 		
 		Calendar endCal = Calendar.getInstance();
@@ -150,9 +171,9 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		Date endDate = endCal.getTime();
 		
 		List<Obs> obsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
-			null, null, null, null,
-			null, endDate, false);
+			null, null, null, null, null, endDate, false);
 		if (obsList == null || obsList.size() == 0) {
+			log.info("There are no patients today needing follow up for care transition.  No email will sent.");
 			return emailInfo;
 		}
 		
@@ -167,9 +188,9 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		}
 		
 		// Remove the Encounters that have already had an email sent.
-		Concept emailSent = conceptService.getConceptByName("email_sent");
+		Concept emailSent = conceptService.getConceptByName(CONCEPT_EMAIL_SENT);
 		if (emailSent == null) {
-			log.error("No concept found with name: email_sent.  No emails will be sent for " +
+			log.error("No concept found with name: " + CONCEPT_EMAIL_SENT + ".  No emails will be sent for " +
 					"Care Transition.");
 			return emailInfo;
 		}
@@ -177,8 +198,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		answerList.clear();
 		answerList.add(emailSent);
 		List<Obs> emailObsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
-			null, null, null, null,
-			endDate, new Date(), false);
+			null, null, null, null, endDate, new Date(), false);
 
 		if (emailObsList != null) {
 			for (Obs obs : emailObsList) {
@@ -194,18 +214,21 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		
         Map<Integer, EmailInfo> locationEmailMap = new HashMap<Integer, EmailInfo>();
         ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
+        PatientService patientService = Context.getPatientService();
 		for (Obs obs : obsList) {
-			Person patient = obs.getPerson();
+			Integer personId = obs.getPersonId();
+			Patient patient = patientService.getPatient(personId);
 			Location location = obs.getLocation();
 			Integer locationId = location.getLocationId();
-			List<String> emailRecipients = new ArrayList<String>();
 			EmailInfo info = locationEmailMap.get(locationId);
 			if (info != null) {
 				info.getPatients().add(patient);
 			} else {
-				ChirdlLocationAttributeValue lav = backportsService.getLocationAttributeValue(locationId, "careTransitionEmailRecipients");
+				ChirdlLocationAttributeValue lav = backportsService.getLocationAttributeValue(
+					locationId, LOCATION_ATTR_CARE_TRANSITION_FOLLOWUP_EMAIL_RECIPIENTS);
 				if (lav == null || StringUtils.isBlank(lav.getValue())) {
-					log.error("Please specify a location attribute for 'careTransitionEmailRecipients'.");
+					log.error("Please specify a location attribute for '" + 
+							LOCATION_ATTR_CARE_TRANSITION_FOLLOWUP_EMAIL_RECIPIENTS + "'.");
 					continue;
 				}
 				
@@ -215,7 +238,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 					emailArray[i] = emailArray[i].trim();
 				}
 				
-				List<Person> patients = new ArrayList<Person>();
+				List<Patient> patients = new ArrayList<Patient>();
 				patients.add(patient);
 				info = new EmailInfo(location, emailArray, patients);
 				locationEmailMap.put(locationId, info);
@@ -223,8 +246,55 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		}
 		
 		encounterObsMap.clear();
-//		log.info("Type 2 Diabetes has " + callInfo.size() + " patient calls pending.");
 		return emailInfo;
+	}
+	
+	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress) {
+		Location location = emailInfo.getLocation();
+		if (location == null) {
+			log.error("Location is null.  No Care Transition Follow Up email will be sent.");
+			return;
+		}
+		
+		List<Patient> patients = emailInfo.getPatients();
+		if (patients == null || patients.size() == 0) {
+			log.info("There are no patients today needing follow up for care transition at " + location.getName() + 
+				".  No email will sent.");
+			return;
+		}
+		
+		Properties mailProps = new Properties();
+		mailProps.put(ChirdlUtilConstants.EMAIL_SMTP_HOST_PROPERTY, mailHost);
+		MailSender mailSender = new MailSender(mailProps);
+		StringBuffer body = new StringBuffer("The following ");
+		body.append(patients.size() == 1 ? "patient was" : "patients were");
+		body.append(" counseled for adult care transition six months ago.  ");
+		body.append("Please follow up to confirm successful care transition.");
+		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
+		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
+		for (Patient patient : patients) {
+			String givenName = patient.getGivenName();
+			String familyName = patient.getFamilyName();
+			body.append(givenName);
+			body.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE);
+			body.append(familyName);
+			body.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE);
+			body.append(ChirdlUtilConstants.GENERAL_INFO_OPEN_PAREN);
+			body.append(patient.getPatientIdentifier());
+			body.append(ChirdlUtilConstants.GENERAL_INFO_CLOSE_PAREN);
+			body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
+		}
+		
+		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
+		body.append("Thank you,");
+		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
+		body.append("CHICA Care Transition");
+		
+		mailSender.sendMail(fromEmailAddress, emailInfo.getEmailRecipients(), 
+			CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT, body.toString());
+		
+		log.info("Care Transition Follow Up Email sent for " + emailInfo.getLocation().getName() + " containing " + 
+				patients.size() + " patient(s).");
 	}
 	
 	/**
@@ -236,7 +306,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		
 		private Location location;
 		private String[] emailRecipients;
-		private List<Person> patients;
+		private List<Patient> patients;
 		
 		/**
 		 * Constructor method
@@ -245,7 +315,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		 * @param emailRecipients Array of email address for receiving the message.
 		 * @param patients List of patients to acknowledge in the email for the clinic.
 		 */
-		public EmailInfo(Location location, String[] emailRecipients, List<Person> patients) {
+		public EmailInfo(Location location, String[] emailRecipients, List<Patient> patients) {
 			this.location = location;
 			this.emailRecipients = emailRecipients;
 			this.patients = patients;
@@ -268,7 +338,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
         /**
          * @return the patients
          */
-        public List<Person> getPatients() {
+        public List<Patient> getPatients() {
         	return patients;
         }
 	}
