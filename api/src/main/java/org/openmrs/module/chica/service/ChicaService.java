@@ -245,4 +245,25 @@ public interface ChicaService
 	 * @return
 	 */
 	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException;
+	
+	/**
+	 * CHICA-1063 
+	 * Create the patient state that is used to query the glooko api
+	 * The state will be created and executed from a separate thread
+	 * @param glookoCode
+	 * @param syncTimestamp
+	 * @param dataType
+	 */
+	public void createPatientStateQueryGlooko(String glookoCode, String syncTimestamp, String dataType);
+	
+	/**
+	 * CHICA-1063
+	 * Create the GlookoCode person attribute
+	 * The GlookoCode person attribute is used to query the Glooko api for device data
+	 * @param firstName
+	 * @param lastName
+	 * @param dateOfBirth
+	 * @param glookoCode
+	 */
+	public void addGlookoCodePersonAttribute(String firstName, String lastName, String dateOfBirth, String glookoCode);
 }
