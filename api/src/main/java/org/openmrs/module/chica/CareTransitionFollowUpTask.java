@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -34,7 +33,6 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
-import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.MailSender;
@@ -48,7 +46,7 @@ import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
 /**
  * @author Steve McKee
  * 
- * Scheduled task to email persons about following up on a patient's care transition.
+ * Scheduled task to email persons about following up on patients' care transition.
  */
 public class CareTransitionFollowUpTask extends AbstractTask {
 	
@@ -96,20 +94,19 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			}
 			
 			ConceptService conceptService = Context.getConceptService();
-			Concept emailSentConcept = conceptService.getConceptByName(CONCEPT_EMAIL_SENT);
-			if (emailSentConcept == null) {
-				log.error("No concept found with name: " + CONCEPT_EMAIL_SENT + ".  No emails will be sent for " +
-						"Care Transition.");
+			Concept transitionConcept = conceptService.getConceptByName(CONCEPT_TRANSITION);
+			if (transitionConcept == null) {
+				log.error("No concept found with name: " + CONCEPT_TRANSITION + ".  No Care Transition follow up emails will be sent.");
 				return;
 			}
 			
-			emailInfoList = getCareTransitionFollowUpEmailInfo(emailSentConcept);
+			emailInfoList = getCareTransitionFollowUpEmailInfo(transitionConcept);
 			if (emailInfoList.size() == 0) {
 				return;
 			}
 			
 			for (EmailInfo emailInfo : emailInfoList) {
-				sendCareTransitionEmail(emailInfo, mailHost, fromEmailAddress, emailSentConcept);
+				sendCareTransitionEmail(emailInfo, mailHost, fromEmailAddress, transitionConcept);
 			}
 		}
 		catch (Exception e) {
@@ -123,29 +120,20 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	@Override
 	public void shutdown() {
 		super.shutdown();
-		log.info("Shutting down care transition follow up scheduled task.");
+		log.info("Shutting down Care Transition follow up scheduled task.");
 	}
 	
 	
 	/**
 	 * Retrieve the email information for the Care Transition Study.
 	 * 
-	 * @param emailSentConcept Concept for sent email.
+	 * @param transitionConcept The Transition concept.
 	 * @return List of EmailInfo objects.
 	 */
-	private List<EmailInfo> getCareTransitionFollowUpEmailInfo(Concept emailSentConcept) {
+	private List<EmailInfo> getCareTransitionFollowUpEmailInfo(Concept transitionConcept) {
 		List<EmailInfo> emailInfo = new ArrayList<EmailInfo>();
 		
 		ConceptService conceptService = Context.getConceptService();
-		Concept transitionConcept = conceptService.getConceptByName(CONCEPT_TRANSITION);
-		if (transitionConcept == null) {
-			log.error("No concept found with name: " + CONCEPT_TRANSITION + ".  No emails will be sent for Care Transition.");
-			return emailInfo;
-		}
-		
-		List<Concept> conceptList = new ArrayList<Concept>();
-		conceptList.add(transitionConcept);
-		
 		Concept discussedWithPatient = conceptService.getConceptByName(CONCEPT_DISCUSSED_WITH_PATIENT);
 		if (discussedWithPatient == null) {
 			log.error("No concept found with name: " + CONCEPT_DISCUSSED_WITH_PATIENT + ".  No emails will be sent for " +
@@ -160,6 +148,15 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			return emailInfo;
 		}
 		
+		Concept emailSentConcept = conceptService.getConceptByName(CONCEPT_EMAIL_SENT);
+		if (emailSentConcept == null) {
+			log.error("No concept found with name: " + CONCEPT_EMAIL_SENT + ".  No emails will be sent for " +
+					"Care Transition.");
+			return emailInfo;
+		}
+		
+		List<Concept> conceptList = new ArrayList<Concept>();
+		conceptList.add(transitionConcept);
 		List<Concept> answerList = new ArrayList<Concept>();
 		answerList.add(discussedWithPatient);
 		answerList.add(providerIdentified);
@@ -188,17 +185,16 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		List<Obs> obsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
 			null, null, null, null, null, endDate, false);
 		if (obsList == null || obsList.size() == 0) {
-			log.info("There are no patients today needing follow up for care transition.  No email will sent.");
+			log.info("There are no patients today needing follow up for Care Transition.  No email will sent.");
 			return emailInfo;
 		}
 		
-		// Create an encounter set.  Would like to use the actual Encounter object, but OpenMRS does override the hashCode
-		// method to support it.
-		Set<Integer> encounterSet = new HashSet<Integer>();
+		// Create an encounter map of all encounters that have the possible triggers for the email.
+		Map<Integer, Encounter> encounterMap = new HashMap<Integer, Encounter>();
 		for (Obs obs : obsList) {
 			Encounter encounter = obs.getEncounter();
 			if (encounter != null) {
-				encounterSet.add(encounter.getEncounterId());
+				encounterMap.put(encounter.getEncounterId(), encounter);
 			}
 		}
 		
@@ -206,25 +202,22 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		answerList.clear();
 		answerList.add(emailSentConcept);
 		List<Obs> emailObsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
-			null, null, null, null, endDate, new Date(), false);
+			null, null, null, null, null, null, false);
 
 		if (emailObsList != null) {
 			for (Obs obs : emailObsList) {
 				Encounter encounter = obs.getEncounter();
 				if (encounter != null) {
-					encounterSet.remove(encounter.getEncounterId());
+					encounterMap.remove(encounter.getEncounterId());
 				}
 			}
 		}
 		
         Map<Integer, EmailInfo> locationEmailMap = new HashMap<Integer, EmailInfo>();
         ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-        EncounterService encounterService = Context.getEncounterService();
-        Iterator<Integer> encounterIter = encounterSet.iterator();
+        List<Encounter> encounters = new ArrayList<Encounter>(encounterMap.values());
         Set<Integer> processedPatientIds = new HashSet<Integer>();
-		while (encounterIter.hasNext()) {
-			Integer encounterId = encounterIter.next();
-			Encounter encounter = encounterService.getEncounter(encounterId);
+		for (Encounter encounter : encounters) {
 			Patient patient = encounter.getPatient();
 			Integer patientId = patient.getPatientId();
 			// We only want to send one email per patient.
@@ -233,6 +226,12 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			}
 			
 			Location location = encounter.getLocation();
+			if (location == null) {
+				log.error("Location is null for encounter " + encounter.getEncounterId() + 
+					".  No Care Transition Follow Up email will be sent for this encounter.");
+				continue;
+			}
+			
 			Integer locationId = location.getLocationId();
 			EmailInfo info = locationEmailMap.get(locationId);
 			if (info != null) {
@@ -242,36 +241,40 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 					locationId, LOCATION_ATTR_CARE_TRANSITION_FOLLOWUP_EMAIL_RECIPIENTS);
 				if (lav == null || StringUtils.isBlank(lav.getValue())) {
 					log.error("Please specify a location attribute for '" + 
-							LOCATION_ATTR_CARE_TRANSITION_FOLLOWUP_EMAIL_RECIPIENTS + "'.");
+							LOCATION_ATTR_CARE_TRANSITION_FOLLOWUP_EMAIL_RECIPIENTS + "' for location: " + 
+							location.getName() + ".");
 					continue;
 				}
 				
 				String emails = lav.getValue();
-				String[] emailArray = emails.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
-				for (int i = 0; i < emailArray.length; i++) {
-					emailArray[i] = emailArray[i].trim();
+				String[] emailRecipientsArray = emails.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+				for (int i = 0; i < emailRecipientsArray.length; i++) {
+					emailRecipientsArray[i] = emailRecipientsArray[i].trim();
 				}
 				
-				List<Encounter> encounters = new ArrayList<Encounter>();
-				encounters.add(encounter);
-				info = new EmailInfo(location, emailArray, encounters);
+				List<Encounter> emailEncounters = new ArrayList<Encounter>();
+				emailEncounters.add(encounter);
+				info = new EmailInfo(location, emailRecipientsArray, emailEncounters);
 				locationEmailMap.put(locationId, info);
 			}
 			
 			processedPatientIds.add(patientId);
 		}
 		
-		encounterSet.clear();
+		encounterMap.clear();
 		return emailInfo;
 	}
 	
-	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress, Concept emailSentConcept) {
+	/**
+	 * Send an email to a specified location about patients that need care transition follow up.
+	 * 
+	 * @param emailInfo Contains the information needed to construct the email.
+	 * @param mailHost The SMTP mailhost used to send the email.
+	 * @param fromEmailAddress The address the email is from.
+	 * @param transitionConcept The concept that will be used to create an observation recording the email is sent.
+	 */
+	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress, Concept transitionConcept) {
 		Location location = emailInfo.getLocation();
-		if (location == null) {
-			log.error("Location is null.  No Care Transition Follow Up email will be sent.");
-			return;
-		}
-		
 		List<Encounter> encounters = emailInfo.getEncounters();
 		if (encounters == null || encounters.size() == 0) {
 			log.info("There are no patients today needing follow up for care transition at " + location.getName() + 
@@ -293,9 +296,9 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			Integer encounterId = encounter.getEncounterId();
 			Patient patient = encounter.getPatient();
 			try {
-				Util.saveObs(patient, emailSentConcept, encounterId, CONCEPT_ANSWER_YES, new Date());
+				Util.saveObs(patient, transitionConcept, encounterId, CONCEPT_EMAIL_SENT, new Date());
 			} catch (Exception e) {
-				log.error("Error saving " + CONCEPT_EMAIL_SENT + " observation for patient: " + 
+				log.error("Error saving " + CONCEPT_TRANSITION + " observation for patient: " + 
 						patient.getPatientId() + " encounter: " + encounterId);
 				continue;
 			}
