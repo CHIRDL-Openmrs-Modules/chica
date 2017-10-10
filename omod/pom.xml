@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>chica</artifactId>
-		<version>1.76.0</version>
+		<version>1.77.0</version>
 	</parent>
 	<artifactId>chica-omod</artifactId>
 	<packaging>jar</packaging>
@@ -87,6 +87,10 @@
 			<groupId>org.openmrs.test</groupId>
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>com.biscom</groupId>
+			<artifactId>faxws-client</artifactId>
 		</dependency>
 	</dependencies>
 

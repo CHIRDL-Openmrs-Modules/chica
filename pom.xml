@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chica</artifactId>
-	<version>1.76.0</version>
+	<version>1.77.0</version>
 	<packaging>pom</packaging>
 	<name>Chica</name>
 	<description>Parent project for Chica</description>
@@ -39,7 +39,7 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>chirdlutil-api</artifactId>
-				<version>1.14.0</version>
+				<version>1.15.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -57,7 +57,7 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>atd-api</artifactId>
-				<version>2.10.0</version>
+				<version>2.11.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -152,7 +152,12 @@
                 <version>4.4.5</version>
                 <scope>provided</scope>
             </dependency>
-
+			<dependency>
+				<groupId>com.biscom</groupId>
+				<artifactId>faxws-client</artifactId>
+				<version>1.0.0</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>
