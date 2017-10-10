@@ -33,6 +33,7 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.MailSender;
@@ -65,7 +66,6 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	private static final String CONCEPT_DISCUSSED_WITH_PATIENT = "Discussed with patient";
 	private static final String CONCEPT_PROVIDER_IDENTIFIED = "Provider identified";
 	private static final String CONCEPT_EMAIL_SENT = "email_sent";
-	private static final String CONCEPT_ANSWER_YES = "yes";
 	
 	@Override
 	public void initialize(TaskDefinition config) {
@@ -96,7 +96,8 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			ConceptService conceptService = Context.getConceptService();
 			Concept transitionConcept = conceptService.getConceptByName(CONCEPT_TRANSITION);
 			if (transitionConcept == null) {
-				log.error("No concept found with name: " + CONCEPT_TRANSITION + ".  No Care Transition follow up emails will be sent.");
+				log.error("No concept found with name: " + CONCEPT_TRANSITION + 
+					".  No Care Transition follow up emails will be sent.");
 				return;
 			}
 			
@@ -127,7 +128,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	/**
 	 * Retrieve the email information for the Care Transition Study.
 	 * 
-	 * @param transitionConcept The Transition concept.
+	 * @param Concept for the email status
 	 * @return List of EmailInfo objects.
 	 */
 	private List<EmailInfo> getCareTransitionFollowUpEmailInfo(Concept transitionConcept) {
@@ -262,6 +263,11 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		}
 		
 		encounterMap.clear();
+		emailInfo = new ArrayList<EmailInfo>(locationEmailMap.values());
+		if (emailInfo.size() == 0) {
+			log.info("There are no patients today needing follow up for Care Transition.  No email will sent.");
+		}
+		
 		return emailInfo;
 	}
 	
@@ -269,9 +275,9 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	 * Send an email to a specified location about patients that need care transition follow up.
 	 * 
 	 * @param emailInfo Contains the information needed to construct the email.
-	 * @param mailHost The SMTP mailhost used to send the email.
+	 * @param mailHost The SMTP mail host used to send the email.
 	 * @param fromEmailAddress The address the email is from.
-	 * @param transitionConcept The concept that will be used to create an observation recording the email is sent.
+	 * @param transitionConcept Concept for the email status 
 	 */
 	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress, Concept transitionConcept) {
 		Location location = emailInfo.getLocation();
@@ -292,11 +298,13 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
 		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
 		int successfulSaves = 0;
+		List<Obs> savedObs = new ArrayList<Obs>();
 		for (Encounter encounter : encounters) {
 			Integer encounterId = encounter.getEncounterId();
 			Patient patient = encounter.getPatient();
 			try {
-				Util.saveObs(patient, transitionConcept, encounterId, CONCEPT_EMAIL_SENT, new Date());
+				Obs obs = Util.saveObs(patient, transitionConcept, encounterId, CONCEPT_EMAIL_SENT, new Date());
+				savedObs.add(obs);
 			} catch (Exception e) {
 				log.error("Error saving " + CONCEPT_TRANSITION + " observation for patient: " + 
 						patient.getPatientId() + " encounter: " + encounterId);
@@ -321,11 +329,18 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
 		body.append("CHICA Care Transition");
 		
-		mailSender.sendMail(fromEmailAddress, emailInfo.getEmailRecipients(), 
+		boolean success = mailSender.sendMail(fromEmailAddress, emailInfo.getEmailRecipients(), 
 			CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT, body.toString());
-		
-		log.info("Care Transition Follow Up Email sent for " + emailInfo.getLocation().getName() + " containing " + 
-				successfulSaves + " patient(s).");
+		if (!success) {
+			log.error("An error occurred sending Care Transition followup email for " + emailInfo.getLocation().getName() + ".");
+			ObsService obsService = Context.getObsService();
+			for (Obs obs : savedObs) {
+				obsService.voidObs(obs, "Care Transition follow up email was unable to be sent.");
+			}
+		} else {
+			log.info("Care Transition Follow Up Email sent for " + emailInfo.getLocation().getName() + " containing " + 
+					successfulSaves + " patient(s).");
+		}
 	}
 	
 	/**
