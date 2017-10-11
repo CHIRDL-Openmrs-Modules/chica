@@ -1,0 +1,12 @@
+.form_pdf_object {
+       width: 99%; 
+       height: 93vh; /*This means to use up 93% of the viewport.  This can be changed to a percentage or number of pixels.*/
+}
+
+.pdf_error {
+       color: #000;
+}
+
+.link {
+       color:blue;
+}
