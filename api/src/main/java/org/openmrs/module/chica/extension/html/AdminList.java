@@ -32,6 +32,7 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("module/chica/chicaRuleTester.form", "Rule Tester");
 		map.put("module/chica/chicaNoteTester.form", "Note Tester");
 		map.put("module/chica/cacheConfiguration.form", "Cache Configuration");
+		map.put("module/chica/faxStatus.form", "Fax Status");
 		return map;
 	}
 	
