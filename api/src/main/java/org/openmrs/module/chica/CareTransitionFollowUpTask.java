@@ -183,8 +183,14 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		endCal.set(GregorianCalendar.MONTH, endCal.get(GregorianCalendar.MONTH) - timeSpan);
 		Date endDate = endCal.getTime();
 		
+		// Set the start time another month back.  This is to reduce the number of obs that come back from the query instead 
+		// of searching all obs.
+		Calendar startCal = Calendar.getInstance();
+		startCal.set(GregorianCalendar.MONTH, endCal.get(GregorianCalendar.MONTH) - (timeSpan + 1));
+		Date startDate = startCal.getTime();
+		
 		List<Obs> obsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
-			null, null, null, null, null, endDate, false);
+			null, null, null, null, startDate, endDate, false);
 		if (obsList == null || obsList.size() == 0) {
 			log.info("There are no patients today needing follow up for Care Transition.  No email will sent.");
 			return emailInfo;
@@ -202,7 +208,8 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		// Remove the Encounters that have already had an email sent.
 		answerList.clear();
 		answerList.add(emailSentConcept);
-		List<Obs> emailObsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
+		List<Encounter> currentEncounters = new ArrayList<Encounter>(encounterMap.values());
+		List<Obs> emailObsList = Context.getObsService().getObservations(null, currentEncounters, conceptList, answerList, personTypeList, 
 			null, null, null, null, null, null, false);
 
 		if (emailObsList != null) {
