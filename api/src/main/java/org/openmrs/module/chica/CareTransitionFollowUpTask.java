@@ -63,8 +63,8 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	private static final String PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN = "careTransitionFollowUpSpan";
 	
 	private static final String CONCEPT_TRANSITION = "Transition";
-	private static final String CONCEPT_DISCUSSED_WITH_PATIENT = "Discussed with patient";
-	private static final String CONCEPT_PROVIDER_IDENTIFIED = "Provider identified";
+	private static final String CONCEPT_TRAQ = "TRAQ";
+	private static final String CONCEPT_TRAQ_COMPLETE = "Complete";
 	private static final String CONCEPT_EMAIL_SENT = "email_sent";
 	
 	@Override
@@ -135,16 +135,16 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		List<EmailInfo> emailInfo = new ArrayList<EmailInfo>();
 		
 		ConceptService conceptService = Context.getConceptService();
-		Concept discussedWithPatient = conceptService.getConceptByName(CONCEPT_DISCUSSED_WITH_PATIENT);
-		if (discussedWithPatient == null) {
-			log.error("No concept found with name: " + CONCEPT_DISCUSSED_WITH_PATIENT + ".  No emails will be sent for " +
+		Concept traqConcept = conceptService.getConceptByName(CONCEPT_TRAQ);
+		if (traqConcept == null) {
+			log.error("No concept found with name: " + CONCEPT_TRAQ + ".  No emails will be sent for " +
 					"Care Transition.");
 			return emailInfo;
 		}
 		
-		Concept providerIdentified = conceptService.getConceptByName(CONCEPT_PROVIDER_IDENTIFIED);
-		if (providerIdentified == null) {
-			log.error("No concept found with name: " + CONCEPT_PROVIDER_IDENTIFIED + ".  No emails will be sent for " +
+		Concept traqCompletConcept = conceptService.getConceptByName(CONCEPT_TRAQ_COMPLETE);
+		if (traqCompletConcept == null) {
+			log.error("No concept found with name: " + CONCEPT_TRAQ_COMPLETE + ".  No emails will be sent for " +
 					"Care Transition.");
 			return emailInfo;
 		}
@@ -157,10 +157,9 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		}
 		
 		List<Concept> conceptList = new ArrayList<Concept>();
-		conceptList.add(transitionConcept);
+		conceptList.add(traqConcept);
 		List<Concept> answerList = new ArrayList<Concept>();
-		answerList.add(discussedWithPatient);
-		answerList.add(providerIdentified);
+		answerList.add(traqCompletConcept);
 		List<PERSON_TYPE> personTypeList = new ArrayList<PERSON_TYPE>();
 		personTypeList.add(PERSON_TYPE.PATIENT);
 		String timeSpanStr = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN);
@@ -206,6 +205,8 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		}
 		
 		// Remove the Encounters that have already had an email sent.
+		conceptList.clear();
+		conceptList.add(transitionConcept);
 		answerList.clear();
 		answerList.add(emailSentConcept);
 		List<Encounter> currentEncounters = new ArrayList<Encounter>(encounterMap.values());
