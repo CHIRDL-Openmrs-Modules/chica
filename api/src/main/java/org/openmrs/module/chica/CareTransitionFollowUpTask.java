@@ -270,12 +270,13 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			processedPatientIds.add(patientId);
 		}
 		
-		encounterMap.clear();
 		emailInfo = new ArrayList<EmailInfo>(locationEmailMap.values());
 		if (emailInfo.size() == 0) {
 			log.info("There are no patients today needing follow up for Care Transition.  No email will sent.");
 		}
 		
+		encounterMap.clear();
+		locationEmailMap.clear();
 		return emailInfo;
 	}
 	
