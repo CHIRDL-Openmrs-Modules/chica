@@ -858,12 +858,9 @@
 	<input id="locationId" name="locationId" type="hidden" value="${locationId}"/>
 	<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
 	<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
-	<input id="TRAQScore" name="TRAQScore" type="hidden"/>
-	<input id="TRAQProb" name="TRAQProb" type="hidden"/>
-	<input id="TRAQSevere" name="TRAQSevere" type="hidden"/>
-	<input id="TRAQResearch" name="TRAQResearch" type="hidden"/>
-	<input id="language" name="language" type="hidden" value="${language}"/>
-	<input id="TRAQInformant" name="TRAQInformant" type="hidden" value="N"/>
+	<input id="TRAQ" name="TRAQ" type="hidden"/>
+    <input id="language" name="language" type="hidden" value="${language}"/>
+
 </form>
 </body>
 </html>

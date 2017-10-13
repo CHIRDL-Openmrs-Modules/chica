@@ -174,6 +174,7 @@ function finishForm() {
 	$("#not_finished_final_dialog").popup("close");
 	$("#not_finished_final_dialog_sp").popup("close");
 	setLanguageField();
+	checkFormCompletion();
 	var submitForm = $("#TRAQForm"); 
 	var token = getAuthenticationToken();
     $.ajax({
@@ -289,4 +290,29 @@ function showBlockingMessage() {
         color: "#000" 
     }, 
     message: blockUIMessage});
+}
+
+//
+function checkFormCompletion() {
+	var countCompleted = 0;
+	var completionStatus = "Incomplete"; 
+	var questionName = "TRAQQuestionEntry_";
+	for (var i = 1; i < 21; i++) {
+	    if (english) {
+	    	
+	    	$("input[name=" + questionName + i + "]:checked").each(function() {
+	    		countCompleted++;
+	        });
+	    } else {
+	    	$("input[name=" + questionName + i + "_2]:checked").each(function() {
+	    		countCompleted++;
+	        });
+	    }
+    }
+	
+	if (countCompleted >= 15) {
+		completionStatus = "Complete";
+	}
+
+	$("#TRAQ").val(completionStatus);
 }
