@@ -111,3 +111,7 @@ a[data-role="button"] {
 	width: 99% !important;
 	border: none;
 }
+
+.underline-text {
+	text-decoration: underline;
+}
