@@ -173,6 +173,8 @@ function finishForm() {
 	$("#finish_error_dialog_sp").popup("close");
 	$("#not_finished_final_dialog").popup("close");
 	$("#not_finished_final_dialog_sp").popup("close");
+	$("#not_finished_dialog").popup("close");
+	$("#not_finished_dialog_sp").popup("close");
 	setLanguageField();
 	checkFormCompletion();
 	var submitForm = $("#TRAQForm"); 
