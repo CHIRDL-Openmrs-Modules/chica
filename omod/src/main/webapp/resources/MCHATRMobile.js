@@ -54,7 +54,7 @@ function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
     // Transfer answers
-    for (var i = 1; i < 24; i++) {
+    for (var i = 1; i < 21; i++) {
 	    if (english) {
 	    	setQuestionCheckboxes("#Choice_" + i + "_sp_Yes", "#Choice_" + i + "_Yes");
 	    	setQuestionCheckboxes("#Choice_" + i + "_sp_No", "#Choice_" + i + "_No");
@@ -143,7 +143,7 @@ function handleFinishFormError() {
 function calculateScore() {
 	var MchatRTotalItemsFailed = 0;
 	var valueFound = false;
-	for (var i = 1; i < 24; i++) {
+	for (var i = 1; i < 21; i++) {
 		if (english) {
 			$("input[name=Choice_" + i + "]:checked").each(function() {
 				valueFound = true;
@@ -176,7 +176,7 @@ function areAllQuestionsAnswered() {
 	}
 	
 	var questionName = "Choice_";
-	for (var i = 1; i < 24; i++) {
+	for (var i = 1; i < 21; i++) {
 		if (!$("input[name='" + questionName + i + spanishChar + "']:checked").val()) {
 		   return false;
 		}

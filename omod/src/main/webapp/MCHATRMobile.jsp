@@ -116,7 +116,7 @@
 						</fieldset>
 					</div>
 					<br />
-					<c:set var="quest5" value='Does your child make unusual finger movements near his or her eyes (FOR EXAMPLE, does your child wiggle his or her fingers close to his or her eyes?)' />
+					<c:set var="quest5" value='Does your child make unusual finger movements near his or her eyes? (FOR EXAMPLE, does your child wiggle his or her fingers close to his or her eyes?)' />
 					<input id="Question_5"  name="Question_5" type="hidden" value="${quest5}" />
 					<strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest5}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
@@ -346,7 +346,7 @@
 						</fieldset>
 					</div>
 					<br />
-					<c:set var="quest20" value='Does your child like movement activities?' />
+					<c:set var="quest20" value='Does your child like movement activities? (FOR EXAMPLE, being swung or bounced on your knee)' />
 					<input id="Question_20"  name="Question_20" type="hidden" value="${quest20}" />
 					<strong>${quest20}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest20}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
@@ -664,7 +664,7 @@
 						</fieldset>
 					</div>
 					<br />
-					<c:set var="quest19_2_sp" value='&iquest;Si algo nuevo ocurre, su hijo/a lo mira a la cara para ver c&oacute;mo se siente usted al respecto?S&iacute; (POR EJEMPLO &iquest;Si oye un ruido extra&ntilde;o o ve un juguete nuevo, se voltear&iacute;a a ver su cara?)' />
+					<c:set var="quest19_2_sp" value='&iquest;Si algo nuevo ocurre, su hijo/a lo mira a la cara para ver c&oacute;mo se siente usted al respecto? S&iacute; (POR EJEMPLO &iquest;Si oye un ruido extra&ntilde;o o ve un juguete nuevo, se voltear&iacute;a a ver su cara?)' />
 					<input id="Question_19_2"  name="Question_19_2" type="hidden" value="${quest19_2_sp}" />
 					<strong>${quest19_2_sp}</strong><a data-role="button" data-inline="true" class="custom-button" onClick='readText("${quest19_2_sp}")'></a>
 					<div data-role="fieldcontain" style="margin-top:0px;">
