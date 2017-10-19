@@ -10,8 +10,14 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.SslConfigurator;
 import org.openmrs.Patient;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.study.dp3.login.LoginCredentials;
 import org.openmrs.module.chica.study.dp3.login.LoginResponse;
 import org.openmrs.module.chica.study.dp3.reading.GenericReading;
@@ -24,6 +30,7 @@ import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author Dave Ely
@@ -31,9 +38,11 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
  */
 public class QueryGlooko implements ProcessStateAction
 {
+	private Log log = LogFactory.getLog(this.getClass());
+	
 	// This is expensive to create 
 	// I'm not sure that we'll need to initialize with SSLContext if the Glooko server doesn't need our certificate
-	private static Client client = initializeClient(); // ClientBuilder.newClient(); // Leave this commented out.
+	private static Client client = ClientBuilder.newClient(); // initializeClient(); // Leave this commented out.
 	
 	// Resource targets
 	private static final String LOGIN_WEB_TARGET = "/auth/login";
@@ -47,14 +56,25 @@ public class QueryGlooko implements ProcessStateAction
 	private static final String CGM_READINGS_DATATYPE = "cgm_readings";
 	
 	// Query parameter names
-	private static final String PARAMETER_SYNC_TIMESTAMP = "";
-	private static final String PARAMETER_PAGE_NUMBER = "";
+	public static final String PARAMETER_SYNC_TIMESTAMP = "syncTimestamp";
+	private static final String PARAMETER_PAGE_NUMBER = "pageNumber";
 	
 	// HTTP headers
 	private static final String CUSTOM_HTTP_HEADER_API_KEY = "x-api-key";
 	private static final String CUSTOM_HTTP_HEADER_TOTAL_PAGES = "X-Total-Pages";
 	private static final String CUSTOM_HTTP_HEADER_CURRENT_PAGE = "X-Current-Page";
 	private static final String HTTP_AUTHORIZATION_TYPE = "Bearer ";
+	
+	// State parameters
+	public static final String PARAMETER_GLOOKO_CODE = "glookoCode";
+	public static final String PARAMETER_DATA_TYPE = "dataType";
+	
+	// Global properties
+	private static final String GLOBAL_PROP_ENABLE_GLOOKO_QUERY = "chica.enableGlookoQuery";
+	private static final String GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT = "chica.GlookoQueryTargetEndpoint";
+	private static final String GLOBAL_PROP_GLOOKO_API_KEY = "chica.GlookoAPIKey";
+	private static final String GLOBAL_PROP_GLOOKO_USERNAME = "chica.GlookoUsername";
+	private static final String GLOBAL_PROP_GLOOKO_PASSWORD = "chica.GlookoPassword";
 		
 	/**
 	 * Configure SSL and initialize the client
@@ -93,73 +113,117 @@ public class QueryGlooko implements ProcessStateAction
 			
 		try
 		{
-			
-			// Read global property to make sure the service is enabled
-			
-			
-			
-			String dataType = ""; // Get the data type from the parameters map
-			
-			// Get the implementation based on the dataType
-			Readings readingsImpl = ReadingsFactory.getReadingsImpl(dataType);
-			if(readingsImpl == null) // We received a device sync notification for an unsupported dataType
+			AdministrationService adminService = Context.getAdministrationService();
+			String enableQuery = adminService.getGlobalProperty(GLOBAL_PROP_ENABLE_GLOOKO_QUERY);
+			if(StringUtils.isBlank(enableQuery) || ChirdlUtilConstants.GENERAL_INFO_FALSE.equalsIgnoreCase(enableQuery))
 			{
-				return;
+				log.error("Glooko query is not enabled and will not be completed for patient: " + patient.getPatientId());
 			}
 			
-			// We could read this once when the class is initialized,
+			// We could read these once when the class is initialized,
 			// but might be better off to read each time 
-			String rootWebTargetString = "http://localhost:10997"; // Read global property to get rootWebTarget
-			
-			String apiKey = ""; // Read global property to get apiKey
-			
-			String syncTimestamp = ""; // Get the sync timestamp from the parameters map
-			String glookoCode = ""; // Get the glookoCode from the parameters map
-			
-			WebTarget rootWebTarget = client.target(rootWebTargetString);
-			
-			// TODO CHICA-1029 Can we login with each request
-			// or do we need to keep track of the token expiration
-			// as mentioned in the documentation (expiration is 1 hour)
-			String token = loginAndGetToken(rootWebTarget);
-			
-			// Get the correct resource target based on the dataType
-			WebTarget readingsTarget = getReadingsTargetByDataType(rootWebTarget, dataType);
-			
-			// Call the rest service
-			Response response = updateQueryParametersGetResponse(glookoCode, syncTimestamp, 1, token, apiKey, readingsTarget);
-			
-			String totalPagesStr = response.getHeaderString(CUSTOM_HTTP_HEADER_TOTAL_PAGES);
-			
-			List<GenericReading> genericReadings = response.readEntity(readingsImpl.getClass())
-														.getGenericReadingList();
-			
-			List<GenericReading> allReadings = new ArrayList<GenericReading>(); // Combined list from all pages
-			allReadings.addAll(genericReadings);
-			
-			int totalPages = Integer.parseInt(totalPagesStr);
-			if(totalPages > 1)
+			String rootWebTargetString = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT); // Read global property to get rootWebTarget
+			if(StringUtils.isBlank(rootWebTargetString))
 			{
-				for(int i = 2; i <= totalPages; i++) // We already have page 1, start at page 2
-				{
-					genericReadings.clear();
-					
-					response = updateQueryParametersGetResponse(glookoCode, syncTimestamp, i, token, apiKey, readingsTarget);
-					
-					// Get current page from response just to be sure we are on the correct page
-					int responsePageNum = Integer.parseInt(response.getHeaderString(CUSTOM_HTTP_HEADER_CURRENT_PAGE)); 
-					if(i == responsePageNum)
-					{
-						genericReadings = response.readEntity(readingsImpl.getClass())
-													.getGenericReadingList();
-						allReadings.addAll(genericReadings);
-					}
-				}
+				log.error(GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
 			}
 			
+			String apiKey = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_API_KEY); // Read global property to get apiKey
+			if(StringUtils.isBlank(apiKey))
+			{
+				log.error(GLOBAL_PROP_GLOOKO_API_KEY + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
+			}
 			
-			// TODO CHICA-1029 What do we do from here?
-			// Store in the cache? Or store in the DB?
+			String username = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_USERNAME); // Read global property to get username
+			if(StringUtils.isBlank(username))
+			{
+				log.error(GLOBAL_PROP_GLOOKO_USERNAME + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
+			}
+			
+			String password = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_PASSWORD); // Read global property to get password
+			if(StringUtils.isBlank(password))
+			{
+				log.error(GLOBAL_PROP_GLOOKO_PASSWORD + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
+			}
+			
+			// Check the global property to make sure the service is enabled
+			if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(enableQuery))
+			{
+				String dataType = (String)parameters.get(PARAMETER_DATA_TYPE); // Get the data type from the parameters map
+				
+				// Get the implementation based on the dataType
+				Readings readingsImpl = ReadingsFactory.getReadingsImpl(dataType);
+				if(readingsImpl != null) // If readingsImpl is null, we received a device sync notification for an unsupported dataType
+				{
+					String syncTimestamp = (String)parameters.get(PARAMETER_SYNC_TIMESTAMP); // Get the sync timestamp from the parameters map
+					String glookoCode = (String)parameters.get(PARAMETER_GLOOKO_CODE); // Get the glookoCode from the parameters map
+					
+					WebTarget rootWebTarget = client.target(rootWebTargetString);
+					
+					// TODO CHICA-1029 Can we login with each request
+					// or do we need to keep track of the token expiration
+					// as mentioned in the documentation (expiration is 1 hour)
+					String token = loginAndGetToken(rootWebTarget, username, password);
+					
+					// Get the correct resource target based on the dataType
+					WebTarget readingsTarget = getReadingsTargetByDataType(rootWebTarget, dataType);
+					
+					// Call the rest service
+					Response response = updateQueryParametersGetResponse(glookoCode, syncTimestamp, 1, token, apiKey, readingsTarget);
+					
+					if(response.getStatus() == HttpStatus.OK.value())
+					{
+						String totalPagesStr = response.getHeaderString(CUSTOM_HTTP_HEADER_TOTAL_PAGES);
+						
+						List<GenericReading> genericReadings = response.readEntity(readingsImpl.getClass())
+																	.getGenericReadingList();
+						
+						List<GenericReading> allReadings = new ArrayList<GenericReading>(); // Combined list from all pages
+						allReadings.addAll(genericReadings);
+						
+						int totalPages = Integer.parseInt(totalPagesStr);
+						if(totalPages > 1)
+						{
+							for(int i = 2; i <= totalPages; i++) // We already have page 1, start at page 2
+							{
+								genericReadings.clear();
+								
+								response = updateQueryParametersGetResponse(glookoCode, syncTimestamp, i, token, apiKey, readingsTarget);
+								
+								if(response.getStatus() == HttpStatus.OK.value())
+								{
+									// Get current page from response just to be sure we are on the correct page
+									int responsePageNum = Integer.parseInt(response.getHeaderString(CUSTOM_HTTP_HEADER_CURRENT_PAGE)); 
+									if(i == responsePageNum)
+									{
+										genericReadings = response.readEntity(readingsImpl.getClass())
+																	.getGenericReadingList();
+										allReadings.addAll(genericReadings);
+									}
+								}
+								else
+								{
+									// Don't try to read anymore pages. We don't want to end up with a partial list of readings
+									log.error("An error occurred while querying for device data. ResponseStatus: " + response.getStatus());
+									allReadings.clear();
+									break;
+								}
+							}
+						}
+						
+						// TODO CHICA-1029 What do we do from here?
+						// Store in the cache? Or store in the DB?
+					}
+					else
+					{
+						log.error("An error occurred while querying for device data for patient: " + patient.getPatientId() + ". ResponseStatus: " + response.getStatus());
+					}
+				}	
+			}
 		}
 		catch(Exception e)
 		{
@@ -167,10 +231,13 @@ public class QueryGlooko implements ProcessStateAction
 			// Don't do anything with the list if an error occurs at any point in time
 			// Running rules against a partial list of readings could result in 
 			// incorrect logic, just log it and change the patient's state
-			// TODO CHICA-1029 Log the error
+			log.error("An error occurred while querying for device data for patient: " + patient.getPatientId(), e);
 		}
 		finally
 		{
+			// TODO CHICA-1029 For discussion. Do we really want to end/change state even if the query wasn't performed? 
+			// If we turn off the query, we could create a PWS for no reason every time
+			// We could end the state if something fails during the query but don't change the state so a PWS doesn't get created
 			StateManager.endState(patientState);
 			
 			BaseStateActionHandler
@@ -183,11 +250,8 @@ public class QueryGlooko implements ProcessStateAction
 	 * @param rootWebTarget
 	 * @return
 	 */
-	private String loginAndGetToken(WebTarget rootWebTarget)
+	private String loginAndGetToken(WebTarget rootWebTarget, String username, String password)
 	{
-		String username = ""; // Read global property to get username
-		String password = ""; // Read global property to get password
-		
 		WebTarget loginTarget = rootWebTarget.path(LOGIN_WEB_TARGET);
 		
 		LoginCredentials loginCredentials = new LoginCredentials(username, password);
