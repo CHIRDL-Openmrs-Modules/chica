@@ -55,7 +55,7 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 	 * Looks up the patient's encounter for the day
 	 * Stores the dataType in an encounter attribute
 	 * Creates a "QUERY GLOOKO" patient state
-	 * Runs and ends the state
+	 * Runs the state
 	 */
 	public void run() 
 	{
