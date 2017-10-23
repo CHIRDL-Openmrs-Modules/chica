@@ -55,7 +55,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	
 	private static final Integer DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN = 6;
 	
-	private static final String CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT = "Care Transition Follow Up";
+	private static final String CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT = "Confidential: Care Transition Follow Up";
 	
 	private static final String LOCATION_ATTR_CARE_TRANSITION_FOLLOWUP_EMAIL_RECIPIENTS = "careTransitionFollowUpEmailRecipients";
 	
