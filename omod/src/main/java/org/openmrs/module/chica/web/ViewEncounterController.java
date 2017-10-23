@@ -137,7 +137,7 @@ public class ViewEncounterController extends SimpleFormController {
 				ChicaService chicaService = Context.getService(ChicaService.class);
 				
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
-						formName.equals("MCHAT")|| formName.equals("ADHD PFU")|| formName.equals("ADHD PSFU") || 
+						formName.equals("MCHAT") || formName.equals("MCHAT-R") || formName.equals("ADHD PFU") || formName.equals("ADHD PSFU") || 
 						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule7yrOrOlder") ||
 						formName.equals("ImmunizationSchedule") || formName.equals("PHQ9_JIT_MOBILE")) {
 					leftImageLocationId = locationId;
@@ -153,6 +153,9 @@ public class ViewEncounterController extends SimpleFormController {
 						displayScanForms = true;
 					} else if (formName.equals("MCHAT")) {
 						leftImageStylesheet = "mchat.xsl";
+						displayScanForms = true;
+					} else if (formName.equals("MCHAT-R")) {
+						leftImageStylesheet = "mchat-r.xsl";
 						displayScanForms = true;
 					}
 				} else {
@@ -228,8 +231,8 @@ public class ViewEncounterController extends SimpleFormController {
 				Integer rightImageFormId = null;
 				Integer rightImageFormInstanceId = null;
 				
-				//don't set a right image for MCHAT
-				if (!formName.equals("MCHAT") && !formName.equals("ImmunizationSchedule7yrOrOlder")
+				//don't set a right image for MCHAT or MCHAT-R
+				if (!formName.equals("MCHAT") && !formName.equals("MCHAT-R") && !formName.equals("ImmunizationSchedule7yrOrOlder")
 						&& !formName.equals("ImmunizationSchedule") && !formName.endsWith("PHQ9_JIT_MOBILE")) {
 					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || 
 							formName.equals("TeacherSummaryReport")) {
@@ -415,6 +418,7 @@ public class ViewEncounterController extends SimpleFormController {
 			formsToProcess.add("ADHD PS");
 			formsToProcess.add("ADHD T");
 			formsToProcess.add("MCHAT");
+			formsToProcess.add("MCHAT-R");
 			formsToProcess.add("ADHD PFU");
 			formsToProcess.add("ADHD TFU");
 			formsToProcess.add("ADHD PSFU");
