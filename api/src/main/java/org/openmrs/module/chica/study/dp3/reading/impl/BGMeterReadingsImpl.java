@@ -1,17 +1,26 @@
 package org.openmrs.module.chica.study.dp3.reading.impl;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 
+import org.openmrs.module.chica.study.dp3.GlookoConstants;
 import org.openmrs.module.chica.study.dp3.reading.GenericReading;
 import org.openmrs.module.chica.study.dp3.reading.Readings;
 
+/**
+ * @author davely
+ * CHICA-1029 Class used to represent the "readings" object that is returned by Glooko
+ * This is for blood glucose meters
+ */
 public class BGMeterReadingsImpl implements Readings
 {
 	private List<Object> readings;
 	private List<GenericReading> genericReadingsList;
 	
+	/**
+	 * Default constructor
+	 */
 	public BGMeterReadingsImpl()
 	{
 		
@@ -27,35 +36,26 @@ public class BGMeterReadingsImpl implements Readings
 	}
 	
 	@Override
-	public List<GenericReading> getGenericReadingList() {
+	public List<GenericReading> getGenericReadingList() throws Exception{
 		if(genericReadingsList == null)
 		{
 			genericReadingsList = new ArrayList<GenericReading>();
 			
 			for(Object obj : readings)
 			{
-				try
-				{
-					@SuppressWarnings({ "rawtypes", "unchecked" })
-					LinkedHashMap<String, Object> map = (LinkedHashMap)obj;
-					String timestamp = map.get("timestamp") == null ? null : (String)map.get("timestamp");
-					Integer timeOffset = map.get("timeOffset") == null ? null : (Integer) map.get("timeOffset");
-					String syncTimestamp = map.get("syncTimestamp") == null ? null : (String) map.get("syncTimestamp");
-					String guid = map.get("guid") == null ? null : (String) map.get("guid");
-					String updatedAt = map.get("updatedAt") == null ? null : (String) map.get("updatedAt");
-					Integer value = map.get("value") == null ? null : (Integer) map.get("value");
-					String units = map.get("units") == null ? null : (String) map.get("units");
-					String mealTagSource = map.get("mealTagSource") == null ? null : (String) map.get("mealTagSource");
-					String mealTag = map.get("mealTag") == null ? null : (String) map.get("mealTag");
-					
-					genericReadingsList.add(new GenericReading(timestamp, timeOffset, syncTimestamp, guid, updatedAt, value, units, mealTagSource, mealTag));
-				}
-				catch(ClassCastException e)
-				{
-					// Log error
-					// Do not return a partial list as this could affect logic in the decision support
-					return null;
-				}
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				HashMap<String, Object> map = (HashMap)obj;
+				String timestamp = map.get(GlookoConstants.PARAMETER_TIMESTAMP) == null ? null : (String)map.get(GlookoConstants.PARAMETER_TIMESTAMP);
+				Integer timeOffset = map.get(GlookoConstants.PARAMETER_TIME_OFFSET) == null ? null : (Integer) map.get(GlookoConstants.PARAMETER_TIME_OFFSET);
+				String syncTimestamp = map.get(GlookoConstants.PARAMETER_SYNC_TIMESTAMP) == null ? null : (String) map.get(GlookoConstants.PARAMETER_SYNC_TIMESTAMP);
+				String guid = map.get(GlookoConstants.PARAMETER_GUID) == null ? null : (String) map.get(GlookoConstants.PARAMETER_GUID);
+				String updatedAt = map.get(GlookoConstants.PARAMETER_UPDATED_AT) == null ? null : (String) map.get(GlookoConstants.PARAMETER_UPDATED_AT);
+				Integer value = map.get(GlookoConstants.PARAMETER_VALUE) == null ? null : (Integer) map.get(GlookoConstants.PARAMETER_VALUE);
+				String units = map.get(GlookoConstants.PARAMETER_UNITS) == null ? null : (String) map.get(GlookoConstants.PARAMETER_UNITS);
+				String mealTagSource = map.get(GlookoConstants.PARAMETER_MEAL_TAG_SOURCE) == null ? null : (String) map.get(GlookoConstants.PARAMETER_MEAL_TAG_SOURCE);
+				String mealTag = map.get(GlookoConstants.PARAMETER_MEAL_TAG) == null ? null : (String) map.get(GlookoConstants.PARAMETER_MEAL_TAG);
+
+				genericReadingsList.add(new GenericReading(timestamp, timeOffset, syncTimestamp, guid, updatedAt, value, units, mealTagSource, mealTag));
 			}
 		}
 		

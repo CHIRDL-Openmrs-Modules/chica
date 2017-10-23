@@ -3,15 +3,20 @@ package org.openmrs.module.chica.study.dp3.reading;
 public class GenericReading 
 {
 	// TODO CHICA-1029 Are all of these fields actually generic enough??? Need to review the spec for all data types
+	// We may be able to get rid of some of these and create one generic constructor, but we'll have to wait until
+	// further details are provided
 	private String timestamp;
-	private Integer timeOffset;
+	private Integer timeOffset; // Is this needed?
+	private String utcOffset; // Is this needed?
+	private String displayTime; // Is this needed?
 	private String syncTimestamp;
 	private String guid;
-	private String updatedAt;
+	private String updatedAt; // What is this?
 	private Integer value;
 	private String units;
-	private String mealTagSource;
-	private String mealTag;
+	private String mealTagSource; // Is this needed?
+	private String mealTag; // Is this needed?
+	private String trendArrow; // Do we actually care about this one?
 	
 	/**
 	 * Default constructor
@@ -22,7 +27,8 @@ public class GenericReading
 	}
 	
 	/**
-	 * Constructor
+	 * // TODO CHICA-1029 - try to come up with one generic constructor after we determine what fields are actually going to be used
+	 * Constructor - currently used by BGMeterReadings
 	 * @param timestamp
 	 * @param timeOffset
 	 * @param syncTimestamp
@@ -45,6 +51,56 @@ public class GenericReading
 		this.mealTagSource = mealTagSource;
 		this.mealTag = mealTag;
 	}
+	
+	/**
+	 * // TODO CHICA-1029 - try to come up with one generic constructor after we determine what fields are actually going to be used
+	 * Constructor - currently used by CGMReadings
+	 * @param timestamp
+	 * @param displayTime
+	 * @param syncTimestamp
+	 * @param guid
+	 * @param updatedAt
+	 * @param value
+	 * @param units
+	 * @param trendArrow
+	 */
+	public GenericReading(String timestamp, String displayTime, String syncTimestamp, String guid, String updatedAt, Integer value, String units, String trendArrow)
+	{
+		this.timestamp = timestamp;
+		this.displayTime = displayTime;
+		this.syncTimestamp = syncTimestamp;
+		this.guid = guid;
+		this.updatedAt = updatedAt;
+		this.value = value;
+		this.units = units;
+		this.trendArrow = trendArrow;
+	}
+	
+	/**
+	 * // TODO CHICA-1029 - try to come up with one generic constructor after we determine what fields are actually going to be used
+	 * Constructor - currently used by PumpReadings
+	 * @param timestamp
+	 * @param utcOffset
+	 * @param syncTimestamp
+	 * @param guid
+	 * @param updatedAt
+	 * @param value
+	 * @param units
+	 * @param mealTagSource
+	 * @param mealTag
+	 */
+	public GenericReading(String timestamp, String utcOffset, String syncTimestamp, String guid, String updatedAt, Integer value, String units, String mealTagSource, String mealTag)
+	{
+		this.timestamp = timestamp;
+		this.utcOffset = utcOffset;
+		this.syncTimestamp = syncTimestamp;
+		this.guid = guid;
+		this.updatedAt = updatedAt;
+		this.value = value;
+		this.units = units;
+		this.mealTagSource = mealTagSource;
+		this.mealTag = mealTag;
+	}
 
 	/**
 	 * @return the timestamp
@@ -58,6 +114,20 @@ public class GenericReading
 	 */
 	public Integer getTimeOffset() {
 		return timeOffset;
+	}
+	
+	/**
+	 * @return utcOffset
+	 */
+	public String getUTCOffset() {
+		return utcOffset;
+	}
+	
+	/**
+	 * @return displayTime
+	 */
+	public String getDisplayTime() {
+		return displayTime;
 	}
 
 	/**
@@ -110,6 +180,13 @@ public class GenericReading
 	}
 
 	/**
+	 * @return trendArrow
+	 */
+	public String getTrendArrow() {
+		return trendArrow;
+	}
+	
+	/**
 	 * @param timestamp the timestamp to set
 	 */
 	public void setTimestamp(String timestamp) {
@@ -121,6 +198,20 @@ public class GenericReading
 	 */
 	public void setTimeOffset(Integer timeOffset) {
 		this.timeOffset = timeOffset;
+	}
+	
+	/**
+	 * @param utcOffset the utcOffset to set
+	 */
+	public void setUTCOffset(String utcOffset) {
+		this.utcOffset = utcOffset;
+	}
+	
+	/**
+	 * @param displayTime the displayTime to set
+	 */
+	public void setDisplayTime(String displayTime) {
+		this.displayTime = displayTime;
 	}
 
 	/**
@@ -171,4 +262,13 @@ public class GenericReading
 	public void setMealTag(String mealTag) {
 		this.mealTag = mealTag;
 	}
+	
+	/**
+	 * @param trendArrow the trendArrow to set
+	 */
+	public void setTrendArrow(String trendArrow) {
+		this.trendArrow = trendArrow;
+	}
+	
+	// TODO CHICA-1029 Generate hashCode() and equals() after we determine what fields we are actually going to keep in this class
 }

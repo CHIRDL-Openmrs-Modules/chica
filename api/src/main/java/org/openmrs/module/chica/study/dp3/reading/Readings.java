@@ -13,5 +13,5 @@ public interface Readings
 	 * This method should convert the list of objects that is returned into a list of GenericReading objects
 	 * @return
 	 */
-	public List<GenericReading> getGenericReadingList();
+	public List<GenericReading> getGenericReadingList() throws Exception;
 }

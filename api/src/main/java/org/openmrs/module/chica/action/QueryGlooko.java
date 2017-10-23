@@ -18,6 +18,7 @@ import org.glassfish.jersey.SslConfigurator;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.study.dp3.GlookoConstants;
 import org.openmrs.module.chica.study.dp3.login.LoginCredentials;
 import org.openmrs.module.chica.study.dp3.login.LoginResponse;
 import org.openmrs.module.chica.study.dp3.reading.GenericReading;
@@ -56,7 +57,6 @@ public class QueryGlooko implements ProcessStateAction
 	private static final String CGM_READINGS_DATATYPE = "cgm_readings";
 	
 	// Query parameter names
-	public static final String PARAMETER_SYNC_TIMESTAMP = "syncTimestamp";
 	private static final String PARAMETER_PAGE_NUMBER = "pageNumber";
 	
 	// HTTP headers
@@ -64,10 +64,6 @@ public class QueryGlooko implements ProcessStateAction
 	private static final String CUSTOM_HTTP_HEADER_TOTAL_PAGES = "X-Total-Pages";
 	private static final String CUSTOM_HTTP_HEADER_CURRENT_PAGE = "X-Current-Page";
 	private static final String HTTP_AUTHORIZATION_TYPE = "Bearer ";
-	
-	// State parameters
-	public static final String PARAMETER_GLOOKO_CODE = "glookoCode";
-	public static final String PARAMETER_DATA_TYPE = "dataType";
 	
 	// Global properties
 	private static final String GLOBAL_PROP_ENABLE_GLOOKO_QUERY = "chica.enableGlookoQuery";
@@ -110,7 +106,8 @@ public class QueryGlooko implements ProcessStateAction
 		State currState = patientState.getState();
 		Integer locationTagId = patientState.getLocationTagId();
 		Integer locationId = patientState.getLocationId();
-			
+		
+		boolean changeState = false; // Use this flag to determine if the state should be changed, we only want to change the state if no errors occurred so that we don't create a PWS for no reason
 		try
 		{
 			AdministrationService adminService = Context.getAdministrationService();
@@ -153,14 +150,14 @@ public class QueryGlooko implements ProcessStateAction
 			// Check the global property to make sure the service is enabled
 			if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(enableQuery))
 			{
-				String dataType = (String)parameters.get(PARAMETER_DATA_TYPE); // Get the data type from the parameters map
+				String dataType = (String)parameters.get(GlookoConstants.PARAMETER_DATA_TYPE); // Get the data type from the parameters map
 				
 				// Get the implementation based on the dataType
 				Readings readingsImpl = ReadingsFactory.getReadingsImpl(dataType);
 				if(readingsImpl != null) // If readingsImpl is null, we received a device sync notification for an unsupported dataType
 				{
-					String syncTimestamp = (String)parameters.get(PARAMETER_SYNC_TIMESTAMP); // Get the sync timestamp from the parameters map
-					String glookoCode = (String)parameters.get(PARAMETER_GLOOKO_CODE); // Get the glookoCode from the parameters map
+					String syncTimestamp = (String)parameters.get(GlookoConstants.PARAMETER_SYNC_TIMESTAMP); // Get the sync timestamp from the parameters map
+					String glookoCode = (String)parameters.get(GlookoConstants.PARAMETER_GLOOKO_CODE); // Get the glookoCode from the parameters map
 					
 					WebTarget rootWebTarget = client.target(rootWebTargetString);
 					
@@ -181,8 +178,8 @@ public class QueryGlooko implements ProcessStateAction
 						
 						List<GenericReading> genericReadings = response.readEntity(readingsImpl.getClass())
 																	.getGenericReadingList();
-						
-						List<GenericReading> allReadings = new ArrayList<GenericReading>(); // Combined list from all pages
+					
+						List<GenericReading> allReadings = new ArrayList<GenericReading>(); // Combined list of readings from all pages
 						allReadings.addAll(genericReadings);
 						
 						int totalPages = Integer.parseInt(totalPagesStr);
@@ -217,6 +214,7 @@ public class QueryGlooko implements ProcessStateAction
 						
 						// TODO CHICA-1029 What do we do from here?
 						// Store in the cache? Or store in the DB?
+						changeState = true;
 					}
 					else
 					{
@@ -227,21 +225,23 @@ public class QueryGlooko implements ProcessStateAction
 		}
 		catch(Exception e)
 		{
-			// Catch any errors that may occur including parseInt or service call
+			// Catch any errors that may occur including parseInt, parsing errors with the response, or service call errors
 			// Don't do anything with the list if an error occurs at any point in time
 			// Running rules against a partial list of readings could result in 
 			// incorrect logic, just log it and change the patient's state
 			log.error("An error occurred while querying for device data for patient: " + patient.getPatientId(), e);
+			
 		}
 		finally
 		{
-			// TODO CHICA-1029 For discussion. Do we really want to end/change state even if the query wasn't performed? 
-			// If we turn off the query, we could create a PWS for no reason every time
-			// We could end the state if something fails during the query but don't change the state so a PWS doesn't get created
+			// End the state even if something fails during the query but don't change the state so a PWS doesn't get created, the PWS can still get created by submitting the PSF or vitals
 			StateManager.endState(patientState);
 			
-			BaseStateActionHandler
-			        .changeState(patient, sessionId, currState, stateAction, parameters, locationTagId, locationId);
+			if(changeState)
+			{
+				BaseStateActionHandler
+		        .changeState(patient, sessionId, currState, stateAction, parameters, locationTagId, locationId);
+			}
 		}
 	}
 	
@@ -308,7 +308,7 @@ public class QueryGlooko implements ProcessStateAction
 	{
 		// Add query parameters
 		WebTarget readingsTargetWithParams = readingsTarget.queryParam(ChirdlUtilConstants.PARAMETER_PATIENT, glookoCode) // patient's glooko code
-													.queryParam(PARAMETER_SYNC_TIMESTAMP, syncTimestamp) // Sync timestamp received in the device synce notification
+													.queryParam(GlookoConstants.PARAMETER_SYNC_TIMESTAMP, syncTimestamp) // Sync timestamp received in the device synce notification
 													.queryParam(PARAMETER_PAGE_NUMBER, pageNumber);
 					
 		// Call the rest service
@@ -348,8 +348,16 @@ public class QueryGlooko implements ProcessStateAction
 		}
 		
 		
-		List<GenericReading> genericReadings = response.readEntity(readingsImpl.getClass())
-													.getGenericReadingList();
+		try
+		{
+			List<GenericReading> genericReadings = response.readEntity(readingsImpl.getClass())
+					.getGenericReadingList();
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
 		
 		System.out.println("Success");
 	}
