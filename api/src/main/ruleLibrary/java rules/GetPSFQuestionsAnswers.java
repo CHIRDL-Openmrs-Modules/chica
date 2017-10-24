@@ -38,8 +38,6 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
  * @author Steve McKee
  */
 public class GetPSFQuestionsAnswers implements Rule {
-	
-	private static final String PSF = "PSF";
 
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -103,7 +101,8 @@ public class GetPSFQuestionsAnswers implements Rule {
 	 */
 	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId, Integer encounterId) {
 		ATDService atdService = Context.getService(ATDService.class);
-		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, PSF);
+		String patientForm = org.openmrs.module.chica.util.Util.getPrimaryPatientForm(encounterId);
+		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, patientForm);
 		if (stats == null || stats.size() == 0) {
 			return new ArrayList<PSFQuestionAnswer>();
 		}

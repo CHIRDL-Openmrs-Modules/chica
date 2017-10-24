@@ -72,7 +72,7 @@ public class pwsId implements Rule
 			
 			if (encounterId != null)
 			{
-				String formName = "PWS";
+				String formName = org.openmrs.module.chica.util.Util.getPrimaryPhysicianForm(encounterId);
 				FormService formService = Context.getFormService();
 				Form form = formService.getForm(formName);
 				Integer formId = null;

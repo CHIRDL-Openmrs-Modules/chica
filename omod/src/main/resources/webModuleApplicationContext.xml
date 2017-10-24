@@ -28,7 +28,6 @@
 	<bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>            
-                <prop key="/module/@MODULE_ID@/greaseBoard.form">greaseBoard</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
@@ -71,11 +70,6 @@
         <property name="commandName"><value>chicaNoteTesterObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/chicaNoteTester</value></property>
         <property name="successView"><value>chicaNoteTester.form</value></property>
-    </bean>
-    <bean id="greaseBoard" class="@MODULE_PACKAGE@.web.GreaseBoardController">
-        <property name="commandName"><value>greaseBoardObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/greaseBoard</value></property>
-        <property name="successView"><value>greaseBoard.form</value></property>
     </bean>
     <bean id="viewEncounter" class="@MODULE_PACKAGE@.web.ViewEncounterController">
         <property name="commandName"><value>greaseBoardObject</value></property>

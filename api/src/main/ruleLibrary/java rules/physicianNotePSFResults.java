@@ -118,16 +118,17 @@ public class physicianNotePSFResults implements Rule {
 		if (encounters == null || encounters.size() == 0) {
 			return new ArrayList<PSFQuestionAnswer>();
 		}
-		
+
 		Encounter lastEncounter = null;
 		if (encounters.size() == 1) {
-			lastEncounter = encounters.get(0);
+			lastEncounter =  encounters.get(0);
 		} else {
 			// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
 			ATDService atdService = Context.getService(ATDService.class);
 			for (int i = encounters.size() - 1; i >= 0 && lastEncounter == null; i--) {
 				Encounter encounter = encounters.get(i);
-				List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+				String formName = Util.getPrimaryPatientForm(((org.openmrs.module.chica.hibernateBeans.Encounter)encounters.get(i)).getEncounterId());
+				List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), formName);
 				if (stats == null || stats.size() == 0) {
 					continue;
 				}
@@ -146,7 +147,8 @@ public class physicianNotePSFResults implements Rule {
 		}
 		
 		ATDService atdService = Context.getService(ATDService.class);
-		List<Statistics> stats = atdService.getStatsByEncounterForm(lastEncounter.getEncounterId(), "PSF");
+		String formName = Util.getPrimaryPatientForm(((org.openmrs.module.chica.hibernateBeans.Encounter)lastEncounter).getEncounterId());
+		List<Statistics> stats = atdService.getStatsByEncounterForm(lastEncounter.getEncounterId(), formName);
 		if (stats == null || stats.size() == 0) {
 			return new ArrayList<PSFQuestionAnswer>();
 		}

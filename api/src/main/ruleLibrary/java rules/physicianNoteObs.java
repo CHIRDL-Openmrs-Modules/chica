@@ -153,7 +153,8 @@ public class physicianNoteObs implements Rule {
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0 && latestEncounter == null; i--) {
 			Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			String formName = Util.getPrimaryPatientForm(((org.openmrs.module.chica.hibernateBeans.Encounter)encounter).getEncounterId());
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), formName);
 			if (stats == null || stats.size() == 0) {
 				continue;
 			}

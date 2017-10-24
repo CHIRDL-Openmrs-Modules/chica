@@ -27,6 +27,7 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -81,7 +82,8 @@ public class ChicaAgeRule implements Rule {
 				}
 			}
 			
-			if (formName != null && formName.equalsIgnoreCase("PWS")){
+			String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
+			if (formName != null && formType.equalsIgnoreCase(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE)){
 				
 				PatientState patientState = 
 					org.openmrs.module.atd.util.Util.getProducePatientStateByFormInstanceAction(formInstance);

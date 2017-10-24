@@ -184,7 +184,8 @@ public class ChicaServiceImpl implements ChicaService
 
 							if (patientATD != null)
 							{
-								if (databaseForm.getName().equals("PSF"))
+								String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+								if (formType.equalsIgnoreCase(ChirdlUtilConstants.PATIENT_FORM_TYPE)) 
 								{
 									// consume only one side of questions for
 									// PSF
@@ -390,8 +391,12 @@ public class ChicaServiceImpl implements ChicaService
 						Integer ruleId = rule.getRuleId();
 
 						String dsstype = databaseForm.getName();
+						
+						EncounterService encounterService = Context.getService(EncounterService.class);
+						Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId((Encounter) encounterService.getEncounter(encounterId));
+						String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 
-						if (dsstype.equalsIgnoreCase("PSF"))
+						if (formType.equalsIgnoreCase(ChirdlUtilConstants.PATIENT_FORM_TYPE))
 						{
 							for (String currLanguage : languageToFieldnames
 									.keySet())
@@ -429,7 +434,7 @@ public class ChicaServiceImpl implements ChicaService
 							}
 						}
 
-						if (dsstype.equalsIgnoreCase("PWS"))
+						if (formType.equalsIgnoreCase(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE))
 						{
 							Integer formInstanceId = formInstance.getFormInstanceId();
 							Integer locationId = formInstance.getLocationId();
@@ -497,8 +502,9 @@ public class ChicaServiceImpl implements ChicaService
 					String answer = answers.get(currRuleId);
 					Integer formInstanceId = formInstance.getFormInstanceId();
 					Integer locationId = formInstance.getLocationId();
+					String patientForm = org.openmrs.module.chica.util.Util.getPrimaryPatientForm(encounterId); 
 					List<Statistics> statistics = atdService
-							.getStatByIdAndRule(formInstanceId, currRuleId, "PSF",locationId);
+							.getStatByIdAndRule(formInstanceId, currRuleId, patientForm, locationId);
 					if (statistics != null)
 					{
 						for (Statistics stat : statistics)
@@ -513,11 +519,14 @@ public class ChicaServiceImpl implements ChicaService
 			}
 		}
 		
-		String formName = databaseForm.getName();
 		//save language response to preferred language
 		//language is determined by maximum number of answers
 		//selected for a language on the PSF
-		if (languageResponse != null&&formName.equals("PSF")) {
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
+		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+		if (languageResponse != null&& formType.equalsIgnoreCase(ChirdlUtilConstants.PATIENT_FORM_TYPE)) {
 			ObsService obsService = Context.getObsService();
 			Obs obs = new Obs();
 			String conceptName = "preferred_language";
@@ -530,10 +539,7 @@ public class ChicaServiceImpl implements ChicaService
 				        + languageResponse);
 			} else {
 				obs.setValueCoded(languageConcept);
-				
-				EncounterService encounterService = Context.getService(EncounterService.class);
-				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-				
+		
 				Location location = encounter.getLocation();
 				
 				obs.setPerson(patient);
