@@ -73,6 +73,8 @@ public class QueryGlooko implements ProcessStateAction
 	private static final String GLOBAL_PROP_GLOOKO_PASSWORD = "chica.GlookoPassword";
 		
 	/**
+	 * TODO CHICA-1029 This method is not currently used. I'm not sure yet if it is needed.
+	 * The client will use SSL without this method, but won't include the certificate
 	 * Configure SSL and initialize the client
 	 * @return
 	 */
@@ -117,8 +119,6 @@ public class QueryGlooko implements ProcessStateAction
 				log.error("Glooko query is not enabled and will not be completed for patient: " + patient.getPatientId());
 			}
 			
-			// We could read these once when the class is initialized,
-			// but might be better off to read each time 
 			String rootWebTargetString = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT); // Read global property to get rootWebTarget
 			if(StringUtils.isBlank(rootWebTargetString))
 			{
@@ -189,6 +189,8 @@ public class QueryGlooko implements ProcessStateAction
 							{
 								genericReadings.clear();
 								
+								// TODO CHICA-1029 If we need to handle token expiration, 
+								// we'll need to check that it isn't about to expire before making this call
 								response = updateQueryParametersGetResponse(glookoCode, syncTimestamp, i, token, apiKey, readingsTarget);
 								
 								if(response.getStatus() == HttpStatus.OK.value())
@@ -259,7 +261,7 @@ public class QueryGlooko implements ProcessStateAction
 		LoginResponse loginResponse = loginTarget.request(MediaType.APPLICATION_JSON)
 											.post(Entity.json(loginCredentials), LoginResponse.class);
 		
-		return loginResponse.getToken(); // TODO CHICA-1029 determine if this can be set at class level with a 1 hour expiration
+		return loginResponse.getToken();
 	}
 	
 	/**
@@ -271,7 +273,7 @@ public class QueryGlooko implements ProcessStateAction
 	private WebTarget getReadingsTargetByDataType(WebTarget rootWebTarget, String dataType)
 	{
 		// Determine the resource target based on the data type from the sync notification
-		WebTarget readingsTarget = rootWebTarget.path("");
+		WebTarget readingsTarget = rootWebTarget.path(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
 		switch(dataType)
 		{
 			case READINGS_DATATYPE:
@@ -318,47 +320,5 @@ public class QueryGlooko implements ProcessStateAction
 							.get();
 		
 		return response;
-	}
-	
-	public static void main(String[] args)
-	{
-		String apiKey = "testAPIKey1234"; // TODO CHICA-1029  this will likely be a global property. It is provided by Glooko after we create an account
-		
-		Client client = ClientBuilder.newClient();
-		
-		// TODO CHICA-1029  Meter readings base target - real world would be the same base target as above
-		WebTarget baseTarget2 = client.target("http://localhost:10997");
-		WebTarget meterReadingsTarget = baseTarget2.path("/external/readings");
-		
-		// Add the patient and the syncTimestamp as url query parameters
-		WebTarget meterReadingsTargetWithParams = meterReadingsTarget.queryParam("patient", "Jenny")
-													.queryParam("syncTimestamp", "2017-09-28T14:07:54:472Z")
-													.queryParam("pageNumber", 1);
-		
-		
-		Response response = meterReadingsTargetWithParams.request(MediaType.APPLICATION_JSON)
-				.header("Authorization", "Bearer " + "")
-				.header("x-api-key", apiKey)
-				.get();
-		
-		Readings readingsImpl = ReadingsFactory.getReadingsImpl(READINGS_DATATYPE);
-		if(readingsImpl == null) // We received a device sync notification for an unsupported dataType
-		{
-			return;
-		}
-		
-		
-		try
-		{
-			List<GenericReading> genericReadings = response.readEntity(readingsImpl.getClass())
-					.getGenericReadingList();
-		}
-		catch(Exception e)
-		{
-			
-		}
-		
-		
-		System.out.println("Success");
 	}
 }

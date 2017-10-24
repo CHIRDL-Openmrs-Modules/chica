@@ -2,7 +2,7 @@ package org.openmrs.module.chica.study.dp3.reading;
 
 public class GenericReading 
 {
-	// TODO CHICA-1029 Are all of these fields actually generic enough??? Need to review the spec for all data types
+	// TODO CHICA-1029 Are all of these fields actually needed??? Need to review the spec for all data types
 	// We may be able to get rid of some of these and create one generic constructor, but we'll have to wait until
 	// further details are provided
 	private String timestamp;
