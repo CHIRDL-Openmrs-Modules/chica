@@ -164,7 +164,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		personTypeList.add(PERSON_TYPE.PATIENT);
 		String timeSpanStr = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN);
 		Integer timeSpan = null;
-		if (timeSpanStr == null || timeSpanStr.trim().length() == 0) {
+		if (StringUtils.isBlank(timeSpanStr)) {
 			log.error("The task property '" + PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN + "' does not exist.  " +
 					"The default value of " + DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN + " months will be used.");
 			timeSpan = DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN;
