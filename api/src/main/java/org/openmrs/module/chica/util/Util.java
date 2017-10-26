@@ -123,7 +123,7 @@ public class Util {
 		
 		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 		if (formName != null && 
-				(formType.equalsIgnoreCase(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE) 
+				(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) 
 				|| formName.equalsIgnoreCase("ImmunizationSchedule")
 				|| formName.equalsIgnoreCase("ImmunizationSchedule7yrOrOlder"))) {
 			usePrintedTimestamp = true;
@@ -834,7 +834,7 @@ public class Util {
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0; i--) {
 			org.openmrs.Encounter encounter = encounters.get(i);
-			String patientForm = org.openmrs.module.chica.util.Util.getPrimaryPatientForm(encounter.getEncounterId());
+			String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), patientForm);
 			if (stats == null || stats.size() == 0) {
 				continue;
@@ -1041,74 +1041,69 @@ public class Util {
 	}
 	
 	/**
-	 * Retrieves locationId and locationTagId
-	 * @param encounterId The patient's encounter id.
-	 * @return locationValueMap The Map with locationId and locationTagId
+	 * Gets the primary form name based on location tag attribute (primaryPatientForm or primaryPhysicianForm)
+	 * @param encounter
+	 * @param attributeName Location Tag Attribute
+	 * @return form form name
 	 */
-	private static Map<String, Integer> getLocationValues(Integer encounterId) {
-		Map<String, Integer> locationValueMap = new HashMap<String, Integer>();
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-		String locationTagString = encounter.getPrinterLocation();
-		LocationTag locationTag = null;
-    	if (StringUtils.isNotBlank(locationTagString)) { 
-    		LocationService locationService = Context.getLocationService();
-    		locationTag = locationService.getLocationTagByName(locationTagString);
-		}
-    	
-    	Location location = encounter.getLocation();
-     	if (locationTag != null && location != null) {
-     		Integer locationTagId = locationTag.getLocationTagId();
-     		Integer locationId = location.getLocationId();
-     		locationValueMap.put("locationTagId", locationTagId);
-     		locationValueMap.put("locationId", locationId);
-     		return locationValueMap;
+	public static String getPrimaryFormNameByLocationTag(Encounter encounter, String attributeName)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTagAttributeValue locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, 
+				attributeName, locationId); 
+		
+		String formName = null;
+     	if (locationTagAttributeValueForm != null && StringUtils.isNotBlank(locationTagAttributeValueForm.getValue())) {
+     		formName = locationTagAttributeValueForm.getValue(); 
      	}
-		return Collections.emptyMap();
+     	return formName;
 	}
 	
 	/**
-	 * Retrieves FormName and reprintState 
-	 * @param encounter The patient's encounter id.
-	 * @param strForm 
-	 * @return attributeValueMap The Map with formName and reprintState
+	 * Gets the primary form name based on the option that is selected in the drop-down
+	 * @param encounter
+	 * @param printOptionString option selected in the GreaseBoard action drop-down
+	 * @return form Name
 	 */
-	public static Map<String, String> getAttributeValues(Integer encounterId, String strForm) {
+	public static String getFormNameByPrintOptionString(Encounter encounter, String printOptionString)
+	{
+		String locTagAttrName = null;
+		if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM)) {
+ 			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM;
+ 		} else if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) {
+ 			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM;
+ 		}
 		
-		Map<String, String> attributeValueMap = new HashMap<String, String>();
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		Map<String, Integer> locationValueMap = new HashMap<String, Integer>();
-		locationValueMap = getLocationValues(encounterId);
-    	LocationTagAttributeValue locationTagAttributeValueForm = null;
-    	if (locationValueMap.get("locationTagId") != null && locationValueMap.get("locationId") != null) {
-    		String locTagAttrName = null;
-     		if (strForm.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM)) {
-     			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM;
-     		} else if (strForm.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) {
-     			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM;
-     		}
-     		locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationValueMap.get("locationTagId"), 
-     				locTagAttrName, locationValueMap.get("locationId"));
-    	}
-     	
-     	String formName = null;
-     	String reprintState = null;
-	   	if (locationTagAttributeValueForm != null && !locationTagAttributeValueForm.equals("") ) {
-    		formName = locationTagAttributeValueForm.getValue(); 
-    		attributeValueMap.put("formName", formName);
-    		Form form = Context.getFormService().getForm(formName);
-    		if (form != null && !form.equals("")) {
-    			FormAttributeValue formAttributeValueEndState = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE, 
-    					locationValueMap.get("locationTagId"), locationValueMap.get("locationId"));
-    			if (formAttributeValueEndState != null && !formAttributeValueEndState.equals("") ) {
-    				reprintState = formAttributeValueEndState.getValue();
-    				attributeValueMap.put(ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE, reprintState);
-        		}
-    		}
-	    } 
-	   	return attributeValueMap;
+		String formName = getPrimaryFormNameByLocationTag(encounter, locTagAttrName);
+		return formName;
 	}
 	
+	/**
+	 * Gets the form attribute for reprintState using the formId
+	 * @param encounter
+	 * @param formId
+	 * @return reprint State name
+	 */
+	public static String getReprintStateName(Encounter encounter, Integer formId)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue formAttributeValueReprintStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE, 
+				locationTagId, locationId);
+		
+		String reprintStateName = null;
+		if (formAttributeValueReprintStateName != null && StringUtils.isNotBlank(formAttributeValueReprintStateName.getValue())) {
+			reprintStateName = formAttributeValueReprintStateName.getValue();
+		}
+		
+		return reprintStateName;
+	}
+		
 	/**
 	 * Retrieves the form type for PrimaryPatientForm and PrimaryPhysicianForm
 	 * @param formId
@@ -1121,58 +1116,15 @@ public class Util {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		FormAttributeValue primaryPatientFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId);
 		FormAttributeValue primaryPhysicianFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId);
-		
-		if (primaryPatientFormfav != null && !primaryPatientFormfav.equals("") && primaryPatientFormfav.getValue().equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) { 
+		   																		
+		if (primaryPatientFormfav != null && StringUtils.isNotBlank(primaryPatientFormfav.getValue()) && 
+				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPatientFormfav.getValue())) { 
 			return ChirdlUtilConstants.PATIENT_FORM_TYPE;
-		} else if (primaryPhysicianFormfav != null && !primaryPhysicianFormfav.equals("") && primaryPhysicianFormfav.getValue().equalsIgnoreCase(ChirdlUtilConstants.FORM_ATTR_VAL_TRUE)) {
+		} else if (primaryPhysicianFormfav != null && StringUtils.isNotBlank(primaryPhysicianFormfav.getValue()) && 
+				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPhysicianFormfav.getValue())) {
 			return ChirdlUtilConstants.PHYSICIAN_FORM_TYPE;
 		}
 		return null;
 	}
 	
-	/**
-	 * Gets Primary Patient Form
-	 * @param encounterId The patient's encounter Id.
-	 * @return formName
-	 */
-	public static String getPrimaryPatientForm(Integer encounterId) {
-		
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		Map<String, Integer> locationValueMap = new HashMap<String, Integer>();
-		locationValueMap = getLocationValues(encounterId);
-    	LocationTagAttributeValue locationTagAttributeValueForm = null;
-    	
-    	if (locationValueMap.get("locationTagId") != null && locationValueMap.get("locationId") != null) {
-    		locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationValueMap.get("locationTagId"), 
-        			ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM, locationValueMap.get("locationId")); 
-    	}
-     	String formName = null;
-     	if (locationTagAttributeValueForm != null && !locationTagAttributeValueForm.equals("") ) {
-    		formName = locationTagAttributeValueForm.getValue(); 
-     	}
-     	return formName;
-	}
-	
-	/**
-	 * Gets Primary Physician Form
-	 * @param encounterId The patient's encounter Id.
-	 * @return formName
-	 */
-	public static String getPrimaryPhysicianForm(Integer encounterId) {
-
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		Map<String, Integer> locationValueMap = new HashMap<String, Integer>();
-		locationValueMap = getLocationValues(encounterId);
-    	LocationTagAttributeValue locationTagAttributeValueForm = null;
-    	
-    	if (locationValueMap.get("locationTagId") != null && locationValueMap.get("locationId") != null) {
-   			locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationValueMap.get("locationTagId"), 
-            			ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM, locationValueMap.get("locationId")); 
-     	}
-     	String formName = null;
-     	if (locationTagAttributeValueForm != null && !locationTagAttributeValueForm.equals("") ) {
-    		formName = locationTagAttributeValueForm.getValue(); 
-     	}
-     	return formName;
-	}
 }

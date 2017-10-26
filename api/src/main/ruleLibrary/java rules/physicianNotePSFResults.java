@@ -34,6 +34,7 @@ import org.openmrs.module.atd.hibernateBeans.PSFQuestionAnswer;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 
 /**
@@ -120,15 +121,17 @@ public class physicianNotePSFResults implements Rule {
 		}
 
 		Encounter lastEncounter = null;
+		String lastFormName = null;
 		if (encounters.size() == 1) {
 			lastEncounter =  encounters.get(0);
+			lastFormName = Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) lastEncounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 		} else {
 			// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
 			ATDService atdService = Context.getService(ATDService.class);
 			for (int i = encounters.size() - 1; i >= 0 && lastEncounter == null; i--) {
 				Encounter encounter = encounters.get(i);
-				String formName = Util.getPrimaryPatientForm(((org.openmrs.module.chica.hibernateBeans.Encounter)encounters.get(i)).getEncounterId());
-				List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), formName);
+				lastFormName = Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+				List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), lastFormName);
 				if (stats == null || stats.size() == 0) {
 					continue;
 				}
@@ -145,10 +148,9 @@ public class physicianNotePSFResults implements Rule {
 		if (lastEncounter == null) {
 			return new ArrayList<PSFQuestionAnswer>();
 		}
-		
+
 		ATDService atdService = Context.getService(ATDService.class);
-		String formName = Util.getPrimaryPatientForm(((org.openmrs.module.chica.hibernateBeans.Encounter)lastEncounter).getEncounterId());
-		List<Statistics> stats = atdService.getStatsByEncounterForm(lastEncounter.getEncounterId(), formName);
+		List<Statistics> stats = atdService.getStatsByEncounterForm(lastEncounter.getEncounterId(), lastFormName);
 		if (stats == null || stats.size() == 0) {
 			return new ArrayList<PSFQuestionAnswer>();
 		}

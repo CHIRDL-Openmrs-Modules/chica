@@ -10,6 +10,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Form;
+import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
@@ -40,8 +42,9 @@ public class ChicaParameterHandler implements ParameterHandler
 	public void addParameters(Map<String, Object> parameters, Rule rule)
 	{
 		FormInstance formInstance = (FormInstance) parameters.get(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
-
-		if (formInstance==null)
+		String ruleType = rule.getRuleType();
+		
+		if (StringUtils.isBlank(ruleType) || formInstance==null)
 		{
 			return;
 		}
@@ -51,13 +54,20 @@ public class ChicaParameterHandler implements ParameterHandler
 				.getLogicDataSource("form");
 		HashMap<String,Field> fieldMap = formDatasource.getFormFields(formInstance);
 
-		String formType = Util.getFormType(formInstance.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
-		if (formType.equalsIgnoreCase(ChirdlUtilConstants.PATIENT_FORM_TYPE))
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(ruleType);
+		
+		if (form==null) {
+			return;
+		}
+			
+		String formType = Util.getFormType(form.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
+		if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPSFParameters(parameters,fieldMap);
 		}
 
-		if (formType.equalsIgnoreCase(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE))
+		if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPWSParameters(parameters,fieldMap);
 		}
@@ -74,19 +84,27 @@ public class ChicaParameterHandler implements ParameterHandler
     public void addParameters(Map<String, Object> parameters, Rule rule, Map<String, Field> fieldMap) 
     {
     	FormInstance formInstance = (FormInstance) parameters.get(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
+    	String ruleType = rule.getRuleType();
 
-		if (formInstance==null)
+		if (StringUtils.isBlank(ruleType) || formInstance==null)
 		{
 			return;
 		}
 		
-		String formType = Util.getFormType(formInstance.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
-		if (formType.equalsIgnoreCase(ChirdlUtilConstants.PATIENT_FORM_TYPE))
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(ruleType);
+		
+		if (form==null) {
+			return;
+		}
+		
+		String formType = Util.getFormType(form.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
+		if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPSFParameters(parameters,fieldMap);
 		}
 
-		if (formType.equalsIgnoreCase(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE))
+		if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPWSParameters(parameters,fieldMap);
 		}

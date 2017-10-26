@@ -26,6 +26,8 @@ import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.DynamicFormAccess;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -63,7 +65,9 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		FormService fs =Context.getFormService();
 		Integer encounterId = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-		String physicianForm = org.openmrs.module.chica.util.Util.getPrimaryPhysicianForm(encounterId);
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		String physicianForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM);
 		Form form = fs.getForm(physicianForm);
 
 		if(form != null)

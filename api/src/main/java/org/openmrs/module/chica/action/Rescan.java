@@ -34,7 +34,7 @@ public class Rescan extends org.openmrs.module.atd.action.Rescan
 		
 		//only void non-question related obs for PSF
 		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
-		if (formName != null && formType.equalsIgnoreCase(ChirdlUtilConstants.PATIENT_FORM_TYPE))
+		if (formName != null && ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			//make sure the processAction from the super
 			//class does not void any Obs since we already

@@ -66,8 +66,9 @@ public class GreaseBoardController {
 			if(patientIdString != null){
 				patientId = Integer.parseInt(patientIdString);
 			}
-		} catch (Exception e)
+		} catch (NumberFormatException e) 
 		{
+			log.error("Error parsing patientId: " + patientIdString, e);
 		}
 		String sessionIdString = request.getParameter("greaseBoardSessionId");
 		Integer sessionId = null;
@@ -76,8 +77,9 @@ public class GreaseBoardController {
 			if(sessionIdString != null){
 				sessionId = Integer.parseInt(sessionIdString);
 			}
-		} catch (Exception e)
+		} catch (NumberFormatException e) 
 		{
+			log.error("Error parsing sessionId: " + sessionIdString, e);
 		}
 		
 		//Initiate an ADHD WU for the patient
@@ -158,64 +160,67 @@ public class GreaseBoardController {
 		if (optionsString != null && (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM)||
 				optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)))
 		{
-			Session session = chirdlutilbackportsService.getSession(sessionId);
-			Integer encounterId = session.getEncounterId();
-			Map<String, String> attributeValueMap = Util.getAttributeValues(encounterId, optionsString); 
-			String formName = attributeValueMap.get("formName");
-			
-			if (patientId != null && sessionId != null && formName != null)
+			if (patientId != null && sessionId != null) 
 			{
 				FormService formService = Context.getFormService();
-				Form form = formService.getForm(formName);
-				Integer formId = null;
-				if (form != null && !form.equals("")) {
-					formId = form.getFormId();
-				} else {
-					log.error("The locationTagAttributeValue "+formName+" is invalid");
-					return new ModelAndView(new RedirectView(FORM));
-				}
-				
-				PatientState patientStateProduce = 
-					org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(encounterId, formId);
+				Session session = chirdlutilbackportsService.getSession(sessionId);
+				Integer encounterId = session.getEncounterId();
+				EncounterService encounterService = Context.getService(EncounterService.class);
+				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+				String formName = Util.getFormNameByPrintOptionString(encounter, optionsString); 
 
-				String stateName = attributeValueMap.get(ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE);
-				if (StringUtils.isBlank(stateName)) {
-					log.error("A valid reprint State parameter was not provided to the CHICA system.");
-					return new ModelAndView(new RedirectView(FORM));
-				}
-
-				State currState = null;
-				if (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM) || (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM) && patientStateProduce != null /*reprint if the state exists*/) ) {
-					currState = chirdlutilbackportsService
-							.getStateByName(stateName);
-					if (currState == null) {
-						log.error("A start state with name "+stateName+" cannot be found in the CHICA system.");
+				if (StringUtils.isNotBlank(formName)) {
+					Form form = formService.getForm(formName);
+					Integer formId = null;
+					if (form != null && !form.equals("")) {
+						formId = form.getFormId();
+					} else {
+						log.error("The locationTagAttributeValue "+formName+" is invalid");
 						return new ModelAndView(new RedirectView(FORM));
 					}
 					
-				} else {
-					// create for the first time if it does not exist
-					currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_GREASE_BOARD_PRINT_PWS);
-				}
-				
-				HashMap<String,Object> actionParameters = new HashMap<String,Object>();
-				actionParameters.put("formName", formName);
-				
-				if(optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) // DWE CHICA-821 Allow PWS to auto-print when "reprinting"
-				{
-					actionParameters.put(ChirdlUtilConstants.PARAMETER_FORCE_AUTO_PRINT, ChirdlUtilConstants.GENERAL_INFO_TRUE);
-				}
+					PatientState patientStateProduce = 
+						org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(encounterId, formId);
 
-				if (currState != null)
-				{
-					PatientState patientState = chirdlutilbackportsService.getLastPatientState(sessionId);
-					PatientService patientService = Context.getPatientService();
-					Patient patient = patientService.getPatient(patientId);
+					String stateName = Util.getReprintStateName(encounter, formId);
+					if (StringUtils.isBlank(stateName)) {
+						log.error("A valid reprint State parameter was not provided to the CHICA system.");
+						return new ModelAndView(new RedirectView(FORM));
+					}
 
-					StateManager.runState(patient, sessionId, currState,actionParameters,
-							patientState.getLocationTagId(),
-							patientState.getLocationId(),
-							BaseStateActionHandler.getInstance());
+					State currState = null;
+					if (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM) || (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM) && patientStateProduce != null /*reprint if the state exists*/) ) {
+						currState = chirdlutilbackportsService
+								.getStateByName(stateName);
+						if (currState == null) {
+							log.error("A start state with name "+stateName+" cannot be found in the CHICA system.");
+							return new ModelAndView(new RedirectView(FORM));
+						}
+						
+					} else {
+						// create for the first time if it does not exist
+						currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_GREASE_BOARD_PRINT_PWS);
+					}
+					
+					HashMap<String,Object> actionParameters = new HashMap<String,Object>();
+					actionParameters.put("formName", formName);
+					
+					if(optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) // DWE CHICA-821 Allow PWS to auto-print when "reprinting"
+					{
+						actionParameters.put(ChirdlUtilConstants.PARAMETER_FORCE_AUTO_PRINT, ChirdlUtilConstants.GENERAL_INFO_TRUE);
+					}
+
+					if (currState != null)
+					{
+						PatientState patientState = chirdlutilbackportsService.getLastPatientState(sessionId);
+						PatientService patientService = Context.getPatientService();
+						Patient patient = patientService.getPatient(patientId);
+
+						StateManager.runState(patient, sessionId, currState,actionParameters,
+								patientState.getLocationTagId(),
+								patientState.getLocationId(),
+								BaseStateActionHandler.getInstance());
+					}
 				}
 			}
 			

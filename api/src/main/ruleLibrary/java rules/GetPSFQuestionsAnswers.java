@@ -29,6 +29,8 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.PSFQuestionAnswer;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 
@@ -101,7 +103,9 @@ public class GetPSFQuestionsAnswers implements Rule {
 	 */
 	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId, Integer encounterId) {
 		ATDService atdService = Context.getService(ATDService.class);
-		String patientForm = org.openmrs.module.chica.util.Util.getPrimaryPatientForm(encounterId);
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, patientForm);
 		if (stats == null || stats.size() == 0) {
 			return new ArrayList<PSFQuestionAnswer>();
