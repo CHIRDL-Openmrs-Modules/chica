@@ -393,7 +393,33 @@
         <description>Port to send obs (HL7 ORU) when the physician worksheet is submitted.
         </description>
     </globalProperty>
-   
+   <globalProperty>
+        <property>chica.enableGlookoQuery</property>
+        <defaultValue>false</defaultValue>
+        <description>Set to true to enable query to the Glooko Cloud to retreive device data for DP3
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.GlookoQueryTargetEndpoint</property>
+        <defaultValue></defaultValue>
+     	<description>Glooko web service target endpoint</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.GlookoAPIKey</property>
+        <defaultValue></defaultValue>
+     	<description>API Key provided by Glooko after account has been setup</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.GlookoUsername</property>
+        <defaultValue></defaultValue>
+     	<description>Username for Glooko</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.GlookoPassword</property>
+        <defaultValue></defaultValue>
+     	<description>Password for Glooko</description>
+    </globalProperty>
+    
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
     <servlet>
