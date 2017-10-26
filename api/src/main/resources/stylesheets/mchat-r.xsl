@@ -19,6 +19,13 @@
                         page-break-after: always;
                     }
                     
+                    /* For some reason Firefox needs more height */
+                    @-moz-document url-prefix() { 
+					    .formPage {
+					       height:1000px;
+					    }
+					}
+                    
                     .instructionContainer {
                         width:590px;
                         min-height:20px;
