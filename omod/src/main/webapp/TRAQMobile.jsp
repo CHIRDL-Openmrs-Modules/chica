@@ -392,7 +392,7 @@
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	       
-	        <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
+	        <div><h3>${headerTalkingWithProviders}</h3><hr/><br/></div>
 	            
 	        <c:set var="QNumber" value="16" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -419,7 +419,7 @@
 	    </div>
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+	        <div><h3>${headerTalkingWithProviders}</h3><hr/><br/></div>
 	            
 	        <c:set var="QNumber" value="17" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -830,6 +830,11 @@
 	<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
 	<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
 	<input id="TRAQ" name="TRAQ" type="hidden"/>
+	<input id="TRAQManagingMedications" name="TRAQManagingMedications" type="hidden"/>
+	<input id="TRAQAppointmentKeeping" name="TRAQAppointmentKeeping" type="hidden"/>
+	<input id="TRAQTrackingHealthIssues" name="TRAQTrackingHealthIssues" type="hidden"/>
+	<input id="TRAQTalkingWithProviders" name="TRAQTalkingWithProviders" type="hidden"/>
+	<input id="TRAQDailyActivitiesAnswers" name="TRAQDailyActivitiesAnswers" type="hidden"/>
     <input id="language" name="language" type="hidden" value="${language}"/>
 
 </form>

@@ -1,9 +1,10 @@
 var english = false;
 var formInstance = null;
-var numberOfQuestions = 20;
+var numberOfQuestions = $("input[id^='TRAQQuestionEntry_']").length / 2;
 var finishAttempts = 0;
 var formTitleText = "";
 var TRAQInformantText = "";
+var questionCompletionCriteria = 15;
 
 var openParen = "&#40";
 var closeParen = "&#41";
@@ -135,7 +136,7 @@ function changePage(newPageNum) {
 function setLanguageFromForm(patientName, birthdate) {
     setLanguage(patientName, birthdate);
     
-    // Transfer the answers for the 10 questions
+    // Transfer the answers for the questions
     for (var i = 1; i <= numberOfQuestions; i++) {
     	if (english) {
 	    	setQuestionCheckboxes("TRAQQuestionEntry_" + i + "_2", "TRAQQuestionEntry_" + i);
@@ -177,6 +178,7 @@ function finishForm() {
 	$("#not_finished_dialog_sp").popup("close");
 	setLanguageField();
 	checkFormCompletion();
+	calculateScore();
 	var submitForm = $("#TRAQForm"); 
 	var token = getAuthenticationToken();
     $.ajax({
@@ -299,7 +301,7 @@ function checkFormCompletion() {
 	var countCompleted = 0;
 	var completionStatus = "Incomplete"; 
 	var questionName = "TRAQQuestionEntry_";
-	for (var i = 1; i < 21; i++) {
+	for (var i = 1; i <= numberOfQuestions; i++) {
 	    if (english) {
 	    	
 	    	$("input[name=" + questionName + i + "]:checked").each(function() {
@@ -312,9 +314,86 @@ function checkFormCompletion() {
 	    }
     }
 	
-	if (countCompleted >= 15) {
+	if (countCompleted >= questionCompletionCriteria) {
 		completionStatus = "Complete";
 	}
 
 	$("#TRAQ").val(completionStatus);
+}
+
+
+function calculateScore() {
+	
+	var questionName = "TRAQQuestionEntry_";
+	var questionPassCriteria = 3;
+	var TRAQCategoryFailed = "failed";
+	
+	// Keep track of each answer so that we can determine if patient failed transition
+	//for that topic
+	var answers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+	var managingMedicationAnswers = [1,2,3,4];
+	var appointmentKeepingAnswers = [5,6,7,8,9,10,11];
+	var trackingHealthIssuesAnswers = [12,13,14,15];
+	var talkingWithProvidersAnswers = [16,17];
+	var dailyActivitiesAnswers = [18,19,20];
+	
+	for (var i = 1; i <= numberOfQuestions; i++) {
+	    if (english) {	
+	    	if($("input[name=" + questionName + i + "]").is(':checked')){
+	    		
+	    		answers[i -1] = parseInt($("input[name=TRAQuestionEntry_" + i + "]:checked").val());
+	    	}
+	    } else {
+	    	if($("input[name=TRAQuestionEntry_" + i + "_2]").is(':checked')){
+	    		
+	    		answers[i -1] = parseInt($("input[name=TRAQuestionEntry_" + i + "_2]:checked").val());
+	    	}	
+	    }
+    }
+	
+	// Determine Manage Medications skill level
+	for(var i = 0; i < managingMedicationAnswers.length; i++){
+		var value = answers[managingMedicationAnswers[i]-1];
+		if(value > -1 && value < questionPassCriteria) // 
+		{
+			$("#TRAQManagingMedications").val(TRAQCategoryFailed);
+			break;
+		}
+	}
+	
+	for(var i = 0; i < appointmentKeepingAnswers.length; i++){
+		var value = answers[appointmentKeepingAnswers[i]-1];
+		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
+		{
+			$("#TRAQAppointmentKeeping").val(TRAQCategoryFailed);
+			break;
+		}
+	}
+	
+	for(var i = 0; i < trackingHealthIssuesAnswers.length; i++){
+		var value = answers[trackingHealthIssuesAnswers[i]-1];
+		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
+		{
+			$("#TRAQTrackingHealthIssues").val(TRAQCategoryFailed);
+			break;
+		}
+	}
+	
+	for(var i = 0; i < talkingWithProvidersAnswers.length; i++){
+		var value = answers[talkingWithProvidersAnswers[i]-1];
+		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
+		{
+			$("#TRAQTalkingWithProviders").val(TRAQCategoryFailed);
+			break;
+		}
+	}
+	
+	for(var i = 0; i < dailyActivitiesAnswers.length; i++){
+		var value = answers[dailyActivitiesAnswers[i]-1];
+		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
+		{
+			$("#TRAQDailyActivitiesAnswers").val(TRAQCategoryFailed);
+			break;
+		}
+	}
 }
