@@ -1063,13 +1063,41 @@ public class Util {
 	}
 	
 	/**
+	 * Gets the primary form name based on location tag attribute (primaryPatientForm or primaryPhysicianForm)
+	 * @param encounterId
+	 * @param attributeName Location Tag Attribute
+	 * @return form form name
+	 */
+	public static String getPrimaryFormNameByLocationTag(Integer encounterId, String attributeName)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTagAttributeValue locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, 
+				attributeName, locationId); 
+		
+		String formName = null;
+     	if (locationTagAttributeValueForm != null && StringUtils.isNotBlank(locationTagAttributeValueForm.getValue())) {
+     		formName = locationTagAttributeValueForm.getValue(); 
+     	}
+     	return formName;
+	}
+	
+	/**
 	 * Gets the primary form name based on the option that is selected in the drop-down
-	 * @param encounter
+	 * @param encounterId
 	 * @param printOptionString option selected in the GreaseBoard action drop-down
 	 * @return form Name
 	 */
-	public static String getFormNameByPrintOptionString(Encounter encounter, String printOptionString)
+	public static String getFormNameByPrintOptionString(Integer encounterId, String printOptionString)
 	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
 		String locTagAttrName = null;
 		if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM)) {
  			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM;
@@ -1083,12 +1111,15 @@ public class Util {
 	
 	/**
 	 * Gets the form attribute for reprintState using the formId
-	 * @param encounter
+	 * @param encounterId
 	 * @param formId
 	 * @return reprint State name
 	 */
-	public static String getReprintStateName(Encounter encounter, Integer formId)
+	public static String getReprintStateName(Integer encounterId, Integer formId)
 	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
 		Integer locationId = encounter.getLocation().getLocationId();
 		Integer locationTagId = getLocationTagId(encounter);
 		

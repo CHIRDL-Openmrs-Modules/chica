@@ -72,8 +72,9 @@ public class ChicaAgeRule implements Rule {
 			}
 			
 			String formType = null;
-			if (formId != null || StringUtils.isNotBlank(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID)) {
-				formType = org.openmrs.module.chica.util.Util.getFormType(formId, (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
+			Integer locationTagId = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
+			if (formId != null || locationTagId != null) {
+				formType = org.openmrs.module.chica.util.Util.getFormType(formId, locationTagId, formInstance.getLocationId());
 			}
 			
 			if (StringUtils.isNotBlank(formType) && ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType)){

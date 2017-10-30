@@ -12,8 +12,6 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 
@@ -75,9 +73,7 @@ public class pwsId implements Rule
 			
 			if (encounterId != null)
 			{
-				EncounterService encounterService = Context.getService(EncounterService.class);
-				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-				String formName = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM);
+				String formName = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM);
 				FormService formService = Context.getFormService();
 				Form form = formService.getForm(formName);
 				Integer formId = null;

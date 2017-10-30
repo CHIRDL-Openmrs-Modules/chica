@@ -164,7 +164,8 @@ public class ChicaServiceImpl implements ChicaService
 			if (fieldsToConsume == null)
 			{
 				fieldsToConsume = new ArrayList<FormField>();
-
+				String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+				
 				for (FormField currField : databaseForm.getOrderedFormFields())
 				{
 					FormField parentField = currField.getParent();
@@ -184,7 +185,6 @@ public class ChicaServiceImpl implements ChicaService
 
 							if (patientATD != null)
 							{
-								String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 								if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType)) 
 								{
 									// consume only one side of questions for
@@ -355,6 +355,9 @@ public class ChicaServiceImpl implements ChicaService
 		Map<Integer, PatientATD> fieldIdToPatientATDMap = new HashMap<Integer, PatientATD>();
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
+		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+
 		for (FormField currField : formFieldsToSave)
 		{
 			FieldType currFieldType = currField.getField().getFieldType();
@@ -394,9 +397,6 @@ public class ChicaServiceImpl implements ChicaService
 
 						String dsstype = databaseForm.getName();
 						
-						Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId((Encounter) encounterService.getEncounter(encounterId));
-						String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
-
 						if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 						{
 							for (String currLanguage : languageToFieldnames
@@ -523,8 +523,6 @@ public class ChicaServiceImpl implements ChicaService
 		//save language response to preferred language
 		//language is determined by maximum number of answers
 		//selected for a language on the PSF
-		Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
-		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 		if (languageResponse != null&& ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType)) {
 			ObsService obsService = Context.getObsService();
 			Obs obs = new Obs();
