@@ -4305,7 +4305,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </sql>
     </diff>   
     <diff>
-        <version>1.9.8</version>  
+        <version>1.9.9</version>  
         <author>Seema Sarala</author>  
         <date>August 23, 2017</date>  
         <description>  
@@ -4329,7 +4329,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </sql>
     </diff>
     <diff>
-    	<version>1.9.9</version>  
+    	<version>1.10.0</version>  
         <author>Seema Sarala</author>  
         <date>Septemer 08, 2017</date>  
         <description>  
@@ -4374,7 +4374,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
     </diff>
     
     <diff>
-    	<version>1.10.0</version>
+    	<version>1.10.1</version>
         <author>David Ely</author>
         <date>September 5th, 2017</date>
         <description>
