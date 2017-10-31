@@ -52,6 +52,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.ObsComparator;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -153,7 +154,8 @@ public class physicianNoteObs implements Rule {
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0 && latestEncounter == null; i--) {
 			Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			String formName = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), formName);
 			if (stats == null || stats.size() == 0) {
 				continue;
 			}

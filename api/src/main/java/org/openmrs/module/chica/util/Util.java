@@ -25,6 +25,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -58,6 +59,7 @@ import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
@@ -119,8 +121,9 @@ public class Util {
 		
 		boolean usePrintedTimestamp = false;
 		
+		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 		if (formName != null && 
-				(formName.equalsIgnoreCase("PWS") 
+				(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) 
 				|| formName.equalsIgnoreCase("ImmunizationSchedule")
 				|| formName.equalsIgnoreCase("ImmunizationSchedule7yrOrOlder"))) {
 			usePrintedTimestamp = true;
@@ -831,7 +834,8 @@ public class Util {
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0; i--) {
 			org.openmrs.Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), patientForm);
 			if (stats == null || stats.size() == 0) {
 				continue;
 			}
@@ -1035,4 +1039,134 @@ public class Util {
 			
 			socketHL7ListenerService.saveMessageToDatabase(hl7Outbound);
 	}
+	
+	/**
+	 * Gets the primary form name based on location tag attribute (primaryPatientForm or primaryPhysicianForm)
+	 * @param encounter
+	 * @param attributeName Location Tag Attribute
+	 * @return form form name
+	 */
+	public static String getPrimaryFormNameByLocationTag(Encounter encounter, String attributeName)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTagAttributeValue locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, 
+				attributeName, locationId); 
+		
+		String formName = null;
+     	if (locationTagAttributeValueForm != null && StringUtils.isNotBlank(locationTagAttributeValueForm.getValue())) {
+     		formName = locationTagAttributeValueForm.getValue(); 
+     	}
+     	return formName;
+	}
+	
+	/**
+	 * Gets the primary form name based on location tag attribute (primaryPatientForm or primaryPhysicianForm)
+	 * @param encounterId
+	 * @param attributeName Location Tag Attribute
+	 * @return form form name
+	 */
+	public static String getPrimaryFormNameByLocationTag(Integer encounterId, String attributeName)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getPrimaryFormNameByLocationTag(encounter, attributeName);
+	}
+	
+	/**
+	 * Gets the primary form name based on the option that is selected in the drop-down
+	 * @param encounter
+	 * @param printOptionString option selected in the GreaseBoard action drop-down
+	 * @return form Name
+	 */
+	public static String getFormNameByPrintOptionString(Encounter encounter, String printOptionString)
+	{
+		String locTagAttrName = null;
+		if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM)) {
+ 			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM;
+ 		} else if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) {
+ 			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM;
+ 		}
+		
+		String formName = getPrimaryFormNameByLocationTag(encounter, locTagAttrName);
+		return formName;
+	}
+	
+	/**
+	 * Gets the primary form name based on the option that is selected in the drop-down
+	 * @param encounterId
+	 * @param printOptionString option selected in the GreaseBoard action drop-down
+	 * @return form Name
+	 */
+	public static String getFormNameByPrintOptionString(Integer encounterId, String printOptionString)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getFormNameByPrintOptionString(encounter, printOptionString);
+	}
+	
+	/**
+	 * Gets the form attribute for reprintState using the formId
+	 * @param encounter
+	 * @param formId
+	 * @return reprint State name
+	 */
+	public static String getReprintStateName(Encounter encounter, Integer formId)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue formAttributeValueReprintStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE, 
+				locationTagId, locationId);
+		
+		String reprintStateName = null;
+		if (formAttributeValueReprintStateName != null && StringUtils.isNotBlank(formAttributeValueReprintStateName.getValue())) {
+			reprintStateName = formAttributeValueReprintStateName.getValue();
+		}
+		
+		return reprintStateName;
+	}
+	
+	/**
+	 * Gets the form attribute for reprintState using the formId
+	 * @param encounterId
+	 * @param formId
+	 * @return reprint State name
+	 */
+	public static String getReprintStateName(Integer encounterId, Integer formId)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getReprintStateName(encounter, formId);
+	}
+		
+	/**
+	 * Retrieves the form type for PrimaryPatientForm and PrimaryPhysicianForm
+	 * @param formId
+	 * @param locationTagId
+	 * @param locationId
+	 * @return Form Type
+	 */
+	public static String getFormType(Integer formId, Integer locationTagId, Integer locationId) {
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue primaryPatientFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId);
+		FormAttributeValue primaryPhysicianFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId);
+		   																		
+		if (primaryPatientFormfav != null && StringUtils.isNotBlank(primaryPatientFormfav.getValue()) && 
+				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPatientFormfav.getValue())) { 
+			return ChirdlUtilConstants.PATIENT_FORM_TYPE;
+		} else if (primaryPhysicianFormfav != null && StringUtils.isNotBlank(primaryPhysicianFormfav.getValue()) && 
+				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPhysicianFormfav.getValue())) {
+			return ChirdlUtilConstants.PHYSICIAN_FORM_TYPE;
+		}
+		return null;
+	}
+	
 }

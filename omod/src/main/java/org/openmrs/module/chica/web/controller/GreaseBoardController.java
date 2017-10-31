@@ -1,4 +1,4 @@
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -23,6 +24,10 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.util.ChicaConstants;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
@@ -31,36 +36,25 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.springframework.validation.BindException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class GreaseBoardController extends SimpleFormController
-{
+
+@Controller
+@RequestMapping(value = "module/chica/greaseBoard.form")
+public class GreaseBoardController {
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
+	private static final String FORM = "greaseBoard.form";
 	
 	private static int numRefreshes = 0;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request)
-			throws Exception
-	{
-		return "testing";
-	}
-
-	
-	@Override
-	protected ModelAndView onSubmit(HttpServletRequest request,
-			HttpServletResponse response, Object command, BindException errors)
-			throws Exception
-	{
+	@RequestMapping(method = RequestMethod.POST)
+	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 	
 		String optionsString = request.getParameter("options");
@@ -72,8 +66,9 @@ public class GreaseBoardController extends SimpleFormController
 			if(patientIdString != null){
 				patientId = Integer.parseInt(patientIdString);
 			}
-		} catch (Exception e)
+		} catch (NumberFormatException e) 
 		{
+			log.error("Error parsing patientId: " + patientIdString, e);
 		}
 		String sessionIdString = request.getParameter("greaseBoardSessionId");
 		Integer sessionId = null;
@@ -82,8 +77,9 @@ public class GreaseBoardController extends SimpleFormController
 			if(sessionIdString != null){
 				sessionId = Integer.parseInt(sessionIdString);
 			}
-		} catch (Exception e)
+		} catch (NumberFormatException e) 
 		{
+			log.error("Error parsing sessionId: " + sessionIdString, e);
 		}
 		
 		//Initiate an ADHD WU for the patient
@@ -161,97 +157,87 @@ public class GreaseBoardController extends SimpleFormController
 			logicService.eval(patientId, "CREATE_JIT",parameters);
 		}
 
-		if (optionsString != null && (optionsString.equalsIgnoreCase("Print PSF")||
-				optionsString.equalsIgnoreCase("Print PWS")))
+		if (optionsString != null && (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM)||
+				optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)))
 		{
-			String formName = optionsString.replaceAll("Print", "");
-			formName = formName.trim();
-			
-
-			if (patientId != null && sessionId != null && formName != null)
+			if (patientId != null && sessionId != null) 
 			{
 				FormService formService = Context.getFormService();
 				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
-				
-				Form form = formService.getForm(formName);
-				Integer formId = null;
-				if (form != null)
-				{
-					formId = form.getFormId();
-				}
-				
-				PatientState patientStateProduce = 
-					org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(encounterId, formId);
+				EncounterService encounterService = Context.getService(EncounterService.class);
+				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+				String formName = Util.getFormNameByPrintOptionString(encounter, optionsString); 
 
-				State currState = null;
+				if (StringUtils.isNotBlank(formName)) {
+					Form form = formService.getForm(formName);
+					Integer formId = null;
+					if (form != null && !form.equals("")) {
+						formId = form.getFormId();
+					} else {
+						log.error("The locationTagAttributeValue "+formName+" is invalid");
+						return new ModelAndView(new RedirectView(FORM));
+					}
+					
+					PatientState patientStateProduce = 
+						org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(encounterId, formId);
 
-				
-				//Don't generate a PSF with the print button on the greaseboard
-				//We don't ever want more than one unique PSF
-				
-				String stateName = null;
-				
-				if(formName.equalsIgnoreCase("PSF")||
-						formName.equalsIgnoreCase("PWS"))
-				{
-					stateName = formName+"_reprint";
-				}
-				
-				if (formName.equalsIgnoreCase("PSF"))
-				{
-					currState = chirdlutilbackportsService
-							.getStateByName(stateName);
-				} else
-				{
-					// reprint if the state exists
-					if (patientStateProduce != null)
-					{
-						currState = chirdlutilbackportsService.getStateByName(stateName);
-					} else
-					{
+					String stateName = Util.getReprintStateName(encounter, formId);
+					if (StringUtils.isBlank(stateName)) {
+						log.error("A valid reprint State parameter was not provided to the CHICA system.");
+						return new ModelAndView(new RedirectView(FORM));
+					}
+
+					State currState = null;
+					if (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM) || (optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM) && patientStateProduce != null /*reprint if the state exists*/) ) {
+						currState = chirdlutilbackportsService
+								.getStateByName(stateName);
+						if (currState == null) {
+							log.error("A start state with name "+stateName+" cannot be found in the CHICA system.");
+							return new ModelAndView(new RedirectView(FORM));
+						}
+						
+					} else {
 						// create for the first time if it does not exist
 						currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_GREASE_BOARD_PRINT_PWS);
 					}
-				}
-				
-				HashMap<String,Object> actionParameters = new HashMap<String,Object>();
-				actionParameters.put("formName", formName);
-				
-				if(formName.equalsIgnoreCase(ChirdlUtilConstants.FORM_PWS)) // DWE CHICA-821 Allow PWS to auto-print when "reprinting"
-				{
-					actionParameters.put(ChirdlUtilConstants.PARAMETER_FORCE_AUTO_PRINT, ChirdlUtilConstants.GENERAL_INFO_TRUE);
-				}
+					
+					HashMap<String,Object> actionParameters = new HashMap<String,Object>();
+					actionParameters.put("formName", formName);
+					
+					if(optionsString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) // DWE CHICA-821 Allow PWS to auto-print when "reprinting"
+					{
+						actionParameters.put(ChirdlUtilConstants.PARAMETER_FORCE_AUTO_PRINT, ChirdlUtilConstants.GENERAL_INFO_TRUE);
+					}
 
-				if (currState != null)
-				{
-					PatientState patientState = chirdlutilbackportsService.getLastPatientState(sessionId);
-					PatientService patientService = Context.getPatientService();
-					Patient patient = patientService.getPatient(patientId);
+					if (currState != null)
+					{
+						PatientState patientState = chirdlutilbackportsService.getLastPatientState(sessionId);
+						PatientService patientService = Context.getPatientService();
+						Patient patient = patientService.getPatient(patientId);
 
-					StateManager.runState(patient, sessionId, currState,actionParameters,
-							patientState.getLocationTagId(),
-							patientState.getLocationId(),
-							BaseStateActionHandler.getInstance());
+						StateManager.runState(patient, sessionId, currState,actionParameters,
+								patientState.getLocationTagId(),
+								patientState.getLocationId(),
+								BaseStateActionHandler.getInstance());
+					}
 				}
 			}
 			
-			return new ModelAndView(new RedirectView("greaseBoard.form"));
+			return new ModelAndView(new RedirectView(FORM));
 		}
 		
-		return new ModelAndView(new RedirectView("greaseBoard.form"));
+		return new ModelAndView(new RedirectView(FORM));
 		
 	}
 
-	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception
-	{
+	@RequestMapping(method = RequestMethod.GET)
+	protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
 		User user = Context.getUserContext().getAuthenticatedUser();
 		if(user == null) {
 			return null;
 		}
 
-		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("refreshPeriod", Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_REFRESH));
 		map.put("showManualCheckin", Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_ENABLE_MANUAL_CHECKIN));
 		map.put("currentUser", user.getUsername());
@@ -261,6 +247,6 @@ public class GreaseBoardController extends SimpleFormController
 			Context.clearSession();
 		}
 		
-		return map;
+		return ChicaConstants.FORM_VIEW_GREASE_BOARD;
 	}
 }
