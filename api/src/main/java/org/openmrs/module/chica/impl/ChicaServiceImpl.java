@@ -498,12 +498,12 @@ public class ChicaServiceImpl implements ChicaService
 		if (languageResponse != null) {
 			HashMap<Integer, String> answers = maxAnswers;
 			if (answers != null) {
+				String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+				Integer formInstanceId = formInstance.getFormInstanceId();
+				Integer locationId = formInstance.getLocationId();
 				for (Integer currRuleId : answers.keySet())
 				{
 					String answer = answers.get(currRuleId);
-					Integer formInstanceId = formInstance.getFormInstanceId();
-					Integer locationId = formInstance.getLocationId();
-					String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 					List<Statistics> statistics = atdService
 							.getStatByIdAndRule(formInstanceId, currRuleId, patientForm, locationId);
 					if (statistics != null)
