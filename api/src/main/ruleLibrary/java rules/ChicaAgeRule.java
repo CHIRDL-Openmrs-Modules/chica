@@ -77,7 +77,7 @@ public class ChicaAgeRule implements Rule {
 				formType = org.openmrs.module.chica.util.Util.getFormType(formId, locationTagId, formInstance.getLocationId());
 			}
 			
-			if (StringUtils.isNotBlank(formType) && ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType)){
+			if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType)){
 				
 				PatientState patientState = 
 					org.openmrs.module.atd.util.Util.getProducePatientStateByFormInstanceAction(formInstance);
