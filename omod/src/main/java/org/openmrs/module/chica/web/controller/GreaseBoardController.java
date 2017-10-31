@@ -24,6 +24,8 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -163,7 +165,9 @@ public class GreaseBoardController {
 				FormService formService = Context.getFormService();
 				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
-				String formName = Util.getFormNameByPrintOptionString(encounterId, optionsString); 
+				EncounterService encounterService = Context.getService(EncounterService.class);
+				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+				String formName = Util.getFormNameByPrintOptionString(encounter, optionsString); 
 
 				if (StringUtils.isNotBlank(formName)) {
 					Form form = formService.getForm(formName);
@@ -178,7 +182,7 @@ public class GreaseBoardController {
 					PatientState patientStateProduce = 
 						org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(encounterId, formId);
 
-					String stateName = Util.getReprintStateName(encounterId, formId);
+					String stateName = Util.getReprintStateName(encounter, formId);
 					if (StringUtils.isBlank(stateName)) {
 						log.error("A valid reprint State parameter was not provided to the CHICA system.");
 						return new ModelAndView(new RedirectView(FORM));
