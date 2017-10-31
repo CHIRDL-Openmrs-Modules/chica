@@ -4303,6 +4303,18 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			,(select state_id from chirdlutilbackports_state where name = 'FINISHED')
 			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
         </sql>
+    </diff>
+     <diff>
+        <version>1.9.8</version>
+        <author>Meena Sheley</author>
+        <date>July 27, 2017</date>
+        <description>
+            CHICA-959 Add page to query FAXCOM webservice for status of faxes to clinics.
+        </description>
+        <sql>
+            insert into chirdlutilbackports_form_instance_attribute (name, description)
+            values('FaxId', 'Unique ID for faxes sent through Eskenazi FAXCOM webservice.');
+        </sql>
     </diff>   
     <diff>
         <version>1.9.9</version>  

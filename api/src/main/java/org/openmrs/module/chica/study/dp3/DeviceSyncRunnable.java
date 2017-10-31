@@ -3,18 +3,16 @@ package org.openmrs.module.chica.study.dp3;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
-import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.chica.action.QueryGlooko;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -57,7 +55,7 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 	 * Looks up the patient's encounter for the day
 	 * Stores the dataType in an encounter attribute
 	 * Creates a "QUERY GLOOKO" patient state
-	 * Runs and ends the state
+	 * Runs the state
 	 */
 	public void run() 
 	{
@@ -111,8 +109,12 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 								
 								// We could check to see if any open states exist without an end time. 
 								// However, lets just create a new state in case new data has actually been 
-								// upload between sync notifications					
-								StateManager.runState(patient, sessions.get(0).getSessionId(), state, new HashMap<String,Object>(),
+								// upload between sync notifications
+								HashMap<String, Object> parameters = new HashMap<String,Object>();
+								parameters.put(GlookoConstants.PARAMETER_DATA_TYPE, dataType);
+								parameters.put(GlookoConstants.PARAMETER_SYNC_TIMESTAMP, syncTimestamp);
+								parameters.put(GlookoConstants.PARAMETER_GLOOKO_CODE, glookoCode);
+								StateManager.runState(patient, sessions.get(0).getSessionId(), state, parameters,
 										locationTagId, location.getLocationId(), BaseStateActionHandler.getInstance());
 							}
 							else
