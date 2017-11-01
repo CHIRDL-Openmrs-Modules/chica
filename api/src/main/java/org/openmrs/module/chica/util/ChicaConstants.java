@@ -34,4 +34,5 @@ public class ChicaConstants {
 	 */
     /** Form views */
 	public static final String FORM_VIEW_EXTERNAL_FORM_LOADER = "/module/chica/externalFormLoader";
+	public static final String FORM_VIEW_GREASE_BOARD = "/module/chica/greaseBoard";
 }
