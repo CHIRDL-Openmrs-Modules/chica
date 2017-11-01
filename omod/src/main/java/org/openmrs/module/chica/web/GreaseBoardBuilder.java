@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +34,6 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
@@ -43,6 +41,7 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chica.util.PatientRowComparator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -143,9 +142,12 @@ public class GreaseBoardBuilder {
 			stateNames.add(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
 			stateNames.add(ChirdlUtilConstants.STATE_PROCESS_VITALS);
 			
+			String checkoutStateString = adminService.getGlobalProperty("chica.greaseboardCheckoutState");
+			State checkoutState = chirdlutilbackportsService.getStateByName(checkoutStateString);
+			State jitIncompleteState = chirdlutilbackportsService.getStateByName("JIT_incomplete");
+			EncounterService encounterService = Context.getService(EncounterService.class);
+			FormService formService = Context.getFormService();
 			for (PatientState currState : unfinishedStates) {
-				String checkoutStateString = adminService.getGlobalProperty("chica.greaseboardCheckoutState");
-				State checkoutState = chirdlutilbackportsService.getStateByName(checkoutStateString);
 				Integer sessionId = currState.getSessionId();
 				List<PatientState> checkoutPatientStates = chirdlutilbackportsService.getPatientStateBySessionState(
 				    sessionId, checkoutState.getStateId());
@@ -157,20 +159,19 @@ public class GreaseBoardBuilder {
 				String lastName = Util.toProperCase(patient.getFamilyName());
 				String firstName = Util.toProperCase(patient.getGivenName());
 				
-				String mrn = atdService.evaluateRule("medicalRecordNoFormatting", patient, null).toString();
+				String mrn = Util.getMedicalRecordNoFormatting(patient);
 				
-				String dob = atdService.evaluateRule("birthdate>fullDateFormat", patient, null).toString();
+				Date birthDate = patient.getBirthdate();
+				String dob = DateUtil.formatDate(birthDate, ChirdlUtilConstants.DATE_FORMAT_MMM_d_yyyy);
 				String sex = patient.getGender();
 				State state = currState.getState();
 				
 				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
-				EncounterService encounterService = Context.getService(EncounterService.class);
 				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 				
-				Map<String, Object> parameters = new HashMap<String, Object>();
-				parameters.put("encounterId", encounterId);
-				String appointment = atdService.evaluateRule("scheduledTime>fullTimeFormat", patient, parameters).toString();
+				Date appointmentDate = encounter.getScheduledTime();
+				String appointment = DateUtil.formatDate(appointmentDate, ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
 				PatientRow row = new PatientRow();
 				Date encounterDate = null;
 				
@@ -184,8 +185,8 @@ public class GreaseBoardBuilder {
 					if (encType != null && encType.getName().equalsIgnoreCase("ManualCheckin")) {
 						row.setIsManualCheckin(true);
 					}
-					parameters.put("param0", new Result(encounter.getEncounterDatetime()));
-					String checkin = atdService.evaluateRule("fullTimeFormat", patient, parameters).toString();
+					Date encounterDateTime = encounter.getEncounterDatetime();
+					String checkin = DateUtil.formatDate(encounterDateTime, ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
 					Person provider = encounter.getProvider();
 					String mdName = "";
 					//Ensure proper case even though we store provider names in proper case
@@ -226,15 +227,8 @@ public class GreaseBoardBuilder {
 					
 				}
 				
-				List<PatientState> reprintRescanStates = new ArrayList<PatientState>();
+				List<PatientState> reprintRescanStates = chicaService.getReprintRescanStatesBySessionId(sessionId, null, locationTagIds, locationId);
 				
-				for (Integer locationTagId : locationTagIds) {
-					List<PatientState> currReprintRescanStates = chicaService.getReprintRescanStatesByEncounter(encounterId,
-					    todaysDate.getTime(), locationTagId, locationId);
-					if (currReprintRescanStates != null) {
-						reprintRescanStates.addAll(currReprintRescanStates);
-					}
-				}
 				boolean reprint = false;
 				if (reprintRescanStates.size() > 0) {
 					reprint = true;
@@ -262,7 +256,7 @@ public class GreaseBoardBuilder {
 						waitingForMD++;
 					}	
 				}
-				setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap);
+				setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap, chirdlutilbackportsService, formService, jitIncompleteState);
 				row.setLocationId(currState.getLocationId());
 				row.setLocationTagId(currState.getLocationTagId());
 				rows.add(row);
@@ -290,15 +284,18 @@ public class GreaseBoardBuilder {
 	 * @param row The PatientRow that will have its status set.
 	 * @param sessionId The sessionId for the patient row.
 	 * @param currState The current PatientState of the row.
+	 * @param psfAndVitalsStatesMap
+	 * @param chirdlutilbackportsService
+	 * @param formService
+	 * @param jitIncompleteState
 	 */
-	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, List<PatientState>> psfAndVitalsStatesMap) {
+	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, 
+	                              List<PatientState>> psfAndVitalsStatesMap, ChirdlUtilBackportsService chirdlutilbackportsService,
+	                              FormService formService, State jitIncompleteState) {
 		//see if an incomplete state exists for the JIT
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		State jitIncompleteState = chirdlutilbackportsService.getStateByName("JIT_incomplete");
 		FormInstance formInstance = currState.getFormInstance();
 		Integer formId = null;
 		String formName = null;
-		FormService formService = Context.getFormService();
 		
 		if (formInstance != null) {
 			formId = formInstance.getFormId();
