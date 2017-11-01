@@ -1,4 +1,4 @@
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,33 +34,26 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
-import org.springframework.validation.BindException;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
-public class ViewEncounterController extends SimpleFormController {
+@Controller
+@RequestMapping(value = "module/chica/viewEncounter.form") 
+public class ViewEncounterController {
 
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
+	
+	private static final String FORM_VIEW = "/module/chica/viewEncounter";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject
-	 * (javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request)
-			throws Exception {
-		return "testing";
-	}
-
-	@Override
-	protected ModelAndView onSubmit(HttpServletRequest request,
-			HttpServletResponse response, Object command, BindException errors)
+	@RequestMapping(method = RequestMethod.POST)
+	protected ModelAndView processSubmit(HttpServletRequest request,
+			HttpServletResponse response, Object command)
 			throws Exception {
 
 		String optionsString = request.getParameter("options");
@@ -342,18 +335,17 @@ public class ViewEncounterController extends SimpleFormController {
 			}
 
 		}
-		return new ModelAndView(new RedirectView("viewEncounter.form"));
+		return new ModelAndView(new RedirectView(FORM_VIEW));
 
 	}
 
-	@Override
-	protected Map referenceData(HttpServletRequest request) throws Exception {
+	@RequestMapping(method = RequestMethod.GET) 
+	protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);		
 		FormService formService = Context.getFormService();
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		PatientService patientService = Context
 				.getService(PatientService.class);
-		Map<String, Object> map = new HashMap<String, Object>();
 		HashMap<Integer,String> formNameMap = new HashMap<Integer,String>();
 
 		try {
@@ -390,7 +382,7 @@ public class ViewEncounterController extends SimpleFormController {
 			}
 			
 			if (patient == null) {
-				return map;
+				return FORM_VIEW;
 			}
 			
 			// title name, mrn, and dob
@@ -624,7 +616,7 @@ public class ViewEncounterController extends SimpleFormController {
 			// login page
 		}
 
-		return map;
+		return FORM_VIEW;
 	}
 
 	private String getProviderName(org.openmrs.Provider prov) {
