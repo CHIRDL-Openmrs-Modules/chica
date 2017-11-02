@@ -130,7 +130,8 @@ public class ViewEncounterController {
 				ChicaService chicaService = Context.getService(ChicaService.class);
 				
 				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
-						formName.equals("MCHAT") || formName.equals("MCHAT-R") || formName.equals("ADHD PFU") || formName.equals("ADHD PSFU") || 
+						formName.equals("MCHAT") || formName.equals("MCHAT-R") || formName.equals("SummaryReportMchatR") || 
+						formName.equals("ADHD PFU") || formName.equals("ADHD PSFU") || 
 						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule7yrOrOlder") ||
 						formName.equals("ImmunizationSchedule") || formName.equals("PHQ9_JIT_MOBILE")) {
 					leftImageLocationId = locationId;
@@ -150,6 +151,9 @@ public class ViewEncounterController {
 					} else if (formName.equals("MCHAT-R")) {
 						leftImageStylesheet = "mchat-r.xsl";
 						displayScanForms = true;
+					} else if (formName.equals("SummaryReportMchatR")) {
+						leftImageStylesheet = "mchat-rSummaryReport.xsl";
+						displayMergeForms = true;
 					}
 				} else {
 					ArrayList<String> leftNames = new ArrayList<String>();
@@ -225,8 +229,9 @@ public class ViewEncounterController {
 				Integer rightImageFormInstanceId = null;
 				
 				//don't set a right image for MCHAT or MCHAT-R
-				if (!formName.equals("MCHAT") && !formName.equals("MCHAT-R") && !formName.equals("ImmunizationSchedule7yrOrOlder")
-						&& !formName.equals("ImmunizationSchedule") && !formName.endsWith("PHQ9_JIT_MOBILE")) {
+				if (!formName.equals("MCHAT") && !formName.equals("MCHAT-R") && !formName.equals("SummaryReportMchatR") && 
+						!formName.equals("ImmunizationSchedule7yrOrOlder") && !formName.equals("ImmunizationSchedule") && 
+						!formName.endsWith("PHQ9_JIT_MOBILE")) {
 					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || 
 							formName.equals("TeacherSummaryReport")) {
 						rightImageLocationId = locationId;
@@ -411,6 +416,7 @@ public class ViewEncounterController {
 			formsToProcess.add("ADHD T");
 			formsToProcess.add("MCHAT");
 			formsToProcess.add("MCHAT-R");
+			formsToProcess.add("SummaryReportMchatR");
 			formsToProcess.add("ADHD PFU");
 			formsToProcess.add("ADHD TFU");
 			formsToProcess.add("ADHD PSFU");
