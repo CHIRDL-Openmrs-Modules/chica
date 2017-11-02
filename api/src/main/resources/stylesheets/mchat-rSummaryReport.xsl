@@ -42,7 +42,7 @@
 		<td align="left" style="padding: 0px 0px 10px 0px; width: 150px;"><b><xsl:value-of select="$dov/Value"/></b></td>
 	</tr>
 	<tr>
-		<td colspan="4" align="center" style="padding: 20px 0px 0px 0px"><h2>Report of M-CHAT-R&#153; Assessment Scores</h2></td>
+		<td colspan="4" align="center" style="padding: 20px 0px 0px 0px"><h2>Report of M-CHAT-R&#153; Assessment Score</h2></td>
 	</tr>
 	<tr>
 		<td colspan="4" align="center">
