@@ -18,9 +18,11 @@ $(document).on("pageinit", function() {
 	// The id is different depending on which position the tablet is being held
 	// Landscape view causes the list to be too long so jquery automatically opens a new "page"
 	// Question 1
+	$("#Informant_1-listbox-popup a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // portrait
 	$("#Informant_1-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
-	$("#Informant_1-dialog").addClass("selectPopup"); // landscape
+	$("#Informant_1-listbox-popup").addClass("selectPopup"); // portrait
 	$("#Informant_1-listbox-popup div.ui-header").removeClass("ui-bar-b").addClass("ui-bar-a"); // Make the title background black instead of blue
+	$("#Informant_1-dialog").addClass("selectPopup"); // landscape
 	
 	// Question 2
 	$("#Informant_2-listbox-popup a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // portrait
@@ -30,16 +32,19 @@ $(document).on("pageinit", function() {
 	$("#Informant_2-dialog").addClass("selectPopup"); // landscape
 	
 	// Spanish Question 1
+	$("#Informant_1_2-listbox-popup a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // portrait
 	$("#Informant_1_2-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
-	$("#Informant_1_2-dialog").addClass("selectPopup"); // landscape
+	$("#Informant_1_2-listbox-popup").addClass("selectPopup"); // portrait
 	$("#Informant_1_2-listbox-popup div.ui-header").removeClass("ui-bar-b").addClass("ui-bar-a"); // Make the title background black instead of blue
+	$("#Informant_1_2-dialog").addClass("selectPopup"); // landscape
 	
 	// Spanish Question 2
-	$("#Informant_2_2-listbox-popup a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
-	$("#Informant_2_2-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // portrait
-	$("#Informant_2_2-listbox-popup").addClass("selectPopup");
+	$("#Informant_2_2-listbox-popup a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // portrait
+	$("#Informant_2_2-dialog a[data-icon=delete]").buttonMarkup({theme: "b", iconpos: "left", icon: "home"}); // landscape
+	$("#Informant_2_2-listbox-popup").addClass("selectPopup"); // portrait
 	$("#Informant_2_2-listbox-popup div.ui-header").removeClass("ui-bar-b").addClass("ui-bar-a"); // Make the title background black instead of blue
-	$("#Informant_2_2-dialog").addClass("selectPopup");
+	$("#Informant_2_2-dialog").addClass("selectPopup"); // landscape
+
 });
 
 $(document).on("pagebeforeshow", "#Informant_1-dialog", function(){
@@ -134,7 +139,7 @@ function setLanguageFromForm(patientName, birthdate) {
 }
 
 function attemptFinishForm() {
-	concatSelectOption();
+	concatMultiSelectQuestions();
 	if (areAllQuestionsAnswered()) {
 		finishForm();
 	}else {
@@ -201,17 +206,29 @@ function setQuestionCheckboxes(initialName, newName) {
 	}
 }
   
-function concatSelectOption() {
+function concatMultiSelectQuestions()
+{
 	var spanishChar = "_2";
 	if (english) {
 		spanishChar = "";
-	} 
-	var selectedVal = $("#Informant_2" + spanishChar).val();
-	var valueSplit = null;
-	if (selectedVal!=null) {
-		valueSplit = selectedVal.toString().split(',').join('^^');
 	}
-	document.getElementById('Visit_Attendee').value = valueSplit;
+	
+	for (var i = 1; i <= numQuestions; i++) // Check each question to see if it is multi-select
+	{
+		if ( $("#Informant_" +  i + spanishChar).attr("multiple") && $("#Informant_" +  i + spanishChar).attr("multiple") == "multiple") 
+		{
+			// If it is a multi-select
+			// Get the selected values then join them with '^^' per previous discussions from the original implementation
+			var selectedVal = $("#Informant_" + i + spanishChar).val();
+			var valueSplit = null;
+			if (selectedVal!=null) 
+			{
+				valueSplit = selectedVal.toString().split(',').join('^^');
+			}
+			
+			$("#Informant_" +  i + "_MultiSelect").val(valueSplit); // Store in the hidden field
+		}
+	}
 }
 
 function areAllQuestionsAnswered() {
