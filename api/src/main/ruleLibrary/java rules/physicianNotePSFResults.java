@@ -158,6 +158,6 @@ public class physicianNotePSFResults implements Rule {
 		Statistics stat = stats.get(0);
 		Integer formInstanceId = stat.getFormInstanceId();
 		Integer locationId = stat.getLocationId();
-		return Context.getService(ATDService.class).getPSFQuestionAnswers(formInstanceId, locationId, patientId);
+		return Context.getService(ATDService.class).getPatientFormQuestionAnswers(formInstanceId, locationId, patientId, lastFormName);
 	}
 }

@@ -321,6 +321,11 @@ public class GreaseBoardBuilder {
 			}
 		}
 		
+		Session session = chirdlutilbackportsService.getSession(sessionId);
+		Integer encounterId = session.getEncounterId();
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
 		String stateName = state.getName();
 		if (stateName.equals(ChirdlUtilConstants.STATE_CHECKIN)) {
 			row.setStatusColor(WAIT_COLOR);
@@ -332,7 +337,7 @@ public class GreaseBoardBuilder {
 			row.setStatus("Searching Patient Data...");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_PSF_CREATE) || stateName.equals(ChirdlUtilConstants.STATE_RANDOMIZE)) {
+		if (stateName.equals(org.openmrs.module.chica.util.Util.getStartStateName(encounter, formId)) || stateName.equals(ChirdlUtilConstants.STATE_RANDOMIZE)) {
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Creating PSF...");
 			return;
@@ -352,7 +357,7 @@ public class GreaseBoardBuilder {
 			row.setStatus("PSF Scanned");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_CREATE)) {
+		if (stateName.equals(org.openmrs.module.chica.util.Util.getStartStateName(encounter, formId))) {
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Creating PWS...");
 			return;
@@ -401,12 +406,12 @@ public class GreaseBoardBuilder {
 			row.setStatus("Error. Contact support");
 		}
 		
-		if (stateName.equals(ChirdlUtilConstants.STATE_PSF_REPRINT)) {
+		if (stateName.equals(org.openmrs.module.chica.util.Util.getReprintStateName(encounter, formId))) {
 			row.setStatusColor(PSF_REPRINT_COLOR);
 			row.setStatus("PSF reprint");
 		}
 		
-		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_REPRINT)) {
+		if (stateName.equals(org.openmrs.module.chica.util.Util.getReprintStateName(encounter, formId))) {
 			row.setStatusColor(PWS_REPRINT_COLOR);
 			row.setStatus("PWS reprint");
 		}
