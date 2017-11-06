@@ -262,7 +262,7 @@ public class GreaseBoardBuilder {
 						waitingForMD++;
 					}	
 				}
-				setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap);
+				setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap, encounter);
 				row.setLocationId(currState.getLocationId());
 				row.setLocationTagId(currState.getLocationTagId());
 				rows.add(row);
@@ -291,7 +291,7 @@ public class GreaseBoardBuilder {
 	 * @param sessionId The sessionId for the patient row.
 	 * @param currState The current PatientState of the row.
 	 */
-	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, List<PatientState>> psfAndVitalsStatesMap) {
+	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, List<PatientState>> psfAndVitalsStatesMap, Encounter encounter) {
 		//see if an incomplete state exists for the JIT
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State jitIncompleteState = chirdlutilbackportsService.getStateByName("JIT_incomplete");
@@ -320,11 +320,6 @@ public class GreaseBoardBuilder {
 				}
 			}
 		}
-		
-		Session session = chirdlutilbackportsService.getSession(sessionId);
-		Integer encounterId = session.getEncounterId();
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 		
 		String stateName = state.getName();
 		if (stateName.equals(ChirdlUtilConstants.STATE_CHECKIN)) {
