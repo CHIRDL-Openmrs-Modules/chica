@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Field;
@@ -415,7 +419,7 @@ public class ChicaServlet extends HttpServlet {
 			try {
 	            writePdfTextToResponse("There are no forms to display.", response);
             }
-            catch (DocumentException e) {
+            catch (Exception e) {
 	            log.error("Error creating error message PDF", e);
 	            return;
             }
@@ -455,7 +459,7 @@ public class ChicaServlet extends HttpServlet {
 			try {
 	            writePdfTextToResponse(message, response);
             }
-            catch (DocumentException e) {
+            catch (Exception e) {
 	            log.error("Error creating error PDF document", e);
             }
 			
@@ -1308,7 +1312,6 @@ public class ChicaServlet extends HttpServlet {
 	 * 
 	 * @param text The text to insert into the PDF
 	 * @param response The HttpServletResponse object where the PDF will be written
-	 * @throws DocumentException
 	 * @throws IOException
 	 */
 	private void writePdfTextToResponse(String text, HttpServletResponse response) throws DocumentException, IOException {
@@ -1339,34 +1342,22 @@ public class ChicaServlet extends HttpServlet {
 			String filePath = null;
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			try {
-				Document document = new Document();
-		        PdfCopy copy = new PdfCopy(document, output);
-		        document.open();
-		        PdfReader reader;
-		        int n;
+				PDDocument document = new PDDocument();
 	        	filePath = pdfFiles.get(0);
-	            reader = new PdfReader(filePath);
-	            // loop over the pages in that document
-	            n = reader.getNumberOfPages();
-	            for (int page = 0; page < n; ) {
-	            	try {
-	            		copy.addPage(copy.getImportedPage(reader, ++page));
-	            	} catch (Exception e) {
-	            		log.error("Error adding page", e);
-	            	}
+	        	PDDocument part = PDDocument.load(new File(filePath));
+	        	// loop over the pages in that document
+	        	PDPageTree pageTree = part.getDocumentCatalog().getPages();
+	        	Iterator<PDPage> pages = pageTree.iterator();
+	            while (pages.hasNext()) {
+	            	PDPage page = pages.next();
+	                document.addPage(page);
 	            }
-	            
-	            copy.freeReader(reader);
-	            reader.close();
-	
-		        document.close();
-		        copy.close();
+	            //part.close();
+	            document.save(output);
+	            document.close();
 		        response.setContentLength(output.size());
 		        response.getOutputStream().write(output.toByteArray());
-			} catch (BadPdfFormatException e) {
-				log.error("Bad PDF found: " + filePath, e);
-				throw new IOException(e);
-			} catch (DocumentException e) {
+			} catch (Exception e) {
 				log.error("Error handling PDF document: " + filePath, e);
 				throw new IOException(e);
 			} finally {
@@ -1381,31 +1372,28 @@ public class ChicaServlet extends HttpServlet {
 			String filePath = "";
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
-				Document doc = new Document();
-		        PdfCopy copy = new PdfCopy(doc, baos);
-		        doc.open();
-		        PdfReader reader = null;
+				PDDocument document = new PDDocument();
 		        
 		        for (int i = 0; i < pdfFiles.size(); i++) {
 		        	filePath = pdfFiles.get(i);
-		        	reader = new PdfReader(renamePdfFields(filePath, i));
+		        	PDDocument part = PDDocument.load(new File(filePath));
 		        	
 		        	// Loop over the pages in the document
-		            int numOfPages = reader.getNumberOfPages();
+		            int numOfPages = part.getNumberOfPages();
 		            
-		            for (int page = 1; page <= numOfPages; page++) {
+		            for (int pageNum = 0; pageNum < numOfPages; pageNum++) {
+		            	PDPage page = part.getPage(pageNum);
 		            	try {		            		
 		            		// When forms are combined, we need to check to see if the view is landscape
 		            		// If it is, we need to rotate it otherwise Firefox will shrink the pages to fit in portrait
 		            		// which causes pages that should be printed in portrait to be shrunk as well
-		            		int rot = reader.getPageRotation(page);
+		            		int rot = page.getRotation();
 		            		if(rot == 90 || rot == 270)
 		            		{
-		            			PdfDictionary pageDict = reader.getPageN(page);
-			            		pageDict.put(PdfName.ROTATE, new PdfNumber(0));
+		            			page.setRotation(0);
 		            		}
 		            					            	
-		                copy.addPage(copy.getImportedPage(reader, page));
+		            		document.addPage(page);
 		            	} catch (Exception e) {
 		            		log.error("Error adding page", e);
 		            	}
@@ -1413,22 +1401,18 @@ public class ChicaServlet extends HttpServlet {
 		            
 		            // Add blank page if the document has an odd number of pages
 		            if(numOfPages % 2 != 0)
-		            {		            	
-		            	copy.addPage(reader.getPageSize(1), reader.getPageRotation(1));
+		            {	
+		            	document.addPage(new PDPage());
 		            }
+			       // part.close();
 		        }
 		        		        
-		        copy.freeReader(reader);
-	            reader.close();
-		        doc.close();		        
-		        copy.close();
+	            document.save(baos);
+	            document.close();
 		       
 		        response.setContentLength(baos.size());
 		        response.getOutputStream().write(baos.toByteArray());
-			} catch (BadPdfFormatException e) {
-				log.error("Bad PDF found: " + filePath, e);
-				throw new IOException(e);
-			} catch (DocumentException e) {
+			} catch (Exception e) {
 				log.error("Error handling PDF document", e);
 				throw new IOException(e);
 			} finally {
@@ -1476,7 +1460,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
             writePdfTextToResponse(message.toString(), response);
         }
-        catch (DocumentException e) {
+        catch (Exception e) {
             log.error("Error creating error PDF document", e);
         }
 	}
@@ -1510,7 +1494,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
             writePdfTextToResponse(message.toString(), response);
         }
-        catch (DocumentException e) {
+        catch (Exception e) {
             log.error("Error creating error PDF document", e);
         }
 	}

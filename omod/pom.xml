@@ -92,6 +92,11 @@
 			<groupId>com.biscom</groupId>
 			<artifactId>faxws-client</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+	<dependency>
+    	<groupId>org.apache.pdfbox</groupId>
+    	<artifactId>pdfbox</artifactId>
+	</dependency>
 	</dependencies>
 
 	<build>
