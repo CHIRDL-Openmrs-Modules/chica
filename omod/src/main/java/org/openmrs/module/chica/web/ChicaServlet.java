@@ -29,6 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Field;
@@ -70,14 +72,6 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.BadPdfFormatException;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
@@ -524,20 +518,19 @@ public class ChicaServlet extends HttpServlet {
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	private static byte[] renamePdfFields(String pdfFile, int instance) throws IOException, DocumentException {
+	private static byte[] renamePdfFields(String pdfFile, int instance) throws IOException, Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		// Create the stamper
-		PdfStamper stamper = new PdfStamper(new PdfReader(pdfFile), baos);
-		// Get the fields
-		AcroFields form = stamper.getAcroFields();
+		PDDocument document = PDDocument.load(new File(pdfFile));		// Get the fields
+		PDAcroForm form = document.getDocumentCatalog().getAcroForm();
+		List<PDField> fields = form.getFields();
 		// Loop over the fields
-		Set<String> keys = new HashSet<String>(form.getFields().keySet());
-		for (String key : keys) {
+		for (PDField field : fields) {
 			// rename the fields
-			form.renameField(key, String.format("%s_%d", key, instance));
+			field.setPartialName(String.format("%s_%d", field.getPartialName(), instance));
 		}
-		// close the stamper
-		stamper.close();
+		document.save(baos);
+        document.close();
 		return baos.toByteArray();
 	}
 	
