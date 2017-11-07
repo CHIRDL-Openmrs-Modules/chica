@@ -4514,7 +4514,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </description>  
         <sql> 
         	INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
-			SELECT a.form_id,'PSF_create', b.form_attribute_id, d.location_tag_id, d.location_id 
+			SELECT a.form_id,'PSF_mobile_create', b.form_attribute_id, d.location_tag_id, d.location_id 
 			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
 			WHERE EXISTS 
 				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
