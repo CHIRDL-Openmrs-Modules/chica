@@ -31,7 +31,6 @@
                 <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
-                <prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
                 <prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
                 <prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
@@ -71,11 +70,6 @@
         <property name="commandName"><value>chicaNoteTesterObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/chicaNoteTester</value></property>
         <property name="successView"><value>chicaNoteTester.form</value></property>
-    </bean>
-    <bean id="viewEncounter" class="@MODULE_PACKAGE@.web.ViewEncounterController">
-        <property name="commandName"><value>greaseBoardObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/viewEncounter</value></property>
-        <property name="successView"><value>viewEncounter.form</value></property>
     </bean>
     <bean id="forcePrintSSNMRN" class="@MODULE_PACKAGE@.web.ForcePrintSSNMRNController">
         <property name="commandName"><value>forcePrintSSNMRNObject</value></property>
