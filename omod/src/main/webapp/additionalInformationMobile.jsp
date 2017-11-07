@@ -39,19 +39,21 @@
 <c:set var="answerTextUncle" value="${possesiveFirstName} uncle"/>
 <c:set var="answerTextFosterParent" value="${possesiveFirstName} foster parent"/>
 <c:set var="answerTextSibling" value="${possesiveFirstName} sibling"/>
+<c:set var="answerTextSiblings" value="${possesiveFirstName} siblings"/>
 <c:set var="answerTextOther" value="Other"/>
 <c:set var="answerTextHereAlone" value="No one (${patient.givenName} is here alone)"/>
 
-<c:set var="answerTextMother_SP" value="${possesiveFirstName} la madre"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextFather_SP" value="${possesiveFirstName} el padre"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextGrandmother_SP" value="${possesiveFirstName} La abuela"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextGrandfather_SP" value="${possesiveFirstName} El abuelo"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextAunt_SP" value="${possesiveFirstName} La t&iacute;a"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextUncle_SP" value="${possesiveFirstName} El t&iacute;o"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextFosterParent_SP" value="${possesiveFirstName} El padre adoptivo/la madre adoptiva"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextSibling_SP" value="${possesiveFirstName} El/la hermano/a"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextOther_SP" value="Otra persona"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
-<c:set var="answerTextHereAlone_SP" value="Nadie (Estoy solo/a aqu&iacute;)"/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
+<c:set var="answerTextMother_SP" value="La madre de ${patient.givenName}"/>
+<c:set var="answerTextFather_SP" value="El padre de ${patient.givenName}"/>
+<c:set var="answerTextGrandmother_SP" value="La abuela de ${patient.givenName}"/>
+<c:set var="answerTextGrandfather_SP" value="El abuelo de ${patient.givenName}"/>
+<c:set var="answerTextAunt_SP" value="La t&iacute;a de ${patient.givenName}"/>
+<c:set var="answerTextUncle_SP" value="El t&iacute;o de ${patient.givenName}"/>
+<c:set var="answerTextFosterParent_SP" value="Un padre sustituto de ${patient.givenName}"/>
+<c:set var="answerTextSibling_SP" value="Los hermano de ${patient.givenName}"/>
+<c:set var="answerTextSiblings_SP" value="Los hermanos de ${patient.givenName}"/>
+<c:set var="answerTextOther_SP" value="Otro"/>
+<c:set var="answerTextHereAlone_SP" value="Nadie (${patient.givenName} est&aacute; aqu&iacute; solo/a)"/>
 
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 <form id="AdditionalInformationForm" method="POST" action="additionalInformationMobile.form" method="post" enctype="multipart/form-data">
@@ -183,7 +185,7 @@
 				  <option name="Informant_2" value="foster parent" id="Informant_2_fp" data-theme="b" />
 				  <label for="Informant_2_fp">${answerTextFosterParent}</label>
 				  <option name="Informant_2" value="sibling" id="Informant_2_sibling" data-theme="b" />
-				  <label for="Informant_2_sibling">${answerTextSibling}</label>
+				  <label for="Informant_2_sibling">${answerTextSiblings}</label>
 				  <option name="Informant_2" value="Other" id="Informant_2_other" data-theme="b" />
 				  <label for="Informant_2_other">${answerTextOther}</label>
 				  	  
@@ -215,7 +217,7 @@
         <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
     </div>
     <div id="content_1_sp" data-role="content">
-        <c:set var="quest1_2" value='&iquest;Cu&aacute;l es su relaci&oacute;n con ${patient.givenName}&nbsp;${patient.familyName}?'/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
+        <c:set var="quest1_2" value='&iquest;Qui&eacute;n respondi&oacute; a las preguntas en la tableta hoy?'/>
         <input id="Question_1_2" name="Question_1_2" type="hidden" value="${quest1_2}"/>
 	    <strong>${quest1_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest1_2}")'></a>
 	    <div data-role="fieldcontain" style="margin-top:0px;">
@@ -259,7 +261,7 @@
 	    </div>
     </div>
     <div id="content_2_sp" data-role="content">
-    <c:set var="quest2_2" value='&iquest;Qui&eacute;n m&aacute;s est&aacute; en esta visita?'/> <!-- TODO CHICA-1101 needs translation this is the old translation -->
+    <c:set var="quest2_2" value='&iquest;Qui&eacute;n esta en la cita con ${patient.givenName}?'/>
         <input id="Question_2_2" name="Question_2_2" type="hidden" value="${quest2_2}"/>
         <strong>${quest2_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest2_2}")'></a>
         <div data-role="fieldcontain" style="margin-top:0px;">
@@ -289,7 +291,7 @@
 				  <option name="Informant_2_2" value="foster parent" id="Informant_2_2_fp" data-theme="b" />
 				  <label for="Informant_2_2_fp">${answerTextFosterParent_SP}</label>
 				  <option name="Informant_2_2" value="sibling" id="Informant_2_2_sibling" data-theme="b" />
-				  <label for="Informant_2_2_sibling">${answerTextSibling_SP}</label>
+				  <label for="Informant_2_2_sibling">${answerTextSiblings_SP}</label>
 				  <option name="Informant_2_2" value="Other" id="Informant_2_2_other" data-theme="b" />
 				  <label for="Informant_2_2_other">${answerTextOther_SP}</label>
 				  
