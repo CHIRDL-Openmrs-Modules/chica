@@ -3,6 +3,7 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -91,11 +92,17 @@ public class getObsList implements Rule
 
    		if (ruleResult != null&&ruleResult.size()>0)
    		{
-   			StringBuffer sb = new StringBuffer();
-   			String delim = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
+   			StringBuffer sb = new StringBuffer();  			
 			for (Result resultValue : ruleResult) {
-				sb.append(delim).append(resultValue);
-				delim = ChirdlUtilConstants.GENERAL_INFO_COMMA;
+				
+				if(StringUtils.isNotBlank(sb.toString()))
+				{
+					// Add a comma and a space if this isn't the first result being added to the string
+					sb.append(ChirdlUtilConstants.GENERAL_INFO_COMMA)
+					.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE);
+				}
+				
+				sb.append(resultValue);				
 			}
  			return new Result(sb.toString());
    		}
