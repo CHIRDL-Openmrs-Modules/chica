@@ -462,6 +462,15 @@ public class GreaseBoardBuilder {
 	    }
 	    
 		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "HashMapAttributesKey [location=" + location + ", printerLocation=" + printerLocation + ", formId="
+					+ formId + ", Type=" + Type + "]";
+		}
+
+		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
