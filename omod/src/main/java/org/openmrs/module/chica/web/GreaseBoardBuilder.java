@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -81,7 +83,7 @@ public class GreaseBoardBuilder {
 		AdministrationService adminService = Context.getAdministrationService();
 		ATDService atdService = Context.getService(ATDService.class);
 		User user = Context.getUserContext().getAuthenticatedUser();
-		
+
 		try {
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			ChicaService chicaService = Context.getService(ChicaService.class);
@@ -126,6 +128,7 @@ public class GreaseBoardBuilder {
 			}
 			
 			List<PatientState> unfinishedStates = new ArrayList<PatientState>();
+			Map<HashMapAttributesKey, String> hMap = new HashMap<HashMapAttributesKey, String>();
 			
 			for (Integer locationTagId : locationTagIds) {
 				Program program = chirdlutilbackportsService.getProgram(locationTagId, locationId);
@@ -256,9 +259,31 @@ public class GreaseBoardBuilder {
 						waitingForMD++;
 					}	
 				}
-				//setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap, encounter);
 
-				setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap, chirdlutilbackportsService, formService, jitIncompleteState);
+				String printerLocation = encounter.getPrinterLocation();
+				Integer formId = currState.getFormId();
+				Integer locationTagId = currState.getLocationTagId();
+				
+				HashMapAttributesKey startStateKey = new HashMapAttributesKey(location, printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE);
+
+				if (!hMap.containsKey(startStateKey)) // If the map doesn't contain the startStateKey, its probably safe to assume it doesn't contain the others
+				{              
+	                // Create the keys and then look up the values and put them in the map
+					HashMapAttributesKey reprintStateKey = new HashMapAttributesKey(location, printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE);
+					HashMapAttributesKey isPrimaryPatientFormKey = new HashMapAttributesKey(location, printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM); 
+					HashMapAttributesKey isPrimaryPhysicianFormKey = new HashMapAttributesKey(location, printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM);
+	                
+	                String startStateValue = org.openmrs.module.chica.util.Util.getStartStateName(encounter, formId);
+	                String reprintStateValue = org.openmrs.module.chica.util.Util.getReprintStateName(encounter, formId);
+	                String isPrimaryPatientFormValue = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId).getValue();
+	                String isPrimaryPhysicianFormValue = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId).getValue();
+	                
+	                hMap.put(startStateKey, startStateValue);
+	                hMap.put(reprintStateKey, reprintStateValue);
+	                hMap.put(isPrimaryPatientFormKey, isPrimaryPatientFormValue);
+	                hMap.put(isPrimaryPhysicianFormKey, isPrimaryPhysicianFormValue);
+				}
+				setStatus(state, row, sessionId, currState, psfAndVitalsStatesMap, chirdlutilbackportsService, formService, jitIncompleteState, encounter, hMap);
 				row.setLocationId(currState.getLocationId());
 				row.setLocationTagId(currState.getLocationTagId());
 				rows.add(row);
@@ -290,13 +315,13 @@ public class GreaseBoardBuilder {
 	 * @param chirdlutilbackportsService
 	 * @param formService
 	 * @param jitIncompleteState
+	 * @param encounter
+	 * @param hMap
 	 */
-
-	//private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, List<PatientState>> psfAndVitalsStatesMap, Encounter encounter) {
 
 	private static void setStatus(State state, PatientRow row, Integer sessionId, PatientState currState, Map<String, 
 	                              List<PatientState>> psfAndVitalsStatesMap, ChirdlUtilBackportsService chirdlutilbackportsService,
-	                              FormService formService, State jitIncompleteState) {
+	                              FormService formService, State jitIncompleteState, Encounter encounter, Map<HashMapAttributesKey, String> hMap) {
 		//see if an incomplete state exists for the JIT
 		FormInstance formInstance = currState.getFormInstance();
 		Integer formId = null;
@@ -323,47 +348,42 @@ public class GreaseBoardBuilder {
 			}
 		}
 		
+		HashMapAttributesKey startStateKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE);
+		HashMapAttributesKey reprintStateKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE);
+		HashMapAttributesKey isPrimaryPatientFormKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM);
+		HashMapAttributesKey isPrimaryPhysicianFormKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM);
+
+		String startStateValue = hMap.get(startStateKey);
+		String reprintStateValue = hMap.get(reprintStateKey);
+		String isPrimaryPatientFormValue = hMap.get(isPrimaryPatientFormKey);
+		String isPrimaryPhysicianFormValue = hMap.get(isPrimaryPhysicianFormKey);
+
+		
 		String stateName = state.getName();
 		if (stateName.equals(ChirdlUtilConstants.STATE_CHECKIN)) {
 			row.setStatusColor(WAIT_COLOR);
 			row.setStatus("Arrived");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_QUERY_KITE_PWS) || stateName.equals(ChirdlUtilConstants.STATE_QUERY_KITE_PSF) || stateName.equals(ChirdlUtilConstants.STATE_QUERY_KITE_ALIAS)) {
-			row.setStatusColor(PROCESSING_COLOR);
-			row.setStatus("Searching Patient Data...");
-			return;
+		
+		if (stateName.equals(ChirdlUtilConstants.STATE_RANDOMIZE) || (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(isPrimaryPatientFormValue) && (stateName.equals(startStateValue)))) {
+            row.setStatusColor(PROCESSING_COLOR);
+            row.setStatus("Creating PSF...");
+            return;
 		}
-		if (stateName.equals(org.openmrs.module.chica.util.Util.getStartStateName(encounter, formId)) || stateName.equals(ChirdlUtilConstants.STATE_RANDOMIZE)) {
-			row.setStatusColor(PROCESSING_COLOR);
-			row.setStatus("Creating PSF...");
-			return;
-		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_PSF_PRINTED)) {
-			row.setStatusColor(PROCESSING_COLOR);
-			row.setStatus("Printing PSF...");
-			return;
-		}
+		
 		if (stateName.equals(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION)) {
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PSF Tablet Ready");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_PSF_PROCESS)) {
-			row.setStatusColor(WAIT_COLOR);
-			row.setStatus("PSF Scanned");
-			return;
-		}
-		if (stateName.equals(org.openmrs.module.chica.util.Util.getStartStateName(encounter, formId))) {
+		
+		if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(isPrimaryPhysicianFormValue) && (stateName.equals(startStateValue))) {
 			row.setStatusColor(PROCESSING_COLOR);
 			row.setStatus("Creating PWS...");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_PRINTED)) {
-			row.setStatusColor(PROCESSING_COLOR);
-			row.setStatus("Printing PWS...");
-			return;
-		}
+		
 		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_WAIT_FOR_SUBMISSION)) {
 			row.setStatusColor(READY_COLOR);
 			if (psfAndVitalsStatesMap != null) {
@@ -388,27 +408,24 @@ public class GreaseBoardBuilder {
 			}
 			return;
 		}
+		
 		if (stateName.equals(ChirdlUtilConstants.STATE_PWS_PROCESS)) {
 			row.setStatusColor(READY_COLOR);
 			row.setStatus("PWS Scanned");
 			return;
 		}
-		if (stateName.equals(ChirdlUtilConstants.STATE_FINISHED)) {
-			row.setStatusColor(READY_COLOR);
-			row.setStatus("Gone");
-			return;
-		}
+		
 		if (stateName.equals(ChirdlUtilConstants.STATE_ERROR_STATE)) {
 			row.setStatusColor(WAIT_COLOR);
 			row.setStatus("Error. Contact support");
 		}
 		
-		if (stateName.equals(org.openmrs.module.chica.util.Util.getReprintStateName(encounter, formId))) {
+		if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(isPrimaryPatientFormValue) && (stateName.equals(reprintStateValue))) {
 			row.setStatusColor(PSF_REPRINT_COLOR);
 			row.setStatus("PSF reprint");
 		}
 		
-		if (stateName.equals(org.openmrs.module.chica.util.Util.getReprintStateName(encounter, formId))) {
+		if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(isPrimaryPhysicianFormValue) && (stateName.equals(reprintStateValue))) {
 			row.setStatusColor(PWS_REPRINT_COLOR);
 			row.setStatus("PWS reprint");
 		}
@@ -416,5 +433,86 @@ public class GreaseBoardBuilder {
 		//PSF_rescan and PWS_rescan states are currently not given
 		//a status on the greaseboard
 		
+	}
+	
+	/**
+	 * 
+	 * @author ssarala
+	 *
+	 */
+	private static class HashMapAttributesKey {
+		
+	    private Location location;
+	    private String printerLocation;
+	    private Integer formId;
+	    private String Type;
+	    
+	    /**
+	     * Constructor method
+	     * @param location
+	     * @param printerLocation
+	     * @param formId
+	     * @param Type
+	     */
+	    public HashMapAttributesKey(Location location, String printerLocation, Integer formId, String Type) {
+	    	this.location = location;
+	    	this.printerLocation = printerLocation;
+	    	this.formId = formId;
+	    	this.Type = Type;
+	    }
+	    
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			return Objects.hash(this.location, this.printerLocation, this.formId, this.Type);
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof HashMapAttributesKey)) {
+				return false;
+			}
+			HashMapAttributesKey other = (HashMapAttributesKey) obj;
+			if (Type == null) {
+				if (other.Type != null) {
+					return false;
+				}
+			} else if (!Type.equals(other.Type)) {
+				return false;
+			}
+			if (formId == null) {
+				if (other.formId != null) {
+					return false;
+				}
+			} else if (!formId.equals(other.formId)) {
+				return false;
+			}
+			if (location == null) {
+				if (other.location != null) {
+					return false;
+				}
+			} else if (!location.equals(other.location)) {
+				return false;
+			}
+			if (printerLocation == null) {
+				if (other.printerLocation != null) {
+					return false;
+				}
+			} else if (!printerLocation.equals(other.printerLocation)) {
+				return false;
+			}
+			return true;
+		}
 	}
 }
