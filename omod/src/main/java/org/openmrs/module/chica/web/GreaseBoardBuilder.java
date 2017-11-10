@@ -445,20 +445,20 @@ public class GreaseBoardBuilder {
 	    private Location location;
 	    private String printerLocation;
 	    private Integer formId;
-	    private String Type;
+	    private String type;
 	    
 	    /**
 	     * Constructor method
 	     * @param location
 	     * @param printerLocation
 	     * @param formId
-	     * @param Type
+	     * @param type
 	     */
-	    public HashMapAttributesKey(Location location, String printerLocation, Integer formId, String Type) {
+	    public HashMapAttributesKey(Location location, String printerLocation, Integer formId, String type) {
 	    	this.location = location;
 	    	this.printerLocation = printerLocation;
 	    	this.formId = formId;
-	    	this.Type = Type;
+	    	this.type = type;
 	    }
 	    
 		/* (non-Javadoc)
@@ -467,7 +467,7 @@ public class GreaseBoardBuilder {
 		@Override
 		public String toString() {
 			return "HashMapAttributesKey [location=" + location + ", printerLocation=" + printerLocation + ", formId="
-					+ formId + ", Type=" + Type + "]";
+					+ formId + ", type=" + type + "]";
 		}
 
 		/* (non-Javadoc)
@@ -475,7 +475,7 @@ public class GreaseBoardBuilder {
 		 */
 		@Override
 		public int hashCode() {
-			return Objects.hash(this.location, this.printerLocation, this.formId, this.Type);
+			return Objects.hash(this.location, this.printerLocation, this.formId, this.type);
 		}
 
 		/* (non-Javadoc)
@@ -493,11 +493,11 @@ public class GreaseBoardBuilder {
 				return false;
 			}
 			HashMapAttributesKey other = (HashMapAttributesKey) obj;
-			if (Type == null) {
-				if (other.Type != null) {
+			if (type == null) {
+				if (other.type != null) {
 					return false;
 				}
-			} else if (!Type.equals(other.Type)) {
+			} else if (!type.equals(other.type)) {
 				return false;
 			}
 			if (formId == null) {
