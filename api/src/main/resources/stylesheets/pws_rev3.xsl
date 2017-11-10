@@ -240,14 +240,14 @@
 											<tr>
 												<td align="right">Time:</td>
 												<td align="left"><xsl:value-of select="Records/Record/Field[@id = 'VisitTime']"/></td>
-											</tr>
-											<tr>
-												<td align="right">Informant:</td>
-												<td align="left"><xsl:value-of select="Records/Record/Field[@id = 'Informant']"/></td>
-											</tr>
+											</tr>											
 											<tr>
 												<td align="right">Language:</td>
 												<td align="left"><xsl:value-of select="Records/Record/Field[@id = 'Language']"/></td>
+											</tr>
+											<tr>
+												<td align="right" style="vertical-align: top;">Informant:</td>
+												<td align="left"><xsl:value-of select="Records/Record/Field[@id = 'Informant']"/></td>
 											</tr>
 										</tbody>
 									</table>
