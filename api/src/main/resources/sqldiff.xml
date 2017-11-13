@@ -4504,6 +4504,24 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			
 		</sql>
     </diff>
+    
+    <diff>
+    	<version>1.10.5</version>  
+        <author>Seema Sarala</author>  
+        <date>November 02, 2017</date>  
+        <description>  
+       		CHICA-1083 Add default form attribute values for patient form
+        </description>  
+        <sql> 
+        	INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'PSF_mobile_create', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PSF' AND retired=0) AND b.name = 'startState' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+        </sql>
+    </diff>
         
 </sqldiff>
 
