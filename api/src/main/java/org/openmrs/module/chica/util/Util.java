@@ -1110,6 +1110,43 @@ public class Util {
 	}
 	
 	/**
+	 * Gets the form attribute for startState using the formId
+	 * @param encounter
+	 * @param formId
+	 * @return Start State name
+	 */
+	public static String getStartStateName(Encounter encounter, Integer formId)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue formAttributeValueStartStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, 
+				locationTagId, locationId);
+		
+		String startStateName = null;
+		if (formAttributeValueStartStateName != null && StringUtils.isNotBlank(formAttributeValueStartStateName.getValue())) {
+			startStateName = formAttributeValueStartStateName.getValue();
+		}
+		
+		return startStateName;
+	}
+	
+	/**
+	 * Gets the form attribute for startState using the formId
+	 * @param encounterId
+	 * @param formId
+	 * @return start State name
+	 */
+	public static String getStartStateName(Integer encounterId, Integer formId)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getStartStateName(encounter, formId);
+	}
+	
+	/**
 	 * Gets the form attribute for reprintState using the formId
 	 * @param encounter
 	 * @param formId

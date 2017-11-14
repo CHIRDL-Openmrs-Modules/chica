@@ -111,7 +111,7 @@ public class GetPSFQuestionsAnswers implements Rule {
 			Integer formInstanceId = stat.getFormInstanceId();
 			Integer locationId = stat.getLocationId();
 			if (formInstanceId != null && locationId != null) {
-				return Context.getService(ATDService.class).getPSFQuestionAnswers(formInstanceId, locationId, patientId);
+				return Context.getService(ATDService.class).getPatientFormQuestionAnswers(formInstanceId, locationId, patientId, patientForm);
 			}
 		}
 		
