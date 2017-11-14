@@ -29,17 +29,17 @@
 <c:set var="staffButtonText" value="Staff"/>
 <c:set var="staffButtonText_sp" value="Personal"/>
 
-<c:set var="possesiveFirstName" value="${patient.givenName.endsWith(\"s\") ? patient.givenName.concat(\"\'\") : patient.givenName.concat(\"\'s\")}"/>
+<c:set var="possessiveFirstName" value="${patient.givenName.endsWith(\"s\") ? patient.givenName.concat(\"\'\") : patient.givenName.concat(\"\'s\")}"/>
 
-<c:set var="answerTextMother" value="${possesiveFirstName} mother"/>
-<c:set var="answerTextFather" value="${possesiveFirstName} father"/>
-<c:set var="answerTextGrandmother" value="${possesiveFirstName} grandmother"/>
-<c:set var="answerTextGrandfather" value="${possesiveFirstName} grandfather"/>
-<c:set var="answerTextAunt" value="${possesiveFirstName} aunt"/>
-<c:set var="answerTextUncle" value="${possesiveFirstName} uncle"/>
-<c:set var="answerTextFosterParent" value="${possesiveFirstName} foster parent"/>
-<c:set var="answerTextSibling" value="${possesiveFirstName} sibling"/>
-<c:set var="answerTextSiblings" value="${possesiveFirstName} siblings"/>
+<c:set var="answerTextMother" value="${possessiveFirstName} mother"/>
+<c:set var="answerTextFather" value="${possessiveFirstName} father"/>
+<c:set var="answerTextGrandmother" value="${possessiveFirstName} grandmother"/>
+<c:set var="answerTextGrandfather" value="${possessiveFirstName} grandfather"/>
+<c:set var="answerTextAunt" value="${possessiveFirstName} aunt"/>
+<c:set var="answerTextUncle" value="${possessiveFirstName} uncle"/>
+<c:set var="answerTextFosterParent" value="${possessiveFirstName} foster parent"/>
+<c:set var="answerTextSibling" value="${possessiveFirstName} sibling"/>
+<c:set var="answerTextSiblings" value="${possessiveFirstName} siblings"/>
 <c:set var="answerTextOther" value="Other"/>
 <c:set var="answerTextHereAlone" value="No one (${patient.givenName} is here alone)"/>
 
