@@ -275,9 +275,12 @@ public class GreaseBoardBuilder {
 	                
 	                String startStateValue = org.openmrs.module.chica.util.Util.getStartStateName(encounter, formId);
 	                String reprintStateValue = org.openmrs.module.chica.util.Util.getReprintStateName(encounter, formId);
-	                String isPrimaryPatientFormValue = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId).getValue();
-	                String isPrimaryPhysicianFormValue = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId).getValue();
-	                
+	                String isPrimaryPatientFormValue = null;
+	                String isPrimaryPhysicianFormValue = null;
+	                if (formId != null && locationId != null && locationTagId != null) {
+		                isPrimaryPatientFormValue = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId).getValue();
+		                isPrimaryPhysicianFormValue = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId).getValue();
+	                }
 	                hMap.put(startStateKey, startStateValue);
 	                hMap.put(reprintStateKey, reprintStateValue);
 	                hMap.put(isPrimaryPatientFormKey, isPrimaryPatientFormValue);

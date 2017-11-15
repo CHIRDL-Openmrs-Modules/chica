@@ -1121,9 +1121,11 @@ public class Util {
 		Integer locationTagId = getLocationTagId(encounter);
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		FormAttributeValue formAttributeValueStartStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, 
-				locationTagId, locationId);
-		
+		FormAttributeValue formAttributeValueStartStateName = null;
+		if (formId != null && locationId != null && locationTagId != null) {
+			formAttributeValueStartStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, 
+					locationTagId, locationId);
+		}
 		String startStateName = null;
 		if (formAttributeValueStartStateName != null && StringUtils.isNotBlank(formAttributeValueStartStateName.getValue())) {
 			startStateName = formAttributeValueStartStateName.getValue();
@@ -1158,9 +1160,11 @@ public class Util {
 		Integer locationTagId = getLocationTagId(encounter);
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		FormAttributeValue formAttributeValueReprintStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE, 
-				locationTagId, locationId);
-		
+		FormAttributeValue formAttributeValueReprintStateName = null;
+		if (formId != null && locationId != null && locationTagId != null) {
+			formAttributeValueReprintStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE, 
+					locationTagId, locationId);
+		}
 		String reprintStateName = null;
 		if (formAttributeValueReprintStateName != null && StringUtils.isNotBlank(formAttributeValueReprintStateName.getValue())) {
 			reprintStateName = formAttributeValueReprintStateName.getValue();
@@ -1193,9 +1197,12 @@ public class Util {
 	public static String getFormType(Integer formId, Integer locationTagId, Integer locationId) {
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		FormAttributeValue primaryPatientFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId);
-		FormAttributeValue primaryPhysicianFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId);
-		   																		
+		FormAttributeValue primaryPatientFormfav = null;
+		FormAttributeValue primaryPhysicianFormfav = null;
+		if (formId != null && locationId != null && locationTagId != null) {
+			primaryPatientFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId);
+			primaryPhysicianFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId);
+		}
 		if (primaryPatientFormfav != null && StringUtils.isNotBlank(primaryPatientFormfav.getValue()) && 
 				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPatientFormfav.getValue())) { 
 			return ChirdlUtilConstants.PATIENT_FORM_TYPE;
