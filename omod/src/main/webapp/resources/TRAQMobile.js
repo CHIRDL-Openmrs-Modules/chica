@@ -1,19 +1,21 @@
 var english = false;
 var formInstance = null;
-var numberOfQuestions = $("input[id^='TRAQQuestionEntry_']").length / 2;
+var numberOfQuestions = 0;
 var finishAttempts = 0;
 var formTitleText = "";
 var TRAQInformantText = "";
 var questionCompletionCriteria = 15;
 
+
+
 var openParen = "&#40";
 var closeParen = "&#41";
 var nTilde = "&#241";
-var colon ="&#58";
+var colon = "&#58";
 var comma = "&#44";
 var slash = "&#47";
 var semicolon = "&#58";
-var questionMark ="&#63";
+var questionMark = "&#63";
 var apostrophe = "&#39";
 var slash = "&#47";
 var oAcute = "&#243";
@@ -28,7 +30,6 @@ var hyphen = "$#45";
 var NTilde = "&#181";
 var period = "&#46";
 
- 
 
 $(document).on("pageinit", function() {
     // Initialize all pages because radio button reset will not work properly.
@@ -41,6 +42,8 @@ $(document).on("pageinit", function() {
 	$(document).ajaxStop(function() {
 		$.unblockUI();
 	});
+	
+
 });
 
 function init(patientName, birthdate, formInst, language) {
@@ -58,9 +61,10 @@ function init(patientName, birthdate, formInst, language) {
 	if (!showVitals) {
 		$(".vitalsButton").hide();
 	}
-	
+	numberOfQuestions = $("input[id^='TRAQQuestion_']").length / 2;
 
 }
+
 
 function submitEmptyForm() {
 	setLanguageField();
@@ -112,8 +116,9 @@ function setLanguage(patientName, birthdate) {
          + "del joven para realizarlas.</p>";
          
          TRAQInformantText = "Marque con una cruz, si usted es (padres " + slash + " cuidadores) quien est" + aAcute + " completando el formulario.";
-         
-    }
+       
+	}
+    
     
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
     $("#instructions").html(instructions);
@@ -121,15 +126,13 @@ function setLanguage(patientName, birthdate) {
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
     $("#formTitle").html(formTitleText);
     $("#TRAQInformantCheckboxLabel .ui-btn-text").html(TRAQInformantText);
-   
 }
 
 function changePage(newPageNum) {
     var newPage = "#question_page_" + newPageNum;
     if (!english) {
         newPage = newPage + "_sp";
-    }
-    
+    }   
     $.mobile.changePage(newPage, { transition: "none", reverse: false });
 }
 
@@ -143,8 +146,7 @@ function setLanguageFromForm(patientName, birthdate) {
 	    } else {
 	    	setQuestionCheckboxes("TRAQQuestionEntry_" + i, "TRAQQuestionEntry_" + i + "_2");
 	    }
-    }
-        
+    }       
     changePage(1);
 }
 
@@ -167,7 +169,6 @@ function attemptFinishForm() {
 	}
 }
 
-
 function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
 	$("#finish_error_dialog").popup("close");
@@ -177,14 +178,13 @@ function finishForm() {
 	$("#not_finished_dialog").popup("close");
 	$("#not_finished_dialog_sp").popup("close");
 	setLanguageField();
-	checkFormCompletion();
-	calculateScore();
+	calculateTransitionReadiness();
 	var submitForm = $("#TRAQForm"); 
 	var token = getAuthenticationToken();
     $.ajax({
     	beforeSend: function (xhr) {
 		    xhr.setRequestHeader ("Authorization", token );
-	    },
+    	},
         "cache": false,
         "data": submitForm.serialize(),
         "type": "POST",
@@ -220,14 +220,14 @@ function setQuestionCheckboxes(initialName, newName) {
 }
 
 function areAllQuestionsAnswered() {
-	var spanishChar = "_2";
+	var spanishExtension = "_2";
 	if (english) {
-		spanishChar = "";
+		spanishExtension = "";
 	}
 	
 	var questionName = "TRAQQuestionEntry_";
-	for (var i = 1; i < 21; i++) {
-		if(!$("input[name='" + questionName + i + spanishChar + "']").is(':checked')){
+	for (var i = 1; i <= numberOfQuestions; i++) {
+		if(!$("input[name='" + questionName + i + spanishExtension + "']").is(':checked')){
 		   return false;
 		}
 	}
@@ -235,14 +235,25 @@ function areAllQuestionsAnswered() {
 	return true;
 }
 
-function insertChoices(questionNumber){
+function isSpanishQuestion(questionNumber){
 	var spanishExtension = "_2";
+	
+	if (questionNumber.length <= spanishExtension.length){
+		return false;
+	}
+	return (questionNumber.lastIndexOf(spanishExtension) == (questionNumber.length - spanishExtension.length));
+}
+
+function insertChoices(questionNumber){
+	
+	
 	var choiceDoNotKnow = "No, I do not know how.";
 	var choiceNoButWantToLearn = "No, but I want to learn.";
 	var choiceNoButLearning = "No, but I am learning to do this.";
 	var choiceYesStarted = "Yes, I have started doing this.";
 	var choiceYesAlways = "Yes, I always do this when I need to.";
-	if (questionNumber.endsWith(spanishExtension)) {
+	
+	if (isSpanishQuestion(questionNumber)){
 		choiceDoNotKnow  = "No, no s" + eAcute + " c" + oAcute + "mo hacerlo.";
 		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
 		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
@@ -272,7 +283,7 @@ function insertChoices(questionNumber){
     fieldSetElement.append(fieldSet);
    
 	$(".choice"+questionNumber).append(fieldSetElement);
-	$(".choice"+questionNumber).trigger("create");
+	$(".choice"+questionNumber).triggerHandler("create");
 	
 	
 }
@@ -296,104 +307,135 @@ function showBlockingMessage() {
     message: blockUIMessage});
 }
 
-//
-function checkFormCompletion() {
+
+function meetsCompletionCriteria() {
 	var countCompleted = 0;
 	var completionStatus = "Incomplete"; 
-	var questionName = "TRAQQuestionEntry_";
-	for (var i = 1; i <= numberOfQuestions; i++) {
-	    if (english) {
-	    	
-	    	$("input[name=" + questionName + i + "]:checked").each(function() {
-	    		countCompleted++;
-	        });
-	    } else {
-	    	$("input[name=" + questionName + i + "_2]:checked").each(function() {
-	    		countCompleted++;
-	        });
-	    }
-    }
+	var formReady = false;
+	var questionName = "TRAQQuestion";
 	
+	countCompleted = $("input[name^=" + questionName + "]:checked").length;
+	    
 	if (countCompleted >= questionCompletionCriteria) {
 		completionStatus = "Complete";
+		formReady = true;
 	}
 
 	$("#TRAQ").val(completionStatus);
+	
+	return formReady;
 }
 
+function calculateTransitionReadiness() {
 
-function calculateScore() {
 	
+	if (!meetsCompletionCriteria()){
+		return;
+	}
 	var questionName = "TRAQQuestionEntry_";
 	var questionPassCriteria = 3;
-	var TRAQCategoryFailed = "failed";
-	
 	// Keep track of each answer so that we can determine if patient failed transition
 	//for that topic
-	var answers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+	//var answers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
 	var managingMedicationAnswers = [1,2,3,4];
 	var appointmentKeepingAnswers = [5,6,7,8,9,10,11];
 	var trackingHealthIssuesAnswers = [12,13,14,15];
 	var talkingWithProvidersAnswers = [16,17];
 	var dailyActivitiesAnswers = [18,19,20];
+	var eval = null;
 	
-	for (var i = 1; i <= numberOfQuestions; i++) {
-	    if (english) {	
-	    	if($("input[name=" + questionName + i + "]").is(':checked')){
-	    		
-	    		answers[i -1] = parseInt($("input[name=TRAQuestionEntry_" + i + "]:checked").val());
-	    	}
-	    } else {
-	    	if($("input[name=TRAQuestionEntry_" + i + "_2]").is(':checked')){
-	    		
-	    		answers[i -1] = parseInt($("input[name=TRAQuestionEntry_" + i + "_2]:checked").val());
-	    	}	
-	    }
-    }
-	
-	// Determine Manage Medications skill level
-	for(var i = 0; i < managingMedicationAnswers.length; i++){
-		var value = answers[managingMedicationAnswers[i]-1];
-		if(value > -1 && value < questionPassCriteria) // 
-		{
-			$("#TRAQManagingMedications").val(TRAQCategoryFailed);
+
+	//If any are answered with value < 3, then TRAQ category failed
+	//If any are answered where all values >= 3 then TRAQ category passed
+	//If no questions are answered, then observation is not saved.
+	// Determine Manage Medication Answers
+	var spanishExtension = "_2";
+	if (english) spanishExtension = "";
+	var transitionReady = null;
+	for(var i = 0, len= managingMedicationAnswers.length; i < len; i++){
+		var value = parseInt($("input[name=TRAQQuestionEntry_" + managingMedicationAnswers[i] + spanishExtension + "]:checked").val());
+		if (isNaN(value)){
+			continue;
+		}
+		if (value < questionPassCriteria){
+			transitionReady = false;
 			break;
 		}
+		transitionReady = true;
+	}
+	if (transitionReady != null ){
+		$("#TRAQManagingMedications").val((transitionReady)? "passed" : "failed");
 	}
 	
-	for(var i = 0; i < appointmentKeepingAnswers.length; i++){
-		var value = answers[appointmentKeepingAnswers[i]-1];
-		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
-		{
-			$("#TRAQAppointmentKeeping").val(TRAQCategoryFailed);
+	
+	transitionReady = null;
+	for(var i = 0, len= appointmentKeepingAnswers.length; i < len; i++){
+		var value = parseInt($("input[name=TRAQQuestionEntry_" + appointmentKeepingAnswers[i] + spanishExtension + "]:checked").val());
+		if (isNaN(value)){
+			continue;
+		}
+		if (value < questionPassCriteria){
+			transitionReady = false;
 			break;
 		}
+		transitionReady = true;
+	}
+	if (transitionReady != null ){
+		$("#TRAQAppointmentKeeping").val((transitionReady)? "passed" : "failed");
 	}
 	
-	for(var i = 0; i < trackingHealthIssuesAnswers.length; i++){
-		var value = answers[trackingHealthIssuesAnswers[i]-1];
-		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
-		{
-			$("#TRAQTrackingHealthIssues").val(TRAQCategoryFailed);
+	transitionReady = null;
+	for(var i = 0, len= trackingHealthIssuesAnswers.length; i < len; i++){
+		var value = parseInt($("input[name=TRAQQuestionEntry_" + trackingHealthIssuesAnswers[i] + spanishExtension + "]:checked").val());
+		if (isNaN(value)){
+			continue;
+		}
+		if (value < questionPassCriteria){
+			transitionReady = false;
 			break;
 		}
+		transitionReady = true;
+	}
+	if (transitionReady != null ){
+		$("#TRAQTrackingHealthIssues").val((transitionReady)? "passed" : "failed");
 	}
 	
-	for(var i = 0; i < talkingWithProvidersAnswers.length; i++){
-		var value = answers[talkingWithProvidersAnswers[i]-1];
-		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
-		{
-			$("#TRAQTalkingWithProviders").val(TRAQCategoryFailed);
+	transitionReady = null;
+	for(var i = 0, len= talkingWithProvidersAnswers.length; i < len; i++){
+		var value = parseInt($("input[name=TRAQQuestionEntry_" + talkingWithProvidersAnswers[i] + spanishExtension + "]:checked").val());
+		if (isNaN(value)){
+			continue;
+		}
+		if (value < questionPassCriteria){
+			transitionReady = false;
 			break;
 		}
+		transitionReady = true;
+	}
+	if (transitionReady != null ){
+		$("#TRAQTalkingWithProviders").val((transitionReady)? "passed" : "failed");
 	}
 	
-	for(var i = 0; i < dailyActivitiesAnswers.length; i++){
-		var value = answers[dailyActivitiesAnswers[i]-1];
-		if(value > -1 && value < questionPassCriteria) // Check to see if the question was answered before adding it to the score
-		{
-			$("#TRAQDailyActivitiesAnswers").val(TRAQCategoryFailed);
+	transitionReady = null;
+	for(var i = 0, len= dailyActivitiesAnswers.length; i < len; i++){
+		var value = parseInt($("input[name=TRAQQuestionEntry_" + dailyActivitiesAnswers[i] + spanishExtension + "]:checked").val());
+		if (isNaN(value)){
+			continue;
+		}
+		if (value < questionPassCriteria){
+			transitionReady = false;
 			break;
 		}
+		transitionReady = true;
 	}
+	if (transitionReady != null ){
+		$("#TRAQDailyActivitiesAnswers").val((transitionReady)? "passed" : "failed");
+	}
+	
+	
+	
+	
+	
 }
+
+

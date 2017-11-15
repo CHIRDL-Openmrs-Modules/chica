@@ -522,7 +522,9 @@
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
 	    </div>
 	    
-	    <div id="content_${PNumber}_sp" data-role="content"><div><h3>${headerManageMedication_sp}</h3><hr/><br/></div>
+	    <div id="content_${PNumber}_sp" data-role="content">
+     
+            <div><h3>${headerManageMedication_sp}</h3><hr/><br/></div>
 	            
 	        <c:set var="QNumber" value="3_2" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -557,6 +559,7 @@
 	    </div>
 	    
 	    <div id="content_${PNumber}" data-role="content">
+     
 			<div><h3>${headerApptKeeping_sp}</h3><hr/><br/></div>
 	
 	        <c:set var="QNumber" value="5_2" />
@@ -758,7 +761,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
+	         <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
 	        
 	        <c:set var="QNumber" value="17_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -804,8 +807,8 @@
 		    <c:set var="QNumber" value="20_2"/>
 		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	        <%@ include file="mobileFinishDialogs_SP.jsp" %>
