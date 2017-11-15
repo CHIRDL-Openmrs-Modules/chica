@@ -18,15 +18,14 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.openmrs.Form;
-import org.openmrs.api.FormService;
-import org.openmrs.api.context.Context;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
 import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -72,16 +71,13 @@ public class ChicaAgeRule implements Rule {
 				formId = formInstance.getFormId();
 			}
 			
-			String formName = null;
-			if (formId != null) {
-				FormService formService = Context.getFormService();
-				Form form = formService.getForm(formId);
-				if (form != null) {
-					formName = form.getName();
-				}
+			String formType = null;
+			Integer locationTagId = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
+			if (formId != null && locationTagId != null) {
+				formType = org.openmrs.module.chica.util.Util.getFormType(formId, locationTagId, formInstance.getLocationId());
 			}
 			
-			if (formName != null && formName.equalsIgnoreCase("PWS")){
+			if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType)){
 				
 				PatientState patientState = 
 					org.openmrs.module.atd.util.Util.getProducePatientStateByFormInstanceAction(formInstance);

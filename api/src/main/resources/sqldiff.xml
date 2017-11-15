@@ -4397,6 +4397,132 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			VALUES ('GlookoCode', 'Person attribute used to store the code/id for Glooko', 'java.lang.String', 1, 1, NOW(), UUID());
 		</sql>
     </diff>
+    
+    <diff>
+    	<version>1.10.2</version>  
+        <author>Seema Sarala</author>  
+        <date>October 03, 2017</date>  
+        <description>  
+       		CHICA-1082 Add new FormAttribute reprintState and new locationTagAttribute primaryPatientForm.
+       		Add default form attribute values and location tag attribute values for chica_epic and chica_iuh_cerner.
+        </description>  
+        <sql> 
+        
+        	INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('reprintState', 'Reprint State.');
+        	
+        	INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'PWS_reprint', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'reprintState' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'PSF_reprint', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PSF' AND retired=0) AND b.name = 'reprintState' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_location_tag_attribute (name,description) 
+        	VALUES ( 'primaryPatientForm', 'Primary Patient Form Name.');
+			
+			INSERT INTO chirdlutilbackports_location_tag_attribute_value (location_tag_id, value, location_tag_attribute_id, location_id) 
+			SELECT b.location_tag_id, 'PSF', c.location_tag_attribute_id, b.location_id  
+			FROM location a, location_tag_map b, chirdlutilbackports_location_tag_attribute c
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND c.name='primaryPatientForm' AND b.location_id=a.location_id 
+			GROUP BY b.location_tag_id,b.location_id;
+			
+        </sql>
+    </diff>
+    <diff>
+    	<version>1.10.3</version>
+        <author>Seema Sarala</author>
+        <date>October 10, 2017</date>
+        <description>
+            CHICA-1082 Add new FormAttributes isPrimaryPatientForm and isPrimaryPhysicianForm to determine the formType
+        </description>
+        <sql>
+           	INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('isPrimaryPatientForm', 'Flag to indicate PrimaryPatient Form Type');
+            
+            INSERT INTO chirdlutilbackports_form_attribute  
+            (`name`, `description`)  
+            VALUES  
+            ('isPrimaryPhysicianForm', 'Flag to indicate PrimaryPhysician Form Type');
+		</sql>
+    </diff>
+    
+    <diff>
+    	<version>1.10.4</version>
+        <author>Seema Sarala</author>
+        <date>October 17, 2017</date>
+        <description>
+            CHICA-1082 Add default form attribute values for chica_epic and chica_iuh_cerner.
+        </description>
+        <sql>
+           	INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'true', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'isPrimaryPhysicianForm' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'false', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'isPrimaryPatientForm' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'false', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PSF' AND retired=0) AND b.name = 'isPrimaryPhysicianForm' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'true', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PSF' AND retired=0) AND b.name = 'isPrimaryPatientForm' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+		</sql>
+    </diff>
+    
+    <diff>
+    	<version>1.10.5</version>  
+        <author>Seema Sarala</author>  
+        <date>November 02, 2017</date>  
+        <description>  
+       		CHICA-1083 Add default form attribute values for patient form
+        </description>  
+        <sql> 
+        	INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'PSF_mobile_create', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+			WHERE EXISTS 
+				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			AND a.form_id=(SELECT form_id FROM form where name='PSF' AND retired=0) AND b.name = 'startState' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+        </sql>
+    </diff>
+        
 </sqldiff>
 
 

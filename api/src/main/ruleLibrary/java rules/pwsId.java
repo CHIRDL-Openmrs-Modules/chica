@@ -12,6 +12,7 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 
 public class pwsId implements Rule
@@ -72,7 +73,7 @@ public class pwsId implements Rule
 			
 			if (encounterId != null)
 			{
-				String formName = "PWS";
+				String formName = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM);
 				FormService formService = Context.getFormService();
 				Form form = formService.getForm(formName);
 				Integer formId = null;

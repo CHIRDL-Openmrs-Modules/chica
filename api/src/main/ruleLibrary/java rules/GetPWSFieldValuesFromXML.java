@@ -22,15 +22,13 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.DynamicFormAccess;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -43,7 +41,6 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class GetPWSFieldValuesFromXML implements Rule{
 
 	private Log log = LogFactory.getLog(GetPWSFieldValuesFromXML.class);
-	private static final String PWS = "PWS";
 	private static final String PWS_PDF = "PWS_PDF";
 	private static final String RESULT_DELIM = "^^";
 	private static final String AT_CHAR = "@";
@@ -58,18 +55,18 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	private static final String TEMPERATURE_METHOD_FIELD = "Temperature_Method";
 	private static final String PREV_WEIGHT_DATE_FIELD = "PrevWeightDate";
 	private static final int MAX_TRIES = 2;
-	private static final String STATE_PWS_CREATE = "PWS_create";
 
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		FormService fs =Context.getFormService();
-		Form form = fs.getForm(PWS);
+		Integer encounterId = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		String physicianForm = Util.getPrimaryFormNameByLocationTag(encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM);
+		Form form = fs.getForm(physicianForm);
 
 		if(form != null)
 		{
-			Integer encounterId = (Integer)parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 			if (encounterId == null) {
 				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate encounterId.");
 				return Result.emptyResult();
@@ -78,9 +75,9 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			// Get a list of patient states for the encounter and PWS_create
 			// The query orders them by the most recent
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-			State state = chirdlutilbackportsService.getStateByName(STATE_PWS_CREATE);
+			State state = chirdlutilbackportsService.getStateByName(Util.getStartStateName(encounterId, form.getFormId()));
 			if(state == null){
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate " + STATE_PWS_CREATE + ".");
+				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate " + ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE + ".");
 				return Result.emptyResult();
 			}
 			
@@ -133,7 +130,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						}
 
 						if(numTries == MAX_TRIES){
-							log.error("Unable to locate " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+							log.error("Unable to locate " + physicianForm + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
 							return Result.emptyResult();
 						}
 					}
@@ -155,9 +152,9 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						log.error("Interrupted thread error", ie);
 					}
 					catch(IOException ioe){
-						log.error("Unable to read " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						log.error("Unable to read " + physicianForm + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
 						this.log.error(ioe.getMessage());
-						this.log.error(Util.getStackTrace(ioe));
+						this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(ioe));
 					}
 				}			
 
