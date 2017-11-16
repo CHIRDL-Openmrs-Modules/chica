@@ -8,31 +8,29 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-            http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-3.0.xsd
-            http://www.springframework.org/schema/jee
-            http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
-            http://www.springframework.org/schema/tx
-            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-            http://www.springframework.org/schema/aop
-            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-            http://www.springframework.org/schema/util
-            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+  		    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  		    http://www.springframework.org/schema/context
+  		    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+  		    http://www.springframework.org/schema/jee
+  		    http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+  		    http://www.springframework.org/schema/tx
+  		    http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+  		    http://www.springframework.org/schema/aop
+  		    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+  		    http://www.springframework.org/schema/util
+  		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <!-- Annotation based controllers -->
-    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
-    
-    <context:component-scan base-package="org.openmrs.module.chica.web.controller" />
-    
-    <bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<!-- Annotation based controllers -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+	
+	<context:component-scan base-package="org.openmrs.module.chica.web.controller" />
+	
+	<bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>            
-                <prop key="/module/@MODULE_ID@/greaseBoard.form">greaseBoard</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
-                <prop key="/module/@MODULE_ID@/viewEncounter.form">viewEncounter</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
                 <prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
                 <prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
@@ -73,16 +71,6 @@
         <property name="commandName"><value>chicaNoteTesterObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/chicaNoteTester</value></property>
         <property name="successView"><value>chicaNoteTester.form</value></property>
-    </bean>
-    <bean id="greaseBoard" class="@MODULE_PACKAGE@.web.GreaseBoardController">
-        <property name="commandName"><value>greaseBoardObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/greaseBoard</value></property>
-        <property name="successView"><value>greaseBoard.form</value></property>
-    </bean>
-    <bean id="viewEncounter" class="@MODULE_PACKAGE@.web.ViewEncounterController">
-        <property name="commandName"><value>greaseBoardObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/viewEncounter</value></property>
-        <property name="successView"><value>viewEncounter.form</value></property>
     </bean>
     <bean id="forcePrintSSNMRN" class="@MODULE_PACKAGE@.web.ForcePrintSSNMRNController">
         <property name="commandName"><value>forcePrintSSNMRNObject</value></property>
@@ -219,7 +207,7 @@
         <property name="formView"><value>/module/@MODULE_ID@/cacheConfiguration</value></property>
         <property name="successView"><value>cacheConfiguration.form</value></property>
     </bean>
-        <bean id="MCHATRMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+    <bean id="MCHATRMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>MCHATRMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/MCHATRMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
