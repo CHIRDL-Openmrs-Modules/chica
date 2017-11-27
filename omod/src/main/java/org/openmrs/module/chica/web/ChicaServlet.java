@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.openmrs.Concept;
@@ -68,11 +69,6 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Servlet giving access to CHICA information.
@@ -1307,19 +1303,38 @@ public class ChicaServlet extends HttpServlet {
 	 * @param response The HttpServletResponse object where the PDF will be written
 	 * @throws IOException
 	 */
-	private void writePdfTextToResponse(String text, HttpServletResponse response) throws DocumentException, IOException {
+	private void writePdfTextToResponse(String text, HttpServletResponse response) throws Exception, IOException {
+		StringTokenizer tokenizer = new StringTokenizer(text, ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED
+		        + ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
+		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		Document document = new Document();
+		PDDocument document = new PDDocument();
 		try {
-	        PdfWriter.getInstance(document, output);
-	        document.open();
-	        document.add(new Paragraph(text));
-	        document.close();
-		    response.setContentLength(output.size());
-		    response.getOutputStream().write(output.toByteArray());
-		} finally {
+			PDPage page = new PDPage();
+			document.addPage(page);
+			PDPageContentStream contentStream = new PDPageContentStream(document, page);
+			contentStream.beginText();
+			contentStream.newLineAtOffset(25, 700);
+			contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+			while (tokenizer.hasMoreTokens()) {
+				contentStream.showText(tokenizer.nextToken());
+				contentStream.newLineAtOffset(0, -15);
+			}
+			
+			contentStream.endText();
+			contentStream.close();
+			document.save(output);
+			document.close();
+			response.setContentLength(output.size());
+			response.getOutputStream().write(output.toByteArray());
+		}
+		catch (Exception e) {
+			log.error("Error in writePdfTextToResponse");
+			throw new IOException(e);
+		}
+		finally {
 			output.flush();
-		    output.close();
+			output.close();
 		}
 	}
 	

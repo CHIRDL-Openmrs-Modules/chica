@@ -17,6 +17,11 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.icepdf.core.exceptions.PDFException;
 import org.icepdf.core.exceptions.PDFSecurityException;
 import org.icepdf.core.pobjects.Document;
@@ -54,11 +59,6 @@ import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
 
 public class getGrowthChartFilename implements Rule {
 	
@@ -177,7 +177,6 @@ public class getGrowthChartFilename implements Rule {
 		
 		try {
 			
-			Image image = Image.getInstance(plotImageLocation);			
 			GrowthCharts growthCharts = growthChartConfig.getGrowthCharts();
 			if (growthCharts == null) {
 				return null;
@@ -189,16 +188,17 @@ public class getGrowthChartFilename implements Rule {
 			}
 			
 			for (GrowthChart growthChart : growthChartList) {
+				PDDocument document = PDDocument.load(new File(growthChart.getFileLocation()));
+				PDPage page1 = document.getPage(0);
+				PDImageXObject image = PDImageXObject.createFromFile(plotImageLocation,document);	
+				PDPageContentStream contentStream = new PDPageContentStream(document, page1, true, true, true);
 				if (typeOfChart.equals(growthChart.getChartType())) {
 					if (gender.equals(growthChart.getGender())) {
 						if (ageInMonths >= growthChart.getAgeInMonthsMin() && ageInMonths < growthChart.getAgeInMonthsMax()) {
 							try {
-								PdfReader pdfReader = new PdfReader(growthChart.getFileLocation());
 								pdfFilename = IOUtil.getFilenameWithoutExtension(growthChart.getFileLocation()) + "_" + suffix + 
 									".pdf";
-								File pdfFile = new File(growthChartDirectory+ pdfFilename);
-								PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(pdfFile));
-								
+							
 								ChartConcepts concepts = growthChart.getChartConcepts();
 								if (concepts == null) {
 									continue;
@@ -210,7 +210,6 @@ public class getGrowthChartFilename implements Rule {
 									continue;
 								}
 								
-								PdfContentByte content = pdfStamper.getOverContent(1);
 								for (ChartConcept chartConcept : conceptList) {
 									ConceptXAxis conceptXAxis = chartConcept.getConceptXAxis();
 									ConceptYAxis conceptYAxis = chartConcept.getConceptYAxis();
@@ -220,10 +219,11 @@ public class getGrowthChartFilename implements Rule {
 										continue;
 									}
 									
-									addPlots(growthChart, patient, conceptXAxis, conceptYAxis, image, content, birthdate);
+									addPlots(growthChart, patient, conceptXAxis, conceptYAxis, image, birthdate, contentStream, document);
 								}
-								
-								pdfStamper.close();
+								contentStream.close();
+								document.save(new FileOutputStream(growthChartDirectory+ pdfFilename));
+								document.close();
 								break;
 							}
 							catch (Exception e) {
@@ -257,7 +257,7 @@ public class getGrowthChartFilename implements Rule {
 	}
 	
 	private void addPlots(GrowthChart growthChart, Patient patient, ConceptXAxis conceptXAxis, ConceptYAxis conceptYAxis, 
-	                      Image image, PdfContentByte content, Date birthdate) 
+	                      PDImageXObject image, Date birthdate, PDPageContentStream contents, PDDocument document) 
 	throws Exception {
 		ConceptService conceptService = Context.getConceptService();
 		Concept yConcept = conceptService.getConceptByName(conceptYAxis.getName());
@@ -329,8 +329,7 @@ public class getGrowthChartFilename implements Rule {
 				Float yValue = Float.parseFloat(currObs.getValueNumeric().toString());
 				Float yPosition = computeAbsolutePosition(conceptYAxis.getMinPosition(), conceptYAxis.getMaxPosition(), 
 					conceptYAxis.getMinVal(), conceptYAxis.getMaxVal(), yValue);
-				image.setAbsolutePosition(xPosition, yPosition);
-				content.addImage(image);
+				contents.drawImage(image, xPosition, yPosition);
 			}
 		}
 	}

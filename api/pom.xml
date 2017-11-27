@@ -69,6 +69,10 @@
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+    	<groupId>org.apache.pdfbox</groupId>
+    	<artifactId>pdfbox</artifactId>
+	</dependency>
 	</dependencies>
 
 	<build>

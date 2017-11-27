@@ -19,6 +19,11 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.icepdf.core.exceptions.PDFException;
 import org.icepdf.core.exceptions.PDFSecurityException;
 import org.icepdf.core.pobjects.Document;
@@ -57,12 +62,6 @@ import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
 
 public class getGrowthChartFilename implements Rule {
 	
@@ -189,7 +188,6 @@ public class getGrowthChartFilename implements Rule {
 		
 		try {
 			
-			Image image = Image.getInstance(plotImageLocation);			
 			GrowthCharts growthCharts = growthChartConfig.getGrowthCharts();
 			if (growthCharts == null) {
 				return null;
@@ -201,16 +199,17 @@ public class getGrowthChartFilename implements Rule {
 			}
 			
 			for (GrowthChart growthChart : growthChartList) {
+				PDDocument document = PDDocument.load(new File(growthChart.getFileLocation()));
+				PDPage page1 = document.getPage(0);
+				PDImageXObject image = PDImageXObject.createFromFile(plotImageLocation,document);	
+				PDPageContentStream contentStream = new PDPageContentStream(document, page1, true, true, true);
 				if (typeOfChart.equals(growthChart.getChartType())) {
 					if (gender.equals(growthChart.getGender())) {
 						if (ageInMonths >= growthChart.getAgeInMonthsMin() && ageInMonths < growthChart.getAgeInMonthsMax()) {
 							try {
-								PdfReader pdfReader = new PdfReader(growthChart.getFileLocation());
 								pdfFilename = IOUtil.getFilenameWithoutExtension(growthChart.getFileLocation()) + "_" + suffix + 
 									".pdf";
-								File pdfFile = new File(growthChartDirectory+ pdfFilename);
-								PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(pdfFile));
-								
+							
 								ChartConcepts concepts = growthChart.getChartConcepts();
 								if (concepts == null) {
 									continue;
@@ -222,7 +221,6 @@ public class getGrowthChartFilename implements Rule {
 									continue;
 								}
 								
-								PdfContentByte content = pdfStamper.getOverContent(1);
 								for (ChartConcept chartConcept : conceptList) {
 									ConceptXAxis conceptXAxis = chartConcept.getConceptXAxis();
 									ConceptYAxis conceptYAxis = chartConcept.getConceptYAxis();
@@ -232,10 +230,11 @@ public class getGrowthChartFilename implements Rule {
 										continue;
 									}
 									
-									addPlots(growthChart, patient, conceptXAxis, conceptYAxis, image, content, birthdate,pdfStamper);
+									addPlots(growthChart, patient, conceptXAxis, conceptYAxis, image, birthdate, contentStream, document);
 								}
-								
-								pdfStamper.close();
+								contentStream.close();
+								document.save(new FileOutputStream(growthChartDirectory+ pdfFilename));
+								document.close();
 								break;
 							}
 							catch (Exception e) {
@@ -277,9 +276,9 @@ public class getGrowthChartFilename implements Rule {
 	 * @param count
 	 * @throws Exception
 	 */
-	private void writeBiometrics(PdfStamper pdfStamper, Encounter encounter, Date birthdate, Integer count, List<Obs> obs) throws Exception{
+	private void writeBiometrics(PDDocument document, Encounter encounter, Date birthdate, Integer count, List<Obs> obs) throws Exception{
 		//fill in most recent biometrics
-		AcroFields form = pdfStamper.getAcroFields();
+		PDAcroForm form = document.getDocumentCatalog().getAcroForm();
 		
 		if (encounter != null) {
 			for (Obs currObs : obs) {
@@ -288,30 +287,30 @@ public class getGrowthChartFilename implements Rule {
 				if (value != null) {
 					value = Math.round(value * 100) / 100D;
 					if (name.equalsIgnoreCase(WEIGHT)) {
-						form.setField("Weight"+count, value.toString()+" lbs");
+						form.getField("Weight"+count).setValue(value.toString()+" lbs");
 					}
 					if (name.equalsIgnoreCase(HEIGHT)) {
-						form.setField("Height"+count, value.toString()+" in");
+						form.getField("Height"+count).setValue(value.toString()+" in");
 					}
 					if (name.equalsIgnoreCase(HEAD_CIRCUMFERENCE)) {
-						form.setField("HC"+count, value.toString()+" cm");
+						form.getField("HC"+count).setValue(value.toString()+" cm");
 					}
 					if (name.equalsIgnoreCase(BMI)) {
-						form.setField("BMI"+count, value.toString());
+						form.getField("BMI"+count).setValue(value.toString());
 					}
 				}	
 			}
 			String value = Util.adjustAgeUnits(birthdate, encounter.getEncounterDatetime());
-			form.setField("Age"+count, value);
+			form.getField("Age"+count).setValue(value);
 			String pattern = "M/d/yyyy";
 			SimpleDateFormat dateForm = new SimpleDateFormat(pattern);
 			String encounterDate = dateForm.format(encounter.getEncounterDatetime());
-			form.setField("Date"+count, encounterDate);
+			form.getField("Date"+count).setValue(encounterDate);
 		}
 	}
 	
 	private void addPlots(GrowthChart growthChart, Patient patient, ConceptXAxis conceptXAxis, ConceptYAxis conceptYAxis, 
-	                      Image image, PdfContentByte content, Date birthdate, PdfStamper pdfStamper) 
+	                      PDImageXObject image, Date birthdate, PDPageContentStream contents, PDDocument document) 
 	throws Exception {
 		ConceptService conceptService = Context.getConceptService();
 		Concept yConcept = conceptService.getConceptByName(conceptYAxis.getName());
@@ -390,9 +389,8 @@ public class getGrowthChartFilename implements Rule {
 				    conceptXAxis.getMinVal(), conceptXAxis.getMaxVal(), xValue);
 				Float yPosition = computeAbsolutePosition(conceptYAxis.getMinPosition(), conceptYAxis.getMaxPosition(),
 				    conceptYAxis.getMinVal(), conceptYAxis.getMaxVal(), yValue);
-				image.setAbsolutePosition(xPosition, yPosition);
-				content.addImage(image);
-				writeBiometrics(pdfStamper, encounter, birthdate,biometricsIndex,obs);
+				contents.drawImage(image, xPosition, yPosition);
+				writeBiometrics(document, encounter, birthdate,biometricsIndex,obs);
 
 				biometricsIndex++;
 			}
