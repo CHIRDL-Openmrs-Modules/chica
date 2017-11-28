@@ -351,86 +351,66 @@ function calculateTransitionReadiness() {
 	// Determine Manage Medication Answers
 	var spanishExtension = "_2";
 	if (english) spanishExtension = "";
-	var transitionReady = null;
+	var transitionReady = true;
 	for(var i = 0, len= managingMedicationAnswers.length; i < len; i++){
 		var value = parseInt($("input[name=TRAQQuestionEntry_" + managingMedicationAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value)){
-			continue;
-		}
-		if (value < questionPassCriteria){
+		if (isNaN(value) || value < questionPassCriteria){
 			transitionReady = false;
 			break;
 		}
-		transitionReady = true;
-	}
-	if (transitionReady != null ){
-		$("#TRAQManagingMedications").val((transitionReady)? "passed" : "failed");
 	}
 	
+	$("#TRAQManagingMedications").val((transitionReady)? "passed" : "failed");
 	
-	transitionReady = null;
+	
+	
+	transitionReady = true;
 	for(var i = 0, len= appointmentKeepingAnswers.length; i < len; i++){
 		var value = parseInt($("input[name=TRAQQuestionEntry_" + appointmentKeepingAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value)){
-			continue;
-		}
-		if (value < questionPassCriteria){
+		if (isNaN(value) || value < questionPassCriteria){
 			transitionReady = false;
 			break;
 		}
-		transitionReady = true;
-	}
-	if (transitionReady != null ){
-		$("#TRAQAppointmentKeeping").val((transitionReady)? "passed" : "failed");
 	}
 	
-	transitionReady = null;
+	$("#TRAQAppointmentKeeping").val((transitionReady)? "passed" : "failed");
+	
+	
+	transitionReady = true;
 	for(var i = 0, len= trackingHealthIssuesAnswers.length; i < len; i++){
 		var value = parseInt($("input[name=TRAQQuestionEntry_" + trackingHealthIssuesAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value)){
-			continue;
-		}
-		if (value < questionPassCriteria){
+		if (isNaN(value) || value < questionPassCriteria){
 			transitionReady = false;
 			break;
 		}
-		transitionReady = true;
-	}
-	if (transitionReady != null ){
-		$("#TRAQTrackingHealthIssues").val((transitionReady)? "passed" : "failed");
 	}
 	
-	transitionReady = null;
+	$("#TRAQTrackingHealthIssues").val((transitionReady)? "passed" : "failed");
+	
+	
+	transitionReady = true;
 	for(var i = 0, len= talkingWithProvidersAnswers.length; i < len; i++){
 		var value = parseInt($("input[name=TRAQQuestionEntry_" + talkingWithProvidersAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value)){
-			continue;
-		}
-		if (value < questionPassCriteria){
+		if (isNaN(value) || value < questionPassCriteria){
 			transitionReady = false;
 			break;
 		}
-		transitionReady = true;
-	}
-	if (transitionReady != null ){
-		$("#TRAQTalkingWithProviders").val((transitionReady)? "passed" : "failed");
 	}
 	
-	transitionReady = null;
+	$("#TRAQTalkingWithProviders").val((transitionReady)? "passed" : "failed");
+	
+	
+	transitionReady = true;
 	for(var i = 0, len= dailyActivitiesAnswers.length; i < len; i++){
 		var value = parseInt($("input[name=TRAQQuestionEntry_" + dailyActivitiesAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value)){
-			continue;
-		}
-		if (value < questionPassCriteria){
+		if (isNaN(value) || value < questionPassCriteria){
 			transitionReady = false;
 			break;
 		}
-		transitionReady = true;
 	}
-	if (transitionReady != null ){
-		$("#TRAQDailyActivitiesAnswers").val((transitionReady)? "passed" : "failed");
-	}
+	
+	$("#TRAQDailyActivitiesAnswers").val((transitionReady)? "passed" : "failed");
+	
 	
 	
 	
