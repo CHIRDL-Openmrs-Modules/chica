@@ -84,7 +84,7 @@ function setLanguage(patientName, birthdate) {
 	//Strings with spanish characters need hex code
 	//HTML with spanish characters can use HTML codes
 	
-	var formTitleText = "Transition Readiness Assessment Questionnaire " + openParen + "TRAQ" + closeParen;
+	var formTitleText = "Transition Readiness Assessment Questionnaire";
 	var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
     var vitalsButtonText = "Staff";
@@ -100,7 +100,7 @@ function setLanguage(patientName, birthdate) {
     
     if (!english) {
     	
-    	formTitleText = "Cuestionario de Evaluaci" + oAcute + "n para la Preparaci" + oAcute + "n de la Transici" + oAcute + "n " + openParen + "TRAQ" + closeParen;
+    	formTitleText = "Cuestionario de Evaluaci" + oAcute + "n para la Preparaci" + oAcute + "n de la Transici" + oAcute + "n";
         langButtonText = "English"; 
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";

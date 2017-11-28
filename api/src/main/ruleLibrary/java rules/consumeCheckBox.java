@@ -31,9 +31,6 @@ import org.openmrs.module.dss.logic.op.OperandObject;
  */
 public class consumeCheckBox implements Rule
 {
-	
-	private LogicService logicService = Context.getLogicService();
-	private Log log = LogFactory.getLog(this.getClass());
 
 	/**
 	 * *
