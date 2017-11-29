@@ -4350,9 +4350,15 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         <sql> 
         	INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
 			SELECT a.form_id,'pws.form', b.form_attribute_id, d.location_tag_id, d.location_id 
-			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
-			WHERE EXISTS 
-				(SELECT name FROM chirdlutilbackports_program WHERE name IN ('chica_epic','chica_iuh_cerner')) 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d, chirdlutilbackports_program e 
+			WHERE e.name = 'chica_epic' 
+			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'url' AND d.location_id=c.location_id 
+			GROUP BY d.location_tag_id,d.location_id;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.form_id,'pwsIUHCerner.form', b.form_attribute_id, d.location_tag_id, d.location_id 
+			FROM form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d, chirdlutilbackports_program e 
+			WHERE e.name = 'chica_iuh_cerner' 
 			AND a.form_id=(SELECT form_id FROM form where name='PWS' AND retired=0) AND b.name = 'url' AND d.location_id=c.location_id 
 			GROUP BY d.location_tag_id,d.location_id;
 			
