@@ -1,4 +1,18 @@
-<div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+        <!-- Initial not-finished dialog. Usually only for adolescent forms -->
+        <div id="not_finished_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
+            <div data-role="header" data-theme="b">
+                <h1>Not Completed</h1>
+            </div>
+            <div data-role="content">
+                <span>This form is not complete.  Please complete before continuing.</span>
+                <div style="margin: 0 auto;text-align: center;">
+                    <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Close</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Final not-finished dialog -->
+        <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Not Completed</h1>
             </div>
@@ -10,6 +24,7 @@
                 </div>
             </div>
         </div>
+        
         <div id="finish_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Error</h1>
