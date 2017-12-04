@@ -124,7 +124,7 @@ public class physicianNotePSFResults implements Rule {
 		String lastFormName = null;
 		if (encounters.size() == 1) {
 			lastEncounter =  encounters.get(0);
-			lastFormName = Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) lastEncounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+			lastFormName = Util.getPrimaryFormNameByLocationTag(lastEncounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 		} else {
 			// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
 			ATDService atdService = Context.getService(ATDService.class);
