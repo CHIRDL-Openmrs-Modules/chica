@@ -130,7 +130,7 @@ public class physicianNotePSFResults implements Rule {
 			ATDService atdService = Context.getService(ATDService.class);
 			for (int i = encounters.size() - 1; i >= 0 && lastEncounter == null; i--) {
 				Encounter encounter = encounters.get(i);
-				lastFormName = Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+				lastFormName = Util.getPrimaryFormNameByLocationTag(encounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 				List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), lastFormName);
 				if (stats == null || stats.size() == 0) {
 					continue;
