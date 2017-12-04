@@ -83,17 +83,17 @@ public class VendorImpl implements Vendor {
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getStartState(java.lang.Integer, java.lang.Integer)
+	 * @see org.openmrs.module.chica.vendor.Vendor#getStartState(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
-	public String getStartState(Integer locationId, Integer locationTagId) {
-		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE);
+	public String getStartState(Integer locationId, Integer locationTagId, String formName) {
+		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, formName);
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getEndState(java.lang.Integer, java.lang.Integer)
+	 * @see org.openmrs.module.chica.vendor.Vendor#getEndState(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
-	public String getEndState(Integer locationId, Integer locationTagId) {
-		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE);
+	public String getEndState(Integer locationId, Integer locationTagId, String formName) {
+		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, formName);
 	}
 	
 	/**
@@ -113,10 +113,10 @@ public class VendorImpl implements Vendor {
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getFormPage(java.lang.Integer, java.lang.Integer)
+	 * @see org.openmrs.module.chica.vendor.Vendor#getFormPage(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
-	public String getFormPage(Integer locationId, Integer locationTagId) {
-		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_URL);
+	public String getFormPage(Integer locationId, Integer locationTagId, String formName) {
+		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_URL, formName);
 	}
 	
 	/**
@@ -225,10 +225,10 @@ public class VendorImpl implements Vendor {
 	 * @param locationId The location identifier.
 	 * @param locationTagId The location tag identifier.
 	 * @param attributeName The name of the attribute.
+	 * @param formName The name of the form being accessed.
 	 * @return The form attribute value or null.
 	 */
-	private String getFormAttributeValue(Integer locationId, Integer locationTagId, String attributeName) {
-		String formName = getFormName(locationId, locationTagId);
+	private String getFormAttributeValue(Integer locationId, Integer locationTagId, String attributeName, String formName) {
 		if (StringUtils.isNotBlank(formName)) {
     		Form form = Context.getFormService().getForm(formName);
     		if (form != null) {

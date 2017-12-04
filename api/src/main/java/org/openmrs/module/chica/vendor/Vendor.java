@@ -49,18 +49,20 @@ public interface Vendor {
 	 * 
 	 * @param locationId The encounter location identifier.
 	 * @param locationTagId The encounter location identifier.
+	 * @param formName The name of the form being accessed.
 	 * @return The start state.
 	 */
-	public String getStartState(Integer locationId, Integer locationTagId);
+	public String getStartState(Integer locationId, Integer locationTagId, String formName);
 	
 	/**
 	 * Returns the endState parameter.
 	 * 
 	 * @param locationId The encounter location identifier.
 	 * @param locationTagId The encounter location identifier.
+	 * @param formName The name of the form being accessed.
 	 * @return The end state.
 	 */
-	public String getEndState(Integer locationId, Integer locationTagId);
+	public String getEndState(Integer locationId, Integer locationTagId, String formName);
 	
 	/**
 	 * Returns the providerId parameter.
@@ -74,9 +76,10 @@ public interface Vendor {
 	 * 
 	 * @param locationId The encounter location identifier.
 	 * @param locationTagId The encounter location identifier.
+	 * @param formName The name of the form being accessed.
 	 * @return The form page.
 	 */
-	public String getFormPage(Integer locationId, Integer locationTagId);
+	public String getFormPage(Integer locationId, Integer locationTagId, String formName);
 	
 	/**
 	 * Returns the mrn parameter.
