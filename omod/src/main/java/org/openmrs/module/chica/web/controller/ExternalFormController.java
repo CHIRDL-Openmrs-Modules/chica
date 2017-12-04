@@ -178,9 +178,8 @@ public class ExternalFormController {
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		List<Encounter> encounterList = getEncounterList(patient); 
 		org.openmrs.module.chica.hibernateBeans.Encounter encounter = null ;
-
-		org.openmrs.module.chica.service.EncounterService encounterService = Context.getService(org.openmrs.module.chica.service.EncounterService.class);
 		if (encounterList!=null && encounterList.size() == 1) { 
+			org.openmrs.module.chica.service.EncounterService encounterService = Context.getService(org.openmrs.module.chica.service.EncounterService.class);
 			Integer encounterId = encounterList.get(0).getEncounterId();
 			encounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterId);
 			setURLAttributes(vendor, encounter, map);
