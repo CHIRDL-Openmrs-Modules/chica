@@ -22,9 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
-import org.openmrs.Location;
-import org.openmrs.LocationTag;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.vendor.Vendor;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -43,20 +40,12 @@ public class VendorImpl implements Vendor {
 	private static Log log = LogFactory.getLog(VendorImpl.class);
 	
 	protected static final String PARAM_MRN = "mrn";
-	protected static final String PARAM_FORM_PAGE = "formPage";
 	protected static final String PARAM_PROVIDER_ID = "providerId";
-	protected static final String PARAM_END_STATE = "endState";
-	protected static final String PARAM_START_STATE = "startState";
-	protected static final String PARAM_FORM_NAME = "formName";
 	protected static final String PARAM_PASSWORD = "password";
 	protected static final String PARAM_USERNAME = "username";
 	private static final char CHARACTER_SPACE = ' ';
 	private static final String STRING_SPACE = " ";
 	private static final String REPLACEMENT_VALUE_ZERO = "0";
-	private String formName;
-	private String formPage;
-	private String startStateStr;
-	private String endStateStr;
 	
 	protected HttpServletRequest request = null;
 	
@@ -74,24 +63,37 @@ public class VendorImpl implements Vendor {
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getFormName()
+	 * @see org.openmrs.module.chica.vendor.Vendor#getFormName(java.lang.Integer, java.lang.Integer)
 	 */
-	public String getFormName() {
-		return formName;
+	public String getFormName(Integer locationId, Integer locationTagId) {
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+    	
+    	LocationTagAttributeValue locationTagAttributeValueForm = null;
+    	
+     	if (locationTagId != null && locationId != null) {
+     		locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, 
+        			ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM, locationId);
+     	}
+     	
+    	if (locationTagAttributeValueForm != null) {
+    		return locationTagAttributeValueForm.getValue(); 
+    	} 
+    	
+    	return null;
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getStartState()
+	 * @see org.openmrs.module.chica.vendor.Vendor#getStartState(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
-	public String getStartState() {
-		return startStateStr;
+	public String getStartState(Integer locationId, Integer locationTagId, String formName) {
+		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, formName);
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getEndState()
+	 * @see org.openmrs.module.chica.vendor.Vendor#getEndState(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
-	public String getEndState() {
-		return endStateStr;
+	public String getEndState(Integer locationId, Integer locationTagId, String formName) {
+		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, formName);
 	}
 	
 	/**
@@ -111,10 +113,10 @@ public class VendorImpl implements Vendor {
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.vendor.Vendor#getFormPage()
+	 * @see org.openmrs.module.chica.vendor.Vendor#getFormPage(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
-	public String getFormPage() {
-		return formPage;
+	public String getFormPage(Integer locationId, Integer locationTagId, String formName) {
+		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_URL, formName);
 	}
 	
 	/**
@@ -218,53 +220,27 @@ public class VendorImpl implements Vendor {
 	}
 	
 	/**
-	 * Retrieves FormName, FormPage, StartState and EndState 
-	 * @param encounter The patient's encounter.
+	 * Convenience method to lookup form attribute values.
+	 * 
+	 * @param locationId The location identifier.
+	 * @param locationTagId The location tag identifier.
+	 * @param attributeName The name of the attribute.
+	 * @param formName The name of the form being accessed.
+	 * @return The form attribute value or null.
 	 */
-	public void getURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter) {
-		
-		String locationTagString = encounter.getPrinterLocation();
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		LocationTag locationTag = null;
-    	if (StringUtils.isNotBlank(locationTagString)) { 
-    		LocationService locationService = Context.getLocationService();
-    		locationTag = locationService.getLocationTagByName(locationTagString);
-		}
-    	
-    	Location location = encounter.getLocation();
-    	LocationTagAttributeValue locationTagAttributeValueForm = null;
-    	
-     	if (locationTag != null && location != null) {
-     		locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTag.getLocationTagId(), 
-        			ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM,location.getLocationId());
-     	}
-    	Form form = null;
-    	formName = null;
-    	formPage = null;
-    	startStateStr = null;
-    	endStateStr = null;
-    	
-    	if (locationTagAttributeValueForm != null && !locationTagAttributeValueForm.equals("") ) {
-    		formName = locationTagAttributeValueForm.getValue(); 
-    		
-    		form = Context.getFormService().getForm(formName);
-    		
-    		if (form != null && !form.equals("")) {
-    			FormAttributeValue formAttributeValueURL = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_URL, locationTag.getLocationTagId(), location.getLocationId());
-        		FormAttributeValue formAttributeValueStartState = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, locationTag.getLocationTagId(), location.getLocationId());
-        		FormAttributeValue formAttributeValueEndState = chirdlutilbackportsService.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, locationTag.getLocationTagId(), location.getLocationId());
-
-        		if (formAttributeValueURL != null && !formAttributeValueURL.equals("") ) { 
-        			formPage = formAttributeValueURL.getValue();
-        		} 
-        		if (formAttributeValueStartState != null && !formAttributeValueStartState.equals("") ) {
-        			startStateStr = formAttributeValueStartState.getValue();
-        		}
-        		if (formAttributeValueEndState != null && !formAttributeValueEndState.equals("") ) {
-        			endStateStr = formAttributeValueEndState.getValue();
+	private String getFormAttributeValue(Integer locationId, Integer locationTagId, String attributeName, String formName) {
+		if (StringUtils.isNotBlank(formName)) {
+    		Form form = Context.getFormService().getForm(formName);
+    		if (form != null) {
+    			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+    			FormAttributeValue formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
+    				form.getFormId(), attributeName, locationTagId, locationId);
+        		if (formAttributeValue != null) { 
+        			return formAttributeValue.getValue();
         		}
     		}
-    	} 
+		}
+		
+		return null;
 	}
-	
 }

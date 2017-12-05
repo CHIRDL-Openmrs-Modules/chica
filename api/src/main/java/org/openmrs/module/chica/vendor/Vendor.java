@@ -38,23 +38,31 @@ public interface Vendor {
 	/**
 	 * Returns the formName parameter.
 	 * 
+	 * @param locationId The encounter location identifier.
+	 * @param locationTagId The encounter location identifier.
 	 * @return The form name.
 	 */
-	public String getFormName();
+	public String getFormName(Integer locationId, Integer locationTagId);
 	
 	/**
 	 * Returns the startState parameter.
 	 * 
+	 * @param locationId The encounter location identifier.
+	 * @param locationTagId The encounter location identifier.
+	 * @param formName The name of the form being accessed.
 	 * @return The start state.
 	 */
-	public String getStartState();
+	public String getStartState(Integer locationId, Integer locationTagId, String formName);
 	
 	/**
 	 * Returns the endState parameter.
 	 * 
+	 * @param locationId The encounter location identifier.
+	 * @param locationTagId The encounter location identifier.
+	 * @param formName The name of the form being accessed.
 	 * @return The end state.
 	 */
-	public String getEndState();
+	public String getEndState(Integer locationId, Integer locationTagId, String formName);
 	
 	/**
 	 * Returns the providerId parameter.
@@ -66,9 +74,12 @@ public interface Vendor {
 	/**
 	 * Returns the formPage parameter.
 	 * 
+	 * @param locationId The encounter location identifier.
+	 * @param locationTagId The encounter location identifier.
+	 * @param formName The name of the form being accessed.
 	 * @return The form page.
 	 */
-	public String getFormPage();
+	public String getFormPage(Integer locationId, Integer locationTagId, String formName);
 	
 	/**
 	 * Returns the mrn parameter.
@@ -83,11 +94,4 @@ public interface Vendor {
 	 * @return The encryption key
 	 */
 	public String getEncryptionKey();
-	
-	/**
-	 * Retrieves FormName, FormPage, StartState and EndState 
-	 * 
-	 * @param encounter The patient's encounter.
-	 */
-	public void getURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter) ;
 }
