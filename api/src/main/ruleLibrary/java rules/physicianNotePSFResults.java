@@ -124,12 +124,14 @@ public class physicianNotePSFResults implements Rule {
 		String lastFormName = null;
 		if (encounters.size() == 1) {
 			lastEncounter =  encounters.get(0);
+			// Passing the enounterId instead of encounter to prevent possible ClassCastException while iterating through list of encounters.
 			lastFormName = Util.getPrimaryFormNameByLocationTag(lastEncounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 		} else {
 			// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
 			ATDService atdService = Context.getService(ATDService.class);
 			for (int i = encounters.size() - 1; i >= 0 && lastEncounter == null; i--) {
 				Encounter encounter = encounters.get(i);
+				// Passing the enounterId instead of encounter to prevent possible ClassCastException while iterating through list of encounters.
 				lastFormName = Util.getPrimaryFormNameByLocationTag(encounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 				List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), lastFormName);
 				if (stats == null || stats.size() == 0) {
