@@ -20,8 +20,9 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/TRAQMobile.js" charset="utf-8"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/TRAQMobile.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
+
 
 </head>
 <c:set var="search" value="'" />
@@ -33,8 +34,8 @@
 <%@ include file="specialCharacters.jsp" %>
 
 <!-- Titles/Headers/Footers/Buttons/Copyright  -->
-<c:set var="formName" value='Transition Readiness Assessment Questionnaire${openParen}TRAQ${closeParen}'/>
-<c:set var="formName_sp" value='Cuestionario de Evaluaci${oAcute}n para la Preparaci${oAcute}n de la Transici${oAcute}n ${openParen}TRAQ${closeParen}:'/>
+<c:set var="formName" value='Transition Readiness Assessment Questionnaire'/>
+<c:set var="formName_sp" value='Cuestionario de Evaluaci${oAcute}n para la Preparaci${oAcute}n de la Transici${oAcute}n:'/>
 <c:set var="headerManageMedication" value='Managing Medications${colon}'/>
 <c:set var="headerManageMedication_sp" value='Manejo de la medicaci${oAcute}n ${openParen}para pacientes que han tomado o toman medicaci${oAcute}n${closeParen}'/>
 <c:set var="headerApptKeeping" value='Appointment Keeping${colon}'/>
@@ -124,7 +125,7 @@
 	        <strong><span id="instructions"></span></strong>
 	        <div class="ui-block-a">
 				<div >	
-				   <input type="checkbox" data-theme="b" name="TRAQInformantCheckbox" id="TRAQInformantCheckbox"  data-mini="true" value="Y"/>
+				   <input type="checkbox" data-theme="b" name="TRAQInformantCheckbox" id="TRAQInformantCheckbox" value="Y"/>
 	   				<label id="TRAQInformantCheckboxLabel" for="TRAQInformantCheckbox" ></label>
 				</div>
     		</div>
@@ -473,7 +474,7 @@
 	
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(changePage(${PNumber}-1))" style="width: 150px;">Previous</a>
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
 	    </div>
 	</div>
@@ -735,7 +736,7 @@
 		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
-		     <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
+		     <div><h3>${headerTalkingWithProviders_sp}</h3><hr/><br/></div>
 		     <c:set var="QNumber" value="16_2"/>
 		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -761,7 +762,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	         <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
+	         <div><h3>${headerTalkingWithProviders_sp}</h3><hr/><br/></div>
 	        
 	        <c:set var="QNumber" value="17_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -772,9 +773,9 @@
 		    <div><h3>${headerManagingDailyActivities_sp}</h3><hr/><br/></div>
 		    
 		    <c:set var="QNumber" value="18_2"/>
-		    <c:set var="question" value='Do you help plan or prepare meals&#47food&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 			<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
@@ -815,7 +816,7 @@
 	    </div>
         
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-          	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1))" style="width: 150px;">Anterior</a>
+          	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
         	<a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continuar</a>
 	    </div>
 	</div>
