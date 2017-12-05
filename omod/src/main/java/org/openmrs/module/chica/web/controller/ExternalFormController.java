@@ -179,6 +179,7 @@ public class ExternalFormController {
 		List<Encounter> encounterList = getEncounterList(patient); 
 		org.openmrs.module.chica.hibernateBeans.Encounter encounter = null ;
 		if (encounterList!=null && encounterList.size() == 1) { 
+			// Look up the encounter through the CHICA encounter service to prevent class cast exceptions.
 			org.openmrs.module.chica.service.EncounterService encounterService = Context.getService(org.openmrs.module.chica.service.EncounterService.class);
 			Integer encounterId = encounterList.get(0).getEncounterId();
 			encounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterId);
@@ -332,6 +333,7 @@ public class ExternalFormController {
 	                                                                                               Map<String, Object> map, Vendor vendor) {
 		org.openmrs.module.chica.service.EncounterService encounterService = Context.getService(org.openmrs.module.chica.service.EncounterService.class);
 		for (int i = encounters.size() - 1; i >= 0; i--) {
+			// Look up the encounter through the CHICA encounter service to prevent class cast exceptions.
 			Integer encounterId = encounters.get(i).getEncounterId();
 			org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterId);
 			setURLAttributes(vendor, chicaEncounter, map);
