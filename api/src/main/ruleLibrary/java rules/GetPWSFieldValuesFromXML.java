@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.FieldType;
@@ -54,6 +56,16 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	private static final String BPP_FIELD = "BPP";
 	private static final String TEMPERATURE_METHOD_FIELD = "Temperature_Method";
 	private static final String PREV_WEIGHT_DATE_FIELD = "PrevWeightDate";
+	private static final String HEIGHT_FIELD = "Height";
+	private static final String HEIGHT_UNITS_FIELD = "HeightSUnits";
+	private static final String PERCENT = "%";
+	private static final String PERIOD = ".";
+	private static final String VITALS_PROCESSED_FIELD = "VitalsProcessed";
+	private static final String VITALS_PROCESSED_VALUE = "Awaiting";
+	private static final String BP_FIELD = "BP";
+	private static final String PREV_WEIGHT_FIELD = "PrevWeight";
+	private static final String BMI_FIELD = "BMI";
+	private static final String TEMPERATURE_FIELD = "Temperature";
 	private static final int MAX_TRIES = 2;
 
 	/**
@@ -199,6 +211,13 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	 */
 	private String createFieldValueString(List<Field> currentFieldsInFile, List<String> currentFieldNames)
 	{
+		// Create map of the values found in the xml file
+		Map<String, String> xmlValuesMap = new HashMap<String, String>();
+		for(Field field  : currentFieldsInFile)
+		{
+			xmlValuesMap.put(field.getId(), field.getValue());
+		}
+		
 		// Add the value and the field name to the return string only if it is found in the list of currentFieldNames
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i < currentFieldsInFile.size(); i++)
@@ -215,28 +234,82 @@ public class GetPWSFieldValuesFromXML implements Rule{
 				{
 					switch(field.getId())
 					{
-					case HEIGHTP_FIELD:
-					case WEIGHTP_FIELD:
-					case BMIP_FIELD:
-					case HCP_FIELD:
-						// The fields in the cases above will all use this formatting								
-						builder.append(" (").append(field.getValue()).append("%)");								
+					case WEIGHTKG_FIELD:
+						// Combine WeightKG + WeightP
+						builder.append(field.getValue())
+						.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE)
+						.append(ChirdlUtilConstants.MEASUREMENT_KG)
+						.append(PERIOD);
+						
+						String weightP = xmlValuesMap.get(WEIGHTP_FIELD);
+						builder.append(formatFieldWithParenthesis(weightP, true));
 						break;
-					case WEIGHTKG_FIELD:								
-						builder.append(field.getValue()).append(" kg.");									
-						break;
-					case HC_FIELD:							
-						builder.append(field.getValue()).append(" cm.");			
+					case HC_FIELD:
+						// Combine HC and HCP field
+						builder.append(field.getValue())
+						.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE)
+						.append(ChirdlUtilConstants.MEASUREMENT_CM)
+						.append(PERIOD);
+						
+						String hcp = xmlValuesMap.get(HCP_FIELD);
+						builder.append(formatFieldWithParenthesis(hcp, true));
 						break;
 					case PULSEOX_FIELD:									
-						builder.append(field.getValue()).append("%");								
+						builder.append(field.getValue()).append(PERCENT);								
 						break;
-					case TEMPERATURE_METHOD_FIELD:
-					case BPP_FIELD:
-					case PREV_WEIGHT_DATE_FIELD:
-						// Temperature method and BPP just need parenthesis
-						// DWE CHICA-677 Added Previous Weight Date to this case
-						builder.append(" (").append(field.getValue()).append(")");
+					case BP_FIELD:
+						// Combine BP + BPP
+						builder.append(field.getValue());
+						
+						String bpp = xmlValuesMap.get(BPP_FIELD);
+						builder.append(formatFieldWithParenthesis(bpp, false));
+						break;
+					case PREV_WEIGHT_FIELD:
+						// Combine PrevWeight + PrevWeightDate
+						builder.append(field.getValue());
+						
+						String date = xmlValuesMap.get(PREV_WEIGHT_DATE_FIELD);
+						builder.append(formatFieldWithParenthesis(date, false));
+						break;
+					case VITALS_PROCESSED_FIELD:
+						// If the xml contains a value of false, the vitals have not been processed
+						if(ChirdlUtilConstants.GENERAL_INFO_FALSE.equalsIgnoreCase(field.getValue()))
+						{
+							builder.append(ChirdlUtilConstants.GENERAL_INFO_OPEN_PAREN)
+							.append(VITALS_PROCESSED_VALUE)
+							.append(ChirdlUtilConstants.GENERAL_INFO_CLOSE_PAREN);
+						}
+						else
+						{
+							builder.append(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
+						}
+						break;
+					case HEIGHT_FIELD:
+						// Combine Height + Units + Percentile
+						builder.append(field.getValue()); // Get the value for Height
+						
+						String units = xmlValuesMap.get(HEIGHT_UNITS_FIELD);
+						String percentile = xmlValuesMap.get(HEIGHTP_FIELD);
+						if(StringUtils.isNotBlank(units))
+						{
+							builder.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE).append(units);
+						}
+						
+						builder.append(formatFieldWithParenthesis(percentile, true));
+						break;
+					case BMI_FIELD:
+						// Combine BMI + BMIP
+						builder.append(field.getValue());
+						
+						String bmiP = xmlValuesMap.get(BMIP_FIELD);
+						builder.append(formatFieldWithParenthesis(bmiP, true));
+						break;
+					case TEMPERATURE_FIELD:
+						// Combine Temperature + Temperature_Method
+						builder.append(field.getValue());
+						
+						String tempMethod = xmlValuesMap.get(TEMPERATURE_METHOD_FIELD);
+						builder.append(formatFieldWithParenthesis(tempMethod, false));
 						break;
 					default:
 						builder.append(field.getValue());
@@ -253,6 +326,32 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			}
 		}
 
+		return builder.toString();
+	}
+	
+	/**
+	 * Formats the field including the space before the open parenthesis " (value)" OR " (value%)"
+	 * @param value
+	 * @param appendPercentSign - true to append the percent sign
+	 * @return formatted value
+	 */
+	private String formatFieldWithParenthesis(String value, boolean appendPercentSign)
+	{
+		StringBuilder builder = new StringBuilder();
+		if(StringUtils.isNotBlank(value))
+		{
+			builder.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE)
+			 .append(ChirdlUtilConstants.GENERAL_INFO_OPEN_PAREN)
+			 .append(value);
+			
+			if(appendPercentSign)
+			{
+				builder.append(PERCENT);
+			}
+			 
+			builder.append(ChirdlUtilConstants.GENERAL_INFO_CLOSE_PAREN);
+		}
+		
 		return builder.toString();
 	}
 
