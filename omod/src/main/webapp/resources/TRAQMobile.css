@@ -1,14 +1,10 @@
 .ui-btn-text, body, .ui-btn-inner, .ui-checkbox label, .ui-controlgroup-label,  .ui-controlgroup .ui-checkbox label, .ui-controlgroup .ui-radio label, .ui-radio label, .ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button, .ui-btn-text, .ui-header .ui-title, .ui-content .ui.listview .ui-li-divider {
-    font-size: 15px;
+    font-size: 17px;
 }
 .ui-header .ui-title
 {
     margin:.6em 20% .8em;
-}
-
-.ui-title
-{
-    font-size: 14px;
+	font-size: 14px;
 }
 
 em.bolder {
@@ -24,4 +20,3 @@ em.underline {
 	font-style: normal;
 	text-decoration: underline;
 }
-
