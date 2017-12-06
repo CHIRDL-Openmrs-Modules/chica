@@ -257,7 +257,7 @@ function insertChoices(questionNumber){
 		choiceDoNotKnow  = "No, no s" + eAcute + " c" + oAcute + "mo hacerlo.";
 		choiceNoButWantToLearn  = "No, pero quiero aprender a hacerlo."; 
 		choiceNoButLearning  = "No, pero estoy aprendiendo a hacerlo."; 
-		choiceYesStarted  = "S" + iAcute + ", ya he comendzado a hacerlo."; 
+		choiceYesStarted  = "S" + iAcute + ", ya he comenzado a hacerlo."; 
 		choiceYesAlways  = "S" + iAcute + ", lo hago siempre que lo necesito."; 
 	}
 	

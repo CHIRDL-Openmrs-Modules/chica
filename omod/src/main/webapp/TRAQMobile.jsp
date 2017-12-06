@@ -33,8 +33,8 @@
 <%@ include file="specialCharacters.jsp" %>
 
 <!-- Titles/Headers/Footers/Buttons/Copyright  -->
-<c:set var="formName" value='Transition Readiness Assessment Questionnaire${openParen}TRAQ${closeParen}'/>
-<c:set var="formName_sp" value='Cuestionario de Evaluaci${oAcute}n para la Preparaci${oAcute}n de la Transici${oAcute}n ${openParen}TRAQ${closeParen}:'/>
+<c:set var="formName" value='Transition Readiness Assessment Questionnaire'/>
+<c:set var="formName_sp" value='Cuestionario de Evaluaci${oAcute}n para la Preparaci${oAcute}n de la Transici${oAcute}n:'/>
 <c:set var="headerManageMedication" value='Managing Medications${colon}'/>
 <c:set var="headerManageMedication_sp" value='Manejo de la medicaci${oAcute}n ${openParen}para pacientes que han tomado o toman medicaci${oAcute}n${closeParen}'/>
 <c:set var="headerApptKeeping" value='Appointment Keeping${colon}'/>
@@ -79,17 +79,17 @@
 <c:set var="question4_2" value='${invQuestionMark}Solicit${aAcute}s tus medicamentos antes de que se terminen${questionMark}' scope="request"/>
 <c:set var="question5_2" value='${invQuestionMark}Te ocup${aAcute}s vos mismo de pedir los turnos para los consultorios m${eAcute}dicos${questionMark}' scope="request"/>
 <c:set var="question6_2" value='${invQuestionMark}Est${aAcute}s pendiente de las derivaciones a especialistas${comma} controles o de los resultados de an${aAcute}lisis de laboratorio${questionMark}' scope="request"/>
-<c:set var="question7_2" value='${invQuestionMark}Organiz${aAcute}s vos mismo c${oAcute}mo viajar para ir a las consultas m${eAcute}dicas?${questionMark}' scope="request"/>
+<c:set var="question7_2" value='${invQuestionMark}Organiz${aAcute}s vos mismo c${oAcute}mo viajar para ir a las consultas m${eAcute}dicas${questionMark}' scope="request"/>
 <c:set var="question8_2" value='${invQuestionMark}Te ocup${aAcute}s vos mismo de consultar al m${eAcute}dico si observ${aAcute}s cambios inusuales en tu salud ${openParen}por ejemplo${colon} reacciones al${eAcute}rgicas${comma} etc${period})${questionMark}' scope="request"/>
 <c:set var="question9_2" value='${invQuestionMark}Sab${eAcute}s realizar vos mismo los tr${aAcute}mites para obtener una cobertura m${eAcute}dica si perd${eAcute}s la actual${questionMark}' scope="request"/>
 <c:set var="question10_2" value='${invQuestionMark}Sab${eAcute}s qu${eAcute} beneficios cubre tu obra social${comma} prepaga${comma} etc${period}${questionMark}' scope="request"/>
 <c:set var="question11_2" value='${invQuestionMark}Manej${aAcute}s tu propio dinero y te encarg${aAcute}s de los gastos de la casa ${openParen}por ejemplo${comma} utiliz${aAcute}s tarjeta de d${eAcute}bito, cr${eAcute}dito${comma} etc${period}${closeParen}${questionMark}' scope="request"/>
-<c:set var="question12_2" value='${invQuestionMark}Pod${eAcute}s comletar vos mismo alg${uAcute}n formulario relacionado con tu historia clínica, incluida a lista de tus alergias${questionMark}' scope="request"/>
+<c:set var="question12_2" value='${invQuestionMark}Pod${eAcute}s completar vos mismo alg${uAcute}n formulario relacionado con tu historia cl${iAcute}nica, incluida a lista de tus alergias${questionMark}' scope="request"/>
 <c:set var="question13_2" value='${invQuestionMark}Ten${eAcute}s anotados tus turnos m${eAcute}dicos y dem${aAcute}s citas de alguna manera ${openParen}agenda${comma} lista${comma} celular${comma} etc${period}${closeParen}${questionMark}' scope="request"/>
-<c:set var="question14_2" value='${invQuestionMark}Realiz${aAcute}s vos mimo una lista de preguntas antes de ir a la consulta m${eAcute}dica${questionMark}' scope="request"/>
+<c:set var="question14_2" value='${invQuestionMark}Realiz${aAcute}s vos mismo una lista de preguntas antes de ir a la consulta m${eAcute}dica${questionMark}' scope="request"/>
 <c:set var="question15_2" value='${invQuestionMark}Recib${iAcute}s ayuda econ${oAcute}mica a trav${eAcute}s de alguna instituci${oAcute}n ${openParen}subsidio${comma} pensi${oAcute}n${comma} apoyo${comma} etc${period}${closeParen}${questionMark}' scope="request"/>
 <c:set var="question16_2" value='${invQuestionMark}Le cont${aAcute}s al m${eAcute}dico o a la enfermera lo que te pasa${questionMark}' scope="request"/>
-<c:set var="question17_2" value='${invQuestionMark}Respond${eAcute}s vox mismo las preguntas que te hacen el m${eAcute}dico${comma} la enfermera u otra persona del equipo de salud${questionMark}' scope="request"/>
+<c:set var="question17_2" value='${invQuestionMark}Respond${eAcute}s vos mismo las preguntas que te hacen el m${eAcute}dico${comma} la enfermera u otra persona del equipo de salud${questionMark}' scope="request"/>
 <c:set var="question18_2" value='${invQuestionMark}Colabor${aAcute}s con la planificaci${oAcute}n o preparaci${oAcute}n de las comidas${questionMark}' scope="request"/>
 <c:set var="question19_2" value='${invQuestionMark}Manten${eAcute}s ordenado tu cuarto y${slash}o casa o levant${aAcute}s la mesa y${slash}o lav${aAcute}s los platos despu${eAcute}s de comer${questionMark}' scope="request"/>
 <c:set var="question20_2" value='${invQuestionMark}Vas a hacer compras a los negocios del barrio ${openParen}por ejemplo${colon} almac${eAcute}n${comma} farmacia${comma} etc${period}${closeParen}${questionMark}' scope="request"/>
@@ -124,7 +124,7 @@
 	        <strong><span id="instructions"></span></strong>
 	        <div class="ui-block-a">
 				<div >	
-				   <input type="checkbox" data-theme="b" name="TRAQInformantCheckbox" id="TRAQInformantCheckbox"  data-mini="true" value="Y"/>
+				   <input type="checkbox" data-theme="b" name="TRAQInformantCheckbox" id="TRAQInformantCheckbox" value="Y"/>
 	   				<label id="TRAQInformantCheckboxLabel" for="TRAQInformantCheckbox" ></label>
 				</div>
     		</div>
@@ -149,7 +149,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerManageMedication}</h3><hr/><br/></div>
+	        <div><h3>${headerManageMedication}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="1" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -181,7 +181,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerManageMedication}</h3><hr/><br/></div>
+	        <div><h3>${headerManageMedication}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="3" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -214,7 +214,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerApptKeeping}</h3><hr/><br/></div>
+	        <div><h3>${headerApptKeeping}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="5" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -249,7 +249,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerApptKeeping}</h3><hr/><br/></div>
+	        <div><h3>${headerApptKeeping}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="7" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -283,7 +283,7 @@
 	    </div>
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerApptKeeping}</h3><hr/><br/></div>
+	        <div><h3>${headerApptKeeping}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="9" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -316,7 +316,7 @@
 	    </div>
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerApptKeeping}</h3><hr/><br/></div>
+	        <div><h3>${headerApptKeeping}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="11" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -324,7 +324,7 @@
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="12" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -351,7 +351,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="13" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -384,7 +384,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerTrackingHealthIssues}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="15" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -392,7 +392,7 @@
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	       
-	        <div><h3>${headerTalkingWithProviders}</h3><hr/><br/></div>
+	        <div><h3>${headerTalkingWithProviders}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="16" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -419,7 +419,7 @@
 	    </div>
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerTalkingWithProviders}</h3><hr/><br/></div>
+	        <div><h3>${headerTalkingWithProviders}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="17" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -427,7 +427,7 @@
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
-	        <div><h3>${headerManagingDailyActivities}</h3><hr/><br/></div>
+	        <div><h3>${headerManagingDailyActivities}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="18" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -454,7 +454,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerManagingDailyActivities}</h3><hr/><br/></div>
+	        <div><h3>${headerManagingDailyActivities}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="19" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -473,7 +473,7 @@
 	
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(changePage(${PNumber}-1))" style="width: 150px;">Previous</a>
+	    	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
 	    </div>
 	</div>
@@ -490,7 +490,7 @@
 	    
 	    <div id="content_${PNumber}_sp" data-role="content">
 	
-	        <div><h3>${headerManageMedication_sp}</h3><hr/><br/></div>
+	        <div><h3>${headerManageMedication_sp}</h3><hr/></div>
 	
 	        <c:set var="QNumber" value="1_2" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -524,7 +524,7 @@
 	    
 	    <div id="content_${PNumber}_sp" data-role="content">
      
-            <div><h3>${headerManageMedication_sp}</h3><hr/><br/></div>
+            <div><h3>${headerManageMedication_sp}</h3><hr/></div>
 	            
 	        <c:set var="QNumber" value="3_2" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -560,7 +560,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
      
-			<div><h3>${headerApptKeeping_sp}</h3><hr/><br/></div>
+			<div><h3>${headerApptKeeping_sp}</h3><hr/></div>
 	
 	        <c:set var="QNumber" value="5_2" />
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -595,7 +595,7 @@
 	        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
 	    </div>
 	    
-	    <div id="content_${PNumber}" data-role="content"><div><h3>${headerApptKeeping_sp}</h3><hr/><br/></div>
+	    <div id="content_${PNumber}" data-role="content"><div><h3>${headerApptKeeping_sp}</h3><hr/></div>
 	        
 	        <c:set var="QNumber" value="7_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -629,7 +629,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerApptKeeping_sp}</h3><hr/><br/></div>
+	        <div><h3>${headerApptKeeping_sp}</h3><hr/></div>
 	        
 	        <c:set var="QNumber" value="9_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -662,14 +662,14 @@
 	    </div>
 	    
 	    <div id="content_${PNumber}" data-role="content">
-	        <div><h3>${headerApptKeeping_sp}</h3><hr/><br/></div>
+	        <div><h3>${headerApptKeeping_sp}</h3><hr/></div>
 	        <c:set var="QNumber" value="11_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
 		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
-		    <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
+		    <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/></div>
 		    <c:set var="QNumber" value="12_2"/>
 		    <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -695,7 +695,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/></div>
 	        
 	        <c:set var="QNumber" value="13_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -728,14 +728,14 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/><br/></div>
+	        <div><h3>${headerTrackingHealthIssues_sp}</h3><hr/></div>
 	        <c:set var="QNumber" value="15_2"/>
 	         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
 		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
-		     <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
+		     <div><h3>${headerTalkingWithProviders_sp}</h3><hr/></div>
 		     <c:set var="QNumber" value="16_2"/>
 		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
@@ -761,7 +761,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	         <div><h3>Talking with Providers&#58</h3><hr/><br/></div>
+	         <div><h3>${headerTalkingWithProviders_sp}</h3><hr/></div>
 	        
 	        <c:set var="QNumber" value="17_2"/>
 	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -769,12 +769,12 @@
 		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
-		    <div><h3>${headerManagingDailyActivities_sp}</h3><hr/><br/></div>
+		    <div><h3>${headerManagingDailyActivities_sp}</h3><hr/></div>
 		    
 		    <c:set var="QNumber" value="18_2"/>
-		    <c:set var="question" value='Do you help plan or prepare meals&#47food&#63'/>
-	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="${question}"/>
-		    <strong>${question}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
+	        <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question}")'></a>
 			<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
@@ -796,7 +796,7 @@
 	    
 	    <div id="content_${PNumber}" data-role="content">
 	    
-	        <div><h3>${headerManagingDailyActivities_sp}</h3><hr/><br/></div>
+	        <div><h3>${headerManagingDailyActivities_sp}</h3><hr/></div>
 	        
 	        <c:set var="QNumber" value="19_2"/>
 	         <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
@@ -807,7 +807,8 @@
 		    <c:set var="QNumber" value="20_2"/>
 		     <input id="TRAQQuestion_${QNumber}" name="TRAQQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
 	        <c:set var="questionName"  value="question${QNumber}"/>
-		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+		    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
 
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
@@ -815,7 +816,7 @@
 	    </div>
         
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-          	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1))" style="width: 150px;">Anterior</a>
+          	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
         	<a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continuar</a>
 	    </div>
 	</div>
