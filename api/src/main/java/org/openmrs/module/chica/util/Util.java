@@ -9,18 +9,23 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -54,6 +59,7 @@ import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
@@ -115,8 +121,9 @@ public class Util {
 		
 		boolean usePrintedTimestamp = false;
 		
+		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 		if (formName != null && 
-				(formName.equalsIgnoreCase("PWS") 
+				(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) 
 				|| formName.equalsIgnoreCase("ImmunizationSchedule")
 				|| formName.equalsIgnoreCase("ImmunizationSchedule7yrOrOlder"))) {
 			usePrintedTimestamp = true;
@@ -327,13 +334,14 @@ public class Util {
 		else
 		{
 			for (Integer locationTagId : locationTagIds) {
-				Program program = chirdlUtilBackportsService.getProgram(locationTagId, locationId);
 				if (sessionIdMatch != null) {
 					PatientState patientState = chirdlUtilBackportsService.getLastPatientState(sessionIdMatch);
 					if (patientState != null) {
 						unfinishedStates.add(patientState);
+						break;
 					}
 				} else {
+					Program program = chirdlUtilBackportsService.getProgram(locationTagId, locationId);
 					List<PatientState> currUnfinishedStates = chirdlUtilBackportsService.getLastPatientStateAllPatients(
 						todaysDate.getTime(), program.getProgramId(), program.getStartState().getName(), locationTagId, locationId);
 					if (currUnfinishedStates != null) {
@@ -355,9 +363,7 @@ public class Util {
 			break;
 		case SECONDARY_FORMS:
 			List<MobileForm> mobileForms = config.getSecondaryForms(username);
-			if (mobileForms != null) {
-				mobileFormsList.addAll(mobileForms);
-			}
+			mobileFormsList.addAll(mobileForms);
 
 			break;
 		}
@@ -367,6 +373,7 @@ public class Util {
 		FormService formService = Context.getFormService();
 		Map<String, Form> formMap = new HashMap<String, Form>();
 		Map<String, HashMap<String, State>> mobileFormStartEndStateMap = new HashMap<String, HashMap<String, State>>();
+		Map<String, State> stateNameToStateMap = new HashMap<String, State>();
 		for (MobileForm mobileForm : mobileFormsList)
 		{
 			Form form = formService.getForm(mobileForm.getName());
@@ -376,14 +383,29 @@ public class Util {
 			}
 			formMap.put(mobileForm.getName(), form);
 			HashMap<String, State> startEndStateMap = new HashMap<String, State>();
-			State startState = chirdlUtilBackportsService.getStateByName(mobileForm.getStartState());
-			State endState = chirdlUtilBackportsService.getStateByName(mobileForm.getEndState());
+			String startStateName = mobileForm.getStartState();
+			String endStateName = mobileForm.getEndState();
+			State startState = stateNameToStateMap.get(startStateName);
+			if (startState == null) {
+				startState = chirdlUtilBackportsService.getStateByName(startStateName);
+				stateNameToStateMap.put(startStateName, startState);
+			}
+			
+			State endState = stateNameToStateMap.get(endStateName);
+			if (endState == null) {
+				endState = chirdlUtilBackportsService.getStateByName(endStateName);
+				stateNameToStateMap.put(endStateName, endState);
+			}
+			
 			startEndStateMap.put(START_STATE, startState);
 			startEndStateMap.put(END_STATE, endState);
 			mobileFormStartEndStateMap.put(mobileForm.getName(), startEndStateMap);	
 		}
 		
+		stateNameToStateMap.clear();
 		Map<String, PatientRow> patientEncounterRowMap = new HashMap<String, PatientRow>();
+		DecimalFormat decimalFormat = new DecimalFormat("#.#");
+		Double maxWeight = userClient.getMaxSecondaryFormWeight();
 		for (PatientState currState : unfinishedStates) {
 			boolean addedForm = false;
 			Integer sessionId = currState.getSessionId();
@@ -402,6 +424,9 @@ public class Util {
 				patientEncounterRowMap.put(patientId + "_" + encounterId, row);
 			}
 			
+			Double accumWeight = 0.0d;
+			Map<Integer, Double> formWeightMap = new HashMap<Integer, Double>();
+			Set<Integer> completedFormIds = new HashSet<Integer>();
 			for (MobileForm mobileForm : mobileFormsList) {
 				State startState;
 				State endState;
@@ -433,6 +458,10 @@ public class Util {
 				Integer formId = form.getFormId();
 				boolean containsStartState = formPatientStateCreateMap.containsKey(formId);
 				boolean containsEndState = formPatientStateProcessMap.containsKey(formId);
+				
+				Double formWeight = mobileForm.getWeight();
+				formWeightMap.put(formId, formWeight);
+				
 				if (containsStartState) {
 					List<PatientState> patientStates = null;
 					if (!containsEndState) {
@@ -450,6 +479,7 @@ public class Util {
 					} else {
 						patientStates = formPatientStateProcessMap.get(formId);
 						if (patientStates != null) {
+							int initialCompletedFormsSize = completedFormIds.size();
 							for (PatientState patientState : patientStates) {
 								if (patientState.getEndTime() == null) {
 									FormInstance formInstance = patientState.getFormInstance();
@@ -458,7 +488,15 @@ public class Util {
 										addedForm = true;
 										break;
 									}
+								} else {
+									completedFormIds.add(formId);
 								}
+							}
+							
+							// Only add weight for forms that have already been completed
+							if ((completedFormIds.size() > initialCompletedFormsSize) && (!addedForm) && (formWeight != null)) {
+								accumWeight += formWeight;
+								accumWeight = Double.parseDouble(decimalFormat.format(accumWeight));
 							}
 						}
 					}
@@ -470,6 +508,41 @@ public class Util {
 			if (!addedForm || row.getFormInstances() == null || row.getFormInstances().size() == 0) {
 				continue;
 			}
+			
+			if (accumWeight >= maxWeight) {
+				// We can't display any more secondary forms
+				row.getFormInstances().clear();
+				continue;
+			}
+			
+			// Filter out forms based on weight
+			Set<FormInstance> formInstances = new LinkedHashSet<FormInstance>(row.getFormInstances());
+			row.getFormInstances().clear();
+			Iterator<FormInstance> iter = formInstances.iterator();
+			while (iter.hasNext() && accumWeight < maxWeight) {
+				FormInstance formInstance = iter.next();
+				Integer formId = formInstance.getFormId();
+				Double formWeight = formWeightMap.get(formId);
+				// If a version of the form has already been completed, we do not want to add it 
+				// to the accumulated weight because it's already been accounted for.
+				if (formWeight != null && !completedFormIds.contains(formId)) {
+					Double newWeight = accumWeight + formWeight;
+					newWeight = Double.parseDouble(decimalFormat.format(newWeight));
+					if (newWeight > maxWeight) {
+						// Break out of the loop.  We want to stop even though there may be a form with a 
+						// lower weight after this one.  It wouldn't make sense to display a form with 
+						// a lower priority if the one before it is filtered out due to weight.
+						break;
+					} else {
+						accumWeight = newWeight;
+					}
+				}
+				
+				row.addFormInstance(formInstance);
+			}
+			
+			formWeightMap.clear();
+			completedFormIds.clear();
 			
 			Patient patient = currState.getPatient();
 			String lastName = org.openmrs.module.chirdlutil.util.Util.toProperCase(patient.getFamilyName());
@@ -761,7 +834,9 @@ public class Util {
 		ATDService atdService = Context.getService(ATDService.class);
 		for (int i = encounters.size() - 1; i >= 0; i--) {
 			org.openmrs.Encounter encounter = encounters.get(i);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), "PSF");
+			// Passing the enounterId instead of encounter to prevent possible ClassCastException while iterating through list of encounters.
+			String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), patientForm);
 			if (stats == null || stats.size() == 0) {
 				continue;
 			}
@@ -965,4 +1040,178 @@ public class Util {
 			
 			socketHL7ListenerService.saveMessageToDatabase(hl7Outbound);
 	}
+	
+	/**
+	 * Gets the primary form name based on location tag attribute (primaryPatientForm or primaryPhysicianForm)
+	 * @param encounter
+	 * @param attributeName Location Tag Attribute
+	 * @return form form name
+	 */
+	public static String getPrimaryFormNameByLocationTag(Encounter encounter, String attributeName)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTagAttributeValue locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, 
+				attributeName, locationId); 
+		
+		String formName = null;
+     	if (locationTagAttributeValueForm != null && StringUtils.isNotBlank(locationTagAttributeValueForm.getValue())) {
+     		formName = locationTagAttributeValueForm.getValue(); 
+     	}
+     	return formName;
+	}
+	
+	/**
+	 * Gets the primary form name based on location tag attribute (primaryPatientForm or primaryPhysicianForm)
+	 * @param encounterId
+	 * @param attributeName Location Tag Attribute
+	 * @return form form name
+	 */
+	public static String getPrimaryFormNameByLocationTag(Integer encounterId, String attributeName)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getPrimaryFormNameByLocationTag(encounter, attributeName);
+	}
+	
+	/**
+	 * Gets the primary form name based on the option that is selected in the drop-down
+	 * @param encounter
+	 * @param printOptionString option selected in the GreaseBoard action drop-down
+	 * @return form Name
+	 */
+	public static String getFormNameByPrintOptionString(Encounter encounter, String printOptionString)
+	{
+		String locTagAttrName = null;
+		if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PATIENT_FORM)) {
+ 			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM;
+ 		} else if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) {
+ 			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM;
+ 		}
+		
+		String formName = getPrimaryFormNameByLocationTag(encounter, locTagAttrName);
+		return formName;
+	}
+	
+	/**
+	 * Gets the primary form name based on the option that is selected in the drop-down
+	 * @param encounterId
+	 * @param printOptionString option selected in the GreaseBoard action drop-down
+	 * @return form Name
+	 */
+	public static String getFormNameByPrintOptionString(Integer encounterId, String printOptionString)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getFormNameByPrintOptionString(encounter, printOptionString);
+	}
+	
+	/**
+	 * Gets the form attribute for startState using the formId
+	 * @param encounter
+	 * @param formId
+	 * @return Start State name
+	 */
+	public static String getStartStateName(Encounter encounter, Integer formId)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue formAttributeValueStartStateName = null;
+		if (formId != null && locationId != null && locationTagId != null) {
+			formAttributeValueStartStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, 
+					locationTagId, locationId);
+		}
+		String startStateName = null;
+		if (formAttributeValueStartStateName != null && StringUtils.isNotBlank(formAttributeValueStartStateName.getValue())) {
+			startStateName = formAttributeValueStartStateName.getValue();
+		}
+		
+		return startStateName;
+	}
+	
+	/**
+	 * Gets the form attribute for startState using the formId
+	 * @param encounterId
+	 * @param formId
+	 * @return start State name
+	 */
+	public static String getStartStateName(Integer encounterId, Integer formId)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getStartStateName(encounter, formId);
+	}
+	
+	/**
+	 * Gets the form attribute for reprintState using the formId
+	 * @param encounter
+	 * @param formId
+	 * @return reprint State name
+	 */
+	public static String getReprintStateName(Encounter encounter, Integer formId)
+	{
+		Integer locationId = encounter.getLocation().getLocationId();
+		Integer locationTagId = getLocationTagId(encounter);
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue formAttributeValueReprintStateName = null;
+		if (formId != null && locationId != null && locationTagId != null) {
+			formAttributeValueReprintStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE, 
+					locationTagId, locationId);
+		}
+		String reprintStateName = null;
+		if (formAttributeValueReprintStateName != null && StringUtils.isNotBlank(formAttributeValueReprintStateName.getValue())) {
+			reprintStateName = formAttributeValueReprintStateName.getValue();
+		}
+		
+		return reprintStateName;
+	}
+	
+	/**
+	 * Gets the form attribute for reprintState using the formId
+	 * @param encounterId
+	 * @param formId
+	 * @return reprint State name
+	 */
+	public static String getReprintStateName(Integer encounterId, Integer formId)
+	{
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+		return getReprintStateName(encounter, formId);
+	}
+		
+	/**
+	 * Retrieves the form type for PrimaryPatientForm and PrimaryPhysicianForm
+	 * @param formId
+	 * @param locationTagId
+	 * @param locationId
+	 * @return Form Type
+	 */
+	public static String getFormType(Integer formId, Integer locationTagId, Integer locationId) {
+		
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		FormAttributeValue primaryPatientFormfav = null;
+		FormAttributeValue primaryPhysicianFormfav = null;
+		if (formId != null && locationId != null && locationTagId != null) {
+			primaryPatientFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId);
+			primaryPhysicianFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId);
+		}
+		if (primaryPatientFormfav != null && StringUtils.isNotBlank(primaryPatientFormfav.getValue()) && 
+				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPatientFormfav.getValue())) { 
+			return ChirdlUtilConstants.PATIENT_FORM_TYPE;
+		} else if (primaryPhysicianFormfav != null && StringUtils.isNotBlank(primaryPhysicianFormfav.getValue()) && 
+				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPhysicianFormfav.getValue())) {
+			return ChirdlUtilConstants.PHYSICIAN_FORM_TYPE;
+		}
+		return null;
+	}
+	
 }

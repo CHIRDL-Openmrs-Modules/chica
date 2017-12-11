@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.FieldType;
@@ -22,15 +24,13 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
-import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.DynamicFormAccess;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -43,7 +43,6 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class GetPWSFieldValuesFromXML implements Rule{
 
 	private Log log = LogFactory.getLog(GetPWSFieldValuesFromXML.class);
-	private static final String PWS = "PWS";
 	private static final String PWS_PDF = "PWS_PDF";
 	private static final String RESULT_DELIM = "^^";
 	private static final String AT_CHAR = "@";
@@ -57,19 +56,29 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	private static final String BPP_FIELD = "BPP";
 	private static final String TEMPERATURE_METHOD_FIELD = "Temperature_Method";
 	private static final String PREV_WEIGHT_DATE_FIELD = "PrevWeightDate";
+	private static final String HEIGHT_FIELD = "Height";
+	private static final String HEIGHT_UNITS_FIELD = "HeightSUnits";
+	private static final String PERCENT = "%";
+	private static final String PERIOD = ".";
+	private static final String VITALS_PROCESSED_FIELD = "VitalsProcessed";
+	private static final String VITALS_PROCESSED_VALUE = "Awaiting";
+	private static final String BP_FIELD = "BP";
+	private static final String PREV_WEIGHT_FIELD = "PrevWeight";
+	private static final String BMI_FIELD = "BMI";
+	private static final String TEMPERATURE_FIELD = "Temperature";
 	private static final int MAX_TRIES = 2;
-	private static final String STATE_PWS_CREATE = "PWS_create";
 
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		FormService fs =Context.getFormService();
-		Form form = fs.getForm(PWS);
+		Integer encounterId = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		String physicianForm = Util.getPrimaryFormNameByLocationTag(encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM);
+		Form form = fs.getForm(physicianForm);
 
 		if(form != null)
 		{
-			Integer encounterId = (Integer)parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 			if (encounterId == null) {
 				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate encounterId.");
 				return Result.emptyResult();
@@ -78,9 +87,9 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			// Get a list of patient states for the encounter and PWS_create
 			// The query orders them by the most recent
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-			State state = chirdlutilbackportsService.getStateByName(STATE_PWS_CREATE);
+			State state = chirdlutilbackportsService.getStateByName(Util.getStartStateName(encounterId, form.getFormId()));
 			if(state == null){
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate " + STATE_PWS_CREATE + ".");
+				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate " + ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE + ".");
 				return Result.emptyResult();
 			}
 			
@@ -133,7 +142,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						}
 
 						if(numTries == MAX_TRIES){
-							log.error("Unable to locate " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+							log.error("Unable to locate " + physicianForm + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
 							return Result.emptyResult();
 						}
 					}
@@ -155,9 +164,9 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						log.error("Interrupted thread error", ie);
 					}
 					catch(IOException ioe){
-						log.error("Unable to read " + PWS + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						log.error("Unable to read " + physicianForm + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
 						this.log.error(ioe.getMessage());
-						this.log.error(Util.getStackTrace(ioe));
+						this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(ioe));
 					}
 				}			
 
@@ -202,6 +211,13 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	 */
 	private String createFieldValueString(List<Field> currentFieldsInFile, List<String> currentFieldNames)
 	{
+		// Create map of the values found in the xml file
+		Map<String, String> xmlValuesMap = new HashMap<String, String>();
+		for(Field field  : currentFieldsInFile)
+		{
+			xmlValuesMap.put(field.getId(), field.getValue());
+		}
+		
 		// Add the value and the field name to the return string only if it is found in the list of currentFieldNames
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i < currentFieldsInFile.size(); i++)
@@ -218,28 +234,82 @@ public class GetPWSFieldValuesFromXML implements Rule{
 				{
 					switch(field.getId())
 					{
-					case HEIGHTP_FIELD:
-					case WEIGHTP_FIELD:
-					case BMIP_FIELD:
-					case HCP_FIELD:
-						// The fields in the cases above will all use this formatting								
-						builder.append(" (").append(field.getValue()).append("%)");								
+					case WEIGHTKG_FIELD:
+						// Combine WeightKG + WeightP
+						builder.append(field.getValue())
+						.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE)
+						.append(ChirdlUtilConstants.MEASUREMENT_KG)
+						.append(PERIOD);
+						
+						String weightP = xmlValuesMap.get(WEIGHTP_FIELD);
+						builder.append(formatFieldWithParenthesis(weightP, true));
 						break;
-					case WEIGHTKG_FIELD:								
-						builder.append(field.getValue()).append(" kg.");									
-						break;
-					case HC_FIELD:							
-						builder.append(field.getValue()).append(" cm.");			
+					case HC_FIELD:
+						// Combine HC and HCP field
+						builder.append(field.getValue())
+						.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE)
+						.append(ChirdlUtilConstants.MEASUREMENT_CM)
+						.append(PERIOD);
+						
+						String hcp = xmlValuesMap.get(HCP_FIELD);
+						builder.append(formatFieldWithParenthesis(hcp, true));
 						break;
 					case PULSEOX_FIELD:									
-						builder.append(field.getValue()).append("%");								
+						builder.append(field.getValue()).append(PERCENT);								
 						break;
-					case TEMPERATURE_METHOD_FIELD:
-					case BPP_FIELD:
-					case PREV_WEIGHT_DATE_FIELD:
-						// Temperature method and BPP just need parenthesis
-						// DWE CHICA-677 Added Previous Weight Date to this case
-						builder.append(" (").append(field.getValue()).append(")");
+					case BP_FIELD:
+						// Combine BP + BPP
+						builder.append(field.getValue());
+						
+						String bpp = xmlValuesMap.get(BPP_FIELD);
+						builder.append(formatFieldWithParenthesis(bpp, false));
+						break;
+					case PREV_WEIGHT_FIELD:
+						// Combine PrevWeight + PrevWeightDate
+						builder.append(field.getValue());
+						
+						String date = xmlValuesMap.get(PREV_WEIGHT_DATE_FIELD);
+						builder.append(formatFieldWithParenthesis(date, false));
+						break;
+					case VITALS_PROCESSED_FIELD:
+						// If the xml contains a value of false, the vitals have not been processed
+						if(ChirdlUtilConstants.GENERAL_INFO_FALSE.equalsIgnoreCase(field.getValue()))
+						{
+							builder.append(ChirdlUtilConstants.GENERAL_INFO_OPEN_PAREN)
+							.append(VITALS_PROCESSED_VALUE)
+							.append(ChirdlUtilConstants.GENERAL_INFO_CLOSE_PAREN);
+						}
+						else
+						{
+							builder.append(ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
+						}
+						break;
+					case HEIGHT_FIELD:
+						// Combine Height + Units + Percentile
+						builder.append(field.getValue()); // Get the value for Height
+						
+						String units = xmlValuesMap.get(HEIGHT_UNITS_FIELD);
+						String percentile = xmlValuesMap.get(HEIGHTP_FIELD);
+						if(StringUtils.isNotBlank(units))
+						{
+							builder.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE).append(units);
+						}
+						
+						builder.append(formatFieldWithParenthesis(percentile, true));
+						break;
+					case BMI_FIELD:
+						// Combine BMI + BMIP
+						builder.append(field.getValue());
+						
+						String bmiP = xmlValuesMap.get(BMIP_FIELD);
+						builder.append(formatFieldWithParenthesis(bmiP, true));
+						break;
+					case TEMPERATURE_FIELD:
+						// Combine Temperature + Temperature_Method
+						builder.append(field.getValue());
+						
+						String tempMethod = xmlValuesMap.get(TEMPERATURE_METHOD_FIELD);
+						builder.append(formatFieldWithParenthesis(tempMethod, false));
 						break;
 					default:
 						builder.append(field.getValue());
@@ -256,6 +326,32 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			}
 		}
 
+		return builder.toString();
+	}
+	
+	/**
+	 * Formats the field including the space before the open parenthesis " (value)" OR " (value%)"
+	 * @param value
+	 * @param appendPercentSign - true to append the percent sign
+	 * @return formatted value
+	 */
+	private String formatFieldWithParenthesis(String value, boolean appendPercentSign)
+	{
+		StringBuilder builder = new StringBuilder();
+		if(StringUtils.isNotBlank(value))
+		{
+			builder.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE)
+			 .append(ChirdlUtilConstants.GENERAL_INFO_OPEN_PAREN)
+			 .append(value);
+			
+			if(appendPercentSign)
+			{
+				builder.append(PERCENT);
+			}
+			 
+			builder.append(ChirdlUtilConstants.GENERAL_INFO_CLOSE_PAREN);
+		}
+		
 		return builder.toString();
 	}
 

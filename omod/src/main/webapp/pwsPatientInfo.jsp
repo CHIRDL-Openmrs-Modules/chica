@@ -27,7 +27,7 @@
                     <tr>
                         <td align="right">Provider:</td>
                         <td align="left"><c:out value="${Doctor}"/></td>
-                    </tr>
+                    </tr>    
                 </tbody>
             </table>
         </div>
@@ -43,13 +43,13 @@
                         <td align="left"><c:out value="${VisitTime}"/></td>
                     </tr>
                     <tr>
-                        <td align="right">Informant:</td>
-                        <td align="left" ><c:out value="${Informant}"/></td>
-                    </tr>
-                    <tr>
                         <td align="right">Language:</td>
                         <td align="left"><c:out value="${Language}"/></td>
                     </tr>
+                    <tr>
+                        <td align="right">Informant:</td>
+                        <td align="left" ><c:out value="${Informant}"/></td>
+                    </tr>                   
                 </tbody>
             </table>
         </div>
