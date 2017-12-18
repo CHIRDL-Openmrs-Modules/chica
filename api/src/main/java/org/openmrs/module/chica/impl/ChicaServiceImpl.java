@@ -700,19 +700,12 @@ public class ChicaServiceImpl implements ChicaService
 		getChicaDAO().updateChica1Appointment(appointment);
 	}
 	
-	public void setChica1PatientObsvObsId(Chica1PatientObsv chica1PatientObsv){
-		getChicaDAO().setChica1PatientObsvObsId(chica1PatientObsv);
-	}
-	
 	public List<Chica1PatientObsv> getUnloadedChicaPatientObs(Integer patientId,String date){
 		return getChicaDAO().getUnloadedChicaPatientObs(patientId, date);
 	}
 	
 	public List<Chica1Appointment> getChica1AppointmentsByDate(Integer patientId, String date){
 		return getChicaDAO().getChica1AppointmentsByDate(patientId, date);
-	}
-	public String getObsvNameByObsvId(String obsvId){
-		return getChicaDAO().getObsvNameByObsvId(obsvId);
 	}
 	
 	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication){

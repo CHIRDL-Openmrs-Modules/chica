@@ -63,8 +63,8 @@ public class PrinterLocationHL7Filter implements HL7Filter
 		
 		LocationTag targetLocationTag = null;
 		for (LocationTag locationTag : locationTags)
-		{
-			if (locationTag.getTag().equalsIgnoreCase(printerLocation))
+		{ 
+			if (locationTag.getName().equalsIgnoreCase(printerLocation)) // CHICA-1151 replace getTag() with getName()
 			{
 				targetLocationTag = locationTag;
 				break;

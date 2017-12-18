@@ -96,14 +96,10 @@ public interface ChicaDAO {
 	public void updateChica1Patient(Chica1Patient patient);
 	
 	public void updateChica1Appointment(Chica1Appointment appointment);
-	
-	public void setChica1PatientObsvObsId(Chica1PatientObsv chica1PatientObsv);
 
 	public List<Chica1PatientObsv> getUnloadedChicaPatientObs(Integer patientId,String date);
 
 	public List<Chica1Appointment> getChica1AppointmentsByDate(Integer patientId, String date);
-
-	public String getObsvNameByObsvId(String obsvId);
 	
 	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication);
 

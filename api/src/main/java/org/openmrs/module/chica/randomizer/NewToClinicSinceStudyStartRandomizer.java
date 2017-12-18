@@ -36,7 +36,7 @@ public class NewToClinicSinceStudyStartRandomizer extends BasicRandomizer implem
 			today.get(Calendar.DAY_OF_YEAR)== encounterDate.get(Calendar.DAY_OF_YEAR)){
 			
 			//make sure the patients has no previous visits before the study start date
-			List<Encounter> encounters = encounterService.getEncounters(patient);
+			List<Encounter> encounters = encounterService.getEncountersByPatient(patient); // CHICA-1151 replace getEncounters() with getEncountersByPatient()
 			
 			for(Encounter lookupEncounter: encounters){
 				if(lookupEncounter.getEncounterDatetime().compareTo(studyStartDate)<0){

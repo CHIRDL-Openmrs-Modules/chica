@@ -1,9 +1,6 @@
 package org.openmrs.module.chica.db.hibernate;
 
 import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -587,66 +584,6 @@ public class HibernateChicaDAO implements ChicaDAO
 		{
 			this.log.error(Util.getStackTrace(e));
 		}
-	}
-
-	public void setChica1PatientObsvObsId(Chica1PatientObsv chica1PatientObsv)
-	{
-		try
-		{
-			Connection con = this.sessionFactory.getCurrentSession()
-					.connection();
-			String sql = "update chica1_patient_obsv set openmrs_obs_id=? where id_num=?";
-
-			try
-			{
-				PreparedStatement stmt = con.prepareStatement(sql);
-				stmt.setInt(1, chica1PatientObsv.getOpenmrsObsId());
-				stmt.setInt(2, chica1PatientObsv.getIdNum());
-
-				stmt.executeUpdate();
-				stmt.close();
-				con.commit();
-			} catch (Exception e)
-			{
-				this.log.error(e.getMessage());
-				this.log.error(Util.getStackTrace(e));
-			}
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-	}
-
-	public String getObsvNameByObsvId(String obsvId)
-	{
-		try
-		{
-			Connection con = this.sessionFactory.getCurrentSession()
-					.connection();
-			String sql = "select obsv_name from chica1_obsv_dictionary where obsv_id = ?";
-
-			try
-			{
-				PreparedStatement stmt = con.prepareStatement(sql);
-				stmt.setString(1, obsvId);
-
-				ResultSet rs = stmt.executeQuery();
-				if (rs.next())
-				{
-					return rs.getString(1);
-				}
-				stmt.close();
-			} catch (Exception e)
-			{
-				this.log.error(e.getMessage());
-				this.log.error(Util.getStackTrace(e));
-			}
-			return null;
-		} catch (Exception e)
-		{
-			this.log.error(Util.getStackTrace(e));
-		}
-		return null;
 	}
 
 	public Integer getHighBP(Integer ageInYears, String sex,

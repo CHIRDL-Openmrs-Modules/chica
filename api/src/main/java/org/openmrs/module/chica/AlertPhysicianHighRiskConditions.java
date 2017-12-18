@@ -106,7 +106,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		
 		//get encounters that should have been submitted but have not been processed by the task
 		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(null, null, startDate, endDate, null, null,
-		    null, false);
+		    null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 		
 		//get suicide observations
 		ArrayList<String> ruleNames = new ArrayList<String>();
