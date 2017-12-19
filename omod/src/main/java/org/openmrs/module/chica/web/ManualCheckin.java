@@ -141,10 +141,10 @@ public class ManualCheckin
 		TreeMap<String,String> raceCodes = new TreeMap<String,String>();
 		ConceptService conceptService = Context.getConceptService();
 		ConceptSource conceptSource = conceptService.getConceptSourceByName("Wishard Race Codes");
-		List<ConceptMap> conceptMaps = conceptService.getConceptsByConceptSource(conceptSource);
+		List<ConceptMap> conceptMaps = conceptService.getConceptMappingsToSource(conceptSource); // CHICA-1151 replace getConceptsByConceptSource() with getConceptMappingsToSource()
 		for(ConceptMap conceptMap:conceptMaps){
 			String generalRaceCategory = conceptMap.getConcept().getName().getName();
-			String raceCode = conceptMap.getSourceCode();
+			String raceCode = conceptMap.getConceptReferenceTerm().getCode(); // CHICA-1151 replace getSourceCode() with getConceptReferenceTerm().getCode()
 			raceCodes.put(generalRaceCategory, raceCode);
 		}
 		
@@ -633,7 +633,7 @@ public class ManualCheckin
 		EncounterService encounterService = Context
 				.getService(EncounterService.class);
 		List<org.openmrs.Encounter> encounters = encounterService
-				.getEncounters(patient, null, null, null, null, null, null,false);
+				.getEncounters(patient, null, null, null, null, null, null,null,null,false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 
 		if (encounters != null && encounters.size() > 0)
 		{
