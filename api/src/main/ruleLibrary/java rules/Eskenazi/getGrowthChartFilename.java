@@ -327,7 +327,7 @@ public class getGrowthChartFilename implements Rule {
 		persons.add(patient);
 
 		EncounterService encounterService = Context.getEncounterService();
-		List<Encounter> encounters = encounterService.getEncounters(patient);
+		List<Encounter> encounters = encounterService.getEncountersByPatient(patient); // CHICA-1151 replace getEncounters() with getEncountersByPatient()
 		Float ageInDays = null;
 		Integer biometricsIndex = 1;
 		Concept heightConcept = conceptService.getConceptByName(HEIGHT);
