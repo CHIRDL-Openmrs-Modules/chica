@@ -73,7 +73,8 @@ public class ChicaParameterHandler implements ParameterHandler
 		}
 		
 		if (StringUtils.isBlank(formType)) {
-			log.error("A valid formType was not provided to the CHICA system.");
+			log.info("A valid formType was not provided to the CHICA system for Form ID: "+form.getFormId()+", Location ID: "+formInstance.getLocationId()+" "
+					+ "and Location Tag ID: "+(Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID)+".");
 			return;
 		}
 	}
@@ -110,7 +111,8 @@ public class ChicaParameterHandler implements ParameterHandler
 		}
 		
 		if (StringUtils.isBlank(formType)) {
-			log.error("A valid formType was not provided to the CHICA system.");
+			log.info("A valid formType was not provided to the CHICA system for Form ID: "+form.getFormId()+", Location ID: "+formInstance.getLocationId()+" "
+					+ "and Location Tag ID: "+(Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID)+".");
 			return;
 		}
     }
