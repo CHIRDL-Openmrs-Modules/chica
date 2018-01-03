@@ -10,6 +10,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 
 import ca.uhn.hl7v2.model.Message;
@@ -55,7 +56,7 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 					.getSSN(message);
 			if (ssn != null)
 			{
-				PatientIdentifierType type = this.patientService.getPatientIdentifierType("SSN");
+				PatientIdentifierType type = this.patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_SSN); // CHICA-1151 replace getPatientIdentifierType() with getPatientIdentifierTypeByName()
 				PatientIdentifier pi = new PatientIdentifier(ssn,type,sendingFacility);
 				pi.setDateCreated(encounterDate);
 				pi.setCreator(Context.getAuthenticatedUser());

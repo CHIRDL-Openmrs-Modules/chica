@@ -42,6 +42,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
+import org.openmrs.util.PrivilegeConstants;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
@@ -146,8 +148,8 @@ public class HL7SocketHandler implements Application {
 				
 				Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
 				    adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
-				Context.addProxyPrivilege(HL7Constants.PRIV_ADD_HL7_IN_QUEUE);
-				if (!Context.hasPrivilege(HL7Constants.PRIV_ADD_HL7_IN_QUEUE)) {
+				Context.addProxyPrivilege(PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE); // CHICA-1151 replaced HL7Constants.PRIV_ADD_HL7_IN_QUEUE with PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE
+				if (!Context.hasPrivilege(PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE)) { // CHICA-1151 replaced HL7Constants.PRIV_ADD_HL7_IN_QUEUE with PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE
 					logger.error("You do not have HL7 add privilege!!");
 					System.exit(0);
 				}
@@ -460,7 +462,7 @@ public class HL7SocketHandler implements Application {
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startDate, endDate, null, 
-			null, null, false);
+			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 		if (encounters == null || encounters.size() == 0) {
 			return null;
 		} else {
@@ -636,7 +638,7 @@ public class HL7SocketHandler implements Application {
 					encounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterAttributeValue.getEncounterId());
 					
 					// Make sure the patientId for the encounter record matches the patient from the HL7 message
-					if(patient.getPatientId().intValue() != encounter.getPatientId().intValue())
+					if(patient.getPatientId().intValue() != encounter.getPatient().getPatientId().intValue()) // CHICA-1151 replace encounter.getPatientId() with encounter.getPatient().getPatientId()
 					{
 						logger.error("Unable to match encounter to patientId: " + patient.getPatientId());
 						encounter = null;
