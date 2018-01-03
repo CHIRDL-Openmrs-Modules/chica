@@ -6,7 +6,6 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -23,11 +22,11 @@ import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -414,10 +413,10 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			ADT_A01 adt = (ADT_A01) message;
 			
 			int numObs = adt.getOBXReps();
-			ConceptDatatype codedDatatype = conceptService.getConceptDatatypeByName("Coded");
-			ConceptDatatype numericDatatype = conceptService.getConceptDatatypeByName("Numeric");
-			ConceptDatatype dateTimeDatatype = conceptService.getConceptDatatypeByName("Datetime");
-			ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
+			ConceptDatatype codedDatatype = conceptService.getConceptDatatypeByName(ChirdlUtilConstants.CONCEPT_DATATYPE_CODED);
+			ConceptDatatype numericDatatype = conceptService.getConceptDatatypeByName(ChirdlUtilConstants.CONCEPT_DATATYPE_NUMERIC);
+			ConceptDatatype dateTimeDatatype = conceptService.getConceptDatatypeByName(ChirdlUtilConstants.CONCEPT_DATATYPE_DATETIME);
+			ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName(ChirdlUtilConstants.CONCEPT_DATATYPE_TEXT);
 			
 			// Initialize the objects in case they go to a caching mechanism.
 			Hibernate.initialize(codedDatatype);
@@ -425,7 +424,6 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			Hibernate.initialize(dateTimeDatatype);
 			Hibernate.initialize(textDatatype);
 			
-			Map<String,ConceptDatatype> conceptDataTypeMap = new HashMap<String,ConceptDatatype>();
 			for (int j = 0; j < numObs; j++) {
 				Obs obs = hl7SocketHandler.CreateObservation(null, false, message, 0, j, existingLoc, patient);
 				
@@ -455,8 +453,6 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 					allObs.add(obs);
 				}
 			}
-			
-			conceptDataTypeMap.clear();
 		}
 		
 		return allObs;

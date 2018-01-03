@@ -419,7 +419,29 @@
         <defaultValue></defaultValue>
      	<description>Password for Glooko</description>
     </globalProperty>
-    
+    <globalProperty>
+        <property>chica.parseInsurancePlanCodeFrom_IN1-35</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the Insurance Plan Code from HL7 location IN1.35</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.parseCarrierCode</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the carrier code from HL7</description>
+    </globalProperty>
+        <globalProperty>
+        <property>chica.parseVisitNumberFrom_PV1_19</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the visit number from HL7 location PVS.19</description>
+    </globalProperty>
+    </globalProperty>
+        <globalProperty>
+        <property>chica.chica.parseObsFromRegistration</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the observations from the registration message</description>
+    </globalProperty>
+     
+  
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
     <servlet>
