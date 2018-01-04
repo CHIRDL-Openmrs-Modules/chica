@@ -157,6 +157,7 @@
 									</select>
 									<input type="hidden" value="${row.patientId}" name="patientId" />
                                     <input type="hidden" value="${row.encounter.encounterId}" name="encounterId" />
+									<input type="hidden" value="${viewPatient}" name="viewPatient" />
 								</fieldset>
 							</form>
 						</td>
@@ -172,7 +173,14 @@
 				<td align="center" style="padding-top:10px;">
 					<div>
 						<button id="viewPatientButton" class="icon-button-large ui-state-default ui-corner-all">View Patient</button>
-						<button id="exitButton" class="icon-button-large ui-state-default ui-corner-all" onclick="javascript:window.close();">Exit</button>
+						<c:choose>
+							 <c:when test="${empty viewPatient}">
+								<button id="exitButton" class="icon-button-large ui-state-default ui-corner-all" onclick="javascript:window.close();">Exit</button>
+							 </c:when>    
+							 <c:otherwise>
+								<button id="exitButton" class="icon-button-large ui-state-default ui-corner-all" onclick="confirmExit('${pageContext.request.contextPath}/module/chica/viewPatient.form')"> Exit</button>
+							 </c:otherwise>
+						</c:choose>
 					</div>
 				</td>
 			</tr>

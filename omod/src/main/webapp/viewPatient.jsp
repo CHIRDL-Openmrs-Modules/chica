@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
+<%@ include file="/WEB-INF/template/header.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -14,6 +15,12 @@
 	session.removeAttribute(WebConstants.OPENMRS_ERROR_ARGS);
 	
 %>
+<script>var ctx = "${pageContext.request.contextPath}";</script>
+<script language="javascript">
+    function backToAdminPage() {
+		window.location = ctx + "/admin/index.htm";
+	}
+</script>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -29,43 +36,37 @@
 				document.location.href("greaseBoard.form");
 			}
 		</script>
-		
-	
-		
-		
 		<title>Patient MRN required</title>
-		
 	</head>
 
 <body>
-	<div id="pageBody">
-		<div id="contentMinimal">
-			<c:if test="${msg != null}">
-				<div id="openmrs_msg"><spring:message code="${msg}" text="${msg}" arguments="${msgArgs}" /></div>
-			</c:if>
-			<c:if test="${err != null}">
-				<div id="openmrs_error"><spring:message code="${err}" text="${err}" arguments="${errArgs}"/></div>
-			</c:if>
+
+	<c:if test="${msg != null}">
+		<div id="openmrs_msg"><spring:message code="${msg}" text="${msg}" arguments="${msgArgs}" /></div>
+	</c:if>
+	<c:if test="${err != null}">
+		<div id="openmrs_error"><spring:message code="${err}" text="${err}" arguments="${errArgs}"/></div>
+	</c:if>
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 
 
 <form name="viewPatient" method="post" >
-<table width = "100%" class="formTitleStyle greaseBoardBackground" >
-<tr>
-<td>
-<b>Search For Patient Encounters</b>
-</td>
-</tr>
-</table>
+	<table width = "100%" class="formTitleStyle greaseBoardBackground" >
+	<tr>
+	<td>
+	<b>Search For Patient Encounters</b>
+	</td>
+	</tr>
+	</table>
 	<c:choose>
 	<c:when test="${!empty param.validate}">
-		<span class="alert" ><p><b>MRN: "${param.mrnLookup}" is not a valid MRN.</b></p></span>
+		<p><span class="alert" style="font-size: 15px;">MRN: "${param.mrnLookup}" is not a valid MRN.</span></p>
     </c:when>
  	<c:otherwise>
 		<c:choose>
  		<c:when test="${!empty param.error}">
-			<span class="alert" ><p><b>There is no record of an existing patient with MRN: "${param.mrnLookup}" 
-					 <br>You may need to add a patient through manual checkin.</b></p></span>
+			<p><span class="alert" style="font-size: 15px;">There is no record of an existing patient with MRN: "${param.mrnLookup}" 
+					 <br>You may need to add a patient through manual checkin.</span></p>
     	</c:when>
     	<c:otherwise>
         	<p><b>Enter the patient MRN to display all encounters for that patient</b></p>
@@ -73,18 +74,16 @@
 		</c:choose>
     </c:otherwise>
 </c:choose>
-
 <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MRN <span style="font-size:8pt;" ></span></b>&nbsp;&nbsp;<input type="text"  size="8" name="mrn" style="width:150px;"tabindex="1"/>
-<input type="submit" name="viewPatientFromEncounterPage" value="Enter" tabindex="2"/> <input type="button" value="Cancel" onClick="javascript:window.close();" tabindex="3"/>
+<input type="submit" name="viewPatientFromEncounterPage" value="Enter" tabindex="2"/> <input type="button" value="Cancel" onclick="backToAdminPage();" tabindex="3"/>
 
 
 <input type="hidden" name="validate" value="validate"/>
 </form>
 <script language="javascript">
     	document.viewPatient.mrnLookup.focus()
- </script>
+</script>
 		<br/>
-		</div>
-	</div>
+
 </body>
 </html>
