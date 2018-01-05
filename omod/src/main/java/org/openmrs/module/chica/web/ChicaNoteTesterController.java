@@ -54,7 +54,7 @@ public class ChicaNoteTesterController extends SimpleFormController {
 		if (mrn != null) {
 			try {
 				PatientService patientService = Context.getPatientService();
-				List<Patient> patients = patientService.getPatientsByIdentifier(mrn, false);
+				List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, null, true); // CHICA-1151 Add the same fix from CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 				Patient patient = null;
 				Integer patientId = null;
 				if (patients != null && patients.size() > 0) {

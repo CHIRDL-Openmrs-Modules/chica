@@ -823,7 +823,7 @@ public class Util {
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-				null, null, false);
+				null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 		if (encounters == null || encounters.size() == 0) {
 			return null;
 		} else if (encounters.size() == 1) {
@@ -924,7 +924,7 @@ public class Util {
 						if (tags != null && tags.size() > 0)
 						{
 							printerLocation = ((LocationTag) tags.toArray()[0])
-									.getTag();
+									.getName(); // CHICA-1151 replace getTag() with getName()
 						}
 					}
 				}
