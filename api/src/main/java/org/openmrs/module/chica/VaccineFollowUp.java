@@ -164,7 +164,7 @@ public class VaccineFollowUp extends AbstractTask {
 				}
 
 				ImmunizationQueryOutput immunizations = ImmunizationForecastLookup
-						.getImmunizationList(encounter.getPatientId());
+						.getImmunizationList(encounter.getPatient().getPatientId()); // CHICA-1151 replace getPatientId() with getPatient().getPatientId()
 
 				if (immunizations == null) {
 					log.info("HPV Study: Vaccine requery found no immunizations in CHIRP for patient: " + identifier);
@@ -201,7 +201,7 @@ public class VaccineFollowUp extends AbstractTask {
 			} catch (Exception e) {
 				log.error(" HPV Study exception for encounter = "
 						+ encounter.getId() + " patient: "
-						+ encounter.getPatientId());
+						+ encounter.getPatient().getPatientId());
 				continue;
 			}
 

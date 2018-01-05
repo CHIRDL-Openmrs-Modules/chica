@@ -123,8 +123,16 @@ public class pageByClinic implements Rule {
 		
 		// Get the PCP
 		Encounter encounter = Context.getEncounterService().getEncounter(encounterId);
-		Person physician = encounter.getProvider();
+		
+		// CHICA-1151 Use the provider that has the "Attending Provider" role for the encounter
 		String pcp = "";
+		Person physician = null;
+		org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+		if(provider != null)
+		{
+			physician = provider.getPerson();
+		}
+		 
 		if (physician != null) {
 			pcp = physician.getGivenName() + " " + physician.getFamilyName();
 		}

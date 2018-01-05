@@ -115,7 +115,7 @@ public class physicianNotePSFResults implements Rule {
 		Date endDate = Calendar.getInstance().getTime();
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-			null, null, false);
+			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 		if (encounters == null || encounters.size() == 0) {
 			return new ArrayList<PSFQuestionAnswer>();
 		}

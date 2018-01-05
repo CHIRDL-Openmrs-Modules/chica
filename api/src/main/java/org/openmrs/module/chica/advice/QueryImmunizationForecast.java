@@ -72,7 +72,7 @@ public class QueryImmunizationForecast implements ChirdlRunnable {
 				Location location = chicaEncounter.getLocation();
 				Set<LocationTag> tags = location.getTags();
 				for(LocationTag tag:tags){
-					if(printerLocation.equalsIgnoreCase(tag.getTag())){
+					if(printerLocation.equalsIgnoreCase(tag.getName())){ // CHICA-1151 replaced getTag() with getName()
 						locationTagId = tag.getLocationTagId();
 						locationId = location.getLocationId();
 						break;

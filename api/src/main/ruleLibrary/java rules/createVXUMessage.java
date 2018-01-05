@@ -458,7 +458,7 @@ public class createVXUMessage implements Rule
 		//Some concepts have more than one CVX code to address CHIRP values of "03" and "3"
 		//Either is fine for VXU updates to CHIRP.
 		ConceptMap conceptMap = conceptMaps.get(0);
-		code = conceptMap.getSourceCode();
+		code = conceptMap.getConceptReferenceTerm().getCode(); // CHICA-1151 replace getSourceCode() with getConceptReferenceTerm().getCode()
 		return code;
 	}
 	

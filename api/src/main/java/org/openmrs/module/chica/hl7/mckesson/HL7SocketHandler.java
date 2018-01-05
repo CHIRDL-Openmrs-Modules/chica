@@ -71,6 +71,7 @@ import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.openmrs.util.OpenmrsConstants;
+import org.openmrs.util.PrivilegeConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -1319,7 +1320,7 @@ public class HL7SocketHandler extends
 			Context.openSession();
 			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
 					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
-			Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_IDENTIFIER_TYPES);
+			Context.addProxyPrivilege(PrivilegeConstants.GET_IDENTIFIER_TYPES); // CHICA-1151 Replace OpenmrsConstants.PRIV_VIEW_IDENTIFIER_TYPES with PrivilegeConstants.GET_IDENTIFIER_TYPES
 			
 			//Pull the patient from the hl7 through identifiers
 			Patient patient = getPatientFromMessage(hl7message);
@@ -1334,7 +1335,7 @@ public class HL7SocketHandler extends
 			Date startOfDay = DateUtils.truncate(new Date(), Calendar.DATE);
 			Location location = locationService.getLocation(locationString);
 			List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, location, startOfDay, null,
-					null, null, null, false);
+					null, null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 			
 			if (encounters == null || encounters.size() == 0){
 				return !encounterFound;
@@ -1378,7 +1379,7 @@ public class HL7SocketHandler extends
 		Context.openSession();
 		Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
 				adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
-		Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_LOCATIONS);
+		Context.addProxyPrivilege(PrivilegeConstants.GET_LOCATIONS); // CHICA-1151 Replace OpenmrsConstants.PRIV_VIEW_LOCATIONS with PrivilegeConstants.GET_LOCATIONS
 		String attribute = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
 		
 		boolean ageOk = true;

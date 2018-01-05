@@ -72,11 +72,19 @@ public class providerAttributeLookup implements Rule {
 		try {
 			Encounter encounter = encounterService.getEncounter(encounterId);
 			if (encounter != null) {
-				Person provider = encounter.getProvider();
-				if (provider != null) {
-					Integer providerId = provider.getPersonId();
+				
+				// CHICA-1151 Use the provider that has the "Attending Provider" role for the encounter
+				Person person = null;
+				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+				if(provider != null)
+				{
+					person = provider.getPerson();
+				}
+				 	
+				if (person != null) {
+					Integer personId = person.getPersonId();
 					if (personAttributeName != null) {
-						PersonAttribute personAttributeValue = personService.getPerson(providerId).getAttribute(
+						PersonAttribute personAttributeValue = personService.getPerson(personId).getAttribute(
 						    personAttributeName);
 						if (personAttributeValue != null) {
 							return new Result(personAttributeValue.getValue());
