@@ -4528,7 +4528,17 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			GROUP BY d.location_tag_id,d.location_id;
         </sql>
     </diff>
-        
+    <diff>
+		<version>1.10.6</version>
+		<author>David Ely</author>
+		<date>January 10, 2018</date>
+		<description>
+			Removed unused global properties related to checking for duplicate HL7 messages that would create duplicate encounters
+		</description>
+		<sql>
+			Delete From global_property WHERE property IN ('chica.filterHL7RegistrationOnPriorCheckin');
+		</sql>
+	</diff>    
 </sqldiff>
 
 

@@ -42,12 +42,11 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				{
 					AdministrationService adminService = Context.getAdministrationService();
 					org.openmrs.Encounter encounter = (org.openmrs.Encounter) args[0];
-					HashMap<String,Object> parameters = (HashMap<String,Object>) args[1];
 					
 					ThreadManager threadManager = ThreadManager.getInstance();
 					Location location = encounter.getLocation();
 					//spawn the checkin thread
-					threadManager.execute(new CheckinPatient(encounter.getEncounterId(),parameters), location.getLocationId());
+					threadManager.execute(new CheckinPatient(encounter.getEncounterId()), location.getLocationId());
 					
 					String executeImmunization = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_IMMUNIZATION_QUERY_ACTIVATED);
 					if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(executeImmunization)) {

@@ -247,12 +247,6 @@
         <description>Activate VXU to create a patient in the CHIRP registry.
         </description>
     </globalProperty>
-     <globalProperty>
-        <property>chica.filterHL7RegistrationOnPriorCheckin</property>
-        <defaultValue>false</defaultValue>
-        <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
-        </description>
-    </globalProperty>
     <globalProperty>
         <property>chica.showBadScans</property>
         <defaultValue>false</defaultValue>
