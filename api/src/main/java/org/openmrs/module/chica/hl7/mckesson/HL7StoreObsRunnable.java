@@ -139,6 +139,11 @@ public class HL7StoreObsRunnable implements Runnable {
 		patientState = backportsService.updatePatientState(patientState);
 		Integer patientId = patient.getPatientId();
 		HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
+		
+		// MES CHICA-795 Instead of checking location, 
+		// global property will indicate if observations should be parsed and saved from message.
+		String parseObsFromRegistration = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_OBS_FROM_REGISTRATION);
+			
 		ArrayList<Obs> allObs = obsHandler.getObs(message, patient);
 		LogicService logicService = Context.getLogicService();
 		ObsInMemoryDatasource xmlDatasource = 
@@ -157,26 +162,26 @@ public class HL7StoreObsRunnable implements Runnable {
 		Set<Integer> vitalsConceptSet = new HashSet<Integer>();
 		Set<String> vitalsConceptByNameSet = new HashSet<String>();
 		
-		String parseObsFromRegistration = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_OBS_FROM_REGISTRATION);
-		if (StringUtils.isNotBlank(parseObsFromRegistration) 
-				&&  ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseObsFromRegistration)){
+		ConceptService conceptService = Context.getConceptService();
+		ObsService obsService = Context.getObsService();
+		boolean savedToDB = false;
+		//global property to find datasource
+		String medicalRecordSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_MEDICAL_RECORD);
+		String vitalsSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_VITALS);
+		
+		
+		for (Obs currObs : allObs) {
+			savedToDB = false;
+			String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
 			
-			//global property to find datasource
-			String medicalRecordSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_MEDICAL_RECORD);
-			String vitalsSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_VITALS);
+			//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
 			
-			ConceptService conceptService = Context.getConceptService();
-			ObsService obsService = Context.getObsService();
-			boolean savedToDB = false;
-			
-			for (Obs currObs : allObs) {
-				savedToDB = false;
-				String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
+			if (StringUtils.isNotBlank(parseObsFromRegistration) 
+					&&  ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseObsFromRegistration)){
 				
-				//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
 				Concept concept = currObs.getConcept();
 				Integer conceptId = concept.getConceptId();
-				
+			
 				// check to see if we've already looked up a mapping for this concept
 				Concept mappedConcept = mrfConceptMapping.get(conceptId);
 				if (mappedConcept == null) {
@@ -247,19 +252,19 @@ public class HL7StoreObsRunnable implements Runnable {
 					}
 				}
 				
-				//put the observation in memory if it was not saved to the database
-				if (!savedToDB) {
-					Set<Obs> obs = obsByConcept.get(currConceptName);
-					if (obs == null) {
-						obs = new HashSet<Obs>();
-						obsByConcept.put(currConceptName, obs);
-					}
-					obs.add(currObs);
-				}
 			}
-			
+
+			//put the observation in memory if it was not saved to the database
+			if (!savedToDB) {
+				Set<Obs> obs = obsByConcept.get(currConceptName);
+				if (obs == null) {
+					obs = new HashSet<Obs>();
+					obsByConcept.put(currConceptName, obs);
+				}
+				obs.add(currObs);
+			}
 		}
-		
+			
 		xmlDatasource.saveObs(patientId, obsByConcept);
 		
 		mrfConceptMapping.clear();
@@ -268,8 +273,11 @@ public class HL7StoreObsRunnable implements Runnable {
 		mrfConceptSet.clear();
 		vitalsConceptSet.clear();
 		vitalsConceptByNameSet.clear();
-		
+			
 		patientState.setEndTime(new Date());
 		backportsService.updatePatientState(patientState);
+	
+	
 	}
 }
+
