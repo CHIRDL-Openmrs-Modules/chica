@@ -6,6 +6,7 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
@@ -424,6 +426,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			Hibernate.initialize(dateTimeDatatype);
 			Hibernate.initialize(textDatatype);
 			
+			Map<String,ConceptDatatype> conceptDataTypeMap = new HashMap<String,ConceptDatatype>();
 			for (int j = 0; j < numObs; j++) {
 				Obs obs = hl7SocketHandler.CreateObservation(null, false, message, 0, j, existingLoc, patient);
 				
@@ -453,6 +456,8 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 					allObs.add(obs);
 				}
 			}
+			
+			conceptDataTypeMap.clear();
 		}
 		
 		return allObs;

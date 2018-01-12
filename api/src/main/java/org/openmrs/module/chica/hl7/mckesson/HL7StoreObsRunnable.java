@@ -169,7 +169,6 @@ public class HL7StoreObsRunnable implements Runnable {
 		String medicalRecordSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_MEDICAL_RECORD);
 		String vitalsSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_VITALS);
 		
-		
 		for (Obs currObs : allObs) {
 			savedToDB = false;
 			String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
@@ -253,7 +252,7 @@ public class HL7StoreObsRunnable implements Runnable {
 				}
 				
 			}
-
+			
 			//put the observation in memory if it was not saved to the database
 			if (!savedToDB) {
 				Set<Obs> obs = obsByConcept.get(currConceptName);
@@ -264,7 +263,7 @@ public class HL7StoreObsRunnable implements Runnable {
 				obs.add(currObs);
 			}
 		}
-			
+		
 		xmlDatasource.saveObs(patientId, obsByConcept);
 		
 		mrfConceptMapping.clear();

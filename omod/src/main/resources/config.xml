@@ -17,7 +17,7 @@
     
     <!-- /Chica Module Properties -->
     
-    <require_version>1.1.10.2283</require_version>
+    <require_version>2.0.6</require_version>
     <require_modules>
         <require_module version="2.34.0">org.openmrs.module.dss</require_module>
         <require_module version="2.13.0">org.openmrs.module.atd</require_module>
@@ -245,12 +245,6 @@
     <globalProperty>
         <property>chica.activateVXUToCreatePatient</property>
         <description>Activate VXU to create a patient in the CHIRP registry.
-        </description>
-    </globalProperty>
-     <globalProperty>
-        <property>chica.filterHL7RegistrationOnPriorCheckin</property>
-        <defaultValue>false</defaultValue>
-        <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
         </description>
     </globalProperty>
     <globalProperty>
