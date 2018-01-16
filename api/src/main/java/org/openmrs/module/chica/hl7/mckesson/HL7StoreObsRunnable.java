@@ -141,7 +141,7 @@ public class HL7StoreObsRunnable implements Runnable {
 		HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
 		
 		// MES CHICA-795 Instead of checking location, 
-		// global property will indicate if observations should be parsed and saved from message.
+		// global property will indicate if observations should be parsed and saved from registration message.
 		String parseObsFromRegistration = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_OBS_FROM_REGISTRATION);
 			
 		ArrayList<Obs> allObs = obsHandler.getObs(message, patient);
@@ -272,11 +272,8 @@ public class HL7StoreObsRunnable implements Runnable {
 		mrfConceptSet.clear();
 		vitalsConceptSet.clear();
 		vitalsConceptByNameSet.clear();
-			
+		
 		patientState.setEndTime(new Date());
 		backportsService.updatePatientState(patientState);
-	
-	
 	}
 }
-
