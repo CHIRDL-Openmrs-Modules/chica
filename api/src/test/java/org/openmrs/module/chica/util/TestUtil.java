@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -39,6 +40,7 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		executeDataSet(org.openmrs.module.chica.test.TestUtil.PATIENT_FORMS_FILE);
 		Context.authenticate("user1", "testpassword");
 		Context.getAdministrationService().setGlobalProperty("chirdlutil.serverConfigFile", "src/test/resources/ServerConfig.xml");
+		Context.getAdministrationService().setGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_CHECKOUT_STATE, ChirdlUtilConstants.STATE_FINISHED); // CHICA-1143 Set the global property for tests
 		
 		ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
 		String errorMessage = Util.getPatientSecondaryForms(rows, 23189);
@@ -66,7 +68,7 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		createPatientState(formInstance2, patient, 23189, createState);
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
 		Assert.assertNull("The error message was not null", errorMessage);
-		Assert.assertEquals("Number of pattient rows did not match", 1, rows.size());
+		Assert.assertEquals("Number of patient rows did not match", 1, rows.size());
 		Assert.assertEquals("Number of form instances did not match", 2, rows.get(0).getFormInstances().size());
 		
 		rows.clear();
@@ -74,8 +76,17 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		createPatientState(formInstance3, patient, 23189, createState);
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
 		Assert.assertNull("The error message was not null", errorMessage);
-		Assert.assertEquals("Number of pattient rows did not match", 1, rows.size());
+		Assert.assertEquals("Number of patient rows did not match", 1, rows.size());
 		Assert.assertEquals("Number of form instances did not match", 2, rows.get(0).getFormInstances().size());
+		
+		// CHICA-1143 Create the finished state and make sure the patient is no longer in the list of rows
+		rows.clear();
+		FormInstance formInstance4 = new FormInstance(8992, 8974, 298240);
+		State finishedState = backportsService.getState(98793);
+		createPatientState(formInstance4, patient, 23189, finishedState);
+		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
+		Assert.assertEquals("Number of patient rows did not match", 0, rows.size());
+		
 	}
 	
 	private PatientState createPatientState(FormInstance formInstance, Patient patient, Integer sessionId, State state) {
