@@ -299,4 +299,15 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		// Intentionally left empty
 		return null;
 	}
+	
+	/**
+	 * CHICA-1160
+	 * Get visit type (visit description) from PV2-12
+	 * Not implemented in this package
+	 */
+	public String getVisitType(Message message)
+	{
+		// Intentionally left empty
+		return null;
+	}
 }
