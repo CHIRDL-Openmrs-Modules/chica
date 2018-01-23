@@ -165,11 +165,3 @@ function verifyEncounterMRN(responseXML) {
         }
     }
 }
-
-function confirmExit(backToViewPatient)
-{
-    var agree=confirm("Are you sure you want to exit View Encounter page?");
-    if (agree) {
-		   window.location = backToViewPatient;
-    }
-}

@@ -15,6 +15,7 @@ $("#Enter").click(function (e) {
 				verifyEncounterMRN(xml, newTab);
 		   },
 		error: function () {
+			newTab.close();
 			alert("An error has occured!!!");
 		}
 	});
@@ -29,7 +30,7 @@ function verifyEncounterMRN(responseXML, newTab) {
 		var validEncounter = $(responseXML).find("validEncounter").text();
 		var mrn = $("#mrn").val();
 		if (result == "true" && validEncounter == "true") {
-			popupfull("viewEncounter.form?mrn=" + $("#mrn").val(), newTab);
+			newTabURL("viewEncounter.form?mrn=" + $("#mrn").val(), newTab);
 			$("#encounterMrnError").removeClass("alert").html("");
 			$("#encounterMrnMessage h5").html("Enter the patient MRN to display all encounters for that patient");
 			$("#mrn").val('');
@@ -49,7 +50,7 @@ function verifyEncounterMRN(responseXML, newTab) {
 	}
 }
 
-function popupfull(url, newTab) {
+function newTabURL(url, newTab) {
 	newTab.location = url;
 	return false;
 }
