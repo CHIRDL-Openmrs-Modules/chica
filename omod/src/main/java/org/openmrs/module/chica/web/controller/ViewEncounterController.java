@@ -357,7 +357,6 @@ public class ViewEncounterController {
 
 			String pidparam = request.getParameter("patientId");
 			Patient patient = null;
-			String viewPatient = null;
 
 			if (pidparam == null || pidparam.trim().length()==0) {
 				String mrn = request.getParameter("mrn");
@@ -368,7 +367,7 @@ public class ViewEncounterController {
 					}
 					
 					PatientIdentifierType identifierType = patientService
-							.getPatientIdentifierTypeByName("MRN_OTHER");
+							.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 					identifierTypes.add(identifierType);
 					List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
@@ -384,7 +383,6 @@ public class ViewEncounterController {
 					}
 				}
 			} else {
-				viewPatient = "viewPatient";
 				patient = patientService.getPatient(Integer.valueOf(pidparam));
 			}
 			
@@ -615,7 +613,6 @@ public class ViewEncounterController {
 
 			map.put("patientRows", rows);
 			map.put("formNameMap",formNameMap);
-			map.put("viewPatient", viewPatient);
 
 		} catch (UnexpectedRollbackException ex) {
 			// ignore this exception since it happens with an
