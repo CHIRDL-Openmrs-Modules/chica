@@ -553,6 +553,7 @@ public class HL7SocketHandler extends
 		String insuranceName = null;
 		String visitNumber = null;
 		String originalLocation = null;
+		String visitType = null;
 		Message message = null;
 		boolean messageContainsInsurance = false;
 		
@@ -627,6 +628,13 @@ public class HL7SocketHandler extends
 					if(originalLocation != null && !originalLocation.isEmpty())
 					{
 						Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_ORIGINAL_LOCATION, originalLocation);
+					}
+					
+					// CHICA-1160 Parse visit type from PV2-12
+					visitType = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler).getVisitType(message);
+					if(StringUtils.isNotEmpty(visitType))
+					{
+						Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_TYPE, visitType);
 					}
 				}
 			} catch (EncodingNotSupportedException e) {

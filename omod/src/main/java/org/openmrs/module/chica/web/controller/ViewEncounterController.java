@@ -367,7 +367,7 @@ public class ViewEncounterController {
 					}
 					
 					PatientIdentifierType identifierType = patientService
-							.getPatientIdentifierTypeByName("MRN_OTHER");
+							.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
 					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
 					identifierTypes.add(identifierType);
 					List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
