@@ -576,7 +576,7 @@ public class HL7SocketHandler extends
 						// DWE CHICA-492 Parse insurance plan code from IN1-35 if this is IUH
 						// MES CHICA-795 Use global property for parsing insurance plan code from IN1-35
 						String parseInsuranceCodeFrom_IN1_35 = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_INSURANCE_CODE_FROM_IN1_35);
-						if(StringUtils.isNotBlank(parseInsuranceCodeFrom_IN1_35) && ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseInsuranceCodeFrom_IN1_35))
+						if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseInsuranceCodeFrom_IN1_35))
 						{
 							planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 									.getInsuranceCompanyPlan(message);
@@ -590,7 +590,7 @@ public class HL7SocketHandler extends
 						// DWE CHICA-492 Do not parse the carrier code if this is IUH
 						// MES CHICA-795 Use global property for parsing the carrier code
 						String parseCarrierCode = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_CARRIER_CODE);
-						if(StringUtils.isNotBlank(parseCarrierCode) &&  ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseCarrierCode))
+						if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseCarrierCode))
 						{
 							carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 									.getInsuranceCarrier(message);
@@ -605,7 +605,7 @@ public class HL7SocketHandler extends
 					// DWE CHICA-633 Parse visit number from PV1-19 if this is not IUH
 					// MES CHICA-795 Use global property for parsing visit number
 					String parseVisitNumberFrom_PV1_19 = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_VISIT_NUMBER_FROM_PV1_19);
-					if(StringUtils.isNotBlank(parseVisitNumberFrom_PV1_19) && ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseVisitNumberFrom_PV1_19))
+					if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseVisitNumberFrom_PV1_19))
 					{
 						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getVisitNumber(message);

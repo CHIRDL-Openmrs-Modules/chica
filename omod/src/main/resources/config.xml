@@ -421,12 +421,12 @@
     </globalProperty>
     <globalProperty>
         <property>chica.parseCarrierCode</property>
-        <defaultValue>false</defaultValue>
+        <defaultValue>true</defaultValue>
         <description>Parse the carrier code from HL7</description>
     </globalProperty>
     <globalProperty>
         <property>chica.parseVisitNumberFrom_PV1_19</property>
-        <defaultValue>false</defaultValue>
+        <defaultValue>true</defaultValue>
         <description>Parse the visit number from HL7 location PVS.19</description>
     </globalProperty>
     <globalProperty>

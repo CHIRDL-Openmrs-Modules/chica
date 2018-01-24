@@ -140,8 +140,7 @@ public class HL7StoreObsRunnable implements Runnable {
 		
 		// MES CHICA-795 Global property will indicate if observations should be parsed and saved from registration message.
 		String parseObsFromRegistration = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_OBS_FROM_REGISTRATION);
-		if (StringUtils.isNotBlank(parseObsFromRegistration) 
-				&&  ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseObsFromRegistration)){
+		if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseObsFromRegistration)){
 			
 			Integer patientId = patient.getPatientId();
 			HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
@@ -250,6 +249,7 @@ public class HL7StoreObsRunnable implements Runnable {
 					}
 				}
 				
+				//put the observation in memory if it was not saved to the database
 				if (!savedToDB) {
 					Set<Obs> obs = obsByConcept.get(currConceptName);
 					if (obs == null) {
