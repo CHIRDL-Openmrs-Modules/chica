@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -129,54 +130,61 @@ public class HL7StoreObsRunnable implements Runnable {
 	 */
 	private void storeHL7Obs(Patient patient, Location location, Integer locationTagId) throws Exception { 
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
+		AdministrationService  adminService = Context.getAdministrationService();	
 		State state = backportsService.getStateByName(ChirdlUtilConstants.STATE_HL7_PROCESS_REGISTRATION_OBS);
 		PatientState patientState = backportsService
 				.addPatientState(patient, state, sessionId, locationTagId,
 						location.getLocationId(), null); // DWE CLINREQ-130 Changed this to use the location service to get the location tag
 		patientState.setStartTime(new Date());
 		patientState = backportsService.updatePatientState(patientState);
-		Integer patientId = patient.getPatientId();
-		HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
-		ArrayList<Obs> allObs = obsHandler.getObs(message, patient);
-		LogicService logicService = Context.getLogicService();
-		ObsInMemoryDatasource xmlDatasource = 
-				(ObsInMemoryDatasource) logicService.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY);
 		
-		HashMap<String, Set<Obs>> obsByConcept = xmlDatasource.getObs(patientId);
-		
-		if (obsByConcept == null) {
-			obsByConcept = new HashMap<String, Set<Obs>>();
-		}
-		
-		final String SOURCE = ChirdlUtilConstants.DATA_SOURCE_IU_HEALTH_MEDICAL_RECORD;
-		final String VITALS_SOURCE = ChirdlUtilConstants.DATA_SOURCE_IU_HEALTH_VITALS;
-		
-		Map<Integer, Concept> mrfConceptMapping = new HashMap<Integer, Concept>();
-		Map<Integer, Concept> vitalsConceptMapping = new HashMap<Integer, Concept>();
-		Map<String, Concept> vitalsConceptByNameMapping = new HashMap<String, Concept>();
-		Set<Integer> mrfConceptSet = new HashSet<Integer>();
-		Set<Integer> vitalsConceptSet = new HashSet<Integer>();
-		Set<String> vitalsConceptByNameSet = new HashSet<String>();
-		
-		ConceptService conceptService = Context.getConceptService();
-		ObsService obsService = Context.getObsService();
-		boolean savedToDB = false;
-		
-		for (Obs currObs : allObs) {
-			savedToDB = false;
-			String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
+		// MES CHICA-795 Global property will indicate if observations should be parsed and saved from registration message.
+		String parseObsFromRegistration = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_OBS_FROM_REGISTRATION);
+		if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseObsFromRegistration)){
 			
-			//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
-			if (location != null && ChirdlUtilConstants.LOCATION_RIIUMG.equalsIgnoreCase(location.getName())) {
+			Integer patientId = patient.getPatientId();
+			HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
+			
+			ArrayList<Obs> allObs = obsHandler.getObs(message, patient);
+			LogicService logicService = Context.getLogicService();
+			ObsInMemoryDatasource xmlDatasource = 
+					(ObsInMemoryDatasource) logicService.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY);
+			
+			HashMap<String, Set<Obs>> obsByConcept = xmlDatasource.getObs(patientId);
+			
+			if (obsByConcept == null) {
+				obsByConcept = new HashMap<String, Set<Obs>>();
+			}
+			
+			Map<Integer, Concept> mrfConceptMapping = new HashMap<Integer, Concept>();
+			Map<Integer, Concept> vitalsConceptMapping = new HashMap<Integer, Concept>();
+			Map<String, Concept> vitalsConceptByNameMapping = new HashMap<String, Concept>();
+			Set<Integer> mrfConceptSet = new HashSet<Integer>();
+			Set<Integer> vitalsConceptSet = new HashSet<Integer>();
+			Set<String> vitalsConceptByNameSet = new HashSet<String>();
+			
+			ConceptService conceptService = Context.getConceptService();
+			ObsService obsService = Context.getObsService();
+			boolean savedToDB = false;
+			
+			//MES CHICA-795: Use global property for data sources
+			String medicalRecordSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_MEDICAL_RECORD);
+			String vitalsSource = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_DATA_SOURCE_VITALS);
+			
+			for (Obs currObs : allObs) {
+				savedToDB = false;
+				String currConceptName = ((ConceptName) currObs.getConcept().getNames().toArray()[0]).getName();
+				
+				//TMD CHICA-498 Look for concept mapping if this is IU Health, the codes (not names) are mapped
 				Concept concept = currObs.getConcept();
 				Integer conceptId = concept.getConceptId();
-				
+			
 				// check to see if we've already looked up a mapping for this concept
 				Concept mappedConcept = mrfConceptMapping.get(conceptId);
 				if (mappedConcept == null) {
 					// check to see if we've already searched this one before
 					if (!mrfConceptSet.contains(conceptId)) {
-						mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), SOURCE);
+						mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), medicalRecordSource);
 						mrfConceptSet.add(conceptId);
 						mrfConceptMapping.put(conceptId, mappedConcept);
 					}
@@ -196,7 +204,7 @@ public class HL7StoreObsRunnable implements Runnable {
 					if (mappedVitalsConcept == null) {
 						// check to see if we've already searched this one before
 						if (!vitalsConceptByNameSet.contains(answerConceptName)) {
-							mappedVitalsConcept = conceptService.getConceptByMapping(answerConceptName, VITALS_SOURCE);
+							mappedVitalsConcept = conceptService.getConceptByMapping(answerConceptName, vitalsSource);
 							vitalsConceptByNameSet.add(answerConceptName);
 							vitalsConceptByNameMapping.put(answerConceptName, mappedVitalsConcept);
 						}
@@ -212,7 +220,7 @@ public class HL7StoreObsRunnable implements Runnable {
 				if (mappedVitalsConcept == null) {
 					// check to see if we've already searched this one before
 					if (!vitalsConceptSet.contains(conceptId)) {
-						mappedVitalsConcept = conceptService.getConceptByMapping(conceptId.toString(), VITALS_SOURCE);
+						mappedVitalsConcept = conceptService.getConceptByMapping(conceptId.toString(), vitalsSource);
 						vitalsConceptSet.add(conceptId);
 						vitalsConceptMapping.put(conceptId, mappedVitalsConcept);
 					}
@@ -225,7 +233,7 @@ public class HL7StoreObsRunnable implements Runnable {
 							String answerConceptName = answerConcept.getName().getName();
 							currObs.setValueText(answerConceptName);
 							log.error("Could not map vitals concept: " + answerConceptName
-							        + ". Could not store vitals observation.");
+								+ ". Could not store vitals observation.");
 						}
 					}
 					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedVitalsConcept);
@@ -241,27 +249,26 @@ public class HL7StoreObsRunnable implements Runnable {
 					}
 				}
 				
+				//put the observation in memory if it was not saved to the database
+				if (!savedToDB) {
+					Set<Obs> obs = obsByConcept.get(currConceptName);
+					if (obs == null) {
+						obs = new HashSet<Obs>();
+						obsByConcept.put(currConceptName, obs);
+					}
+					obs.add(currObs);
+				}
+			
 			}
 			
-			//put the observation in memory if it was not saved to the database
-			if (!savedToDB) {
-				Set<Obs> obs = obsByConcept.get(currConceptName);
-				if (obs == null) {
-					obs = new HashSet<Obs>();
-					obsByConcept.put(currConceptName, obs);
-				}
-				obs.add(currObs);
-			}
+			xmlDatasource.saveObs(patientId, obsByConcept);
+			mrfConceptMapping.clear();
+			vitalsConceptMapping.clear();
+			vitalsConceptByNameMapping.clear();
+			mrfConceptSet.clear();
+			vitalsConceptSet.clear();
+			vitalsConceptByNameSet.clear();
 		}
-		
-		xmlDatasource.saveObs(patientId, obsByConcept);
-		
-		mrfConceptMapping.clear();
-		vitalsConceptMapping.clear();
-		vitalsConceptByNameMapping.clear();
-		mrfConceptSet.clear();
-		vitalsConceptSet.clear();
-		vitalsConceptByNameSet.clear();
 		
 		patientState.setEndTime(new Date());
 		backportsService.updatePatientState(patientState);
