@@ -436,12 +436,10 @@
     </globalProperty>
     <globalProperty>
         <property>chica.dataSourceVitals</property>
-        <defaultValue>IU Health Vitals</defaultValue>
         <description>Data source for Vital messages </description>
     </globalProperty>
      <globalProperty>
         <property>chica.dataSourceMedicalRecord</property>
-        <defaultValue>IU Health MRF Dump</defaultValue>
         <description>Data source for medical records dump</description>
     </globalProperty>
   
