@@ -279,6 +279,7 @@ function forcePrint_parseAvailableForms(responseXML) {
 		$('.force-print-accordion').remove();
 		$('.force-print-panel').remove();
 		$('.force-print-divider').remove();
+		$("#force-print-form-list").empty();
 		$(responseXML).find("group").each(function () {
 			foundForms = true;
 			var groupName = $(this).attr('name');
