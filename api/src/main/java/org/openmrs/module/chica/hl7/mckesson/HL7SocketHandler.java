@@ -525,6 +525,7 @@ public class HL7SocketHandler extends
 			Provider provider, HashMap<String, Object> parameters) {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context
 				.getService(ChirdlUtilBackportsService.class);
+		AdministrationService adminService = Context.getAdministrationService();
 		org.openmrs.Encounter encounter = super.processEncounter(
 				incomingMessageString, p, encDate, newEncounter, provider,
 				parameters);
@@ -571,10 +572,12 @@ public class HL7SocketHandler extends
 
 					appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getAppointmentTime(message);
-
+					
 					if(messageContainsInsurance) { // CHICA-1157
 						// DWE CHICA-492 Parse insurance plan code from IN1-35 if this is IUH
-						if(locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+						// MES CHICA-795 Use global property for parsing insurance plan code from IN1-35
+						String parseInsuranceCodeFrom_IN1_35 = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_INSURANCE_CODE_FROM_IN1_35);
+						if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseInsuranceCodeFrom_IN1_35))
 						{
 							planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 									.getInsuranceCompanyPlan(message);
@@ -584,10 +587,11 @@ public class HL7SocketHandler extends
 							planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 									.getInsurancePlan(message);
 						}
-					
 				
 						// DWE CHICA-492 Do not parse the carrier code if this is IUH
-						if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+						// MES CHICA-795 Use global property for parsing the carrier code
+						String parseCarrierCode = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_CARRIER_CODE);
+						if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseCarrierCode))
 						{
 							carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 									.getInsuranceCarrier(message);
@@ -596,12 +600,13 @@ public class HL7SocketHandler extends
 						insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getInsuranceName(message);
 					}
-
 					printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getPrinterLocation(message, incomingMessageString);
 					
 					// DWE CHICA-633 Parse visit number from PV1-19 if this is not IUH
-					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					// MES CHICA-795 Use global property for parsing visit number
+					String parseVisitNumberFrom_PV1_19 = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_VISIT_NUMBER_FROM_PV1_19);
+					if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseVisitNumberFrom_PV1_19))
 					{
 						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getVisitNumber(message);
