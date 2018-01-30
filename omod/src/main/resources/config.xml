@@ -419,7 +419,35 @@
         <defaultValue></defaultValue>
      	<description>The view encounters config file (including the path)</description>
     </globalProperty>
-    
+ 	<globalProperty>
+        <property>chica.parseInsurancePlanCodeFrom_IN1-35</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the Insurance Plan Code from HL7 location IN1.35</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.parseCarrierCode</property>
+        <defaultValue>true</defaultValue>
+        <description>Parse the carrier code from HL7</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.parseVisitNumberFrom_PV1_19</property>
+        <defaultValue>true</defaultValue>
+        <description>Parse the visit number from HL7 location PVS.19</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.parseObsFromRegistration</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the observations from the registration message</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.dataSourceVitals</property>
+        <description>Data source for Vital messages </description>
+    </globalProperty>
+     <globalProperty>
+        <property>chica.dataSourceMedicalRecord</property>
+        <description>Data source for medical records dump</description>
+    </globalProperty>
+  
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
     <servlet>
