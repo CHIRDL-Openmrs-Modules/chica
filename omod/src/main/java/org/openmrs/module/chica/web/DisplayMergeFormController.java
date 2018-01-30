@@ -52,6 +52,7 @@ public class DisplayMergeFormController extends SimpleFormController
 		String leftFormIdStr = request.getParameter("leftImageFormId");
 		String leftFormInstanceIdStr = request.getParameter("leftImageFormInstanceId");
 		String leftStylesheet = request.getParameter("leftImageStylesheet");
+		String leftImageDirectory = request.getParameter("leftImageDirectory");
 		Integer rightLocationId = null;
 		Integer rightFormId = null;
 		Integer rightFormInstanceId = null;
@@ -59,6 +60,7 @@ public class DisplayMergeFormController extends SimpleFormController
 		String rightFormIdStr = request.getParameter("rightImageFormId");
 		String rightFormInstanceIdStr = request.getParameter("rightImageFormInstanceId");
 		String rightStylesheet = request.getParameter("rightImageStylesheet");
+		String rightImageDirectory = request.getParameter("rightImageDirectory");
 		String encounterIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		Integer encounterId = null;
 		String strOutput = null;
@@ -107,7 +109,7 @@ public class DisplayMergeFormController extends SimpleFormController
 			}
 			map.put("leftImageForminstance", leftFormInstanceId);
 			strOutput = Util.displayStylesheet(leftFormId, locationTagId, leftLocationId, leftFormInstanceId, 
-											   leftStylesheet, getLocationAttributeDirectoryName());
+											   leftStylesheet, leftImageDirectory);
 		}
 		map.put("leftOutput", strOutput);
 		
@@ -119,7 +121,7 @@ public class DisplayMergeFormController extends SimpleFormController
 			}
 			map.put("rightImageForminstance", rightFormInstanceId);
 			strOutput = Util.displayStylesheet(rightFormId, locationTagId, rightLocationId, rightFormInstanceId, 
-											   rightStylesheet, getLocationAttributeDirectoryName());
+											   rightStylesheet, rightImageDirectory);
 		}
 		map.put("rightOutput", strOutput);
 		return map;

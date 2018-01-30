@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
@@ -28,8 +29,12 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.PatientRow;
+import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
+import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm;
+import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -50,6 +55,8 @@ public class ViewEncounterController {
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	private static final String FORM_VIEW = "/module/chica/viewEncounter";
+	private static final String DISPLAY_POSITION_LEFT = "left";
+	private static final String DISPLAY_POSITION_RIGHT = "right";
 
 	@RequestMapping(method = RequestMethod.POST)
 	protected ModelAndView processSubmit(HttpServletRequest request,
@@ -123,220 +130,353 @@ public class ViewEncounterController {
 				Integer leftImageFormInstanceId = null;
 				String leftImageStylesheet = null;
 				String rightImageStylesheet = null;
-				boolean displayMergeForms = false;
-				boolean displayScanForms = false;
-				org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
-				org.openmrs.Encounter encounter = encounterService.getEncounter(encounterId);
-				ChicaService chicaService = Context.getService(ChicaService.class);
-				
-				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||
-						formName.equals("MCHAT") || formName.equals("MCHAT-R") || formName.equals("SummaryReportMchatR") || 
-						formName.equals("ADHD PFU") || formName.equals("ADHD PSFU") || 
-						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule7yrOrOlder") ||
-						formName.equals("ImmunizationSchedule") || formName.equals("PHQ9_JIT_MOBILE")) {
-					leftImageLocationId = locationId;
-					leftImageFormId = formId;
-					leftImageFormInstanceId = formInstanceId;
-					if (formName.equals("ParentSummaryReport")) {
-						leftImageStylesheet = "parentSummaryReport.xsl";
-						displayMergeForms = true;
-					} else if (formName.equals("PSF")) {
-						leftImageStylesheet = "psf.xsl";
-					} else if (formName.equals("PHQ9_JIT_MOBILE")) {
-						leftImageStylesheet = "PHQ9_JIT_MOBILE.xsl";
-						displayScanForms = true;
-					} else if (formName.equals("MCHAT")) {
-						leftImageStylesheet = "mchat.xsl";
-						displayScanForms = true;
-					} else if (formName.equals("MCHAT-R")) {
-						leftImageStylesheet = "mchat-r.xsl";
-						displayScanForms = true;
-					} else if (formName.equals("SummaryReportMchatR")) {
-						leftImageStylesheet = "mchat-rSummaryReport.xsl";
-						displayMergeForms = true;
-					}
-				} else {
-					ArrayList<String> leftNames = new ArrayList<String>();
-					
-					if(formName.equals("ADHD T")){
-						leftNames.add("ADHD P");
-						leftNames.add("ADHD PS");
-					}
-					
-					if(formName.equals("ADHD TFU")){
-						leftNames.add("ADHD PFU");
-						leftNames.add("ADHD PSFU");
-					}
-					
-					if(formName.equals("PWS")){
-						leftNames.add("PSF");
-						leftImageStylesheet = "psf.xsl";
-					}
-					
-					if (formName.equals("TeacherSummaryReport")) {
-						leftNames.add("ParentSummaryReport");
-						leftImageStylesheet = "parentSummaryReport.xsl";
-						displayMergeForms = true;
-					}
-					
-					if (formName.equals("ImmunizationSchedule")) {
-						leftNames.add("ImmunizationSchedule");
-						leftImageStylesheet = "ImmunizationSchedule.xsl";
-						displayMergeForms = true;
-					}
-					
-					if (formName.equals("ImmunizationSchedule7yrOrOlder")) {
-						leftNames.add("ImmunizationSchedule7yrOrOlder");
-						leftImageStylesheet = "ImmunizationSchedule7yrOrOlder.xsl";
-						displayMergeForms = true;
-					}
-					
-					for (String leftName : leftNames) {
-						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName,
-						    encounterId);
-						if (patientStates != null && !patientStates.isEmpty()) {
-							
-							for (PatientState currState : patientStates) {
-								if (currState.getEndTime() != null) {
-									leftImageLocationId = currState.getLocationId();
-									leftImageFormId = currState.getFormId();
-									leftImageFormInstanceId = currState.getFormInstanceId();
-									break;
-								}
-							}
-						} else {
-							if (leftName!=null&&leftName.equals("PSF")) {
-								Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
-								
-								if (chica1Appt != null) {
-									leftImageFormInstanceId = chica1Appt.getApptPsfId();
-									leftImageLocationId = encounter.getLocation().getLocationId();
-									
-									if (leftImageFormInstanceId != null) {
-										form = formService.getForm("PSF");
-										if (form != null) {
-											leftImageFormId = form.getFormId();
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				
+				//boolean displayMergeForms = false;
+				//boolean displayScanForms = false;
+				String leftImageDirectory = null;
+				String rightImageDirectory = null;
 				Integer rightImageLocationId = null;
 				Integer rightImageFormId = null;
 				Integer rightImageFormInstanceId = null;
 				
-				//don't set a right image for MCHAT or MCHAT-R
-				if (!formName.equals("MCHAT") && !formName.equals("MCHAT-R") && !formName.equals("SummaryReportMchatR") && 
-						!formName.equals("ImmunizationSchedule7yrOrOlder") && !formName.equals("ImmunizationSchedule") && 
-						!formName.endsWith("PHQ9_JIT_MOBILE")) {
-					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || 
-							formName.equals("TeacherSummaryReport")) {
-						rightImageLocationId = locationId;
-						rightImageFormId = formId;
-						rightImageFormInstanceId = formInstanceId;
-						if (formName.equals("TeacherSummaryReport")) {
-							rightImageStylesheet = "teacherSummaryReport.xsl";
-							displayMergeForms = true;
-						} else if (formName.equals("PWS")) {
-							rightImageStylesheet = "pws.xsl";
-						}
-					} else {
+				ViewEncountersConfig config = org.openmrs.module.chica.util.Util.getViewEncountersConfig();
+				if (config == null) {
+					log.error("View Encounters Config file could not be loaded. No forms will be displayed.");
+					// TODO CHICA-1125 What to return here
+				}
+				
+				FormsToDisplay formsToDisplayConfig = config.getFormsToDisplay();
+				if (formsToDisplayConfig == null) {
+					log.error("View Encounters Config contains no entry for formsToDisplay. No forms will be displayed.");
+					// TODO CHICA-1125 What to return here
+				}
+				
+				Map<String, ViewEncounterForm> viewEncounterFormMap = new HashMap<>();
+				viewEncounterFormMap = formsToDisplayConfig.getViewEncounterFormMap();
+				
+				// Determine if the selected form should display on the left or the right of the page
+				ViewEncounterForm viewEncounterForm = viewEncounterFormMap.get(formName);
+				if(DISPLAY_POSITION_LEFT.equalsIgnoreCase(viewEncounterForm.getDisplayPosition()))
+				{
+					leftImageLocationId = locationId;
+					leftImageFormId = formId;
+					leftImageFormInstanceId = formInstanceId;
+					leftImageStylesheet = viewEncounterForm.getStylesheet();
+					leftImageDirectory = viewEncounterForm.getDirectory();
 						
-						String rightName = null;
-						
-						if (formName.equals("ADHD P")) {
-							rightName = "ADHD T";
-						}
-						
-						if (formName.equals("ADHD PFU")) {
-							rightName = "ADHD TFU";
-						}
-						
-						if (formName.equals("ADHD PS")) {
-							rightName = "ADHD T";
-						}
-						
-						if (formName.equals("ADHD PSFU")) {
-							rightName = "ADHD TFU";
-						}
-						
-						if (formName.equals("PSF")) {
-							rightName = "PWS";
-							rightImageStylesheet = "pws.xsl";
-						}
-						
-						if (formName.equals("ParentSummaryReport")) {
-							rightName = "TeacherSummaryReport";
-							rightImageStylesheet = "teacherSummaryReport.xsl";
-							displayMergeForms = true;
-						}
-						
-						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName,
-						    encounterId);
-						if (patientStates != null && !patientStates.isEmpty()) {
-							boolean checkPWSProcess = false;
-							HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
-							for (PatientState currState : patientStates) {
-								if (currState.getEndTime() != null) {
-									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
-										checkPWSProcess = true; 
-									}
-									if (!checkPWSProcess) { 
-										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
-									} else {
-										rightImageLocationId = currState.getLocationId();
-										rightImageFormId = currState.getFormId();
-										rightImageFormInstanceId = currState.getFormInstanceId();
-										pwsTempFormInstancesMap.clear();
-										break;
-									}
-								}
-							}
-							if (!pwsTempFormInstancesMap.isEmpty()) {
-								FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
-								rightImageLocationId = formInstance.getLocationId();
-								rightImageFormId = formInstance.getFormId();
-								rightImageFormInstanceId = formInstance.getFormInstanceId();
-							}
-						} else {
-							if (rightName != null && rightName.equals("PWS")) {
-								Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
-								
-								if (chica1Appt != null) {
-									rightImageFormInstanceId = chica1Appt.getApptPwsId();
-									rightImageLocationId = encounter.getLocation().getLocationId();
-									
-									if (rightImageFormInstanceId != null) {
-										form = formService.getForm("PWS");
-										if (form != null) {
-											rightImageFormId = form.getFormId();
+					// Now query for patient states with the rightForm name
+					// Note: There are no current cases where this list would have more than one
+					for(ViewEncounterForm rightForm : viewEncounterForm.getRelatedForms())
+					{
+						if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(rightForm.getDisplayPosition())) // Make sure this is configured properly as a right form
+						{
+							String rightName = rightForm.getName();
+							List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName, encounterId);
+							if (patientStates != null && !patientStates.isEmpty()) 
+							{
+								boolean checkPWSProcess = false;
+								HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+								for (PatientState currState : patientStates) 
+								{
+									if (currState.getEndTime() != null) 
+									{
+										if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
+										{
+											checkPWSProcess = true; 
+										}
+
+										if (!checkPWSProcess) 
+										{ 
+											pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+										} 
+										else 
+										{
+											rightImageLocationId = currState.getLocationId();
+											rightImageFormId = currState.getFormId();
+											rightImageFormInstanceId = currState.getFormInstanceId();
+											rightImageStylesheet = rightForm.getStylesheet();
+											rightImageDirectory = rightForm.getDirectory();
+											pwsTempFormInstancesMap.clear();
+											break;
 										}
 									}
 								}
-							}
-						}
+
+								if (!pwsTempFormInstancesMap.isEmpty())
+								{
+									FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+									rightImageLocationId = formInstance.getLocationId();
+									rightImageFormId = formInstance.getFormId();
+									rightImageFormInstanceId = formInstance.getFormInstanceId();
+									rightImageStylesheet = rightForm.getStylesheet();
+									rightImageDirectory = rightForm.getDirectory();
+								}
+							} 
+						}	
 					}
 				}
+				else if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(viewEncounterForm.getDisplayPosition()))
+				{
+					rightImageLocationId = locationId;
+					rightImageFormId = formId;
+					rightImageFormInstanceId = formInstanceId;
+					rightImageStylesheet = viewEncounterForm.getStylesheet();
+					rightImageDirectory = viewEncounterForm.getDirectory();
+
+					for(ViewEncounterForm leftForm : viewEncounterForm.getRelatedForms())
+					{
+						if(DISPLAY_POSITION_LEFT.equalsIgnoreCase(leftForm.getDisplayPosition())) // Make sure this is configured properly as a left form
+						{
+							String leftName = leftForm.getName();
+							List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName, encounterId);
+							if (patientStates != null && !patientStates.isEmpty()) 
+							{
+								for (PatientState currState : patientStates) 
+								{
+									if (currState.getEndTime() != null) 
+									{
+										leftImageLocationId = currState.getLocationId();
+										leftImageFormId = currState.getFormId();
+										leftImageFormInstanceId = currState.getFormInstanceId();
+										leftImageStylesheet = leftForm.getStylesheet();
+										leftImageDirectory = leftForm.getDirectory();
+										break;
+									}
+								}
+							} 
+						}		
+					}
+				}
+				
+//				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||formName.equals("MCHAT") || formName.equals("MCHAT-R") || formName.equals("SummaryReportMchatR") || 
+//						formName.equals("ADHD PFU") || formName.equals("ADHD PSFU") || 
+//						formName.equals("ParentSummaryReport") || formName.equals("ImmunizationSchedule7yrOrOlder") ||
+//						formName.equals("ImmunizationSchedule") || formName.equals("PHQ9_JIT_MOBILE")) 
+//				{
+//					leftImageLocationId = locationId;
+//					leftImageFormId = formId;
+//					leftImageFormInstanceId = formInstanceId;
+//					
+//					if (formName.equals("ParentSummaryReport"))
+//					{
+//						leftImageStylesheet = "parentSummaryReport.xsl";
+//						displayMergeForms = true;
+//					} 
+//					else if (formName.equals("PSF")) 
+//					{
+//						leftImageStylesheet = "psf.xsl";
+//					} 
+//					else if (formName.equals("PHQ9_JIT_MOBILE")) 
+//					{
+//						leftImageStylesheet = "PHQ9_JIT_MOBILE.xsl";
+//						displayScanForms = true;
+//					} 
+//					else if (formName.equals("MCHAT")) 
+//					{
+//						leftImageStylesheet = "mchat.xsl";
+//						displayScanForms = true;
+//					}
+//					else if (formName.equals("MCHAT-R")) 
+//					{
+//						leftImageStylesheet = "mchat-r.xsl";
+//						displayScanForms = true;
+//					} 
+//					else if (formName.equals("SummaryReportMchatR")) 
+//					{
+//						leftImageStylesheet = "mchat-rSummaryReport.xsl";
+//						displayMergeForms = true;
+//					}
+//					
+//				} 
+//				else 
+//				{
+//					ArrayList<String> leftNames = new ArrayList<String>();
+//					
+//					if(formName.equals("ADHD T")){
+//						leftNames.add("ADHD P");
+//						leftNames.add("ADHD PS");
+//					}
+//					
+//					if(formName.equals("ADHD TFU")){
+//						leftNames.add("ADHD PFU");
+//						leftNames.add("ADHD PSFU");
+//					}
+//					
+//					if(formName.equals("PWS")){
+//						leftNames.add("PSF");
+//						leftImageStylesheet = "psf.xsl";
+//					}
+//					
+//					if (formName.equals("TeacherSummaryReport")) {
+//						leftNames.add("ParentSummaryReport");
+//						leftImageStylesheet = "parentSummaryReport.xsl";
+//						displayMergeForms = true;
+//					}
+//					
+//					if (formName.equals("ImmunizationSchedule")) {
+//						leftNames.add("ImmunizationSchedule");
+//						leftImageStylesheet = "ImmunizationSchedule.xsl";
+//						displayMergeForms = true;
+//					}
+//					
+//					if (formName.equals("ImmunizationSchedule7yrOrOlder")) {
+//						leftNames.add("ImmunizationSchedule7yrOrOlder");
+//						leftImageStylesheet = "ImmunizationSchedule7yrOrOlder.xsl";
+//						displayMergeForms = true;
+//					}
+//					
+//					for (String leftName : leftNames) {
+//						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName,
+//						    encounterId);
+//						if (patientStates != null && !patientStates.isEmpty()) {
+//							
+//							for (PatientState currState : patientStates) {
+//								if (currState.getEndTime() != null) {
+//									leftImageLocationId = currState.getLocationId();
+//									leftImageFormId = currState.getFormId();
+//									leftImageFormInstanceId = currState.getFormInstanceId();
+//									break;
+//								}
+//							}
+//						} else {
+//							if (leftName!=null&&leftName.equals("PSF")) {
+//								Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
+//								
+//								if (chica1Appt != null) {
+//									leftImageFormInstanceId = chica1Appt.getApptPsfId();
+//									leftImageLocationId = encounter.getLocation().getLocationId();
+//									
+//									if (leftImageFormInstanceId != null) {
+//										form = formService.getForm("PSF");
+//										if (form != null) {
+//											leftImageFormId = form.getFormId();
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+				
+//				Integer rightImageLocationId = null;
+//				Integer rightImageFormId = null;
+//				Integer rightImageFormInstanceId = null;
+				
+				//don't set a right image for MCHAT or MCHAT-R
+//				if (!formName.equals("MCHAT") && !formName.equals("MCHAT-R") && !formName.equals("SummaryReportMchatR") && 
+//						!formName.equals("ImmunizationSchedule7yrOrOlder") && !formName.equals("ImmunizationSchedule") && 
+//						!formName.endsWith("PHQ9_JIT_MOBILE"))
+//				{
+//					if (formName.equals("PWS") || formName.equals("ADHD T")|| formName.equals("ADHD TFU") || formName.equals("TeacherSummaryReport"))
+//					{
+//							rightImageLocationId = locationId;
+//							rightImageFormId = formId;
+//							rightImageFormInstanceId = formInstanceId;
+//							if (formName.equals("TeacherSummaryReport")) {
+//								rightImageStylesheet = "teacherSummaryReport.xsl";
+//								displayMergeForms = true;
+//							} else if (formName.equals("PWS")) {
+//								rightImageStylesheet = "pws.xsl";
+//							}
+//					} 
+//					else 
+//					{
+//						
+//						String rightName = null;
+//						
+//						if (formName.equals("ADHD P")) {
+//							rightName = "ADHD T";
+//						}
+//						
+//						if (formName.equals("ADHD PFU")) {
+//							rightName = "ADHD TFU";
+//						}
+//						
+//						if (formName.equals("ADHD PS")) {
+//							rightName = "ADHD T";
+//						}
+//						
+//						if (formName.equals("ADHD PSFU")) {
+//							rightName = "ADHD TFU";
+//						}
+//						
+//						if (formName.equals("PSF")) {
+//							rightName = "PWS";
+//							rightImageStylesheet = "pws.xsl";
+//							rightImageDirectory = "defaultExportDirectory";// TODO CHICA-1125 Testing
+//						}
+//						
+//						if (formName.equals("ParentSummaryReport")) {
+//							rightName = "TeacherSummaryReport";
+//							rightImageStylesheet = "teacherSummaryReport.xsl";
+//							displayMergeForms = true;
+//						}
+//						
+//						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName,
+//						    encounterId);
+//						if (patientStates != null && !patientStates.isEmpty()) {
+//							boolean checkPWSProcess = false;
+//							HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+//							for (PatientState currState : patientStates) {
+//								if (currState.getEndTime() != null) {
+//									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
+//										checkPWSProcess = true; 
+//									}
+//									if (!checkPWSProcess) { 
+//										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+//									} else {
+//										rightImageLocationId = currState.getLocationId();
+//										rightImageFormId = currState.getFormId();
+//										rightImageFormInstanceId = currState.getFormInstanceId();
+//										pwsTempFormInstancesMap.clear();
+//										break;
+//									}
+//								}
+//							}
+//							if (!pwsTempFormInstancesMap.isEmpty()) {
+//								FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+//								rightImageLocationId = formInstance.getLocationId();
+//								rightImageFormId = formInstance.getFormId();
+//								rightImageFormInstanceId = formInstance.getFormInstanceId();
+//							}
+//						} else {
+//							if (rightName != null && rightName.equals("PWS")) {
+//								Chica1Appointment chica1Appt = chicaService.getChica1AppointmentByEncounterId(encounterId);
+//								
+//								if (chica1Appt != null) {
+//									rightImageFormInstanceId = chica1Appt.getApptPwsId();
+//									rightImageLocationId = encounter.getLocation().getLocationId();
+//									
+//									if (rightImageFormInstanceId != null) {
+//										form = formService.getForm("PWS");
+//										if (form != null) {
+//											rightImageFormId = form.getFormId();
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
 							
 					map.put("rightImageLocationId", rightImageLocationId);
 					map.put("rightImageFormId", rightImageFormId);
 					map.put("rightImageFormInstanceId", rightImageFormInstanceId);
 					map.put("rightImageStylesheet", rightImageStylesheet);
+					map.put("rightImageDirectory", rightImageDirectory);
 					map.put("leftImageLocationId", leftImageLocationId);
 					map.put("leftImageFormId", leftImageFormId);
 					map.put("leftImageFormInstanceId", leftImageFormInstanceId);
 					map.put("leftImageStylesheet", leftImageStylesheet);
+					map.put("leftImageDirectory", leftImageDirectory);
 					
-					if (displayMergeForms) {
-						return new ModelAndView(new RedirectView("displayMergeForm.form"), map);
-					} else if (displayScanForms) {
-						return new ModelAndView(new RedirectView("displayScanForm.form"), map);
-					}
-
-					return new ModelAndView(new RedirectView("displayTiff.form"), map);
+					return new ModelAndView(new RedirectView("displayMergeForm.form"), map);
+//					if (displayMergeForms) {
+//						return new ModelAndView(new RedirectView("displayMergeForm.form"), map);
+//					} else if (displayScanForms) {
+//						return new ModelAndView(new RedirectView("displayScanForm.form"), map);
+//					}
+//
+//					return new ModelAndView(new RedirectView("displayTiff.form"), map);
 			}
 
 		}
@@ -348,19 +488,18 @@ public class ViewEncounterController {
 	protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);		
 		FormService formService = Context.getFormService();
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		PatientService patientService = Context
 				.getService(PatientService.class);
 		HashMap<Integer,String> formNameMap = new HashMap<Integer,String>();
 
 		try {
 
-			String pidparam = request.getParameter("patientId");
+			String pidparam = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
 			Patient patient = null;
 
 			if (pidparam == null || pidparam.trim().length()==0) {
-				String mrn = request.getParameter("mrn");
-				if (mrn != null && mrn.trim().length() > 0) {
+				String mrn = request.getParameter(ChirdlUtilConstants.PARAMETER_MRN);
+				if (StringUtils.isNotEmpty(mrn)) {
 					mrn = Util.removeLeadingZeros(mrn);
 					if (!mrn.contains("-") && mrn.length() > 1) {
 						mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length()-1);
@@ -408,23 +547,35 @@ public class ViewEncounterController {
 					.getEncountersByPatientId(patient.getPatientId());
 			List<PatientRow> rows = new ArrayList<PatientRow>();
 
-			ArrayList<String> formsToProcess = new ArrayList<String>();
-			formsToProcess.add("PSF");
-			formsToProcess.add("PWS");
-			formsToProcess.add("ADHD P");
-			formsToProcess.add("ADHD PS");
-			formsToProcess.add("ADHD T");
-			formsToProcess.add("MCHAT");
-			formsToProcess.add("MCHAT-R");
-			formsToProcess.add("SummaryReportMchatR");
-			formsToProcess.add("ADHD PFU");
-			formsToProcess.add("ADHD TFU");
-			formsToProcess.add("ADHD PSFU");
-			formsToProcess.add("ParentSummaryReport");
-			formsToProcess.add("TeacherSummaryReport");
-			formsToProcess.add("ImmunizationSchedule");
-			formsToProcess.add("ImmunizationSchedule7yrOrOlder");
-			formsToProcess.add("PHQ9_JIT_MOBILE");
+			ViewEncountersConfig config = org.openmrs.module.chica.util.Util.getViewEncountersConfig();
+			if (config == null) {
+				log.error("View Encounters Config file could not be loaded. No forms will be displayed.");
+				// TODO CHICA-1125 What to return here
+			}
+			
+			FormsToDisplay formsToDisplayConfig = config.getFormsToDisplay();
+			if (formsToDisplayConfig == null) {
+				log.error("View Encounters Config contains no entry for formsToDisplay. No forms will be displayed.");
+				// TODO CHICA-1125 What to return here
+			}
+			
+			List<String> formsToProcess = formsToDisplayConfig.getFormNames(); //new ArrayList<String>();
+//			formsToProcess.add("PSF");
+//			formsToProcess.add("PWS");
+//			formsToProcess.add("ADHD P");
+//			formsToProcess.add("ADHD PS");
+//			formsToProcess.add("ADHD T");
+//			formsToProcess.add("MCHAT");
+//			formsToProcess.add("MCHAT-R");
+//			formsToProcess.add("SummaryReportMchatR");
+//			formsToProcess.add("ADHD PFU");
+//			formsToProcess.add("ADHD TFU");
+//			formsToProcess.add("ADHD PSFU");
+//			formsToProcess.add("ParentSummaryReport");
+//			formsToProcess.add("TeacherSummaryReport");
+//			formsToProcess.add("ImmunizationSchedule");
+//			formsToProcess.add("ImmunizationSchedule7yrOrOlder");
+//			formsToProcess.add("PHQ9_JIT_MOBILE");
 			
 			String firstName = null;
 			String lastName = null;
@@ -447,6 +598,9 @@ public class ViewEncounterController {
 				if (enct == null)
 					continue;
 
+				Integer locationId = enct.getLocation().getLocationId();
+				Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(enct);
+				
 				String apptDateString = "";
 				Date appt = enct.getScheduledTime();
 				if (appt != null) {
@@ -498,7 +652,13 @@ public class ViewEncounterController {
 							if(formName == null){
 								Form form = formService.getForm(formId);
 								formName = form.getName();
-								formNameMap.put(formId, formName);
+								
+								// Use the display name from the form attribute
+								FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
+								if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+								{
+									formNameMap.put(formId, formName);
+								}							
 							}
 							
 							//make sure you only get the most recent psf/pws pair
@@ -541,50 +701,6 @@ public class ViewEncounterController {
 				}
 			
 				
-				//get CHICA 1 PSF and PWS ids
-				Chica1Appointment chica1Appt = chicaService
-					.getChica1AppointmentByEncounterId(encounterId);
-				
-				if (chica1Appt != null)
-				{
-					Integer psfId = chica1Appt.getApptPsfId();
-					Integer pwsId = chica1Appt.getApptPwsId();
-					Integer locationId = enct.getLocation().getLocationId();
-					
-					
-					if(psfId != null){
-						Form form = formService.getForm("PSF");
-						Integer formId = null;
-						if (form != null)
-						{
-							formId = form.getFormId();
-						}
-						FormInstance psfFormInstance = new FormInstance();
-						psfFormInstance.setFormInstanceId(psfId);
-						psfFormInstance.setFormId(formId);
-						psfFormInstance.setLocationId(locationId);
-						row.setPsfId(psfFormInstance);
-						formNameMap.put(formId, "PSF");
-						row.addFormInstance(psfFormInstance);
-					}
-					
-					if(pwsId != null){
-						Form form = formService.getForm("PWS");
-						Integer formId = null;
-						if (form != null)
-						{
-							formId = form.getFormId();
-						}
-						FormInstance pwsFormInstance = new FormInstance();
-						pwsFormInstance.setFormInstanceId(pwsId);
-						pwsFormInstance.setFormId(formId);
-						pwsFormInstance.setLocationId(locationId);
-						row.setPwsId(pwsFormInstance);
-						formNameMap.put(formId, "PWS");
-						row.addFormInstance(pwsFormInstance);
-					}
-				}
-
 				// From the encounter, get the obs for weight percentile
 				//String result = searchEncounterForObs(enct, "WTCENTILE");
 				//row.setWeightPercentile(result);

@@ -414,6 +414,11 @@
         <defaultValue></defaultValue>
      	<description>Password for Glooko</description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.ViewEncountersConfigFile</property>
+        <defaultValue></defaultValue>
+     	<description>The view encounters config file (including the path)</description>
+    </globalProperty>
     
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
