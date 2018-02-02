@@ -16,6 +16,9 @@
 	
 %>
   
+<style>
+	#content { font-size: inherit }
+</style>
 <script>var ctx = "${pageContext.request.contextPath}";</script>
 <link
     href="${pageContext.request.contextPath}/moduleResources/chica/chica.css"
@@ -67,11 +70,11 @@
 					</table>
 
 					<div id="encounterMrnMessage" >
-						<p><h5>Enter the patient MRN to display all encounters for that patient</h5><p>
+						<p><h4>Enter the patient MRN to display all encounters for that patient</h4><p>
 						<p><span id="encounterMrnError" ></span></p>
 					</div>
 					<div id= "viewEncounter">
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MRN <span style="font-size:8pt;" ></span>&nbsp;&nbsp;<input type="text"  size="8" id="mrn" name="mrn" style="width:150px;"tabindex="1"/>
+						<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MRN <span style="font-size:8pt;" ></span></b>&nbsp;&nbsp;<input type="text"  size="8" id="mrn" name="mrn" style="width:150px;"tabindex="1"/>
 					
 						<input id="Enter" type="submit" name="viewPatientFromEncounterPage" value="Enter" tabindex="2"/> 
 						<input type="button" value="Cancel" onClick="backToAdminPage();" tabindex="3"/>
