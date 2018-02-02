@@ -56,6 +56,7 @@ import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
@@ -1236,6 +1237,7 @@ public class Util {
 	}
 	
 	/**
+	 * CHICA-1125
 	 * Returns the view encounters configuration.
 	 * 
 	 * @return ViewEncountersConfig object.
@@ -1267,4 +1269,31 @@ public class Util {
     	return viewEncountersConfig;
 	}
 	
+	/**
+	 * CHICA-1125
+	 * Utility method to get the FormsToDisplay section of the ViewEncountersConfig file
+	 * 
+	 * @return FormsToDisplay object
+	 */
+	public static FormsToDisplay getViewEncountersFormsToDisplayConfig()
+	{
+		FormsToDisplay formsToDisplayConfig = null;
+		try
+		{
+			ViewEncountersConfig config = getViewEncountersConfig();
+			if (config == null) 
+			{
+				log.error("View Encounters Config file could not be loaded.");
+				return null;
+			}
+			
+			formsToDisplayConfig = config.getFormsToDisplay();	
+		}
+		catch(Exception e)
+		{
+			log.error("View Encounters Config file could not be loaded.", e);
+			return null;
+		}
+		return formsToDisplayConfig;
+	}
 }

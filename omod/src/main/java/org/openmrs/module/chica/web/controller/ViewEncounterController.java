@@ -1,6 +1,5 @@
 package org.openmrs.module.chica.web.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -8,31 +7,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm;
-import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -55,197 +50,209 @@ public class ViewEncounterController {
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	private static final String FORM_VIEW = "/module/chica/viewEncounter";
+	private static final String FORM_VIEW_NAME = "viewEncounter.form";
+	private static final String REDIRECT_FORM_VIEW = "displayViewEncounterForm.form";
 	private static final String DISPLAY_POSITION_LEFT = "left";
 	private static final String DISPLAY_POSITION_RIGHT = "right";
-
+	private static final String TODAY = "Today";
+	
+	private static final String PARAMATER_TITLE_MRN = "titleMRN";
+	private static final String PARAMATER_TITLE_LAST_NAME = "titleLastName";
+	private static final String PARAMATER_TITLE_FIRST_NAME = "titleFirstName";
+	private static final String PARAMATER_TITLE_DOB = "titleDOB";
+	private static final String PARAMATER_TITLE_PATIENT_ROWS = "patientRows";
+	private static final String PARAMATER_TITLE_FORM_NAME_MAP = "formNameMap";
+	private static final String PARAMATER_OPTIONS = "options";
+	private static final String PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG = "viewEncountersErrorMsg";
+	
 	@RequestMapping(method = RequestMethod.POST)
-	protected ModelAndView processSubmit(HttpServletRequest request,
-			HttpServletResponse response, Object command)
-			throws Exception {
+	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object command) throws Exception {
 
-		String optionsString = request.getParameter("options");
-		String patientIdString = request.getParameter("patientId");
-
+		Map<String, Object> map = new HashMap<String, Object>();
+		String optionsString = request.getParameter(PARAMATER_OPTIONS);
+		String patientIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
 		Integer patientId = null;
-
-		try {
-			if (patientIdString != null) {
-				patientId = Integer.parseInt(patientIdString);
-			}
-		} catch (Exception e) {
+		String errorMsg = "A server error occurred. No forms will be displayed.";
+		
+		try 
+		{
+			patientId = Integer.parseInt(patientIdString);
+		} 
+		catch (Exception e) 
+		{
+			log.error("Error displaying form in View Encounters. Unable to parse patientId (patientIdString: " + patientIdString + ").", e);
+			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
+			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
 
-		String encounterIdString = request.getParameter("encounterId");
+		String encounterIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		Integer encounterId = null;
-		try {
-			if (encounterIdString != null && !encounterIdString.equals("")) {
-				encounterId = Integer.parseInt(encounterIdString);
-			}
-		} catch (Exception e) {
+		try 
+		{
+			encounterId = Integer.parseInt(encounterIdString);
+		} 
+		catch (Exception e) 
+		{
+			log.error("Error displaying form in View Encounters. Unable to parse encounterId (encounterIdString: " + encounterIdString + ").", e);
+			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
+			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
+		}
+		
+		if(optionsString == null)
+		{
+			log.error("Error displaying form in View Encounters for encounterId: " + encounterId + "(optionsString: " + optionsString + ")");
+			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
+			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
 
-		if (optionsString != null) {
+		map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
+		map.put(ChirdlUtilConstants.PARAMETER_PATIENT_ID, patientId);
+		StringTokenizer tokenizer = new StringTokenizer(optionsString,"_");
+		Integer locationId = null;
+		Integer formId = null;
+		Integer formInstanceId = null;
 
-			if (patientId != null) {
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("encounterId", encounterId);
-				map.put("patientId", patientIdString);
-				StringTokenizer tokenizer = new StringTokenizer(optionsString,"_");
-				Integer locationId = null;
-				Integer formId = null;
-				Integer formInstanceId = null;
-				if(tokenizer.hasMoreTokens()){
-					try
-					{
-						locationId = Integer.parseInt(tokenizer.nextToken());
-					} catch (NumberFormatException e)
-					{
-					}
-				}
-				
-				if(tokenizer.hasMoreTokens()){
-					try
-					{
-						formId = Integer.parseInt(tokenizer.nextToken());
-					} catch (NumberFormatException e)
-					{
-					}
-				}
-				
-				if(tokenizer.hasMoreTokens()){
-					try
-					{
-						formInstanceId = Integer.parseInt(tokenizer.nextToken());
-					} catch (NumberFormatException e)
-					{
-					}
-				}
-				
-				FormService formService = Context.getFormService();
-				Form form = formService.getForm(formId);
-				String formName = form.getName();
-				ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-				Integer leftImageLocationId = null;
-				Integer leftImageFormId = null;
-				Integer leftImageFormInstanceId = null;
-				String leftImageStylesheet = null;
-				String rightImageStylesheet = null;
-				//boolean displayMergeForms = false;
-				//boolean displayScanForms = false;
-				String leftImageDirectory = null;
-				String rightImageDirectory = null;
-				Integer rightImageLocationId = null;
-				Integer rightImageFormId = null;
-				Integer rightImageFormInstanceId = null;
-				
-				ViewEncountersConfig config = org.openmrs.module.chica.util.Util.getViewEncountersConfig();
-				if (config == null) {
-					log.error("View Encounters Config file could not be loaded. No forms will be displayed.");
-					// TODO CHICA-1125 What to return here
-				}
-				
-				FormsToDisplay formsToDisplayConfig = config.getFormsToDisplay();
-				if (formsToDisplayConfig == null) {
-					log.error("View Encounters Config contains no entry for formsToDisplay. No forms will be displayed.");
-					// TODO CHICA-1125 What to return here
-				}
-				
-				Map<String, ViewEncounterForm> viewEncounterFormMap = new HashMap<>();
-				viewEncounterFormMap = formsToDisplayConfig.getViewEncounterFormMap();
-				
-				// Determine if the selected form should display on the left or the right of the page
-				ViewEncounterForm viewEncounterForm = viewEncounterFormMap.get(formName);
-				if(DISPLAY_POSITION_LEFT.equalsIgnoreCase(viewEncounterForm.getDisplayPosition()))
+		try
+		{
+			locationId = Integer.parseInt(tokenizer.nextToken());
+			formId = Integer.parseInt(tokenizer.nextToken());
+			formInstanceId = Integer.parseInt(tokenizer.nextToken());
+		}
+		catch(Exception e)
+		{
+			log.error("Error displaying form in View Encounters for encounterId: " + encounterId + "(optionsString: " + optionsString + ")", e);
+			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
+			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
+		}
+
+		FormService formService = Context.getFormService();
+		Form form = formService.getForm(formId);
+		String formName = form.getName();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		Integer leftFormLocationId = null;
+		Integer leftFormFormId = null;
+		Integer leftFormFormInstanceId = null;
+		String leftFormStylesheet = null;
+		String rightFormStylesheet = null;
+		String leftFormDirectory = null;
+		String rightFormDirectory = null;
+		Integer rightFormLocationId = null;
+		Integer rightFormFormId = null;
+		Integer rightFormFormInstanceId = null;
+
+		FormsToDisplay formsToDisplayConfig = org.openmrs.module.chica.util.Util.getViewEncountersFormsToDisplayConfig();
+		if(formsToDisplayConfig == null)
+		{
+			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
+			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
+		}
+
+		Map<String, ViewEncounterForm> viewEncounterFormMap = formsToDisplayConfig.getViewEncounterFormMap();				
+
+		// Determine if the selected form should display on the left or the right of the page
+		ViewEncounterForm viewEncounterForm = viewEncounterFormMap.get(formName);
+		if(DISPLAY_POSITION_LEFT.equalsIgnoreCase(viewEncounterForm.getDisplayPosition()))
+		{
+			leftFormLocationId = locationId;
+			leftFormFormId = formId;
+			leftFormFormInstanceId = formInstanceId;
+			leftFormStylesheet = viewEncounterForm.getStylesheet();
+			leftFormDirectory = viewEncounterForm.getDirectory();
+
+			// Now query for patient states with the rightForm name
+			// Note: There are no current cases where this list would have more than one possible right form to display
+			if(viewEncounterForm.getRelatedForms() != null)
+			{
+				for(ViewEncounterForm rightForm : viewEncounterForm.getRelatedForms())
 				{
-					leftImageLocationId = locationId;
-					leftImageFormId = formId;
-					leftImageFormInstanceId = formInstanceId;
-					leftImageStylesheet = viewEncounterForm.getStylesheet();
-					leftImageDirectory = viewEncounterForm.getDirectory();
-						
-					// Now query for patient states with the rightForm name
-					// Note: There are no current cases where this list would have more than one
-					for(ViewEncounterForm rightForm : viewEncounterForm.getRelatedForms())
+					if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(rightForm.getDisplayPosition())) // Make sure this is configured properly as a right form
 					{
-						if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(rightForm.getDisplayPosition())) // Make sure this is configured properly as a right form
+						String rightName = rightForm.getName();
+						// NOTE: This query needs to change and will be fixed by CHICA-1169, 
+						// we'll need to support a list of end states to query for due to paper vs electronic versions of the same form
+						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName, encounterId); 
+						if (patientStates != null && !patientStates.isEmpty()) 
 						{
-							String rightName = rightForm.getName();
-							List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName, encounterId);
-							if (patientStates != null && !patientStates.isEmpty()) 
+							boolean checkPWSProcess = false;
+							HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+							for (PatientState currState : patientStates) 
 							{
-								boolean checkPWSProcess = false;
-								HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
-								for (PatientState currState : patientStates) 
+								if (currState.getEndTime() != null) 
 								{
-									if (currState.getEndTime() != null) 
+									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
 									{
-										if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
-										{
-											checkPWSProcess = true; 
-										}
-
-										if (!checkPWSProcess) 
-										{ 
-											pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
-										} 
-										else 
-										{
-											rightImageLocationId = currState.getLocationId();
-											rightImageFormId = currState.getFormId();
-											rightImageFormInstanceId = currState.getFormInstanceId();
-											rightImageStylesheet = rightForm.getStylesheet();
-											rightImageDirectory = rightForm.getDirectory();
-											pwsTempFormInstancesMap.clear();
-											break;
-										}
+										checkPWSProcess = true; 
 									}
-								}
 
-								if (!pwsTempFormInstancesMap.isEmpty())
-								{
-									FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
-									rightImageLocationId = formInstance.getLocationId();
-									rightImageFormId = formInstance.getFormId();
-									rightImageFormInstanceId = formInstance.getFormInstanceId();
-									rightImageStylesheet = rightForm.getStylesheet();
-									rightImageDirectory = rightForm.getDirectory();
-								}
-							} 
-						}	
-					}
-				}
-				else if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(viewEncounterForm.getDisplayPosition()))
-				{
-					rightImageLocationId = locationId;
-					rightImageFormId = formId;
-					rightImageFormInstanceId = formInstanceId;
-					rightImageStylesheet = viewEncounterForm.getStylesheet();
-					rightImageDirectory = viewEncounterForm.getDirectory();
-
-					for(ViewEncounterForm leftForm : viewEncounterForm.getRelatedForms())
-					{
-						if(DISPLAY_POSITION_LEFT.equalsIgnoreCase(leftForm.getDisplayPosition())) // Make sure this is configured properly as a left form
-						{
-							String leftName = leftForm.getName();
-							List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName, encounterId);
-							if (patientStates != null && !patientStates.isEmpty()) 
-							{
-								for (PatientState currState : patientStates) 
-								{
-									if (currState.getEndTime() != null) 
+									if (!checkPWSProcess) 
+									{ 
+										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+									} 
+									else 
 									{
-										leftImageLocationId = currState.getLocationId();
-										leftImageFormId = currState.getFormId();
-										leftImageFormInstanceId = currState.getFormInstanceId();
-										leftImageStylesheet = leftForm.getStylesheet();
-										leftImageDirectory = leftForm.getDirectory();
+										rightFormLocationId = currState.getLocationId();
+										rightFormFormId = currState.getFormId();
+										rightFormFormInstanceId = currState.getFormInstanceId();
+										rightFormStylesheet = rightForm.getStylesheet();
+										rightFormDirectory = rightForm.getDirectory();
+										pwsTempFormInstancesMap.clear();
 										break;
 									}
 								}
-							} 
-						}		
-					}
+							}
+
+							if (!pwsTempFormInstancesMap.isEmpty())
+							{
+								FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+								rightFormLocationId = formInstance.getLocationId();
+								rightFormFormId = formInstance.getFormId();
+								rightFormFormInstanceId = formInstance.getFormInstanceId();
+								rightFormStylesheet = rightForm.getStylesheet();
+								rightFormDirectory = rightForm.getDirectory();
+							}
+						} 
+					}	
 				}
+			}	
+		}
+		else if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(viewEncounterForm.getDisplayPosition()))
+		{
+			rightFormLocationId = locationId;
+			rightFormFormId = formId;
+			rightFormFormInstanceId = formInstanceId;
+			rightFormStylesheet = viewEncounterForm.getStylesheet();
+			rightFormDirectory = viewEncounterForm.getDirectory();
+			
+			if(viewEncounterForm.getRelatedForms() != null)
+			{
+				for(ViewEncounterForm leftForm : viewEncounterForm.getRelatedForms())
+				{
+					if(DISPLAY_POSITION_LEFT.equalsIgnoreCase(leftForm.getDisplayPosition())) // Make sure this is configured properly as a left form
+					{
+						String leftName = leftForm.getName();
+						
+						// NOTE: This query needs to change and will be fixed by CHICA-1169, 
+						// we'll need to support a list of end states to query for due to paper vs electronic versions of the same form
+						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName, encounterId);
+						if (patientStates != null && !patientStates.isEmpty()) 
+						{
+							for (PatientState currState : patientStates) 
+							{
+								if (currState.getEndTime() != null) 
+								{
+									leftFormLocationId = currState.getLocationId();
+									leftFormFormId = currState.getFormId();
+									leftFormFormInstanceId = currState.getFormInstanceId();
+									leftFormStylesheet = leftForm.getStylesheet();
+									leftFormDirectory = leftForm.getDirectory();
+									break;
+								}
+							}
+						} 
+					}		
+				}
+			}
+		}
 				
 //				if (formName.equals("PSF") || formName.equals("ADHD P") || formName.equals("ADHD PS") ||formName.equals("MCHAT") || formName.equals("MCHAT-R") || formName.equals("SummaryReportMchatR") || 
 //						formName.equals("ADHD PFU") || formName.equals("ADHD PSFU") || 
@@ -457,72 +464,58 @@ public class ViewEncounterController {
 //						}
 //					}
 //				}
-							
-					map.put("rightImageLocationId", rightImageLocationId);
-					map.put("rightImageFormId", rightImageFormId);
-					map.put("rightImageFormInstanceId", rightImageFormInstanceId);
-					map.put("rightImageStylesheet", rightImageStylesheet);
-					map.put("rightImageDirectory", rightImageDirectory);
-					map.put("leftImageLocationId", leftImageLocationId);
-					map.put("leftImageFormId", leftImageFormId);
-					map.put("leftImageFormInstanceId", leftImageFormInstanceId);
-					map.put("leftImageStylesheet", leftImageStylesheet);
-					map.put("leftImageDirectory", leftImageDirectory);
-					
-					return new ModelAndView(new RedirectView("displayMergeForm.form"), map);
-//					if (displayMergeForms) {
-//						return new ModelAndView(new RedirectView("displayMergeForm.form"), map);
-//					} else if (displayScanForms) {
-//						return new ModelAndView(new RedirectView("displayScanForm.form"), map);
-//					}
-//
-//					return new ModelAndView(new RedirectView("displayTiff.form"), map);
-			}
+										
+		map.put(ChicaConstants.PARAMETER_RIGHT_FORM_LOCATION_ID, rightFormLocationId);
+		map.put(ChicaConstants.PARAMETER_RIGHT_FORM_FORM_ID, rightFormFormId);
+		map.put(ChicaConstants.PARAMETER_RIGHT_FORM_FORM_INSTANCE_ID, rightFormFormInstanceId);
+		map.put(ChicaConstants.PARAMETER_RIGHT_FORM_STYLESHEET, rightFormStylesheet);
+		map.put(ChicaConstants.PARAMETER_RIGHT_FORM_DIRECTORY, rightFormDirectory);
+		map.put(ChicaConstants.PARAMETER_LEFT_FORM_LOCATION_ID, leftFormLocationId);
+		map.put(ChicaConstants.PARAMETER_LEFT_FORM_FORM_ID, leftFormFormId);
+		map.put(ChicaConstants.PARAMETER_LEFT_FORM_FORM_INSTANCE_ID, leftFormFormInstanceId);
+		map.put(ChicaConstants.PARAMETER_LEFT_FORM_STYLESHEET, leftFormStylesheet);
+		map.put(ChicaConstants.PARAMETER_LEFT_FORM_DIRECTORY, leftFormDirectory);
 
-		}
-		return new ModelAndView(new RedirectView(FORM_VIEW));
-
+		return new ModelAndView(new RedirectView(REDIRECT_FORM_VIEW), map);
 	}
 
 	@RequestMapping(method = RequestMethod.GET) 
 	protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
+		
+		String errorMsg = request.getParameter(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG);
+		if(StringUtils.isNotEmpty(errorMsg)) // An error occurred in processSubmit() pass it back through to the client
+		{
+			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
+			return FORM_VIEW;
+		}
+		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);		
 		FormService formService = Context.getFormService();
-		PatientService patientService = Context
-				.getService(PatientService.class);
+		PatientService patientService = Context.getService(PatientService.class);
 		HashMap<Integer,String> formNameMap = new HashMap<Integer,String>();
 
 		try {
-
-			String pidparam = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
 			Patient patient = null;
-
-			if (pidparam == null || pidparam.trim().length()==0) {
-				String mrn = request.getParameter(ChirdlUtilConstants.PARAMETER_MRN);
-				if (StringUtils.isNotEmpty(mrn)) {
-					mrn = Util.removeLeadingZeros(mrn);
-					if (!mrn.contains("-") && mrn.length() > 1) {
-						mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length()-1);
-					}
-					
-					PatientIdentifierType identifierType = patientService
-							.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
-					List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
-					identifierTypes.add(identifierType);
-					List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
-							identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
-					if (patients.size() == 0){
-						patients = patientService.getPatientsByIdentifier(null, "0" + mrn,
-								identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
-					}
-
-					if (patients.size() > 0)
-					{
-						patient = patients.get(0);
-					}
+			String mrn = request.getParameter(ChirdlUtilConstants.PARAMETER_MRN);
+			if (StringUtils.isNotEmpty(mrn)) {
+				mrn = Util.removeLeadingZeros(mrn);
+				if (!mrn.contains(ChirdlUtilConstants.GENERAL_INFO_DASH) && mrn.length() > 1) {
+					mrn = mrn.substring(0, mrn.length() - 1) + ChirdlUtilConstants.GENERAL_INFO_DASH + mrn.substring(mrn.length()-1);
 				}
-			} else {
-				patient = patientService.getPatient(Integer.valueOf(pidparam));
+
+				PatientIdentifierType identifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
+				List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+				identifierTypes.add(identifierType);
+
+				List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
+				if (patients.size() == 0){
+					patients = patientService.getPatientsByIdentifier(null, "0" + mrn, identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
+				}
+
+				if (patients.size() > 0)
+				{
+					patient = patients.get(0);
+				}
 			}
 			
 			if (patient == null) {
@@ -530,118 +523,69 @@ public class ViewEncounterController {
 			}
 			
 			// title name, mrn, and dob
-			String dobString = "";
-			Date dob = patient.getBirthdate();
-			if (dob != null) {
-				dobString = new SimpleDateFormat("yyyy-MM-dd").format(dob);
-			}
-			map.put("titleMRN", Util.getDisplayMRN(patient));
-			map.put("titleLastName", patient.getFamilyName());
-			map.put("titleFirstName", patient.getGivenName());
-			map.put("titleDOB", dobString);
+			String dobString = DateUtil.formatDate(patient.getBirthdate(), ChirdlUtilConstants.DATE_FORMAT_HYPHEN_yyyy_MM_dd, ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
+			
+			map.put(PARAMATER_TITLE_MRN, Util.getDisplayMRN(patient));
+			map.put(PARAMATER_TITLE_LAST_NAME, patient.getFamilyName());
+			map.put(PARAMATER_TITLE_FIRST_NAME, patient.getGivenName());
+			map.put(PARAMATER_TITLE_DOB, dobString);
 
 			// encounter rows
-			EncounterService encounterService = Context
-					.getService(EncounterService.class);
-			List<org.openmrs.Encounter> list = encounterService
-					.getEncountersByPatientId(patient.getPatientId());
+			EncounterService encounterService = Context.getService(EncounterService.class);
+			List<org.openmrs.Encounter> list = encounterService.getEncountersByPatientId(patient.getPatientId());
 			List<PatientRow> rows = new ArrayList<PatientRow>();
-
-			ViewEncountersConfig config = org.openmrs.module.chica.util.Util.getViewEncountersConfig();
-			if (config == null) {
-				log.error("View Encounters Config file could not be loaded. No forms will be displayed.");
-				// TODO CHICA-1125 What to return here
+			
+			List<String> formsToProcess = new ArrayList<String>();
+			FormsToDisplay formsToDisplayConfig = org.openmrs.module.chica.util.Util.getViewEncountersFormsToDisplayConfig();
+			
+			if(formsToDisplayConfig == null)
+			{
+				map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, "A server error occurred. No encounters will be displayed.");
+				return FORM_VIEW;
 			}
 			
-			FormsToDisplay formsToDisplayConfig = config.getFormsToDisplay();
-			if (formsToDisplayConfig == null) {
-				log.error("View Encounters Config contains no entry for formsToDisplay. No forms will be displayed.");
-				// TODO CHICA-1125 What to return here
-			}
+			formsToProcess = formsToDisplayConfig.getFormNames();
 			
-			List<String> formsToProcess = formsToDisplayConfig.getFormNames(); //new ArrayList<String>();
-//			formsToProcess.add("PSF");
-//			formsToProcess.add("PWS");
-//			formsToProcess.add("ADHD P");
-//			formsToProcess.add("ADHD PS");
-//			formsToProcess.add("ADHD T");
-//			formsToProcess.add("MCHAT");
-//			formsToProcess.add("MCHAT-R");
-//			formsToProcess.add("SummaryReportMchatR");
-//			formsToProcess.add("ADHD PFU");
-//			formsToProcess.add("ADHD TFU");
-//			formsToProcess.add("ADHD PSFU");
-//			formsToProcess.add("ParentSummaryReport");
-//			formsToProcess.add("TeacherSummaryReport");
-//			formsToProcess.add("ImmunizationSchedule");
-//			formsToProcess.add("ImmunizationSchedule7yrOrOlder");
-//			formsToProcess.add("PHQ9_JIT_MOBILE");
-			
-			String firstName = null;
-			String lastName = null;
-			String mrn = null;
-			if (patient != null) {
-				firstName = patient.getGivenName();
-				lastName = patient.getFamilyName();
-				PatientIdentifier pi = patient.getPatientIdentifier();
-				if (pi != null) {
-					mrn = pi.getIdentifier();	
-				}
-			}
 			for (org.openmrs.Encounter enc : list) {
 				Integer encounterId = enc.getEncounterId();
 				PatientRow row = new PatientRow();
-				row.setLastName(lastName);
-				row.setMrn(mrn);
-				Encounter enct = (Encounter) encounterService
-						.getEncounter(encounterId);
+				
+				Encounter enct = (Encounter) encounterService.getEncounter(encounterId);
 				if (enct == null)
+				{
 					continue;
-
+				}
+				
 				Integer locationId = enct.getLocation().getLocationId();
 				Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(enct);
 				
-				String apptDateString = "";
-				Date appt = enct.getScheduledTime();
-				if (appt != null) {
-					apptDateString = new SimpleDateFormat("MMM dd, yyyy")
-							.format(appt);
-				}
-
 				// Set checkin date text
 				Date checkin = enct.getEncounterDatetime();
-
 				String checkinDateString = "";
-
 				if (checkin != null) {
 					if (Util.isToday(checkin)) {
-						checkinDateString = "Today";
+						checkinDateString = TODAY;
 					} else {
-						checkinDateString = new SimpleDateFormat("MMM dd, yyyy")
-								.format(checkin);
+						checkinDateString = DateUtil.formatDate(checkin, ChirdlUtilConstants.DATE_FORMAT_MMM_dd_comma_yyyy, ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
 					}
 				}
 
 				// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
 				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(enct);
-				
 				String providerName = getProviderName(provider);
-				String station = enct.getPrinterLocation();
 				
 				row.setPatientId(patient.getPatientId());
-				row.setFirstName(firstName);
+				row.setFirstName(patient.getGivenName());
+				row.setLastName(patient.getFamilyName());
 				row.setMdName(providerName);
-				row.setAppointment(apptDateString);
 				row.setCheckin(checkinDateString);
 				row.setEncounter(enct);
-				row.setStation(station);
-				row.setAgeAtVisit(org.openmrs.module.chirdlutil.util.Util
-						.adjustAgeUnits(dob, checkin));
+				row.setStation(enct.getPrinterLocation());
+				row.setAgeAtVisit(org.openmrs.module.chirdlutil.util.Util.adjustAgeUnits(patient.getBirthdate(), checkin));
 
-				// psf, pws form ids
-				
+				// This section will add form instances to row, which is used to populate the Action drop-down
+				// It will also set the PSF and PWS id for the row
 				List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
-				
 				if (patientStates != null && !patientStates.isEmpty()) {
 					HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
 					boolean checkPWSProcess = false;
@@ -657,7 +601,7 @@ public class ViewEncounterController {
 								FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
 								if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
 								{
-									formNameMap.put(formId, formName);
+									formNameMap.put(formId, fav.getValue());
 								}							
 							}
 							
@@ -700,16 +644,6 @@ public class ViewEncounterController {
 					}
 				}
 			
-				
-				// From the encounter, get the obs for weight percentile
-				//String result = searchEncounterForObs(enct, "WTCENTILE");
-				//row.setWeightPercentile(result);
-				row.setWeightPercentile("");
-				
-				//result = searchEncounterForObs(enct, "HTCENTILE");
-				//row.setHeightPercentile(result);
-				row.setHeightPercentile("");
-
 				FormInstance pwsId = row.getPwsId();
 				if (pwsId != null) {
 					State currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_PWS_PROCESS);
@@ -725,10 +659,8 @@ public class ViewEncounterController {
 				rows.add(row);
 			}
 
-			
-
-			map.put("patientRows", rows);
-			map.put("formNameMap",formNameMap);
+			map.put(PARAMATER_TITLE_PATIENT_ROWS, rows);
+			map.put(PARAMATER_TITLE_FORM_NAME_MAP,formNameMap);
 
 		} catch (UnexpectedRollbackException ex) {
 			// ignore this exception since it happens with an

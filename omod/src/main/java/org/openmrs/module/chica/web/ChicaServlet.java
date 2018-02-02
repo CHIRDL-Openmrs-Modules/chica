@@ -130,6 +130,7 @@ public class ChicaServlet extends HttpServlet {
 	public static final String PARAM_ACTION = "action";
 	public static final String PARAM_TIFF_FILE_LOCATION = "tiffFileLocation";
 	public static final String STYLESHEET = "stylesheet";
+	public static final String FORM_DIRECTORY = "formDirectory";
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -1950,8 +1951,16 @@ public class ChicaServlet extends HttpServlet {
 			return;
 		}
 		
+		String formDirectory = request.getParameter(FORM_DIRECTORY);
+		if(StringUtils.isBlank(formDirectory))
+		{
+			log.error("Parameter " + FORM_DIRECTORY + " is invalid: " + FORM_DIRECTORY);
+			pw.write(errorHtml);
+			return;
+		}
+		
 		String output = org.openmrs.module.chica.util.Util.displayStylesheet(formId, locationTagId, locationId, formInstanceId, 
-			stylesheet, XMLUtil.DEFAULT_EXPORT_DIRECTORY);
+			stylesheet, formDirectory); // CHICA-1125 Changed to use the directory specified in the config file
 		if (StringUtils.isBlank(output)) {
 			log.info("Transformation is empty for form ID: " + formIdStr + " location tag ID: " + locationTagIdStr + 
 				" location ID: " + locationIdStr + " form instance ID: " + formInstanceIdStr + " stylesheet: " + stylesheet);
