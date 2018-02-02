@@ -208,7 +208,7 @@ public class DisplayViewEncounterFormController {
 			// Left form parameters - these parameters could be null if the left form isn't set
 			Integer leftFormFormInstanceId = parseParameter(request, ChicaConstants.PARAMETER_LEFT_FORM_FORM_INSTANCE_ID);
 			Integer leftFormFormId = parseParameter(request, ChicaConstants.PARAMETER_LEFT_FORM_FORM_ID);
-			Integer leftFormLocationId = parseParameter(request, ChicaConstants.PARAMETER_LEFT_FORM_FORM_ID);
+			Integer leftFormLocationId = parseParameter(request, ChicaConstants.PARAMETER_LEFT_FORM_LOCATION_ID);
 			String leftStylesheet = request.getParameter(ChicaConstants.PARAMETER_LEFT_FORM_STYLESHEET);
 			String leftFormDirectory = request.getParameter(ChicaConstants.PARAMETER_LEFT_FORM_DIRECTORY);
 			

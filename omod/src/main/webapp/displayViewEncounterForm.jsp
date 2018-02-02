@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <!DOCTYPE html>
-<openmrs:require allPrivileges="View Encounters, View Patients" otherwise="/login.htm" redirect="/module/chica/displayViewEncounter.form" />
+<openmrs:require allPrivileges="View Encounters, View Patients" otherwise="/login.htm" redirect="/module/chica/displayViewEncounterForm.form" />
 <html>
 <head>
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
@@ -25,7 +25,7 @@
                         </div>
                         <div class="cell_container displayLeftTiffHeaderSegment">
                             <c:if test="${!empty leftFormName}">
-                                <b>${leftImageFormname}:&nbsp;${leftImageForminstance}</b>
+                                <b>${leftFormName}:&nbsp;${leftFormFormInstanceId}</b>
                             </c:if> 
                             <c:if test="${empty leftFormName}">
                                 N/A
@@ -39,7 +39,7 @@
                     <div class="row_container">
                         <div class="cell_container displayRighttiffHeaderSegment">
                             <c:if test="${!empty rightFormName}">
-                                <b>${rightImageFormname}:&nbsp;${rightImageForminstance}</b>
+                                <b>${rightFormName}:&nbsp;${rightFormFormInstanceId}</b>
                             </c:if> 
                             <c:if test="${empty rightFormName}">
                                 N/A
