@@ -32,8 +32,6 @@
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
-                <prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
-                <prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsNotificationMobileIUHCerner.form">finishFormsNotificationMobileIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsNotificationMobile.form">finishFormsNotificationMobile</prop>
@@ -81,16 +79,6 @@
         <property name="commandName"><value>forcePrintJITsObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/forcePrintJITs</value></property>
         <property name="successView"><value>forcePrintJITs.form</value></property>
-    </bean>
-    <bean id="displayMergeForm" class="@MODULE_PACKAGE@.web.DisplayMergeFormController">
-        <property name="commandName"><value>displayMergeFormObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/displayMergeForm</value></property>
-        <property name="successView"><value>displayMergeForm.form</value></property>
-    </bean>
-    <bean id="displayScanForm" class="@MODULE_PACKAGE@.web.DisplayScanFormController">
-        <property name="commandName"><value>displayScanFormObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/displayScanForm</value></property>
-        <property name="successView"><value>displayScanForm.form</value></property>
     </bean>
     <bean id="finishFormsMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
         <property name="commandName"><value>finishFormsMobileObject</value></property>

@@ -103,6 +103,7 @@ public class Util {
 	private static ViewEncountersConfig viewEncountersConfig = null;
 	private static long lastUpdatedViewEncountersConfig = System.currentTimeMillis();
 	private static final long VIEW_ENCOUNTERS_CONFIG_UPDATE_CYCLE = 900000; // fifteen minutes
+	private static final String GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG = "chica.ViewEncountersConfigFile";
 	
 	/**
 	 * 
@@ -1248,16 +1249,16 @@ public class Util {
 		long currentTime = System.currentTimeMillis();
     	if (viewEncountersConfig == null || (currentTime - lastUpdatedViewEncountersConfig) > VIEW_ENCOUNTERS_CONFIG_UPDATE_CYCLE) {
     		lastUpdatedViewEncountersConfig = currentTime;
-			String configFileStr = Context.getAdministrationService().getGlobalProperty("chica.ViewEncountersConfigFile"); // TODO CHICA-1125 Constant
+			String configFileStr = Context.getAdministrationService().getGlobalProperty(GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
 			if (configFileStr == null) {
-				log.error("You must set a value for global property: chica.ViewEncountersConfigFile"); // TODO CHICA-1125 Constant
+				log.error("You must set a value for global property: " + GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
 				return null;
 			}
 			
 			File configFile = new File(configFileStr);
 			if (!configFile.exists()) {
 				log.error("The file location specified for the global property "
-					+ "chica.ViewEncountersConfigFile does not exist."); // TODO CHICA-1125 Constant
+					+ GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG + " does not exist.");
 				return null;
 			}
 			

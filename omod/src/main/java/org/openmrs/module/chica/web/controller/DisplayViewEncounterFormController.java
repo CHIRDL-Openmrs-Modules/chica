@@ -42,6 +42,7 @@ public class DisplayViewEncounterFormController {
 	private static final String PARAMETER_RIGHT_IMAGE_FILENAME = "rightImagefilename";
 	private static final String PARAMETER_LEFT_HTML_OUTPUT = "leftHtmlOutput";
 	private static final String PARAMETER_RIGHT_HTML_OUTPUT = "rightHtmlOutput";
+	private static final String LOCATION_PEPS = "PEPS";
 
 	@RequestMapping(method = RequestMethod.POST)
 	protected ModelAndView processSubmit(HttpServletRequest request,HttpServletResponse response, Object command) throws Exception {
@@ -88,7 +89,7 @@ public class DisplayViewEncounterFormController {
 					Location location = locationService.getLocation(locationId);
 					String locationName = location.getName();
 
-					if (locationName.equals("PEPS")) {
+					if (LOCATION_PEPS.equals(locationName)) {
 						imageFilename = formInstanceId.toString();
 						imagefile = IOUtil.searchForImageFile(imageFilename, imageDir);
 
@@ -218,37 +219,7 @@ public class DisplayViewEncounterFormController {
 			Integer rightFormLocationId = parseParameter(request, ChicaConstants.PARAMETER_RIGHT_FORM_LOCATION_ID);
 			String rightStylesheet = request.getParameter(ChicaConstants.PARAMETER_RIGHT_FORM_STYLESHEET);
 			String rightFormDirectory = request.getParameter(ChicaConstants.PARAMETER_RIGHT_FORM_DIRECTORY);
-			
-			
-			
-			
-			
-			
-			
-//			String encounterIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-//			Integer encounterId = null;
-//			try {
-//				encounterId = Integer.parseInt(encounterIdString);
-//			} catch (NumberFormatException e){
-//				log.error("Error in " + getClass().getName() + ". Error parsing encounter Id: "+encounterIdString, e);
-//			}
-//			
-//			Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounterId);
-
-			// Left form
-//			String leftFormFormInstanceIdString = request.getParameter(ChicaConstants.PARAMETER_LEFT_FORM_FORM_INSTANCE_ID);
-//			String leftFormFormIdString = request.getParameter(ChicaConstants.PARAMETER_LEFT_FORM_FORM_ID);
-//			String leftFormLocationIdString = request.getParameter(ChicaConstants.PARAMETER_LEFT_FORM_LOCATION_ID);
-//			Integer locationId = null;
-//			try {
-//				locationId = Integer.parseInt(leftFormLocationIdString);
-//			} catch (NumberFormatException e){
-//				log.error("Error in " + getClass().getName() + ". Error parsing location Id: "+leftFormLocationIdString, e);
-//			}
-//			Integer leftImageFormId = parseString(leftFormFormIdString);
-//			String leftStylesheet = request.getParameter(ChicaConstants.PARAMETER_LEFT_FORM_STYLESHEET);
-//			String leftFormDirectory = request.getParameter(ChicaConstants.PARAMETER_LEFT_FORM_DIRECTORY);
-			
+				
 			// Use the display name from the form attribute
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(leftFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, leftFormLocationId);
@@ -258,14 +229,6 @@ public class DisplayViewEncounterFormController {
 			}
 			
 			map.put(ChicaConstants.PARAMETER_LEFT_FORM_FORM_INSTANCE_ID, leftFormFormInstanceId);
-			
-			// Right form
-//			String rightFormFormInstanceIdString = request.getParameter(ChicaConstants.PARAMETER_RIGHT_FORM_FORM_INSTANCE_ID);
-//			String rightFormFormIdString = request.getParameter(ChicaConstants.PARAMETER_RIGHT_FORM_FORM_ID);
-//			String rightFormLocationIdString = request.getParameter(ChicaConstants.PARAMETER_RIGHT_FORM_LOCATION_ID);
-//			String rightStylesheet = request.getParameter(ChicaConstants.PARAMETER_RIGHT_FORM_STYLESHEET);
-//			String rightFormDirectory = request.getParameter(ChicaConstants.PARAMETER_RIGHT_FORM_DIRECTORY);
-//			Integer rightFormFormId = parseString(rightFormFormIdString);
 			
 			// Use the display name from the form attribute
 			fav = chirdlutilbackportsService.getFormAttributeValue(rightFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, rightFormLocationId);
