@@ -181,7 +181,14 @@ public class ViewEncounterController {
 								{
 									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
 									{
-										checkPWSProcess = true; 
+										// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
+										// described in CHICA-814. Although, this was unlikely to occur and can no longer occur
+										// due to how the ExternalFormController handles displaying the PWS
+										// 1. PSF submitted
+										// 2. PWS submitted
+										// 3. PSF rescanned or vitals received (which triggers a new PWS)
+										// 4. Second PWS submitted
+										checkPWSProcess = true;
 									}
 
 									if (!checkPWSProcess) 
