@@ -50,6 +50,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chirdlutilbackports.util.PatientStateStartDateComparator;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -311,8 +313,14 @@ public class ExternalFormController {
 		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
-		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit> 
+		
+		//List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
+		//	null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit> 
+		
+		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(startDate)
+				.setToDate(endDate).setIncludeVoided(false).createEncounterSearchCriteria();
+		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(encounterSearchCriteria);   
+		
 		if (encounters == null || encounters.size() == 0) {
 			return Collections.emptyList(); 
 		} 

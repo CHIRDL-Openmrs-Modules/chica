@@ -19,6 +19,8 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 
 /**
  * CHICA-1063
@@ -95,8 +97,12 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 						todaysDate.set(Calendar.MINUTE, 0);
 						todaysDate.set(Calendar.SECOND, 0);
 						
-						List<Encounter> encounters = encounterService.getEncounters(patient, null, todaysDate.getTime(), null, null, null, null, null, null, false);
+						//List<Encounter> encounters = encounterService.getEncounters(patient, null, todaysDate.getTime(), null, null, null, null, null, null, false);
 						
+						EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(todaysDate.getTime())
+								.setIncludeVoided(false).createEncounterSearchCriteria();
+						List<org.openmrs.Encounter> encounters = Context.getService(EncounterService.class).getEncounters(encounterSearchCriteria); 
+							
 						if(encounters.size() > 0)
 						{
 							// Found an encounter for the day, add to the list of matches

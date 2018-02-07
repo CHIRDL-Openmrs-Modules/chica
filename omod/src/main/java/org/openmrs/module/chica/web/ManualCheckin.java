@@ -53,6 +53,8 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.openmrs.validator.PatientIdentifierValidator;
 
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -630,11 +632,14 @@ public class ManualCheckin
 			ServletUtil.writeTag("mrn", ServletUtil.escapeXML(mrn), pw);
 		}
 
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
-		List<org.openmrs.Encounter> encounters = encounterService
-				.getEncounters(patient, null, null, null, null, null, null,null,null,false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+		//List<org.openmrs.Encounter> encounters = encounterService
+		//		.getEncounters(patient, null, null, null, null, null, null,null,null,false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 
+
+		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setIncludeVoided(false)
+				.createEncounterSearchCriteria();
+		List<org.openmrs.Encounter> encounters = Context.getService(EncounterService.class).getEncounters(encounterSearchCriteria); 
+	
 		if (encounters != null && encounters.size() > 0)
 		{
 			Encounter encounter = (Encounter) encounters.get(0);

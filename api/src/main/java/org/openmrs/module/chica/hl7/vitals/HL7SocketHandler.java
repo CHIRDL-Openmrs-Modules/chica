@@ -42,6 +42,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.openmrs.util.PrivilegeConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -461,8 +463,16 @@ public class HL7SocketHandler implements Application {
 		startCal.set(GregorianCalendar.SECOND, 0);
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
-		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startDate, endDate, null, 
-			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+		
+		//List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startDate, endDate, null, 
+		//	null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+		
+		//MES CHICA-1156 Replace deprecated getEncounters method by using new EncounterSearchCriteria class
+		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(startDate)
+				.setToDate(endDate).setIncludeVoided(false).createEncounterSearchCriteria();
+		
+		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(encounterSearchCriteria); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+				
 		if (encounters == null || encounters.size() == 0) {
 			return null;
 		} else {

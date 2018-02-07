@@ -33,6 +33,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttribut
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
 /**
@@ -105,8 +107,13 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		EncounterService encounterService = Context.getEncounterService();
 		
 		//get encounters that should have been submitted but have not been processed by the task
-		List<org.openmrs.Encounter> encounters = encounterService.getEncounters(null, null, startDate, endDate, null, null,
-		    null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+		//List<org.openmrs.Encounter> encounters = encounterService.getEncounters(null, null, startDate, endDate, null, null,
+		//    null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+		
+		//MES CHICA-1156 Replace deprecated getEncounters method by using new EncounterSearchCriteria class
+		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setFromDate(startDate).setToDate(endDate)
+				.setIncludeVoided(false).createEncounterSearchCriteria();
+		List<org.openmrs.Encounter> encounters = Context.getService(EncounterService.class).getEncounters(encounterSearchCriteria);
 		
 		//get suicide observations
 		ArrayList<String> ruleNames = new ArrayList<String>();

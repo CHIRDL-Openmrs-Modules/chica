@@ -58,6 +58,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.xmlBeans.physiciannote.HeadingOrder;
 import org.openmrs.module.dss.xmlBeans.physiciannote.PhysicianNoteConfig;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 
 
 /**
@@ -141,8 +143,13 @@ public class physicianNoteObs implements Rule {
 		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
-		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+		//List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
+		//	null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
+		
+		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient)
+				.setFromDate(startDate).setToDate(endDate).setIncludeVoided(false).createEncounterSearchCriteria();
+		List<org.openmrs.Encounter> encounters = Context.getService(EncounterService.class).getEncounters(encounterSearchCriteria); 
+		
 		Encounter latestEncounter = null;
 		if (encounters == null || encounters.size() == 0) {
 			return noteBuffer.toString();
