@@ -72,34 +72,6 @@
         <structure field="formsToDisplay" usage="optional"/>
    </mapping>
    
-   <!--  
-   <mapping class="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay" name="formsToDisplay">
-        <collection field="forms">
-            <structure name="form" type="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm">
-            	<value style="attribute" name="displayName" field="displayName" usage="required" />
-                <value style="attribute" name="leftFormName" field="leftFormName" usage="required" />
-                <value style="attribute" name="leftFormStylesheet" field="leftFormStylesheet" usage="required" />
-                <value style="attribute" name="leftFormDirectory" field="leftFormDirectory" usage="required" />
-                <value style="attribute" name="rightFormName" field="rightFormName" usage="optional" />
-                <value style="attribute" name="rightFormStylesheet" field="rightFormStylesheet" usage="optional" />
-                <value style="attribute" name="rightFormDirectory" field="rightFormDirectory" usage="optional" />
-                
-                <collection field="leftForms" usage="optional">
-                    <structure name="leftForm" type="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.LeftForm">
-                        <value style="attribute" name="name" field="name" usage="required" />
-                    </structure>
-                </collection>
-                
-                <collection field="rightForms" usage="optional">
-                    <structure name="rightForm" type="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.RightForm">
-                        <value style="attribute" name="name" field="name" usage="required" />
-                    </structure>
-                </collection>
-            </structure>
-        </collection>
-  </mapping>
-  -->
-  
   <mapping class="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay" name="formsToDisplay">
         <collection field="forms">
             <structure name="form" type="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm">
