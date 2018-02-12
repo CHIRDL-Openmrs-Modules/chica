@@ -1,6 +1,10 @@
 package org.openmrs.module.chica.xmlBeans.viewEncountersConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class ViewEncounterForm {
 	
@@ -8,6 +12,7 @@ public class ViewEncounterForm {
 	private String displayPosition;
 	private String stylesheet;
 	private String directory;
+	private String stateNames; // This can be a comma separated list of state names
 	private ArrayList<ViewEncounterForm> relatedForms;
 	
 	/**
@@ -59,6 +64,25 @@ public class ViewEncounterForm {
 		this.directory = directory;
 	}
 	/**
+	 * Creates a list of stateNames from the comma separated list of states in the stateNames field
+	 * @return the list of stateNames
+	 */
+	public List<String> getStateNames() {
+		List<String> stateNamesList = new ArrayList<String>();
+		String[] stateNamesArray = stateNames.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+		if(stateNamesArray != null)
+		{
+			stateNamesList = Arrays.asList(stateNamesArray);
+		}
+		return stateNamesList;
+	}
+	/**
+	 * @param stateNames the stateNames to set
+	 */
+	public void setStateNames(String stateNames) {
+		this.stateNames = stateNames;
+	}
+	/**
 	 * @return the relatedForms
 	 */
 	public ArrayList<ViewEncounterForm> getRelatedForms() {
@@ -82,6 +106,7 @@ public class ViewEncounterForm {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((relatedForms == null) ? 0 : relatedForms.hashCode());
 		result = prime * result + ((stylesheet == null) ? 0 : stylesheet.hashCode());
+		result = prime * result + ((stateNames == null) ? 0 : stateNames.hashCode());
 		return result;
 	}
 	/* (non-Javadoc)
@@ -134,6 +159,14 @@ public class ViewEncounterForm {
 		} else if (!stylesheet.equals(other.stylesheet)) {
 			return false;
 		}
+		
+		if (stateNames == null) {
+			if (other.stateNames != null) {
+				return false;
+			}
+		} else if (!stateNames.equals(other.stateNames)) {
+			return false;
+		}
 		return true;
 	}
 	/* (non-Javadoc)
@@ -142,6 +175,6 @@ public class ViewEncounterForm {
 	@Override
 	public String toString() {
 		return "ViewEncounterForm [name=" + name + ", displayPosition=" + displayPosition + ", stylesheet=" + stylesheet
-				+ ", directory=" + directory + ", relatedForms=" + relatedForms + "]";
+				+ ", directory=" + directory + ", stateNames=" + stateNames + ", relatedForms=" + relatedForms + "]";
 	}
 }
