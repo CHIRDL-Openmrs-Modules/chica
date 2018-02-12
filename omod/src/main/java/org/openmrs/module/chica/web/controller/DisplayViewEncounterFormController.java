@@ -222,19 +222,26 @@ public class DisplayViewEncounterFormController {
 				
 			// Use the display name from the form attribute
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-			FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(leftFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, leftFormLocationId);
-			if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+			FormAttributeValue fav = null;
+			if(leftFormFormId != null && locationTagId != null && leftFormLocationId != null)
 			{
-				map.put(PARAMETER_LEFT_FORM_NAME, fav.getValue());
+				fav = chirdlutilbackportsService.getFormAttributeValue(leftFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, leftFormLocationId);
+				if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+				{
+					map.put(PARAMETER_LEFT_FORM_NAME, fav.getValue());
+				}
 			}
 			
 			map.put(ChicaConstants.PARAMETER_LEFT_FORM_FORM_INSTANCE_ID, leftFormFormInstanceId);
 			
 			// Use the display name from the form attribute
-			fav = chirdlutilbackportsService.getFormAttributeValue(rightFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, rightFormLocationId);
-			if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+			if(rightFormFormId != null && locationTagId != null && rightFormLocationId != null)
 			{
-				map.put(PARAMETER_RIGHT_FORM_NAME, fav.getValue());
+				fav = chirdlutilbackportsService.getFormAttributeValue(rightFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, rightFormLocationId);
+				if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+				{
+					map.put(PARAMETER_RIGHT_FORM_NAME, fav.getValue());
+				}
 			}
 			
 			map.put(ChicaConstants.PARAMETER_RIGHT_FORM_FORM_INSTANCE_ID, rightFormFormInstanceId);
