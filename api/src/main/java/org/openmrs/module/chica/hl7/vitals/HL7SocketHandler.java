@@ -92,7 +92,7 @@ public class HL7SocketHandler implements Application {
 	
 	/**
 	 *  Returns true if the message is not null and is an instance of ORU_R01
-	 * 
+	 *
 	 * @returns true
 	 */
 	public boolean canProcess(Message message) {

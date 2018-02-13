@@ -835,14 +835,10 @@ public class Util {
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		
-		//List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-		//		null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-		
 		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(startDate)
 				.setToDate(endDate).setIncludeVoided(false).createEncounterSearchCriteria();
 		List<org.openmrs.Encounter> encounters = Context.getService(EncounterService.class).getEncounters(encounterSearchCriteria); 
 		
-
 		if (encounters == null || encounters.size() == 0) {
 			return null;
 		} else if (encounters.size() == 1) {

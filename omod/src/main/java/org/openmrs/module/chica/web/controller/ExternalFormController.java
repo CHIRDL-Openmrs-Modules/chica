@@ -314,9 +314,6 @@ public class ExternalFormController {
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		
-		//List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-		//	null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit> 
-		
 		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(startDate)
 				.setToDate(endDate).setIncludeVoided(false).createEncounterSearchCriteria();
 		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(encounterSearchCriteria);   

@@ -96,9 +96,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 						todaysDate.set(Calendar.HOUR_OF_DAY, 0);
 						todaysDate.set(Calendar.MINUTE, 0);
 						todaysDate.set(Calendar.SECOND, 0);
-						
-						//List<Encounter> encounters = encounterService.getEncounters(patient, null, todaysDate.getTime(), null, null, null, null, null, null, false);
-						
+												
 						EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(todaysDate.getTime())
 								.setIncludeVoided(false).createEncounterSearchCriteria();
 						List<org.openmrs.Encounter> encounters = Context.getService(EncounterService.class).getEncounters(encounterSearchCriteria); 

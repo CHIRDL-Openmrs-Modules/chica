@@ -143,8 +143,6 @@ public class physicianNoteObs implements Rule {
 		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
-		//List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-		//	null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 		
 		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient)
 				.setFromDate(startDate).setToDate(endDate).setIncludeVoided(false).createEncounterSearchCriteria();

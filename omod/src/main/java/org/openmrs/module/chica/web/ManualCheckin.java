@@ -632,10 +632,6 @@ public class ManualCheckin
 			ServletUtil.writeTag("mrn", ServletUtil.escapeXML(mrn), pw);
 		}
 
-		//List<org.openmrs.Encounter> encounters = encounterService
-		//		.getEncounters(patient, null, null, null, null, null, null,null,null,false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-
-
 		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setIncludeVoided(false)
 				.createEncounterSearchCriteria();
 		List<org.openmrs.Encounter> encounters = Context.getService(EncounterService.class).getEncounters(encounterSearchCriteria); 

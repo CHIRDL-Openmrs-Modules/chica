@@ -82,8 +82,6 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 					todaysDate.set(Calendar.MINUTE, 0);
 					todaysDate.set(Calendar.SECOND, 0);
 					
-					//List<Encounter> encounters = Context.getService(EncounterService.class).getEncounters(patient, null, todaysDate.getTime(), null, null, null, null, null, null, false);
-					
 					//MES CHICA-1156 Replace deprecated getEncounters method by using new EncounterSearchCriteria class
 					EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(todaysDate.getTime())
 							.setIncludeVoided(false).createEncounterSearchCriteria();

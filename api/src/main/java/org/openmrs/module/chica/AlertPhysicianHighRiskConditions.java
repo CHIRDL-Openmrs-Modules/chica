@@ -105,11 +105,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		}
 		
 		EncounterService encounterService = Context.getEncounterService();
-		
-		//get encounters that should have been submitted but have not been processed by the task
-		//List<org.openmrs.Encounter> encounters = encounterService.getEncounters(null, null, startDate, endDate, null, null,
-		//    null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-		
+				
 		//MES CHICA-1156 Replace deprecated getEncounters method by using new EncounterSearchCriteria class
 		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setFromDate(startDate).setToDate(endDate)
 				.setIncludeVoided(false).createEncounterSearchCriteria();
