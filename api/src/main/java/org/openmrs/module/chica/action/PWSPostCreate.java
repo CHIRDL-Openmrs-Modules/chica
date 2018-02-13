@@ -7,13 +7,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.logic.result.Result;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
@@ -43,9 +41,7 @@ public class PWSPostCreate implements ProcessStateAction
 		try
 		{
 			DssService dssService = Context.getService(DssService.class);
-			Rule rule = new Rule();
-			rule.setRuleType(PWS_POST_CREATE);
-			List<Rule> rules = dssService.getRules(rule, true, false, null);
+			List<Rule> rules = dssService.getRulesByType(PWS_POST_CREATE);
 			if (rules == null || rules.size() == 0) {
 				return;
 			}
