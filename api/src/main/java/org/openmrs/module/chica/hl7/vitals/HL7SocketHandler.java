@@ -464,9 +464,6 @@ public class HL7SocketHandler implements Application {
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		
-		//List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, null, startDate, endDate, null, 
-		//	null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-		
 		//MES CHICA-1156 Replace deprecated getEncounters method by using new EncounterSearchCriteria class
 		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder().setPatient(patient).setFromDate(startDate)
 				.setToDate(endDate).setIncludeVoided(false).createEncounterSearchCriteria();
