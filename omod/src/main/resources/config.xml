@@ -427,7 +427,7 @@
     <globalProperty>
         <property>chica.parseVisitNumberFrom_PV1_19</property>
         <defaultValue>true</defaultValue>
-        <description>Parse the visit number from HL7 location PVS.19</description>
+        <description>Parse the visit number from HL7 location PV1.19</description>
     </globalProperty>
     <globalProperty>
         <property>chica.parseObsFromRegistration</property>
