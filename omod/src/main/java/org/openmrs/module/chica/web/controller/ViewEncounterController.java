@@ -17,6 +17,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.APIException;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -168,7 +169,7 @@ public class ViewEncounterController {
 					if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(rightForm.getDisplayPosition())) // Make sure this is configured properly as a right form
 					{
 						String rightName = rightForm.getName();
-						
+
 						// CHICA-1169 Query for patient states by form name and state
 						// This is intended to fix one scenario
 						// Both the ADHD P and ADHD PS are printed using either force print option or ADHD workup from the grease board
@@ -178,81 +179,89 @@ public class ViewEncounterController {
 						// This would allow us to break out of the loop and potentially display the wrong form
 						boolean foundFinishedState = false;
 						List<String> stateNames = rightForm.getStateNames();
-						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(rightName, stateNames, encounterId, false);
-						if(patientStates != null && !patientStates.isEmpty())
+						List<PatientState> patientStates = null;
+						try
 						{
-							for(PatientState currState : patientStates)
+							patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(rightName, stateNames, encounterId, false);
+							if(patientStates != null && !patientStates.isEmpty())
 							{
-								if(currState.getEndTime() != null)
+								for(PatientState currState : patientStates)
 								{
-									rightFormLocationId = currState.getLocationId();
-									rightFormFormId = currState.getFormId();
-									rightFormFormInstanceId = currState.getFormInstanceId();
-									rightFormStylesheet = rightForm.getStylesheet();
-									rightFormDirectory = rightForm.getDirectory();
-									foundFinishedState = true;
-									break;
-								}
-							}
-						}
-						
-						if(!foundFinishedState)
-						{
-							// Now try the old way so that we can at least display the formId and name even if it wasn't actually submitted or scanned
-							patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName, encounterId); 
-							if (patientStates != null && !patientStates.isEmpty()) 
-							{
-								boolean checkPWSProcess = false;
-								HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
-								for (PatientState currState : patientStates) 
-								{
-									if (currState.getEndTime() != null) 
+									if(currState.getEndTime() != null)
 									{
-										// Note on the use of STATE_PWS_PROCESS, we should be checking to see if this is the primary physician form
-										// Then, if it is, we should look up the end state
-										// Both the isPrimaryPhysicianForm and endState are form attribute values
-										// CHICA-1167 should address this
-										if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
-										{
-											// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
-											// described in CHICA-814.
-											// 1. PSF submitted
-											// 2. PWS created
-											// 3. PSF rescanned or vitals received (which triggers a new PWS)
-											// 4. First PWS submitted
-											// 5. OR the second PWS submitted
-											// 6. We need to make sure that the correct PWS is displayed
-											// 7. If neither was submitted, we need to dispay the most recent PWS
-											checkPWSProcess = true;
-										}
-
-										if (!checkPWSProcess) 
-										{ 
-											pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
-										} 
-										else 
-										{
-											rightFormLocationId = currState.getLocationId();
-											rightFormFormId = currState.getFormId();
-											rightFormFormInstanceId = currState.getFormInstanceId();
-											rightFormStylesheet = rightForm.getStylesheet();
-											rightFormDirectory = rightForm.getDirectory();
-											pwsTempFormInstancesMap.clear();
-											break;
-										}
+										rightFormLocationId = currState.getLocationId();
+										rightFormFormId = currState.getFormId();
+										rightFormFormInstanceId = currState.getFormInstanceId();
+										rightFormStylesheet = rightForm.getStylesheet();
+										rightFormDirectory = rightForm.getDirectory();
+										foundFinishedState = true;
+										break;
 									}
 								}
+							}
 
-								if (!pwsTempFormInstancesMap.isEmpty())
+							if(!foundFinishedState)
+							{
+								// Now try the old way so that we can at least display the formId and name even if it wasn't actually submitted or scanned
+								patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName, encounterId); 
+								if (patientStates != null && !patientStates.isEmpty()) 
 								{
-									FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
-									rightFormLocationId = formInstance.getLocationId();
-									rightFormFormId = formInstance.getFormId();
-									rightFormFormInstanceId = formInstance.getFormInstanceId();
-									rightFormStylesheet = rightForm.getStylesheet();
-									rightFormDirectory = rightForm.getDirectory();
-								}
-							} 
+									boolean checkPWSProcess = false;
+									HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+									for (PatientState currState : patientStates) 
+									{
+										if (currState.getEndTime() != null) 
+										{
+											// Note on the use of STATE_PWS_PROCESS, we should be checking to see if this is the primary physician form
+											// Then, if it is, we should look up the end state
+											// Both the isPrimaryPhysicianForm and endState are form attribute values
+											// CHICA-1167 should address this
+											if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
+											{
+												// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
+												// described in CHICA-814.
+												// 1. PSF submitted
+												// 2. PWS created
+												// 3. PSF rescanned or vitals received (which triggers a new PWS)
+												// 4. First PWS submitted
+												// 5. OR the second PWS submitted
+												// 6. We need to make sure that the correct PWS is displayed
+												// 7. If neither was submitted, we need to display the most recent PWS
+												checkPWSProcess = true;
+											}
+
+											if (!checkPWSProcess) 
+											{ 
+												pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+											} 
+											else 
+											{
+												rightFormLocationId = currState.getLocationId();
+												rightFormFormId = currState.getFormId();
+												rightFormFormInstanceId = currState.getFormInstanceId();
+												rightFormStylesheet = rightForm.getStylesheet();
+												rightFormDirectory = rightForm.getDirectory();
+												pwsTempFormInstancesMap.clear();
+												break;
+											}
+										}
+									}
+
+									if (!pwsTempFormInstancesMap.isEmpty())
+									{
+										FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+										rightFormLocationId = formInstance.getLocationId();
+										rightFormFormId = formInstance.getFormId();
+										rightFormFormInstanceId = formInstance.getFormInstanceId();
+										rightFormStylesheet = rightForm.getStylesheet();
+										rightFormDirectory = rightForm.getDirectory();
+									}
+								} 
+							}
+						}
+						catch(APIException e)
+						{
+							log.error(this.getClass().getName() + ": Error finding form information for the form to be displayed on the right side.", e);
 						}	
 					}	
 				}
@@ -283,84 +292,92 @@ public class ViewEncounterController {
 						// This would allow us to break out of the loop and potentially display the wrong form
 						boolean foundFinishedState = false;
 						List<String> stateNames = leftForm.getStateNames();
-						List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(leftName, stateNames, encounterId, false);
-						if(patientStates != null && !patientStates.isEmpty())
+						List<PatientState> patientStates = null;
+						try
 						{
-							for(PatientState currState : patientStates)
+							patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(leftName, stateNames, encounterId, false);
+							if(patientStates != null && !patientStates.isEmpty())
 							{
-								if(currState.getEndTime() != null)
+								for(PatientState currState : patientStates)
 								{
-									leftFormLocationId = currState.getLocationId();
-									leftFormFormId = currState.getFormId();
-									leftFormFormInstanceId = currState.getFormInstanceId();
-									leftFormStylesheet = leftForm.getStylesheet();
-									leftFormDirectory = leftForm.getDirectory();
-									break;
-								}
-							}
-						}
-						
-						if(!foundFinishedState)
-						{
-							// Now try the old way so that we can at least display the formId and name even if it wasn't actually submitted or scanned
-							patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName, encounterId);
-							if (patientStates != null && !patientStates.isEmpty()) 
-							{
-								// I had to copy the same code from above regarding the checkPWSProcess and pwsTempFormInstanceMap
-								// This is now needed in both places because the configuration file controls which side the PWS is displayed on
-								// If we ever configured it to be on the left, this code is needed
-								boolean checkPWSProcess = false;
-								HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
-								for (PatientState currState : patientStates) 
-								{
-									if (currState.getEndTime() != null) 
+									if(currState.getEndTime() != null)
 									{
-										// Note on the use of STATE_PWS_PROCESS, we should be checking to see if this is the primary physician form
-										// Then, if it is, we should look up the end state
-										// Both the isPrimaryPhysicianForm and endState are form attribute values
-										// CHICA-1167 should address this
-										if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
-										{
-											// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
-											// described in CHICA-814.
-											// 1. PSF submitted
-											// 2. PWS created
-											// 3. PSF rescanned or vitals received (which triggers a new PWS)
-											// 4. First PWS submitted
-											// 5. OR the second PWS submitted
-											// 6. We need to make sure that the correct PWS is displayed
-											// 7. If neither was submitted, we need to display the most recent PWS
-											checkPWSProcess = true;
-										}
-
-										if (!checkPWSProcess) 
-										{ 
-											pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
-										} 
-										else 
-										{
-											leftFormLocationId = currState.getLocationId();
-											leftFormFormId = currState.getFormId();
-											leftFormFormInstanceId = currState.getFormInstanceId();
-											leftFormStylesheet = leftForm.getStylesheet();
-											leftFormDirectory = leftForm.getDirectory();
-											pwsTempFormInstancesMap.clear();
-											break;
-										}	
+										leftFormLocationId = currState.getLocationId();
+										leftFormFormId = currState.getFormId();
+										leftFormFormInstanceId = currState.getFormInstanceId();
+										leftFormStylesheet = leftForm.getStylesheet();
+										leftFormDirectory = leftForm.getDirectory();
+										break;
 									}
 								}
-								
-								if (!pwsTempFormInstancesMap.isEmpty())
+							}
+							
+							if(!foundFinishedState)
+							{
+								// Now try the old way so that we can at least display the formId and name even if it wasn't actually submitted or scanned
+								patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName, encounterId);
+								if (patientStates != null && !patientStates.isEmpty()) 
 								{
-									FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
-									leftFormLocationId = formInstance.getLocationId();
-									leftFormFormId = formInstance.getFormId();
-									leftFormFormInstanceId = formInstance.getFormInstanceId();
-									leftFormStylesheet = leftForm.getStylesheet();
-									leftFormDirectory = leftForm.getDirectory();
-								}
-							} 
-						}	
+									// I had to copy the same code from above regarding the checkPWSProcess and pwsTempFormInstanceMap
+									// This is now needed in both places because the configuration file controls which side the PWS is displayed on
+									// If we ever configured it to be on the left, this code is needed
+									boolean checkPWSProcess = false;
+									HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+									for (PatientState currState : patientStates) 
+									{
+										if (currState.getEndTime() != null) 
+										{
+											// Note on the use of STATE_PWS_PROCESS, we should be checking to see if this is the primary physician form
+											// Then, if it is, we should look up the end state
+											// Both the isPrimaryPhysicianForm and endState are form attribute values
+											// CHICA-1167 should address this
+											if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
+											{
+												// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
+												// described in CHICA-814.
+												// 1. PSF submitted
+												// 2. PWS created
+												// 3. PSF rescanned or vitals received (which triggers a new PWS)
+												// 4. First PWS submitted
+												// 5. OR the second PWS submitted
+												// 6. We need to make sure that the correct PWS is displayed
+												// 7. If neither was submitted, we need to display the most recent PWS
+												checkPWSProcess = true;
+											}
+
+											if (!checkPWSProcess) 
+											{ 
+												pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+											} 
+											else 
+											{
+												leftFormLocationId = currState.getLocationId();
+												leftFormFormId = currState.getFormId();
+												leftFormFormInstanceId = currState.getFormInstanceId();
+												leftFormStylesheet = leftForm.getStylesheet();
+												leftFormDirectory = leftForm.getDirectory();
+												pwsTempFormInstancesMap.clear();
+												break;
+											}	
+										}
+									}
+									
+									if (!pwsTempFormInstancesMap.isEmpty())
+									{
+										FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+										leftFormLocationId = formInstance.getLocationId();
+										leftFormFormId = formInstance.getFormId();
+										leftFormFormInstanceId = formInstance.getFormInstanceId();
+										leftFormStylesheet = leftForm.getStylesheet();
+										leftFormDirectory = leftForm.getDirectory();
+									}
+								} 
+							}
+						}
+						catch(APIException e)
+						{
+							log.error(this.getClass().getName() + ": Error finding form information for the form to be displayed on the left side.", e);
+						}		
 					}		
 				}
 			}
