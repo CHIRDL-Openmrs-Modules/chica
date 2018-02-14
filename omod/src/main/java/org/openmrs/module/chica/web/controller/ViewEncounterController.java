@@ -164,6 +164,7 @@ public class ViewEncounterController {
 			// Note: There are no current cases where this list would have more than one possible right form to display
 			if(viewEncounterForm.getRelatedForms() != null)
 			{
+				rightFormLoop:
 				for(ViewEncounterForm rightForm : viewEncounterForm.getRelatedForms())
 				{
 					if(DISPLAY_POSITION_RIGHT.equalsIgnoreCase(rightForm.getDisplayPosition())) // Make sure this is configured properly as a right form
@@ -177,7 +178,7 @@ public class ViewEncounterController {
 						// This is because we had a list of all states, both the create states for ADHD PS and ADHD P would have an end time
 						// The first state in the this list would be which ever form was created last due to sorting by end_time
 						// This would allow us to break out of the loop and potentially display the wrong form
-						boolean foundFinishedState = false;
+						//boolean foundFinishedState = false;
 						List<String> stateNames = rightForm.getStateNames();
 						List<PatientState> patientStates = null;
 						try
@@ -194,20 +195,23 @@ public class ViewEncounterController {
 										rightFormFormInstanceId = currState.getFormInstanceId();
 										rightFormStylesheet = rightForm.getStylesheet();
 										rightFormDirectory = rightForm.getDirectory();
-										foundFinishedState = true;
-										break;
+										//foundFinishedState = true;
+										break rightFormLoop;
 									}
 								}
 							}
 
-							if(!foundFinishedState)
-							{
+							// We didn't break out of the outer loop (meaning we didn't find a "finished" state WITH and end time
+							// This is not an else to the if statement above because we could have found a list of patientStates, 
+							// but maybe none of them had an end time (which really shouldn't happen, but is possible)
+							//if(!foundFinishedState)
+							//{
 								// Now try the old way so that we can at least display the formId and name even if it wasn't actually submitted or scanned
 								patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(rightName, encounterId); 
 								if (patientStates != null && !patientStates.isEmpty()) 
 								{
-									boolean checkPWSProcess = false;
-									HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+									//boolean checkPWSProcess = false;
+									HashMap<Date, FormInstance> tempFormInstancesMap = new HashMap<Date, FormInstance>();
 									for (PatientState currState : patientStates) 
 									{
 										if (currState.getEndTime() != null) 
@@ -216,40 +220,40 @@ public class ViewEncounterController {
 											// Then, if it is, we should look up the end state
 											// Both the isPrimaryPhysicianForm and endState are form attribute values
 											// CHICA-1167 should address this
-											if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
-											{
-												// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
-												// described in CHICA-814.
-												// 1. PSF submitted
-												// 2. PWS created
-												// 3. PSF rescanned or vitals received (which triggers a new PWS)
-												// 4. First PWS submitted
-												// 5. OR the second PWS submitted
-												// 6. We need to make sure that the correct PWS is displayed
-												// 7. If neither was submitted, we need to display the most recent PWS
-												checkPWSProcess = true;
-											}
+//											if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
+//											{
+//												// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
+//												// described in CHICA-814.
+//												// 1. PSF submitted
+//												// 2. PWS created
+//												// 3. PSF rescanned or vitals received (which triggers a new PWS)
+//												// 4. First PWS submitted
+//												// 5. OR the second PWS submitted
+//												// 6. We need to make sure that the correct PWS is displayed
+//												// 7. If neither was submitted, we need to display the most recent PWS
+//												checkPWSProcess = true;
+//											}
 
-											if (!checkPWSProcess) 
-											{ 
-												pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
-											} 
-											else 
-											{
-												rightFormLocationId = currState.getLocationId();
-												rightFormFormId = currState.getFormId();
-												rightFormFormInstanceId = currState.getFormInstanceId();
-												rightFormStylesheet = rightForm.getStylesheet();
-												rightFormDirectory = rightForm.getDirectory();
-												pwsTempFormInstancesMap.clear();
-												break;
-											}
+											//if (!checkPWSProcess) 
+											//{ 
+											tempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+											//} 
+//											else 
+//											{
+//												rightFormLocationId = currState.getLocationId();
+//												rightFormFormId = currState.getFormId();
+//												rightFormFormInstanceId = currState.getFormInstanceId();
+//												rightFormStylesheet = rightForm.getStylesheet();
+//												rightFormDirectory = rightForm.getDirectory();
+//												pwsTempFormInstancesMap.clear();
+//												break;
+//											}
 										}
 									}
 
-									if (!pwsTempFormInstancesMap.isEmpty())
+									if (!tempFormInstancesMap.isEmpty())
 									{
-										FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+										FormInstance formInstance = tempFormInstancesMap.get(Collections.max(tempFormInstancesMap.keySet()));
 										rightFormLocationId = formInstance.getLocationId();
 										rightFormFormId = formInstance.getFormId();
 										rightFormFormInstanceId = formInstance.getFormInstanceId();
@@ -257,7 +261,7 @@ public class ViewEncounterController {
 										rightFormDirectory = rightForm.getDirectory();
 									}
 								} 
-							}
+							//}
 						}
 						catch(APIException e)
 						{
@@ -277,6 +281,7 @@ public class ViewEncounterController {
 			
 			if(viewEncounterForm.getRelatedForms() != null)
 			{
+				leftFormLoop:
 				for(ViewEncounterForm leftForm : viewEncounterForm.getRelatedForms())
 				{
 					if(DISPLAY_POSITION_LEFT.equalsIgnoreCase(leftForm.getDisplayPosition())) // Make sure this is configured properly as a left form
@@ -290,7 +295,7 @@ public class ViewEncounterController {
 						// This is because we had a list of all states, both the create states for ADHD PS and ADHD P would have an end time
 						// The first state in the this list would be which ever form was created last due to sorting by end_time
 						// This would allow us to break out of the loop and potentially display the wrong form
-						boolean foundFinishedState = false;
+						//boolean foundFinishedState = false;
 						List<String> stateNames = leftForm.getStateNames();
 						List<PatientState> patientStates = null;
 						try
@@ -307,13 +312,17 @@ public class ViewEncounterController {
 										leftFormFormInstanceId = currState.getFormInstanceId();
 										leftFormStylesheet = leftForm.getStylesheet();
 										leftFormDirectory = leftForm.getDirectory();
-										break;
+										//foundFinishedState = true;
+										break leftFormLoop;
 									}
 								}
 							}
 							
-							if(!foundFinishedState)
-							{
+							// We didn't break out of the outer loop (meaning we didn't find a "finished" state WITH and end time
+							// This is not an else to the if statement above because we could have found a list of patientStates, 
+							// but maybe none of them had an end time (which really shouldn't happen, but is possible)
+							//if(!foundFinishedState)
+							//{
 								// Now try the old way so that we can at least display the formId and name even if it wasn't actually submitted or scanned
 								patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(leftName, encounterId);
 								if (patientStates != null && !patientStates.isEmpty()) 
@@ -321,8 +330,8 @@ public class ViewEncounterController {
 									// I had to copy the same code from above regarding the checkPWSProcess and pwsTempFormInstanceMap
 									// This is now needed in both places because the configuration file controls which side the PWS is displayed on
 									// If we ever configured it to be on the left, this code is needed
-									boolean checkPWSProcess = false;
-									HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+									//boolean checkPWSProcess = false;
+									HashMap<Date, FormInstance> tempFormInstancesMap = new HashMap<Date, FormInstance>();
 									for (PatientState currState : patientStates) 
 									{
 										if (currState.getEndTime() != null) 
@@ -331,40 +340,40 @@ public class ViewEncounterController {
 											// Then, if it is, we should look up the end state
 											// Both the isPrimaryPhysicianForm and endState are form attribute values
 											// CHICA-1167 should address this
-											if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
-											{
-												// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
-												// described in CHICA-814.
-												// 1. PSF submitted
-												// 2. PWS created
-												// 3. PSF rescanned or vitals received (which triggers a new PWS)
-												// 4. First PWS submitted
-												// 5. OR the second PWS submitted
-												// 6. We need to make sure that the correct PWS is displayed
-												// 7. If neither was submitted, we need to display the most recent PWS
-												checkPWSProcess = true;
-											}
+//											if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS))
+//											{
+//												// The checkPWSProcess and pwsTempFormInstancesMap is used for the following scenario
+//												// described in CHICA-814.
+//												// 1. PSF submitted
+//												// 2. PWS created
+//												// 3. PSF rescanned or vitals received (which triggers a new PWS)
+//												// 4. First PWS submitted
+//												// 5. OR the second PWS submitted
+//												// 6. We need to make sure that the correct PWS is displayed
+//												// 7. If neither was submitted, we need to display the most recent PWS
+//												checkPWSProcess = true;
+//											}
 
-											if (!checkPWSProcess) 
-											{ 
-												pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
-											} 
-											else 
-											{
-												leftFormLocationId = currState.getLocationId();
-												leftFormFormId = currState.getFormId();
-												leftFormFormInstanceId = currState.getFormInstanceId();
-												leftFormStylesheet = leftForm.getStylesheet();
-												leftFormDirectory = leftForm.getDirectory();
-												pwsTempFormInstancesMap.clear();
-												break;
-											}	
+											//if (!checkPWSProcess) 
+											//{ 
+											tempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+											//} 
+//											else 
+//											{
+//												leftFormLocationId = currState.getLocationId();
+//												leftFormFormId = currState.getFormId();
+//												leftFormFormInstanceId = currState.getFormInstanceId();
+//												leftFormStylesheet = leftForm.getStylesheet();
+//												leftFormDirectory = leftForm.getDirectory();
+//												pwsTempFormInstancesMap.clear();
+//												break;
+//											}	
 										}
 									}
 									
-									if (!pwsTempFormInstancesMap.isEmpty())
+									if (!tempFormInstancesMap.isEmpty())
 									{
-										FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+										FormInstance formInstance = tempFormInstancesMap.get(Collections.max(tempFormInstancesMap.keySet()));
 										leftFormLocationId = formInstance.getLocationId();
 										leftFormFormId = formInstance.getFormId();
 										leftFormFormInstanceId = formInstance.getFormInstanceId();
@@ -372,7 +381,7 @@ public class ViewEncounterController {
 										leftFormDirectory = leftForm.getDirectory();
 									}
 								} 
-							}
+							//}
 						}
 						catch(APIException e)
 						{
@@ -530,6 +539,10 @@ public class ViewEncounterController {
 								}
 							}
 							if (row.getPwsId() == null) {
+								// Note on the use of STATE_PWS_PROCESS, we should be checking to see if this is the primary physician form
+								// Then, if it is, we should look up the end state
+								// Both the isPrimaryPhysicianForm and endState are form attribute values
+								// CHICA-1167 should address this
 								if (formName.equals("PWS")) {
 									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
 										checkPWSProcess = true;

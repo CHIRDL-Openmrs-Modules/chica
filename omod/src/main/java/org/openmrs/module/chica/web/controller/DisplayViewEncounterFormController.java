@@ -102,7 +102,7 @@ public class DisplayViewEncounterFormController {
 				}
 			}
 
-			if(imagefile == null)
+			if(imagefile == null && !ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY.equalsIgnoreCase(formDirectory))
 			{
 					String transformUrl = null;
 					try {
@@ -130,7 +130,7 @@ public class DisplayViewEncounterFormController {
 				try {
 					URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
 					uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
-					uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
+					uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
 
 					imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 					map.put(filenameParameterName, imageFilename);
