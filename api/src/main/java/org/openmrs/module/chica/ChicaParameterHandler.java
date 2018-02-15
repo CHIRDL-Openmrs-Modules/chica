@@ -168,7 +168,7 @@ public class ChicaParameterHandler implements ParameterHandler
 			return;
 		}
 		
-		if(child0Val.contains("Err")){
+		if(child0Val != null && child0Val.contains("Err")){
 			answerValues = child1Val;
 			errorValues = child0Val;
 		}else{
