@@ -417,33 +417,11 @@ public class ViewEncounterController {
 		}
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);		
-		FormService formService = Context.getFormService();
-		PatientService patientService = Context.getService(PatientService.class);
-		HashMap<Integer,String> formNameMap = new HashMap<Integer,String>();
+		HashMap<Integer,String> displayNameMap = new HashMap<Integer,String>();
 
 		try {
-			Patient patient = null;
 			String mrn = request.getParameter(ChirdlUtilConstants.PARAMETER_MRN);
-			if (StringUtils.isNotEmpty(mrn)) {
-				mrn = Util.removeLeadingZeros(mrn);
-				if (!mrn.contains(ChirdlUtilConstants.GENERAL_INFO_DASH) && mrn.length() > 1) {
-					mrn = mrn.substring(0, mrn.length() - 1) + ChirdlUtilConstants.GENERAL_INFO_DASH + mrn.substring(mrn.length()-1);
-				}
-
-				PatientIdentifierType identifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
-				List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
-				identifierTypes.add(identifierType);
-
-				List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
-				if (patients.size() == 0){
-					patients = patientService.getPatientsByIdentifier(null, "0" + mrn, identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
-				}
-
-				if (patients.size() > 0)
-				{
-					patient = patients.get(0);
-				}
-			}
+			Patient patient = org.openmrs.module.chirdlutil.util.Util.getPatientByMRNOther(mrn);
 			
 			if (patient == null) {
 				return FORM_VIEW;
@@ -510,88 +488,126 @@ public class ViewEncounterController {
 				row.setStation(enct.getPrinterLocation());
 				row.setAgeAtVisit(org.openmrs.module.chirdlutil.util.Util.adjustAgeUnits(patient.getBirthdate(), checkin));
 
-				// This section will add form instances to row, which is used to populate the Action drop-down
+				// This section will add form instances to the row, which is used to populate the Action drop-down
 				// It will also set the PSF and PWS id for the row
-				List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesWithFormInstances(null,encounterId);
-				if (patientStates != null && !patientStates.isEmpty()) {
-					HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
-					boolean checkPWSProcess = false;
-					for (PatientState currState : patientStates) {
-						if (currState.getEndTime() != null) {
-							Integer formId = currState.getFormId();
-							String formName = formNameMap.get(formId);
-							if(formName == null){
-								Form form = formService.getForm(formId);
-								formName = form.getName();
-								
-								// Use the display name from the form attribute
-								FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
-								if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
-								{
-									formNameMap.put(formId, fav.getValue());
-								}							
-							}
+				// Loop over the forms listed in the config file and query for patient states for that form
+				// All form instances of a form will be added to the drop-down,
+				// except for the PWS, which will only have the most recently created or most recently submitted version added to the drop-down
+				for(String formName : formsToProcess)
+				{
+					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(formName, null, encounterId, false);
+					if (patientStates != null && !patientStates.isEmpty()) {
+						
+						HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
+						//boolean checkPWSProcess = false;
+						HashMap<Integer, String> formTypeMap = new HashMap<Integer, String>();
+						HashMap<Integer, String> endStateMap = new HashMap<Integer, String>();
+
+						for (PatientState currState : patientStates) 
+						{
 							
-							//make sure you only get the most recent psf/pws pair
-							if (row.getPsfId() == null) {
-								if (formName.equals("PSF")) {
-									row.setPsfId(currState.getFormInstance());
+							if (currState.getEndTime() != null) {
+								Integer formId = currState.getFormId();
+
+								// Determine if this is the primary physician form, primary patient form, or neither
+								String formType = formTypeMap.get(formId);
+								if(formType == null)
+								{
+									formType = org.openmrs.module.chica.util.Util.getFormType(formId, locationTagId, locationId);
 								}
-							}
-							if (row.getPwsId() == null) {
-								// Note on the use of STATE_PWS_PROCESS, we should be checking to see if this is the primary physician form
-								// Then, if it is, we should look up the end state
-								// Both the isPrimaryPhysicianForm and endState are form attribute values
-								// CHICA-1167 should address this
-								if (formName.equals("PWS")) {
-									if (currState.getState().getName().trim().equals(ChirdlUtilConstants.STATE_PWS_PROCESS)){
-										checkPWSProcess = true;
-									}
-									if (!checkPWSProcess) { 
-										pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
-									} else {
-										row.setPwsId(currState.getFormInstance());
+
+								// Get endState name from the form attribute
+								String endStateName = endStateMap.get(formId);
+								if(endStateName == null)
+								{
+									FormAttributeValue formAttributeValueEndStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, 
+											locationTagId, locationId);
+									if(formAttributeValueEndStateName != null && StringUtils.isNotEmpty(formAttributeValueEndStateName.getValue()))
+									{
+										endStateName = formAttributeValueEndStateName.getValue();
 									}
 								}
-							}
-							if (formsToProcess.contains(formName)) {
-								if (formName.equals("PWS") ){
-									if (checkPWSProcess && row.getPwsId() != null) { 
-											row.addFormInstance(currState.getFormInstance());
-											pwsTempFormInstancesMap.clear();
-											checkPWSProcess = false;
-									} 
-								} else {
+
+								// Get the display name for this form
+								String displayName = displayNameMap.get(formId);
+								if(displayName == null)
+								{
+									// Use the display name from the form attribute
+									FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
+									if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+									{
+										displayNameMap.put(formId, fav.getValue());
+									}
+								}
+
+								//make sure you only get the most recent psf/pws pair
+								if(ChirdlUtilConstants.PATIENT_FORM_TYPE.equals(formType))
+								{
+									if (row.getPsfId() == null) 
+									{
+										row.setPsfId(currState.getFormInstance());
+									}
+								}
+								
+								// If this is the PWS, set the pwsId to the most recently submitted PWS for the row
+								// Only add the most recently submitted instance to the list of form instances for the row
+								if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equals(formType)) 
+								{
+									if (row.getPwsId() == null) 
+									{
+										if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equals(formType)) 
+										{
+											if (currState.getState().getName().trim().equals(endStateName))
+											{ 
+												//checkPWSProcess = true;
+												row.setPwsScanned(true);
+												row.setPwsId(currState.getFormInstance());
+												row.addFormInstance(currState.getFormInstance());
+												pwsTempFormInstancesMap.clear();
+											}
+											else
+											{
+												// This isn't the scanned state add the form instance to the temp map
+												pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+											}
+																															
+//											if (!checkPWSProcess) { 
+//												pwsTempFormInstancesMap.put(currState.getEndTime(), currState.getFormInstance());
+//											} else {
+//												row.setPwsId(currState.getFormInstance());
+//											}
+										}
+									}
+									
+//									if (checkPWSProcess && row.getPwsId() != null) 
+//									{ 
+//										row.addFormInstance(currState.getFormInstance());
+//										pwsTempFormInstancesMap.clear();
+//										checkPWSProcess = false;
+//									} 
+								}
+								else
+								{
+									// This is not the PWS, just add the form instance to the list 
+									// so that all instances of the form show up in the drop-down
 									row.addFormInstance(currState.getFormInstance());
-								}
+								}	
 							}
 						}
-					}
-					
-					if (!pwsTempFormInstancesMap.isEmpty()) {
-						FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
-						row.setPwsId(formInstance);
-						row.addFormInstance(formInstance);
+
+						if (!row.isPwsScanned() && !pwsTempFormInstancesMap.isEmpty()) {
+							FormInstance formInstance = pwsTempFormInstancesMap.get(Collections.max(pwsTempFormInstancesMap.keySet()));
+							row.setPwsId(formInstance);
+							row.addFormInstance(formInstance);
+						}
 					}
 				}
 			
-				FormInstance pwsId = row.getPwsId();
-				if (pwsId != null) {
-					State currState = chirdlutilbackportsService.getStateByName(ChirdlUtilConstants.STATE_PWS_PROCESS);
-					List<PatientState> pwsScanStates = chirdlutilbackportsService.getPatientStateByFormInstanceState(pwsId,
-						currState,true);
-					if (pwsScanStates != null && pwsScanStates.size() > 0) {
-						PatientState pwsScanState = pwsScanStates.get(0);
-						if (pwsScanState.getEndTime() != null) {
-							row.setPwsScanned(true);
-						}
-					}
-				}
 				rows.add(row);
 			}
 
 			map.put(PARAMATER_TITLE_PATIENT_ROWS, rows);
-			map.put(PARAMATER_TITLE_FORM_NAME_MAP,formNameMap);
+			map.put(PARAMATER_TITLE_FORM_NAME_MAP,displayNameMap);
 
 		} catch (UnexpectedRollbackException ex) {
 			// ignore this exception since it happens with an
