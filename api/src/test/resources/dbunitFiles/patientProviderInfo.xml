@@ -22,22 +22,22 @@
 		voided_by="1" date_voided="2008-12-08 15:11:52.0" void_reason="Merged with patient #30520" />
 	<patient_identifier_type
 		patient_identifier_type_id="1" name="OpenMRS Identification Number"
-		description="Unique number used in OpenMRS" format="" check_digit="true"
+		description="Unique number used in OpenMRS" format=""
 		creator="1" date_created="2005-09-22 00:00:00.0" required="false"
 		validator="org.openmrs.patient.impl.LuhnIdentifierValidator" retired="0" />
 	<patient_identifier_type
 		patient_identifier_type_id="2" name="Old Identification Number"
 		description="Number given out prior to the OpenMRS system (No check digit)"
-		format="" check_digit="false" creator="1" date_created="2005-09-22 00:00:00.0"
+		format="" creator="1" date_created="2005-09-22 00:00:00.0"
 		required="false" retired="0" />
 	<patient_identifier_type
 		patient_identifier_type_id="3" name="MRN_OTHER" description="Other medical record number"
-		check_digit="true" creator="1" date_created="2008-05-14 08:48:57.0"
+		creator="1" date_created="2008-05-14 08:48:57.0"
 		required="false" validator="org.openmrs.patient.impl.LuhnIdentifierValidator"
 		retired="0" />
 	<patient_identifier_type
 		patient_identifier_type_id="4" name="SSN" description="social security number"
-		check_digit="false" creator="1" date_created="2008-09-10 11:26:21.0"
+		creator="1" date_created="2008-09-10 11:26:21.0"
 		required="false" validator="org.openmrs.module.chica.hl7.SSNValidator"
 		retired="0" />
 	<person_address person_address_id="1" person_id="30520"

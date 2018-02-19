@@ -1,6 +1,7 @@
-<%@ include file="/WEB-INF/template/include.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<%@ include file="/WEB-INF/template/header.jsp" %>
+<!DOCTYPE html>
+  <openmrs:require allPrivileges="View Encounters, View Patients" otherwise="/login.htm" redirect="/module/chica/viewPatient.form" />
 
 <%@ page import="org.openmrs.web.WebConstants" %>
 <%
@@ -14,77 +15,76 @@
 	session.removeAttribute(WebConstants.OPENMRS_ERROR_ARGS);
 	
 %>
+  
+<style>
+	#content { font-size: inherit }
+</style>
+<script>var ctx = "${pageContext.request.contextPath}";</script>
+<link
+    href="${pageContext.request.contextPath}/moduleResources/chica/chica.css"
+    type="text/css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css"
+    href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css" />
+<link rel="stylesheet" type="text/css"
+    href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
+<link rel="stylesheet" type="text/css"
+    href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />
+<script
+	src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.floatThead.min.js"></script>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<openmrs:htmlInclude file="/openmrs.css" />
-		<openmrs:htmlInclude file="/style.css" />
-		<openmrs:htmlInclude file="/openmrs.js" />
-		
-		<script type="text/javascript">
-			/* variable used in js to know the context path */
-			var openmrsContextPath = '${pageContext.request.contextPath}';
-			
-			function exitForm(){
-				document.location.href("greaseBoard.form");
-			}
-		</script>
-		
-	
-		
-		
-		<title>Patient MRN required</title>
-		
-	</head>
-
-<body>
-	<div id="pageBody">
-		<div id="contentMinimal">
-			<c:if test="${msg != null}">
-				<div id="openmrs_msg"><spring:message code="${msg}" text="${msg}" arguments="${msgArgs}" /></div>
-			</c:if>
-			<c:if test="${err != null}">
-				<div id="openmrs_error"><spring:message code="${err}" text="${err}" arguments="${errArgs}"/></div>
-			</c:if>
-<link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
-
-
-<form name="viewPatient" method="post" >
-<table width = "100%" class="formTitleStyle greaseBoardBackground" >
-<tr>
-<td>
-<b>Search For Patient Encounters</b>
-</td>
-</tr>
-</table>
-	<c:choose>
-	<c:when test="${!empty param.validate}">
-		<span class="alert" ><p><b>MRN: "${param.mrnLookup}" is not a valid MRN.</b></p></span>
-    </c:when>
- 	<c:otherwise>
-		<c:choose>
- 		<c:when test="${!empty param.error}">
-			<span class="alert" ><p><b>There is no record of an existing patient with MRN: "${param.mrnLookup}" 
-					 <br>You may need to add a patient through manual checkin.</b></p></span>
-    	</c:when>
-    	<c:otherwise>
-        	<p><b>Enter the patient MRN to display all encounters for that patient</b></p>
-        </c:otherwise>
-		</c:choose>
-    </c:otherwise>
-</c:choose>
-
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MRN <span style="font-size:8pt;" ></span></b>&nbsp;&nbsp;<input type="text"  size="8" name="mrn" style="width:150px;"tabindex="1"/>
-<input type="submit" name="viewPatientFromEncounterPage" value="Enter" tabindex="2"/> <input type="button" value="Cancel" onClick="javascript:window.close();" tabindex="3"/>
-
-
-<input type="hidden" name="validate" value="validate"/>
-</form>
 <script language="javascript">
-    	document.viewPatient.mrnLookup.focus()
- </script>
-		<br/>
+    function backToAdminPage() {
+		window.location = ctx + "/admin/index.htm";
+	}
+</script>
+<html>
+	<link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>View Encounters</title>
+		<style>
+			td{
+				vertical-align: middle;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="pageBody">
+			<div id="contentMinimal">
+				<c:if test="${msg != null}">
+					<div id="openmrs_msg"><spring:message code="${msg}" text="${msg}" arguments="${msgArgs}" /></div>
+				</c:if>
+				<c:if test="${err != null}">
+					<div id="openmrs_error"><spring:message code="${err}" text="${err}" arguments="${errArgs}"/></div>
+				</c:if>
+				<form id="viewPatient" name="viewPatient" method="post" >
+					<table width = "100%" class="formTitleStyle" >
+						<tr>
+							<td>
+								<h3>Search For Patient Encounters</h3>
+							</td>
+						</tr>
+					</table>
+
+					<div id="encounterMrnMessage" >
+						<p><h4>Enter the patient MRN to display all encounters for that patient</h4><p>
+						<p><span id="encounterMrnError" ></span></p>
+					</div>
+					<div id= "viewEncounter">
+						<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MRN <span style="font-size:8pt;" ></span></b>&nbsp;&nbsp;<input type="text"  size="8" id="mrn" name="mrn" style="width:150px;"tabindex="1"/>
+					
+						<input id="Enter" type="submit" name="viewPatientFromEncounterPage" value="Enter" tabindex="2"/> 
+						<input type="button" value="Cancel" onClick="backToAdminPage();" tabindex="3"/>
+					</div>
+				</form>
+				<script language="javascript">
+						document.viewPatient.mrn.focus();
+				</script>
+				<script src="${pageContext.request.contextPath}/moduleResources/chica/viewPatient.js"></script>
+			</div>
 		</div>
-	</div>
-</body>
+	</body>
 </html>

@@ -205,7 +205,7 @@ public class ImmunizationRegistryQuery
 						}
 						
 						for (ConceptMap conceptMap: conceptMaps){
-							String unspecifiedVaccineCode = conceptMap.getSourceCode();
+							String unspecifiedVaccineCode = conceptMap.getConceptReferenceTerm().getCode(); // CHICA-1151 replace getSourceCode() with getConceptReferenceTerm().getCode()
 							String unspecifiedVaccineName = "";
 							Concept unspecifiedVaccineConcept = conceptService.getConceptByMapping(unspecifiedVaccineCode, SOURCE );
 							if (unspecifiedVaccineConcept != null && unspecifiedVaccineConcept.getName() != null){
@@ -366,7 +366,7 @@ public class ImmunizationRegistryQuery
 						//Get the unspecified name and cvx code to add to forecasting list
 						for (ConceptMap conceptMap : conceptMaps) {
 							
-							String unspecfiedCode = conceptMap.getSourceCode();
+							String unspecfiedCode = conceptMap.getConceptReferenceTerm().getCode(); // CHICA-1151 replace getSourceCode() with getConceptReferenceTerm().getCode()
 							if (unspecfiedCode == null || unspecfiedCode.trim().equalsIgnoreCase("") ){
 								log.info("ImmunizationForecast: Concept map exists, but no source_code defined.  Concept id: " 
 										+ conceptMap.getConcept().getConceptId());
@@ -471,6 +471,7 @@ public class ImmunizationRegistryQuery
 		Integer encounterId = encounter.getEncounterId();;
 		Patient chicaPatient = encounter.getPatient();
 		PipeParser parser = new PipeParser();
+		Integer patientId = encounter.getPatient().getPatientId(); // CHICA-1151 Assign to new variable and replace getPatientId() with getPatient().getPatientId()
 		
 		try {
 			
@@ -506,7 +507,7 @@ public class ImmunizationRegistryQuery
 			} catch (Exception e1) {
 				logError(CHIRP_ERROR 
 						, Util.getStackTrace(e1),
-						url, encounter.getPatientId());
+						url, encounter.getPatient().getPatientId()); // CHICA-1151 Replace getPatientId() with patientId variable
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 						, new Date());
 				return null;
@@ -519,14 +520,14 @@ public class ImmunizationRegistryQuery
 			
 			//log errors
 			if (queryResponse == null ){
-				logError( CHIRP_ERROR, "",  url, encounter.getPatientId());
+				logError( CHIRP_ERROR, "",  url, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 						, new Date());
 				return null;
 			}
 			
 			if (queryResponse.isEmpty() || queryResponse.trim().equals("")) {
-				logError(CHIRP_RESPONSE_INVALID, "", url, encounter.getPatientId());
+				logError(CHIRP_RESPONSE_INVALID, "", url, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 						, new Date());
 				return null;
@@ -567,13 +568,13 @@ public class ImmunizationRegistryQuery
 						} else {
 							//Chirp status remains at "not in chirp"
 							logError(CHIRP_UPDATE_FAILED, 
-									 queryResponse, url, encounter.getPatientId());
+									 queryResponse, url, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 						}
 						
 					} catch (IOException e) {
 						logError(CHIRP_ERROR, 
 								Util.getStackTrace(e),
-								url, encounter.getPatientId());
+								url, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 						Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 								, new Date());	
 						return null;
@@ -597,7 +598,7 @@ public class ImmunizationRegistryQuery
 				if (msaControlId == null || !msaControlId.equalsIgnoreCase("AA") )
 				{
 					logError(CHIRP_ERROR,
-							"HL7 response: " + queryResponse, url, encounter.getPatientId());
+							"HL7 response: " + queryResponse, url, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 					Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 							, new Date());
 					return null;
@@ -605,7 +606,7 @@ public class ImmunizationRegistryQuery
 			} catch (HL7Exception hl7e){
 				logError( CHIRP_PARSING_ERROR, 
 						"HL7 response = " + queryResponse ,
-						null, encounter.getPatientId());
+						null, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 				Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 						, new Date());
 				return null;
@@ -682,7 +683,7 @@ public class ImmunizationRegistryQuery
 				} catch (HL7Exception e) {
 					logError( CHIRP_PARSING_ERROR, 
 							"HL7 response = " + queryResponse ,
-							null, encounter.getPatientId());
+							null, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 					Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 							, new Date());
 					return null;
@@ -738,15 +739,14 @@ public class ImmunizationRegistryQuery
 					}
 				}
 				
-				createImmunizationList(queryResponse, mrn, encounter
-						.getPatientId());
+				createImmunizationList(queryResponse, mrn, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 				return queryResponse;
 			}
 			
 		}  catch (IOException e) {
 			
 			logError( CHIRP_ERROR, Util.getStackTrace(e),
-					url, encounter.getPatientId());
+					url, patientId); // CHICA-1151 Replace getPatientId() with patientId variable
 			Util.saveObs(chicaPatient, statusConcept, encounterId, CHIRP_NOT_AVAILABLE
 					, new Date());
 		}

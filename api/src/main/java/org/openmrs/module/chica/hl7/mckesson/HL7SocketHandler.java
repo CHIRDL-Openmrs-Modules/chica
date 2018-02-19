@@ -17,7 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,7 +28,6 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -51,12 +49,11 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
+import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -70,11 +67,13 @@ import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
-import org.openmrs.util.OpenmrsConstants;
+import org.openmrs.util.PrivilegeConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.v25.message.ADT_A01;
+import ca.uhn.hl7v2.model.v25.segment.IN1;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
@@ -103,13 +102,13 @@ public class HL7SocketHandler extends
 
 	protected final static Log log = LogFactory.getLog(HL7SocketHandler.class);
 	
-	private static final String GLOBAL_PROPERTY_FILTER_ON_PRIOR_CHECKIN = "chica.filterHL7RegistrationOnPriorCheckin";
 	private static final String GLOBAL_PROPERTY_PARSE_ERROR_DIRECTORY = "chica.mckessonParseErrorDirectory";
 	
 	private static final String STATE_CLINIC_REGISTRATION = "Clinic Registration";
 	private static final String STATE_HL7_CHECKIN = "Process Checkin HL7";
 	
 	private static final String CONCEPT_INSURANCE_NAME = "InsuranceName";
+	private static final String CONCEPT_INSURANCE = "Insurance";
 	
 	private static final String PARAMETER_SESSION = "session";
 	
@@ -396,14 +395,8 @@ public class HL7SocketHandler extends
 		
 		AdministrationService adminService = Context.getAdministrationService();
 		parameters.put(PROCESS_HL7_CHECKIN_START, new java.util.Date());
-		boolean filterDuplicateCheckin = false;
+		
 		boolean processMessageError = false;
-		Context.openSession();
-		String filterDuplicateRegistrationStr = adminService.getGlobalProperty(GLOBAL_PROPERTY_FILTER_ON_PRIOR_CHECKIN);
-		if (filterDuplicateRegistrationStr != null && filterDuplicateRegistrationStr.equalsIgnoreCase(TRUE)){
-			filterDuplicateCheckin = true;
-		}
-		Context.closeSession();
 		
 		String incomingMessageString = null;
 		Segment inboundHeader = null;
@@ -506,8 +499,7 @@ public class HL7SocketHandler extends
 					.getLocation(message);
 
 			if ((printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS))||
-					!(isValidAge(message, printerLocation, locationString)) ||
-					(filterDuplicateCheckin && priorCheckinExists(message, locationString))) {
+					!(isValidAge(message, printerLocation, locationString))) {
 
 				try {
 					processMessageError = false;
@@ -533,6 +525,7 @@ public class HL7SocketHandler extends
 			Provider provider, HashMap<String, Object> parameters) {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context
 				.getService(ChirdlUtilBackportsService.class);
+		AdministrationService adminService = Context.getAdministrationService();
 		org.openmrs.Encounter encounter = super.processEncounter(
 				incomingMessageString, p, encDate, newEncounter, provider,
 				parameters);
@@ -560,10 +553,15 @@ public class HL7SocketHandler extends
 		String insuranceName = null;
 		String visitNumber = null;
 		String originalLocation = null;
+		String visitType = null;
 		Message message = null;
+		boolean messageContainsInsurance = false;
 		
 			try {
 				message = this.parser.parse(incomingMessageString);
+				
+				messageContainsInsurance = messageContainsInsuranceInfo(message); // CHICA-1157 Only attempt to parse insurance info if the message contains a valid IN1 segment (A10 messages will not)
+					
 				EncounterService encounterService = Context
 						.getService(EncounterService.class);
 				encounter = encounterService.getEncounter(encounter
@@ -574,34 +572,41 @@ public class HL7SocketHandler extends
 
 					appointmentTime = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getAppointmentTime(message);
-
-					// DWE CHICA-492 Parse insurance plan code from IN1-35 if this is IUH
-					if(locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
-					{
-						planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-								.getInsuranceCompanyPlan(message);
-					}
-					else
-					{
-						planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-								.getInsurancePlan(message);
-					}
+					
+					if(messageContainsInsurance) { // CHICA-1157
+						// DWE CHICA-492 Parse insurance plan code from IN1-35 if this is IUH
+						// MES CHICA-795 Use global property for parsing insurance plan code from IN1-35
+						String parseInsuranceCodeFrom_IN1_35 = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_INSURANCE_CODE_FROM_IN1_35);
+						if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseInsuranceCodeFrom_IN1_35))
+						{
+							planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+									.getInsuranceCompanyPlan(message);
+						}
+						else
+						{
+							planCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+									.getInsurancePlan(message);
+						}
 				
-					// DWE CHICA-492 Do not parse the carrier code if this is IUH
-					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
-					{
-						carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-								.getInsuranceCarrier(message);
+						// DWE CHICA-492 Do not parse the carrier code if this is IUH
+						// MES CHICA-795 Use global property for parsing the carrier code
+						String parseCarrierCode = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_CARRIER_CODE);
+						if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseCarrierCode))
+						{
+							carrierCode = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+									.getInsuranceCarrier(message);
+						}
+						
+						insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getInsuranceName(message);
 					}
-
 					printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 							.getPrinterLocation(message, incomingMessageString);
 					
-					insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-							.getInsuranceName(message);
-					
 					// DWE CHICA-633 Parse visit number from PV1-19 if this is not IUH
-					if(!locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG))
+					// MES CHICA-795 Use global property for parsing visit number
+					String parseVisitNumberFrom_PV1_19 = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_PARSE_VISIT_NUMBER_FROM_PV1_19);
+					if(ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(parseVisitNumberFrom_PV1_19))
 					{
 						visitNumber = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getVisitNumber(message);
@@ -623,6 +628,13 @@ public class HL7SocketHandler extends
 					if(originalLocation != null && !originalLocation.isEmpty())
 					{
 						Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_ORIGINAL_LOCATION, originalLocation);
+					}
+					
+					// CHICA-1160 Parse visit type from PV2-12
+					visitType = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler).getVisitType(message);
+					if(StringUtils.isNotEmpty(visitType))
+					{
+						Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_TYPE, visitType);
 					}
 				}
 			} catch (EncodingNotSupportedException e) {
@@ -699,13 +711,37 @@ public class HL7SocketHandler extends
 		chirdlutilbackportsService.updatePatientState(patientState);
 		
 		encounterService.saveEncounter(chicaEncounter);
-		ConceptService conceptService = Context.getConceptService();
-		Concept concept = conceptService.getConceptByName(CONCEPT_INSURANCE_NAME);
-		if (insuranceName != null){
-			org.openmrs.module.chirdlutil.util.Util.saveObs(p, concept, encounterId, insuranceName,encDate);
-		}else {
-			log.error("Insurance Name is null for patient: " + p.getPatientId());
+		
+		if(messageContainsInsurance) { // CHICA-1157
+			ConceptService conceptService = Context.getConceptService();
+			Concept concept = conceptService.getConceptByName(CONCEPT_INSURANCE_NAME);
+			if (insuranceName != null){
+				org.openmrs.module.chirdlutil.util.Util.saveObs(p, concept, encounterId, insuranceName,encDate);
+			}else {
+				log.error("Insurance Name is null for patient: " + p.getPatientId());
+			}
+
+			// CHICA-1157 Move category lookup to here from CheckinPatient thread
+			String category =  null;
+			String sendingApplication =(String) parameters.get(ChirdlUtilConstants.PARAMETER_SENDING_APPLICATION);
+			String sendingFacility = (String) parameters.get(ChirdlUtilConstants.PARAMETER_SENDING_FACILITY);
+			if(StringUtils.isNotEmpty(sendingApplication) && StringUtils.isNotEmpty(sendingFacility) && StringUtils.isNotEmpty(planCode))
+			{
+				ChicaService chicaService = Context.getService(ChicaService.class);
+				category = chicaService.getInsCategoryByInsCode(planCode, sendingApplication, sendingFacility);
+			}
+
+			if (category != null)
+			{
+				concept = conceptService.getConcept(CONCEPT_INSURANCE);
+				org.openmrs.module.chirdlutil.util.Util.saveObs(p, concept, encounterId, category, 
+						encounter.getEncounterDatetime());
+			}else{
+				log.error("Could not map code: plan code: "+planCode+" insurance Name: "+ insuranceName+
+						" sending application: "+sendingApplication+" sending facility: "+sendingFacility);
+			}
 		}
+		
 		return encounter;
 	}
 
@@ -853,7 +889,7 @@ public class HL7SocketHandler extends
 					UUID uuid = UUID.randomUUID();
 					address.setUuid(uuid.toString());
 				}
-				address.setDateCreated(encounterDate);
+				address.setDateCreated(new Date());  // CHICA-1157 Change the create date to current time so that the address can be updated if we receive an A10 then A04 with two different values 
 				currentPatient.addAddress(address);
 			}
 
@@ -1299,68 +1335,6 @@ public class HL7SocketHandler extends
 	}
 	
 	/**
-	 * Checks if patient from this hl7 message already has an encounter today at the same location.
-	 * The message is saved to the sockethl7listener_patient_message table for record.
-	 * @param hl7message
-	 * @param locationString
-	 * @return
-	 */
-	private boolean priorCheckinExists(Message hl7message, String locationString) {
-
-		boolean encounterFound = true;
-
-		org.openmrs.api.EncounterService encounterService = Context.getEncounterService();
-		AdministrationService adminService = Context.getService(AdministrationService.class);
-		ChirdlUtilBackportsService chirdlutilbackportsService  = Context.getService(ChirdlUtilBackportsService.class);
-		LocationService locationService = Context.getLocationService();
-
-		try {
-
-			Context.openSession();
-			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
-			Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_IDENTIFIER_TYPES);
-			
-			//Pull the patient from the hl7 through identifiers
-			Patient patient = getPatientFromMessage(hl7message);
-			if (patient == null) {
-				return !encounterFound;
-			}
-		
-			//Get all encounters for that patient from the start of the day
-			//CHICA-721 Only filter if new registration location is the same as the first registration location.
-			//If a patient is registered at one clinic in error, and registered in another clinic afterward,
-			//allow that checkin.
-			Date startOfDay = DateUtils.truncate(new Date(), Calendar.DATE);
-			Location location = locationService.getLocation(locationString);
-			List<org.openmrs.Encounter> encounters = encounterService.getEncounters(patient, location, startOfDay, null,
-					null, null, null, false);
-			
-			if (encounters == null || encounters.size() == 0){
-				return !encounterFound;
-			}
-			
-			//Save the hl7 message and error
-			this.saveMessage(hl7message, patient, false, true);
-			Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants. ERROR_GENERAL,
-						"An HL7 registration message arrived for a patient at the same location that is already checked in.  MRN =  "
-								+ patient.getPatientIdentifier().getIdentifier(), null, new Date(), null);
-			chirdlutilbackportsService.saveError(error);
-
-			return encounterFound;
-		
-
-		} catch (Exception e) {
-			log.error(Util.getStackTrace(e));
-		} finally {
-			Context.closeSession();
-		}
-
-		return !encounterFound;
-
-	}
-	
-	/**
 	 * If there is no location tag attribute value or it is not numeric, check-in the patient.
 	 * If the age limit for the location tag exists as a numeric value, and the patient's age is greater than or equal to that limit,
 	 * do not check-in patient.
@@ -1378,7 +1352,7 @@ public class HL7SocketHandler extends
 		Context.openSession();
 		Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
 				adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
-		Context.addProxyPrivilege(OpenmrsConstants.PRIV_VIEW_LOCATIONS);
+		Context.addProxyPrivilege(PrivilegeConstants.GET_LOCATIONS); // CHICA-1151 Replace OpenmrsConstants.PRIV_VIEW_LOCATIONS with PrivilegeConstants.GET_LOCATIONS
 		String attribute = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
 		
 		boolean ageOk = true;
@@ -1704,5 +1678,31 @@ public class HL7SocketHandler extends
 					+ existingMRNEHR + "; New "+ ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR +": " + newMRNEHR, e);
 		}
 
+	}
+	
+	/**
+	 * CHICA-1157
+	 * Check to see if this message contains insurance information in the IN1 segment
+	 * Hapi adds the segment by default so we need to determine if the segment is the default or contains actual information
+	 * 
+	 * @param message
+	 * @return - true if this message contains information in the IN1 segment
+	 */
+	private boolean messageContainsInsuranceInfo(Message message)
+	{
+		if (message instanceof ADT_A01)
+		{
+			ADT_A01 adt = (ADT_A01)message;
+			IN1 in1 = adt.getINSURANCE().getIN1();
+			
+			// Checking the ID (IN1-1) seems to be the most reliable way to determine if this is the default segment added by hapi
+			// If it is the default, the ID field will be null
+			if(in1.getSetIDIN1().getValue() != null) 
+			{
+				return true;
+			} 
+		}
+		
+		return false;
 	}
 }

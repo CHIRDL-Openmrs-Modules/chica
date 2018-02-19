@@ -312,7 +312,7 @@ public class ExternalFormController {
 		Date startDate = startCal.getTime();
 		Date endDate = Calendar.getInstance().getTime();
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-			null, null, false);
+			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit> 
 		if (encounters == null || encounters.size() == 0) {
 			return Collections.emptyList(); 
 		} 

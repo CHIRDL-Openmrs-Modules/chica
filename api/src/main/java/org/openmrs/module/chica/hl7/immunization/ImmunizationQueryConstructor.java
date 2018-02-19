@@ -280,7 +280,7 @@ public class ImmunizationQueryConstructor extends
 					props.getProperty("response_format_code"));
 			qrd.getQueryPriority()
 					.setValue(props.getProperty("query_priority"));
-			qrd.getQueryID().setValue(String.valueOf(encounter.getPatientId()));
+			qrd.getQueryID().setValue(String.valueOf(encounter.getPatient().getPatientId())); // CHICA-1151 replace getPatientId() with getPatient().getPatientId()
 			qrd.getDeferredResponseType().setValue(
 					props.getProperty("deferred_response_type"));
 			qrd.getQuantityLimitedRequest().getQuantity().setValue(
@@ -501,7 +501,7 @@ public class ImmunizationQueryConstructor extends
 			String dateFormat = "yyyyMMddHHmmss";
 			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
 			String formattedDate = formatter.format(new Date());
-			Integer patientId = enc.getPatientId();
+			Integer patientId = enc.getPatient().getPatientId(); // CHICA-1151 replace getPatientId() with getPatient().getPatientId()
 
 			try {
 				msh.getFieldSeparator().setValue("|");
@@ -1004,9 +1004,19 @@ public class ImmunizationQueryConstructor extends
 
 			// provider
 			Encounter encounter = vaccine.getEncounter();
-			Person provider = encounter.getProvider();
-			String providerFN = provider.getGivenName();
-			String providerLN = provider.getFamilyName();
+			
+			// CHICA-1151 Use the provider that has the "Attending Provider" role for the encounter
+			org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+			String providerFN = "";
+			String providerLN = "";
+			
+			if(provider != null)
+			{
+				Person person = provider.getPerson();
+				providerFN = person.getGivenName();
+				providerLN = person.getFamilyName();
+			}
+			
 
 			// location
 			Location location = vaccine.getLocation();
@@ -1127,9 +1137,18 @@ public class ImmunizationQueryConstructor extends
 
 			// provider
 			Encounter encounter = vaccine.getEncounter();
-			Person provider = encounter.getProvider();
-			String providerFN = provider.getGivenName();
-			String providerLN = provider.getFamilyName();
+			
+			// CHICA-1151 Use the provider that has the "Attending Provider" role for the encounter
+			org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+			String providerFN = "";
+			String providerLN = "";
+
+			if(provider != null)
+			{
+				Person person = provider.getPerson();
+				providerFN = person.getGivenName();
+				providerLN = person.getFamilyName();
+			}
 
 			// location
 			Location location = vaccine.getLocation();
@@ -1348,9 +1367,19 @@ public class ImmunizationQueryConstructor extends
 			VXU_V04 vxu = (VXU_V04) parser.parse(vxuString);
 			// provider
 			Encounter encounter = vaccine.getEncounter();
-			Person provider = encounter.getProvider();
-			String providerFN = provider.getGivenName();
-			String providerLN = provider.getFamilyName();
+			
+			// CHICA-1151 Use the provider that has the "Attending Provider" role for the encounter
+			org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+			String providerFN = "";
+			String providerLN = "";
+
+			if(provider != null)
+			{
+				Person person = provider.getPerson();
+				providerFN = person.getGivenName();
+				providerLN = person.getFamilyName();
+			}
+			
 			Location location = vaccine.getLocation();
 			
 			// date
@@ -1427,7 +1456,7 @@ public class ImmunizationQueryConstructor extends
 				List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
 				encounters.add(encounter);
 				List<Person> persons = new ArrayList<Person>();
-				persons.add(new Person(encounter.getPatientId()));
+				persons.add(new Person(encounter.getPatient().getPatientId()));  // CHICA-1151 replace getPatientId() with getPatient().getPatientId()
 				List<Concept> concepts = new ArrayList<Concept>();
 				Concept concept = conceptService.getConceptByName("PROVIDER_ID");
 				concepts.add(concept);

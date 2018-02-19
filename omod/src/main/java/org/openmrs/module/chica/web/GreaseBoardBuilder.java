@@ -190,20 +190,24 @@ public class GreaseBoardBuilder {
 					}
 					Date encounterDateTime = encounter.getEncounterDatetime();
 					String checkin = DateUtil.formatDate(encounterDateTime, ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
-					Person provider = encounter.getProvider();
+					
+					// CHICA-1151 Use the provider that has the "Attending Provider" role for the encounter
+					org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+					Person person = provider.getPerson();
+					
 					String mdName = "";
 					//Ensure proper case even though we store provider names in proper case
 					//Any provider names stored before the hl7sockethandler update need to be
 					//adjusted to proper case for display on greaseboard
-					if (provider != null) {
-						String firstInit = Util.toProperCase(provider.getGivenName());
+					if (person != null) {
+						String firstInit = Util.toProperCase(person.getGivenName());
 						if (firstInit != null && firstInit.length() > 0) {
 							firstInit = firstInit.substring(0, 1);
 						} else {
 							firstInit = "";
 						}
 						
-						String middleInit = Util.toProperCase(provider.getMiddleName());
+						String middleInit = Util.toProperCase(person.getMiddleName());
 						if (middleInit != null && middleInit.length() > 0) {
 							middleInit = middleInit.substring(0, 1);
 						} else {
@@ -218,7 +222,7 @@ public class GreaseBoardBuilder {
 						if (mdName.length() > 0) {
 							mdName += " ";
 						}
-						String familyName = Util.toProperCase(provider.getFamilyName());
+						String familyName = Util.toProperCase(person.getFamilyName());
 						if (familyName == null) {
 							familyName = "";
 						}

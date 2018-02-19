@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chica;
+package org.openmrs.module.chica.study.caretransition;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,9 +63,10 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	private static final String PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN = "careTransitionFollowUpSpan";
 	
 	private static final String CONCEPT_TRANSITION = "Transition";
-	private static final String CONCEPT_TRAQ = "TRAQ";
-	private static final String CONCEPT_TRAQ_COMPLETE = "Complete";
 	private static final String CONCEPT_EMAIL_SENT = "email_sent";
+	private static final String CONCEPT_DISCUSSED_WITH_PATIENT = "Discussed with patient";
+	private static final String CONCEPT_PROVIDER_IDENTIFIED = "Provider identified";
+	private static final String CONCEPT_NOT_YET = "Not yet";
 	
 	@Override
 	public void initialize(TaskDefinition config) {
@@ -135,16 +136,16 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		List<EmailInfo> emailInfo = new ArrayList<EmailInfo>();
 		
 		ConceptService conceptService = Context.getConceptService();
-		Concept traqConcept = conceptService.getConceptByName(CONCEPT_TRAQ);
-		if (traqConcept == null) {
-			log.error("No concept found with name: " + CONCEPT_TRAQ + ".  No emails will be sent for " +
+		Concept discussedWithPatientConcept = conceptService.getConceptByName(CONCEPT_DISCUSSED_WITH_PATIENT);
+		if (discussedWithPatientConcept == null) {
+			log.error("No concept found with name: " + CONCEPT_DISCUSSED_WITH_PATIENT + ".  No emails will be sent for " +
 					"Care Transition.");
 			return emailInfo;
 		}
 		
-		Concept traqCompletConcept = conceptService.getConceptByName(CONCEPT_TRAQ_COMPLETE);
-		if (traqCompletConcept == null) {
-			log.error("No concept found with name: " + CONCEPT_TRAQ_COMPLETE + ".  No emails will be sent for " +
+		Concept providerIdentifiedConcept = conceptService.getConceptByName(CONCEPT_PROVIDER_IDENTIFIED);
+		if (providerIdentifiedConcept == null) {
+			log.error("No concept found with name: " + CONCEPT_PROVIDER_IDENTIFIED + ".  No emails will be sent for " +
 					"Care Transition.");
 			return emailInfo;
 		}
@@ -156,10 +157,19 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			return emailInfo;
 		}
 		
+		Concept notYetConcept = conceptService.getConceptByName(CONCEPT_NOT_YET);
+		if (notYetConcept == null) {
+			log.error("No concept found with name: " + CONCEPT_NOT_YET + ".  No emails will be sent for " +
+					"Care Transition.");
+			return emailInfo;
+		}
+		
+		// Look for Transition answers of "Discussed with patient" or "Provider identified".
 		List<Concept> conceptList = new ArrayList<Concept>();
-		conceptList.add(traqConcept);
+		conceptList.add(transitionConcept);
 		List<Concept> answerList = new ArrayList<Concept>();
-		answerList.add(traqCompletConcept);
+		answerList.add(discussedWithPatientConcept);
+		answerList.add(providerIdentifiedConcept);
 		List<PERSON_TYPE> personTypeList = new ArrayList<PERSON_TYPE>();
 		personTypeList.add(PERSON_TYPE.PATIENT);
 		String timeSpanStr = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN);
@@ -185,13 +195,13 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		// Set the start time another month back.  This is to reduce the number of obs that come back from the query instead 
 		// of searching all obs.
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.MONTH, endCal.get(GregorianCalendar.MONTH) - (timeSpan + 1));
+		startCal.set(GregorianCalendar.MONTH, startCal.get(GregorianCalendar.MONTH) - (timeSpan + 1));
 		Date startDate = startCal.getTime();
 		
 		List<Obs> obsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
 			null, null, null, null, startDate, endDate, false);
 		if (obsList == null || obsList.size() == 0) {
-			log.info("There are no patients today needing follow up for Care Transition.  No email will sent.");
+			log.info("There are no patients today needing follow up for Care Transition.  No emails will sent.");
 			return emailInfo;
 		}
 		
@@ -201,6 +211,23 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			Encounter encounter = obs.getEncounter();
 			if (encounter != null) {
 				encounterMap.put(encounter.getEncounterId(), encounter);
+			}
+		}
+		
+		// Remove encounters that have "Not yet" specified for Transition.
+		conceptList.clear();
+		conceptList.add(transitionConcept);
+		answerList.clear();
+		answerList.add(notYetConcept);
+		List<Obs> notYetObsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
+			null, null, null, null, startDate, endDate, false);
+		if (notYetObsList != null) {
+			for (Obs obs : notYetObsList) {
+				Encounter encounter = obs.getEncounter();
+				if (encounter != null) {
+					Integer encounterId = encounter.getEncounterId();
+					encounterMap.remove(encounterId);
+				}
 			}
 		}
 		

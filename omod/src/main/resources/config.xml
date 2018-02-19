@@ -17,13 +17,14 @@
     
     <!-- /Chica Module Properties -->
     
-    <require_version>1.1.10.2283</require_version>
+    <require_version>2.0.6</require_version>
     <require_modules>
-        <require_module version="2.33.0">org.openmrs.module.dss</require_module>
-        <require_module version="2.12.0">org.openmrs.module.atd</require_module>
-        <require_module version="1.9.0">org.openmrs.module.sockethl7listener</require_module>
-        <require_module version="1.16.0">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.8.1">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+        <require_module version="2.34.0">org.openmrs.module.dss</require_module>
+        <require_module version="2.13.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.10.0">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="1.17.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.9.0">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
+         <require_module version="1.3.1">org.openmrs.module.legacyui</require_module>
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.chica.extension.html.AdminList</class>
@@ -246,12 +247,6 @@
         <description>Activate VXU to create a patient in the CHIRP registry.
         </description>
     </globalProperty>
-     <globalProperty>
-        <property>chica.filterHL7RegistrationOnPriorCheckin</property>
-        <defaultValue>false</defaultValue>
-        <description>Ignore HL7 Registration message if patient has already been checked-in (due to eCW issues)
-        </description>
-    </globalProperty>
     <globalProperty>
         <property>chica.showBadScans</property>
         <defaultValue>false</defaultValue>
@@ -419,7 +414,35 @@
         <defaultValue></defaultValue>
      	<description>Password for Glooko</description>
     </globalProperty>
-    
+    <globalProperty>
+        <property>chica.parseInsurancePlanCodeFrom_IN1-35</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the Insurance Plan Code from HL7 location IN1.35</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.parseCarrierCode</property>
+        <defaultValue>true</defaultValue>
+        <description>Parse the carrier code from HL7</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.parseVisitNumberFrom_PV1_19</property>
+        <defaultValue>true</defaultValue>
+        <description>Parse the visit number from HL7 location PV1.19</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.parseObsFromRegistration</property>
+        <defaultValue>false</defaultValue>
+        <description>Parse the observations from the registration message</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.dataSourceVitals</property>
+        <description>Data source for Vital messages </description>
+    </globalProperty>
+     <globalProperty>
+        <property>chica.dataSourceMedicalRecord</property>
+        <description>Data source for medical records dump</description>
+    </globalProperty>
+  
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
     <servlet>
