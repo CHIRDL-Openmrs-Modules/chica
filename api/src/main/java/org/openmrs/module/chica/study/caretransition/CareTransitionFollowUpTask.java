@@ -195,7 +195,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		// Set the start time another month back.  This is to reduce the number of obs that come back from the query instead 
 		// of searching all obs.
 		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.MONTH, endCal.get(GregorianCalendar.MONTH) - (timeSpan + 1));
+		startCal.set(GregorianCalendar.MONTH, startCal.get(GregorianCalendar.MONTH) - (timeSpan + 1));
 		Date startDate = startCal.getTime();
 		
 		List<Obs> obsList = Context.getObsService().getObservations(null, null, conceptList, answerList, personTypeList, 
