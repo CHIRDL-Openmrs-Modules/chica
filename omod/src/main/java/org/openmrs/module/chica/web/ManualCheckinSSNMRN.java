@@ -48,8 +48,7 @@ public class ManualCheckinSSNMRN {
 		if (validPatient) {
 			EncounterService encounterService = Context.getEncounterService();
 			EncounterSearchCriteriaBuilder criteriaBuilder = new EncounterSearchCriteriaBuilder();
-			criteriaBuilder.setPatient(patient);
-			criteriaBuilder.setIncludeVoided(false);
+			criteriaBuilder.setPatient(patient).setIncludeVoided(false);
 			encounters = encounterService.getEncounters(criteriaBuilder.createEncounterSearchCriteria());
 		}
 						
