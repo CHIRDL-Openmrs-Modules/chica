@@ -250,7 +250,7 @@ function parsePatientList(responseXML) {
             
             // DWE CHICA-884
             var ageInYears = $(this).find("ageInYears").text();
-            var newFirstName = firstName.replace("'", "\\'");
+            var newFirstName = firstName.replace(/'/g, "\\'");
             
             content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ', ' + ageInYears + ', \'' + newFirstName + '\');" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
             count++;
