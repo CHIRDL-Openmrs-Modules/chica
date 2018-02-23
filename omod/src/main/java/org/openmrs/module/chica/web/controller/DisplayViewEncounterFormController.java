@@ -76,7 +76,7 @@ public class DisplayViewEncounterFormController {
 			imageDir = IOUtil.formatDirectoryName(org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId,
 					ChirdlUtilConstants.FORM_ATTRIBUTE_IMAGE_DIRECTORY, locationTagId, locationId));
 
-			if (StringUtils.isNotEmpty(imageDir)) 
+			if (StringUtils.isNotBlank(imageDir)) 
 			{
 				// check if dir and file exists
 				imageFilename = locationId + ChirdlUtilConstants.GENERAL_INFO_DASH + formId + ChirdlUtilConstants.GENERAL_INFO_DASH + formInstanceId;
@@ -218,7 +218,7 @@ public class DisplayViewEncounterFormController {
 			if(leftFormFormId != null && locationTagId != null && leftFormLocationId != null)
 			{
 				fav = chirdlutilbackportsService.getFormAttributeValue(leftFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, leftFormLocationId);
-				if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+				if(fav != null && StringUtils.isNotBlank(fav.getValue()))
 				{
 					map.put(PARAMETER_LEFT_FORM_NAME, fav.getValue());
 				}
@@ -230,7 +230,7 @@ public class DisplayViewEncounterFormController {
 			if(rightFormFormId != null && locationTagId != null && rightFormLocationId != null)
 			{
 				fav = chirdlutilbackportsService.getFormAttributeValue(rightFormFormId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, rightFormLocationId);
-				if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+				if(fav != null && StringUtils.isNotBlank(fav.getValue()))
 				{
 					map.put(PARAMETER_RIGHT_FORM_NAME, fav.getValue());
 				}

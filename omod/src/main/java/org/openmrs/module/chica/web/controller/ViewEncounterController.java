@@ -321,7 +321,7 @@ public class ViewEncounterController {
 	protected String initForm(HttpServletRequest request, ModelMap map) throws Exception {
 		
 		String errorMsg = request.getParameter(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG);
-		if(StringUtils.isNotEmpty(errorMsg)) // An error occurred in processSubmit() pass it back through to the client
+		if(StringUtils.isNotBlank(errorMsg)) // An error occurred in processSubmit() pass it back through to the client
 		{
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return FORM_VIEW;
@@ -432,7 +432,7 @@ public class ViewEncounterController {
 								{
 									FormAttributeValue formAttributeValueEndStateName = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, 
 											locationTagId, locationId);
-									if(formAttributeValueEndStateName != null && StringUtils.isNotEmpty(formAttributeValueEndStateName.getValue()))
+									if(formAttributeValueEndStateName != null && StringUtils.isNotBlank(formAttributeValueEndStateName.getValue()))
 									{
 										endStateName = formAttributeValueEndStateName.getValue();
 									}
@@ -444,7 +444,7 @@ public class ViewEncounterController {
 								{
 									// Use the display name from the form attribute
 									FormAttributeValue fav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DISPLAY_NAME, locationTagId, locationId);
-									if(fav != null && StringUtils.isNotEmpty(fav.getValue()))
+									if(fav != null && StringUtils.isNotBlank(fav.getValue()))
 									{
 										displayNameMap.put(formId, fav.getValue());
 									}
