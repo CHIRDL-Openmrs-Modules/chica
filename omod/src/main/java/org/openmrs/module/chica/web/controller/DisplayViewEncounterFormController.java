@@ -51,7 +51,7 @@ public class DisplayViewEncounterFormController {
 	
 	/**
 	 * Sets the path to the file (image, merge, or scan)
-	 * Looks in the image directory first since ADHD form are in the image directory, but PWSs can also be in the image directory
+	 * Looks in the image directory first since ADHD form are in the image directory, but PWSs and PSFs can also be in the image directory
 	 * If an image is not found, a url is created with the directory set based on what was found in the config file
 	 * 
 	 * @param formId
@@ -85,20 +85,12 @@ public class DisplayViewEncounterFormController {
 
 				//check for formInstance.tif format if from Pecar
 				if (!imagefile.exists()) {
-					LocationService locationService = Context.getLocationService();
-					Location location = locationService.getLocation(locationId);
-					String locationName = location.getName();
+					imageFilename = formInstanceId.toString();
+					imagefile = IOUtil.searchForImageFile(imageFilename, imageDir);
 
-					if (LOCATION_PEPS.equals(locationName)) {
-						imageFilename = formInstanceId.toString();
-						imagefile = IOUtil.searchForImageFile(imageFilename, imageDir);
-
-						if (!imagefile.exists()) {
-							imagefile = null;
-						} 
-					}else{
+					if (!imagefile.exists()) {
 						imagefile = null;
-					}
+					} 
 				}
 			}
 
