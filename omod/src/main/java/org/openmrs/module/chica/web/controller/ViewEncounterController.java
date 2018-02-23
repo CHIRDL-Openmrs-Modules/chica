@@ -339,8 +339,27 @@ public class ViewEncounterController {
 				return FORM_VIEW;
 			}
 			
-			String mrn = request.getParameter(ChirdlUtilConstants.PARAMETER_MRN);
-			Patient patient = org.openmrs.module.chirdlutil.util.Util.getPatientByMRNOther(mrn);
+			Patient patient = null;
+			String patientIdParam = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
+			if(StringUtils.isNotBlank(patientIdParam))
+			{
+				try
+				{
+					Integer pid = Integer.parseInt(patientIdParam);
+					PatientService patientService = Context.getPatientService();
+					patient = patientService.getPatient(Integer.valueOf(pid));
+				}
+				catch(NumberFormatException nfe)
+				{
+					log.error(this.getClass().getName() + ": unable to parse parameter for patientId: " + patientIdParam);
+				}
+			}
+			else
+			{
+				String mrn = request.getParameter(ChirdlUtilConstants.PARAMETER_MRN);
+				patient = org.openmrs.module.chirdlutil.util.Util.getPatientByMRNOther(mrn);
+			}
+			
 			
 			if (patient == null) {
 				return FORM_VIEW;
