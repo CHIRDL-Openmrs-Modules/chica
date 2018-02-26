@@ -415,6 +415,11 @@
      	<description>Password for Glooko</description>
     </globalProperty>
     <globalProperty>
+        <property>chica.ViewEncountersConfigFile</property>
+        <defaultValue></defaultValue>
+     	<description>The view encounters config file (including the path)</description>
+    </globalProperty>
+ 	<globalProperty>
         <property>chica.parseInsurancePlanCodeFrom_IN1-35</property>
         <defaultValue>false</defaultValue>
         <description>Parse the Insurance Plan Code from HL7 location IN1.35</description>
