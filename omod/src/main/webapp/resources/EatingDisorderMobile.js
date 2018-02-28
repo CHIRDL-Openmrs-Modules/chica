@@ -67,33 +67,25 @@ function init(patientName, birthdate, formInst, language) {
 
 function submitEmptyForm() {
 	setLanguageField();
-	document.getElementById("EatingDisorderMobile.form").submit();
+	document.getElementById("EatingDisorderForm").submit();
 }
 
-function setLanguageField() {
-	if (english) {
-		$("#language").val("english");
-	} else {
-		$("#language").val("spanish");
-	}
-}
 
 function setLanguage(patientName, birthdate) {
+	english = !english;
 	
 	//Strings with spanish characters need hex code
 	//HTML with spanish characters can use HTML codes
 	
 	var formTitleText = "Eating Habit Questionnaire";
-    var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
     var vitalsButtonText = "Staff";
  
-    var instructions = "<p><em class=\"bolderNonItalic\">Directions to Youth and Young Adults</em>: Please check the box that best describes your "
+    var instructions = "<p><em class=\"bolderNonItalic\">Directions to Youth and Young Adults</em>: Please choose the option that best describes your "
     	+ "eating habits. There are no right or wrong answers" + comma + " and your answers will remain confidential and private.</p><hr/>";
     
     //No Spanish instructions
     
-    $("#confirmLangButton .ui-btn-text").html(langButtonText);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").html(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
@@ -103,9 +95,6 @@ function setLanguage(patientName, birthdate) {
 
 function changePage(newPageNum) {
     var newPage = "#question_page_" + newPageNum;
-    if (!english) {
-        newPage = newPage + "_sp";
-    }   
     $.mobile.changePage(newPage, { transition: "none", reverse: false });
 }
 
@@ -115,17 +104,13 @@ function attemptFinishForm() {
 	if (areAllQuestionsAnswered()) {
 		finishForm();
 	} else if (finishAttempts == 1) {
-    	if (english) {
-    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
-    	}
+    	
+    	 $("#not_finished_dialog").popup("open", { transition: "pop"});
+    	
 	} else if (finishAttempts >= 2) {
-		if (english) {
-    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
-    	}
+		
+    	 $("#not_finished_final_dialog").popup("open", { transition: "pop"});
+    	
 	}
 }
 
@@ -134,10 +119,10 @@ function finishForm() {
 	$("#finish_error_dialog").popup("close");
 	$("#not_finished_final_dialog").popup("close");
 	$("#not_finished_dialog").popup("close");
-	
+		
 	//No Spanish popups
 	
-	setLanguageField();
+	
 	interpretResults();
 	var submitForm = $("#EatingDisorderForm"); 
 	var token = getAuthenticationToken();
@@ -159,19 +144,16 @@ function finishForm() {
 
 function handleFinishFormError() {
 	$("#finish_error_dialog").popup("open", { transition: "pop"});
-	}
 }
 
 
+
 function areAllQuestionsAnswered() {
-	var spanishExtension = "_2";
-	if (english) {
-		spanishExtension = "";
-	}
+	
 	
 	var questionName = "EatingDisorderQuestionEntry_";
 	for (var i = 1; i <= numberOfQuestions; i++) {
-		if(!$("input[name='" + questionName + i + spanishExtension + "']").is(':checked')){
+		if(!$("input[name='" + questionName + i  + "']").is(':checked')){
 		   return false;
 		}
 	}
@@ -179,14 +161,6 @@ function areAllQuestionsAnswered() {
 	return true;
 }
 
-function isSpanishQuestion(questionNumber){
-	var spanishExtension = "_2";
-	
-	if (questionNumber.length <= spanishExtension.length){
-		return false;
-	}
-	return (questionNumber.lastIndexOf(spanishExtension) == (questionNumber.length - spanishExtension.length));
-}
 
 function insertChoices(questionNumber){
 	
@@ -230,9 +204,6 @@ function insertChoices(questionNumber){
 
 function showBlockingMessage() {
 	var message = "Saving Answers...";
-	if (!english) {
-		message = "Ahorrar Respuestas...";
-	}
 	
 	var blockUIMessage = '<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;' + message + '</h3></td></tr></table>';
 	$.blockUI({ css: { 
@@ -249,86 +220,6 @@ function showBlockingMessage() {
 //Completion criteria and calculations can go here.
 function interpretResults() {
 
-	
-	var questionName = "EatingDisorderQuestionEntry_";
-	var questionPassCriteria = 3;
-	// Keep track of each answer so that we can determine if patient failed transition
-	//for that topic
-	//var answers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
-	//var managingMedicationAnswers = [1,2,3,4];
-	//var appointmentKeepingAnswers = [5,6,7,8,9,10,11];
-	////var trackingHealthIssuesAnswers = [12,13,14,15];
-	//var talkingWithProvidersAnswers = [16,17];
-	//var dailyActivitiesAnswers = [18,19,20];
-	//var eval = null;
-	
-
-	//If any are answered with value < 3, then TRAQ category failed
-	//If any are answered where all values >= 3 then TRAQ category passed
-	//If no questions are answered, then observation is not saved.
-	// Determine Manage Medication Answers
-	spanishExtension = "";
-	var transitionReady = true;
-	for(var i = 0, len= numberOfQuestions; i < len; i++){
-		var value = parseInt($("input[name=" + questionName + " + i + spanishExtension + "]:checked").val());
-		if (isNaN(value) || value < questionPassCriteria){
-			transitionReady = false;
-			break;
-		}
-	}
-	
-	$("#TRAQManagingMedications").val((transitionReady)? "passed" : "failed");
-	
-	
-	
-	transitionReady = true;
-	for(var i = 0, len= appointmentKeepingAnswers.length; i < len; i++){
-		var value = parseInt($("input[name=TRAQQuestionEntry_" + appointmentKeepingAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value) || value < questionPassCriteria){
-			transitionReady = false;
-			break;
-		}
-	}
-	
-	$("#TRAQAppointmentKeeping").val((transitionReady)? "passed" : "failed");
-	
-	
-	transitionReady = true;
-	for(var i = 0, len= trackingHealthIssuesAnswers.length; i < len; i++){
-		var value = parseInt($("input[name=TRAQQuestionEntry_" + trackingHealthIssuesAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value) || value < questionPassCriteria){
-			transitionReady = false;
-			break;
-		}
-	}
-	
-	$("#TRAQTrackingHealthIssues").val((transitionReady)? "passed" : "failed");
-	
-	
-	transitionReady = true;
-	for(var i = 0, len= talkingWithProvidersAnswers.length; i < len; i++){
-		var value = parseInt($("input[name=TRAQQuestionEntry_" + talkingWithProvidersAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value) || value < questionPassCriteria){
-			transitionReady = false;
-			break;
-		}
-	}
-	
-	$("#TRAQTalkingWithProviders").val((transitionReady)? "passed" : "failed");
-	
-	
-	transitionReady = true;
-	for(var i = 0, len= dailyActivitiesAnswers.length; i < len; i++){
-		var value = parseInt($("input[name=TRAQQuestionEntry_" + dailyActivitiesAnswers[i] + spanishExtension + "]:checked").val());
-		if (isNaN(value) || value < questionPassCriteria){
-			transitionReady = false;
-			break;
-		}
-	}
-	
-	$("#TRAQDailyActivitiesAnswers").val((transitionReady)? "passed" : "failed");
-	
-	
 	
 	
 	

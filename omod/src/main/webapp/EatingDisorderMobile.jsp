@@ -76,8 +76,11 @@
         <div data-role="header">
             <h1 id="formTitle">${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" ></a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+        </div>
+        
+        <div data-role="content" id="addition">
+            <strong><span id="instructions"></span></strong>
         </div>
     
         <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -93,7 +96,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -124,7 +126,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -155,7 +156,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -188,7 +188,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -221,7 +220,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         <div id="content_${PNumber}" data-role="content">
@@ -251,7 +249,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
                 data-transition="pop">${staffButtonText}</a>
         </div>
@@ -282,7 +279,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -313,7 +309,6 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -331,11 +326,11 @@
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
             
-            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+            <%@ include file="mobileFinishDialogs.jsp" %>
         </div>
        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
             <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
-            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
         </div>
     </div>
     

@@ -221,7 +221,7 @@
         <bean id="EatingDisorderMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>EatingDisorderMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/EatingDisorderMobile</value></property>
-        <property name="successView"><value>EatingDisorderMobile.form</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
  
 </beans>
