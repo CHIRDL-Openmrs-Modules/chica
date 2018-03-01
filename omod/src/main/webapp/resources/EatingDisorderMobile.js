@@ -219,11 +219,56 @@ function showBlockingMessage() {
 }
 //Completion criteria and calculations can go here.
 function interpretResults() {
+<!-- Questions (English) -->
 
+	var answer[1] = 'losingweight';
+	var answer[2] = 'skipmeals';
+	var answer[3] = 'otheroutofcontrol';
+	var answer[4] = 'toolittleinsulin';
+	var answer[5] = 'morealone';
+	var answer[6] = 'hardloseweight';
+	var answer[7] = 'avoidchecking';
+	var answer[8] = 'makevomit';
+	var answer[9] = 'keephigh';
+	var answer[10] = 'skipmeals';
+	var answer[11] = 'spillketones';
+	var answer[12] = 'feelfat';
+	var answer[13] = 'skipdose';
+	var answer[14] = 'outofcontrol';
+	var answer[15] = 'alternateeating';
+	var answer[16] = 'ratherbethin';
+	var answer = {};
+	var edscore = 0;
 	
-	
-	
-	
+	for(var i = 1; i<= numberOfQuestions;  i++){
+		var value = parseInt($("input[name=EatingDisorderQuestionEntry_" + i +]:checked").val());
+		if (!isNaN(value)){
+			answer[answer[i]] = value;
+			edscore = edscore + value;
+		}
+	}
+
+	$("#EDS_interpretation").val(edscore >= 20 ? "failed" : "passed");
+	 
+	 if (answer['toolittleinsulin'] > 0 ||
+		 answer['makevomit'] > 0 ||
+		 answer['keephigh'] > 0 ||
+		 answer['spillketones'] > 0 ||
+		 answer['feelfat'] > 0 ||
+		 answer['skipdose'] > 0 ||
+		 answer['alternateeating'] > 0 ||
+		 answer['ratherbethin'] > 0 ||
+		 answer['losingweight'] > 3 ||
+		 answer['skipmeals'] > 3 ||
+		 answer['outofcontrol'] > 3 ||
+		 answer['morealone'] > 3 ||
+		 answer['hardloseweight'] > 3 ||
+		 answer['avoidchecking'] > 3 ||
+		 answer['takebettercare'] > 3 ){
+		 $("#EDS_interpretation").val("failed");
+	 } else {
+		 $("#EDS_interpretation").val("passed");
+	{
 }
 
 
