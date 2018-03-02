@@ -67,4 +67,30 @@
         <value name="minPosition" field="minPosition" />
         <value name="maxPosition" field="maxPosition" />
    </mapping>
+   
+   <mapping class="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig" name="viewEncountersConfig">
+        <structure field="formsToDisplay" usage="optional"/>
+   </mapping>
+   
+  <mapping class="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay" name="formsToDisplay">
+        <collection field="forms">
+            <structure name="form" type="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm">
+            	<value style="attribute" name="name" field="name" usage="required" />          	
+                <value style="attribute" name="displayPosition" field="displayPosition" usage="required" />
+                <value style="attribute" name="stylesheet" field="stylesheet" usage="required" />
+                <value style="attribute" name="directory" field="directory" usage="required" />
+                <value style="attribute" name="stateNames" field="stateNames" usage="required" />
+                
+                <collection field="relatedForms" usage="optional">
+                    <structure name="relatedForm" type="org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm">
+                        <value style="attribute" name="name" field="name" usage="required" />                        
+                		<value style="attribute" name="displayPosition" field="displayPosition" usage="required" />
+                		<value style="attribute" name="stylesheet" field="stylesheet" usage="required" />
+                		<value style="attribute" name="directory" field="directory" usage="required" />
+                		<value style="attribute" name="stateNames" field="stateNames" usage="required" />
+                    </structure>
+                </collection>
+            </structure>
+        </collection>
+  </mapping>
 </binding>

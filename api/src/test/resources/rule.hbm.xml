@@ -11,26 +11,26 @@
 			<generator class="native" />
 		</id>
 	
-		<property name="classFilename" type="java.lang.String" column="class_filename" length="500"/>
+		<property name="classFilename" type="java.lang.String" column="class_filename"/>
 		<property name="creationTime" type="java.util.Date" column="creation_time"/>
-		<property name="title" type="java.lang.String" column="title" length="500"/>
+		<property name="title" type="java.lang.String" column="title"/>
 		<property name="version" type="java.lang.Double" column="version"/>
-		<property name="institution" type="java.lang.String" column="institution" length="500"/>
-		<property name="author" type="java.lang.String" column="author" length="500"/>
-		<property name="specialist" type="java.lang.String" column="specialist" length="500"/>
+		<property name="institution" type="java.lang.String" column="institution"/>
+		<property name="author" type="java.lang.String" column="author"/>
+		<property name="specialist" type="java.lang.String" column="specialist"/>
 		<property name="ruleCreationDate" type="java.lang.String" column="ruleCreationDate"/>
-		<property name="purpose" type="java.lang.String" column="purpose" length="500"/>
-		<property name="explanation" type="java.lang.String" column="explanation" length="500"/>
-		<property name="keywords" type="java.lang.String" column="keywords" length="500"/>
-		<property name="citations" type="java.lang.String" column="citations" length="500"/>
-		<property name="links" type="java.lang.String" column="links" length="500"/>
-		<property name="logic" type="java.lang.String" column="logic" length="65535"/>
-		<property name="data" type="java.lang.String" column="data" length="500"/>
-		<property name="action" type="java.lang.String" column="action" length="500"/>
+		<property name="purpose" type="java.lang.String" column="purpose"/>
+		<property name="explanation" type="java.lang.String" column="explanation"/>
+		<property name="keywords" type="java.lang.String" column="keywords"/>
+		<property name="citations" type="java.lang.String" column="citations"/>
+		<property name="links" type="java.lang.String" column="links"/>
+		<property name="logic" type="java.lang.String" column="logic"/>
+		<property name="data" type="java.lang.String" column="data"/>
+		<property name="action" type="java.lang.String" column="action"/>
 		<property name="lastModified" type="java.util.Date" column="last_modified"/>
-		<property name="tokenName" type="java.lang.String" column="token_name" length="100"/>
-		<property name="ageMinUnits" type="java.lang.String" column="age_min_units" length="20"/>
-		<property name="ageMaxUnits" type="java.lang.String" column="age_max_units" length="20"/>
+		<property name="tokenName" type="java.lang.String" column="token_name"/>
+		<property name="ageMinUnits" type="java.lang.String" column="age_min_units"/>
+		<property name="ageMaxUnits" type="java.lang.String" column="age_max_units"/>
 		<property name="ageMin" type="java.lang.Integer" column="age_min" />
 		<property name="ageMax" type="java.lang.Integer" column="age_max" />
 	</class>

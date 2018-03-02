@@ -35,4 +35,16 @@ public class ChicaConstants {
     /** Form views */
 	public static final String FORM_VIEW_EXTERNAL_FORM_LOADER = "/module/chica/externalFormLoader";
 	public static final String FORM_VIEW_GREASE_BOARD = "/module/chica/greaseBoard";
+	
+	/** Parameters used in CHICA */
+	public static final String PARAMETER_RIGHT_FORM_LOCATION_ID = "rightFormLocationId";
+	public static final String PARAMETER_RIGHT_FORM_FORM_ID = "rightFormFormId";
+	public static final String PARAMETER_RIGHT_FORM_FORM_INSTANCE_ID = "rightFormFormInstanceId";
+	public static final String PARAMETER_RIGHT_FORM_STYLESHEET = "rightFormStylesheet";
+	public static final String PARAMETER_RIGHT_FORM_DIRECTORY = "rightFormDirectory";
+	public static final String PARAMETER_LEFT_FORM_LOCATION_ID = "leftFormLocationId";
+	public static final String PARAMETER_LEFT_FORM_FORM_ID = "leftFormFormId";
+	public static final String PARAMETER_LEFT_FORM_FORM_INSTANCE_ID = "leftFormFormInstanceId";
+	public static final String PARAMETER_LEFT_FORM_STYLESHEET = "leftFormStylesheet";
+	public static final String PARAMETER_LEFT_FORM_DIRECTORY = "leftFormDirectory";
 }

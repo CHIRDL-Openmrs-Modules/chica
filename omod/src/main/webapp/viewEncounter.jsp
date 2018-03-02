@@ -89,9 +89,14 @@
 	<div class="viewEncounterHeaderArea" id="top">
 		<table width="100%">
 			<tr>
+				<c:set var="patientName" value="" />
+				<c:if test="${titleLastName != null && titleFirstName != null}">
+					<c:set var="patientName" value="${titleLastName}, ${titleFirstName}&nbsp;&nbsp;&nbsp;" />
+				</c:if>
+				
 				<td width="100%" class="formTitleStyle"><b>Encounters:
-						${titleMRN} <br>${titleLastName}, ${titleFirstName}
-						&nbsp;&nbsp;&nbsp; DOB: ${titleDOB}
+						${titleMRN} <br>${patientName}
+						 DOB: ${titleDOB}
 				</b></td>
 			</tr>
 		</table>
@@ -105,10 +110,6 @@
                     <th class="viewEncounterStation chicaTableHeader"><b>Station</b></th>
                     <th class="viewEncounterAge chicaTableHeader"><b>Age at
                             visit</b></th>
-                    <th class="viewEncounterWeight chicaTableHeader"><b>Weight<BR>Percentile
-                    </b></th>
-                    <th class="viewEncounterHeight chicaTableHeader"><b>Height<BR>Percentile
-                    </b></th>
                     <th class="viewEncounterDoctor chicaTableHeader"><b>Doctor</b></th>
                     <th class="viewEncounterPSFID chicaTableHeader"><b>PSF ID</b></th>
                     <th class="viewEncounterPWSID chicaTableHeader"><b>PWS ID</b></th>
@@ -129,8 +130,6 @@
 						<td class="viewEncounterDate ${rowColor}">${row.checkin}</td>
 						<td class="viewEncounterStation ${rowColor}">${row.station}</td>
 						<td class="viewEncounterAge ${rowColor}">${row.ageAtVisit}</td>
-						<td class="viewEncounterWeight ${rowColor}">${row.weightPercentile}</td>
-						<td class="viewEncounterHeight ${rowColor}">${row.heightPercentile}</td>
 						<td class="viewEncounterDoctor ${rowColor}">${row.mdName}</td>
 						<td class="viewEncounterPSFID ${rowColor}"><c:if
 								test="${empty row.psfId.formInstanceId}">N/A</c:if> <c:if
@@ -202,6 +201,12 @@
               </div>
             <div id="encounterMrnError" style="text-align:center;"><span id="encounterMrnMessage" class="alertText"></span></div>
             <div style="padding-bottom:10px;"><input type="text" size="20" id="encounterMrnLookup" tabindex="1"/></div>
+        </div>
+    </div>
+    <input type="hidden" value="${viewEncountersErrorMsg}" id="viewEncountersErrorMsg" name="viewEncountersErrorMsg" />
+    <div id="viewEncounterErrorDialog" title="Server Error" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
+        <div style="margin: 0 auto;text-align: center;">
+            <div style="color:#000000;"><p>${viewEncountersErrorMsg}</p></div>
         </div>
     </div>
 </body>
