@@ -24,7 +24,7 @@
         <property name="keywords" type="java.lang.String" column="keywords" length="500"/>
         <property name="citations" type="java.lang.String" column="citations" length="500"/>
         <property name="links" type="java.lang.String" column="links" length="500"/>
-        <property name="logic" type="java.lang.String" column="logic"/>
+        <property name="logic" type="java.lang.String" column="logic" length="65535"/>
         <property name="data" type="java.lang.String" column="data" length="500"/>
         <property name="action" type="java.lang.String" column="action" length="500"/>
         <property name="lastModified" type="java.util.Date" column="last_modified"/>
