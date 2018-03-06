@@ -1114,7 +1114,7 @@ public class HL7SocketHandler extends
 				currentNextOfKinNameAttr.setVoided(true);
 				currentNextOfKinNameAttr.setVoidedBy(Context.getAuthenticatedUser());
 				currentNextOfKinNameAttr.setDateVoided(new Date());
-				currentNextOfKinNameAttr.setVoidReason(ChirdlUtilConstants.ATTR_VALUE_VOID_REASON + ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE + ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
+				currentNextOfKinNameAttr.setVoidReason(ChirdlUtilConstants.ATTR_VALUE_VOID_REASON); // This will show that there is not a new value
 			}
 			
 			return;
