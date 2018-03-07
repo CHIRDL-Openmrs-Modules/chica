@@ -75,16 +75,7 @@ public class ChicaRuleTesterController extends SimpleFormController
 				{
 					HashMap<String, Object> parameters = new HashMap<String, Object>();
 					parameters.put("mode", mode);
-					Rule rule = new Rule();
-					rule.setTokenName(ruleName);
-					List<Rule> rules = dssService.getRules(rule, false, false,
-							null);
-					Rule currRule = null;
-					if (rules.size() > 0)
-					{
-						currRule = rules.get(0);
-					}
-
+					Rule currRule = dssService.getRule(ruleName);
 					if (currRule != null
 							&& currRule.checkAgeRestrictions(patient))
 					{
