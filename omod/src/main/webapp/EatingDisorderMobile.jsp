@@ -33,9 +33,11 @@
 <%@ include file="specialCharacters.jsp" %>
 
 <!-- Titles/Headers/Footers/Buttons/Copyright  -->
-<c:set var="formName" value='Eating Disorders Questionnaire'/>
+<c:set var="formName" value='Eating Habits Questionnaire'/>
+<!--  Spanish translation for form name is not available-->
 
 <c:set var="staffButtonText" value="Staff"/>
+<c:set var="staffButtonText_sp" value="Personal"/>
 
 <!-- Questions (English) -->
 <c:set var="question1"  value='Losing weight is an important goal to me.' scope="request"/>
@@ -53,7 +55,10 @@
 <c:set var="question13" value='After I overeat${comma} I skip my next insulin dose.' scope="request"/>
 <c:set var="question14" value='I feel that my eating is out of control.' scope="request"/>
 <c:set var="question15" value='I alternate between eating very little and eating huge amounts.' scope="request"/>
-<c:set var="question16" value='I would rather be thin than to have good control of my diabetes' scope="request"/>
+<c:set var="question16" value='I would rather be thin than to have good control of my diabetes.' scope="request"/>
+
+<!-- Questions (Spanish) -->
+<!-- Currently not available-->
 
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 
@@ -334,6 +339,260 @@
         </div>
     </div>
     
+    <!-- Form pages (Spanish) - two questions per page -->  
+    <c:set var="PNumber" value="1" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header">
+            <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
+        </div>        
+           
+            <c:set var="QNumber" value="1_2" />
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+            <c:set var="questionName" value="question${QNumber}" />
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script> insertChoices("${QNumber}");</script></div>
+            
+            <c:set var="QNumber" value="2_2" />
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+            <c:set var="questionName" value="question${QNumber}" />
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Next</a>
+        </div>
+    </div>
+
+    <c:set var="PNumber" value="2" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header">
+            <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+        </div>
+        
+        <div id="content_${PNumber}_sp" data-role="content">
+                
+            <c:set var="QNumber" value="3_2" />
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+            <c:set var="questionName" value="question${QNumber}" />
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+    
+            <c:set var="QNumber" value="4_2" />
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+            <c:set var="questionName" value="question${QNumber}" />
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            
+            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
+        </div>
+    </div>
+
+    <c:set var="PNumber" value="3" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header">
+            <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+        </div>
+        
+        <div id="content_${PNumber}" data-role="content">
+    
+            <c:set var="QNumber" value="5_2" />
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+            <c:set var="questionName" value="question${QNumber}" />
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+    
+            <c:set var="QNumber" value="6_2" />
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+            <c:set var="questionName" value="question${QNumber}" />
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <div style="float: right;">
+                <span style="float: right; font-size: 75%;">${copyright}</span>
+            </div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
+        </div>
+    </div>
+    
+    
+    <c:set var="PNumber" value="4" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header" >
+            <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+        </div>
+        
+        <div id="content_${PNumber}" data-role="content">
+            
+            <c:set var="QNumber" value="7_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            
+            <c:set var="QNumber" value="8_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+              <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+              <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
+        </div>
+    </div>
+
+    <c:set var="PNumber" value="5" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header" >
+           <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+           <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right"  data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+        </div>
+        
+        <div id="content_${PNumber}" data-role="content">
+            
+            <c:set var="QNumber" value="9_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <c:set var="QNumber" value="10_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+           <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+           <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
+        </div>
+    </div>
+
+    <c:set var="PNumber" value="6" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header" >
+            <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+        </div>
+        
+        <div id="content_${PNumber}" data-role="content">
+
+            <c:set var="QNumber" value="11_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <c:set var="QNumber" value="12_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
+        </div>
+    </div>
+    
+    <c:set var="PNumber" value="7" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header" >
+            <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+        </div>
+        
+        <div id="content_${PNumber}" data-role="content">
+            
+            <c:set var="QNumber" value="13_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <c:set var="QNumber" value="14_2"/>
+            <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
+        </div>
+    </div>
+
+<c:set var="PNumber" value="8" />
+    <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
+        <div data-role="header" >
+            <h1>${formName_sp}</h1>
+            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+        </div>
+        
+        <div id="content_${PNumber}" data-role="content">
+        
+        
+            <c:set var="QNumber" value="15_2"/>
+             <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+
+             <c:set var="QNumber" value="16_2"/>
+             <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}"/>
+            <c:set var="questionName"  value="question${QNumber}"/>
+            <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+            
+            <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+        </div>
+        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+            <a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continuar</a>
+        </div>
+    </div>
     
 
 
@@ -349,6 +608,7 @@
     <input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
     <input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
     <input id="language" name="language" type="hidden" value="${language}"/>
+    <input id="EDS_interpretation" name="EDS_interpretation" type="hidden"  value="${EDS_interpretation}"/>
 
 </form>
 </body>

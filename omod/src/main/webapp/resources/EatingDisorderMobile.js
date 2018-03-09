@@ -217,58 +217,58 @@ function showBlockingMessage() {
     }, 
     message: blockUIMessage});
 }
-//Completion criteria and calculations can go here.
+//Set interpretation from eJIT answers
 function interpretResults() {
-<!-- Questions (English) -->
 
-	var answer[1] = 'losingweight';
-	var answer[2] = 'skipmeals';
-	var answer[3] = 'otheroutofcontrol';
-	var answer[4] = 'toolittleinsulin';
-	var answer[5] = 'morealone';
-	var answer[6] = 'hardloseweight';
-	var answer[7] = 'avoidchecking';
-	var answer[8] = 'makevomit';
-	var answer[9] = 'keephigh';
-	var answer[10] = 'skipmeals';
-	var answer[11] = 'spillketones';
-	var answer[12] = 'feelfat';
-	var answer[13] = 'skipdose';
-	var answer[14] = 'outofcontrol';
-	var answer[15] = 'alternateeating';
-	var answer[16] = 'ratherbethin';
 	var answer = {};
+	answer[1] = 'losingweight';
+	answer[2] = 'skipmeals';
+	answer[3] = 'otheroutofcontrol';
+	answer[4] = 'toolittleinsulin';
+	answer[5] = 'morealone';
+	answer[6] = 'hardloseweight';
+	answer[7] = 'avoidchecking';
+	answer[8] = 'makevomit';
+	answer[9] = 'keephigh';
+	answer[10] = 'skipmeals';
+	answer[11] = 'spillketones';
+	answer[12] = 'feelfat';
+	answer[13] = 'skipdose';
+	answer[14] = 'outofcontrol';
+	answer[15] = 'alternateeating';
+	answer[16] = 'ratherbethin';
+	var score = {};
+
 	var edscore = 0;
-	
+	var never = 0;
+	var often = 3;
 	for(var i = 1; i<= numberOfQuestions;  i++){
-		var value = parseInt($("input[name=EatingDisorderQuestionEntry_" + i +]:checked").val());
+		var value = parseInt($("input[name=EatingDisorderQuestionEntry_" + i + "]:checked").val());
 		if (!isNaN(value)){
-			answer[answer[i]] = value;
+			score[answer[i]] = value;
 			edscore = edscore + value;
 		}
 	}
-
-	$("#EDS_interpretation").val(edscore >= 20 ? "failed" : "passed");
-	 
-	 if (answer['toolittleinsulin'] > 0 ||
-		 answer['makevomit'] > 0 ||
-		 answer['keephigh'] > 0 ||
-		 answer['spillketones'] > 0 ||
-		 answer['feelfat'] > 0 ||
-		 answer['skipdose'] > 0 ||
-		 answer['alternateeating'] > 0 ||
-		 answer['ratherbethin'] > 0 ||
-		 answer['losingweight'] > 3 ||
-		 answer['skipmeals'] > 3 ||
-		 answer['outofcontrol'] > 3 ||
-		 answer['morealone'] > 3 ||
-		 answer['hardloseweight'] > 3 ||
-		 answer['avoidchecking'] > 3 ||
-		 answer['takebettercare'] > 3 ){
-		 $("#EDS_interpretation").val("failed");
-	 } else {
-		 $("#EDS_interpretation").val("passed");
-	{
+	$("#EDS_interpretation").val("negative");
+	if ((edscore >= 20 ||
+		 score['toolittleinsulin'] > never ||
+		 score['makevomit'] > never ||
+		 score['keephigh'] > never ||
+		 score['spillketones'] > never ||
+		 score['feelfat'] > never ||
+		 score['skipdose'] > never ||
+		 score['alternateeating'] > never ||
+		 score['ratherbethin'] > never ||
+		 score['losingweight'] > often ||
+		 score['skipmeals'] > often ||
+		 score['outofcontrol'] > often ||
+		 score['morealone'] > often ||
+		 score['hardloseweight'] > often ||
+		 score['avoidchecking'] > often ||
+		 score['takebettercare'] > often ))
+		{
+		 	$("#EDS_interpretation").val("positive");
+		}
 }
 
 
