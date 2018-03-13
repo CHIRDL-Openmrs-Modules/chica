@@ -60,7 +60,7 @@ function init(patientName, birthdate, formInst, language) {
 	if (!showVitals) {
 		$(".vitalsButton").hide();
 	}
-	numberOfQuestions = $("input[id^='EatingDisorderQuestion_']").length;
+	numberOfQuestions = $("input[id^='EatingDisorderQuestion_']").length / 2;
 
 }
 
@@ -70,22 +70,38 @@ function submitEmptyForm() {
 	document.getElementById("EatingDisorderForm").submit();
 }
 
+function setLanguageField() {
+	if (english) {
+		$("#language").val("english");
+	} else {
+		$("#language").val("spanish");
+	}
+}
 
 function setLanguage(patientName, birthdate) {
 	english = !english;
 	
 	//Strings with spanish characters need hex code
 	//HTML with spanish characters can use HTML codes
-	
-	var formTitleText = "Eating Habit Questionnaire";
+	var formTitleText = "Eating Habits";
+	var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
     var vitalsButtonText = "Staff";
  
-    var instructions = "<p><em class=\"bolderNonItalic\">Directions to Youth and Young Adults</em>: Please choose the option that best describes your "
-    	+ "eating habits. There are no right or wrong answers" + comma + " and your answers will remain confidential and private.</p><hr/>";
+    var instructions = "<p> Please choose the option that best describes your eating habits.</p>"; 
     
-    //No Spanish instructions
+    //Need spanish translation
+    f (!english) {
+    	
+    	formTitleText = "";
+        langButtonText = "English"; 
+        startButtonText = "Comienzo";
+        vitalsButtonText = "Personal";    
+        instructions = "<p></p>";
+         
+	}
     
+    $("#confirmLangButton .ui-btn-text").html(langButtonText);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").html(startButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
@@ -95,34 +111,56 @@ function setLanguage(patientName, birthdate) {
 
 function changePage(newPageNum) {
     var newPage = "#question_page_" + newPageNum;
+    if (!english) {
+        newPage = newPage + "_sp";
+    }   
     $.mobile.changePage(newPage, { transition: "none", reverse: false });
 }
 
+function setLanguageFromForm(patientName, birthdate) {
+    setLanguage(patientName, birthdate);
+    
+    // Transfer the answers for the questions
+    for (var i = 1; i <= numberOfQuestions; i++) {
+    	if (english) {
+	    	setQuestionCheckboxes("TRAQQuestionEntry_" + i + "_2", "TRAQQuestionEntry_" + i);
+	    } else {
+	    	setQuestionCheckboxes("TRAQQuestionEntry_" + i, "TRAQQuestionEntry_" + i + "_2");
+	    }
+    }       
+    changePage(1);
+}
 
 function attemptFinishForm() {
 	finishAttempts++;
 	if (areAllQuestionsAnswered()) {
 		finishForm();
 	} else if (finishAttempts == 1) {
-    	
-    	 $("#not_finished_dialog").popup("open", { transition: "pop"});
-    	
+    	if (english) {
+    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
+    	} else {
+    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
+    	}
 	} else if (finishAttempts >= 2) {
-		
-    	 $("#not_finished_final_dialog").popup("open", { transition: "pop"});
-    	
+		if (english) {
+    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
+    	} else {
+    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
+    	}
 	}
 }
 
+
 function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
+
 	$("#finish_error_dialog").popup("close");
+	$("#finish_error_dialog_sp").popup("close");
 	$("#not_finished_final_dialog").popup("close");
+	$("#not_finished_final_dialog_sp").popup("close");
 	$("#not_finished_dialog").popup("close");
-		
-	//No Spanish popups
-	
-	
+	$("#not_finished_dialog_sp").popup("close");
+	setLanguageField();
 	interpretResults();
 	var submitForm = $("#EatingDisorderForm"); 
 	var token = getAuthenticationToken();
@@ -143,7 +181,11 @@ function finishForm() {
 }
 
 function handleFinishFormError() {
-	$("#finish_error_dialog").popup("open", { transition: "pop"});
+	if (english) {
+	    $("#finish_error_dialog").popup("open", { transition: "pop"});
+	} else {
+		$("#finish_error_dialog_sp").popup("open", { transition: "pop"});
+	}
 }
 
 

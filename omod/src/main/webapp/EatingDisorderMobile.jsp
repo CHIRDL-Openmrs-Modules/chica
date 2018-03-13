@@ -59,6 +59,24 @@
 
 <!-- Questions (Spanish) -->
 <!-- Currently not available-->
+<!-- Created Spanish question vars and filled with English until Spanish is available. -->
+<c:set var="question1_2"  value='Losing weight is an important goal to me.' scope="request"/>
+<c:set var="question2_2"  value='I skip meals and${slash} or snacks.' scope="request"/>
+<c:set var="question3_2"  value='Other people have told me that my eating is out of control.' scope="request"/>
+<c:set var="question4_2"  value='When I overeat${comma} I don${apostrophe}t take enough insulin to cover the food.' scope="request"/>
+<c:set var="question5_2"  value='I eat more when I am alone than when I am with others.' scope="request" />
+<c:set var="question6_2"  value='I feel that it${apostrophe}s difficult to lose weight and control my diabetes at the same time.' scope="request" />
+<c:set var="question7_2"  value='I avoid checking my blood sugar when I feel like it is out of range.' scope="request"/>
+<c:set var="question8_2"  value='I make myself vomit.' scope="request"/>
+<c:set var="question9_2"  value='I try to keep my blood sugar high so that I will lose weight.' scope="request"/>
+<c:set var="question10_2" value='I try to eat to the point of spilling ketones in my urine.' scope="request"/>
+<c:set var="question11_2" value='I feel fat when I take all of my insulin.' scope="request"/>
+<c:set var="question12_2" value='Other people tell me to take better care of my diabetes.' scope="request"/>
+<c:set var="question13_2" value='After I overeat${comma} I skip my next insulin dose.' scope="request"/>
+<c:set var="question14_2" value='I feel that my eating is out of control.' scope="request"/>
+<c:set var="question15_2" value='I alternate between eating very little and eating huge amounts.' scope="request"/>
+<c:set var="question16_2" value='I would rather be thin than to have good control of my diabetes.' scope="request"/>
+
 
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 
@@ -81,6 +99,7 @@
         <div data-role="header">
             <h1 id="formTitle">${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -101,6 +120,7 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -131,6 +151,7 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -161,6 +182,7 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -193,6 +215,7 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -225,6 +248,7 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         <div id="content_${PNumber}" data-role="content">
@@ -254,8 +278,8 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"
-                data-transition="pop">${staffButtonText}</a>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         <div id="content_${PNumber}" data-role="content">
         
@@ -284,6 +308,7 @@
         <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
@@ -311,10 +336,11 @@
 
     <c:set var="PNumber" value="8" />
     <div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
-        <div data-role="header">
+       <div data-role="header">
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward"data-transition="pop">${staffButtonText}</a>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -374,8 +400,8 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
-        </div>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
+        </div>  
         
         <div id="content_${PNumber}_sp" data-role="content">
                 
@@ -406,9 +432,9 @@
         <div data-role="header">
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
-        </div>
+            <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
+        </div>  
         
         <div id="content_${PNumber}" data-role="content">
     
