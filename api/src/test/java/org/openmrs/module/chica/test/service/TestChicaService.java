@@ -2,19 +2,25 @@ package org.openmrs.module.chica.test.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Form;
 import org.openmrs.FormField;
+import org.openmrs.annotation.Authorized;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.SkipBaseSetup;
 
 /**
  * @author Tammy Dugan
@@ -101,5 +107,17 @@ public class TestChicaService extends BaseModuleContextSensitiveTest
 			}
 		}
 		
+	}
+	
+	@Test
+	@SkipBaseSetup
+	public void checkAuthorizationAnnotations() throws Exception {
+		Method[] allMethods = ChicaService.class.getDeclaredMethods();
+		for (Method method : allMethods) {
+		    if (Modifier.isPublic(method.getModifiers())) {
+		        Authorized authorized = method.getAnnotation(Authorized.class);
+		        Assert.assertNotNull("Authorized annotation not found on method " + method.getName(), authorized);
+		    }
+		}
 	}
 }

@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/pws.form" />
 		    <div id="examExtras">
                         <div class="examExtraCheckbox">
                             <input type="checkbox" name="Special_Need" value="yes" ${Special_Need == 'Y' || Special_Need == 'yes' ? 'checked' : ''}/>Special Need Child<br/> 

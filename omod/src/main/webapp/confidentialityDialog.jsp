@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/confidentialityDialog.form" />
 <div id="confidentialityDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" style="width:400px;">
 	<div data-role="header" data-theme="b">
  		<div  id="confidentialityNoticeHeader">
