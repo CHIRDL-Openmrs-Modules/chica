@@ -1,4 +1,5 @@
-
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/specialCharacters.form" />
 <c:set var="oAcute" value="&#243"/>			 <%-- ó --%>
 <c:set var="oGrave" value="&#242"/>			 <%-- ò --%>
 <c:set var="oCirc" value="&#244"/>			 <%-- ô --%>

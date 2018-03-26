@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/mobileQuitConfirmDialog.form" />
 <div id="quit_confirm_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Confirm Quit</h1>
