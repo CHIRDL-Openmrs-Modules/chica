@@ -27,7 +27,7 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>logic-api</artifactId>
-				<version>0.5.3</version>
+				<version>0.5.4</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -209,7 +209,7 @@
 	</dependencyManagement>
 
 	<properties>
-		<openMRSVersion>2.0.6.1</openMRSVersion>
+		<openMRSVersion>2.0.6.2</openMRSVersion>
 	</properties>
 
 	<build>

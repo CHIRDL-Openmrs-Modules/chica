@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/forcePrintJITs.form" />
 <div id="force-print-dialog" title="Available Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
     <div class="force-print-content">
          <div class="force-print-forms-loading">
