@@ -145,10 +145,19 @@
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script> insertYESNO("${QNumber}");</script></div>
 	        
+			<c:set var="QNumber" value="2" />
+	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertInsulinMethodChoices("${QNumber}");</script></div>
+			
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+			
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Next</a>
+	        <a id="Next" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 2)" style="width: 150px;">Next</a>
+			<a id="NextNoInsulin" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+3)" style="width: 150px;">Next</a>
+			<a id="NextShotsPump" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
@@ -165,11 +174,6 @@
 	    
 	        <div><h3>${headerInterimDiabetesHistory}</h3><hr/></div>
 	            
-			<c:set var="QNumber" value="2" />
-	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
-	        <c:set var="questionName" value="question${QNumber}" />
-	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertInsulinMethodChoices("${QNumber}");</script></div>
 			<div id="question_shots_container">
 				<c:set var="QNumber" value="10" />
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -196,13 +200,12 @@
 				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertMissInsulinChoices("${QNumber}");</script></div>
 			</div>
-	        
+        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
-	        <a id="Next" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
-			<a id="NextNoInsulin" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+2)" style="width: 150px;">Next</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
@@ -250,7 +253,8 @@
 
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+			<a id="PreviousFirstPage" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-2)" style="width: 150px;">Previous</a>
+	        <a id="PreviousShotsPump" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
@@ -296,7 +300,7 @@
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	        <a id="Previous" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
-			<a id="PreviousNoInsulin" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-2)" style="width: 150px;">Previous</a>
+			<a id="PreviousNoInsulin" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-3)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
 	    </div>
 	</div>
@@ -322,10 +326,18 @@
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
 	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script> insertYESNO("${QNumber}");</script></div>
 	        
+			<c:set var="QNumber" value="2_2" />
+	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+	        <c:set var="questionName" value="question${QNumber}" />
+	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertInsulinMethodChoices("${QNumber}");</script></div>
+			
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Proximo</a>
+			<a id="Next_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 2)" style="width: 150px;">Proximo</a>
+			<a id="NextNoInsulin_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+3)" style="width: 150px;">Proximo</a>
+			<a id="NextShotsPump_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
 
@@ -342,11 +354,6 @@
 	    
 	        <div><h3>${headerInterimDiabetesHistory_sp}</h3><hr/></div>
 	            
-			<c:set var="QNumber" value="2_2" />
-	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
-	        <c:set var="questionName" value="question${QNumber}" />
-	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertInsulinMethodChoices("${QNumber}");</script></div>
 			<div id="question_shots_container_sp">
 				<c:set var="QNumber" value="10_2" />
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
@@ -377,9 +384,8 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
-	        <a id="Next_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
-			<a id="NextNoInsulin_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+2)" style="width: 150px;">Proximo</a>
+			<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
 
@@ -426,7 +432,8 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+			<a id="PreviousFirstPage_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-2)" style="width: 150px;">Anterior</a>
+	        <a id="PreviousShotsPump_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
@@ -471,8 +478,8 @@
 
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a id="Previous_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
-			<a id="PreviousNoInsulin_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-2)" style="width: 150px;">Anterior</a>
+			<a id="Previous_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+			<a id="PreviousNoInsulin_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-3)" style="width: 150px;">Anterior</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continuar</a>
 	    </div>
 	</div>

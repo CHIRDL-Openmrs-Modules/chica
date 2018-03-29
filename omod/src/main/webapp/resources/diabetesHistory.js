@@ -66,6 +66,12 @@ function init(patientName, birthdate, formInst, language) {
 	$('#PreviousNoInsulin').hide();
 	$('#NextNoInsulin_sp').hide();
 	$('#PreviousNoInsulin_sp').hide();
+	$('#NextShotsPump').hide();
+	$('#NextShotsPump_sp').hide();
+	$('#PreviousShotsPump').hide();
+	$('#PreviousShotsPump_sp').hide();
+	
+	
 
 	$("#DiabetesHistory_2_SHOTS, #DiabetesHistory_2_2_SHOTS").click(function() {
 		$("#question_insulin_pump_container").hide();
@@ -89,14 +95,21 @@ function init(patientName, birthdate, formInst, language) {
 		$("#DiabetesHistory_13_2_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_13_2_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
 		
-		$('#Next').show();
+		$('#NextShotsPump').show();
+		$('#NextShotsPump_sp').show();
+		$('#Next').hide();
+		$('#Next_sp').hide();
 		$('#NextNoInsulin').hide();
-		$('#Next_sp').show();
 		$('#NextNoInsulin_sp').hide();
 		$('#Previous').show();
-		$('#PreviousNoInsulin').hide();
 		$('#Previous_sp').show();
+		$('#PreviousNoInsulin').hide();
 		$('#PreviousNoInsulin_sp').hide();
+		$('#PreviousShotsPump').show();
+		$('#PreviousShotsPump_sp').show();
+		$('#PreviousFirstPage').hide();
+		$('#PreviousFirstPage_sp').hide();
+		
 		$("#question_hypoglycemia_container").show();
 		$("#question_hypoglycemia_container_sp").show();
 	});
@@ -162,13 +175,15 @@ function init(patientName, birthdate, formInst, language) {
 		$("#DiabetesHistory_13_2_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
 		
 		$('#Next').hide();
-		$('#NextNoInsulin').show();
 		$('#Next_sp').hide();
+		$('#NextNoInsulin').show();
 		$('#NextNoInsulin_sp').show();
 		$('#Previous').hide();
-		$('#PreviousNoInsulin').show();
 		$('#Previous_sp').hide();
+		$('#PreviousNoInsulin').show();
 		$('#PreviousNoInsulin_sp').show();
+		$('#NextShotsPump').hide();
+		$('#NextShotsPump_sp').hide();
 		
 		$("#question_hypoglycemia_container").hide();
 		$("#question_hypoglycemia_container_sp").hide();
@@ -198,14 +213,17 @@ function init(patientName, birthdate, formInst, language) {
 		$("#DiabetesHistory_11_2_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_11_2_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
 		
-		$('#Next').show();
+		$('#Next').hide();
+		$('#Next_sp').hide();
+		$('#NextShotsPump').show();
+		$('#NextShotsPump_sp').show();
 		$('#NextNoInsulin').hide();
-		$('#Next_sp').show();
 		$('#NextNoInsulin_sp').hide();
 		$('#Previous').show();
-		$('#PreviousNoInsulin').hide();
 		$('#Previous_sp').show();
+		$('#PreviousNoInsulin').hide();
 		$('#PreviousNoInsulin_sp').hide();
+		
 		$("#question_hypoglycemia_container").show();
 		$("#question_hypoglycemia_container_sp").show();
 	});
@@ -410,7 +428,7 @@ function insertYESNO(questionNumber){
 	var choiceNo = "No";
 	
 	if (isSpanishQuestion(questionNumber)){ 
-		choiceYes  = "Si";
+		choiceYes  = "S" + iAcute; //"Si";
 		choiceNo  = "No"; 
 	}
 	
