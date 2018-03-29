@@ -201,7 +201,8 @@
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
+	        <a id="Next" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
+			<a id="NextNoInsulin" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+2)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
 
@@ -264,16 +265,17 @@
 	    </div>
 	    
 	    <div id="content_${PNumber}" data-role="content">
-	    
-	        <div><h3>${headerHypoglycemia}</h3><hr/></div>
+			<div id="question_hypoglycemia_container">
+				<div><h3>${headerHypoglycemia}</h3><hr/></div>
 
-			<c:set var="QNumber" value="7" />
-	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
-	        <c:set var="questionName" value="question${QNumber}" />
-	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertYESNO("${QNumber}");</script></div>
-			
-			</br>
+				<c:set var="QNumber" value="7" />
+				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+				<c:set var="questionName" value="question${QNumber}" />
+				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertYESNO("${QNumber}");</script></div>
+				
+				</br>
+			</div>
 			<div><h3>${headerHyperglycemia}</h3><hr/></div>
 
 			<c:set var="QNumber" value="8" />
@@ -293,7 +295,8 @@
 
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+	        <a id="Previous" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
+			<a id="PreviousNoInsulin" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-2)" style="width: 150px;">Previous</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
 	    </div>
 	</div>
@@ -375,7 +378,8 @@
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
+	        <a id="Next_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
+			<a id="NextNoInsulin_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+2)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
 
@@ -437,16 +441,17 @@
 	    </div>
 	    
 	    <div id="content_${PNumber}" data-role="content">
-	    
-	        <div><h3>${headerHypoglycemia_sp}</h3><hr/></div>
+			<div id="question_hypoglycemia_container_sp">
+				<div><h3>${headerHypoglycemia_sp}</h3><hr/></div>
 
-			<c:set var="QNumber" value="7_2" />
-	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
-	        <c:set var="questionName" value="question${QNumber}" />
-	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertYESNO("${QNumber}");</script></div>
-			
-			</br>
+				<c:set var="QNumber" value="7_2" />
+				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+				<c:set var="questionName" value="question${QNumber}" />
+				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertYESNO("${QNumber}");</script></div>
+				
+				</br>
+			</div>
 			<div><h3>${headerHyperglycemia_sp}</h3><hr/></div>
 
 			<c:set var="QNumber" value="8_2" />
@@ -466,7 +471,8 @@
 
 	    </div>
 	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+	        <a id="Previous_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+			<a id="PreviousNoInsulin_sp" href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-2)" style="width: 150px;">Anterior</a>
 	        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continuar</a>
 	    </div>
 	</div>

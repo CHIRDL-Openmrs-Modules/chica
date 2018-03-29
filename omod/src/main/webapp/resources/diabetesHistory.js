@@ -55,18 +55,24 @@ function init(patientName, birthdate, formInst, language) {
 	if (!showVitals) {
 		$(".vitalsButton").hide();
 	}
-	numQuestions = $("select[id^='DiabHistQuestion_']").length / 2; 
+	numQuestions = $("input[id^='DiabHistQuestion_']").length / 2; 
 
 	$("#question_shots_container").hide();
 	$("#question_shots_container_sp").hide();
 	$("#question_insulin_pump_container").hide();
 	$("#question_insulin_pump_container_sp").hide();
+	
+	$('#NextNoInsulin').hide();
+	$('#PreviousNoInsulin').hide();
+	$('#NextNoInsulin_sp').hide();
+	$('#PreviousNoInsulin_sp').hide();
 
-	$("#DiabetesHistory_2_SHOTS").click(function() {
+	$("#DiabetesHistory_2_SHOTS, #DiabetesHistory_2_2_SHOTS").click(function() {
 		$("#question_insulin_pump_container").hide();
 		$("#question_insulin_pump_container_sp").hide();
 		$("#question_shots_container").show();
 		$("#question_shots_container_sp").show();
+		
 		$("#DiabetesHistory_12_YES").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_12_NO").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_13_MORE_THAN_ONCE_WEEK").prop("checked", false).checkboxradio('refresh');
@@ -74,13 +80,44 @@ function init(patientName, birthdate, formInst, language) {
 		$("#DiabetesHistory_13_MORE_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_13_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_13_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		
+		$("#DiabetesHistory_12_2_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_12_2_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_MORE_THAN_ONCE_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_ONCE_A_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_MORE_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		
+		$('#Next').show();
+		$('#NextNoInsulin').hide();
+		$('#Next_sp').show();
+		$('#NextNoInsulin_sp').hide();
+		$('#Previous').show();
+		$('#PreviousNoInsulin').hide();
+		$('#Previous_sp').show();
+		$('#PreviousNoInsulin_sp').hide();
+		$("#question_hypoglycemia_container").show();
+		$("#question_hypoglycemia_container_sp").show();
 	});
 	
-	$("#DiabetesHistory_2_NOT_ON_INSULIN").click(function() { 
+	$("#DiabetesHistory_2_NOT_ON_INSULIN, #DiabetesHistory_2_2_NOT_ON_INSULIN").click(function() {
 		$("#question_shots_container").hide();
 		$("#question_shots_container_sp").hide();
 		$("#question_insulin_pump_container").hide();
 		$("#question_insulin_pump_container_sp").hide();
+		
+		$("#DiabetesHistory_3_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_3_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_4_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_4_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_5_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_5_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_6_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_6_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_7_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_7_NO").prop("checked", false).checkboxradio('refresh');
+		
 		$("#DiabetesHistory_10_ME").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_10_PARENT_OTHER").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_10_ALL").prop("checked", false).checkboxradio('refresh');
@@ -96,13 +133,53 @@ function init(patientName, birthdate, formInst, language) {
 		$("#DiabetesHistory_13_MORE_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_13_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_13_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		
+		$("#DiabetesHistory_3_2_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_3_2_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_4_2_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_4_2_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_5_2_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_5_2_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_6_2_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_6_2_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_7_2_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_7_2_NO").prop("checked", false).checkboxradio('refresh');
+		
+		$("#DiabetesHistory_10_2_ME").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_10_2_PARENT_OTHER").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_10_2_ALL").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_MORE_THAN_ONCE_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_ONCE_A_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_MORE_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_12_2_YES").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_12_2_NO").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_MORE_THAN_ONCE_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_ONCE_A_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_MORE_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_13_2_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		
+		$('#Next').hide();
+		$('#NextNoInsulin').show();
+		$('#Next_sp').hide();
+		$('#NextNoInsulin_sp').show();
+		$('#Previous').hide();
+		$('#PreviousNoInsulin').show();
+		$('#Previous_sp').hide();
+		$('#PreviousNoInsulin_sp').show();
+		
+		$("#question_hypoglycemia_container").hide();
+		$("#question_hypoglycemia_container_sp").hide();
 	});
 
-	$("#DiabetesHistory_2_INSULIN_PUMP").click(function() {
+	$("#DiabetesHistory_2_INSULIN_PUMP, #DiabetesHistory_2_2_INSULIN_PUMP").click(function() {
 		$("#question_shots_container").hide();
 		$("#question_shots_container_sp").hide();
 		$("#question_insulin_pump_container").show();
 		$("#question_insulin_pump_container_sp").show();
+		
 		$("#DiabetesHistory_10_ME").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_10_PARENT_OTHER").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_10_ALL").prop("checked", false).checkboxradio('refresh');
@@ -111,6 +188,26 @@ function init(patientName, birthdate, formInst, language) {
 		$("#DiabetesHistory_11_MORE_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_11_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_11_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		
+		$("#DiabetesHistory_10_2_ME").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_10_2_PARENT_OTHER").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_10_2_ALL").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_MORE_THAN_ONCE_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_ONCE_A_WEEK").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_MORE_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_ONCE_A_MONTH").prop("checked", false).checkboxradio('refresh');
+		$("#DiabetesHistory_11_2_LESS_THAN_ONCE_MONTH").prop("checked", false).checkboxradio('refresh');
+		
+		$('#Next').show();
+		$('#NextNoInsulin').hide();
+		$('#Next_sp').show();
+		$('#NextNoInsulin_sp').hide();
+		$('#Previous').show();
+		$('#PreviousNoInsulin').hide();
+		$('#Previous_sp').show();
+		$('#PreviousNoInsulin_sp').hide();
+		$("#question_hypoglycemia_container").show();
+		$("#question_hypoglycemia_container_sp").show();
 	});
 }
 
@@ -160,15 +257,15 @@ function changePage(newPageNum) {
 }
 
 function setLanguageFromForm(patientName, birthdate) {
-    setLanguage(patientName, birthdate);
-    for (var i = 1; i <= numQuestions; i++) {
-    	if (english) {
-	    	setQuestionCheckboxes("DiabetesHistory_" + i + "_2", "DiabetesHistory_" + i);
-	    } else {
-	    	setQuestionCheckboxes("DiabetesHistory_" + i, "DiabetesHistory_" + i + "_2");
-	    }
+    setLanguage(patientName, birthdate); 
+	
+	 for (var i = 1; i <= numQuestions; i++) {
+		if (english) {
+			setQuestionCheckboxes("DiabetesHistory_" + i + "_2", "DiabetesHistory_" + i);
+		} else {
+			setQuestionCheckboxes("DiabetesHistory_" + i, "DiabetesHistory_" + i + "_2");
+		}
     }
-    
     changePage(1);
 }
 
@@ -230,6 +327,7 @@ function handleFinishFormError() {
 function setQuestionCheckboxes(initialName, newName) {
 	// Determine if any of the radio buttons in the group are selected
 	// If so, select the English/Spanish version
+
 	if($("input[name='" + initialName + "']").is(':checked')) {
 		var selectedValue = $("input[name='" + initialName + "']:checked").val();
 		// Select the radio button by name and value
@@ -247,9 +345,51 @@ function areAllQuestionsAnswered() {
 	}
 
 	var questionName = "DiabetesHistory_";
+	var noInsulin = false;
+	var shots = false;
+	var pump = false;
+	
+	var insulinMethod = ["DiabetesHistory_2" + spanishExtension];
+	var noInsulinArray = ["DiabetesHistory_3" + spanishExtension, "DiabetesHistory_4" + spanishExtension, "DiabetesHistory_5" + spanishExtension, "DiabetesHistory_6" + spanishExtension, "DiabetesHistory_7" + spanishExtension, "DiabetesHistory_10" + spanishExtension, "DiabetesHistory_11" + spanishExtension, "DiabetesHistory_12" + spanishExtension, "DiabetesHistory_13" + spanishExtension];
+	var shotsArray = ["DiabetesHistory_12" + spanishExtension, "DiabetesHistory_13" + spanishExtension];
+	var pumpArray = ["DiabetesHistory_10" + spanishExtension,"DiabetesHistory_11" + spanishExtension];
+	
 	for (var i = 1; i <= numQuestions; i++) {
-		if(!$("input[name='" + questionName + i + spanishExtension + "']").is(':checked')){
-		   return false;
+		var choiceName = questionName + i + spanishExtension;
+
+		if ($.inArray(choiceName, insulinMethod ) > -1 ) {
+			var value =  $(":radio[name='" + choiceName + "']:checked").val(); 
+			if (value == 1) {
+				noInsulin = true;
+			} else if (value == 2) {
+				shots = true;
+			} else if (value == 3) {
+				pump = true;
+			}
+		}
+		
+		if ($.inArray(choiceName, noInsulinArray ) > -1  && noInsulin) {
+			if (!noInsulin) { 
+				if(!$("input[name='" + choiceName + "']").is(':checked')){
+					return false;
+				}
+			}
+		} else if ($.inArray(choiceName, shotsArray ) > -1 && shots) {
+			if (!shots) {
+				if(!$("input[name='" + choiceName + "']").is(':checked')){
+					return false;
+				}
+			}
+		} else if ($.inArray(choiceName, pumpArray ) > -1 && pump) {
+			if (!pump) {
+				if(!$("input[name='" + choiceName + "']").is(':checked')){
+					return false;
+				}
+			}
+		} else {
+			if(!$("input[name='" + choiceName + "']").is(':checked')){
+				return false;
+			}
 		}
 	}
 	return true;
@@ -291,8 +431,6 @@ function insertYESNO(questionNumber){
    
 	$(".choice"+questionNumber).append(fieldSetElement);
 	$(".choice"+questionNumber).triggerHandler("create");
-	
-	
 }
 
 function insertInsulinMethodChoices(questionNumber) {
@@ -417,7 +555,7 @@ function evaluateDHInterpretations() {
 	var DHHyperglycemiaMap = {};	
 	
 	for (var i = 0, len = concerningHistory.length; i < len; i++) {
-		var value =  $(":radio[name='" + questionName + concerningHistory[i] + "']:checked").val();  
+		var value =  $(":radio[name='" + questionName + concerningHistory[i] + spanishExtension +"']:checked").val();  
 		if (value) {
 			DHConcerningHistory[concerningHistory[i]] = value;
 		}
@@ -435,7 +573,7 @@ function evaluateDHInterpretations() {
 	}
 	
 	for (var i = 0, len = hypoglycemia.length; i < len; i++) {
-		var value =  $(":radio[name='" + questionName + hypoglycemia[i] + "']:checked").val(); 
+		var value =  $(":radio[name='" + questionName + hypoglycemia[i] + spanishExtension +"']:checked").val(); 
 		if (value) {
 			DHHypoglycemiaMap[hypoglycemia[i]] = value;
 		}
@@ -453,7 +591,7 @@ function evaluateDHInterpretations() {
 	}
 	
 	for (var i = 0, len = hyperglycemia.length; i < len; i++) {
-		var value =  $(":radio[name='" + questionName + hyperglycemia[i] + "']:checked").val();  
+		var value =  $(":radio[name='" + questionName + hyperglycemia[i] + spanishExtension +"']:checked").val();  
 		if (value) {
 			DHHyperglycemiaMap[hyperglycemia[i]] = value;
 		}
