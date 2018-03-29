@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobilePages.form" />
 <div data-role="page" id="confirm_page" data-theme="b">
     <div data-role="header" class="single-line-header" >
         <h1>Pre-Screener:</h1>

@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/template/include.jsp"%>
+<openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/psfMobileStaff.form" />
 <div id="vitals_page" data-role="page" data-theme="b">
     <div id="vitals_header" data-role="header" >
         <a id="backQuestionsButton" data-role="button" data-icon="back" data-theme="b" data-rel="back">Questions</a>
