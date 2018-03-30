@@ -3,6 +3,7 @@ var formInstance = null;
 var numQuestions = 0;
 var finishAttempts = 0;
 var formTitleText = "";
+var fieldSetElement = null;
 
 var openParen = "&#40";
 var closeParen = "&#41";
@@ -56,11 +57,6 @@ function init(patientName, birthdate, formInst, language) {
 		$(".vitalsButton").hide();
 	}
 	numQuestions = $("input[id^='DiabHistQuestion_']").length / 2; 
-
-	$("#question_shots_container").hide();
-	$("#question_shots_container_sp").hide();
-	$("#question_insulin_pump_container").hide();
-	$("#question_insulin_pump_container_sp").hide();
 	
 	$('#NextNoInsulin').hide();
 	$('#PreviousNoInsulin').hide();
@@ -115,10 +111,6 @@ function init(patientName, birthdate, formInst, language) {
 	});
 	
 	$("#DiabetesHistory_2_NOT_ON_INSULIN, #DiabetesHistory_2_2_NOT_ON_INSULIN").click(function() {
-		$("#question_shots_container").hide();
-		$("#question_shots_container_sp").hide();
-		$("#question_insulin_pump_container").hide();
-		$("#question_insulin_pump_container_sp").hide();
 		
 		$("#DiabetesHistory_3_YES").prop("checked", false).checkboxradio('refresh');
 		$("#DiabetesHistory_3_NO").prop("checked", false).checkboxradio('refresh');
@@ -223,6 +215,10 @@ function init(patientName, birthdate, formInst, language) {
 		$('#Previous_sp').show();
 		$('#PreviousNoInsulin').hide();
 		$('#PreviousNoInsulin_sp').hide();
+		$('#PreviousFirstPage').hide();
+		$('#PreviousFirstPage_sp').hide();
+		$('#PreviousShotsPump').show();
+		$('#PreviousShotsPump_sp').show();
 		
 		$("#question_hypoglycemia_container").show();
 		$("#question_hypoglycemia_container_sp").show();
@@ -249,7 +245,7 @@ function setLanguage(patientName, birthdate) {
     var langButtonText = "Español"; 
     var startButtonText = "Start";
     var vitalsButtonText = "Staff";
-    var instructions = "The following are some additional questions about diabetes history.";
+    var instructions = "The following are some additional questions about your diabetes history.";
 	
     if (!english) {
 		formTitleText = "Spanish";
@@ -444,111 +440,6 @@ function insertYESNO(questionNumber){
 	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_YES">' + choiceYes + '</label>';
 	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber +'" id="DiabetesHistory_' + questionNumber + '_NO" value="no" data-theme="c" />';
 	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_NO">' + choiceNo + '</label>';
-		
-    fieldSetElement.append(fieldSet);
-   
-	$(".choice"+questionNumber).append(fieldSetElement);
-	$(".choice"+questionNumber).triggerHandler("create");
-}
-
-function insertInsulinMethodChoices(questionNumber) {
-
-	var choiceNotOnInsulin = "I am not on insulin";
-	var choiceShots = "Shots";
-	var choiceInsulinPump = "Insulin pump";
-
-	if (isSpanishQuestion(questionNumber)){
-		choiceNotOnInsulin  = "spanish";
-		choiceShots = "spanish";
-		choiceInsulinPump  = "spanish"; 
-	}
-
-	fieldSetElement = $(document.createElement("fieldset"));
-	fieldSetElement.attr({
-		"data-role": "controlgroup",
-		"data-type": "vertical"
-	});
-
-	var fieldSet = '';
-	
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_NOT_ON_INSULIN" value="1" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_NOT_ON_INSULIN">' + choiceNotOnInsulin + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_SHOTS" value="2" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_SHOTS">' + choiceShots + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_INSULIN_PUMP" value="3" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_INSULIN_PUMP">' + choiceInsulinPump + '</label>';
-		
-    fieldSetElement.append(fieldSet);
-   
-	$(".choice"+questionNumber).append(fieldSetElement);
-	$(".choice"+questionNumber).triggerHandler("create");
-}
-
-function insertWhoGivesInsulinChoices(questionNumber) {
-	var choiceMe = "Me";
-	var choiceParentOrOther = "A parent / someone else";
-	var choiceAll = "Both me and a parent/someone else";
-
-	if (isSpanishQuestion(questionNumber)){
-		choiceMe  = "spanish";
-		choiceParentOrOther = "spanish";
-		choiceAll  = "spanish"; 
-	}
-
-	fieldSetElement = $(document.createElement("fieldset"));
-	fieldSetElement.attr({
-		"data-role": "controlgroup",
-		"data-type": "vertical"
-	});
-
-	var fieldSet = '';
-	
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_ME" value="1" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_ME">' + choiceMe + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_PARENT_OTHER" value="2" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_PARENT_OTHER">' + choiceParentOrOther + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_ALL" value="3" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_ALL">' + choiceAll + '</label>';
-		
-    fieldSetElement.append(fieldSet);
-   
-	$(".choice"+questionNumber).append(fieldSetElement);
-	$(".choice"+questionNumber).triggerHandler("create");
-}
-
-function insertMissInsulinChoices(questionNumber) {
-	var choiceMoreThanOnceAWeek = "More than once a week";
-	var choiceOnceAWeek = "About once a week";
-	var choiceMoreThanOnceAMonth = "More than once a month";
-	var choiceOnceAMonth = "About once a month";
-	var choiceLessThanOnceAMonth = "Less than once a month";
-
-	if (isSpanishQuestion(questionNumber)){
-		choiceMoreThanOnceAWeek  = "spanish";
-		choiceOnceAWeek = "spanish";
-		choiceMoreThanOnceAMonth  = "spanish"; 
-		choiceOnceAMonth = "spanish";
-		choiceLessThanOnceAMonth = "spanish";
-	}
-
-	fieldSetElement = $(document.createElement("fieldset"));
-	fieldSetElement.attr({
-		"data-role": "controlgroup",
-		"data-type": "vertical"
-	});
-
-	var fieldSet = '';
-	
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_MORE_THAN_ONCE_WEEK" value="1" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_MORE_THAN_ONCE_WEEK">' + choiceMoreThanOnceAWeek + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_ONCE_A_WEEK" value="2" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_ONCE_A_WEEK">' + choiceOnceAWeek + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_MORE_THAN_ONCE_MONTH">' + choiceMoreThanOnceAMonth + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_ONCE_A_MONTH" value="4" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_ONCE_A_MONTH">' + choiceOnceAMonth + '</label>';
-	fieldSet += '<input type="radio" name="DiabetesHistory_' + questionNumber + '" id="DiabetesHistory_' + questionNumber + '_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />';
-	fieldSet += '<label for="DiabetesHistory_' + questionNumber + '_LESS_THAN_ONCE_MONTH">' + choiceLessThanOnceAMonth + '</label>';
 		
     fieldSetElement.append(fieldSet);
    

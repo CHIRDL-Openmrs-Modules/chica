@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
-<%@ page import="org.openmrs.module.chirdlutil.util.Util"%>
-<%@ page import="org.openmrs.Patient" %>
+
 <!DOCTYPE html>
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/diabetesHistory.form" />
 <html>
@@ -149,7 +148,16 @@
 	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 	        <c:set var="questionName" value="question${QNumber}" />
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertInsulinMethodChoices("${QNumber}");</script></div>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+				<fieldset data-role="controlgroup" data-type="vertical">
+					<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_NOT_ON_INSULIN" value="1" data-theme="b" />
+					<label for="DiabetesHistory_${QNumber}_NOT_ON_INSULIN">I am not on insulin</label>
+					<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_SHOTS" value="2" data-theme="b" />
+					<label for="DiabetesHistory_${QNumber}_SHOTS">Shots</label>
+					<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_INSULIN_PUMP" value="3" data-theme="b" />
+					<label for="DiabetesHistory_${QNumber}_INSULIN_PUMP">Insulin pump</label>
+				</fieldset>
+			</div>
 			
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 			
@@ -179,13 +187,35 @@
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 				<c:set var="questionName" value="question${QNumber}" />
 				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertWhoGivesInsulinChoices("${QNumber}");</script></div>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+					<fieldset data-role="controlgroup" data-type="vertical">
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ME" value="1" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ME">Me</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_PARENT_OTHER" value="2" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_PARENT_OTHER">A parent / someone else</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ALL" value="3" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ALL">Both me and a parent/someone else</label>
+					</fieldset>
+				</div>
 
 				<c:set var="QNumber" value="11" />
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 				<c:set var="questionName" value="question${QNumber}" />
 				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertMissInsulinChoices("${QNumber}");</script></div>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+					<fieldset data-role="controlgroup" data-type="vertical">
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK" value="1" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK">More than once a week</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH">Less than once a month</label>
+					</fieldset>
+				</div>
 			</div>
 			<div id="question_insulin_pump_container">
 				<c:set var="QNumber" value="12" />
@@ -198,7 +228,20 @@
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 				<c:set var="questionName" value="question${QNumber}" />
 				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertMissInsulinChoices("${QNumber}");</script></div>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+					<fieldset data-role="controlgroup" data-type="vertical">
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK" value="1" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK">More than once a week</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH">Less than once a month</label>
+					</fieldset>
+				</div>
 			</div>
         
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
@@ -330,7 +373,16 @@
 	        <input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 	        <c:set var="questionName" value="question${QNumber}" />
 	        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertInsulinMethodChoices("${QNumber}");</script></div>
+	        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+				<fieldset data-role="controlgroup" data-type="vertical">
+					<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_NOT_ON_INSULIN" value="1" data-theme="b" />
+					<label for="DiabetesHistory_${QNumber}_NOT_ON_INSULIN">I am not on insulin(SP)</label>
+					<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_SHOTS" value="2" data-theme="b" />
+					<label for="DiabetesHistory_${QNumber}_SHOTS">Shots(SP)</label>
+					<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_INSULIN_PUMP" value="3" data-theme="b" />
+					<label for="DiabetesHistory_${QNumber}_INSULIN_PUMP">Insulin pump(SP)</label>
+				</fieldset>
+			</div>
 			
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 	    </div>
@@ -359,13 +411,35 @@
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 				<c:set var="questionName" value="question${QNumber}" />
 				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertWhoGivesInsulinChoices("${QNumber}");</script></div>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+					<fieldset data-role="controlgroup" data-type="vertical">
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ME" value="1" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ME">Me(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_PARENT_OTHER" value="2" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_PARENT_OTHER">A parent / someone else(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ALL" value="3" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ALL">Both me and a parent/someone else(SP)</label>
+					</fieldset>
+				</div>
 
 				<c:set var="QNumber" value="11_2" />
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 				<c:set var="questionName" value="question${QNumber}" />
 				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertMissInsulinChoices("${QNumber}");</script></div>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+					<fieldset data-role="controlgroup" data-type="vertical">
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK" value="1" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK">More than once a week(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH">Less than once a month(SP)</label>
+					</fieldset>
+				</div>
 			</div>
 			<div id="question_insulin_pump_container_sp">
 				<c:set var="QNumber" value="12_2" />
@@ -378,7 +452,20 @@
 				<input id="DiabHistQuestion_${QNumber}" name="DiabHistQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 				<c:set var="questionName" value="question${QNumber}" />
 				<strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertMissInsulinChoices("${QNumber}");</script></div>
+				<div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;">
+					<fieldset data-role="controlgroup" data-type="vertical">
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK" value="1" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_WEEK">More than once a week(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month(SP)</label>
+						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
+						<label for="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH">Less than once a month(SP)</label>
+					</fieldset>
+				</div>
 			</div>
 	        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
@@ -484,11 +571,6 @@
 	    </div>
 	</div>
 	
-	
-	
-
-	<div id="empty_page" data-role="page" data-theme="b">
-	</div>
 
 	<input id="formInstances" name="formInstances" type="hidden" value="${formInstances }"/>
 	<input id="patientId" name="patientId" type="hidden" value="${patient.patientId}"/>
@@ -499,7 +581,6 @@
 	<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
 	<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
 	<input id="language" name="language" type="hidden" value="${language}"/>
-	<input type="hidden" name="ageInYears" id="ageInYears" value="${AgeInYears}" />
 	<input id="DiabetesInterpretation" name="DiabetesInterpretation" type="hidden"/>
 	<input id="DiabetesHistory" name="DiabetesHistory" type="hidden"/>
 	<input id="DiabetesHistoryAction" name="DiabetesHistoryAction" type="hidden"/>
