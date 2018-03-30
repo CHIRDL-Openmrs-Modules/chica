@@ -91,7 +91,7 @@ function setLanguage(patientName, birthdate) {
     var instructions = "<p> Please choose the option that best describes your eating habits.</p>"; 
     
     //Need spanish translation
-    f (!english) {
+    if (!english) {
     	
     	formTitleText = "";
         langButtonText = "English"; 
@@ -123,9 +123,9 @@ function setLanguageFromForm(patientName, birthdate) {
     // Transfer the answers for the questions
     for (var i = 1; i <= numberOfQuestions; i++) {
     	if (english) {
-	    	setQuestionCheckboxes("TRAQQuestionEntry_" + i + "_2", "TRAQQuestionEntry_" + i);
+	    	setQuestionCheckboxes("EatingDisorderQuestionEntry_" + i + "_2", "EatingDisorderQuestionEntry_" + i);
 	    } else {
-	    	setQuestionCheckboxes("TRAQQuestionEntry_" + i, "TRAQQuestionEntry_" + i + "_2");
+	    	setQuestionCheckboxes("EatingDisorderQuestionEntry_" + i, "EatingDisorderQuestionEntry_" + i + "_2");
 	    }
     }       
     changePage(1);

@@ -32,6 +32,8 @@
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
+                <prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
+                <prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsNotificationMobileIUHCerner.form">finishFormsNotificationMobileIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsNotificationMobile.form">finishFormsNotificationMobile</prop>
