@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
-
+<openmrs:require allPrivileges="Manage CHICA" otherwise="/login.htm" redirect="/module/chica/chicaRuleTester.form" />
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 
 <p>

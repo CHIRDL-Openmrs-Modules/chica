@@ -5,6 +5,8 @@ package org.openmrs.module.chica.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -28,6 +30,10 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jibx.runtime.BindingDirectory;
+import org.jibx.runtime.IBindingFactory;
+import org.jibx.runtime.IUnmarshallingContext;
+import org.jibx.runtime.JiBXException;
 import org.openmrs.Concept;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -50,6 +56,8 @@ import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
+import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
@@ -91,6 +99,11 @@ public class Util {
 	
 	private static final String START_STATE = "start_state";
 	private static final String END_STATE = "end_state";
+	
+	private static ViewEncountersConfig viewEncountersConfig = null;
+	private static long lastUpdatedViewEncountersConfig = System.currentTimeMillis();
+	private static final long VIEW_ENCOUNTERS_CONFIG_UPDATE_CYCLE = 900000; // fifteen minutes
+	private static final String GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG = "chica.ViewEncountersConfigFile";
 	
 	/**
 	 * 
@@ -1224,4 +1237,64 @@ public class Util {
 		return null;
 	}
 	
+	/**
+	 * CHICA-1125
+	 * Returns the view encounters configuration.
+	 * 
+	 * @return ViewEncountersConfig object.
+	 * @throws JiBXException
+	 * @throws FileNotFoundException
+	 */
+	public static ViewEncountersConfig getViewEncountersConfig() throws JiBXException, FileNotFoundException {
+		long currentTime = System.currentTimeMillis();
+    	if (viewEncountersConfig == null || (currentTime - lastUpdatedViewEncountersConfig) > VIEW_ENCOUNTERS_CONFIG_UPDATE_CYCLE) {
+    		lastUpdatedViewEncountersConfig = currentTime;
+			String configFileStr = Context.getAdministrationService().getGlobalProperty(GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
+			if (configFileStr == null) {
+				log.error("You must set a value for global property: " + GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
+				return null;
+			}
+			
+			File configFile = new File(configFileStr);
+			if (!configFile.exists()) {
+				log.error("The file location specified for the global property "
+					+ GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG + " does not exist.");
+				return null;
+			}
+			
+			IBindingFactory bfact = BindingDirectory.getFactory(ViewEncountersConfig.class);
+			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
+			viewEncountersConfig = (ViewEncountersConfig)uctx.unmarshalDocument(new FileInputStream(configFile), null);
+    	}
+    	
+    	return viewEncountersConfig;
+	}
+	
+	/**
+	 * CHICA-1125
+	 * Utility method to get the FormsToDisplay section of the ViewEncountersConfig file
+	 * 
+	 * @return FormsToDisplay object
+	 */
+	public static FormsToDisplay getViewEncountersFormsToDisplayConfig()
+	{
+		FormsToDisplay formsToDisplayConfig = null;
+		try
+		{
+			ViewEncountersConfig config = getViewEncountersConfig();
+			if (config == null) 
+			{
+				log.error("View Encounters Config file could not be loaded.");
+				return null;
+			}
+			
+			formsToDisplayConfig = config.getFormsToDisplay();	
+		}
+		catch(Exception e)
+		{
+			log.error("View Encounters Config file could not be loaded.", e);
+			return null;
+		}
+		return formsToDisplayConfig;
+	}
 }

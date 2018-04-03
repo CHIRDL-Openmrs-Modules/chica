@@ -40,7 +40,6 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
@@ -65,6 +64,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.dss.DssElement;
 import org.openmrs.module.dss.DssManager;
 import org.openmrs.module.dss.hibernateBeans.Rule;
+import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
 
 /**
@@ -722,7 +722,7 @@ public class DynamicFormAccess {
 			for (String currRuleName : rulesToRun.keySet()) {
 				Rule rule = rulesToRun.get(currRuleName);
 				Map<String, Object> parameters = rule.getParameters();
-				parameterHandler.addParameters(parameters, rule, fieldMap);
+				parameterHandler.addParameters(parameters, fieldMap);
 				atdService.evaluateRule(currRuleName, patient, parameters);
 				setScannedTimestamps(formInstanceId, rule.getRuleId(), formName, locationId);
 			}
@@ -812,7 +812,16 @@ public class DynamicFormAccess {
 				    locationTagId, locationId);
 			} else if (currDssElement.getRuleId() != patientATD.getRule().getRuleId()) {
 				Integer ruleId = currDssElement.getRuleId();
-				Rule rule = dssService.getRule(ruleId);
+				Rule rule = null;
+				Integer priority = null;
+				RuleEntry ruleEntry = dssService.getRuleEntry(ruleId, formName);
+				if (ruleEntry != null) {
+					rule = ruleEntry.getRule();
+					priority = ruleEntry.getPriority();
+				} else {
+					rule = dssService.getRule(ruleId);
+				}
+				
 				patientATD.setRule(rule);
 				Result result = currDssElement.getResult();
 				if (result != null) {
@@ -829,7 +838,7 @@ public class DynamicFormAccess {
 				List<Statistics> stats = atdService.getStatByIdAndRule(formInstanceId, ruleId, formName, locationId);
 				for (Statistics stat : stats) {
 					stat.setRuleId(ruleId);
-					stat.setPriority(rule.getPriority());
+					stat.setPriority(priority);
 					stat.setPrintedTimestamp(new Date());
 					atdService.updateStatistics(stat);
 				}
@@ -855,11 +864,16 @@ public class DynamicFormAccess {
 	                          Integer formInstanceId, int questionPosition, Encounter encounter, String formName,
 	                          Integer locationTagId, Integer locationId) {
 		Integer ruleId = currDssElement.getRuleId();
-		Rule rule = dssService.getRule(ruleId);
+		// Try to get rule entry to determine priority
+		Integer priority = null;
+		RuleEntry ruleEntry = dssService.getRuleEntry(ruleId, formName);
+		if (ruleEntry != null) {
+			priority = ruleEntry.getPriority();
+		}
 		
 		Statistics statistics = new Statistics();
 		statistics.setAgeAtVisit(Util.adjustAgeUnits(patient.getBirthdate(), null));
-		statistics.setPriority(rule.getPriority());
+		statistics.setPriority(priority);
 		statistics.setFormInstanceId(formInstanceId);
 		statistics.setLocationTagId(locationTagId);
 		statistics.setPosition(questionPosition + 1);

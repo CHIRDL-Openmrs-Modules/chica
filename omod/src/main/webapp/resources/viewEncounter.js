@@ -88,6 +88,24 @@ $(function() {
     });
 	
 	$("#encounterMrnLoading").hide();
+	
+	$("#viewEncounterErrorDialog").dialog({
+		modal: true,
+		height: "auto",
+		width: 300,
+		resizable: false,
+		autoOpen: false,
+		buttons: {
+	        OK: function() {
+	          $( this ).dialog("close");
+	        }
+	      }
+	});
+	
+	if($("#viewEncountersErrorMsg") && $("#viewEncountersErrorMsg").val() != '')
+	{
+		$("#viewEncounterErrorDialog").dialog("open");
+	}
 
 	$(window).bind("resize", resizeContent);
 	resizeContent();

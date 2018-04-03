@@ -147,7 +147,7 @@ public class HL7SocketHandler extends
 				}
 				else {
 					resultPatient = updatePatient(matchedPatient, hl7Patient,
-							encounterDate);
+							encounterDate, parameters); // CHICA-1185 Add parameters
 				}
 				
 				parameters.put(PROCESS_HL7_CHECKIN_END, new java.util.Date());
@@ -294,7 +294,7 @@ public class HL7SocketHandler extends
 	
 	@Override
 	protected Patient updatePatient(Patient matchPatient, Patient hl7Patient,
-			Date encounterDate) {
+			Date encounterDate, HashMap<String,Object> parameters) { // CHICA-1185 Add parameters
 
 		PatientService patientService = Context.getPatientService();
 
@@ -304,6 +304,9 @@ public class HL7SocketHandler extends
 		if (currentPatient == null || hl7Patient == null) {
 			return matchPatient;
 		}
+		
+		// CHICA-1185 Get HL7 event type code to determine if this was an A10 converted to an A04
+		String eventTypeCode = parameters.get(ChirdlUtilConstants.PARAMETER_HL7_EVENT_TYPE_CODE) == null ? ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING : (String)parameters.get(ChirdlUtilConstants.PARAMETER_HL7_EVENT_TYPE_CODE);
 
 		currentPatient.setCauseOfDeath(hl7Patient.getCauseOfDeath());
 		currentPatient.setDead(hl7Patient.getDead());
@@ -316,7 +319,13 @@ public class HL7SocketHandler extends
 		addReligion(currentPatient, hl7Patient, encounterDate);
 		addMaritalStatus(currentPatient, hl7Patient, encounterDate);
 		addMaidenName(currentPatient, hl7Patient, encounterDate);
-		addNK(currentPatient, hl7Patient, encounterDate);
+		
+		// CHICA-1185 Don't do anything with next of kin if this is an A10
+		if(!ChirdlUtilConstants.HL7_EVENT_CODE_A10.equalsIgnoreCase(eventTypeCode))
+		{
+			addNK(currentPatient, hl7Patient, encounterDate);
+		}
+		
 		addTelephoneNumber(currentPatient, hl7Patient, encounterDate);
 		AddCitizenship(currentPatient, hl7Patient, encounterDate);
 		AddRace(currentPatient, hl7Patient, encounterDate);
@@ -1097,8 +1106,17 @@ public class HL7SocketHandler extends
 		PersonAttribute currentNextOfKinNameAttr = currentPatient
 				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_NEXT_OF_KIN);
 
-		if (newNextOfKinNameAttr == null || newNextOfKinNameAttr.getValue() == null
-				|| newNextOfKinNameAttr.getValue().equals(EMPTY_STRING)){
+		if (newNextOfKinNameAttr == null || StringUtils.isBlank(newNextOfKinNameAttr.getValue()))
+		{
+			// CHICA-1185 Check to see if there is an existing attribute to void
+			if(currentNextOfKinNameAttr != null)
+			{
+				currentNextOfKinNameAttr.setVoided(true);
+				currentNextOfKinNameAttr.setVoidedBy(Context.getAuthenticatedUser());
+				currentNextOfKinNameAttr.setDateVoided(new Date());
+				currentNextOfKinNameAttr.setVoidReason(ChirdlUtilConstants.ATTR_VALUE_VOID_REASON); // This will show that there is not a new value
+			}
+			
 			return;
 		}
 		

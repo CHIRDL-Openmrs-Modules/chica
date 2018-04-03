@@ -92,9 +92,7 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 	private List<TabletNotification> runRules(Patient patient, Map<String,Object> parameters) {
 		List<TabletNotification> notifications = new ArrayList<TabletNotification>();
 		DssService dssService = Context.getService(DssService.class);
-		Rule rule = new Rule();
-		rule.setRuleType(STAFF_NOTIFICATION);
-		List<Rule> rules = dssService.getRules(rule, true, false, null);
+		List<Rule> rules = dssService.getRulesByType(STAFF_NOTIFICATION);
 		if (rules == null || rules.size() == 0) {
 			return notifications;
 		}
