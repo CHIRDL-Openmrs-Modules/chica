@@ -49,6 +49,7 @@
 	<c:set var="formNameHeader_sp" value="${formName_sp}:"/>
 	<input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
+	<c:set var="prefix" value="SUDEPQuestionEntry_" />
 	
 	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about ${PossessiveFirstName} epilepsy or seizures." />
 	
@@ -202,37 +203,37 @@
         <input id="SUDEPQuestion_3" name="SUDEPQuestion_3" type="hidden" value="${quest3}"/>
         <strong>${quest3}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest3}")'></a>
         <div class="choice_3" data-role="fieldcontain" style="margin-top:0px;">
-            <script>insertYesNo("3", false);</script>
+            <script>insertYesNo("${prefix}", "3", false);</script>
         </div>
         
         <input id="SUDEPQuestion_4" name="SUDEPQuestion_4" type="hidden" value="${quest4}"/>
         <strong>${quest4}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest4}")'></a>
         <div class="choice_4" data-role="fieldcontain" style="margin-top:0px;">
-             <script>insertYesNo("4", false);</script>
+             <script>insertYesNo("${prefix}", "4", false);</script>
         </div>
         
         <input id="SUDEPQuestion_5" name="SUDEPQuestion_5" type="hidden" value="${quest5}"/>
         <strong>${quest5}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest5}")'></a>
         <div class="choice_5" data-role="fieldcontain" style="margin-top:0px;">
-             <script>insertYesNo("5", false);</script>
+             <script>insertYesNo("${prefix}", "5", false);</script>
         </div>
     
         <input id="SUDEPQuestion_6" name="SUDEPQuestion_6" type="hidden" value="${quest6}"/>
         <strong>${quest6}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest6}")'></a>
         <div class="choice_6" data-role="fieldcontain" style="margin-top:0px;">
-             <script>insertYesNo("6", false);</script>
+             <script>insertYesNo("${prefix}", "6", false);</script>
         </div>
     
         <input id="SUDEPQuestion_7" name="SUDEPQuestion_7" type="hidden" value="${quest7}"/>
         <strong>${quest7}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest7}")'></a>
         <div class="choice_7" data-role="fieldcontain" style="margin-top:0px;">
-             <script>insertYesNo("7", false);</script>
+             <script>insertYesNo("${prefix}", "7", false);</script>
         </div>
     
         <input id="SUDEPQuestion_8" name="SUDEPQuestion_8" type="hidden" value="${quest8}"/>
         <strong>${quest8}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${quest8}")'></a>
         <div class="choice_8" data-role="fieldcontain" style="margin-top:0px;">
-             <script>insertYesNo("8", false);</script>
+             <script>insertYesNo("${prefix}", "8", false);</script>
         </div>
         <div style="float:right;"><span style="float: right;font-size: 50%;">${copyright}</span></div>
         
@@ -282,37 +283,37 @@
         <input id="SUDEPQuestion_3_2" name="SUDEPQuestion_3_2" type="hidden" value="${quest3_2}"/>
         <strong>${quest3_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest3_2}")'></a>
         <div class="choice_3_2" data-role="fieldcontain" style="margin-top:0px;">
-            <script>insertYesNo("3", true);</script>
+            <script>insertYesNo("${prefix}", "3", true);</script>
         </div>
         
         <input id="SUDEPQuestion_4_2" name="SUDEPQuestion_4_2" type="hidden" value="${quest4_2}"/>
         <strong>${quest4_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest4_2}")'></a>
         <div class="choice_4_2" data-role="fieldcontain" style="margin-top:0px;">
-            <script>insertYesNo("4", true);</script>
+            <script>insertYesNo("${prefix}", "4", true);</script>
         </div>
         
         <input id="SUDEPQuestion_5_2" name="SUDEPQuestion_5_2" type="hidden" value="${quest5_2}"/>
         <strong>${quest5_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest5_2}")'></a>
         <div class="choice_5_2" data-role="fieldcontain" style="margin-top:0px;">
-        	<script>insertYesNo("5", true);</script>
+        	<script>insertYesNo("${prefix}", "5", true);</script>
         </div>
         
         <input id="SUDEPQuestion_6_2" name="SUDEPQuestion_6_2" type="hidden" value="${quest6_2}"/>
         <strong>${quest6_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest6_2}")'></a>
         <div class="choice_6_2" data-role="fieldcontain" style="margin-top:0px;">
-        	<script>insertYesNo("6", true);</script>
+        	<script>insertYesNo("${prefix}", "6", true);</script>
         </div>
         
         <input id="SUDEPQuestion_7_2" name="SUDEPQuestion_7_2" type="hidden" value="${quest7_2}"/>
         <strong>${quest7_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest7_2}")'></a>
         <div class="choice_7_2" data-role="fieldcontain" style="margin-top:0px;">
-        	<script>insertYesNo("7", true);</script>
+        	<script>insertYesNo("${prefix}", "7", true);</script>
         </div>
         
         <input id="SUDEPQuestion_8_2" name="SUDEPQuestion_8_2" type="hidden" value="${quest8_2}"/>
         <strong>${quest8_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readTextSpanish("${quest8_2}")'></a>
         <div class="choice_8_2" data-role="fieldcontain" style="margin-top:0px;">
-        	<script>insertYesNo("8", true);</script>
+        	<script>insertYesNo("${prefix}", "8", true);</script>
         </div>
         
         <div style="float:right;"><br/><span style="float: right;font-size: 50%;">${copyright}</span></div>

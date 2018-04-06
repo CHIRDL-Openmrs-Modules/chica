@@ -295,3 +295,34 @@ function finishForm() {
         }
     });
 }
+
+//Insert choices for Yes/No
+function insertYesNo(prefix, questionNumber, isSpanish)
+{
+	var choiceYes = "Yes";
+	var choiceNo = "No";
+	
+	if(isSpanish)
+	{
+		choiceYes = "S&iacute;";
+		questionNumber = questionNumber + "_2";
+	}
+	
+	var fieldSetElement = $(document.createElement("fieldset"));
+	fieldSetElement.attr({
+		"data-role": "controlgroup",
+		"data-type": "horizontal"
+		});
+	
+	var fieldSet = '';
+	
+	fieldSet += '<input type="radio" name="' + prefix + questionNumber + '" id="' + prefix + questionNumber + '_Yes" value="yes" data-theme="c" />';
+	fieldSet += '<label for="' + prefix + questionNumber + '_Yes">' + choiceYes + '</label>';
+	fieldSet += '<input type="radio" name="' + prefix + questionNumber + '" id="' + prefix + questionNumber + '_No" value="no" data-theme="c" />';
+	fieldSet += '<label for="' + prefix + questionNumber + '_No">' + choiceNo + '</label>';
+	
+	fieldSetElement.append(fieldSet);
+	
+	$(".choice_"+questionNumber).append(fieldSetElement);
+	$(".choice_"+questionNumber).triggerHandler("create");
+}
