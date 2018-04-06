@@ -28,7 +28,6 @@
 	<c:set var="replace" value="\\'" />
 	<c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
 	<c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
-	<c:set var="possessiveFirstName" value="${patient.givenName.endsWith(\"s\") ? patient.givenName.concat(\"\'\") : patient.givenName.concat(\"\'\").concat(\"s\")}"/>
 	
 	<!-- Use gender to determine his/her  -->
 	<c:set var="hisHer" value="his/her"/>
@@ -51,17 +50,18 @@
 	<input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about ${PossessiveFirstName} epilepsy or seizures." />
+	
 	<!-- Escape using special characters defined in the specialCharacters.jsp so that the hidden inputs can be used in the .js file to toggle between English/Spanish -->
-	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about ${possessiveFirstName} epilepsy or seizures." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions about ${possessiveFirstName} epilepsy or seizures." />
+	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions about ${PossessiveFirstName} epilepsy or seizures." />
 	
 	<!--  Questions (English) -->
 	<c:set var="quest1" value='How many seizures with stiffness or jerking has ${patient.givenName} had in the last 12 months?'/>
 	<c:set var="quest2" value='In the past week, how many doses of the anti-epileptic medication has ${patient.givenName} missed?'/>
 	<c:set var="quest3" value='Does ${patient.givenName} receive ${hisHer} medication most of the time?'/>
 	<c:set var="quest4" value='Do you sometimes forget to give ${patient.givenName} ${hisHer} medications?'/>
-	<c:set var="quest5" value='Have you sometimes run out of ${possessiveFirstName} medication?'/>
-	<c:set var="quest6" value='Is it difficult to afford ${possessiveFirstName} medication?'/>
+	<c:set var="quest5" value='Have you sometimes run out of ${PossessiveFirstName} medication?'/>
+	<c:set var="quest6" value='Is it difficult to afford ${PossessiveFirstName} medication?'/>
 	<c:set var="quest7" value='Has ${patient.givenName} seen the neurologist in the last 12 months?'/>
 	<c:set var="quest8" value='Do you have difficulty bringing ${patient.givenName} to the neurologist for appointments?'/>
 	
@@ -85,10 +85,9 @@
 			<c:set var="quest6" value='Is it difficult for your family to afford your medication?'/>
 			<c:set var="quest7" value='Have you seen the neurologist in the last 12 months?'/>
 			<c:set var="quest8" value='Do you have difficulty going to the neurologist for your appointments?'/>
-			
-			<!-- Escape using special characters defined in the specialCharacters.jsp so that the hidden inputs can be used in the .js file to toggle between English/Spanish -->
 			<c:set var="instructions_additionalQuestions" value="The following are some additional questions about your epilepsy or seizures." />
 			
+			<!-- Escape using special characters defined in the specialCharacters.jsp so that the hidden inputs can be used in the .js file to toggle between English/Spanish -->
 			<c:set var="quest1_2" value='Spanish question 1 - FIRST PERSON'/>
 			<c:set var="quest2_2" value='Spanish question 2 - FIRST PERSON'/>
 			<c:set var="quest3_2" value='Spanish question 3 - FIRST PERSON'/>

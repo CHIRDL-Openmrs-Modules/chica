@@ -19,6 +19,9 @@ import org.openmrs.logic.rule.RuleParameterInfo;
  */
 public class getPossessiveName implements Rule {
 	
+	private static final String CHAR_APOSTROPHE = "'";
+	private static final String CHAR_S = "s";
+	
 	/**
 	 * *
 	 * 
@@ -67,13 +70,13 @@ public class getPossessiveName implements Rule {
 			return Result.emptyResult();
 		}
 		
-		if(firstName.endsWith("s"))
+		if(firstName.endsWith(CHAR_S))
 		{
-			firstName += "'";
+			firstName += CHAR_APOSTROPHE;
 		}
 		else
 		{
-			firstName += "'s";
+			firstName += CHAR_APOSTROPHE + CHAR_S;
 		}
 		
 		return new Result(firstName);

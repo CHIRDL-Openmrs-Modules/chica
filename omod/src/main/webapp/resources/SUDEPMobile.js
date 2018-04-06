@@ -72,7 +72,7 @@ function insertChoices(questionNumber, isSpanish)
 	
 	if(isSpanish)
 	{
-		choiceGTFive = "(SPANISH) More than five";
+		choiceGTFive = "M&aacute;s de 5";
 		questionNumber = questionNumber + "_2";
 	}
 	
