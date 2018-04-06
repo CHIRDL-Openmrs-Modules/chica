@@ -103,6 +103,13 @@
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
 	
+	<!--  Leaving this as an example since the new chicaMobile.js file has been created 
+	<c:set var="instructions_part2" value="This is just an example &lt;span style='text-decoration: underline;'&gt; with some underlined text. &lt;/span&gt;" />
+	<c:set var="instructions_part2_sp" value="(SPANISH) This is just an example &lt;span style='text-decoration: underline;'&gt; with some underlined text. &lt;/span&gt;" />
+	<input type="hidden" name="instructions_part2" id="instructions_part2" value="${instructions_part2}" />
+	<input type="hidden" name="instructions_part2_sp" id="instructions_part2_sp" value="${instructions_part2_sp}" />
+	-->
+	
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'SUDEPForm', 'SUDEPQuestion_', 'SUDEPQuestionEntry_')">
 <form id="SUDEPForm" method="POST" action="SUDEPMobile.form" method="post" enctype="multipart/form-data">
 <c:if test="${errorMessage != null}">
@@ -129,6 +136,11 @@
     <div data-role="content" >
         <strong><span id="additionalQuestions">${instructions_additionalQuestions}</span></strong>
         <div><br/></div>
+        
+        <!-- We typically put more instructions here 
+        <strong><span id="instructions">${instructions_part2}</span></strong>
+        <div><br/></div>
+        -->
     </div><!-- /content -->
     
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">

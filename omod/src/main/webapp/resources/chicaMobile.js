@@ -189,10 +189,10 @@ function setInstructionsText()
 	if($("#instructions").length)
 	{
 		if(english){
-			$("#instructions").text($("#instructions_part2").val());
+			$("#instructions").html($("#instructions_part2").val());
 		}
 		else{
-			$("#instructions").text($("#instructions_part2_sp").val());
+			$("#instructions").html($("#instructions_part2_sp").val());
 		}
 	}
 }
