@@ -6,22 +6,6 @@ $(document).on("pageinit", function() {
     
 });
 
-// Sets the text for the instructions page
-function setLanguage(patientName, birthdate) {
-	english = !english;
-	
-	if(english){
-		$("#additionalQuestions").text($("#instructions_additionalQuestions").val());
-		$("#formTitle").text($("#formNameHeader").val());
-	}
-	else{
-		$("#additionalQuestions").text($("#instructions_additionalQuestions_sp").val());
-		$("#formTitle").text($("#formNameHeader_sp").val());
-	}
-
-    setLanguageForButtons();
-}
-
 // Calculate score is intentionally left empty
 // for this form
 function calculateScore() {

@@ -147,6 +147,68 @@ function setLanguageFromForm(patientName, birthdate) {
     changePage(1);
 }
 
+// Sets english variable, title, instructions, and buttons text
+function setLanguage(patientName, birthdate) {
+	
+	setEnglish();
+	
+	setTitleText();
+	
+	setAdditionalQuestionsText();
+	
+	setInstructionsText();
+
+    setLanguageForButtons();
+}
+
+// Changes value of the english variable
+function setEnglish()
+{
+	english = !english;
+}
+
+// Toggles the instructions between English/Spanish
+// by changing the text for the "additionalQuestions" element
+function setAdditionalQuestionsText()
+{
+	if(english){
+		$("#additionalQuestions").text($("#instructions_additionalQuestions").val());
+	}
+	else{
+		$("#additionalQuestions").text($("#instructions_additionalQuestions_sp").val());
+	}
+}
+
+// Toggles the instructions between English/Spanish
+// by changing the text for the "instructions" element
+// NOTE: This element is not required, so we'll check to see if it exists
+// on the page before attempting to change the text
+function setInstructionsText()
+{
+	// Check to see if the section exists
+	if($("#instructions").length)
+	{
+		if(english){
+			$("#instructions").text($("#instructions_part2").val());
+		}
+		else{
+			$("#instructions").text($("#instructions_part2_sp").val());
+		}
+	}
+}
+
+// Toggles the form header between English/Spanish
+// by changing the text for the "formTitle" element
+function setTitleText()
+{
+	if(english){
+		$("#formTitle").text($("#formNameHeader").val());
+	}
+	else{
+		$("#formTitle").text($("#formNameHeader_sp").val());
+	}
+}
+
 // This function must be called after the setLanguage() function in the eJIT .js
 // This sets the text for the English/Spanish and Staff buttons
 function setLanguageForButtons()
