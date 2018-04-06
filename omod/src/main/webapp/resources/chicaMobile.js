@@ -156,7 +156,7 @@ function setLanguage(patientName, birthdate) {
 	
 	setAdditionalQuestionsText();
 	
-	setInstructionsText();
+	setInstructionsHTML();
 
     setLanguageForButtons();
 }
@@ -183,7 +183,7 @@ function setAdditionalQuestionsText()
 // by changing the text for the "instructions" element
 // NOTE: This element is not required, so we'll check to see if it exists
 // on the page before attempting to change the text
-function setInstructionsText()
+function setInstructionsHTML()
 {
 	// Check to see if the section exists
 	if($("#instructions").length)
