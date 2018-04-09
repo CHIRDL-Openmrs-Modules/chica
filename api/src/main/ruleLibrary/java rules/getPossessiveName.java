@@ -3,6 +3,7 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -65,7 +66,7 @@ public class getPossessiveName implements Rule {
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		String firstName = patient.getGivenName();
 		
-		if(firstName == null)
+		if(StringUtils.isBlank(firstName))
 		{
 			return Result.emptyResult();
 		}
