@@ -131,7 +131,7 @@
             <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script> insertChoices("${QNumber}");</script></div>
+            <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
             
             <c:set var="QNumber" value="2" />
             <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />

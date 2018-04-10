@@ -203,6 +203,14 @@ function areAllQuestionsAnswered() {
 	return true;
 }
 
+function isSpanishQuestion(questionNumber){
+	var spanishExtension = "_2";
+	
+	if (questionNumber.length <= spanishExtension.length){
+		return false;
+	}
+	return (questionNumber.lastIndexOf(spanishExtension) == (questionNumber.length - spanishExtension.length));
+}
 
 function insertChoices(questionNumber){
 	
@@ -214,6 +222,14 @@ function insertChoices(questionNumber){
 	var choiceUsually = "Usually";
 	var choiceAlways = "Always";
 	
+	if (isSpanishQuestion(questionNumber)){
+		 choiceNever = "Never";
+		 choiceRarely = "Rarely";
+		 choiceSometimes = "Sometimes";
+		 choiceOften = "Often";
+		 choiceUsually = "Usually";
+		 choiceAlways = "Always";
+	}
 	
 	fieldSetElement = $(document.createElement("fieldset"));
 	fieldSetElement.attr({
