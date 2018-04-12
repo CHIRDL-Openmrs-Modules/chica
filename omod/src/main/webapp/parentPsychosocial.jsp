@@ -29,7 +29,7 @@
 	<c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
 
 	<!-- Titles/Headers/Footers/Buttons/Copyright  -->
-	<c:set var="formName" value="Parent Psychosocial Questionnaire:"/>
+	<c:set var="formName" value="Parent Psychosocial Questionnaire"/>
 	<c:set var="formName_sp" value="Parent Psychosocial Questionnaire:(SPANISH)"/>
 	<c:set var="formNameHeader" value="${formName}:"/>
 	<c:set var="formNameHeader_sp" value="${formName_sp}:"/>
