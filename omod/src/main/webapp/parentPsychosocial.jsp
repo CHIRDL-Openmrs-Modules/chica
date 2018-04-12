@@ -30,25 +30,25 @@
 
 	<!-- Titles/Headers/Footers/Buttons/Copyright  -->
 	<c:set var="formName" value="Parent Psychosocial Questionnaire"/>
-	<c:set var="formName_sp" value="Parent Psychosocial Questionnaire:(SPANISH)"/>
+	<c:set var="formName_sp" value="Parent Psychosocial Questionnaire(SPANISH)"/>
 	<c:set var="formNameHeader" value="${formName}:"/>
 	<c:set var="formNameHeader_sp" value="${formName_sp}:"/>
 	<input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	<c:set var="prefix" value="ParentPsychosocialQuestionEntry_" />
 
-	<c:set var="instructions_additionalQuestions" value="The following are some additional Parent Psychosocial questions ." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional Parent Psychosocial questions ." />
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions regarding parent${apostrophe}s psychosocial behavior." />
+	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions regarding parent${apostrophe}s psychosocial behavior." />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='In the past four weeks, did you worry that your household would not have enough food${questionMark}' scope="request"/>
-	<c:set var="question2"  value='Do you ever have trouble getting to clinic due to not having a ride or someone to drive${questionMark}' scope="request"/>
+	<c:set var="question2"  value='Do you ever have trouble getting to the clinic due to not having a ride or someone to drive${questionMark}' scope="request"/>
 	<c:set var="question3"  value='Have you changed or lost your job since the last visit${questionMark}' scope="request"/>
 	<c:set var="question4"  value='Have you lost or changed insurance coverage since the last visit${questionMark}' scope="request"/>
 	<c:set var="question5"  value='Are there any concerns or problems our social worker can help you with today${questionMark}' scope="request"/>
 	<c:set var="question6"  value='Are there any concerns or problems our dietician can help you with today${questionMark}' scope="request"/>
 	<c:set var="question8"  value='Would you like to schedule a separate appointment with a dietician${questionMark}' scope="request"/>
-	<c:set var="question7"  value='Are there any concerns or problems a diabetes educator can help you with${questionMark}' scope="request"/>
+	<c:set var="question7"  value='Are there any concerns or problems a diabetes educator can help you with today${questionMark}' scope="request"/>
 	<c:set var="question9"  value='Would you like to schedule a separate appointment with a diabetes educator${questionMark}' scope="request"/>
 
 	<!-- Questions (Spanish) -->
@@ -102,7 +102,7 @@
 
 <div data-role="page" id="form_completed_page" data-theme="b">
     <div data-role="header" >
-        <h1>${formName} Form Completed</h1>
+        <h1>${formNameHeader} Form Completed</h1>
     </div>
     <div data-role="content" style="margin: 0 auto;text-align: center;" >
         <strong><span>The Parent Psychosocial form has already been completed and successfully submitted.  It cannot be accessed again.</span></strong>
@@ -149,7 +149,7 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 			
 	    </div>
-	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">.
+	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 			<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Next</a>
 	    </div>
 	</div>
@@ -228,7 +228,7 @@
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 			
 	    </div>
-	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">.
+	    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 			<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(2)" style="width: 150px;">Proximo</a>
 	    </div>
 	</div>
