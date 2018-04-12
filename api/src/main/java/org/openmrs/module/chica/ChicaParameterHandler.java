@@ -15,7 +15,6 @@ import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
-import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -33,21 +32,19 @@ public class ChicaParameterHandler implements ParameterHandler
 	/**
 	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map)
 	 */
-	public void addParameters(Map<String, Object> parameters)
+	public void addParameters(Map<String, Object> parameters, String formType)
 	{
 		FormInstance formInstance = (FormInstance) parameters.get(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
-		if (formInstance == null)
+		if (formInstance == null || StringUtils.isBlank(formType)) // CHICA-1234 Check formType before continuing
 		{
 			return;
 		}
 		
 		LogicService logicService = Context.getLogicService();
 		FormDatasource formDatasource = (FormDatasource) logicService
-				.getLogicDataSource("form");
+				.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_FORM);
 		HashMap<String,Field> fieldMap = formDatasource.getFormFields(formInstance);
 
-		String formType = Util.getFormType(formInstance.getFormId(), 
-			(Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
 		if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPSFParameters(parameters,fieldMap);
@@ -56,30 +53,21 @@ public class ChicaParameterHandler implements ParameterHandler
 		if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPWSParameters(parameters,fieldMap);
-		}
-		
-		if (StringUtils.isBlank(formType)) {
-			log.info("A valid formType was not provided to the CHICA system for Form ID: " + formInstance.getFormId() 
-					+ ", Location ID: "+formInstance.getLocationId() + " " + "and Location Tag ID: " + 
-					(Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID) + ".");
-			return;
 		}
 	}
 	
 	/**
 	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map, java.util.Map)
 	 */
-    public void addParameters(Map<String, Object> parameters, Map<String, Field> fieldMap) 
+    public void addParameters(Map<String, Object> parameters, Map<String, Field> fieldMap, String formType) 
     {
     	FormInstance formInstance = (FormInstance) parameters.get(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
 
-		if (formInstance == null)
+		if (formInstance == null || StringUtils.isBlank(formType)) // CHICA-1234 Check for formType before continuing
 		{
 			return;
 		}
 		
-		String formType = Util.getFormType(formInstance.getFormId(), 
-			(Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
 		if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPSFParameters(parameters,fieldMap);
@@ -88,13 +76,6 @@ public class ChicaParameterHandler implements ParameterHandler
 		if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPWSParameters(parameters,fieldMap);
-		}
-		
-		if (StringUtils.isBlank(formType)) {
-			log.info("A valid formType was not provided to the CHICA system for Form ID: " + formInstance.getFormId() 
-					+ ", Location ID: "+formInstance.getLocationId() + " " + "and Location Tag ID: " 
-					+ (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID) + ".");
-			return;
 		}
     }
 
