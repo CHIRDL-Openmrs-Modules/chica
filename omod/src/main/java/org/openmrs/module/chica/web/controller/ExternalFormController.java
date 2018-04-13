@@ -130,7 +130,8 @@ public class ExternalFormController {
 	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
 		
     	Map<String, Object> map = new HashMap<String, Object>();
-    	
+		map.put(ChirdlUtilConstants.PARAMETER_FORM_TIME_LIMIT, (Util.getFormTimeLimit())*24);
+
     	String vendorStr = request.getParameter(ChirdlUtilConstants.PARAMETER_VENDOR);
     	map.put(ChirdlUtilConstants.PARAMETER_VENDOR, vendorStr);
     	if (StringUtils.isBlank(vendorStr)) {
@@ -239,7 +240,6 @@ public class ExternalFormController {
 			return new ModelAndView(ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER, map);
 		}
  	
-		map.put(ChirdlUtilConstants.PARAMETER_FORM_TIME_LIMIT, (Util.getFormTimeLimit())*24);
 		
 		FormInstanceTag tag = getFormInstanceInfo(encounter.getEncounterId(), form.getFormId(), startState.getStateId(), 
 			endState.getStateId(), backportsService);
