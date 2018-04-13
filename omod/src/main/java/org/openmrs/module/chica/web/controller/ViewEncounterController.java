@@ -442,7 +442,7 @@ public class ViewEncounterController {
 								String formType = formTypeMap.get(formId);
 								if(formType == null)
 								{
-									formType = org.openmrs.module.chica.util.Util.getFormType(formId, locationTagId, locationId);
+									formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formId, locationTagId, locationId);
 								}
 
 								// Get endState name from the form attribute

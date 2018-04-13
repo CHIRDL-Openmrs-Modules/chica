@@ -718,11 +718,12 @@ public class DynamicFormAccess {
 		//run all the consume rules
 		Integer formInstanceId = formInstance.getFormInstanceId();
 		String formName = form.getName();
+		String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(form.getFormId(), locationTagId, locationId); // CHICA-1234 Look up the formType
 		for (LinkedHashMap<String, Rule> rulesToRun : rulesToRunByField.values()) {
 			for (String currRuleName : rulesToRun.keySet()) {
 				Rule rule = rulesToRun.get(currRuleName);
 				Map<String, Object> parameters = rule.getParameters();
-				parameterHandler.addParameters(parameters, fieldMap);
+				parameterHandler.addParameters(parameters, fieldMap, formType); // CHICA-1234 Added formType parameter
 				atdService.evaluateRule(currRuleName, patient, parameters);
 				setScannedTimestamps(formInstanceId, rule.getRuleId(), formName, locationId);
 			}
