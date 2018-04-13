@@ -102,10 +102,10 @@
 
 <div data-role="page" id="form_completed_page" data-theme="b">
     <div data-role="header" >
-        <h1>${formNameHeader} Form Completed</h1>
+        <h1>${formName} Form Completed</h1>
     </div>
     <div data-role="content" style="margin: 0 auto;text-align: center;" >
-        <strong><span>The Parent Psychosocial form has already been completed and successfully submitted.  It cannot be accessed again.</span></strong>
+        <strong><span>The ${formName} form has already been completed and successfully submitted. It cannot be accessed again.</span></strong>
     </div>
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a href="#" data-inline="true" data-theme="b" data-role="button" data-rel="back" style="width: 150px;">Back</a>
