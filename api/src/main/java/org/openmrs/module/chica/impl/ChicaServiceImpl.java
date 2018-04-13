@@ -164,7 +164,7 @@ public class ChicaServiceImpl implements ChicaService
 			if (fieldsToConsume == null)
 			{
 				fieldsToConsume = new ArrayList<FormField>();
-				String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+				String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 				
 				for (FormField currField : databaseForm.getOrderedFormFields())
 				{
@@ -356,7 +356,7 @@ public class ChicaServiceImpl implements ChicaService
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 		Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
-		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+		String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 
 		for (FormField currField : formFieldsToSave)
 		{
