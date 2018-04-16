@@ -7,7 +7,7 @@
          </div>
          <div class="force-print-forms-server-error">
              <div class="force-print-forms-server-error-text ui-state-error"></div>
-             <br/><br/><a href="#" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
+             <br/><br/><a href="#" id="force-print-retry-button" class="force-print-retry-button force-print-icon-button ui-state-default ui-corner-all">Retry</a>
          </div>
          <div class="force-print-no-forms force-print-black-text">
              There are no available handouts.

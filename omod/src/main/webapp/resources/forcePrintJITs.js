@@ -5,54 +5,19 @@ $(function() {
 	$(".force-print-no-forms").hide();
 	isChromeSafari = forcePrint_checkForChromeSafari();
 
-	$(".force-print-retry-button").button();
-	$(".force-print-retry-button").click(function(event) {
-		forcePrint_loadForms();
-		event.preventDefault();
-	});
-	
+	$("#force-print-retry-button").button();
+    $("#force-print-retry-button").click(function(){
+		$(".force-print-button-panel").show();
+		$(".force-print-forms-server-error").hide();
+        forcePrint_createForm();
+    });
+   	
     $("#force-print-create-forms-button").button();
-    $("#force-print-create-forms-button").click(function() {
-    	var selectedForms = forcePrint_getSelectedForms();
-    	if (selectedForms.length === 0) {
-    		$("#force-print-no-force-prints-dialog").dialog("open");
-    	} else {
-    		var pdfCount = 0;
-    		var teleformCount = 0;
-    		var index;
-    		var teleformForms = "";
-    		var outputTypes = forcePrint_getSelectedFormsOutputTypes();
-    		for (index = 0; index < outputTypes.length; index++) {
-    			var outputType = outputTypes[index][0];
-    			outputType = outputType.toLowerCase();
-    			var pdfPos = outputType.indexOf("pdf");
-    			var teleformPos = outputType.indexOf("teleformxml");
-    			if (pdfPos >= 0) {
-    				pdfCount++;
-    			}
-    			
-    			if (teleformPos >= 0) {
-    				teleformCount++;
-    				if (teleformForms.length > 0) {
-    					teleformForms += ", ";
-    				}
-    				
-    				teleformForms += outputTypes[index][1];
-    			}
-    		}
-    		
-    		if (teleformCount > 0) { // CHICA-962 Display this message even if the only form selected is a teleform file
-    			$(".force-print-form-container").hide();
-    			var message = "<p>The following " + (teleformCount > 1 ? 'forms' : 'form') + " will be automatically sent to the printer and will not be displayed here: " + 
-    				teleformForms + "</p>";
-    			$("#force-print-multiple-output-types-result-div").html(message);
-    			$("#force-print-multiple-output-types-dialog").dialog("open");
-    		} else {
-    			forcePrint_loadForm();
-    		}
-    	}
+    $("#force-print-create-forms-button").click(function(){
+        forcePrint_createForm();
     });
     
+
     $("#force-print-dialog").dialog({
         open: function() { 
         	$(".force-print-form-container").hide();
@@ -501,3 +466,43 @@ function togglePrintJITs() {
 	}
 }
 
+function forcePrint_createForm() {
+    	var selectedForms = forcePrint_getSelectedForms();
+    	if (selectedForms.length === 0) {
+    		$("#force-print-no-force-prints-dialog").dialog("open");
+    	} else {
+    		var pdfCount = 0;
+    		var teleformCount = 0;
+    		var index;
+    		var teleformForms = "";
+    		var outputTypes = forcePrint_getSelectedFormsOutputTypes();
+    		for (index = 0; index < outputTypes.length; index++) {
+    			var outputType = outputTypes[index][0];
+    			outputType = outputType.toLowerCase();
+    			var pdfPos = outputType.indexOf("pdf");
+    			var teleformPos = outputType.indexOf("teleformxml");
+    			if (pdfPos >= 0) {
+    				pdfCount++;
+    			}
+    			
+    			if (teleformPos >= 0) {
+    				teleformCount++;
+    				if (teleformForms.length > 0) {
+    					teleformForms += ", ";
+    				}
+    				
+    				teleformForms += outputTypes[index][1];
+    			}
+    		}
+    		
+    		if (teleformCount > 0) { // CHICA-962 Display this message even if the only form selected is a teleform file
+    			$(".force-print-form-container").hide();
+    			var message = "<p>The following " + (teleformCount > 1 ? 'forms' : 'form') + " will be automatically sent to the printer and will not be displayed here: " + 
+    				teleformForms + "</p>";
+    			$("#force-print-multiple-output-types-result-div").html(message);
+    			$("#force-print-multiple-output-types-dialog").dialog("open");
+    		} else {
+    			forcePrint_loadForm();
+    		}
+		}
+}
