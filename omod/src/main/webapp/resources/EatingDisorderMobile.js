@@ -87,18 +87,15 @@ function setLanguage(patientName, birthdate) {
 	var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
     var vitalsButtonText = "Staff";
- 
     var instructions = "<p> Please choose the option that best describes your eating habits.</p>"; 
     
-    //Need spanish translation
+   /*-----Need Spanish Translation----*/
     if (!english) {
-    	
     	formTitleText = "";
         langButtonText = "English"; 
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";    
-        instructions = "<p></p>";
-         
+        instructions = "<p> Please choose the option that best describes your eating habits.</p>"; 
 	}
     
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
@@ -188,11 +185,25 @@ function handleFinishFormError() {
 	}
 }
 
-
+function setQuestionCheckboxes(initialName, newName) {
+	// Determine if any of the radio buttons in the group are selected
+	// If so, select the English/Spanish version
+	if($("input[name='" + initialName + "']").is(':checked')) {
+		var selectedValue = $("input[name='" + initialName + "']:checked").val();
+		
+		// Select the radio button by name and value
+		$("input[name='" + newName + "'][value='" + selectedValue + "']").prop("checked",true);
+		$("input[name='" + initialName + "'][value='" + selectedValue + "']").prop("checked",false);
+		$("input[name='" + newName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
+		$("input[name='" + initialName + "'][value='" + selectedValue + "']").checkboxradio('refresh');
+	}
+}
 
 function areAllQuestionsAnswered() {
-	
-	
+	var spanishExtension = "_2";
+	if (english) {
+		spanishExtension = "";
+	}
 	var questionName = "EatingDisorderQuestionEntry_";
 	for (var i = 1; i <= numberOfQuestions; i++) {
 		if(!$("input[name='" + questionName + i  + "']").is(':checked')){
@@ -222,6 +233,7 @@ function insertChoices(questionNumber){
 	var choiceUsually = "Usually";
 	var choiceAlways = "Always";
 	
+	/* ---Need Spanish Translation ----*/
 	if (isSpanishQuestion(questionNumber)){
 		 choiceNever = "Never";
 		 choiceRarely = "Rarely";
@@ -262,6 +274,9 @@ function insertChoices(questionNumber){
 
 function showBlockingMessage() {
 	var message = "Saving Answers...";
+	if (!english) {
+		message = "Ahorrar Respuestas...";
+	}
 	
 	var blockUIMessage = '<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;' + message + '</h3></td></tr></table>';
 	$.blockUI({ css: { 
