@@ -5,11 +5,17 @@ $(function() {
 	$(".force-print-no-forms").hide();
 	isChromeSafari = forcePrint_checkForChromeSafari();
 
-	$("#force-print-retry-button").button();
-    $("#force-print-retry-button").click(function(){
+	$(".force-print-retry-button").button();
+	$(".force-print-retry-button").click(function(event) {
 		$(".force-print-button-panel").show();
 		$(".force-print-forms-server-error").hide();
-        forcePrint_createForm();
+		
+		if($("#force-print-form-list li").length>0){
+        	forcePrint_createForm();
+        }else{
+        	forcePrint_loadForms();
+			event.preventDefault();
+        }
     });
    	
     $("#force-print-create-forms-button").button();
