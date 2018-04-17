@@ -134,7 +134,7 @@ public class Util {
 		
 		boolean usePrintedTimestamp = false;
 		
-		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+		String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 		if (formName != null && 
 				(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) 
 				|| formName.equalsIgnoreCase("ImmunizationSchedule")
@@ -1211,32 +1211,6 @@ public class Util {
 		return getReprintStateName(encounter, formId);
 	}
 		
-	/**
-	 * Retrieves the form type for PrimaryPatientForm and PrimaryPhysicianForm
-	 * @param formId
-	 * @param locationTagId
-	 * @param locationId
-	 * @return Form Type
-	 */
-	public static String getFormType(Integer formId, Integer locationTagId, Integer locationId) {
-		
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		FormAttributeValue primaryPatientFormfav = null;
-		FormAttributeValue primaryPhysicianFormfav = null;
-		if (formId != null && locationId != null && locationTagId != null) {
-			primaryPatientFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM, locationTagId, locationId);
-			primaryPhysicianFormfav = chirdlutilbackportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM, locationTagId, locationId);
-		}
-		if (primaryPatientFormfav != null && StringUtils.isNotBlank(primaryPatientFormfav.getValue()) && 
-				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPatientFormfav.getValue())) { 
-			return ChirdlUtilConstants.PATIENT_FORM_TYPE;
-		} else if (primaryPhysicianFormfav != null && StringUtils.isNotBlank(primaryPhysicianFormfav.getValue()) && 
-				ChirdlUtilConstants.FORM_ATTR_VAL_TRUE.equalsIgnoreCase(primaryPhysicianFormfav.getValue())) {
-			return ChirdlUtilConstants.PHYSICIAN_FORM_TYPE;
-		}
-		return null;
-	}
-	
 	/**
 	 * CHICA-1125
 	 * Returns the view encounters configuration.

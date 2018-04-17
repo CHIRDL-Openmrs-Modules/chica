@@ -58,6 +58,7 @@
                 <prop key="/module/@MODULE_ID@/MCHATRMobile.form">MCHATRMobile</prop>
                 <prop key="/module/@MODULE_ID@/TRAQMobile.form">TRAQMobile</prop>
                 <prop key="/module/@MODULE_ID@/diabetesHistory.form">diabetesHistory</prop>
+                <prop key="/module/@MODULE_ID@/parentPsychosocial.form">parentPsychosocial</prop>
                 <prop key="/module/@MODULE_ID@/EatingDisorderMobile.form">EatingDisorderMobile</prop>
             </props>
         </property>
@@ -207,12 +208,17 @@
         <property name="formView"><value>/module/@MODULE_ID@/TRAQMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
-        <bean id="diabetesHistory" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+    <bean id="diabetesHistory" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>diabetesHistoryObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/diabetesHistory</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
-        <bean id="EatingDisorderMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <bean id="parentPsychosocial" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>parentPsychosocialObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/parentPsychosocial</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="EatingDisorderMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>EatingDisorderMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/EatingDisorderMobile</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>

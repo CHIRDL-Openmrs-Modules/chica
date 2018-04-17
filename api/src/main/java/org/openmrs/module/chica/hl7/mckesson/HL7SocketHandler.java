@@ -544,6 +544,15 @@ public class HL7SocketHandler extends
 			//it was a duplicate encounter.
 			return null;
 		}
+		
+		// CHICA-1190
+		boolean newEncounterCreated = true;
+		Object newEncounterCreatedObject = parameters.get(ChirdlUtilConstants.PARAMETER_NEW_ENCOUNTER_CREATED);
+		if(newEncounterCreatedObject != null && newEncounterCreatedObject instanceof Boolean)
+		{
+			newEncounterCreated = (boolean)newEncounterCreatedObject;
+		}
+				
 		// store the encounter id with the session
 		Integer encounterId = encounter.getEncounterId();
 		getSession(parameters).setEncounterId(encounterId);
@@ -609,8 +618,13 @@ public class HL7SocketHandler extends
 						insuranceName = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 								.getInsuranceName(message);
 					}
-					printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
-							.getPrinterLocation(message, incomingMessageString);
+					
+					if(newEncounterCreated)
+					{
+											
+						printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
+								.getPrinterLocation(message, incomingMessageString);
+					}
 					
 					// DWE CHICA-633 Parse visit number from PV1-19 if this is not IUH
 					// MES CHICA-795 Use global property for parsing visit number
@@ -664,7 +678,20 @@ public class HL7SocketHandler extends
 		chicaEncounter.setInsurancePlanCode(planCode);
 		chicaEncounter.setInsuranceCarrierCode(carrierCode);
 		chicaEncounter.setScheduledTime(appointmentTime);
-		chicaEncounter.setPrinterLocation(printerLocation);
+		
+		// Set the printer location only if this is a new encounter, we don't want to potentially change the printer location
+		// after registration is already complete and the tablet has already been handed out
+		if(newEncounterCreated) 
+		{
+			chicaEncounter.setPrinterLocation(printerLocation);
+		}
+		else
+		{
+			// Use the existing printer location
+			// Note: This really shouldn't be needed at this point, but setting it just
+			// in case similar A10 and A04 functionality is implemented at IUH
+			printerLocation = chicaEncounter.getPrinterLocation();
+		}
 
 		Location location = null;
 
