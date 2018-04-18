@@ -651,7 +651,7 @@ function parsePatientList(responseXML) {
 										'<option value="unselected">Options</option>' +
 										'<option>Encounters</option>' +
 										'<option>Print JITS</option>' +
-										'<option>Print Pre-Screener</option>' +
+										'<option value="Print Pre-Screener">Create Pre-Screener</option>' +
 										'<option>Print Physician Worksheet</option>' +
 										'<option>ADHD WU</option>' +
 									'</select>' +
