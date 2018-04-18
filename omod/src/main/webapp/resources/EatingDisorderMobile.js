@@ -83,7 +83,7 @@ function setLanguage(patientName, birthdate) {
 	
 	//Strings with spanish characters need hex code
 	//HTML with spanish characters can use HTML codes
-	var formTitleText = "Eating Habits";
+	var formTitleText = "Eating Habits Questionnaire";
 	var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
     var vitalsButtonText = "Staff";
@@ -91,11 +91,11 @@ function setLanguage(patientName, birthdate) {
     
    /*-----Need Spanish Translation----*/
     if (!english) {
-    	formTitleText = "";
+    	formTitleText = "Eating Habits Questionnaire(SPANISH)";
         langButtonText = "English"; 
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";    
-        instructions = "<p> Please choose the option that best describes your eating habits.</p>"; 
+        instructions = "<p> Please choose the option that best describes your eating habits.(SPANISH)</p>"; 
 	}
     
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
@@ -206,7 +206,8 @@ function areAllQuestionsAnswered() {
 	}
 	var questionName = "EatingDisorderQuestionEntry_";
 	for (var i = 1; i <= numberOfQuestions; i++) {
-		if(!$("input[name='" + questionName + i  + "']").is(':checked')){
+		
+		if(!$("input[name='" + questionName + i + spanishExtension + "']").is(':checked')){
 		   return false;
 		}
 	}
@@ -235,12 +236,12 @@ function insertChoices(questionNumber){
 	
 	/* ---Need Spanish Translation ----*/
 	if (isSpanishQuestion(questionNumber)){
-		 choiceNever = "Never";
-		 choiceRarely = "Rarely";
-		 choiceSometimes = "Sometimes";
-		 choiceOften = "Often";
-		 choiceUsually = "Usually";
-		 choiceAlways = "Always";
+		 choiceNever = "Never(SPANISH)";
+		 choiceRarely = "Rarely(SPANISH)";
+		 choiceSometimes = "Sometimes(SPANISH)";
+		 choiceOften = "Often(SPANISH)";
+		 choiceUsually = "Usually(SPANISH)";
+		 choiceAlways = "Always(SPANISH)";
 	}
 	
 	fieldSetElement = $(document.createElement("fieldset"));

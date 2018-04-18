@@ -35,6 +35,7 @@
 <!-- Titles/Headers/Footers/Buttons/Copyright  -->
 <c:set var="formName" value='Eating Habits Questionnaire'/>
 <!--  Spanish translation for form name is not available-->
+<c:set var="formName_sp" value='Eating Habits Questionnaire (SPANISH)'/>
 
 <c:set var="staffButtonText" value="Staff"/>
 <c:set var="staffButtonText_sp" value="Personal"/>
@@ -60,22 +61,22 @@
 <!-- Questions (Spanish) -->
 <!-- Currently not available-->
 <!-- Created Spanish question vars and filled with English until Spanish is available. -->
-<c:set var="question1_2"  value='Losing weight is an important goal to me.' scope="request"/>
-<c:set var="question2_2"  value='I skip meals and${slash} or snacks.' scope="request"/>
-<c:set var="question3_2"  value='Other people have told me that my eating is out of control.' scope="request"/>
-<c:set var="question4_2"  value='When I overeat${comma} I don${apostrophe}t take enough insulin to cover the food.' scope="request"/>
-<c:set var="question5_2"  value='I eat more when I am alone than when I am with others.' scope="request" />
-<c:set var="question6_2"  value='I feel that it${apostrophe}s difficult to lose weight and control my diabetes at the same time.' scope="request" />
-<c:set var="question7_2"  value='I avoid checking my blood sugar when I feel like it is out of range.' scope="request"/>
-<c:set var="question8_2"  value='I make myself vomit.' scope="request"/>
-<c:set var="question9_2"  value='I try to keep my blood sugar high so that I will lose weight.' scope="request"/>
-<c:set var="question10_2" value='I try to eat to the point of spilling ketones in my urine.' scope="request"/>
-<c:set var="question11_2" value='I feel fat when I take all of my insulin.' scope="request"/>
-<c:set var="question12_2" value='Other people tell me to take better care of my diabetes.' scope="request"/>
-<c:set var="question13_2" value='After I overeat${comma} I skip my next insulin dose.' scope="request"/>
-<c:set var="question14_2" value='I feel that my eating is out of control.' scope="request"/>
-<c:set var="question15_2" value='I alternate between eating very little and eating huge amounts.' scope="request"/>
-<c:set var="question16_2" value='I would rather be thin than to have good control of my diabetes.' scope="request"/>
+<c:set var="question1_2"  value='${invQuestionMark}Question1 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question2_2"  value='${invQuestionMark}Question2 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question3_2"  value='${invQuestionMark}Question3 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question4_2"  value='${invQuestionMark}Question4 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question5_2"  value='${invQuestionMark}Question5 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question6_2"  value='${invQuestionMark}Question6 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question7_2"  value='${invQuestionMark}Question7 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question8_2"  value='${invQuestionMark}Question8 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question9_2"  value='${invQuestionMark}Question9 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question10_2" value='${invQuestionMark}Question10 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question11_2" value='${invQuestionMark}Question11 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question12_2" value='${invQuestionMark}Question12 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question13_2" value='${invQuestionMark}Question13 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question14_2" value='${invQuestionMark}Question14 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question15_2" value='${invQuestionMark}Question15 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question16_2" value='${invQuestionMark}Question16 (SPANISH)${questionMark}' scope="request"/>
 
 
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
@@ -95,24 +96,23 @@
     
     
 <!-- Instructions/Start page -->
-    <div data-role="page" id="instruction_page" data-theme="b">
-        <div data-role="header">
-            <h1 id="formTitle">${formName}</h1>
-            <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
-        </div>
-        
-        <div data-role="content" id="addition">
-            <strong><span id="instructions"></span></strong>
-        </div>
-    
-        <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-            <a id="startButton" href="#" data-role="button" data-theme="b" onclick="changePage(1)" style="width: 150px;">Start</a>
-        </div>
-    
+ <div data-role="page" id="instruction_page" data-theme="b">
+    <div data-role="header" >
+        <h1 id="formTitle">${formName}</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+    </div>
+    <div data-role="content" id="informationContent">
+        <strong><span id="instructions"></span></strong>
+        <div><br/></div>
+    </div>
+
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a id="startButton" href="#" data-role="button" data-theme="b" onclick="changePage(1)" style="width: 150px;">Start</a>
     </div>
     
+</div>
     
 <!-- Form pages (English) - two questions per page -->  
     <c:set var="PNumber" value="1" />
@@ -126,7 +126,6 @@
         
         <div id="content_${PNumber}" data-role="content">
         
-           
             <c:set var="QNumber" value="1" />
             <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
@@ -371,10 +370,10 @@
         <div data-role="header">
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-            <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
+            <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
             <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
         </div>        
-           
+           <div id="content_${PNumber}" data-role="content">
             <c:set var="QNumber" value="1_2" />
             <input id="EatingDisorderQuestion_${QNumber}" name="EatingDisorderQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
@@ -390,9 +389,10 @@
             <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
         </div>
         <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Next</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Proximo</a>
         </div>
     </div>
+    
 
     <c:set var="PNumber" value="2" />
     <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
@@ -587,7 +587,7 @@
         </div>
     </div>
 
-<c:set var="PNumber" value="8" />
+    <c:set var="PNumber" value="8" />
     <div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
         <div data-role="header" >
             <h1>${formName_sp}</h1>
@@ -613,10 +613,11 @@
             <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
             
             <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+            <%@ include file="mobileFinishDialogs_SP.jsp" %>
         </div>
         <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
             <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
-            <a href="#" onclick="attemptFinishForm()" data-role="button" data-inline="true" data-theme="b" style="width: 150px;">Continuar</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continuar</a>
         </div>
     </div>
     
