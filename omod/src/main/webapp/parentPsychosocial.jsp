@@ -37,19 +37,17 @@
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	<c:set var="prefix" value="ParentPsychosocialQuestionEntry_" />
 
-	<c:set var="instructions_additionalQuestions" value="The following are some additional questions regarding parent${apostrophe}s psychosocial behavior." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions regarding parent${apostrophe}s psychosocial behavior." />
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Please hand tablet to the parent/caregiver." />
+	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions for your parent. Please hand them the tablet." />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='In the past four weeks, did you worry that your household would not have enough food${questionMark}' scope="request"/>
 	<c:set var="question2"  value='Do you ever have trouble getting to the clinic due to not having a ride or someone to drive${questionMark}' scope="request"/>
 	<c:set var="question3"  value='Have you changed or lost your job since the last visit${questionMark}' scope="request"/>
 	<c:set var="question4"  value='Have you lost or changed insurance coverage since the last visit${questionMark}' scope="request"/>
-	<c:set var="question5"  value='Are there any concerns or problems our social worker can help you with today${questionMark}' scope="request"/>
-	<c:set var="question6"  value='Are there any concerns or problems our dietician can help you with today${questionMark}' scope="request"/>
-	<c:set var="question8"  value='Would you like to schedule a separate appointment with a dietician${questionMark}' scope="request"/>
-	<c:set var="question7"  value='Are there any concerns or problems a diabetes educator can help you with today${questionMark}' scope="request"/>
-	<c:set var="question9"  value='Would you like to schedule a separate appointment with a diabetes educator${questionMark}' scope="request"/>
+	<c:set var="question5"  value='Are there any concerns or problems our social worker can help you with${questionMark}' scope="request"/>
+	<c:set var="question6"  value='Are there any concerns or problems our dietician can help you with${questionMark}' scope="request"/>
+	<c:set var="question7"  value='Are there any concerns or problems a diabetes educator can help you with${questionMark}' scope="request"/>
 
 	<!-- Questions (Spanish) -->
 	<c:set var="question1_2"  value='${invQuestionMark} ${questionMark} one' scope="request"/>
@@ -58,9 +56,7 @@
 	<c:set var="question4_2"  value='${invQuestionMark} ${questionMark} four' scope="request"/>
 	<c:set var="question5_2"  value='${invQuestionMark} ${questionMark} five' scope="request"/>
 	<c:set var="question6_2"  value='${invQuestionMark} ${questionMark} six' scope="request"/>
-	<c:set var="question8_2"  value='${invQuestionMark} ${questionMark} eight' scope="request"/>
 	<c:set var="question7_2"  value='${invQuestionMark} ${questionMark} seven' scope="request"/>
-	<c:set var="question9_2"  value='${invQuestionMark} ${questionMark} nine' scope="request"/>
 	
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
@@ -168,22 +164,10 @@
 	        <strong>${question6}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question6}")'></a>
 	        <div class="choice_6" data-role="fieldcontain" style="margin-top:0px;"><script>insertYesNo("${prefix}", "6", false);</script></div>
 			
-			<div id="question_8_container">
-				<input id="ParentPsycoSocialQuestion_8" name="ParentPsycoSocialQuestion_8" type="hidden" value="${question8}" />
-				<strong>${question8}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question8}")'></a>
-				<div class="choice_8" data-role="fieldcontain" style="margin-top:0px;"><script>insertYesNo("${prefix}", "8", false);</script></div>
-			</div>
-			
 			<input id="ParentPsycoSocialQuestion_7" name="ParentPsycoSocialQuestion_7" type="hidden" value="${question7}" />
 	        <strong>${question7}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question7}")'></a>
 	        <div class="choice_7" data-role="fieldcontain" style="margin-top:0px;"><script>insertYesNo("${prefix}", "7", false);</script></div>
 			
-			<div id="question_9_container">
-				<input id="ParentPsycoSocialQuestion_9" name="ParentPsycoSocialQuestion_9" type="hidden" value="${question9}" />
-				<strong>${question9}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question9}")'></a>
-				<div class="choice_9" data-role="fieldcontain" style="margin-top:0px;"><script>insertYesNo("${prefix}", "9", false);</script></div>
-			</div>
-        
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 			<%@ include file="mobileFinishDialogs.jsp" %>
 	    </div>
@@ -247,24 +231,9 @@
 	        <strong>${question6_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question6_2}")'></a>
 	        <div class="choice_6_2" data-role="fieldcontain" style="margin-top:0px;"><script> insertYesNo("${prefix}", "6", true);</script></div>
 
-			<div id="question_8_container_sp">
-				<br/>
-				<input id="ParentPsycoSocialQuestion_8_2" name="ParentPsycoSocialQuestion_8_2" type="hidden" value="${question8_2}" />
-				<strong>${question8_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question8_2}")'></a>
-				<div class="choice_8_2" data-role="fieldcontain" style="margin-top:0px;"><script> insertYesNo("${prefix}", "8", true);</script></div>
-			</div>
-
 	        <input id="ParentPsycoSocialQuestion_7_2" name="ParentPsycoSocialQuestion_7_2" type="hidden" value="${question7_2}" />
 			<strong>${question7_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question7_2}")'></a>
 			<div class="choice_7_2" data-role="fieldcontain" style="margin-top:0px;"><script> insertYesNo("${prefix}", "7", true);</script></div>
-			
-			<c:set var="QNumber" value="9_2" />			
-			<div id="question_9_container_sp">
-				<br/>
-				<input id="ParentPsycoSocialQuestion_9_2" name="ParentPsycoSocialQuestion_9_2" type="hidden" value="${question9_2}" />
-				<strong>${question9_2}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("${question9_2}")'></a>
-				<div class="choice_9_2" data-role="fieldcontain" style="margin-top:0px;"><script> insertYesNo("${prefix}", "9", true);</script></div>
-			</div>
         
 	        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 			

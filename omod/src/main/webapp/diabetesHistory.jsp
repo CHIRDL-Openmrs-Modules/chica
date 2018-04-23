@@ -209,7 +209,7 @@
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
-						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month</label>
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month but less than once a week</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
@@ -235,7 +235,7 @@
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
-						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month</label>
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month but less than once a week</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
@@ -433,7 +433,7 @@
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week(SP)</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
-						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month(SP)</label>
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month but less than once a week(SP)</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month(SP)</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
@@ -459,7 +459,7 @@
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_WEEK" value="2" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_WEEK">About once a week(SP)</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
-						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month(SP)</label>
+						<label for="DiabetesHistory_${QNumber}_MORE_THAN_ONCE_MONTH">More than once a month but less than once a week(SP)</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_ONCE_A_MONTH" value="4" data-theme="b" />
 						<label for="DiabetesHistory_${QNumber}_ONCE_A_MONTH">About once a month(SP)</label>
 						<input type="radio" name="DiabetesHistory_${QNumber}" id="DiabetesHistory_${QNumber}_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
