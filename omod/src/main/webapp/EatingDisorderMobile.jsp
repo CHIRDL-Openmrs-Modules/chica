@@ -82,7 +82,7 @@
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
 
 <form id="EatingDisorderForm" method="POST" action="EatingDisorderMobile.form" method="post" enctype="multipart/form-data">
-    <c:if test="${c != null}">
+    <c:if test="${errorMessage != null}">
         <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false"
             data-theme="b" data-overlay-theme="c">
             <div data-role="header" data-theme="b"><h1>Error</h1></div>
