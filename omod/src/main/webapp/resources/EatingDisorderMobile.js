@@ -158,7 +158,7 @@ function finishForm() {
 	$("#not_finished_dialog").popup("close");
 	$("#not_finished_dialog_sp").popup("close");
 	setLanguageField();
-	interpretResults();
+	calculateScore();
 	var submitForm = $("#EatingDisorderForm"); 
 	var token = getAuthenticationToken();
     $.ajax({
@@ -292,7 +292,7 @@ function showBlockingMessage() {
     message: blockUIMessage});
 }
 //Set interpretation from eJIT answers
-function interpretResults() {
+function calculateScore() {
 
 	var answer = {};
 	answer[1] = 'losingweight';

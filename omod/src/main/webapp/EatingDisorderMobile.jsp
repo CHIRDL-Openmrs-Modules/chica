@@ -42,7 +42,7 @@
 
 <!-- Questions (English) -->
 <c:set var="question1"  value='Losing weight is an important goal to me.' scope="request"/>
-<c:set var="question2"  value='I skip meals and${slash} or snacks.' scope="request"/>
+<c:set var="question2"  value='I skip meals and${slash}or snacks.' scope="request"/>
 <c:set var="question3"  value='Other people have told me that my eating is out of control.' scope="request"/>
 <c:set var="question4"  value='When I overeat${comma} I don${apostrophe}t take enough insulin to cover the food.' scope="request"/>
 <c:set var="question5"  value='I eat more when I am alone than when I am with others.' scope="request" />
