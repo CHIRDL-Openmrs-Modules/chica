@@ -54,7 +54,7 @@
 	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about ${PossessiveFirstName} epilepsy or seizures." />
 	
 	<!-- Escape using special characters defined in the specialCharacters.jsp so that the hidden inputs can be used in the .js file to toggle between English/Spanish -->
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions about ${PossessiveFirstName} epilepsy or seizures." />
+	<c:set var="instructions_additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales sobre la epilepsia o convulsiones de ${patient.givenName}." />
 	
 	<!--  Questions (English) -->
 	<c:set var="quest1" value='How many seizures with stiffness or jerking has ${patient.givenName} had in the last 12 months?'/>
@@ -67,14 +67,14 @@
 	<c:set var="quest8" value='Do you have difficulty bringing ${patient.givenName} to the neurologist for appointments?'/>
 	
 	<!--  Questions (Spanish) -->
-	<c:set var="quest1_2" value='Spanish question 1'/>
-	<c:set var="quest2_2" value='Spanish question 2'/>
-	<c:set var="quest3_2" value='Spanish question 3'/>
-	<c:set var="quest4_2" value='Spanish question 4'/>
-	<c:set var="quest5_2" value='Spanish question 5'/>
-	<c:set var="quest6_2" value='Spanish question 6'/>
-	<c:set var="quest7_2" value='Spanish question 7'/>
-	<c:set var="quest8_2" value='Spanish question 8'/>
+	<c:set var="quest1_2" value='${invQuestionMark}Cu${aAcute}ntas convulsiones con rigidez o espasmos ha tenido ${patient.givenName} en los ${uAcute}ltimos 12 meses${questionMark}'/>
+	<c:set var="quest2_2" value='En la semana pasada, ${invQuestionMark}cu${aAcute}ntas dosis del medicamento antiepil${eAcute}ptico ha omitido ${patient.givenName}${questionMark}'/>
+	<c:set var="quest3_2" value='${invQuestionMark}Toma ${patient.givenName} su medicamento la mayor${iAcute}a de las veces${questionMark}'/>
+	<c:set var="quest4_2" value='${invQuestionMark}Olvida usted darle a ${patient.givenName} sus medicamentos${questionMark}'/>
+	<c:set var="quest5_2" value='${invQuestionMark}Se le ha terminado el medicamento de ${patient.givenName} alguna vez${questionMark}'/>
+	<c:set var="quest6_2" value='${invQuestionMark}Le resulta dif${iAcute}cil costear el medicamento de ${patient.givenName}${questionMark}'/>
+	<c:set var="quest7_2" value='${invQuestionMark}Ha visitado ${patient.givenName} al neur${oAcute}logo en los ${uAcute}ltimos 12 meses${questionMark}'/>
+	<c:set var="quest8_2" value='${invQuestionMark}Tiene usted dificultad para llevar a ${patient.givenName} a las citas m${eAcute}dicas del neur${oAcute}logo${questionMark}'/>
 	
 	<!-- Adolescent version of questions along with the instructions page text -->
 	<c:if test="${AgeInYears>=12.0}">
@@ -89,17 +89,17 @@
 			<c:set var="instructions_additionalQuestions" value="The following are some additional questions about your epilepsy or seizures." />
 			
 			<!-- Escape using special characters defined in the specialCharacters.jsp so that the hidden inputs can be used in the .js file to toggle between English/Spanish -->
-			<c:set var="quest1_2" value='Spanish question 1 - FIRST PERSON'/>
-			<c:set var="quest2_2" value='Spanish question 2 - FIRST PERSON'/>
-			<c:set var="quest3_2" value='Spanish question 3 - FIRST PERSON'/>
-			<c:set var="quest4_2" value='Spanish question 4 - FIRST PERSON'/>
-			<c:set var="quest5_2" value='Spanish question 5 - FIRST PERSON'/>
-			<c:set var="quest6_2" value='Spanish question 6 - FIRST PERSON'/>
-			<c:set var="quest7_2" value='Spanish question 7 - FIRST PERSON'/>
-			<c:set var="quest8_2" value='Spanish question 8 - FIRST PERSON'/>
+			<c:set var="quest1_2" value='${invQuestionMark}Cu${aAcute}ntas convulsiones con rigidez o espasmos ha tenido usted en los ${uAcute}ltimos 12 meses${questionMark}'/>
+			<c:set var="quest2_2" value='En la semana pasada, ${invQuestionMark}cu${aAcute}ntas dosis del medicamento antiepil${eAcute}ptico ha omitido usted${questionMark}'/>
+			<c:set var="quest3_2" value='${invQuestionMark}Toma usted su medicamento la mayor${iAcute}a de las veces${questionMark}'/>
+			<c:set var="quest4_2" value='${invQuestionMark}Olvida usted tomar sus medicamentos algunas veces${questionMark}'/>
+			<c:set var="quest5_2" value='${invQuestionMark}Se le ha terminado su medicamento alguna vez${questionMark}'/>
+			<c:set var="quest6_2" value='${invQuestionMark}Es dif${iAcute}cil para su familia costear su medicamento${questionMark}'/>
+			<c:set var="quest7_2" value='${invQuestionMark}Ha visitado usted al neur${oAcute}logo en los ${uAcute}ltimos 12 meses${questionMark}'/>
+			<c:set var="quest8_2" value='${invQuestionMark}Tiene usted dificultad para ir a las citas m${eAcute}dicas del neur${oAcute}logo${questionMark}'/>
 			
 			<!-- Escape using special characters defined in the specialCharacters.jsp so that the hidden inputs can be used in the .js file to toggle between English/Spanish -->
-			<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions about your epilepsy or seizures." />
+			<c:set var="instructions_additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales sobre su epilepsia o convulsiones." />
 	</c:if>
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
