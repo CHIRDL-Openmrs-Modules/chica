@@ -79,7 +79,7 @@
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
 
-<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'DiabetesHistoryForm', 'DiabHistQuestion_', 'DiabetesHistory_', )">
+<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'DiabetesHistoryForm', 'DiabHistQuestion_', 'DiabetesHistory_')">
 <form id="DiabetesHistoryForm" method="POST" action="diabetesHistory.form" method="post" enctype="multipart/form-data">
 	<c:if test="${errorMessage != null}">
 		<div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
