@@ -167,19 +167,6 @@ $(document).on("pageinit", function() {
 	
 });
 
-function attemptFinishForm() {
-	if (areAllQuestionsAnswered()) {
-		finishForm(); 
-	} else{
-		if (english) {
-    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
-    	}
-	}
-}
-
-  
 function areAllQuestionsAnswered() {
 
 	var spanishExtension = "_2";
