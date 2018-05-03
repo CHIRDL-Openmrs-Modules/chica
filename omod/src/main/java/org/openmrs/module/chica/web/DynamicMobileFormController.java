@@ -23,6 +23,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
+import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -276,9 +277,10 @@ public class DynamicMobileFormController extends SimpleFormController {
 					Form form = Context.getFormService().getForm(formId);
 	
 					DssService dssService = Context.getService(DssService.class);
-					List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
+					List<RuleEntry> nonPriorRuleEntries = dssService.getNonPrioritizedRuleEntries(form.getName());
 					
-					for (Rule currRule : nonPriorRules) {
+					for (RuleEntry currRuleEntry : nonPriorRuleEntries) {
+						Rule currRule = currRuleEntry.getRule();
 						if (currRule.checkAgeRestrictions(patient)) {
 							currRule.setParameters(parameters);
 							dssService.runRule(patient, currRule);

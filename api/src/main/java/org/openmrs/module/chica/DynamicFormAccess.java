@@ -420,9 +420,10 @@ public class DynamicFormAccess {
 		//Process rules with null priority that have @ value in write action
 		//These rules directly write results to a specific field
 		DssService dssService = Context.getService(DssService.class);
-		List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
+		List<RuleEntry> nonPriorRuleEntries = dssService.getNonPrioritizedRuleEntries(form.getName());
 		
-		for (Rule currRule : nonPriorRules) {
+		for (RuleEntry currRuleEntry : nonPriorRuleEntries) {
+			Rule currRule = currRuleEntry.getRule();
 			if (currRule.checkAgeRestrictions(patient)) {
 				currRule.setParameters(parameters);
 				Result result = dssService.runRule(patient, currRule);
