@@ -5,7 +5,6 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a id="confirmVitalsButton" data-role="button" href="#vitals_page" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="fade">Staff</a>
     </div>
 
     <div data-role="content" >
@@ -54,7 +53,7 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a id="vitalsDirectButton" data-role="button" onclick="openVitalsConfirm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="openVitalsConfirm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div data-role="content">
         <div id="content_1"></div>
@@ -63,10 +62,10 @@
                 <h1>Staff</h1>
             </div>
             <div data-role="content">
-                <span>All answers on this page will be submitted before proceeding to the Staff page.  Are you sure you want to continue?</span>
+                <span>Please enter the passcode to continue.</span>
                 <div style="margin: 0 auto;text-align: center;">
-                    <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">Yes</a>
-                    <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
+                    <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">OK</a>
+                    <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancel</a>
                 </div>
             </div>
         </div>
@@ -104,7 +103,7 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${NewLastName}', '${patient.birthdate}')">English</a>
-        <a id="vitalsDirectButton_sp" data-role="button" onclick="openVitalsConfirmSpanish()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="openVitalsConfirmSpanish()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div data-role="content">
         <div id="content_1_sp"></div>

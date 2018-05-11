@@ -901,7 +901,7 @@
                   <div class="ui-block-a" style="height: 50px;text-align: right;padding-right:10px;">
                       <strong><span style="line-height: 50px;">RR:</span></strong>
                   </div>
-                  <div class="ui-block-b" style="height: 50px;p;">
+                  <div class="ui-block-b" style="height: 50px;">
                       <span style="line-height: 50px;"><input type="number" id="RR" name="RR"/></span>
                   </div>
                   <div class="ui-block-d" style="height: 50px;text-align: left;">

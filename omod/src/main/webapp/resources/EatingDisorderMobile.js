@@ -55,11 +55,6 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 	numberOfQuestions = $("input[id^='EatingDisorderQuestion_']").length / 2;
 
 }

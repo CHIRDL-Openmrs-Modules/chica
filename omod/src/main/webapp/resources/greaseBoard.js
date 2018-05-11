@@ -1014,9 +1014,9 @@ function test(period) {
 	
 }
 
-<!-- Idea by:  Nic Wolfe -->
-<!-- This script and many more are available free online at -->
-<!-- The JavaScript Source!! http:// javascript.internet.com -->
+/* Idea by:  Nic Wolfe */
+/* This script and many more are available free online at */
+/* The JavaScript Source!! http:// javascript.internet.com */
 function popUp(URL) {
     day = new Date();
     id = day.getTime();

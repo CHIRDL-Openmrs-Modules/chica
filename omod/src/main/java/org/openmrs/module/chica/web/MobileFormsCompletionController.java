@@ -2,12 +2,8 @@ package org.openmrs.module.chica.web;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.springframework.validation.BindException;
@@ -18,7 +14,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class MobileFormsCompletionController extends SimpleFormController {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+        private static final String PARAM_LANGUAGE = "language";
 
 	/*
 	 * (non-Javadoc)
@@ -33,8 +29,10 @@ public class MobileFormsCompletionController extends SimpleFormController {
 	@Override
 	protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object object,
 	                                             BindException errors) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		String view = getSuccessView();
+                String language = request.getParameter(PARAM_LANGUAGE);
+		map.put(PARAM_LANGUAGE, language);
 		return new ModelAndView(new RedirectView(view), map);
 	}
 	
@@ -42,7 +40,7 @@ public class MobileFormsCompletionController extends SimpleFormController {
 	protected Map referenceData(HttpServletRequest request) throws Exception {
 		String patientIdStr = request.getParameter("patientId");
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("patient", patient);
 		return map;
 	}

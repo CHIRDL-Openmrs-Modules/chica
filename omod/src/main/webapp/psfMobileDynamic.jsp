@@ -43,7 +43,7 @@
 
 <%@ include file="psfMobileDialogs.jsp" %>
 
-<%@ include file="psfMobileStaff.jsp" %>
+<%@ include file="sharedMobile.jsp" %>
 
 <input id="patientId" name="patientId" type="hidden" value="${patient.patientId}"/>
 <input id="encounterId" name="encounterId" type="hidden" value="${encounterId}"/>
@@ -55,12 +55,6 @@
 <input id="maxElements" name="maxElements" type="hidden" value="5"/>
 <input id="language" name="language" type="hidden" value="${language}"/>
 <input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
-
-<!-- DWE CHICA-430 Add hidden input to allow these parameters to be included when the checkboxes are unchecked -->
-<input id="SickVisit" name="SickVisit" type="hidden" value="N"/>
-<input id="Handout_Reviewed_by_MA" name="Handout_Reviewed_by_MA" type="hidden" value="no diet and exercise given"/>
-<input id="MATwoIDsChecked" name="MATwoIDsChecked" type="hidden" value="N"/>
-<input id="showVitals" name="showVitals" type="hidden" value="true"/>
 </form>
 </body>
 </html>

@@ -26,11 +26,6 @@ function init(patientName, birthdate, formInst, language) {
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
 	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
-	
 	numQuestions = $("input[id^='SCAREDQuestion_']").length / 2; // Divide by 2 to handle Spanish version
 }
 

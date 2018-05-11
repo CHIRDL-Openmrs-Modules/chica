@@ -43,8 +43,6 @@
 <%@ include file="psfMobilePages.jsp" %>
 
 <%@ include file="psfMobileDialogs.jsp" %>
-
-<input id="showVitals" name="showVitals" type="hidden" value="false"/>
 </form>
 </body>
 </html>

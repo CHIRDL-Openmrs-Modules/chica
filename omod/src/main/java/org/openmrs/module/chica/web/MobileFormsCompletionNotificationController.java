@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
@@ -36,6 +34,7 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
 	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
 	private static final String PARAM_SESSION_ID = "sessionId";
+        private static final String PARAM_LANGUAGE = "language";
 
 	/*
 	 * (non-Javadoc)
@@ -62,6 +61,7 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 		String encounterIdStr = request.getParameter(PARAM_ENCOUNTER_ID);
 		String locationTagIdStr = request.getParameter(PARAM_LOCATION_TAG_ID);
 		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
+                String language = request.getParameter(PARAM_LANGUAGE);
 		Integer locationId = Integer.parseInt(locationIdStr);
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
 		
@@ -78,6 +78,7 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put(PARAM_PATIENT, patient);
 		map.put(PARAM_NOTIFICATIONS, runRules(patient, parameters));
+                map.put(PARAM_LANGUAGE, language);
 		
 		return map;
 	}

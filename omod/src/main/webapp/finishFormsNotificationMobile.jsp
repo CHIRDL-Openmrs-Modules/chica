@@ -25,8 +25,6 @@
            <c:when test="${empty (notifications)}">
                <div align="left"><p>There are no more items to complete for ${patient.givenName}&nbsp;${patient.familyName}.  Please click the "Finish" button.</p></div>
                <br/>
-               <div align="left"><p>No hay m&#225;s datos para completar para ${patient.givenName}&nbsp;${patient.familyName}.  Por favor, haga clic en el bot&#243;n "Finish".</p></div>
-               <br/>
            </c:when>
            <c:otherwise>
                <div align="left"><p>There are some additional items to complete for ${patient.givenName}&nbsp;${patient.familyName}.</p></div>
@@ -50,13 +48,8 @@
             </div>
        </form>  
     </div>
-    <div id="loadingDialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
-        <div data-role="content">
-            <div style="margin: 0 auto;text-align: center;">
-                Loading...
-            </div>
-        </div>
-    </div>
+    
+    <%@ include file="finishFormsDialogs.jsp" %>
 </div>
 
 </body>

@@ -23,6 +23,8 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     });
     
     $('#loading_form_dialog').dialog();
+    $('#quit_passcode_dialog').dialog();
+    $('#passcode_error_dialog').dialog();
     
     $("#Temperature_Method_Oral").click(function () {
     	$("#Temperature_Method_Rectal").prop("checked", false).checkboxradio("refresh");
@@ -160,7 +162,11 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     
     $("#goButton").focus(function() {
 		  $("#goButton").click();
-	});
+    });
+    
+    $("#quit_passcode_ok_button").click(function () {
+    	completeForm();
+    });
 });
 
 $(document).on("pageshow", "#vitals_page", function(){
@@ -214,12 +220,6 @@ function init(patientName, birthdate, formInst, formId, formInstanceId, encounte
 	this.encounterId = encounterId;
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	if (!shouldShowVitalsButton()) {
-		$("#confirmVitalsButton").hide();
-		$("#vitalsDirectButton").hide();
-		$("#vitalsDirectButton_sp").hide();
-	}
 }
 
 function displayQuestions() {
@@ -630,7 +630,6 @@ function setLanguage(patientName, birthdate) {
     $("#instructions").html(instructions);
     $("#confirmButton .ui-btn-text").text(confirmButtonText);
     $("#denyButton .ui-btn-text").text(denyButtonText);
-    $("#confirmVitalsButton .ui-btn-text").text(vitalsButtonText);
 }
 
 function setLanguageFromForm(patientName, birthdate) {
@@ -761,18 +760,7 @@ function parsePatientForms(responseXML) {
         $.mobile.loading("hide");
         $('#content_frame').html("");
         
-        // Check to see if we need to show the vitals
-        if (!shouldShowVitalsButton()) {
-        	// Submit the form
-        	completeForm();
-        } else {
-        	// Go to the vitals page
-            if (english) {
-            	$.mobile.changePage("#finished_dialog", { transition: "pop" });
-            } else {
-            	$.mobile.changePage("#finished_dialog_sp", { transition: "pop" });
-            }
-        }
+        completeForm();
     }
 }
 
@@ -1109,7 +1097,8 @@ function handleAuthenticationAjaxTimerError(xhr, textStatus, error) {
 }
 
 function openVitalsConfirm() {
-	$("#quit_to_vitals_dialog").popup("open", { transition: "pop"});
+	//$("#quit_to_vitals_dialog").popup("open", { transition: "pop"});
+        $.mobile.changePage( "#quit_passcode_dialog", { transition: "pop"});
 }
 
 function openVitalsConfirmSpanish() {
@@ -1117,7 +1106,8 @@ function openVitalsConfirmSpanish() {
 }
 
 function navigateToVitals() {
-	$.mobile.changePage( "#vitals_page", { transition: "fade" });
+	//$.mobile.changePage( "#vitals_page", { transition: "fade" });
+        openVitalsConfirm();
 }
 
 function saveSendToVitals() {
@@ -1159,15 +1149,6 @@ function areAllQuestionsAnswered() {
 	}
 	
 	return true;
-}
-
-function shouldShowVitalsButton() {
-	 var showVitals = $("#showVitals").val();
-     if (showVitals == "false") {
-     	return false;
-     }
-     
-     return true;
 }
 
 // DWE CHICA-884

@@ -56,13 +56,7 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 	numberOfQuestions = $("input[id^='TRAQQuestion_']").length / 2;
-
 }
 
 
@@ -111,7 +105,7 @@ function setLanguage(patientName, birthdate) {
          + "No hay respuestas correctas ni incorrectas y las respuestas ser" + aAcute + "n confidenciales y privadas.</p><hr/>";
          
          instructions += "<p><em class=\"bolderNonItalic\">Instrucciones para padres" + slash + "cuidadores</em>" + colon + " Si el joven que est" + aAcute 
-         + " a su cuidado no tiene la capacidad de comprender el signiÔ¨Åcado por s" + iAcute + " mismo de las preguntas que se mencionan m" + aAcute 
+         + " a su cuidado no tiene la capacidad de comprender el signiÔ¨?cado por s" + iAcute + " mismo de las preguntas que se mencionan m" + aAcute 
          + "s abajo, por favor, resp" + oAcute + "ndalas en forma conjunta y marque con una cruz el casillero que mejor describa la capacidad "
          + "del joven para realizarlas.</p>";
          

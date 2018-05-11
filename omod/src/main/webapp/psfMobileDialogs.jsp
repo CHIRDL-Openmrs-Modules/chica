@@ -33,30 +33,6 @@
     </div>
 </div>
 
-<div id="finished_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Finished</h1>
-    </div>
-    <div data-role="content">
-        <span>Thank you for filling out the form.  The MA/nurse will collect the device from you.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#vitals_page" data-role="button" data-inline="true" data-theme="b" data-transition="fade" style="width: 150px;">OK</a>
-        </div>
-    </div>
-</div>
-
-<div id="finished_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
-    <div data-role="header" data-theme="b">
-        <h1>Acabado</h1>
-    </div>
-    <div data-role="content">
-        <span>Gracias por rellenar el formulario. La MA/enfermera recoger&#225; el aparato de usted.</span>
-        <div style="margin: 0 auto;text-align: center;">
-            <a href="#vitals_page" data-role="button" data-inline="true" data-theme="b" data-transition="fade" style="width: 150px;">Aceptar</a>
-        </div>
-    </div>
-</div>
-
 <div id="quit_confirm_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Confirm Quit</h1>

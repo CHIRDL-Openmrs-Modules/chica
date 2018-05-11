@@ -1,4 +1,4 @@
-﻿var english = false;
+var english = false;
 var formInstance = null;
 $(document).ready(function () {
 	$(document).ajaxStart(function() {
