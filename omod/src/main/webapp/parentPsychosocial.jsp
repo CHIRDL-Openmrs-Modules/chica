@@ -37,8 +37,8 @@
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	<c:set var="prefix" value="ParentPsychosocialQuestionEntry_" />
 
-	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Please hand tablet to the parent/caregiver." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions for your parent. Please hand them the tablet." />
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Please hand tablet to the parent/caregiver. If your parent/caregiver is not present, please skip the questions by clicking the No Parent button below." />
+	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions for your parent. Please hand them the tablet. If your parent/caregiver is not present, please skip the questions by clicking the Parent No Parent button below." />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='In the past four weeks, did you worry that your household would not have enough food${questionMark}' scope="request"/>
@@ -76,7 +76,7 @@
 			</div>
 		</div>
 	</c:if>
-
+        
 <!-- Instructions/Start page -->
 <div data-role="page" id="instruction_page" data-theme="b">
     <div data-role="header" >
@@ -92,6 +92,8 @@
 
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a id="startButton" href="#" data-role="button" data-theme="b" onclick="changePage(1)" style="width: 150px;">Start</a>
+        <a id="skipButton" href="#" data-role="button" data-theme="b" onclick="confirmSkipForm()" style="width: 150px;">No Parent</a>
+        <%@ include file="mobileSkipFormDialog.jsp" %>
     </div>
     
 </div>

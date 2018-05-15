@@ -326,3 +326,12 @@ function insertYesNo(prefix, questionNumber, isSpanish)
 	$(".choice_"+questionNumber).append(fieldSetElement);
 	$(".choice_"+questionNumber).triggerHandler("create");
 }
+
+function confirmSkipForm()
+{
+	if (english) {
+	    $("#skip_form_dialog").popup("open", { transition: "pop"});
+	} else {
+		$("#skip_form_dialog_sp").popup("open", { transition: "pop"});
+	}
+}
