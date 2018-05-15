@@ -54,14 +54,14 @@ function setLanguage(patientName, birthdate) {
     var additionalQuestions = "Here are a number of questions regarding the behavior of your child during sleep and wakefulness.";
     var instructions = '<p>The questions apply to how your child acts in general, not necessarily during the past few days since these may not have been typical if your child has not been well. If you are not sure how to answer any question, please feel free to ask your husband or wife, child, or physician for help. When you see the word â€œusuallyâ€? it means â€œmore than half the timeâ€? or â€œon more than half the nights.â€?</p>';
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     var formTitleText = "PEDIATRIC SLEEP QUESTIONNAIRE";
     if (!english) {
         langButtonText = "English"; 
         additionalQuestions = "Por favor, conteste las preguntas del siguiente cuestionario acerca de la conducta de su hijo/a durante el sue" + ntilde + "o y tambi" + eacute + "n cuando est" + aacute + " despierto/a.";
         instructions = '<p>Las preguntas se refieren a la conducta de su hijo/a en general y no &uacute;nicamente en los &uacute;ltimos d&iacute;as, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si &eacute;l o ella no se encuentran bien estos &uacute;ltimos d&iacuteas por cualquier motivo. Si hay alguna pregunta que no sabe como contestar, por favor consulte con su mujer, su marido, su hijo/a o con su m&eacute;dico.  Cuando en alguna pregunta Vd lea â€œhabitualmenteâ€?, quiere decir â€œm&aacute;s de la mitad de las vecesâ€? o â€œm&aacute;s de la mitad de las nochesâ€?.</p>';
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
         formTitleText = "CUESTIONARIO PEDIATRICO DE SUE" + Ntilde + "O:";
     }
     
@@ -69,7 +69,7 @@ function setLanguage(patientName, birthdate) {
     $("#additionalQuestions").text(additionalQuestions);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#formTitle").text(formTitleText);
 }
 

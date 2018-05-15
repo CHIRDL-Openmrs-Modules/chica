@@ -53,22 +53,10 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="openVitalsConfirm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
+        <a data-role="button" onclick="confirmQuitForm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div data-role="content">
         <div id="content_1"></div>
-        <div id="quit_to_vitals_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Staff</h1>
-            </div>
-            <div data-role="content">
-                <span>Please enter the passcode to continue.</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">OK</a>
-                    <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">Cancel</a>
-                </div>
-            </div>
-        </div>
         <div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>Not Completed</h1>
@@ -103,22 +91,10 @@
         <h1>Pre-Screener:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" data-theme="b" class="ui-btn-left" onclick="setLanguageFromForm('${newFirstName}&nbsp;${NewLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="openVitalsConfirmSpanish()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
+        <a data-role="button" onclick="confirmQuitForm()" data-theme="b" class="ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div data-role="content">
         <div id="content_1_sp"></div>
-        <div id="quit_to_vitals_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
-            <div data-role="header" data-theme="b">
-                <h1>Personal</h1>
-            </div>
-            <div data-role="content">
-                <span>Todas las respuestas en esta p&#225;gina se presentar&#225;n antes de proceder a la p&#225;gina personal.  &#191;Est&#225; seguro que desea continuar?</span>
-                <div style="margin: 0 auto;text-align: center;">
-                    <a data-inline="true" data-rel="back" data-theme="b" data-role="button" onclick="saveSendToVitals()" style="width: 150px;">Si</a>
-                    <a data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
-                </div>
-            </div>
-        </div>
         <div id="not_finished_final_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a" >
             <div data-role="header" data-theme="b">
                 <h1>No Completado</h1>

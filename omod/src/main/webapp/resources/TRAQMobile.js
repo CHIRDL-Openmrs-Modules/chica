@@ -81,7 +81,7 @@ function setLanguage(patientName, birthdate) {
 	var formTitleText = "Transition Readiness Assessment Questionnaire";
 	var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     TRAQInformantText = "Check here if you are a parent " + slash + " caregiver completing this form."
    
     var instructions = "<p><em class=\"bolderNonItalic\">Directions to Youth and Young Adults</em>: <em class=\"underline\">Please check the box that best describes <em class=\"bolder\">your</em> "
@@ -97,7 +97,7 @@ function setLanguage(patientName, birthdate) {
     	formTitleText = "Cuestionario de Evaluaci" + oAcute + "n para la Preparaci" + oAcute + "n de la Transici" + oAcute + "n";
         langButtonText = "English"; 
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
         
          instructions = "<p><em class=\"bolderNonItalic\">Instrucciones para los j" + oAcute + "venes</em>" + colon + " Por favor marc" + aAcute 
          + " con una cruz la opci" + oAcute + "n que mejor describa tu capacidad para cada una de las siguientes " + aAcute 
@@ -117,7 +117,7 @@ function setLanguage(patientName, birthdate) {
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").html(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#formTitle").html(formTitleText);
     $("#TRAQInformantCheckboxLabel .ui-btn-text").html(TRAQInformantText);
 }

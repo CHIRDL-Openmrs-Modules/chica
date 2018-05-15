@@ -48,14 +48,14 @@ function setLanguage(patientName, birthdate) {
     var additionalQuestions = "Here is a list of sentences that describe how people feel. Read each phrase and decide if it is \"Not True or Hardly Ever True\" or \"Somewhat True or Sometimes True\" or \"Very True or Often True\" for your child.";
     var instructions = '<p>Choose the response that seems to describe your child <span style="text-decoration: underline;">for the last 3 months.</span></p>';
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     var formTitleText = "Screen for Child Anxiety Related Disorders:";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "\311sta es una lista de cosas que describen como se siente la gente. Lea cada frase y decida si es \"Casi nunca o nunca es cierto\" o \"Es cierto algunas veces\" o \"Casi siempre o siempre es cierto\" para su hijo.";
         instructions = '<p>Elija la respuesta que parece describir a su hijo <span style="text-decoration: underline;">por los &uacute;ltimos 3 meses.</span></p>';
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
         formTitleText = "Des\363rdenes Relacionados Con La Ansiedad En La Infancia:";
     }
     
@@ -63,7 +63,7 @@ function setLanguage(patientName, birthdate) {
     $("#additionalQuestions").text(additionalQuestions);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#formTitle").text(formTitleText);
 }
 

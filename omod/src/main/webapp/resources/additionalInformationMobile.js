@@ -93,19 +93,19 @@ function setLanguage(patientName, birthdate) {
 	english = !english;
     var langButtonText = "Español";
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     var formTitleText = "Additional Information Form:";
 	var additionalQuestions = "Please complete some additional information about this visit.";
     if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
         formTitleText = "El formulario de información adicional";
 		additionalQuestions = "Por favor, complete la información adicional acerca de esta visita a la clínica.";
     }
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#formTitle").text(formTitleText);
 	$("#additionalQuestions").text(additionalQuestions);
 	changeCloseButtonText();
