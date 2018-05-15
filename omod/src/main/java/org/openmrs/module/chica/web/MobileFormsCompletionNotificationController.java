@@ -10,6 +10,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.chica.TabletNotification;
+import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.hibernateBeans.Rule;
@@ -34,7 +35,6 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
 	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
 	private static final String PARAM_SESSION_ID = "sessionId";
-        private static final String PARAM_LANGUAGE = "language";
 
 	/*
 	 * (non-Javadoc)
@@ -49,7 +49,7 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 	@Override
 	protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object object,
 	                                             BindException errors) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		String view = getSuccessView();
 		return new ModelAndView(new RedirectView(view), map);
 	}
@@ -61,11 +61,11 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 		String encounterIdStr = request.getParameter(PARAM_ENCOUNTER_ID);
 		String locationTagIdStr = request.getParameter(PARAM_LOCATION_TAG_ID);
 		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
-                String language = request.getParameter(PARAM_LANGUAGE);
+                String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
 		Integer locationId = Integer.parseInt(locationIdStr);
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
 		
-		Map<String,Object> parameters = new HashMap<String,Object>();
+		Map<String,Object> parameters = new HashMap<>();
 		parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
 		// The LocationAttributeLookup rule requires a location ID through a FormInstance object.
 		FormInstance formInstance = new FormInstance(locationId, null, null);
@@ -75,10 +75,10 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, Integer.parseInt(locationTagIdStr));
 		parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, Integer.parseInt(sessionIdStr));
 		
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put(PARAM_PATIENT, patient);
 		map.put(PARAM_NOTIFICATIONS, runRules(patient, parameters));
-                map.put(PARAM_LANGUAGE, language);
+                map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
 		
 		return map;
 	}
@@ -91,10 +91,10 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 	 * @return List of string results of the rules that are run.
 	 */
 	private List<TabletNotification> runRules(Patient patient, Map<String,Object> parameters) {
-		List<TabletNotification> notifications = new ArrayList<TabletNotification>();
+		List<TabletNotification> notifications = new ArrayList<>();
 		DssService dssService = Context.getService(DssService.class);
 		List<Rule> rules = dssService.getRulesByType(STAFF_NOTIFICATION);
-		if (rules == null || rules.size() == 0) {
+		if (rules == null || rules.isEmpty()) {
 			return notifications;
 		}
 		
@@ -108,7 +108,7 @@ public class MobileFormsCompletionNotificationController extends SimpleFormContr
 		}
 		
 		List<Result> results = dssService.runRules(patient, rules);
-		if (results == null || results.size() == 0) {
+		if (results == null || results.isEmpty()) {
 			return notifications;
 		}
 		

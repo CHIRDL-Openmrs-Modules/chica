@@ -26,6 +26,11 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     $('#quit_passcode_dialog').dialog();
     $('#passcode_error_dialog').dialog();
     
+    $("#quit_passcode").keypress(function(e){
+	    if ( e.which === 13 ) 
+	     checkPasscode();    
+    });
+    
     $("#Temperature_Method_Oral").click(function () {
     	$("#Temperature_Method_Rectal").prop("checked", false).checkboxradio("refresh");
     	$("#Temperature_Method_Axillary").prop("checked", false).checkboxradio("refresh");
@@ -166,19 +171,16 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     
     $("#quit_passcode_ok_button").click(function () {
     	checkPasscode();
-        $("#quit_passcode").val("");
-    });
-    $("#quit_passcode_cancel_button").click(function () {
-    	$("#quit_passcode").val("");
     });
 });
 
 $(document).on("pageshow", "#quit_passcode_dialog", function(){
+    $("#quit_passcode").val("");
     $("#quit_passcode").focus();
-    $("#quit_passcode").keypress(function(e){
-	    if ( e.which == 13 ) 
-	     checkPasscode();    
-    });
+});
+
+$(document).on("pageshow", "#passcode_error_dialog", function(){
+    $("#passcode_error_ok_button").focus();
 });
 
 $(document).on("pagebeforeshow", "#question_page", function() {

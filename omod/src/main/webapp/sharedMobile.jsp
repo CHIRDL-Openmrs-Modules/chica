@@ -23,7 +23,7 @@
     <div data-role="content">
         <span id="passcode_error_text"></span>
         <div style="margin: 0 auto;text-align: center;">
-            <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="history.go(-1)" style="width: 200px;">OK</a>
+            <a id="passcode_error_ok_button" href="#" data-role="button" data-inline="true" data-theme="b" onclick="history.go(-1)" style="width: 200px;">OK</a>
         </div>
     </div>
 </div>

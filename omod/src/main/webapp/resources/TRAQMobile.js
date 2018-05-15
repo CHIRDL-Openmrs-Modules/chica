@@ -105,7 +105,7 @@ function setLanguage(patientName, birthdate) {
          + "No hay respuestas correctas ni incorrectas y las respuestas ser" + aAcute + "n confidenciales y privadas.</p><hr/>";
          
          instructions += "<p><em class=\"bolderNonItalic\">Instrucciones para padres" + slash + "cuidadores</em>" + colon + " Si el joven que est" + aAcute 
-         + " a su cuidado no tiene la capacidad de comprender el signiï¬?cado por s" + iAcute + " mismo de las preguntas que se mencionan m" + aAcute 
+         + " a su cuidado no tiene la capacidad de comprender el significado por s" + iAcute + " mismo de las preguntas que se mencionan m" + aAcute 
          + "s abajo, por favor, resp" + oAcute + "ndalas en forma conjunta y marque con una cruz el casillero que mejor describa la capacidad "
          + "del joven para realizarlas.</p>";
          

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.util.ChicaConstants;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -14,8 +15,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class MobileFormsCompletionController extends SimpleFormController {
 	
-        private static final String PARAM_LANGUAGE = "language";
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -31,8 +30,8 @@ public class MobileFormsCompletionController extends SimpleFormController {
 	                                             BindException errors) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		String view = getSuccessView();
-                String language = request.getParameter(PARAM_LANGUAGE);
-		map.put(PARAM_LANGUAGE, language);
+                String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
+		map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
 		return new ModelAndView(new RedirectView(view), map);
 	}
 	
