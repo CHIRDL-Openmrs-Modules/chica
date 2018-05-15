@@ -324,22 +324,23 @@ function calculateScore() {
 		}
 	}
 	$("#EDS_interpretation").val("negative");
-	if ((edscore >= 20 ||
+	if (edscore >= 20 ||
 		 score['toolittleinsulin'] > never ||
 		 score['makevomit'] > never ||
 		 score['keephigh'] > never ||
 		 score['spillketones'] > never ||
 		 score['feelfat'] > never ||
 		 score['skipdose'] > never ||
+		 score['outofcontrol'] > never ||
 		 score['alternateeating'] > never ||
 		 score['ratherbethin'] > never ||
 		 score['losingweight'] > often ||
 		 score['skipmeals'] > often ||
-		 score['outofcontrol'] > often ||
+		 score['otheroutofcontrol'] > often ||
 		 score['morealone'] > often ||
 		 score['hardloseweight'] > often ||
 		 score['avoidchecking'] > often ||
-		 score['takebettercare'] > often ))
+		 score['takebettercare'] > often )
 		{
 		 	$("#EDS_interpretation").val("positive");
 		}
