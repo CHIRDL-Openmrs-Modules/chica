@@ -216,15 +216,18 @@ function setLanguageForButtons()
 	var langButtonText = "Español";
 	var startButtonText = "Start";
 	var vitalsButtonText = "Staff";
+	var skipButtonText = "No Parent";
 	
 	if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";
+        skipButtonText = "No Padre";
     }
 	
 	$("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#startButton .ui-btn-text").text(startButtonText);
+    $("#skipButton .ui-btn-text").text(skipButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);  
 }
 
@@ -325,4 +328,13 @@ function insertYesNo(prefix, questionNumber, isSpanish)
 	
 	$(".choice_"+questionNumber).append(fieldSetElement);
 	$(".choice_"+questionNumber).triggerHandler("create");
+}
+
+function confirmSkipForm()
+{
+	if (english) {
+	    $("#skip_form_dialog").popup("open", { transition: "pop"});
+	} else {
+		$("#skip_form_dialog_sp").popup("open", { transition: "pop"});
+	}
 }
