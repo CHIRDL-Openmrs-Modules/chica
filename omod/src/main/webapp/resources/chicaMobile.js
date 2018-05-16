@@ -216,15 +216,18 @@ function setLanguageForButtons()
 	var langButtonText = "Español";
 	var startButtonText = "Start";
 	var vitalsButtonText = "Staff";
+	var skipButtonText = "No Parent";
 	
 	if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
         vitalsButtonText = "Personal";
+        skipButtonText = "No Padre";
     }
 	
 	$("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#startButton .ui-btn-text").text(startButtonText);
+    $("#skipButton .ui-btn-text").text(skipButtonText);
     $(".vitalsButton .ui-btn-text").text(vitalsButtonText);  
 }
 

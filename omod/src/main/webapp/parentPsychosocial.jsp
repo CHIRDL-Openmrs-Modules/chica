@@ -38,7 +38,7 @@
 	<c:set var="prefix" value="ParentPsychosocialQuestionEntry_" />
 
 	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Please hand tablet to the parent/caregiver." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions for your parent. Please hand them the tablet. If your parent/caregiver is not present, please skip the questions by clicking the Parent No Parent button below." />
+	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions for your parent. Please hand them the tablet." />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='In the past four weeks, did you worry that your household would not have enough food${questionMark}' scope="request"/>
@@ -62,7 +62,7 @@
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
 	
 	<c:set var="instructions_part2" value="If your parent/caregiver is not present, please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below." />
-	<c:set var="instructions_part2_sp" value="(SPANISH) This is just an example &lt;span style='text-decoration: underline;'&gt; with some underlined text. &lt;/span&gt;" />
+	<c:set var="instructions_part2_sp" value="(SPANISH) If your parent/caregiver is not present, please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below." />
 	<input type="hidden" name="instructions_part2" id="instructions_part2" value="${instructions_part2}" />
 	<input type="hidden" name="instructions_part2_sp" id="instructions_part2_sp" value="${instructions_part2_sp}" />
 
