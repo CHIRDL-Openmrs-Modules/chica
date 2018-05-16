@@ -44,17 +44,6 @@
 <%@ include file="psfMobileDialogs.jsp" %>
 
 <%@ include file="sharedMobile.jsp" %>
-
-<input id="patientId" name="patientId" type="hidden" value="${patient.patientId}"/>
-<input id="encounterId" name="encounterId" type="hidden" value="${encounterId}"/>
-<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
-<input id="formId" name="formId" type="hidden" value="${formId}"/>
-<input id="formInstanceId" name="formInstanceId" type="hidden" value="${formInstanceId}"/>
-<input id="locationId" name="locationId" type="hidden" value="${locationId}"/>
-<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
-<input id="maxElements" name="maxElements" type="hidden" value="5"/>
-<input id="language" name="language" type="hidden" value="${language}"/>
-<input id="formInstance" name="formInstance" type="hidden" value="${formInstance}"/>
 </form>
 </body>
 </html>

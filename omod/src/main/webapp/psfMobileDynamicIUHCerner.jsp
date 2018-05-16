@@ -43,6 +43,8 @@
 <%@ include file="psfMobilePages.jsp" %>
 
 <%@ include file="psfMobileDialogs.jsp" %>
+
+<%@ include file="sharedMobile.jsp" %>
 </form>
 </body>
 </html>

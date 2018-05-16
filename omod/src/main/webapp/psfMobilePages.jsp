@@ -137,14 +137,6 @@
 
 </div>
 
-<input id="HeightP" name="HeightP" type="hidden"/>
-<input id="HeightS" name="HeightS" type="hidden"/>
-<input id="WeightP" name="WeightP" type="hidden"/>
-<input id="WeightS" name="WeightS" type="hidden"/>
-<input id="TempP" name="TempP" type="hidden"/>
-<input id="TempS" name="TempS" type="hidden"/>
-<input id="HCP" name="HCP" type="hidden"/>
-<input id="HCS" name="HCS" type="hidden"/>
 <input id="patientId" name="patientId" type="hidden" value="${patient.patientId}"/>
 <input id="encounterId" name="encounterId" type="hidden" value="${encounterId}"/>
 <input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
