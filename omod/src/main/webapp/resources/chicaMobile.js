@@ -216,16 +216,19 @@ function setLanguageForButtons()
 	var langButtonText = "Español";
 	var startButtonText = "Start";
 	var quitButtonText = "Quit";
+	var skipButtonText = "No Parent";
 	
 	if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
         quitButtonText = "Dejar";
+        skipButtonText = "No Padre";
     }
 	
 	$("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".quitButton .ui-btn-text").text(quitButtonText);  
+    $(".quitButton .ui-btn-text").text(quitButtonText);
+    $("#skipButton .ui-btn-text").text(skipButtonText);
 }
 
 // CHICA-1226 Moved function into common .js file
@@ -325,4 +328,13 @@ function insertYesNo(prefix, questionNumber, isSpanish)
 	
 	$(".choice_"+questionNumber).append(fieldSetElement);
 	$(".choice_"+questionNumber).triggerHandler("create");
+}
+
+function confirmSkipForm()
+{
+	if (english) {
+	    $("#skip_form_dialog").popup("open", { transition: "pop"});
+	} else {
+		$("#skip_form_dialog_sp").popup("open", { transition: "pop"});
+	}
 }

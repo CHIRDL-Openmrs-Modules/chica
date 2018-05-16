@@ -60,6 +60,11 @@
 	
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
+	
+	<c:set var="instructions_part2" value="If your parent/caregiver is not present, please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below." />
+	<c:set var="instructions_part2_sp" value="(SPANISH) If your parent/caregiver is not present, please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below." />
+	<input type="hidden" name="instructions_part2" id="instructions_part2" value="${instructions_part2}" />
+	<input type="hidden" name="instructions_part2_sp" id="instructions_part2_sp" value="${instructions_part2_sp}" />
 
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'ParentPsychosocialForm', 'ParentPsycoSocialQuestion_', 'ParentPsychosocialQuestionEntry_')">
 <form id="ParentPsychosocialForm" method="POST" action="parentPsychosocial.form" method="post" enctype="multipart/form-data">
@@ -76,7 +81,7 @@
 			</div>
 		</div>
 	</c:if>
-
+        
 <!-- Instructions/Start page -->
 <div data-role="page" id="instruction_page" data-theme="b">
     <div data-role="header" >
@@ -88,10 +93,15 @@
 	<div data-role="content" >
 		<strong><span id="additionalQuestions">${instructions_additionalQuestions}</span></strong>
 		<div><br/></div>
+		
+		<strong><span id="instructions">${instructions_part2}</span></strong>
+        <div><br/></div>
 	</div>
 
     <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
         <a id="startButton" href="#" data-role="button" data-theme="b" onclick="changePage(1)" style="width: 150px;">Start</a>
+        <a id="skipButton" href="#" data-role="button" data-theme="b" onclick="confirmSkipForm()" style="width: 150px;">No Parent</a>
+        <%@ include file="mobileSkipFormDialog.jsp" %>
     </div>
     
 </div>
