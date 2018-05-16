@@ -267,7 +267,6 @@ function completeForm() {
 		completeForm();
 	});
 	
-	$("#lnkLoadingDialog").click();
 	populateValues();
 	login(parseLoginSubmitResult, handleAuthenticationAjaxTimerError);
 }
