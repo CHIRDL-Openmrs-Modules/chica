@@ -32,6 +32,6 @@
            
     <%@ include file="finishFormsDialogs.jsp" %>
 </div>
-
+<input type="hidden" name="userQuitForm" id="userQuitForm" value="${userQuitForm}" />
 </body>
 </html>

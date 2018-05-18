@@ -33,6 +33,14 @@
     </div>
 </div>
 
+<div id="loading_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+    <div data-role="content">
+        <div style="margin: 0 auto;text-align: center;">
+            Loading...
+        </div>
+    </div>
+</div>
+
 <div id="load_error_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="header" data-theme="b">
         <h1>Error</h1>

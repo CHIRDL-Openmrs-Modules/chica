@@ -1,7 +1,9 @@
 $(document).on("pageshow", "#finished_form", function(){
-    $("#finished_dialog").popup("open", { 
-        transition: "pop",
-    });
+	if ($("#userQuitForm").val() !== "true") {
+	    $("#finished_dialog").popup("open", { 
+	        transition: "pop",
+	    });
+	}
 });
 
 function finish() {

@@ -47,5 +47,6 @@ public class ChicaConstants {
 	public static final String PARAMETER_LEFT_FORM_FORM_INSTANCE_ID = "leftFormFormInstanceId";
 	public static final String PARAMETER_LEFT_FORM_STYLESHEET = "leftFormStylesheet";
 	public static final String PARAMETER_LEFT_FORM_DIRECTORY = "leftFormDirectory";
-        public static final String PARAMETER_LANGUAGE = "language";
+    public static final String PARAMETER_LANGUAGE = "language";
+    public static final String PARAMETER_USER_QUIT_FORM = "userQuitForm";
 }

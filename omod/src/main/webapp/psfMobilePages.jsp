@@ -150,3 +150,4 @@
 <input type="hidden" name="ageInYears" id="ageInYears" value="${AgeInYears}" />
 <input type="hidden" name="displayConfidentialityNotice" id="displayConfidentialityNotice" value="${DisplayConfidentialityNotice}" />
 <input type="hidden" name="patientFirstName" id="patientFirstName" value="${patient.givenName}" />
+<input type="hidden" name="userQuitForm" id="userQuitForm" value="${userQuitForm}" />

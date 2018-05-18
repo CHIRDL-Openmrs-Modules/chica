@@ -23,6 +23,7 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     });
     
     $('#loading_form_dialog').dialog();
+    $('#loading_dialog').dialog();
     $('#quit_passcode_dialog').dialog();
     $('#passcode_error_dialog').dialog();
     
@@ -258,6 +259,8 @@ function handleAuthenticationAjaxError(xhr, textStatus, error) {
 }
 
 function completeForm() {
+	$.mobile.changePage( "#loading_dialog", { transition: "pop"});
+	
 	// Set the language
 	setLanguageField();
 	
@@ -811,6 +814,7 @@ function parsePasscodeResult(responseXML) {
   } else {
       var result = $(responseXML).find("result").text();
       if (result === "success") {
+    	$("#userQuitForm").val("true");
       	completeForm();
       } else {
         $("#passcode_error_text").html("<p>" + result + "</p>");
