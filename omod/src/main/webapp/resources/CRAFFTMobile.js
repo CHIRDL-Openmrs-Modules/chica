@@ -86,20 +86,13 @@ function setLanguageField() {
 }
 
 function attemptFinishForm() {
-	finishAttempts++;
 	if (areAllQuestionsAnswered()) {
-		finishForm();
-	} else if (finishAttempts == 1) {
-    	if (english) {
+		finishForm(); 
+	} else{
+		if (english) {
     	    $("#not_finished_dialog").popup("open", { transition: "pop"});
     	} else {
     		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
-    	}
-	} else if (finishAttempts >= 2) {
-		if (english) {
-    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
-    	} else {
-    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
     	}
 	}
 }
@@ -108,10 +101,10 @@ function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
 	if (english) {
 		$("#finish_error_dialog").popup("close");
-		$("#not_finished_final_dialog").popup("close");
+		$("#not_finished_dialog").popup("close");
 	} else {
 		$("#finish_error_dialog_sp").popup("close");
-		$("#not_finished_final_dialog_sp").popup("close");
+		$("#not_finished_dialog_sp").popup("close");
 	}
 	
 	setLanguageField();
