@@ -55,11 +55,6 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 	numberOfQuestions = $("input[id^='EatingDisorderQuestion_']").length / 2;
 
 }
@@ -86,7 +81,7 @@ function setLanguage(patientName, birthdate) {
 	var formTitleText = "Eating Habits Questionnaire";
 	var langButtonText = "Espa" + nTilde + "ol";
 	var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     var instructions = "<p> Please choose the option that best describes your eating habits.</p>"; 
     
    /*-----Need Spanish Translation----*/
@@ -94,14 +89,14 @@ function setLanguage(patientName, birthdate) {
     	formTitleText = "Eating Habits Questionnaire(SPANISH)";
         langButtonText = "English"; 
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";    
+        quitButtonText = "Dejar";    
         instructions = "<p> Please choose the option that best describes your eating habits.(SPANISH)</p>"; 
 	}
     
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").html(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#formTitle").html(formTitleText);
    
 }

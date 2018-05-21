@@ -25,11 +25,6 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 }
 
 function submitEmptyForm() {
@@ -51,20 +46,20 @@ function setLanguage(patientName, birthdate) {
     var additionalQuestions = "The following are some additional questions about depression.";
     var instructions = '<p>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</p>';
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "Las preguntas siguientes son adicionales acerca de la depresión.";
         instructions = '<p>Durante las últimas 2 semanas, ¿qué tan seguido le han afectado cualquiera de los siguientes problemas?</p>';
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#additionalQuestions").text(additionalQuestions);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
 }
 
 function changePage(newPageNum) {

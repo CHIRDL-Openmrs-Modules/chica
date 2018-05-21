@@ -33,14 +33,12 @@
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
-                <prop key="/module/@MODULE_ID@/finishFormsNotificationMobileIUHCerner.form">finishFormsNotificationMobileIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsNotificationMobile.form">finishFormsNotificationMobile</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobile.form">psfMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobileTabs.form">psfMobileTabs</prop>
                 <prop key="/module/@MODULE_ID@/loginMobile.form">loginMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobileDynamic.form">psfMobileDynamic</prop>
-                <prop key="/module/@MODULE_ID@/psfMobileDynamicIUHCerner.form">psfMobileDynamicIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/phq9Mobile.form">phq9Mobile</prop>
                 <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
@@ -89,11 +87,6 @@
         <property name="formView"><value>/module/@MODULE_ID@/finishFormsMobile</value></property>
         <property name="successView"><value>greaseBoardMobile.form</value></property>
     </bean>
-    <bean id="finishFormsNotificationMobileIUHCerner" class="@MODULE_PACKAGE@.web.MobileFormsCompletionNotificationController">
-        <property name="commandName"><value>finishFormsNotificationMobileIUHCernerObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/finishFormsNotificationMobileIUHCerner</value></property>
-        <property name="successView"><value>greaseBoardMobile.form</value></property>
-    </bean>
     <bean id="finishFormsNotificationMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionNotificationController">
         <property name="commandName"><value>finishFormsNotificationMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/finishFormsNotificationMobile</value></property>
@@ -133,11 +126,6 @@
         <property name="commandName"><value>psfMobileDynamicObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/psfMobileDynamic</value></property>
         <property name="successView"><value>finishFormsNotificationMobile.form</value></property>
-    </bean>
-    <bean id="psfMobileDynamicIUHCerner" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
-        <property name="commandName"><value>psfMobileDynamicIUHCernerObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/psfMobileDynamicIUHCerner</value></property>
-        <property name="successView"><value>finishFormsNotificationMobileIUHCerner.form</value></property>
     </bean>
     <bean id="phq9Mobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>phq9MobileObject</value></property>

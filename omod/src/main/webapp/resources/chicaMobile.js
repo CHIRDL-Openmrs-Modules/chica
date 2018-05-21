@@ -21,6 +21,11 @@ function pageInit()
 	$(document).ajaxStop(function() {
 		$.unblockUI();
 	});
+        
+    // This is for the OK button on the passcode dialog from sharedMobile.jsp
+    $("#quit_passcode_ok_button").click(function() {
+        parent.completeForm();
+    });
 }
 
 // CHICA-1226 Moved function into common .js file
@@ -56,11 +61,6 @@ function init(patientName, birthdate, formInst, language, formId, prefix, entryP
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 	
 	numQuestions = $("input[id^='" + prefix + "']").length / 2; // Divide by 2 to handle Spanish version
 	
@@ -215,20 +215,20 @@ function setLanguageForButtons()
 {
 	var langButtonText = "Español";
 	var startButtonText = "Start";
-	var vitalsButtonText = "Staff";
+	var quitButtonText = "Quit";
 	var skipButtonText = "No Parent";
 	
 	if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
         skipButtonText = "No Padre";
     }
 	
 	$("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#startButton .ui-btn-text").text(startButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#skipButton .ui-btn-text").text(skipButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);  
 }
 
 // CHICA-1226 Moved function into common .js file

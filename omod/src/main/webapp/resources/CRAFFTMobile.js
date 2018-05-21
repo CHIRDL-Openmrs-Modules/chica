@@ -25,11 +25,6 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 }
 
 function setLanguage(patientName, birthdate) {
@@ -37,18 +32,18 @@ function setLanguage(patientName, birthdate) {
     var langButtonText = "Español";
     var additionalQuestions = "The following are some additional questions about alcohol and drug use.";
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "Las preguntas siguientes son adicionales acerca del consumo de alcohol y las drogas.";
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#additionalQuestions").text(additionalQuestions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
 }
 
 function setLanguageFromForm(patientName, birthdate) {

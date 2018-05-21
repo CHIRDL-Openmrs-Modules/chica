@@ -41,7 +41,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
 
     <div data-role="content" >
@@ -125,7 +125,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div id="content_1" data-role="content">
         <strong><span>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</span></strong>
@@ -175,7 +175,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div id="content_2" data-role="content">
         <strong><span>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</span></strong>
@@ -226,7 +226,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage3Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div id="content_3" data-role="content">
         <strong><span>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</span></strong>
@@ -277,7 +277,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div id="content_4" data-role="content">
         <strong><span>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</span></strong>
@@ -328,7 +328,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
     </div>
     <div id="content_5" data-role="content">
         <strong><span>Over the <span style="text-decoration: underline;">last 2 weeks</span>, how often have you been bothered by any of the following problems?</span></strong>
@@ -489,7 +489,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div id="content_1_sp" data-role="content">
         <strong><span>Durante las &#250;ltimas 2 semanas, &#191;qu&#233; tan seguido le han afectado cualquiera de los siguientes problemas?</span></strong>
@@ -539,7 +539,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div id="content_2_sp" data-role="content">
         <strong><span>Durante las &#250;ltimas 2 semanas, &#191;qu&#233; tan seguido le han afectado cualquiera de los siguientes problemas?</span></strong>
@@ -590,7 +590,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage3SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div id="content_3_sp" data-role="content">
         <strong><span>Durante las &#250;ltimas 2 semanas, &#191;qu&#233; tan seguido le han afectado cualquiera de los siguientes problemas?</span></strong>
@@ -641,7 +641,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage4SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div id="content_4_sp" data-role="content">
         <strong><span>Durante las &#250;ltimas 2 semanas, &#191;qu&#233; tan seguido le han afectado cualquiera de los siguientes problemas?</span></strong>
@@ -692,7 +692,7 @@
         <h1>PHQ-9:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage5SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
     </div>
     <div id="content_5_sp" data-role="content">
         <strong><span>Durante las &#250;ltimas 2 semanas, &#191;qu&#233; tan seguido le han afectado cualquiera de los siguientes problemas?</span></strong>

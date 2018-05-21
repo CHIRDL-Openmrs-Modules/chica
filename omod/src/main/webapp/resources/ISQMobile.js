@@ -24,11 +24,6 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 }
 
 function submitEmptyForm() {
@@ -50,14 +45,14 @@ function setLanguage(patientName, birthdate) {
     var additionalQuestions = "Here are a number of questions about your baby's sleeping habits.";
     var instructions = '<p>Please base your answers on what you have noticed over the last MONTH.</p>';
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     var formTitleText = "Infant Sleep Questionnaire:";
     if (!english) {
         langButtonText = "English";
         additionalQuestions = "A continuación encontrará una serie de preguntas sobre los hábitos de sueño de su bebé.";
         instructions = '<p>Base sus respuestas en lo que haya observado durante el último MES.</p>';
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
         formTitleText = "CUESTIONARIO SOBRE EL SUEÑO INFANTIL:";
     }
     
@@ -65,7 +60,7 @@ function setLanguage(patientName, birthdate) {
     $("#additionalQuestions").text(additionalQuestions);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#formTitle").text(formTitleText);
 }
 

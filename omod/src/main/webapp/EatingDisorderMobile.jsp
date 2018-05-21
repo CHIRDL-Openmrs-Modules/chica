@@ -101,7 +101,7 @@
         <h1 id="formTitle">${formName}</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
     </div>
     <div data-role="content" id="informationContent">
         <strong><span id="instructions"></span></strong>
@@ -121,7 +121,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -151,7 +151,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -182,7 +182,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -215,7 +215,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -248,7 +248,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         <div id="content_${PNumber}" data-role="content">
         
@@ -278,7 +278,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         <div id="content_${PNumber}" data-role="content">
         
@@ -308,7 +308,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -339,7 +339,7 @@
             <h1>${formName}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -371,7 +371,7 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
         </div>        
            <div id="content_${PNumber}" data-role="content">
             <c:set var="QNumber" value="1_2" />
@@ -400,7 +400,7 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
         </div>  
         
         <div id="content_${PNumber}_sp" data-role="content">
@@ -433,7 +433,7 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText}_sp</a>
         </div>  
         
         <div id="content_${PNumber}" data-role="content">
@@ -468,7 +468,7 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -500,7 +500,7 @@
            <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
            <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right"  data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right"  data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -531,7 +531,7 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -562,7 +562,7 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">
@@ -593,7 +593,7 @@
             <h1>${formName_sp}</h1>
             <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
             <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-            <a data-role="button" onclick="parent.navigateToVitals()" data-theme="b" class="vitalsButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
+            <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${staffButtonText_sp}</a>
         </div>
         
         <div id="content_${PNumber}" data-role="content">

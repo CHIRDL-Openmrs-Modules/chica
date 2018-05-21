@@ -24,11 +24,6 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 }
 
 function setLanguage(patientName, birthdate) {
@@ -36,18 +31,18 @@ function setLanguage(patientName, birthdate) {
     var langButtonText = "Español";
 	var additionalQuestions = "Please answer these questions about your child. Keep in mind how your child usually behaves. If you have seen your child do the behavior a few times, but he or she does not usually do it, then please answer no. Please select yes or no for every question. Thank you very much.";
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     if (!english) {
         langButtonText = "English";
 		additionalQuestions = "Por favor conteste las siguientes preguntas teniendo en cuenta el comportamiento que su hijo/a presenta usualmente. Si ha notado cierto comportamiento algunas veces, pero no es algo que hace usualmente, por favor conteste no. Conteste cada una de las preguntas seleccionando la palabra sí o no como respuesta. Muchas gracias.";
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#additionalQuestions").text(additionalQuestions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
 }
 
 function setLanguageFromForm(patientName, birthdate) {
