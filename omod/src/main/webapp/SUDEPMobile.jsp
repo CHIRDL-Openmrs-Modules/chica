@@ -44,7 +44,7 @@
 	</c:choose>
 	
 	<c:set var="formName" value="Epilepsy Questions"/>
-	<c:set var="formName_sp" value="SPANISH Epilepsy Questions"/>
+	<c:set var="formName_sp" value="Preguntas acerca de la epilepsia"/>
 	<c:set var="formNameHeader" value="${formName}:"/>
 	<c:set var="formNameHeader_sp" value="${formName_sp}:"/>
 	<input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
