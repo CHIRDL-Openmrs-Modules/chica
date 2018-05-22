@@ -43,7 +43,7 @@
         <h1 id="formTitle">Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
 
     <div data-role="content" >
@@ -127,7 +127,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_1" data-role="content">
         <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
@@ -164,7 +164,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_2" data-role="content">
     <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
@@ -204,7 +204,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage3Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_3" data-role="content">
     <div><h3>Going to bed/to sleep:</h3><hr/><br/></div>
@@ -244,7 +244,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_4" data-role="content">
     <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
@@ -284,7 +284,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_5" data-role="content">
     <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
@@ -320,7 +320,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage6Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_6" data-role="content">
     <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
@@ -359,7 +359,7 @@
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 
         <a id="langPage7Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_7" data-role="content">
     <div><h3>Waking at night (between midnight and 6:00 a.m.):</h3><hr/><br/></div>
@@ -399,7 +399,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage8Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_8" data-role="content">
     <div><h3>Sleeping in parents&#39; bed:</h3><hr/><br/></div>
@@ -439,7 +439,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage9Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_9" data-role="content">
     <div><h3>Sleeping in parents&#39; bed:</h3><hr/><br/></div>
@@ -479,7 +479,7 @@
         <h1>Infant Sleep Questionnaire:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage10Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Staff</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Quit</a>
     </div>
     <div id="content_10" data-role="content">
     <div><h3>Your views:</h3><hr/><br/></div>
@@ -515,7 +515,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_1_sp" data-role="content">
         <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
@@ -552,7 +552,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_2_sp" data-role="content">
         <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
@@ -592,7 +592,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage3SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_3_sp" data-role="content">
         <div><h3>Acostarlo/ponerlo a dormir:</h3><hr/><br/></div>
@@ -632,7 +632,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage4SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_4_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
@@ -672,7 +672,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage5SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_5_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
@@ -708,7 +708,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage6SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_6_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
@@ -746,7 +746,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage7SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_7_sp" data-role="content">
         <div><h3>Despertarse en la noche (entre la medianoche y las 6:00 a.m.):</h3><hr/><br/></div>
@@ -786,7 +786,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage8SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_8_sp" data-role="content">
         <div><h3>Dormir en la cama de los padres:</h3><hr/><br/></div>
@@ -826,7 +826,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage9SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_9_sp" data-role="content">
         <div><h3>Dormir en la cama de los padres:</h3><hr/><br/></div>
@@ -866,7 +866,7 @@
         <h1>CUESTIONARIO SOBRE EL SUE&Ntilde;O INFANTIL:</h1>
         <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
         <a id="langPage10SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Personal</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">Dejar</a>
     </div>
     <div id="content_10_sp" data-role="content">
         <div><h3>Su opini&oacute;n</h3><hr/><br/></div>
