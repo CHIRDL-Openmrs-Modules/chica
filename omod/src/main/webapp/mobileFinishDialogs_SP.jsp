@@ -9,7 +9,7 @@
             <div data-role="content">
                 <span>Esta forma no es completa. Est&aacute;s seguro de que quieres continuar?</span>
                 <div style="margin: 0 auto;text-align: center;">
-                    <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">Si</a>
+                    <a href="" onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">S&#237</a>
                     <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>
                 </div>
             </div>
