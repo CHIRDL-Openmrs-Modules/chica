@@ -1,6 +1,5 @@
 var english = false;
 var formInstance = null;
-var finishAttempts = 0;
 var gender = null;
 
 $(document).on("pageinit", function() {

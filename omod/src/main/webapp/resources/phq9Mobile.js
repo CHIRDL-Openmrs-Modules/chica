@@ -1,6 +1,5 @@
 var english = false;
 var formInstance = null;
-var finishAttempts = 0;
 
 $(document).on("pageinit", function() {
     // Initialize all pages because radio button reset will not work properly.

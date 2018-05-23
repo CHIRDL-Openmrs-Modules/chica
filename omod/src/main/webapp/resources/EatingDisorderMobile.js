@@ -1,7 +1,6 @@
 var english = false;
 var formInstance = null;
 var numberOfQuestions = 0;
-var finishAttempts = 0;
 var formTitleText = "";
 var questionCompletionCriteria = 15;
 
