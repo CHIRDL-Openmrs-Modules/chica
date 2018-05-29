@@ -19,6 +19,7 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 public class DetermineShouldAutoPrintPWS implements Rule
 {
 	private static final String LOCATION_TEPS = "TEPS";
+	private static final String LOCATION_PCPS = "PCPS";
 	
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException 
 	{
@@ -52,14 +53,17 @@ public class DetermineShouldAutoPrintPWS implements Rule
 			locationName = (String) locationNameObj;
 		}
 		
-		// Don't auto print if it's from 38th Street (TEPS), but still do if it's from the GreaseBoard
-		if (locationName.equalsIgnoreCase(LOCATION_TEPS) && !printedFromGreaseBoard.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)) 
+		// Don't auto print if it's from 38th Street (TEPS) or OCC (PCPS), but still do if it's from the GreaseBoard
+		if ((locationName.equalsIgnoreCase(LOCATION_TEPS) || locationName.equalsIgnoreCase(LOCATION_PCPS)) && 
+				!printedFromGreaseBoard.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)) 
 		{
 			return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
 		}
 	
 		// Auto print if the PSF AND vitals have been submitted OR this is a force print from the GreaseBoard
-		if((psfSubmitted.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE) && vitalsProcessed.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)) || (printedFromGreaseBoard.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)))
+		if((psfSubmitted.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE) && 
+				vitalsProcessed.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)) || 
+				(printedFromGreaseBoard.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)))
 		{
 			return new Result(ChirdlUtilConstants.GENERAL_INFO_TRUE);
 		}
