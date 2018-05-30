@@ -112,7 +112,7 @@ public class FaxStatusController {
 	private List<FaxStatus> queryFaxStatus ( int rowcount, ModelMap model ) {
 		
 		AdministrationService administrationService = Context.getAdministrationService();
-		String password = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_PASSWORD);
+		String password = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_PASSPHRASE);
 		String username = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_USERNAME); 
 		String wsdlURLString = administrationService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_OUTGOING_FAX_WSDL_LOCATION);
 		

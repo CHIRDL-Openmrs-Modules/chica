@@ -1396,7 +1396,7 @@ public class HL7SocketHandler extends
 		
 		Context.openSession();
 		Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
-				adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+				adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
 		Context.addProxyPrivilege(PrivilegeConstants.GET_LOCATIONS); // CHICA-1151 Replace OpenmrsConstants.PRIV_VIEW_LOCATIONS with PrivilegeConstants.GET_LOCATIONS
 		String attribute = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
 		
