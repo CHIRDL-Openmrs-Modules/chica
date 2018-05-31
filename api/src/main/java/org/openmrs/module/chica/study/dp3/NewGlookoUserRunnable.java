@@ -59,7 +59,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 		{	
 			AdministrationService adminService = Context.getAdministrationService();
 			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
 
 			List<Patient> patients = Context.getPatientService().getPatients(firstName + ChirdlUtilConstants.GENERAL_INFO_COMMA + lastName, null, null, false);
 			if(patients != null && patients.size() > 0)

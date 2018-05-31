@@ -273,7 +273,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 				try {
 					AdministrationService adminService = Context.getAdministrationService();
 					Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
-						adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+						adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
 	
 					Patient patient = Context.getPatientService().getPatient(patientId);
 					Form form = Context.getFormService().getForm(formId);
