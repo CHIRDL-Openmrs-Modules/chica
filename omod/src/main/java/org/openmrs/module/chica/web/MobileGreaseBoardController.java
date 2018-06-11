@@ -97,13 +97,21 @@ public class MobileGreaseBoardController extends SimpleFormController {
 				}
 			}
 			
-			String nextPage = Util.getFormUrl(formId);
-			map.put("patientId", patientId);
-			map.put("encounterId", encounterId);
-			map.put("sessionId", sessionId);
-			map.put("formInstance", locationIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationTagId.toString() + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
-				formIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceIdStr);
-			return new ModelAndView(new RedirectView(nextPage), map);
+			if(locationTagId != null){
+			    String nextPage = Util.getFormUrl(formId);
+	            map.put("patientId", patientId);
+	            map.put("encounterId", encounterId);
+	            map.put("sessionId", sessionId);
+	            map.put("formInstance", locationIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationTagId.toString() + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
+	                formIdStr + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceIdStr);
+	            return new ModelAndView(new RedirectView(nextPage), map);
+			}
+			else{
+			    log.error("Error processing form submission, locationTagId is null (patientId: " + patientId + " formIdStr: " + formIdStr + " formInstanceIdStr: " + formInstanceIdStr + " locationIdStr: " + locationIdStr + ").");
+			    map.put("errorMessage", SELECTION_ERROR);
+	            return new ModelAndView(new RedirectView(getSuccessView()), map);			     
+			}
+			
 		}catch(NumberFormatException nfe){
 			log.error("Error processing form submission (patientId: " + patientId + " formIdStr: " + formIdStr + " formInstanceIdStr: " + formInstanceIdStr + " locationIdStr: " + locationIdStr + ").", nfe);
 			map.put("errorMessage", SELECTION_ERROR);

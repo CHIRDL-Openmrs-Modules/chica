@@ -100,7 +100,7 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String XML_RESULT = "result";
 	private static final String XML_AGE_IN_YEARS = "ageInYears";
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Log LOG = LogFactory.getLog(ChicaMobileServlet.class);
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -176,7 +176,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			try {
 				sessionId = Integer.parseInt(sessionIdStr);
 			} catch(NumberFormatException e) {
-				log.error("Error parsing sessionId: " + sessionIdStr, e);
+			    LOG.error("Error parsing sessionId: " + sessionIdStr, e);
 			}
 		}
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -220,7 +220,7 @@ public class ChicaMobileServlet extends HttpServlet {
 						{
 							if(formInstance.getFormId() == null || formInstance.getFormInstanceId() == null || formInstance.getLocationId() == null)
 							{
-								log.error("Error getting forms for patientId: " + row.getPatientId() + " formId: " 
+							    LOG.error("Error getting forms for patientId: " + row.getPatientId() + " formId: " 
 										+ formInstance.getFormId() 
 										+ " formInstanceId: " + formInstance.getFormInstanceId() 
 										+ " locationId: " + formInstance.getLocationId() 
@@ -231,7 +231,7 @@ public class ChicaMobileServlet extends HttpServlet {
 					}
 					else
 					{
-						log.error("Error getting forms for patientId: " + row.getPatientId() + ". The patient will not be added to the mobile greaseBoard.");
+					    LOG.error("Error getting forms for patientId: " + row.getPatientId() + ". The patient will not be added to the mobile greaseBoard.");
 						continue;
 					}
 					
@@ -280,7 +280,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			pw.write(stringWriter.toString());
 		}
 		catch (Exception e) {
-			log.error("Error generating patients with forms", e);
+		    LOG.error("Error generating patients with forms", e);
 			pw.write(XML_ERROR_START + "An error occurred retrieving the patient list" + XML_ERROR_END);
 		}
 		
@@ -309,7 +309,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			String systemPasscode = Context.getAdministrationService().getGlobalProperty(
 				ChirdlUtilConstants.GLOBAL_PROP_PASSCODE);
 			if (systemPasscode == null) {
-				log.error("Please specify global propery chica.passcode");
+			    LOG.error("Please specify global propery chica.passcode");
 				pw.write("Passcode not properly set on server.");
 			} else {
 				if (systemPasscode.equals(passcode)) {
@@ -385,7 +385,7 @@ public class ChicaMobileServlet extends HttpServlet {
 				patient, parameterMap, parameterHandler);
 			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_TRUE, pw);
 		} catch (Exception e) {
-			log.error("Error saving prioritized elements", e);
+		    LOG.error("Error saving prioritized elements", e);
 			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_FALSE, pw);
 		}
 		

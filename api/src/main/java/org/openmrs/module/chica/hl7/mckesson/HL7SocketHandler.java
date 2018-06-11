@@ -900,8 +900,6 @@ public class HL7SocketHandler extends
 					|| (StringUtils.isBlank(newAddress.getAddress1())
 							&& StringUtils.isBlank(newAddress.getAddress2())
 							&& StringUtils.isBlank(newAddress.getCityVillage())
-							&& StringUtils.isBlank(newAddress
-									.getStateProvince())
 							&& StringUtils.isBlank(newAddress.getCountry())
 							&& StringUtils.isBlank(newAddress.getPostalCode())
 							&& StringUtils.isBlank(newAddress.getCountyDistrict()) 

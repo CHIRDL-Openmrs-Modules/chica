@@ -187,4 +187,78 @@ public class Study implements java.io.Serializable {
         
         return hash;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Study)) {
+            return false;
+        }
+        Study other = (Study) obj;
+        if (endDate == null) {
+            if (other.endDate != null) {
+                return false;
+            }
+        } else if (!endDate.equals(other.endDate)) {
+            return false;
+        }
+        if (investigators == null) {
+            if (other.investigators != null) {
+                return false;
+            }
+        } else if (!investigators.equals(other.investigators)) {
+            return false;
+        }
+        if (purpose == null) {
+            if (other.purpose != null) {
+                return false;
+            }
+        } else if (!purpose.equals(other.purpose)) {
+            return false;
+        }
+        if (startDate == null) {
+            if (other.startDate != null) {
+                return false;
+            }
+        } else if (!startDate.equals(other.startDate)) {
+            return false;
+        }
+        if (status == null) {
+            if (other.status != null) {
+                return false;
+            }
+        } else if (!status.equals(other.status)) {
+            return false;
+        }
+        if (studyConceptId == null) {
+            if (other.studyConceptId != null) {
+                return false;
+            }
+        } else if (!studyConceptId.equals(other.studyConceptId)) {
+            return false;
+        }
+        if (studyId == null) {
+            if (other.studyId != null) {
+                return false;
+            }
+        } else if (!studyId.equals(other.studyId)) {
+            return false;
+        }
+        if (title == null) {
+            if (other.title != null) {
+                return false;
+            }
+        } else if (!title.equals(other.title)) {
+            return false;
+        }
+        return true;
+    }
 }

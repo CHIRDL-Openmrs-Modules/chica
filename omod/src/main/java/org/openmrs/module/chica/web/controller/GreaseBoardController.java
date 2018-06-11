@@ -172,7 +172,7 @@ public class GreaseBoardController {
 				if (StringUtils.isNotBlank(formName)) {
 					Form form = formService.getForm(formName);
 					Integer formId = null;
-					if (form != null && !form.equals("")) {
+					if (form != null) {
 						formId = form.getFormId();
 					} else {
 						log.error("The locationTagAttributeValue "+formName+" is invalid");

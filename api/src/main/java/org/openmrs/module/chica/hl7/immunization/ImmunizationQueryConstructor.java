@@ -195,7 +195,7 @@ public class ImmunizationQueryConstructor extends
 			Patient patient = new Patient();
 			patient = encounter.getPatient();
 			AddSegmentPID(pid, patient.getPatientId());
-			vxu = AddSegmentNK1(vxu, patient.getPatientId());
+			AddSegmentNK1(vxu, patient.getPatientId());
 			vxuString = getVXUMessageString(vxu);
 		} catch (Exception e) {
 			log.error("Error in constructVXU().", e);
@@ -693,14 +693,13 @@ public class ImmunizationQueryConstructor extends
 			Encounter encounter) {
 		String encounterId = "";
 		String locationId = "";
-		try {
 			if (encounter != null && encounter.getEncounterId() != null){
 				encounterId = encounter.getEncounterId().toString();
 				locationId = encounter.getLocation().getLocationId().toString();
 			}
-			FileOutputStream immunFileOutput = new FileOutputStream(file + "\\"
+		try (FileOutputStream immunFileOutput = new FileOutputStream(file + "\\"
 					+ encounterId + "_" + locationId + "_"
-					+ Util.archiveStamp() + "." + filetype);
+					+ Util.archiveStamp() + "." + filetype)){
 			ByteArrayInputStream responseInput = new ByteArrayInputStream(text
 					.getBytes());
 			IOUtil.bufferedReadWrite(responseInput, immunFileOutput);
@@ -1465,7 +1464,7 @@ public class ImmunizationQueryConstructor extends
 						concepts, null, null, null, null, null, null, null, null, false);
 				
 				if (providerIdObs != null && providerIdObs.size() > 0 
-						&& providerIdObs.get(0) != null && providerIdObs.get(0) != null){
+						&& providerIdObs.get(0) != null){
 					vxu.getORCRXARXROBXNTE(rep).getRXA()
 						.getAdministeringProvider(0).getIDNumber().setValue(providerIdObs.get(0).getValueText());
 				}

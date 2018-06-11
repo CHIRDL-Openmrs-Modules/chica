@@ -771,12 +771,12 @@ public class ImmunizationRegistryQuery
 					 XPN[] xpns = pidnk1.getPID().getPatientName();
 					 XPN xpn_alias = pidnk1.getPID().getPatientAlias(0);
 					 for (XPN xpn : xpns){
-						  xpn = pidnk1.getPID().getPatientName(0);
-						 if (xpn != null){
+						  XPN xpnRep1 = pidnk1.getPID().getPatientName(0);
+						 if (xpnRep1 != null){
 							 PersonName personName = new PersonName();
-							 String last = xpn.getFamilyLastName().getFamilyName().getValue();
-							 String first = xpn.getGivenName().getValue();
-							 String middle = xpn.getMiddleInitialOrName().getValue();
+							 String last = xpnRep1.getFamilyLastName().getFamilyName().getValue();
+							 String first = xpnRep1.getGivenName().getValue();
+							 String middle = xpnRep1.getMiddleInitialOrName().getValue();
 							 personName.setFamilyName(last);
 							 personName.setGivenName(first);
 							 personName.setMiddleName(middle);
@@ -912,12 +912,12 @@ public class ImmunizationRegistryQuery
 			Patient patient = new Patient();	 
 			XPN[] xpns = pid.getPatientName();
 			for (XPN xpn : xpns){
-				xpn = pid.getPatientName(0);
-				if (xpn != null){
+				XPN patientName = pid.getPatientName(0);
+				if (patientName != null){
 					PersonName personName = new PersonName();
-					String last = xpn.getFamilyLastName().getFamilyName().getValue();
-					String first = xpn.getGivenName().getValue();
-					String middle = xpn.getMiddleInitialOrName().getValue();
+					String last = patientName.getFamilyLastName().getFamilyName().getValue();
+					String first = patientName.getGivenName().getValue();
+					String middle = patientName.getMiddleInitialOrName().getValue();
 					personName.setFamilyName(last);
 					personName.setGivenName(first);
 					personName.setMiddleName(middle);

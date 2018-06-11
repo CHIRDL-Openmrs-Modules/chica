@@ -32,9 +32,9 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class FaxStatus {
 
 
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Log LOG = LogFactory.getLog(FaxStatus.class);
 
-	public short id;
+	private short id;
 	private XMLGregorianCalendar transmitTime;
 	private String transmitTimeAsString;  
 	private String faxNumber;
@@ -84,40 +84,41 @@ public class FaxStatus {
 			return;
 		}
 		setFormInstance(idTag);
-		if (formInstance == null) return;
-		setFormNameByFormInstance(formInstance);
-		setLocation(formInstance);
-
-		PatientService patientService = Context.getPatientService();
-		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		List<PatientState> states = new ArrayList<PatientState>();
-		try {
-			if (formInstance != null){
-				states = chirdlUtilBackportsService.getPatientStatesByFormInstance(formInstance, false);
-			}
-
-			if (states == null || states.isEmpty()) {
-				return;
-			}
-			patientId = states.get(0).getPatientId();
-			locationTagId = states.get(0).getLocationTagId();
-			if (patientId != null){
-				Patient patient = patientService.getPatient(patientId);
-				if (patient != null) {
-					patientFirstName = patient.getGivenName();
-					patientLastName = patient.getFamilyName();
-					setPatientMRN(patient);
-				}
-			}
-
-			Location location = locationService.getLocation(formInstance.getLocationId());
-			if (location != null){
-				setLocationName(location.getName());
-			}
-
-
-		} catch (Exception e) {
-			log.error("Error setting fax patient information from form instance " + formInstance.toString() + ".", e);
+	
+		if (formInstance != null){
+    		setFormNameByFormInstance(formInstance);
+    		setLocation(formInstance);
+    
+    		PatientService patientService = Context.getPatientService();
+    		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+    		List<PatientState> states = new ArrayList<PatientState>();
+		
+		    try {
+		        
+		        states = chirdlUtilBackportsService.getPatientStatesByFormInstance(formInstance, false);
+		        
+		        if (states == null || states.isEmpty()) {
+		            return;
+		        }
+		        patientId = states.get(0).getPatientId();
+		        locationTagId = states.get(0).getLocationTagId();
+		        if (patientId != null){
+		            Patient patient = patientService.getPatient(patientId);
+		            if (patient != null) {
+		                patientFirstName = patient.getGivenName();
+		                patientLastName = patient.getFamilyName();
+		                setPatientMRN(patient);
+		            }
+		        }
+		        
+		        Location location = locationService.getLocation(formInstance.getLocationId());
+		        if (location != null){
+		            setLocationName(location.getName());
+		        }
+		        
+		    } catch (Exception e) {
+		        LOG.error("Error setting fax patient information from form instance " + formInstance.toString() + ".", e);
+		    }
 		}
 	}
 
@@ -439,7 +440,7 @@ public class FaxStatus {
 			//Do not print to log.
 			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		} catch (Exception e2){
-			log.error("Unable to determine fax status form instance from idTag " + idTag, e2);
+		    LOG.error("Unable to determine fax status form instance from idTag " + idTag, e2);
 		}
 
 		return formInstance;
@@ -509,7 +510,7 @@ public class FaxStatus {
 			}
 
 		} catch (Exception e) {
-			log.error("Unable to extract fax location (clinic) from form instance  " + formInstance.toString() + ".", e);
+		    LOG.error("Unable to extract fax location (clinic) from form instance  " + formInstance.toString() + ".", e);
 		}
 
 
@@ -570,7 +571,7 @@ public class FaxStatus {
 			}
 
 		} catch (Exception e) {
-			log.error("Error setting fax patient information from form instance " + formInstance.toString() + "." , e);
+		    LOG.error("Error setting fax patient information from form instance " + formInstance.toString() + "." , e);
 		}
 
 	}
