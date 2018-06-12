@@ -107,7 +107,7 @@ public class HL7SocketHandler implements Application {
 			
 			try (FileOutputStream vitalsDumpFile = new FileOutputStream(vitalsDirectory + "/" + filename);
 			        ByteArrayInputStream vitalsDumpInput = new ByteArrayInputStream(incomingMessage.getBytes())){		  	                
-	                    IOUtil.bufferedReadWrite(vitalsDumpInput, vitalsDumpFile);   
+	                    IOUtil.bufferedReadWrite(vitalsDumpInput, vitalsDumpFile, false);   
 			}
 			catch (FileNotFoundException e1) {
 				logger.error("Couldn't find file: " + vitalsDirectory + "/" + filename);

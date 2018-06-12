@@ -16,6 +16,7 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -246,11 +247,8 @@ public class HL7SocketHandler extends
 		if (familyName1 != null) {
 			if (!familyName1.equals(familyName2))
 				return false;
-		} else if (familyName2 != null) {
-			if (!familyName2.equals(familyName1))
-				return false;
 		}
-
+		
 		String givenName1 = patient1.getGivenName();
 		String givenName2 = patient2.getGivenName();
 		if ((givenName1 != null && givenName2 == null)
@@ -260,9 +258,6 @@ public class HL7SocketHandler extends
 
 		if (givenName1 != null) {
 			if (!givenName1.equals(givenName2))
-				return false;
-		} else if (givenName2 != null) {
-			if (!givenName2.equals(givenName1))
 				return false;
 		}
 
@@ -453,33 +448,23 @@ public class HL7SocketHandler extends
 				if (mckessonParseErrorDirectory != null) {
 					String filename = "r" + Util.archiveStamp() + ChirdlUtilConstants.FILE_EXTENSION_HL7;
 
-					FileOutputStream outputFile = null;
-
-					try {
-						outputFile = new FileOutputStream(
-								mckessonParseErrorDirectory + "/" + filename);
-					} catch (FileNotFoundException e1) {
-						log.error("Could not find file: " + mckessonParseErrorDirectory + "/" + filename);
+					try (FileOutputStream outputFile = new FileOutputStream(
+					    mckessonParseErrorDirectory + "/" + filename)){
+					    if(incomingMessageString != null){
+					        try(ByteArrayInputStream input = new ByteArrayInputStream(
+	                            incomingMessageString.getBytes())){
+	                            IOUtil.bufferedReadWrite(input, outputFile, false);
+	                        }catch(Exception e1){
+	                            log.error("There was an error writing the dump file");
+	                            log.error(e1.getMessage());
+	                            log.error(Util.getStackTrace(e1));
+	                        }
+					    }    
+					}catch(IOException ioe){
+					    log.error("IOException in HL7SocketHandler.processMessage() (mckessonParseErrorDirectory: " + 
+					            mckessonParseErrorDirectory + " filename: " + filename + ")", ioe);
 					}
-					if (outputFile != null) {
-						try {
-
-							ByteArrayInputStream input = new ByteArrayInputStream(
-									incomingMessageString.getBytes());
-							IOUtil.bufferedReadWrite(input, outputFile);
-							outputFile.flush();
-							outputFile.close();
-						} catch (Exception e1) {
-							try {
-								outputFile.flush();
-								outputFile.close();
-							} catch (Exception e2) {
-							}
-							log.error("There was an error writing the dump file");
-							log.error(e1.getMessage());
-							log.error(Util.getStackTrace(e));
-						}
-					}
+					
 				}
 				try {
 					processMessageError  = true;

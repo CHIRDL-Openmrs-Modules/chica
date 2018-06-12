@@ -702,7 +702,7 @@ public class ImmunizationQueryConstructor extends
 					+ Util.archiveStamp() + "." + filetype)){
 			ByteArrayInputStream responseInput = new ByteArrayInputStream(text
 					.getBytes());
-			IOUtil.bufferedReadWrite(responseInput, immunFileOutput);
+			IOUtil.bufferedReadWrite(responseInput, immunFileOutput, false);
 		} catch (Exception e) {
 			log.error(" vxq output stream error", e);
 		}
