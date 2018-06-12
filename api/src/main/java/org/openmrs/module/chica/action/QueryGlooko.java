@@ -70,7 +70,7 @@ public class QueryGlooko implements ProcessStateAction
 	private static final String GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT = "chica.GlookoQueryTargetEndpoint";
 	private static final String GLOBAL_PROP_GLOOKO_API_KEY = "chica.GlookoAPIKey";
 	private static final String GLOBAL_PROP_GLOOKO_USERNAME = "chica.GlookoUsername";
-	private static final String GLOBAL_PROP_GLOOKO_PASSWORD = "chica.GlookoPassword";
+	private static final String GLOBAL_PROP_GLOOKO_PASS = "chica.GlookoPassword";
 		
 	/**
 	 * TODO CHICA-1029 This method is not currently used. I'm not sure yet if it is needed.
@@ -140,10 +140,10 @@ public class QueryGlooko implements ProcessStateAction
 				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
 			}
 			
-			String password = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_PASSWORD); // Read global property to get password
+			String password = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_PASS); // Read global property to get password
 			if(StringUtils.isBlank(password))
 			{
-				log.error(GLOBAL_PROP_GLOOKO_PASSWORD + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				log.error(GLOBAL_PROP_GLOOKO_PASS + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
 				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
 			}
 			

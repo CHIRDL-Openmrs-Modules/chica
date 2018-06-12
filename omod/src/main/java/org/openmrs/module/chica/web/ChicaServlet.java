@@ -187,79 +187,91 @@ public class ChicaServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		boolean authenticated = ServletUtil.authenticateUser(request);
-		if (!authenticated) {
-			response.setHeader(
-				ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		}
-		
-		String action = request.getParameter(PARAM_ACTION);
-		if (GET_PATIENT_JITS.equals(action) || DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
-			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
-			response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
-		} else if (FORCE_PRINT_FORMS.equals(action)) {
-			getForcePrintFormHeader(request, response);
-		}
+	public void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	    try{
+    		boolean authenticated = ServletUtil.authenticateUser(request);
+    		if (!authenticated) {
+    			response.setHeader(
+    				ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
+    			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    		}
+    		
+    		String action = request.getParameter(PARAM_ACTION);
+    		if (GET_PATIENT_JITS.equals(action) || DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
+    			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
+    			response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
+    		} else if (FORCE_PRINT_FORMS.equals(action)) {
+    			getForcePrintFormHeader(request, response);
+    		}
+	    }catch(IOException e){
+	        LOG.error("IOException in ChicaServlet.", e);
+	    }
 	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		boolean authenticated = ServletUtil.authenticateUser(request);
-		if (!authenticated) {
-			response.setHeader(
-				ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		}
-		
-		String action = request.getParameter(PARAM_ACTION);
-		if (IS_AUTHENTICATED.equals(action)) {
-			ServletUtil.isUserAuthenticated(response);
-		} else if (AUTHENTICATE_USER.equals(action)) {
-			ServletUtil.authenticateUser(request, response);
-		} else if (GET_PATIENT_JITS.equals(action)) {
-			getPatientJITs(request, response);
-		} else if (GET_AVAILABLE_PATIENT_JITS.equals(action)) {
-			getAvailablePatientJITs(request, response);
-		} else if (GET_FORCE_PRINT_FORMS.equals(action)) {
-			getForcePrintForms(request, response);
-		} else if (FORCE_PRINT_FORMS.equals(action)) {
-			forcePrintForms(request, response);
-		} else if (DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
-			getPatientJITs(request, response);
-		} else if (GET_GREASEBOARD_PATIENTS.equals(action)) {
-			getGreaseboardPatients(request, response);
-		} else if (VERIFY_MRN.equals(action)) {
-			ManualCheckinSSNMRN.verifyMRN(request, response);
-		} else if (GET_MANUAL_CHECKIN.equals(action)) {
-			ManualCheckin.getManualCheckinPatient(request, response);
-		} else if (SAVE_MANUAL_CHECKIN.equals(action)) {
-			ManualCheckin.saveManualCheckinPatient(request, response);
-		} else if (SEND_PAGE_REQUEST.equals(action)) {
-			Pager.sendPage(request, response);
-		} else if (KEEP_ALIVE.equals(action)) {
-			keepAlive(response);
-		} else if (CLEAR_CACHE.equals(action)) {
-			clearCache(request, response);
-		} else if (SAVE_FORM_DRAFT.equals(action)) {
-			saveFormDraft(request, response);
-		} else if (CLEAR_FORM_INSTANCE_FROM_FORM_CACHE.equals(action)) {
-			clearFormInstaceFromFormDraftCache(request, response);
-		} else if (CONVERT_TIFF_TO_PDF.equals(action)) {
-			convertTiffToPDF(request, response);
-		} else if (TRANSFORM_FORM_XML.equals(action)) {
-			transformFormXMLToHTML(request, response);
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		try{
+		    boolean authenticated = ServletUtil.authenticateUser(request);
+		    if (!authenticated) {
+		        response.setHeader(
+		            ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
+		        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		    }
+		    
+		    String action = request.getParameter(PARAM_ACTION);
+		    if (IS_AUTHENTICATED.equals(action)) {
+		        ServletUtil.isUserAuthenticated(response);
+		    } else if (AUTHENTICATE_USER.equals(action)) {
+		        ServletUtil.authenticateUser(request, response);
+		    } else if (GET_PATIENT_JITS.equals(action)) {
+		        getPatientJITs(request, response);
+		    } else if (GET_AVAILABLE_PATIENT_JITS.equals(action)) {
+		        getAvailablePatientJITs(request, response);
+		    } else if (GET_FORCE_PRINT_FORMS.equals(action)) {
+		        getForcePrintForms(request, response);
+		    } else if (FORCE_PRINT_FORMS.equals(action)) {
+		        forcePrintForms(request, response);
+		    } else if (DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
+		        getPatientJITs(request, response);
+		    } else if (GET_GREASEBOARD_PATIENTS.equals(action)) {
+		        getGreaseboardPatients(request, response);
+		    } else if (VERIFY_MRN.equals(action)) {
+		        ManualCheckinSSNMRN.verifyMRN(request, response);
+		    } else if (GET_MANUAL_CHECKIN.equals(action)) {
+		        ManualCheckin.getManualCheckinPatient(request, response);
+		    } else if (SAVE_MANUAL_CHECKIN.equals(action)) {
+		        ManualCheckin.saveManualCheckinPatient(request, response);
+		    } else if (SEND_PAGE_REQUEST.equals(action)) {
+		        Pager.sendPage(request, response);
+		    } else if (KEEP_ALIVE.equals(action)) {
+		        keepAlive(response);
+		    } else if (CLEAR_CACHE.equals(action)) {
+		        clearCache(request, response);
+		    } else if (SAVE_FORM_DRAFT.equals(action)) {
+		        saveFormDraft(request, response);
+		    } else if (CLEAR_FORM_INSTANCE_FROM_FORM_CACHE.equals(action)) {
+		        clearFormInstaceFromFormDraftCache(request, response);
+		    } else if (CONVERT_TIFF_TO_PDF.equals(action)) {
+		        convertTiffToPDF(request, response);
+		    } else if (TRANSFORM_FORM_XML.equals(action)) {
+		        transformFormXMLToHTML(request, response);
+		    }
+		}catch(IOException ioe){
+		    LOG.error("IOException in ChicaServlet.", ioe);
 		}
 	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+	public void doPost(HttpServletRequest request, HttpServletResponse response) {
+		try{
+		    doGet(request, response);
+		}catch(ServletException e){
+            LOG.error("ServletException in ChicaServlet", e);
+        }
 	}
 	
 	/**

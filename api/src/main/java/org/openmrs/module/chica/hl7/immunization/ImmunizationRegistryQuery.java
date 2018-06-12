@@ -95,6 +95,8 @@ public class ImmunizationRegistryQuery
 	private static String CHIRP_UPDATE_FAILED = "CHIRP is accessible, but the immunization update failed.";
 	private static String CHIRP_RESPONSE_INVALID = "CHIRP response was empty or invalid";
 	
+	private static final String PARAM_PASS = "PASSWORD";
+	
 	/**
 	 * 
 	 * Auto generated method comment
@@ -134,7 +136,7 @@ public class ImmunizationRegistryQuery
 			}
 			parseImmunizations(message, patientId);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception in createImmunizationList() (patientId: " + patientId + ")", e); 
 		}
 	}
 
@@ -427,7 +429,7 @@ public class ImmunizationRegistryQuery
 
 			data = URLEncoder.encode("USERID", "UTF-8") + "="
 			+ URLEncoder.encode(userId, "UTF-8");
-			data += "&" + URLEncoder.encode("PASSWORD", "UTF-8") + "="
+			data += "&" + URLEncoder.encode(PARAM_PASS, "UTF-8") + "="
 			+ URLEncoder.encode(password, "UTF-8");
 			
 			if (message != null && message.contains("VXU")){
@@ -439,7 +441,7 @@ public class ImmunizationRegistryQuery
 			data += "&" + URLEncoder.encode("MESSAGEDATA", "UTF-8") + "="
 			+ URLEncoder.encode(message, "UTF-8");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception in getData()", e); 
 		} 
 		return data;		
 		

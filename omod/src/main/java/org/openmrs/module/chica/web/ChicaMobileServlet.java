@@ -105,37 +105,45 @@ public class ChicaMobileServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		boolean authenticated = ServletUtil.authenticateUser(request);
-		if (!authenticated) {
-			response.setHeader(
-				ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		}
-		
-		String action = request.getParameter(PARAM_ACTION);
-		if (PATIENTS_WITH_PRIMARY_FORM.equals(action)) {
-			getPatientsWithPrimaryForm(request, response);
-		} else if (GET_PATTIENT_SECONDARY_FORMS.equals(action)) {
-			getPatientSecondaryForms(request, response);
-		} else if (VERIFY_PASSCODE.equals(action)) {
-			verifyPasscode(request, response);
-		} else if (IS_AUTHENTICATED.equals(action)) {
-			ServletUtil.isUserAuthenticated(response);
-		} else if (AUTHENTICATE_USER.equals(action)) {
-			ServletUtil.authenticateUser(request, response);
-		} else if (GET_PRIORITIZED_ELEMENTS.equals(action)) {
-			getPrioritizedElements(request, response);
-		} else if (SAVE_EXPORT_ELEMENTS.equals(action)) {
-			saveExportElements(request, response);
-		}
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	    try{
+	        boolean authenticated = ServletUtil.authenticateUser(request);
+	        if (!authenticated) {
+	            response.setHeader(
+	                ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
+	            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+	        }
+	        
+	        String action = request.getParameter(PARAM_ACTION);
+	        if (PATIENTS_WITH_PRIMARY_FORM.equals(action)) {
+	            getPatientsWithPrimaryForm(request, response);
+	        } else if (GET_PATTIENT_SECONDARY_FORMS.equals(action)) {
+	            getPatientSecondaryForms(request, response);
+	        } else if (VERIFY_PASSCODE.equals(action)) {
+	            verifyPasscode(request, response);
+	        } else if (IS_AUTHENTICATED.equals(action)) {
+	            ServletUtil.isUserAuthenticated(response);
+	        } else if (AUTHENTICATE_USER.equals(action)) {
+	            ServletUtil.authenticateUser(request, response);
+	        } else if (GET_PRIORITIZED_ELEMENTS.equals(action)) {
+	            getPrioritizedElements(request, response);
+	        } else if (SAVE_EXPORT_ELEMENTS.equals(action)) {
+	            saveExportElements(request, response);
+	        }
+	    }catch(IOException ioe){
+	        LOG.error("IOException in ChicaMobileServlet.", ioe);
+	    }
 	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+	public void doPost(HttpServletRequest request, HttpServletResponse response) {
+		try{
+		    doGet(request, response);
+		}catch(ServletException e){
+		    LOG.error("ServletException in ChicaMobileServlet", e);
+		}
 	}
 	
 	/**
