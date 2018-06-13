@@ -155,30 +155,14 @@ public class HL7ToObs {
 			if (mrfParseErrorDirectory != null) {
 				
 				String filename = "r" + Util.archiveStamp() + ChirdlUtilConstants.FILE_EXTENSION_HL7;
-				FileOutputStream outputFile = null;
-
-				try {
-					outputFile = new FileOutputStream(new File(mrfParseErrorDirectory,filename));
-				} catch (FileNotFoundException e1) {
-					log.error("Could not find filename " + filename + " in directory " + mrfParseErrorDirectory );
-				}
 				
-				if (outputFile != null) {
-					try {
-						ByteArrayInputStream input = new ByteArrayInputStream(newMessageString.getBytes());
-						IOUtil.bufferedReadWrite(input, outputFile);
-					} catch (IOException e1) {
-						log.error("Error writing the errored mrf dump to an error directory.",e1);
-					}
-
-					try {
-						outputFile.flush();
-						outputFile.close();
-					} catch (IOException e1) {
-						log.error("Error flushing output stream after an MRF dump parsing error.", e1);
-					}
-
-				}
+				try(FileOutputStream outputFile = new FileOutputStream(new File(mrfParseErrorDirectory,filename));
+				        ByteArrayInputStream input = new ByteArrayInputStream(newMessageString.getBytes())){
+				    IOUtil.bufferedReadWrite(input, outputFile);
+				}catch(IOException ioe){
+				    log.error("IOException in HL7ToObs (mrfParseErrorDirectory: " + 
+				            mrfParseErrorDirectory + " filename: " + filename + ")", ioe);
+				}	
 			}
 			return;
 		}

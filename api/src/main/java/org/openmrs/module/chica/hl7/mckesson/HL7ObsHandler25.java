@@ -235,96 +235,121 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 
 	public String getObsValueType(Message message, int orderRep, int obxRep)
 	{
-		return getOBX(message, orderRep, obxRep).getValueType().toString();
+	    OBX obx = getOBX(message, orderRep, obxRep);
+	    if(obx != null){
+	        return obx.getValueType().toString(); 
+	    }
+		return null;
 	}
 
 	public Date getObsDateTime(Message message, int orderRep, int obxRep)
 	{
-		TS tsObsDateTime = getOBX(message, orderRep, obxRep)
-				.getDateTimeOfTheObservation();
-		Date obsDateTime = TranslateDate(tsObsDateTime);
-		return obsDateTime;
+	    OBX obx = getOBX(message, orderRep, obxRep);
+	    if(obx != null){
+	        TS tsObsDateTime = obx.getDateTimeOfTheObservation();
+	        Date obsDateTime = TranslateDate(tsObsDateTime);
+	        return obsDateTime;
+	    }
+		
+		return null;
 	}
 
 	public String getConceptId(Message message, int orderRep, int obxRep)
 	{
-		CE ceObsIdentifier = getOBX(message, orderRep, obxRep)
-				.getObservationIdentifier();
-		return ceObsIdentifier.getIdentifier().toString();
+	    OBX obx = getOBX(message, orderRep, obxRep);
+	    if(obx != null){
+	        CE ceObsIdentifier = obx.getObservationIdentifier();
+	        return ceObsIdentifier.getIdentifier().toString();
+	    }
+		return null;
 	}
 
 	public String getConceptName(Message message, int orderRep, int obxRep)
 	{
-		CE ceObsIdentifier = getOBX(message, orderRep, obxRep)
-				.getObservationIdentifier();
-		return ceObsIdentifier.getText().toString();
+	    OBX obx = getOBX(message, orderRep, obxRep);
+	    if(obx != null){
+	        CE ceObsIdentifier = obx.getObservationIdentifier();
+	        return ceObsIdentifier.getText().toString();
+	    }
+		
+		return null;
 	}
 
 	public String getTextResult(Message message, int orderRep, int obxRep)
 	{
-		Varies[] values = getOBX(message, orderRep, obxRep)
-				.getObservationValue();
-		Varies value = null;
-		String dataString = null;
+	    OBX obx = getOBX(message, orderRep, obxRep);
+	    if(obx != null){
+	        Varies[] values = obx.getObservationValue();
+	        Varies value = null;
+	        String dataString = null;
 
-		if (values.length > 0)
-		{
-			value = values[0];
+	        if (values.length > 0)
+	        {
+	            value = values[0];
 
-			if (value.getData() instanceof TX)
-			{
-				TX data = (TX) value.getData();
-				dataString = data.getValue();
-			}
+	            if (value.getData() instanceof TX)
+	            {
+	                TX data = (TX) value.getData();
+	                dataString = data.getValue();
+	            }
 
-			if (value.getData() instanceof ST)
-			{
-				ST data = (ST) value.getData();
-				dataString = data.getValue();
-			}
+	            if (value.getData() instanceof ST)
+	            {
+	                ST data = (ST) value.getData();
+	                dataString = data.getValue();
+	            }
 
-			return dataString;
-		}
+	            return dataString;
+	        }
+	    }
+		
 		return null;
 	}
 
 	public Date getDateResult(Message message, int orderRep, int obxRep)
 	{
-		Varies[] values = getOBX(message, orderRep, obxRep)
-				.getObservationValue();
-		Varies value = null;
-		if (values.length > 0)
-		{
+	    OBX obx = getOBX(message, orderRep, obxRep);
+	    if(obx != null){
+	        Varies[] values = obx .getObservationValue();
+	        Varies value = null;
+	        if (values.length > 0)
+	        {
 
-			value = values[0];
-			TS ts = (TS) value.getData();
-			Date date = TranslateDate(ts);
-			return date;
-		}
+	            value = values[0];
+	            TS ts = (TS) value.getData();
+	            Date date = TranslateDate(ts);
+	            return date;
+	        }
+	    }
+		
 		return null;
 	}
 
 	public Double getNumericResult(Message message, int orderRep, int obxRep)
 	{
 		double dVal = 0;
-		Varies[] values = getOBX(message, orderRep, obxRep)
-				.getObservationValue();
-		Varies value = null;
-		if (values.length > 0)
-		{
-			value = values[0];
-			String nmvalue = ((NM) value.getData()).getValue();
+		OBX obx = getOBX(message, orderRep, obxRep);
+		if(obx != null){
+		    Varies[] values = obx.getObservationValue();
+	        Varies value = null;
+	        if (values.length > 0)
+	        {
+	            value = values[0];
+	            String nmvalue = ((NM) value.getData()).getValue();
 
-			if (nmvalue != null)
-			{
-				try
-				{
-					dVal = Double.parseDouble(nmvalue);
-				} catch (NumberFormatException ex)
-				{
-				}
-			}
+	            if (nmvalue != null)
+	            {
+	                try
+	                {
+	                    dVal = Double.parseDouble(nmvalue);
+	                } catch (NumberFormatException ex)
+	                {
+	                    dVal = 0;
+	                }
+	            }
+	        } 
 		}
+		
 		return dVal;
 	}
 
@@ -375,23 +400,23 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			Logger logger, String pIdentifierString, String obsvID,
 			String obsValueType, Logger conceptNotFoundLogger)
 	{
-		Varies[] values = getOBX(message, orderRep, obxRep)
-				.getObservationValue();
-		Varies value = null;
-		Concept conceptResult = null;
+	    OBX obx = getOBX(message, orderRep, obxRep);
+	    if(obx != null){
+	        Varies[] values = obx.getObservationValue();
+	        Varies value = null;
 
-		if (values.length > 0)
-		{
-			value = values[0];
+	        if (values.length > 0)
+	        {
+	            value = values[0];
 
-			if (obsValueType.equals("CE"))
-			{
-				conceptResult = processCEType(value, logger, pIdentifierString,
-						obsvID);
-			}
-		}
+	            if (obsValueType.equals("CE"))
+	            {
+	                return processCEType(value, logger, pIdentifierString, obsvID);
+	            }
+	        }
+	    }
 
-		return conceptResult;
+		return null;
 	}
 	
 	public ArrayList<Obs> getObs(Message message,Patient patient) throws HL7Exception

@@ -100,42 +100,50 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String XML_RESULT = "result";
 	private static final String XML_AGE_IN_YEARS = "ageInYears";
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Log LOG = LogFactory.getLog(ChicaMobileServlet.class);
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		boolean authenticated = ServletUtil.authenticateUser(request);
-		if (!authenticated) {
-			response.setHeader(
-				ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		}
-		
-		String action = request.getParameter(PARAM_ACTION);
-		if (PATIENTS_WITH_PRIMARY_FORM.equals(action)) {
-			getPatientsWithPrimaryForm(request, response);
-		} else if (GET_PATTIENT_SECONDARY_FORMS.equals(action)) {
-			getPatientSecondaryForms(request, response);
-		} else if (VERIFY_PASSCODE.equals(action)) {
-			verifyPasscode(request, response);
-		} else if (IS_AUTHENTICATED.equals(action)) {
-			ServletUtil.isUserAuthenticated(response);
-		} else if (AUTHENTICATE_USER.equals(action)) {
-			ServletUtil.authenticateUser(request, response);
-		} else if (GET_PRIORITIZED_ELEMENTS.equals(action)) {
-			getPrioritizedElements(request, response);
-		} else if (SAVE_EXPORT_ELEMENTS.equals(action)) {
-			saveExportElements(request, response);
-		}
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	    try{
+	        boolean authenticated = ServletUtil.authenticateUser(request);
+	        if (!authenticated) {
+	            response.setHeader(
+	                ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE, ChirdlUtilConstants.HTTP_HEADER_AUTHENTICATE_BASIC_CHICA);  
+	            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+	        }
+	        
+	        String action = request.getParameter(PARAM_ACTION);
+	        if (PATIENTS_WITH_PRIMARY_FORM.equals(action)) {
+	            getPatientsWithPrimaryForm(request, response);
+	        } else if (GET_PATTIENT_SECONDARY_FORMS.equals(action)) {
+	            getPatientSecondaryForms(request, response);
+	        } else if (VERIFY_PASSCODE.equals(action)) {
+	            verifyPasscode(request, response);
+	        } else if (IS_AUTHENTICATED.equals(action)) {
+	            ServletUtil.isUserAuthenticated(response);
+	        } else if (AUTHENTICATE_USER.equals(action)) {
+	            ServletUtil.authenticateUser(request, response);
+	        } else if (GET_PRIORITIZED_ELEMENTS.equals(action)) {
+	            getPrioritizedElements(request, response);
+	        } else if (SAVE_EXPORT_ELEMENTS.equals(action)) {
+	            saveExportElements(request, response);
+	        }
+	    }catch(IOException ioe){
+	        LOG.error("IOException in ChicaMobileServlet.", ioe);
+	    }
 	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+	public void doPost(HttpServletRequest request, HttpServletResponse response) {
+		try{
+		    doGet(request, response);
+		}catch(ServletException e){
+		    LOG.error("ServletException in ChicaMobileServlet", e);
+		}
 	}
 	
 	/**
@@ -176,7 +184,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			try {
 				sessionId = Integer.parseInt(sessionIdStr);
 			} catch(NumberFormatException e) {
-				log.error("Error parsing sessionId: " + sessionIdStr, e);
+			    LOG.error("Error parsing sessionId: " + sessionIdStr, e);
 			}
 		}
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -220,7 +228,7 @@ public class ChicaMobileServlet extends HttpServlet {
 						{
 							if(formInstance.getFormId() == null || formInstance.getFormInstanceId() == null || formInstance.getLocationId() == null)
 							{
-								log.error("Error getting forms for patientId: " + row.getPatientId() + " formId: " 
+							    LOG.error("Error getting forms for patientId: " + row.getPatientId() + " formId: " 
 										+ formInstance.getFormId() 
 										+ " formInstanceId: " + formInstance.getFormInstanceId() 
 										+ " locationId: " + formInstance.getLocationId() 
@@ -231,7 +239,7 @@ public class ChicaMobileServlet extends HttpServlet {
 					}
 					else
 					{
-						log.error("Error getting forms for patientId: " + row.getPatientId() + ". The patient will not be added to the mobile greaseBoard.");
+					    LOG.error("Error getting forms for patientId: " + row.getPatientId() + ". The patient will not be added to the mobile greaseBoard.");
 						continue;
 					}
 					
@@ -280,7 +288,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			pw.write(stringWriter.toString());
 		}
 		catch (Exception e) {
-			log.error("Error generating patients with forms", e);
+		    LOG.error("Error generating patients with forms", e);
 			pw.write(XML_ERROR_START + "An error occurred retrieving the patient list" + XML_ERROR_END);
 		}
 		
@@ -309,7 +317,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			String systemPasscode = Context.getAdministrationService().getGlobalProperty(
 				ChirdlUtilConstants.GLOBAL_PROP_PASSCODE);
 			if (systemPasscode == null) {
-				log.error("Please specify global propery chica.passcode");
+			    LOG.error("Please specify global propery chica.passcode");
 				pw.write("Passcode not properly set on server.");
 			} else {
 				if (systemPasscode.equals(passcode)) {
@@ -385,7 +393,7 @@ public class ChicaMobileServlet extends HttpServlet {
 				patient, parameterMap, parameterHandler);
 			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_TRUE, pw);
 		} catch (Exception e) {
-			log.error("Error saving prioritized elements", e);
+		    LOG.error("Error saving prioritized elements", e);
 			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_FALSE, pw);
 		}
 		

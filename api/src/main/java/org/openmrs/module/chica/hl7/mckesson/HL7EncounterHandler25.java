@@ -41,8 +41,11 @@ public class HL7EncounterHandler25 extends
 			return TranslateDate(pv1.getAdmitDateTime());
 		}
 		
-		PV2 pv2 = getPV2(message);
-		return TranslateDate(pv2.getExpectedAdmitDateTime());
+		PV2 pv2 = getPV2FromMessage(message);
+		if(pv2 != null){
+		    return TranslateDate(pv2.getExpectedAdmitDateTime()); 
+		}
+		return null;
 	}
 
 	public String getInsuranceCode(Message message)
@@ -57,25 +60,25 @@ public class HL7EncounterHandler25 extends
 		return pv1.getAssignedPatientLocation().getPointOfCare().getValue();
 	}
 
-	protected PV2 getPV2(Message message)
+	private PV2 getPV2FromMessage(Message message)
 	{
 		if (message instanceof ORU_R01)
 		{
-			return getPV2((ORU_R01) message);
+			return getPV2FromORU((ORU_R01) message);
 		}
 		if (message instanceof ADT_A01)
 		{
-			return getPV2((ADT_A01) message);
+			return getPV2FromADT((ADT_A01) message);
 		}
 		return null;
 	}
 
-	private PV2 getPV2(ORU_R01 oru)
+	private PV2 getPV2FromORU(ORU_R01 oru)
 	{
 		return oru.getPATIENT_RESULT().getPATIENT().getVISIT().getPV2();
 	}
 
-	private PV2 getPV2(ADT_A01 adt)
+	private PV2 getPV2FromADT(ADT_A01 adt)
 	{
 		return adt.getPV2();
 	}

@@ -68,7 +68,7 @@ public class HL7OutboundHandler implements Runnable
 					closeSocket();
 				}
 				
-				Thread.sleep(sleepTime * 1000);
+				Thread.sleep(sleepTime * 1000L);
 			}
 		}
 		catch(ContextAuthenticationException e)

@@ -106,7 +106,11 @@ public class ImmunizationForecastLookup {
 					// milliseconds
 				}
 			}
-			catch (NumberFormatException e) {};
+			catch (NumberFormatException e) {
+			    timeout = null;
+			    log.error("NumberFormatException occurred while parsing " + ChirdlUtilConstants.GLOBAL_PROP_IMMUNIZATION_LIST_TIMEOUT + " (timeout:" + timeout + ")");
+			    return;
+			}
 			
 			QueryImmunizationForecast queryImmunizationsThread = new QueryImmunizationForecast(encounter.getEncounterId());
 			Thread thread = new Thread(queryImmunizationsThread);
@@ -138,8 +142,9 @@ public class ImmunizationForecastLookup {
 						Thread.sleep(100);// wait for a tenth of a second
 						
 					}
-					catch (Exception e) {
-						e.printStackTrace();
+					catch (InterruptedException e) {
+					    log.error(e);
+						Thread.currentThread().interrupt();
 						return;
 					}
 				}

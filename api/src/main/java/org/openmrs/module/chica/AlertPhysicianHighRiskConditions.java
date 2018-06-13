@@ -185,7 +185,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 					}
 					
 					
-					if (dateThreshold != null) {
+					if (dateThreshold != null && riskDate != null) {
 						if (riskDate.compareTo(dateThreshold) >= 0) {
 							sendEmailNotification(locationId, locationTagId, chicaEncounter, notificationText, fromEmail,
 							    subject, riskDate);

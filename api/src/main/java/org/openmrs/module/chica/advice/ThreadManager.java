@@ -76,23 +76,25 @@ public class ThreadManager
             }
 
 			// remove inactive threads
-			for (int i = 0; i < activeThreadsLength; i++)
-			{
-				Thread currThread = activeThreadsArray[i];
-				if (!currThread.isAlive())
-				{
-					readWriteManager.getWriteLock();
-					try {
-	                    activeThreads.remove(currThread);
+            if(activeThreadsArray != null){
+                for (int i = 0; i < activeThreadsLength; i++)
+                {
+                    Thread currThread = activeThreadsArray[i];
+                    if (!currThread.isAlive())
+                    {
+                        readWriteManager.getWriteLock();
+                        try {
+                            activeThreads.remove(currThread);
+                        }
+                        catch (Exception e) {
+                            log.error("",e);
+                        }finally{
+                            readWriteManager.releaseWriteLock();
+                        }
+                        purgedThreads++;
                     }
-                    catch (Exception e) {
-	                    log.error("",e);
-                    }finally{
-                    	readWriteManager.releaseWriteLock();
-                    }
-					purgedThreads++;
-				}
-			}
+                }
+            }
 		} catch (Exception e)
 		{
 			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));

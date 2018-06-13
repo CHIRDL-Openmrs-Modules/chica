@@ -59,7 +59,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 public class HibernateChicaDAO implements ChicaDAO
 {
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Log LOG = LogFactory.getLog(HibernateChicaDAO.class);
 
 	/**
 	 * Hibernate session factory
@@ -96,7 +96,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (Percentile) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -114,7 +114,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (Bmiage) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -132,7 +132,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (Hcageinf) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -150,7 +150,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (Lenageinf) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -167,7 +167,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -192,7 +192,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return null;
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -229,7 +229,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return null;
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -248,7 +248,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (String) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -271,7 +271,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			}
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -291,7 +291,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (String) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -315,7 +315,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return categories;
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -332,7 +332,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (PatientFamily) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -371,7 +371,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return null;
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -388,7 +388,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (Family) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -405,7 +405,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (Family) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -417,7 +417,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.sessionFactory.getCurrentSession().save(patientFamily);
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 	}
 
@@ -428,7 +428,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.sessionFactory.getCurrentSession().save(family);
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 	}
 
@@ -439,7 +439,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.sessionFactory.getCurrentSession().update(family);
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 	}
 
@@ -454,7 +454,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -473,7 +473,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -495,7 +495,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -516,7 +516,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -537,7 +537,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -559,7 +559,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -571,7 +571,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.sessionFactory.getCurrentSession().update(patient);
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 	}
 
@@ -582,7 +582,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.sessionFactory.getCurrentSession().update(appointment);
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 	}
 
@@ -597,12 +597,16 @@ public class HibernateChicaDAO implements ChicaDAO
 			{
 				bpColumn = "Diastolic";
 			}
-
-			String sql = "select " + bpColumn + "_HT" + heightPercentile
-					+ " from chica_high_bp where Age=? and Sex=?"
-					+ " and BP_Percentile=?";
+			
+			StringBuilder sql = new StringBuilder("select ")
+			        .append(bpColumn)
+			        .append("_HT")
+			        .append(heightPercentile)
+			        .append(" from chica_high_bp where Age=? and Sex=?")
+			        .append(" and BP_Percentile=?");
+			
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
+					.createSQLQuery(sql.toString());
 			qry.setInteger(0, ageInYears);
 			qry.setString(1, sex);
 			qry.setInteger(2, bpPercentile);
@@ -610,7 +614,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (Integer) qry.uniqueResult();
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -632,7 +636,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			}
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -708,7 +712,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		} catch (Exception e)
 		{
-			log.error(Util.getStackTrace(e));
+			LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 	}
@@ -723,8 +727,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			qry.addEntity(Chica1Appointment.class);
 			appt = (Chica1Appointment) qry.uniqueResult();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			log.error(Util.getStackTrace(e));
+			LOG.error(Util.getStackTrace(e));
 		}
 		
 		return appt;
@@ -736,7 +739,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.sessionFactory.getCurrentSession().save(map);
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 	}
 	
@@ -752,7 +755,7 @@ public class HibernateChicaDAO implements ChicaDAO
 				return list.get(0);
 			}
 		}catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Exception in getChicaExportMapByQueueId() (queueId: " + queueId + ")", e);
 		}
 		return null;
 	}
@@ -778,11 +781,11 @@ public class HibernateChicaDAO implements ChicaDAO
 			    Restrictions.eq("name", name));
 			try {
 				if (crit.list().size() < 1) {
-					log.warn("No export status found with name: " + name);
+					LOG.warn("No export status found with name: " + name);
 					return null;
 				}
 			}catch (Exception e){
-				e.printStackTrace();
+			    LOG.error("Exception in getChicaExportStatusByName() + (name: " + name + ")", e);
 			}
 			return (ChicaHL7ExportStatus) crit.list().get(0);
 	}
@@ -800,7 +803,7 @@ public class HibernateChicaDAO implements ChicaDAO
 				return list.get(0);
 			}
 		}catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error("Exception in getChicaExportStatusById() (id: " + id + ")", e);
 		}
 		return null;
 		
@@ -825,7 +828,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error("Exception in getFormsPrintedByWeek() (formName: " + formName + " locationName: " + locationName + ")", e);
 		}
 		return null;
 	}
@@ -850,7 +853,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error("Exception in getFormsScannedByWeek() (formName: " + formName + " locationName: " + locationName + ")", e);
 		}
 		return null;
 	}
@@ -876,7 +879,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error("Exception in getFormsScannedAnsweredByWeek() (formName: " + formName + " locationName: " + locationName + ")", e);
 		}
 		return null;
 	}
@@ -902,7 +905,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error("Exception in getFormsScannedAnythingMarkedByWeek() (formName: " + formName + " locationName: " + locationName + ")", e);
 		}
 		return null;
 	}
@@ -928,7 +931,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error("Exception in getQuestionsScanned() (formName: " + formName + " locationName: " + locationName + ")", e);
 		}
 		return null;
 	}
@@ -954,7 +957,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			return qry.list();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error("Exception in getQuestionsScannedAnswered() (formName: " + formName + " locationName: " + locationName + ")", e);
 		}
 		return null;
 	}
@@ -990,7 +993,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			
 		} catch (Exception e)
 		{
-			this.log.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
 		

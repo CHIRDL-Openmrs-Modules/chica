@@ -104,32 +104,19 @@ public class HL7SocketHandler implements Application {
 		if (vitalsDirectory != null) {
 			String filename = "r" + Util.archiveStamp() + "_" + mrn + ChirdlUtilConstants.FILE_EXTENSION_HL7;
 			
-			FileOutputStream vitalsDumpFile = null;
-			try {
-				vitalsDumpFile = new FileOutputStream(vitalsDirectory + "/" + filename);
+			
+			try (FileOutputStream vitalsDumpFile = new FileOutputStream(vitalsDirectory + "/" + filename);
+			        ByteArrayInputStream vitalsDumpInput = new ByteArrayInputStream(incomingMessage.getBytes())){		  	                
+	                    IOUtil.bufferedReadWrite(vitalsDumpInput, vitalsDumpFile, false);   
 			}
 			catch (FileNotFoundException e1) {
 				logger.error("Couldn't find file: " + vitalsDirectory + "/" + filename);
 			}
-			if (vitalsDumpFile != null) {
-				try {
-					
-					ByteArrayInputStream vitalsDumpInput = new ByteArrayInputStream(incomingMessage.getBytes());
-					IOUtil.bufferedReadWrite(vitalsDumpInput, vitalsDumpFile);
-					vitalsDumpFile.flush();
-					vitalsDumpFile.close();
-				}
-				catch (Exception e) {
-					try {
-						vitalsDumpFile.flush();
-						vitalsDumpFile.close();
-					}
-					catch (Exception e1) {}
-					logger.error("There was an error writing the vitals dump file");
-					logger.error(e.getMessage());
-					logger.error(Util.getStackTrace(e));
-				}
-			}
+            catch (IOException e2) {
+                logger.error("There was an error writing the vitals dump file");
+                logger.error(e2.getMessage());
+                logger.error(Util.getStackTrace(e2));
+            }	
 		}
 	}
 	
