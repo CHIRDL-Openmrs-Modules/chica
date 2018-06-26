@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
@@ -40,6 +41,7 @@ public class ManualCheckinSSNMRN {
 		String mrn = request.getParameter(PARAM_MRN);
 		Patient patient = Util.getPatientByMRNOther(mrn);
 		boolean validPatient = false;
+		boolean validIdentifier = StringUtils.isNotEmpty(mrn);
 		List<Encounter> encounters = null;
 		if (patient != null) {
 			validPatient = true;
@@ -52,7 +54,7 @@ public class ManualCheckinSSNMRN {
 			encounters = encounterService.getEncounters(criteriaBuilder.createEncounterSearchCriteria());
 		}
 						
-		if (validPatient) {
+		if (validPatient || validIdentifier) { // CHICA-1239 Added check for validIdentifier so that we can manually register new patients as long as the mrn entered by the user is valid (not null and not empty)
 			pw.write(XML_RESULT_START + XML_TRUE + XML_RESULT_END);
 		} else {
 			pw.write(XML_RESULT_START + XML_FALSE + XML_RESULT_END);
