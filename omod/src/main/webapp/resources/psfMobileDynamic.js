@@ -22,8 +22,11 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     	}
     });
     
-    $('#loading_form_dialog').dialog();
-    $('#loading_dialog').dialog();
+	if (english) {
+		$('#loading_form_dialog').dialog();
+	} else {
+		$('#loading_form_dialog_sp').dialog();
+	}
     $('#quit_passcode_dialog').dialog();
     $('#passcode_error_dialog').dialog();
     
@@ -258,8 +261,7 @@ function handleAuthenticationAjaxError(xhr, textStatus, error) {
   }
 }
 
-function completeForm() {
-	$.mobile.changePage( "#loading_dialog", { transition: "pop"});
+function completeForm() { 
 	
 	// Set the language
 	setLanguageField();
@@ -472,7 +474,11 @@ function parseQuestionsResult(responseXML) {
 }
 
 function loadNewForms() {
-	$.mobile.changePage( "#loading_form_dialog", { transition: "pop"});
+	if (english) {
+		$.mobile.changePage( "#loading_form_dialog", { transition: "pop"});
+	} else {
+		$.mobile.changePage( "#loading_form_dialog_sp", { transition: "pop"});
+	}
 	getPatientForms();
 }
 
@@ -766,7 +772,11 @@ function addLoadedForm(formInfo) {
 }
 
 function closeIframe() {
-	$.mobile.changePage( "#loading_form_dialog", { transition: "pop"});
+	if (english) {
+		$.mobile.changePage( "#loading_form_dialog", { transition: "pop"});
+	} else {
+		$.mobile.changePage( "#loading_form_dialog_sp", { transition: "pop"});
+	}
 	getPatientForms();
 }
 
@@ -824,7 +834,12 @@ function parsePasscodeResult(responseXML) {
 }
 
 function showBlockingMessage() {
-	var blockUIMessage = '<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;Please wait...</h3></td></tr></table>';
+	var blockUIMessage;
+	if (english) {
+		blockUIMessage = '<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;Please wait...</h3></td></tr></table>';
+	} else {
+		blockUIMessage = '<table><tr><td><h3><img src="' + ctx + '/moduleResources/chica/images/ajax-loader.gif" /></h3></td><td style="white-space: nowrap;vertical-align: center;"><h3>&nbsp;Favor de esperar...</h3></td></tr></table>';
+	}
 	var divHtml = $("#blockUIMessage").html();
 	if (divHtml !== null && divHtml.length > 0) {
 		blockUIMessage = divHtml;
