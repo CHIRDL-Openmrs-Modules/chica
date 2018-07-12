@@ -33,10 +33,10 @@
     </div>
 </div>
 
-<div id="loading_dialog" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+<div id="loading_form_dialog_sp" class="extended-header" data-role="dialog" data-dismissible="false" data-theme="b" data-overlay-theme="c">
     <div data-role="content">
         <div style="margin: 0 auto;text-align: center;">
-            Loading...
+            Cargando el formulario...
         </div>
     </div>
 </div>

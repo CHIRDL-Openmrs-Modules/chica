@@ -29,7 +29,7 @@
     height   : 100%;
 }
 
-#loading_form_dialog .ui-dialog-contain, #loading_dialog .ui-dialog-contain {
+#loading_form_dialog .ui-dialog-contain, #loading_form_dialog_sp .ui-dialog-contain {
     width: 200px;
     max-width: 200px;
     margin: 10% auto 15px auto;
