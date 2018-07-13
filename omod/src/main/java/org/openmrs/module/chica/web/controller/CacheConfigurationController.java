@@ -1,4 +1,4 @@
-package org.openmrs.module.chica.web;
+package org.openmrs.module.chica.web.controller;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,9 +16,11 @@ import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 import org.openmrs.module.chirdlutilbackports.cache.CacheStatistic;
 import org.openmrs.module.chirdlutilbackports.util.ChirdlUtilBackportsConstants;
-import org.springframework.validation.BindException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -27,10 +28,19 @@ import org.springframework.web.servlet.view.RedirectView;
  *
  * @author Steve McKee
  */
-public class CacheConfigurationController extends SimpleFormController {
+@Controller
+@RequestMapping(value = "module/chica/cacheConfiguration.form")
+public class CacheConfigurationController {
 	
 	private final Log log = LogFactory.getLog(getClass());
 	
+	/** Form view */
+    private static final String FORM_VIEW = "/module/chica/cacheConfiguration";
+    
+    /** Success view */
+    private static final String SUCCESS_VIEW = "cacheConfiguration.form";
+	
+    /** Parameters */
 	private static final String PARAM_ERROR_MESSAGE = "errorMessage";
 	private static final String PARAM_CACHE_CONFIG_LOCATION = "cacheConfigurationLocation";
 	private static final String PARAM_EHR_CACHE_HEAP_SIZE = "EHRCacheHeapSize";
@@ -56,21 +66,15 @@ public class CacheConfigurationController extends SimpleFormController {
 	private static final String PARAM_FORM_DRAFT_CACHE_STATISTICS = "formDraftCacheStatistics";
 	
 	/**
-	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Object formBackingObject(HttpServletRequest request) throws Exception {
-		return "testing";
-	}
-	
-	/**
-	 * @see org.springframework.web.servlet.mvc.SimpleFormController#onSubmit(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
-	 */
-	@Override
-	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
-	                                BindException errors) throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();
-		String EHRCacheHeapSizeStr = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE);
+     * Handles submission of the page.
+     * 
+     * @param request The HTTP request information
+     * @return The name of the next view
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    protected ModelAndView processSubmit(HttpServletRequest request) {
+		Map<String, Object> model = new HashMap<>();
+		String ehrCacheHeapSizeStr = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE);
 		String immunizationCacheHeapSizeStr = request.getParameter(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE);
 		String formDraftCacheHeapSizeStr = request.getParameter(PARAM_FORM_DRAFT_CACHE_HEAP_SIZE);
 		
@@ -78,11 +82,11 @@ public class CacheConfigurationController extends SimpleFormController {
 		updateCacheHeapSize(ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 							ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 							ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS, 
-							EHRCacheHeapSizeStr, model);
+							ehrCacheHeapSizeStr, model);
 		
 		// A non-empty model reflects errors occurred updating the heap size
 		if (!model.isEmpty()) {
-			return new ModelAndView(new RedirectView(getSuccessView()), model);
+			return new ModelAndView(new RedirectView(SUCCESS_VIEW), model);
 		}
 		
 		// Update the Immunization Cache heap size
@@ -93,7 +97,7 @@ public class CacheConfigurationController extends SimpleFormController {
 		
 		// A non-empty model reflects errors occurred updating the heap size
 		if (!model.isEmpty()) {
-			return new ModelAndView(new RedirectView(getSuccessView()), model);
+			return new ModelAndView(new RedirectView(SUCCESS_VIEW), model);
 		}
 		
 		// Update the Form Draft Cache heap size
@@ -104,42 +108,45 @@ public class CacheConfigurationController extends SimpleFormController {
 		
 		// A non-empty model reflects errors occurred updating the heap size
 		if (!model.isEmpty()) {
-			return new ModelAndView(new RedirectView(getSuccessView()), model);
+			return new ModelAndView(new RedirectView(SUCCESS_VIEW), model);
 		}
 		
-		return new ModelAndView(new RedirectView(getSuccessView()));
+		return new ModelAndView(new RedirectView(SUCCESS_VIEW));
 	}
 	
-	/**
-	 * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
-	 */
-	@Override
-	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
+    /**
+     * Form initialization method.
+     * 
+     * @param request The HTTP request information
+     * @param map The map to populate for return to the client
+     * @return The form view name
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    protected String initForm(HttpServletRequest request, ModelMap map) {
 		User user = Context.getUserContext().getAuthenticatedUser();
 		if (user == null) {
 			return null;
 		}
 		
-		Map<String, Object> model = new HashMap<String, Object>();
 		String errorMessage = request.getParameter(PARAM_ERROR_MESSAGE);
-		model.put(PARAM_ERROR_MESSAGE, errorMessage);
+		map.put(PARAM_ERROR_MESSAGE, errorMessage);
 		ApplicationCacheManager cacheManager = ApplicationCacheManager.getInstance();
 		
 		URI cacheLocationURI = cacheManager.getCacheConfigurationFileLocation();
 		if (cacheLocationURI != null) {
-			model.put(PARAM_CACHE_CONFIG_LOCATION, cacheLocationURI.toString());
+		    map.put(PARAM_CACHE_CONFIG_LOCATION, cacheLocationURI.toString());
 		}
 		
 		// Retrieve data for the EHR cache
-		loadEHRMedicalRecordCacheInfo(cacheManager, model);
+		loadEHRMedicalRecordCacheInfo(cacheManager, map);
 		
 		// Retrieve data for the immunization cache
-		loadImmunizationCacheInfo(cacheManager, model);
+		loadImmunizationCacheInfo(cacheManager, map);
 		
 		// Retrieve data for the form draft cache
-		loadFormDraftCacheInfo(cacheManager, model);
+		loadFormDraftCacheInfo(cacheManager, map);
 		
-		return model;
+		return FORM_VIEW;
 	}
 	
 	/**
@@ -149,41 +156,41 @@ public class CacheConfigurationController extends SimpleFormController {
 	 * @param model Map containing the HTTP information to display to the client
 	 */
 	private void loadEHRMedicalRecordCacheInfo(ApplicationCacheManager cacheManager, Map<String, Object> model) {
-		Long EHRCacheHeapSize = cacheManager.getCacheHeapSize(
+		Long ehrCacheHeapSize = cacheManager.getCacheHeapSize(
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS);
-		model.put(PARAM_EHR_CACHE_HEAP_SIZE, EHRCacheHeapSize);
+		model.put(PARAM_EHR_CACHE_HEAP_SIZE, ehrCacheHeapSize);
 		
-		String EHRCacheHeapSizeUnit = cacheManager.getCacheHeapSizeUnit(
+		String ehrCacheHeapSizeUnit = cacheManager.getCacheHeapSizeUnit(
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS);
-		model.put(PARAM_EHR_CACHE_HEAP_SIZE_UNIT, EHRCacheHeapSizeUnit);
+		model.put(PARAM_EHR_CACHE_HEAP_SIZE_UNIT, ehrCacheHeapSizeUnit);
 		
-		Long EHRCacheDiskSize = cacheManager.getCacheDiskSize(
+		Long ehrCacheDiskSize = cacheManager.getCacheDiskSize(
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS);
-		model.put(PARAM_EHR_CACHE_DISK_SIZE, EHRCacheDiskSize);
+		model.put(PARAM_EHR_CACHE_DISK_SIZE, ehrCacheDiskSize);
 		
-		String EHRCacheDiskSizeUnit = cacheManager.getCacheDiskSizeUnit(
+		String ehrCacheDiskSizeUnit = cacheManager.getCacheDiskSizeUnit(
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS);
-		model.put(PARAM_EHR_CACHE_DISK_SIZE_UNIT, EHRCacheDiskSizeUnit);
+		model.put(PARAM_EHR_CACHE_DISK_SIZE_UNIT, ehrCacheDiskSizeUnit);
 		
-		Long EHRCacheExpiry = cacheManager.getCacheExpiry(
+		Long ehrCacheExpiry = cacheManager.getCacheExpiry(
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS);
-		model.put(PARAM_EHR_CACHE_EXPIRY, EHRCacheExpiry);
+		model.put(PARAM_EHR_CACHE_EXPIRY, ehrCacheExpiry);
 		
-		String EHRCacheExpiryUnit = cacheManager.getCacheExpiryUnit(
+		String ehrCacheExpiryUnit = cacheManager.getCacheExpiryUnit(
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_KEY_CLASS, 
 			ChirdlUtilBackportsConstants.CACHE_EHR_MEDICAL_RECORD_VALUE_CLASS);
-		model.put(PARAM_EHR_CACHE_EXPIRY_UNIT, EHRCacheExpiryUnit);
+		model.put(PARAM_EHR_CACHE_EXPIRY_UNIT, ehrCacheExpiryUnit);
 		
 		// load the cache statistics
 		List<CacheStatistic> stats = cacheManager.getCacheStatistics(
@@ -296,7 +303,8 @@ public class CacheConfigurationController extends SimpleFormController {
 	}
 	
 	/**
-	 * Updates a cache's heap size.  It will only update the heap size if the provided value is different than the current value.
+	 * Updates a cache's heap size.  It will only update the heap size if the provided value is different than the current 
+	 * value.
 	 * 
 	 * @param cacheName The name of the cache
 	 * @param keyClass The key class of the cache
@@ -304,12 +312,15 @@ public class CacheConfigurationController extends SimpleFormController {
 	 * @param newCacheHeapSizeStr The new heap size value
 	 * @param model Map used for error handling
 	 */
-	private void updateCacheHeapSize(String cacheName, Class<?> keyClass, Class<?> valueClass, String newCacheHeapSizeStr, Map<String, Object> model) {
+	private void updateCacheHeapSize(String cacheName, Class<?> keyClass, Class<?> valueClass, String newCacheHeapSizeStr, 
+	        Map<String, Object> model) {
 		Long newCacheHeapSize = null;
 		try {
 			newCacheHeapSize = Long.parseLong(newCacheHeapSizeStr);
 		} catch (NumberFormatException e) {
-			model.put(PARAM_ERROR_MESSAGE, "The " + cacheName + " cache heap size specified is not a valid value.");
+		    String message = "The " + cacheName + " cache heap size specified is not a valid value.";
+		    log.error(message, e);
+			model.put(PARAM_ERROR_MESSAGE, message);
 			return;
 		}
 		
@@ -322,7 +333,8 @@ public class CacheConfigurationController extends SimpleFormController {
 				cacheManager.updateCacheHeapSize(cacheName, keyClass, valueClass, newCacheHeapSize);
 			} catch (Exception e) {
 				log.error("Error updating the " + cacheName + " cache heap size.", e);
-				model.put(PARAM_ERROR_MESSAGE, "An error occurred saving the " + cacheName + " cache heap size: " + e.getMessage());
+				model.put(PARAM_ERROR_MESSAGE, "An error occurred saving the " + cacheName + " cache heap size: " + 
+				        e.getMessage());
 			}
 		}
 	}
