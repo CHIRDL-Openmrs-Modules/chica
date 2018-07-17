@@ -22,14 +22,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * Utility class for form controllers.
+ * Utility class for mobile form controllers.
  * 
  * @author Steve McKee
  */
-public class FormControllerUtil {
+public class MobileFormControllerUtil {
     
     /** Logger for this class and subclasses */
-    protected static final Log log = LogFactory.getLog(FormControllerUtil.class);
+    protected static final Log log = LogFactory.getLog(MobileFormControllerUtil.class);
     
     /**
      * Handles for submission for mobile forms
@@ -97,7 +97,7 @@ public class FormControllerUtil {
      * @param formView The view to display once the form is loaded.
      * @return The view to display once the form is loaded.
      */
-    public static String loadFormInformation(HttpServletRequest request, ModelMap map, String formView) {
+    public static String loadMobileFormInformation(HttpServletRequest request, ModelMap map, String formView) {
         String encounterIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
         Integer encounterId = Integer.parseInt(encounterIdStr);
         map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterIdStr);

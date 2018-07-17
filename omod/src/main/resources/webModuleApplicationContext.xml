@@ -28,8 +28,6 @@
 	<bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>            
-                <prop key="/module/@MODULE_ID@/forcePrintSSNMRN.form">forcePrintSSNMRN</prop>
-                <prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsNotificationMobile.form">finishFormsNotificationMobile</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
@@ -40,16 +38,6 @@
                 <prop key="/module/@MODULE_ID@/sessionTimeout.form">sessionTimeout</prop>
             </props>
         </property>
-    </bean>
-    <bean id="forcePrintSSNMRN" class="@MODULE_PACKAGE@.web.ForcePrintSSNMRNController">
-        <property name="commandName"><value>forcePrintSSNMRNObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/forcePrintSSNMRN</value></property>
-        <property name="successView"><value>forcePrintJITs.form</value></property>
-    </bean>
-    <bean id="forcePrintJITs" class="@MODULE_PACKAGE@.web.ForcePrintJITsController">
-        <property name="commandName"><value>forcePrintJITsObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/forcePrintJITs</value></property>
-        <property name="successView"><value>forcePrintJITs.form</value></property>
     </bean>
     <bean id="finishFormsMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
         <property name="commandName"><value>finishFormsMobileObject</value></property>

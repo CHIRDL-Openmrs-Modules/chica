@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Controller for forms that have their parts built dynamically.
+ * Controller for forms that have their questiosn created dynamically.
  *
  * @author Steve McKee
  */
@@ -32,7 +32,7 @@ public class DynamicMobileFormNotificationController {
      */
 	@RequestMapping(value = "module/chica/psfMobileDynamic.form", method = RequestMethod.GET)
     protected String initPsfMobileDynamicForm(HttpServletRequest request, ModelMap map) {
-		return FormControllerUtil.loadFormInformation(request, map, FORM_VIEW_PSF_MOBILE_DYNAMIC);
+		return MobileFormControllerUtil.loadMobileFormInformation(request, map, FORM_VIEW_PSF_MOBILE_DYNAMIC);
 	}
 	
     /**
@@ -43,6 +43,6 @@ public class DynamicMobileFormNotificationController {
      */
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView processSubmit(HttpServletRequest request) {
-        return FormControllerUtil.handleMobileFormSubmission(request, SUCCESS_VIEW);
+        return MobileFormControllerUtil.handleMobileFormSubmission(request, SUCCESS_VIEW);
 	}
 }

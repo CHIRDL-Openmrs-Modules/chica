@@ -2,6 +2,7 @@ package org.openmrs.module.chica.web.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +28,7 @@ public class CompleteForm implements Runnable {
     private Log log = LogFactory.getLog(this.getClass());
     private Integer patientId;
     private Integer formId;
-    private HashMap<String, Object> parameters;
+    private Map<String, Object> parameters;
     private FormInstance formInstance;
 
     /**
@@ -35,10 +36,10 @@ public class CompleteForm implements Runnable {
      * 
      * @param patientId Patient identifier
      * @param formId Form identifier
-     * @param parameters HashMap of parameters for the rule execution
+     * @param parameters Map of parameters for the rule execution
      * @param formInstance The instance of the form
      */
-    public CompleteForm(Integer patientId, Integer formId, HashMap<String, Object> parameters, 
+    public CompleteForm(Integer patientId, Integer formId, Map<String, Object> parameters, 
                                   FormInstance formInstance) {
         this.patientId = patientId;
         this.formId = formId;
@@ -95,10 +96,10 @@ public class CompleteForm implements Runnable {
      * @param formInstanceToChange The FormInstance object containing relevant form information.
      * @param stateChangeParameters Map containing parameters needed for the rules to execute.
      */
-    private void changeState(FormInstance formInstanceToChange, HashMap<String, Object> stateChangeParameters) {
+    private void changeState(FormInstance formInstanceToChange, Map<String, Object> stateChangeParameters) {
         ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
         List<PatientState> states = service.getPatientStatesByFormInstance(formInstanceToChange, false);
-        if (states != null && states.size() > 0) {
+        if (states != null && !states.isEmpty()) {
             for (PatientState formInstState : states) {
                 
                 // only process unfinished states for this sessionId
@@ -107,7 +108,7 @@ public class CompleteForm implements Runnable {
                 }
                 
                 try {
-                    BaseStateActionHandler.getInstance().changeState(formInstState, stateChangeParameters);
+                    BaseStateActionHandler.getInstance().changeState(formInstState, (HashMap)stateChangeParameters);
                 }
                 catch (Exception e) {
                     log.error(e.getMessage());
