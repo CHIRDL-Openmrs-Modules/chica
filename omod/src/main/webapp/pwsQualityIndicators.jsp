@@ -15,11 +15,15 @@
                 <tbody>
                     <tr>
                         <td align="left" style="width: 50;">
-                            <input type="checkbox" name="Special_Need" value="yes" ${Special_Need=='Y' || Special_Need=='yes' ? 'checked' : ''}/>Special Need Child</td>
+                            <input type="checkbox" name="Special_Need" id="Special_Need" value="yes" ${Special_Need=='Y' || Special_Need=='yes' ? 'checked' : ''}/>
+							<label for="Special_Need">Special Need Child</label>
+						</td>
                     </tr>
                     <tr>
                         <td align="left" style="width: 50;">
-                            <input type="checkbox" name="MDTwoIDsChecked" value="Y" ${MDTwoIDsChecked=='Y' ? 'checked' : ''}/>Two ID's Checked</td>
+                            <input type="checkbox" name="MDTwoIDsChecked" id="MDTwoIDsChecked" value="Y" ${MDTwoIDsChecked=='Y' ? 'checked' : ''}/>
+							<label for="MDTwoIDsChecked">Two ID's Checked</label>
+						</td>
                     </tr>
                 </tbody>
             </table>
@@ -29,7 +33,9 @@
                 <tbody>
                     <tr>
                         <td align="left" style="width: 50;">
-                            <input type="checkbox" name="screenedForAbuse" value="screened" ${screenedForAbuse=='screened' ? 'checked' : ''}/>Screened for abuse</td>
+                            <input type="checkbox" name="screenedForAbuse" id="screenedForAbuse" value="screened" ${screenedForAbuse=='screened' ? 'checked' : ''}/>
+							<label for="screenedForAbuse">Screened for abuse</label>
+						</td>
                     </tr>
                     <tr>
                         <td align="left" style="width: 50;"><span><c:out value="${AlcoholLabel}"/>&nbsp;<c:out value="${AlcoholAnswer}"/></span>
@@ -43,7 +49,9 @@
                 <tbody>
                     <tr>
                         <td align="left" style="width: 50;">
-                            <input type="checkbox" name="discussedHealthyDiet" value="Healthy Diet" ${discussedHealthyDiet=='Healthy Diet' ? 'checked' : ''}/>Discussed healthy diet</td>
+                            <input type="checkbox" name="discussedHealthyDiet" id="discussedHealthyDiet" value="Healthy Diet" ${discussedHealthyDiet=='Healthy Diet' ? 'checked' : ''}/>
+							<label for="discussedHealthyDiet">Discussed healthy diet</label>
+						</td>
                     </tr>
                     <tr>
                         <td align="left" style="width: 50;"><span><c:out value="${TobaccoLabel}"/>&nbsp;<c:out value="${TobaccoAnswer}"/></span>
@@ -57,7 +65,8 @@
                 <tbody>
                     <tr>
                         <td align="left" style="width: 50;">
-                            <input type="checkbox" name="discussedPhysicalActivity" value="Physical Activity" ${discussedPhysicalActivity=='Physical Activity' ? 'checked' : ''}/>Discussed physical activity
+                            <input type="checkbox" name="discussedPhysicalActivity" id="discussedPhysicalActivity" value="Physical Activity" ${discussedPhysicalActivity=='Physical Activity' ? 'checked' : ''}/>
+							<label for="discussedPhysicalActivity">Discussed physical activity</label>
                             <br/>
                         </td>
                     </tr>
@@ -73,9 +82,12 @@
                 Vaccines
             </span>
             <span> 
-                 <input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedYES" value="yes" ${MedicationEducationPerformed == 'yes' ? 'checked' : ''}/>Y
-                 <input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNO" value="no" ${MedicationEducationPerformed == 'no' ? 'checked' : ''}/>N
-                 <input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" ${MedicationEducationPerformed == 'not applicable' ? 'checked' : ''}/>N/A
+                 <input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedYES" value="yes" ${MedicationEducationPerformed == 'yes' ? 'checked' : ''}/>
+				 <label for="medicalEducationPerformedYES">Y</label>
+                 <input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNO" value="no" ${MedicationEducationPerformed == 'no' ? 'checked' : ''}/>
+				 <label for="medicalEducationPerformedNO">N</label>
+                 <input type="radio" class="uncheckableRadioButton" name="MedicationEducationPerformed" id="medicalEducationPerformedNA" value="not applicable" ${MedicationEducationPerformed == 'not applicable' ? 'checked' : ''}/>
+				 <label for="medicalEducationPerformedNA">N/A</label>
             </span>
         </div>
     </section>
