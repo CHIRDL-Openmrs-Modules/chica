@@ -32,6 +32,13 @@ public class MobileFormControllerUtil {
     protected static final Log log = LogFactory.getLog(MobileFormControllerUtil.class);
     
     /**
+     * Constructor method
+     */
+    private MobileFormControllerUtil() {
+        // Empty private constructor
+    }
+    
+    /**
      * Handles for submission for mobile forms
      * @param request The HTTP request containing the information from the client
      * @param successView The page to display after the form is submitted
@@ -125,7 +132,7 @@ public class MobileFormControllerUtil {
         
         //Run this to show the form
         try {
-            showForm(map, formId, formInstanceId, locationId, encounterId);
+            showForm(map, formId, formInstanceId, encounterId);
         } catch (Exception e) {
             String message = 
                 "Error retrieving data to display a form. Please contact support with the following information: Form ID: " + 
@@ -157,12 +164,9 @@ public class MobileFormControllerUtil {
      * @param map The map for the HTTP response.
      * @param formId The form identifier.
      * @param formInstanceId The form instance identifier.
-     * @param locationId The location identifier.
      * @param encounterId The encounter identifier.
-     * @throws Exception
      */
-    private static void showForm(Map<String, Object> map, Integer formId, Integer formInstanceId, Integer locationId, 
-                                 Integer encounterId) throws Exception {
+    private static void showForm(Map<String, Object> map, Integer formId, Integer formInstanceId, Integer encounterId) {
         DynamicFormAccess formAccess = new DynamicFormAccess();
         
         List<org.openmrs.module.atd.xmlBeans.Field> fields = 

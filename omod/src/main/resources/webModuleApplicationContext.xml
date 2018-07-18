@@ -28,51 +28,15 @@
 	<bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>            
-                <prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
-                <prop key="/module/@MODULE_ID@/finishFormsNotificationMobile.form">finishFormsNotificationMobile</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
-                <prop key="/module/@MODULE_ID@/loginMobile.form">loginMobile</prop>
-                <prop key="/module/@MODULE_ID@/pws.form">pws</prop>
-                <prop key="/module/@MODULE_ID@/finishFormsWeb.form">finishFormsWeb</prop>
-                <prop key="/module/@MODULE_ID@/pwsIUHCerner.form">pwsIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/sessionTimeout.form">sessionTimeout</prop>
             </props>
         </property>
-    </bean>
-    <bean id="finishFormsMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
-        <property name="commandName"><value>finishFormsMobileObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/finishFormsMobile</value></property>
-        <property name="successView"><value>greaseBoardMobile.form</value></property>
-    </bean>
-    <bean id="finishFormsNotificationMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionNotificationController">
-        <property name="commandName"><value>finishFormsNotificationMobileObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/finishFormsNotificationMobile</value></property>
-        <property name="successView"><value>greaseBoardMobile.form</value></property>
     </bean>
     <bean id="greaseBoardMobile" class="@MODULE_PACKAGE@.web.MobileGreaseBoardController">
         <property name="commandName"><value>greaseBoardMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/greaseBoardMobile</value></property>
         <property name="successView"><value>greaseBoardMobile.form</value></property>
-    </bean>
-    <bean id="pws" class="@MODULE_PACKAGE@.web.MobileFormController">
-        <property name="commandName"><value>pwsObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/pws</value></property>
-        <property name="successView"><value>finishFormsWeb.form</value></property>
-    </bean>
-    <bean id="pwsIUHCerner" class="@MODULE_PACKAGE@.web.MobileFormController">
-        <property name="commandName"><value>pwsIUHCernerObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/pwsIUHCerner</value></property>
-        <property name="successView"><value>finishFormsWeb.form</value></property>
-    </bean>
-    <bean id="loginMobile" class="@MODULE_PACKAGE@.web.LoginMobileController">
-        <property name="commandName"><value>loginMobileObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/loginMobile</value></property>
-        <property name="successView"><value>loginMobile.form</value></property>
-    </bean>
-    <bean id="finishFormsWeb" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
-        <property name="commandName"><value>finishFormsWebObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/finishFormsWeb</value></property>
-        <property name="successView"><value>finishFormsWeb.form</value></property>
     </bean>
     <bean id="sessionTimeout" class="@MODULE_PACKAGE@.web.NoActionController">
         <property name="commandName"><value>sessionTimeoutObject</value></property>

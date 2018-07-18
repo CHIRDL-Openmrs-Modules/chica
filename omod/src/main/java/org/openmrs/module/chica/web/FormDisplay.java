@@ -17,7 +17,7 @@ package org.openmrs.module.chica.web;
 /**
  *
  */
-public class FormDisplay implements Comparable{
+public class FormDisplay implements Comparable<FormDisplay>{
 	
 	private String formName = null;
 	private String displayName = null;
@@ -57,9 +57,10 @@ public class FormDisplay implements Comparable{
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      * sort by display name
      */
-    public int compareTo(Object arg0) {
+    @Override
+    public int compareTo(FormDisplay arg0) {
     	
-    	return this.displayName.compareTo(((FormDisplay) arg0).displayName);
+    	return this.displayName.compareTo((arg0).displayName);
 	   
     }
     
