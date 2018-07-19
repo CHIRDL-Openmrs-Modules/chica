@@ -24,23 +24,5 @@
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
 	
 	<context:component-scan base-package="org.openmrs.module.chica.web.controller" />
-	
-	<bean id="chicaUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="mappings">
-            <props>            
-                <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
-                <prop key="/module/@MODULE_ID@/sessionTimeout.form">sessionTimeout</prop>
-            </props>
-        </property>
-    </bean>
-    <bean id="greaseBoardMobile" class="@MODULE_PACKAGE@.web.MobileGreaseBoardController">
-        <property name="commandName"><value>greaseBoardMobileObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/greaseBoardMobile</value></property>
-        <property name="successView"><value>greaseBoardMobile.form</value></property>
-    </bean>
-    <bean id="sessionTimeout" class="@MODULE_PACKAGE@.web.NoActionController">
-        <property name="commandName"><value>sessionTimeoutObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/sessionTimeout</value></property>
-        <property name="successView"><value>sessionTimeout.form</value></property>
-     </bean>
+
 </beans>

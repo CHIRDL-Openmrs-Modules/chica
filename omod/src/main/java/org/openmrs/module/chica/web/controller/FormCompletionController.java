@@ -24,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
-@RequestMapping(value = "module/chica/finishFormsMobile.form")
 public class FormCompletionController {
     
     /** Form views */
@@ -163,11 +162,10 @@ public class FormCompletionController {
      * @return List of string results of the rules that are run.
      */
     private List<TabletNotification> runRules(Patient patient, Map<String,Object> parameters) {
-        List<TabletNotification> notifications = new ArrayList<>();
         DssService dssService = Context.getService(DssService.class);
         List<Rule> rules = dssService.getRulesByType(STAFF_NOTIFICATION);
         if (rules == null || rules.isEmpty()) {
-            return notifications;
+            return new ArrayList<>();
         }
         
         for (int i = rules.size() - 1; i >= 0; i--) {
@@ -181,14 +179,21 @@ public class FormCompletionController {
         
         List<Result> results = dssService.runRules(patient, rules);
         if (results == null || results.isEmpty()) {
-            return notifications;
+            return new ArrayList<>();
         }
         
+        return processRuleResults(results);
+    }
+    
+    /**
+     * Processes the rules results creates a list of notifications.
+     * 
+     * @param results The rule results to process
+     * @return The list of tablet notifications created from the rule results
+     */
+    private List<TabletNotification> processRuleResults(List<Result> results) {
+        List<TabletNotification> notifications = new ArrayList<>();
         for (Result result : results) {
-            if (result.isEmpty() || result.isNull()) {
-                continue;
-            }
-            
             TabletNotification notification = new TabletNotification();
             boolean foundResults = false;
             for (int i = 0; i < result.size(); i++) {
