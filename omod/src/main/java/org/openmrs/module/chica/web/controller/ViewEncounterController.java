@@ -175,7 +175,7 @@ public class ViewEncounterController {
 							try
 							{
 								// CHICA-1169 Query for patient states by form name and state
-								patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(rightName, stateNames, encounterId, false);
+								patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(rightName, stateNames, encounterId, true);
 								if(patientStates != null && !patientStates.isEmpty())
 								{
 									for(PatientState currState : patientStates)
@@ -249,7 +249,7 @@ public class ViewEncounterController {
 							try
 							{
 								// CHICA-1169 Query for patient states by form name and state
-								patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(leftName, stateNames, encounterId, false);
+								patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(leftName, stateNames, encounterId, true);
 								if(patientStates != null && !patientStates.isEmpty())
 								{
 									for(PatientState currState : patientStates)
