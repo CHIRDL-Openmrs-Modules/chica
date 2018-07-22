@@ -425,7 +425,7 @@ public class ViewEncounterController {
 				// except for the PWS, which will only have the most recently created or most recently submitted version added to the drop-down
 				for(String formName : formsToProcess)
 				{
-					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(formName, null, encounterId, false);
+					List<PatientState> patientStates = chirdlutilbackportsService.getPatientStatesByFormNameAndState(formName, null, encounterId, true);
 					if (patientStates != null && !patientStates.isEmpty()) {
 
 						HashMap<Date, FormInstance> pwsTempFormInstancesMap = new HashMap<Date, FormInstance>();
