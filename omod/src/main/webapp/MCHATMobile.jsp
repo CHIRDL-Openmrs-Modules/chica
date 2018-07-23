@@ -45,7 +45,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Staff</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Quit</a>
 				</div>
 				
 				<div data-role="content">
@@ -64,7 +64,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage1Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Staff</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Quit</a>
 				</div>
 				
 				<div id="content_1" data-role="content">
@@ -140,7 +140,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage2Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Staff</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Quit</a>
 				</div>
 				
 				<div id="content_2" data-role="content">
@@ -217,7 +217,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage3Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Staff</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Quit</a>
 				</div>
 				
 				<div id="content_3" data-role="content">
@@ -294,7 +294,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage4Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Staff</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Quit</a>
 				</div>
 				
 				<div id="content_4" data-role="content">
@@ -371,7 +371,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage5Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&ntilde;ol</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Staff</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Quit</a>
 				</div>
 				
 				<div id="content_5" data-role="content">
@@ -411,29 +411,7 @@
 						</fieldset>
 					</div>
 					<div style="float:right;"><br /><span style="float:right; font-size:50%;">${copyright}</span></div>
-					<div id="not_finished_final_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
-						<div data-role="header" data-theme="b">
-							<h1>Not Completed</h1>
-						</div>
-						<div data-role="content">
-							<span>This form is not complete. Are you sure you want to continue?</span>
-							<div style="margin:0 auto; text-align:center;">
-								<a href="" onClick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width:150px;">Yes</a>
-								<a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width:150px;">No</a>
-							</div>
-						</div>
-					</div>
-					<div id="finish_error_dialog" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
-						<div data-role="header" data-theme="b">
-							<h1>Error</h1>
-						</div>
-						<div data-role="content">
-							<span>There was an error submitting the form. Please press 'OK' to try again.</span>
-							<div style="margin:0 auto; text-align:center;">
-								<a href="" onClick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width:150px;">OK</a>
-							</div>
-						</div>
-					</div>
+					<%@ include file="mobileFinishDialogs.jsp" %>
 				</div>
 				
 				<div data-role="footer" style="text-align:center; padding-bottom:20px; padding-top:20px;">
@@ -447,7 +425,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage1SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Personal</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Dejar</a>
 				</div>
 				
 				<div id="content_1_sp" data-role="content">
@@ -523,7 +501,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage2SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Personal</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Dejar</a>
 				</div>
 				
 				<div id="content_2_sp" data-role="content">
@@ -600,7 +578,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage3SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Personal</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Dejar</a>
 				</div>
 				
 				<div id="content_3_sp" data-role="content">
@@ -677,7 +655,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage4SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Personal</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Dejar</a>
 				</div>
 				
 				<div id="content_4_sp" data-role="content">
@@ -754,7 +732,7 @@
 					<h1>M-CHAT:</h1>
 					<h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
 					<a id="langPage5SPButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onClick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-					<a class="vitalsButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.navigateToVitals()" data-transition="pop" data-icon="forward">Personal</a>
+					<a class="quitButton" data-role="button" class="ui-btn-right" data-theme="b" onClick="parent.quitForm()" data-transition="pop" data-icon="forward">Dejar</a>
 				</div>
 				
 				<div id="content_5_sp" data-role="content">
@@ -794,29 +772,7 @@
 						</fieldset>
 					</div>
 					<div style="float:right;"><br /><span style="float:right; font-size:50%;">${copyright}</span></div>
-					<div id="not_finished_final_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
-						<div data-role="header" data-theme="b">
-							<h1>Not Completado</h1>
-						</div>
-						<div data-role="content">
-							<span>Esta forma no es completa. Est&aacute;s seguro de que quieres continuar?</span>
-							<div style="margin:0 auto; text-align:center;">
-								<a href="" onClick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width:150px;">S&iacute;</a>
-								<a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width:150px;">No</a>
-							</div>
-						</div>
-					</div>
-					<div id="finish_error_dialog_sp" class="extended-header" data-role="popup" data-dismissible="false" data-theme="b" data-overlay-theme="a">
-						<div data-role="header" data-theme="b">
-							<h1>Error</h1>
-						</div>
-						<div data-role="content">
-							<span>Hubo un error al enviar el formulario. Por favor, pulse 'OK' para intentarlo de nuevo.</span>
-							<div style="margin:0 auto; text-align:center;">
-								<a href="" onClick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width:150px;">OK</a>
-							</div>
-						</div>
-					</div>
+					<%@ include file="mobileFinishDialogs_SP.jsp" %>
 				</div>
 				
 				<div data-role="footer" style="text-align:center; padding-bottom:20px; padding-top:20px;">

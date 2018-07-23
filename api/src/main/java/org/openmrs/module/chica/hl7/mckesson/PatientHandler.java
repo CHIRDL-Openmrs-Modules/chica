@@ -1,6 +1,7 @@
 package org.openmrs.module.chica.hl7.mckesson;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
@@ -48,12 +49,12 @@ public class PatientHandler extends org.openmrs.module.sockethl7listener.Patient
 	//set additional patient attributes
 	@Override
 	public Patient setPatientFromHL7(Message message, Date encounterDate,
-			Location sendingFacility, HL7PatientHandler hl7PatientHandler)
+			Location sendingFacility, HL7PatientHandler hl7PatientHandler, HashMap<String,Object> parameters) // CHICA-1185 Add parameters
 	{
 
 		
 		Patient hl7Patient = super.setPatientFromHL7(message, encounterDate,
-				sendingFacility, hl7PatientHandler);
+				sendingFacility, hl7PatientHandler, parameters); // CHICA-1185 Add parameters
 
 		if (hl7PatientHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25)
 		{

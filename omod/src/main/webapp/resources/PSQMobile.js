@@ -26,11 +26,6 @@ function init(patientName, birthdate, formInst, language) {
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
 	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
-	
 	numQuestions = $("input[id^='PSQQuestion_']").length / 2; // Divide by 2 to handle Spanish version
 }
 
@@ -57,16 +52,16 @@ function setLanguage(patientName, birthdate) {
 	var Ntilde = '\xD1';
     var langButtonText = "Espa" + ntilde + "ol";
     var additionalQuestions = "Here are a number of questions regarding the behavior of your child during sleep and wakefulness.";
-    var instructions = '<p>The questions apply to how your child acts in general, not necessarily during the past few days since these may not have been typical if your child has not been well. If you are not sure how to answer any question, please feel free to ask your husband or wife, child, or physician for help. When you see the word “usually” it means “more than half the time” or “on more than half the nights.”</p>';
+    var instructions = '<p>The questions apply to how your child acts in general, not necessarily during the past few days since these may not have been typical if your child has not been well. If you are not sure how to answer any question, please feel free to ask your husband or wife, child, or physician for help. When you see the word "usually" it means "more than half the time" or "on more than half the nights."</p>';
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     var formTitleText = "PEDIATRIC SLEEP QUESTIONNAIRE";
     if (!english) {
         langButtonText = "English"; 
         additionalQuestions = "Por favor, conteste las preguntas del siguiente cuestionario acerca de la conducta de su hijo/a durante el sue" + ntilde + "o y tambi" + eacute + "n cuando est" + aacute + " despierto/a.";
-        instructions = '<p>Las preguntas se refieren a la conducta de su hijo/a en general y no &uacute;nicamente en los &uacute;ltimos d&iacute;as, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si &eacute;l o ella no se encuentran bien estos &uacute;ltimos d&iacuteas por cualquier motivo. Si hay alguna pregunta que no sabe como contestar, por favor consulte con su mujer, su marido, su hijo/a o con su m&eacute;dico.  Cuando en alguna pregunta Vd lea “habitualmente”, quiere decir “m&aacute;s de la mitad de las veces” o “m&aacute;s de la mitad de las noches”.</p>';
+        instructions = '<p>Las preguntas se refieren a la conducta de su hijo/a en general y no &uacute;nicamente en los &uacute;ltimos d&iacute;as, ya que en ese caso, la conducta de su hijo/a, puede haber estado algo alterada si &eacute;l o ella no se encuentran bien estos &uacute;ltimos d&iacuteas por cualquier motivo. Si hay alguna pregunta que no sabe como contestar, por favor consulte con su mujer, su marido, su hijo/a o con su m&eacute;dico.  Cuando en alguna pregunta Vd lea "habitualmente", quiere decir "m&aacute;s de la mitad de las veces" o "m&aacute;s de la mitad de las noches".</p>';
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
         formTitleText = "CUESTIONARIO PEDIATRICO DE SUE" + Ntilde + "O:";
     }
     
@@ -74,7 +69,7 @@ function setLanguage(patientName, birthdate) {
     $("#additionalQuestions").text(additionalQuestions);
     $("#instructions").html(instructions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
     $("#formTitle").text(formTitleText);
 }
 
@@ -108,9 +103,9 @@ function attemptFinishForm() {
 		finishForm();
 	}else {
 		if (english) {
-    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
+    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
     	} else {
-    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
+    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
     	}
 	}
 }
@@ -119,8 +114,8 @@ function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
 	$("#finish_error_dialog").popup("close");
 	$("#finish_error_dialog_sp").popup("close");
-	$("#not_finished_final_dialog").popup("close");
-	$("#not_finished_final_dialog_sp").popup("close");
+	$("#not_finished_dialog").popup("close");
+	$("#not_finished_dialog_sp").popup("close");
 	setLanguageField();
 	var submitForm = $("#PSQForm"); 
 	var token = getAuthenticationToken();

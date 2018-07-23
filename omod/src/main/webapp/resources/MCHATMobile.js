@@ -24,11 +24,6 @@ function init(patientName, birthdate, formInst, language) {
 	
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
 }
 
 function setLanguage(patientName, birthdate) {
@@ -36,18 +31,18 @@ function setLanguage(patientName, birthdate) {
     var langButtonText = "Español";
 	var additionalQuestions = "Please fill out the following about how your child usually is. Please try to answer every question. If the behavior is rare (e.g., you've seen it once or twice), please answer as if the child does not do it.";
     var startButtonText = "Start";
-    var vitalsButtonText = "Staff";
+    var quitButtonText = "Quit";
     if (!english) {
         langButtonText = "English";
 		additionalQuestions = "Por favor conteste acerca de como su niño(a) es usualmente. Por favor trata de contestar cada pregunta. Si el comportamiento de su niño no ocurre con frecuencia, conteste como si no lo hiciera.";
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#additionalQuestions").text(additionalQuestions);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);
+    $(".quitButton .ui-btn-text").text(quitButtonText);
 }
 
 function setLanguageFromForm(patientName, birthdate) {
@@ -94,9 +89,9 @@ function attemptFinishForm() {
 		finishForm();
 	} else {
 		if (english) {
-    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
+    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
     	} else {
-    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
+    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
     	}
 	}
 }
@@ -105,10 +100,10 @@ function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
 	if (english) {
 		$("#finish_error_dialog").popup("close");
-		$("#not_finished_final_dialog").popup("close");
+		$("#not_finished_dialog").popup("close");
 	} else {
 		$("#finish_error_dialog_sp").popup("close");
-		$("#not_finished_final_dialog_sp").popup("close");
+		$("#not_finished_dialog_sp").popup("close");
 	}
 	
 	setLanguageField();

@@ -16,6 +16,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
+import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -23,6 +24,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
+import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,7 +46,6 @@ public class DynamicMobileFormController extends SimpleFormController {
 	private static final String PARAM_FORM_INSTANCE = "formInstance";
 	private static final String PARAM_PATIENT = "patient";
 	private static final String PARAM_PATIENT_ID = "patientId";
-	private static final String PARAM_LANGUAGE = "language";
 	private static final String PARAM_SESSION_ID = "sessionId";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
 	/** Logger for this class and subclasses */
@@ -72,8 +73,8 @@ public class DynamicMobileFormController extends SimpleFormController {
 		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
 		map.put(PARAM_SESSION_ID, sessionIdStr);
 		
-		String language = request.getParameter(PARAM_LANGUAGE);
-		map.put(PARAM_LANGUAGE, language);
+		String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
+		map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
 		
 		String patientIdStr = request.getParameter(PARAM_PATIENT_ID);
 		Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
@@ -97,7 +98,7 @@ public class DynamicMobileFormController extends SimpleFormController {
 			String message = 
 				"Error retrieving data to display a form. Please contact support with the following information: Form ID: " + 
 				formId + " Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
-			log.error(message);
+			log.error(message, e);
 			map.put(PARAM_ERROR_MESSAGE, message);
 			return map;
 		}
@@ -153,8 +154,10 @@ public class DynamicMobileFormController extends SimpleFormController {
 		map.put(PARAM_LOCATION_TAG_ID, locationTagIdStr);
 		map.put(PARAM_ENCOUNTER_ID, encounterIdStr);
 		map.put(PARAM_SESSION_ID, sessionIdStr);
-		String language = request.getParameter(PARAM_LANGUAGE);
-		map.put(PARAM_LANGUAGE, language);
+		String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
+		map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
+		String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
+		map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
 		
 		String view = getSuccessView();
 		return new ModelAndView(new RedirectView(view), map);
@@ -276,9 +279,10 @@ public class DynamicMobileFormController extends SimpleFormController {
 					Form form = Context.getFormService().getForm(formId);
 	
 					DssService dssService = Context.getService(DssService.class);
-					List<Rule> nonPriorRules = dssService.getNonPrioritizedRules(form.getName());
+					List<RuleEntry> nonPriorRuleEntries = dssService.getNonPrioritizedRuleEntries(form.getName());
 					
-					for (Rule currRule : nonPriorRules) {
+					for (RuleEntry currRuleEntry : nonPriorRuleEntries) {
+						Rule currRule = currRuleEntry.getRule();
 						if (currRule.checkAgeRestrictions(patient)) {
 							currRule.setParameters(parameters);
 							dssService.runRule(patient, currRule);

@@ -4540,7 +4540,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 		</sql>
 	</diff>
 	<diff>
-        <version>1.10.7</version>
+		<version>1.10.7</version>
         <author>David Ely</author>
         <date>March 14, 2018</date>
         <description>
@@ -4550,7 +4550,74 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
             Insert Into privilege(privilege, description, uuid)
 			Values('Manage CHICA', 'CHICA Module privilege', UUID());
         </sql>
-    </diff>    
+    </diff>
+    <diff>
+		<version>1.10.8</version>
+		<author>David Ely</author>
+		<date>February 23, 2018</date>
+		<description>
+			Inserts rows for isPrimaryPatientForm, isPrimaryPhysicianForm, and endState for older versions of the PSF and PWS that did
+			not have these attributes.
+			NOTE: This does not insert endState attributes for the PSF, because the attribute is not currently used. Also, depending on the version
+			of the PSF (paper vs electronic) the endState could be different.
+		</description>
+		<sql>
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.* FROM 
+				(select distinct a.form_id, 'false', b.form_attribute_id, d.location_tag_id, d.location_id
+				from form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+				where a.name='PWS' and b.name = 'isPrimaryPatientForm' and d.location_id=c.location_id)a
+			LEFT JOIN (select distinct form_id,form_attribute_id,location_tag_id,location_id from chirdlutilbackports_form_attribute_value
+  				where form_id in (select form_id from form where name='PWS') and form_attribute_id in (select form_attribute_id from
+  				chirdlutilbackports_form_attribute where name='isPrimaryPatientForm'))b
+			ON a.form_id=b.form_id AND a.form_attribute_id=b.form_attribute_id AND a.location_tag_id=b.location_tag_id
+			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.* FROM 
+				(select distinct a.form_id, 'true', b.form_attribute_id, d.location_tag_id, d.location_id
+				from form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+				where a.name='PWS' and b.name = 'isPrimaryPhysicianForm' and d.location_id=c.location_id)a
+			LEFT JOIN (select distinct form_id,form_attribute_id,location_tag_id,location_id from chirdlutilbackports_form_attribute_value
+			  where form_id in (select form_id from form where name='PWS') and form_attribute_id in (select form_attribute_id from
+			  chirdlutilbackports_form_attribute where name='isPrimaryPhysicianForm'))b
+			ON a.form_id=b.form_id AND a.form_attribute_id=b.form_attribute_id AND a.location_tag_id=b.location_tag_id
+			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
+
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.* FROM 
+				(select distinct a.form_id, 'PWS_process', b.form_attribute_id, d.location_tag_id, d.location_id
+				from form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+				where a.name='PWS' and b.name = 'endState' and d.location_id=c.location_id)a
+			LEFT JOIN (select distinct form_id,form_attribute_id,location_tag_id,location_id from chirdlutilbackports_form_attribute_value
+			  where form_id in (select form_id from form where name='PWS') and form_attribute_id in (select form_attribute_id from
+			  chirdlutilbackports_form_attribute where name='endState'))b
+			ON a.form_id=b.form_id AND a.form_attribute_id=b.form_attribute_id AND a.location_tag_id=b.location_tag_id
+			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.* FROM 
+				(select distinct a.form_id, 'true', b.form_attribute_id, d.location_tag_id, d.location_id
+				from form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+				where a.name='PSF' and b.name = 'isPrimaryPatientForm' and d.location_id=c.location_id)a
+			LEFT JOIN (select distinct form_id,form_attribute_id,location_tag_id,location_id from chirdlutilbackports_form_attribute_value
+			  where form_id in (select form_id from form where name='PSF') and form_attribute_id in (select form_attribute_id from
+			  chirdlutilbackports_form_attribute where name='isPrimaryPatientForm'))b
+			ON a.form_id=b.form_id AND a.form_attribute_id=b.form_attribute_id AND a.location_tag_id=b.location_tag_id
+			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
+			
+			INSERT INTO chirdlutilbackports_form_attribute_value (form_id, value, form_attribute_id, location_tag_id,location_Id)
+			SELECT a.* FROM 
+				(select distinct a.form_id, 'false', b.form_attribute_id, d.location_tag_id, d.location_id
+				from form a, chirdlutilbackports_form_attribute b, location c, location_tag_map d
+				where a.name='PSF' and b.name = 'isPrimaryPhysicianForm' and d.location_id=c.location_id)a
+			LEFT JOIN (select distinct form_id,form_attribute_id,location_tag_id,location_id from chirdlutilbackports_form_attribute_value
+			  where form_id in (select form_id from form where name='PSF') and form_attribute_id in (select form_attribute_id from
+			  chirdlutilbackports_form_attribute where name='isPrimaryPhysicianForm'))b
+			ON a.form_id=b.form_id AND a.form_attribute_id=b.form_attribute_id AND a.location_tag_id=b.location_tag_id
+			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
+		</sql>
+	</diff>    
 </sqldiff>
 
 

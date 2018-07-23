@@ -651,7 +651,7 @@ function parsePatientList(responseXML) {
 										'<option value="unselected">Options</option>' +
 										'<option>Encounters</option>' +
 										'<option>Print JITS</option>' +
-										'<option>Print Pre-Screener</option>' +
+										'<option value="Print Pre-Screener">Continue Tablet PSF</option>' +
 										'<option>Print Physician Worksheet</option>' +
 										'<option>ADHD WU</option>' +
 									'</select>' +
@@ -1014,9 +1014,9 @@ function test(period) {
 	
 }
 
-<!-- Idea by:  Nic Wolfe -->
-<!-- This script and many more are available free online at -->
-<!-- The JavaScript Source!! http:// javascript.internet.com -->
+/* Idea by:  Nic Wolfe */
+/* This script and many more are available free online at */
+/* The JavaScript Source!! http:// javascript.internet.com */
 function popUp(URL) {
     day = new Date();
     id = day.getTime();

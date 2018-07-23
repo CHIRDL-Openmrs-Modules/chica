@@ -21,6 +21,11 @@ function pageInit()
 	$(document).ajaxStop(function() {
 		$.unblockUI();
 	});
+        
+    // This is for the OK button on the passcode dialog from sharedMobile.jsp
+    $("#quit_passcode_ok_button").click(function() {
+        parent.completeForm();
+    });
 }
 
 // CHICA-1226 Moved function into common .js file
@@ -57,11 +62,6 @@ function init(patientName, birthdate, formInst, language, formId, prefix, entryP
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
 	
-	var showVitals = window.parent.shouldShowVitalsButton();
-	if (!showVitals) {
-		$(".vitalsButton").hide();
-	}
-	
 	numQuestions = $("input[id^='" + prefix + "']").length / 2; // Divide by 2 to handle Spanish version
 	
 	formElementId = formId;
@@ -81,9 +81,9 @@ function attemptFinishForm() {
 		finishForm(); 
 	} else{
 		if (english) {
-    	    $("#not_finished_final_dialog").popup("open", { transition: "pop"});
+    	    $("#not_finished_dialog").popup("open", { transition: "pop"});
     	} else {
-    		$("#not_finished_final_dialog_sp").popup("open", { transition: "pop"});
+    		$("#not_finished_dialog_sp").popup("open", { transition: "pop"});
     	}
 	}
 }
@@ -210,22 +210,25 @@ function setTitleText()
 }
 
 // This function must be called after the setLanguage() function in the eJIT .js
-// This sets the text for the English/Spanish and Staff buttons
+// This sets the text for the English/Spanish and Quit buttons
 function setLanguageForButtons()
 {
 	var langButtonText = "Español";
 	var startButtonText = "Start";
-	var vitalsButtonText = "Staff";
+	var quitButtonText = "Quit";
+	var skipButtonText = "No Parent";
 	
 	if (!english) {
         langButtonText = "English";
         startButtonText = "Comienzo";
-        vitalsButtonText = "Personal";
+        quitButtonText = "Dejar";
+        skipButtonText = "No Padre";
     }
 	
 	$("#confirmLangButton .ui-btn-text").text(langButtonText);
     $("#startButton .ui-btn-text").text(startButtonText);
-    $(".vitalsButton .ui-btn-text").text(vitalsButtonText);  
+    $(".quitButton .ui-btn-text").text(quitButtonText);
+    $("#skipButton .ui-btn-text").text(skipButtonText);
 }
 
 // CHICA-1226 Moved function into common .js file
@@ -272,8 +275,8 @@ function finishForm() {
 	//run an AJAX post request to your server-side script, $this.serialize() is the data from your form being added to the request
 	$("#finish_error_dialog").popup("close");
 	$("#finish_error_dialog_sp").popup("close");
-	$("#not_finished_final_dialog").popup("close");
-	$("#not_finished_final_dialog_sp").popup("close");
+	$("#not_finished_dialog").popup("close");
+	$("#not_finished_dialog_sp").popup("close");
 	setLanguageField(english);
 	calculateScore(); // This function can be left empty if there is nothing to score
 	var submitForm = $("#"+formElementId); 
@@ -325,4 +328,13 @@ function insertYesNo(prefix, questionNumber, isSpanish)
 	
 	$(".choice_"+questionNumber).append(fieldSetElement);
 	$(".choice_"+questionNumber).triggerHandler("create");
+}
+
+function confirmSkipForm()
+{
+	if (english) {
+	    $("#skip_form_dialog").popup("open", { transition: "pop"});
+	} else {
+		$("#skip_form_dialog_sp").popup("open", { transition: "pop"});
+	}
 }

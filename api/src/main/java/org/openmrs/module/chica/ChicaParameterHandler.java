@@ -10,19 +10,15 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Form;
-import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
-import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.dss.hibernateBeans.Rule;
 
 /**
  * @author tmdugan
@@ -33,35 +29,22 @@ public class ChicaParameterHandler implements ParameterHandler
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map,
-	 *      org.openmrs.module.dss.hibernateBeans.Rule)
+	/**
+	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map)
 	 */
-	public void addParameters(Map<String, Object> parameters, Rule rule)
+	public void addParameters(Map<String, Object> parameters, String formType)
 	{
 		FormInstance formInstance = (FormInstance) parameters.get(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
-		String ruleType = rule.getRuleType();
-		
-		if (StringUtils.isBlank(ruleType) || formInstance==null)
+		if (formInstance == null || StringUtils.isBlank(formType)) // CHICA-1234 Check formType before continuing
 		{
 			return;
 		}
+		
 		LogicService logicService = Context.getLogicService();
-
 		FormDatasource formDatasource = (FormDatasource) logicService
-				.getLogicDataSource("form");
+				.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_FORM);
 		HashMap<String,Field> fieldMap = formDatasource.getFormFields(formInstance);
 
-		FormService formService = Context.getFormService();
-		Form form = formService.getForm(ruleType);
-		
-		if (form==null) {
-			return;
-		}
-			
-		String formType = Util.getFormType(form.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
 		if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPSFParameters(parameters,fieldMap);
@@ -70,36 +53,21 @@ public class ChicaParameterHandler implements ParameterHandler
 		if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPWSParameters(parameters,fieldMap);
-		}
-		
-		if (StringUtils.isBlank(formType)) {
-			log.info("A valid formType was not provided to the CHICA system for Form ID: "+form.getFormId()+", Location ID: "+formInstance.getLocationId()+" "
-					+ "and Location Tag ID: "+(Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID)+".");
-			return;
 		}
 	}
 	
 	/**
-	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map, org.openmrs.module.dss.hibernateBeans.Rule, java.util.HashMap)
+	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map, java.util.Map)
 	 */
-    public void addParameters(Map<String, Object> parameters, Rule rule, Map<String, Field> fieldMap) 
+    public void addParameters(Map<String, Object> parameters, Map<String, Field> fieldMap, String formType) 
     {
     	FormInstance formInstance = (FormInstance) parameters.get(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
-    	String ruleType = rule.getRuleType();
 
-		if (StringUtils.isBlank(ruleType) || formInstance==null)
+		if (formInstance == null || StringUtils.isBlank(formType)) // CHICA-1234 Check for formType before continuing
 		{
 			return;
 		}
 		
-		FormService formService = Context.getFormService();
-		Form form = formService.getForm(ruleType);
-		
-		if (form==null) {
-			return;
-		}
-		
-		String formType = Util.getFormType(form.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
 		if (ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPSFParameters(parameters,fieldMap);
@@ -108,12 +76,6 @@ public class ChicaParameterHandler implements ParameterHandler
 		if (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			processPWSParameters(parameters,fieldMap);
-		}
-		
-		if (StringUtils.isBlank(formType)) {
-			log.info("A valid formType was not provided to the CHICA system for Form ID: "+form.getFormId()+", Location ID: "+formInstance.getLocationId()+" "
-					+ "and Location Tag ID: "+(Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID)+".");
-			return;
 		}
     }
 
@@ -122,7 +84,7 @@ public class ChicaParameterHandler implements ParameterHandler
 	{
 		
 		if(fieldMap == null){
-			System.out.println("Field map is null!");
+			log.info("Field map is null!");
 			return;
 		}
 		
@@ -131,11 +93,11 @@ public class ChicaParameterHandler implements ParameterHandler
 		String child1Val = (String) parameters.get("child1");
 		
 		if (child0Val != null && fieldMap.get(child0Val) == null) {
-			System.out.println("The fieldMap object for child0Val is null!");
+			log.info("The fieldMap object for child0Val is null!");
 		}
 		
 		if (child1Val != null && fieldMap.get(child1Val) == null) {
-			System.out.println("The fieldMap object for child1Val is null!");
+			log.info("The fieldMap object for child1Val is null!");
 		}
 		
 		if(child0Val != null&&fieldMap.get(child0Val) != null){
@@ -187,7 +149,7 @@ public class ChicaParameterHandler implements ParameterHandler
 			return;
 		}
 		
-		if(child0Val.contains("Err")){
+		if(child0Val != null && child0Val.contains("Err")){
 			answerValues = child1Val;
 			errorValues = child0Val;
 		}else{

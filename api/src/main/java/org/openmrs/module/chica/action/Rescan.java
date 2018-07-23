@@ -33,7 +33,7 @@ public class Rescan extends org.openmrs.module.atd.action.Rescan
 		String formName = form.getName();
 		
 		//only void non-question related obs for PSF
-		String formType = org.openmrs.module.chica.util.Util.getFormType(formInstance.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
+		String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID), formInstance.getLocationId());
 		if (formName != null && ChirdlUtilConstants.PATIENT_FORM_TYPE.equalsIgnoreCase(formType))
 		{
 			//make sure the processAction from the super

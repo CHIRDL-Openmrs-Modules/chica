@@ -23,6 +23,14 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     });
     
     $('#loading_form_dialog').dialog();
+    $('#loading_dialog').dialog();
+    $('#quit_passcode_dialog').dialog();
+    $('#passcode_error_dialog').dialog();
+    
+    $("#quit_passcode").keypress(function(e){
+	    if ( e.which === 13 ) 
+	     checkPasscode();    
+    });
     
     $("#Temperature_Method_Oral").click(function () {
     	$("#Temperature_Method_Rectal").prop("checked", false).checkboxradio("refresh");
@@ -160,33 +168,20 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
     
     $("#goButton").focus(function() {
 		  $("#goButton").click();
-	});
-});
-
-$(document).on("pageshow", "#vitals_page", function(){
-	$("#vitals_passcode").click(function() {
-		$("#vitals_passcode").focus();
-	});
-	
-	$("#height").click(function() {
-		$("#height").focus();
-	});
-	
-	$( "#vitals_passcode_dialog" ).popup({
-        afteropen: function( event, ui ) {
-        	$("#vitals_passcode").trigger("click");
-        },
-	    afterclose: function( event, ui ) {
-	    	$("#height").trigger("click");
-	    }
     });
     
-    $("#vitals_passcode").keypress(function(e){
-	    if ( e.which == 13 ) 
-	     checkPasscode();    
-	});
-    
-	$("#lnkVitalsPasscode").click();
+    $("#quit_passcode_ok_button").click(function () {
+    	checkPasscode();
+    });
+});
+
+$(document).on("pageshow", "#quit_passcode_dialog", function(){
+    $("#quit_passcode").val("");
+    $("#quit_passcode").focus();
+});
+
+$(document).on("pageshow", "#passcode_error_dialog", function(){
+    $("#passcode_error_ok_button").focus();
 });
 
 $(document).on("pagebeforeshow", "#question_page", function() {
@@ -202,10 +197,10 @@ $(document).on("pagebeforeshow", "#confirm_page", function() {
 });
 
 $(document).on("pageshow", "#additionalForms_page", function() {
-	var content = $("#content_frame").html();
-	if (content.trim().length == 0) {
-		$.mobile.changePage( "#vitals_page", { transition: "fade" });
-	}
+    var content = $("#content_frame").html();
+    if (content.trim().length === 0) {
+        completeForm();
+    }
 });
 
 function init(patientName, birthdate, formInst, formId, formInstanceId, encounterId) {
@@ -214,12 +209,6 @@ function init(patientName, birthdate, formInst, formId, formInstanceId, encounte
 	this.encounterId = encounterId;
 	setLanguage(patientName, birthdate);
 	formInstance = formInst;
-	
-	if (!shouldShowVitalsButton()) {
-		$("#confirmVitalsButton").hide();
-		$("#vitalsDirectButton").hide();
-		$("#vitalsDirectButton_sp").hide();
-	}
 }
 
 function displayQuestions() {
@@ -270,6 +259,8 @@ function handleAuthenticationAjaxError(xhr, textStatus, error) {
 }
 
 function completeForm() {
+	$.mobile.changePage( "#loading_dialog", { transition: "pop"});
+	
 	// Set the language
 	setLanguageField();
 	
@@ -279,7 +270,6 @@ function completeForm() {
 		completeForm();
 	});
 	
-	$("#lnkLoadingDialog").click();
 	populateValues();
 	login(parseLoginSubmitResult, handleAuthenticationAjaxTimerError);
 }
@@ -401,11 +391,8 @@ function saveDynamicQuestions(autoloadNextQuestions) {
 			if (autoloadNextQuestions) {
 				parseSaveQuestionsResult(xml);
 			} else {
-				$.mobile.changePage("#vitals_page", {
-					transition : "fade"
-				});
-				var contentPage = $("#content_1").html("");
-				var contentPage = $("#content_1").html("");
+				completeForm();
+				$("#content_1").html("");
 			}
 		}
 	});
@@ -615,14 +602,12 @@ function setLanguage(patientName, birthdate) {
     var instructions = "<p>1) Please return the device back to the front desk if the patient information listed is incorrect.</p><p>2) Please confirm this form is for:<br/>Name: " + patientName + "<br/>Date of Birth: " + birthdate + "</p>";
     var confirmButtonText = "Confirm";
     var denyButtonText = "Deny";
-    var vitalsButtonText = "Staff";
     if (!english) {
         langButtonText = "English";
         parentText = "Padres de familia: Muchas gracias por tomarse la molestia de contestar las siguientes preguntas acerca de su nino(a).  Las respuestas de estas preguntas seran: ayundar a su doctor a dar mejor atencion medica.  Si su nino(a) tiene 12 anos o mas, por favor su nino(a) debe contestar las preguntas el (ella) solo(a).  Sus respuestas seran completamente privadas.  No necesita contestar ninguna pregunta que no desee contestar.  Si usted tiene preguntas acerca de este cuestionario, haga el favor de hablar sobre ellas con su doctor.  Por favor llene los circulos de la forma mas completa que le sea posible con un lapiz o lapiz tinta.";
         instructions = "<p>1) Por favor devuelva el aparato a la información si la información del paciente que aparece es incorrecta.</p><p>2) Por favor, confirme esta forma es para:<br/>Nombre: " + patientName + "<br/>Fecha de nacimiento: " + birthdate + "</p>";
         confirmButtonText = "Confirmar";
         denyButtonText = "Negar";
-        vitalsButtonText = "Personal";
     }
     
     $("#confirmLangButton .ui-btn-text").text(langButtonText);
@@ -630,7 +615,6 @@ function setLanguage(patientName, birthdate) {
     $("#instructions").html(instructions);
     $("#confirmButton .ui-btn-text").text(confirmButtonText);
     $("#denyButton .ui-btn-text").text(denyButtonText);
-    $("#confirmVitalsButton .ui-btn-text").text(vitalsButtonText);
 }
 
 function setLanguageFromForm(patientName, birthdate) {
@@ -761,18 +745,7 @@ function parsePatientForms(responseXML) {
         $.mobile.loading("hide");
         $('#content_frame').html("");
         
-        // Check to see if we need to show the vitals
-        if (!shouldShowVitalsButton()) {
-        	// Submit the form
-        	completeForm();
-        } else {
-        	// Go to the vitals page
-            if (english) {
-            	$.mobile.changePage("#finished_dialog", { transition: "pop" });
-            } else {
-            	$.mobile.changePage("#finished_dialog_sp", { transition: "pop" });
-            }
-        }
+        completeForm();
     }
 }
 
@@ -804,7 +777,7 @@ function attemptLoadForms() {
 }
 
 function checkPasscode() {
-  var passcode = $("#vitals_passcode").val();
+  var passcode = $("#quit_passcode").val();
   var url = ctx + "/moduleServlet/chica/chicaMobile";
   var action = "action=verifyPasscode&passcode=" + passcode;
   var token = getAuthenticationToken();
@@ -840,22 +813,14 @@ function parsePasscodeResult(responseXML) {
       return false;
   } else {
       var result = $(responseXML).find("result").text();
-      if (result == "success") {
-      	$("#vitals_passcode_dialog").popup("close");
-      	$("#vitals_passcode").val("");
+      if (result === "success") {
+    	$("#userQuitForm").val("true");
+      	completeForm();
       } else {
-        $("#passcodeErrorResultDiv").html("<p>" + result + "</p>");
-        $("#lnkPasscodeError").click();
+        $("#passcode_error_text").html("<p>" + result + "</p>");
+        $.mobile.changePage( "#passcode_error_dialog", { transition: "pop"});
       }
   }
-}
-
-function finishVitals() {
-	if (!validate()) {
-        return;
-    }
-    
-	$( "#confirm_submit_dialog" ).popup( "open", { transition: "pop"} );
 }
 
 function showBlockingMessage() {
@@ -1108,19 +1073,15 @@ function handleAuthenticationAjaxTimerError(xhr, textStatus, error) {
 	setTimeout(startLoginTimer, 30000);
 }
 
-function openVitalsConfirm() {
-	$("#quit_to_vitals_dialog").popup("open", { transition: "pop"});
+function confirmQuitForm() {
+        $.mobile.changePage( "#quit_passcode_dialog", { transition: "pop"});
 }
 
-function openVitalsConfirmSpanish() {
-	$("#quit_to_vitals_dialog_sp").popup("open", { transition: "pop"});
+function quitForm() {
+        confirmQuitForm();
 }
 
-function navigateToVitals() {
-	$.mobile.changePage( "#vitals_page", { transition: "fade" });
-}
-
-function saveSendToVitals() {
+function saveAndQuit() {
 	saveDynamicQuestions(false);
 }
 
@@ -1159,15 +1120,6 @@ function areAllQuestionsAnswered() {
 	}
 	
 	return true;
-}
-
-function shouldShowVitalsButton() {
-	 var showVitals = $("#showVitals").val();
-     if (showVitals == "false") {
-     	return false;
-     }
-     
-     return true;
 }
 
 // DWE CHICA-884

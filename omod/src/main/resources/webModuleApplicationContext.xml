@@ -32,17 +32,13 @@
                 <prop key="/module/@MODULE_ID@/chicaRuleTester.form">chicaRuleTester</prop>
                 <prop key="/module/@MODULE_ID@/chicaNoteTester.form">chicaNoteTester</prop>
                 <prop key="/module/@MODULE_ID@/forcePrintJITs.form">forcePrintJITs</prop>
-                <prop key="/module/@MODULE_ID@/displayMergeForm.form">displayMergeForm</prop>
-                <prop key="/module/@MODULE_ID@/displayScanForm.form">displayScanForm</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsMobile.form">finishFormsMobile</prop>
-                <prop key="/module/@MODULE_ID@/finishFormsNotificationMobileIUHCerner.form">finishFormsNotificationMobileIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/finishFormsNotificationMobile.form">finishFormsNotificationMobile</prop>
                 <prop key="/module/@MODULE_ID@/greaseBoardMobile.form">greaseBoardMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobile.form">psfMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobileTabs.form">psfMobileTabs</prop>
                 <prop key="/module/@MODULE_ID@/loginMobile.form">loginMobile</prop>
                 <prop key="/module/@MODULE_ID@/psfMobileDynamic.form">psfMobileDynamic</prop>
-                <prop key="/module/@MODULE_ID@/psfMobileDynamicIUHCerner.form">psfMobileDynamicIUHCerner</prop>
                 <prop key="/module/@MODULE_ID@/phq9Mobile.form">phq9Mobile</prop>
                 <prop key="/module/@MODULE_ID@/sexRiskMobile.form">sexRiskMobile</prop>
                 <prop key="/module/@MODULE_ID@/CRAFFTMobile.form">CRAFFTMobile</prop>
@@ -59,6 +55,10 @@
                 <prop key="/module/@MODULE_ID@/cacheConfiguration.form">cacheConfiguration</prop>
                 <prop key="/module/@MODULE_ID@/MCHATRMobile.form">MCHATRMobile</prop>
                 <prop key="/module/@MODULE_ID@/TRAQMobile.form">TRAQMobile</prop>
+                <prop key="/module/@MODULE_ID@/diabetesHistory.form">diabetesHistory</prop>
+                <prop key="/module/@MODULE_ID@/parentPsychosocial.form">parentPsychosocial</prop>
+                <prop key="/module/@MODULE_ID@/EatingDisorderMobile.form">EatingDisorderMobile</prop>
+                <prop key="/module/@MODULE_ID@/insulinDosingMedications.form">insulinDosingMedications</prop>
                 <prop key="/module/@MODULE_ID@/SUDEPMobile.form">SUDEPMobile</prop>
             </props>
         </property>
@@ -83,24 +83,9 @@
         <property name="formView"><value>/module/@MODULE_ID@/forcePrintJITs</value></property>
         <property name="successView"><value>forcePrintJITs.form</value></property>
     </bean>
-    <bean id="displayMergeForm" class="@MODULE_PACKAGE@.web.DisplayMergeFormController">
-        <property name="commandName"><value>displayMergeFormObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/displayMergeForm</value></property>
-        <property name="successView"><value>displayMergeForm.form</value></property>
-    </bean>
-    <bean id="displayScanForm" class="@MODULE_PACKAGE@.web.DisplayScanFormController">
-        <property name="commandName"><value>displayScanFormObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/displayScanForm</value></property>
-        <property name="successView"><value>displayScanForm.form</value></property>
-    </bean>
     <bean id="finishFormsMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionController">
         <property name="commandName"><value>finishFormsMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/finishFormsMobile</value></property>
-        <property name="successView"><value>greaseBoardMobile.form</value></property>
-    </bean>
-    <bean id="finishFormsNotificationMobileIUHCerner" class="@MODULE_PACKAGE@.web.MobileFormsCompletionNotificationController">
-        <property name="commandName"><value>finishFormsNotificationMobileIUHCernerObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/finishFormsNotificationMobileIUHCerner</value></property>
         <property name="successView"><value>greaseBoardMobile.form</value></property>
     </bean>
     <bean id="finishFormsNotificationMobile" class="@MODULE_PACKAGE@.web.MobileFormsCompletionNotificationController">
@@ -142,11 +127,6 @@
         <property name="commandName"><value>psfMobileDynamicObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/psfMobileDynamic</value></property>
         <property name="successView"><value>finishFormsNotificationMobile.form</value></property>
-    </bean>
-    <bean id="psfMobileDynamicIUHCerner" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
-        <property name="commandName"><value>psfMobileDynamicIUHCernerObject</value></property>
-        <property name="formView"><value>/module/@MODULE_ID@/psfMobileDynamicIUHCerner</value></property>
-        <property name="successView"><value>finishFormsNotificationMobileIUHCerner.form</value></property>
     </bean>
     <bean id="phq9Mobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>phq9MobileObject</value></property>
@@ -216,6 +196,26 @@
     <bean id="TRAQMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
         <property name="commandName"><value>TRAQMobileObject</value></property>
         <property name="formView"><value>/module/@MODULE_ID@/TRAQMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="diabetesHistory" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>diabetesHistoryObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/diabetesHistory</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+        <bean id="parentPsychosocial" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>parentPsychosocialObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/parentPsychosocial</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="EatingDisorderMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>EatingDisorderMobileObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/EatingDisorderMobile</value></property>
+        <property name="successView"><value>finishFormsMobile.form</value></property>
+    </bean>
+    <bean id="insulinDosingMedications" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">
+        <property name="commandName"><value>insulinDosingMedicationsObject</value></property>
+        <property name="formView"><value>/module/@MODULE_ID@/insulinDosingMedications</value></property>
         <property name="successView"><value>finishFormsMobile.form</value></property>
     </bean>
  	<bean id="SUDEPMobile" class="@MODULE_PACKAGE@.web.DynamicMobileFormController">

@@ -19,12 +19,13 @@
     
     <require_version>2.0.6</require_version>
     <require_modules>
-        <require_module version="2.34.1">org.openmrs.module.dss</require_module>
-        <require_module version="2.13.1">org.openmrs.module.atd</require_module>
-        <require_module version="1.10.1">org.openmrs.module.sockethl7listener</require_module>
-        <require_module version="1.17.3">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.9.2">org.openmrs.module.chirdlutilbackports</require_module> </require_modules>
-         <require_module version="1.3.1">org.openmrs.module.legacyui</require_module>
+        <require_module version="3.0.0">org.openmrs.module.dss</require_module>
+        <require_module version="2.14.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.11.0">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="1.18.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.10.0">org.openmrs.module.chirdlutilbackports</require_module> 
+        <require_module version="1.3.1">org.openmrs.module.legacyui</require_module>
+    </require_modules>
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.chica.extension.html.AdminList</class>
@@ -415,6 +416,11 @@
      	<description>Password for Glooko</description>
     </globalProperty>
     <globalProperty>
+        <property>chica.ViewEncountersConfigFile</property>
+        <defaultValue></defaultValue>
+     	<description>The view encounters config file (including the path)</description>
+    </globalProperty>
+ 	<globalProperty>
         <property>chica.parseInsurancePlanCodeFrom_IN1-35</property>
         <defaultValue>false</defaultValue>
         <description>Parse the Insurance Plan Code from HL7 location IN1.35</description>
