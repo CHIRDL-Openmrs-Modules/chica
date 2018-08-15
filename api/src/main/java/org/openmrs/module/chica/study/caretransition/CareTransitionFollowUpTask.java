@@ -31,7 +31,6 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.Provider;
@@ -432,7 +431,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			body.append(familyName);
 			body.append(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE);
 			body.append(ChirdlUtilConstants.GENERAL_INFO_OPEN_PAREN);
-			body.append(getPatientIdentifier(patient));
+			body.append(Util.getPatientEHRMRNIdentifier(patient));
 			body.append(ChirdlUtilConstants.GENERAL_INFO_CLOSE_PAREN);
 			body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
 			successfulSaves++;
@@ -456,25 +455,6 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			log.info("Care Transition Follow Up Email sent for provider ID " + providerId + " containing " + 
 					successfulSaves + " patient(s).");
 		}
-	}
-	
-	/**
-	 * Get the patient's identifier.  This will look at the MRN_EHR first and default to the preferred identifier if it 
-	 * does not exist.
-	 * 
-	 * @param patient The patient for identifier lookup
-	 * @return patient identifier
-	 */
-	private String getPatientIdentifier(Patient patient) {
-	    // We ideally want to return the EHR identifier because this will match the EHR identifier better
-	    PatientIdentifier pi = patient.getPatientIdentifier(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR);
-	    if (pi != null && StringUtils.isNotBlank(pi.getIdentifier())) {
-	        return pi.getIdentifier();
-	    }
-	    
-	    // Return the preferred identifier
-	    pi =  patient.getPatientIdentifier();
-	    return pi == null ? ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING : pi.getIdentifier();
 	}
 	
 	/**
