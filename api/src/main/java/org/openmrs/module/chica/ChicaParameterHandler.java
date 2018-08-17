@@ -140,56 +140,44 @@ public class ChicaParameterHandler implements ParameterHandler
 	{
 		
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		String child0Val = (String) parameters.get("child0");
-		String child1Val = (String) parameters.get("child1");
-		String answerValues = null;
-		String errorValues = null;
+		String answerValues = (String) parameters.get("child0");
 		
 		if(fieldMap == null){
 			return;
 		}
 		
-		if(child0Val != null && child0Val.contains("Err")){
-			answerValues = child1Val;
-			errorValues = child0Val;
-		}else{
-			answerValues = child0Val;
-			errorValues = child1Val;
-		}
-		
 		if(answerValues != null&&fieldMap.get(answerValues)!=null){
 			String answer = fieldMap.get(answerValues).getValue();
-			String errorString = fieldMap.get(errorValues).getValue();
 			Integer numBoxes = 0;
 			if(answer != null){
 				answer = answer.trim();
 				
-				if(answer.contains("1")&&!(errorString!=null&&errorString.contains("1"))){
+				if(answer.contains("1")){
 					parameters.put("Box1", "true");
 					parameters.put("box1", "true");
 					numBoxes++;
 				}
-				if(answer.contains("2")&&!(errorString!=null&&errorString.contains("2"))){
+				if(answer.contains("2")){
 					parameters.put("Box2", "true");
 					parameters.put("box2", "true");
 					numBoxes++;
 				}
-				if(answer.contains("3")&&!(errorString!=null&&errorString.contains("3"))){
+				if(answer.contains("3")){
 					parameters.put("Box3", "true");
 					parameters.put("box3", "true");
 					numBoxes++;
 				}
-				if(answer.contains("4")&&!(errorString!=null&&errorString.contains("4"))){
+				if(answer.contains("4")){
 					parameters.put("Box4", "true");
 					parameters.put("box4", "true");
 					numBoxes++;
 				}
-				if(answer.contains("5")&&!(errorString!=null&&errorString.contains("5"))){
+				if(answer.contains("5")){
 					parameters.put("Box5", "true");
 					parameters.put("box5", "true");
 					numBoxes++;
 				}
-				if(answer.contains("6")&&!(errorString!=null&&errorString.contains("6"))){
+				if(answer.contains("6")){
 					parameters.put("Box6", "true");
 					parameters.put("box6", "true");
 					numBoxes++;
