@@ -3,7 +3,6 @@
  */
 package org.openmrs.module.chica;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +15,7 @@ import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 /**
  * @author tmdugan
@@ -139,7 +136,6 @@ public class ChicaParameterHandler implements ParameterHandler
 			Map<String,Field> fieldMap)
 	{
 		
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		String answerValues = (String) parameters.get("child0");
 		
 		if(fieldMap == null){
@@ -181,17 +177,6 @@ public class ChicaParameterHandler implements ParameterHandler
 					parameters.put("Box6", "true");
 					parameters.put("box6", "true");
 					numBoxes++;
-				}
-				if (numBoxes == 6){
-					
-					Error error = new Error("Warning", "PWS Scan"
-							, "All six PWS boxes were checked - possible scan error. "
-							,null, new Date(), null);
-					//Get the session id
-					Integer sessionId = (Integer) parameters.get("sessionId");
-					error.setSessionId(sessionId);
-					chirdlutilbackportsService.saveError(error);
-					
 				}
 			}
 		}
