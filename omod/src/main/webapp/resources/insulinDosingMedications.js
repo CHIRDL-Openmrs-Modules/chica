@@ -13,10 +13,10 @@ function insertChoices(prefix, questionNumber, isSpanish){
 	
 	if(isSpanish)
 	{
-		choiceNever = "Never(SPANISH)";
-		choiceSometimes = "Sometimes(SPANISH)";
-		choiceUsually = "Usually(SPANISH)";
-		choiceAlways = "Always(SPANISH)";
+		choiceNever = "Casi nunca";
+		choiceSometimes = "Algunas veces (menos de la mitad del tiempo)";
+		choiceUsually = "Usualmente (más de la mitad del tiempo)";
+		choiceAlways = "Siempre";
 		questionNumber = questionNumber + "_2";
 	}
 	
