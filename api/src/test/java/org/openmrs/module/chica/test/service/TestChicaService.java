@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.junit.Assert;
@@ -17,6 +18,8 @@ import org.openmrs.annotation.Authorized;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.hibernateBeans.Study;
+import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -120,4 +123,33 @@ public class TestChicaService extends BaseModuleContextSensitiveTest
 		    }
 		}
 	}
+	
+	/**
+     * Tests retrieving list of ActiveStudies
+     * @see org.openmrs.module.chica.service.ChicaService#getActiveStudies()
+     * @throws Exception
+     */
+    @Test
+    public void should_getActiveStudies() {
+        ChicaService chicaService = Context.getService(ChicaService.class);
+        List<Study> activeStudies = chicaService.getActiveStudies();
+        Assert.assertNotNull("Active Studies not found.", activeStudies);
+    }
+    
+    /**
+     * Tests retrieving StudyAttributeValue
+     * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributeValue()
+     * @throws Exception
+     */
+    @Test
+    public void should_getStudyAttributeValue() {
+        ChicaService chicaService = Context.getService(ChicaService.class);
+        List<Study> studies = chicaService.getActiveStudies();
+        String studyName = null;
+        StudyAttributeValue studyAttributeValue = null;
+        for (Study study : studies) {
+            studyAttributeValue = chicaService.getStudyAttributeValue(study,"Test Study");
+        }
+        Assert.assertNotNull("Active Studies not found.", studyAttributeValue.);
+    }
 }
