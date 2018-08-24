@@ -85,11 +85,11 @@ function setLanguage(patientName, birthdate) {
     
    /*-----Need Spanish Translation----*/
     if (!english) {
-    	formTitleText = "Cuestionario sobre los hábitos alimenticios";
+    	formTitleText = "Cuestionario sobre los h"+ aAcute +"bitos alimenticios";
         langButtonText = "English"; 
         startButtonText = "Comienzo";
         quitButtonText = "Dejar";    
-        instructions = "<p> Escoja la opción que mejor describa sus hábitos alimenticios.</p>"; 
+        instructions = "<p> Escoja la opci"+ oAcute +"n que mejor describa sus h"+ aAcute +"bitos alimenticios.</p>"; 
 	}
     
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
