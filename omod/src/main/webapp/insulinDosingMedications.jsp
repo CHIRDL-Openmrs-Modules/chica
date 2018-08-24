@@ -30,15 +30,15 @@
 
 	<!-- Titles/Headers/Footers/Buttons/Copyright  -->
 	<c:set var="formName" value="Insulin Dosing and Medications Questionnaire"/>
-	<c:set var="formName_sp" value="Insulin Dosing and Medications Questionnaire(SPANISH)"/>
-	<c:set var="formNameHeader" value="${formName}:"/>
-	<c:set var="formNameHeader_sp" value="${formName_sp}:"/>
+	<c:set var="formName_sp" value="Cuestionario sobre dosis de insulina y medicamentos"/>
+	<c:set var="formNameHeader" value="${formName}${colon}"/>
+	<c:set var="formNameHeader_sp" value="${formName_sp}${colon}"/>
 	<input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	<c:set var="prefix" value="InsulinDosingQuestionEntry_" />
 
-	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about insulin dosing and medications." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions about insulin dosing and medications." />
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about insulin dosing and medications${period}" />
+	<c:set var="instructions_additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales sobre las dosis de insulina y medicamentos${period}" />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='I take my insulin without anyone reminding me${period}' scope="request"/>
@@ -49,12 +49,12 @@
 	<c:set var="question6"  value='I adjust my own insulin doses based on how much I exercise${period}' scope="request"/>
 
 	<!-- Questions (Spanish) -->
-	<c:set var="question1_2"  value='${invQuestionMark} ${period} one' scope="request"/>
-	<c:set var="question2_2"  value='${invQuestionMark} ${period} two' scope="request"/>
-	<c:set var="question3_2"  value='${invQuestionMark} ${period} three' scope="request"/>
-	<c:set var="question4_2"  value='${invQuestionMark} ${period} four' scope="request"/>
-	<c:set var="question5_2"  value='${invQuestionMark} ${period} five' scope="request"/>
-	<c:set var="question6_2"  value='${invQuestionMark} ${period} six' scope="request"/>
+	<c:set var="question1_2"  value='Tomo mi insulina sin que nadie me lo recuerde${period}' scope="request"/>
+	<c:set var="question2_2"  value='S${eAcute} cu${aAcute}l es mi az${uAcute}car en la sangre antes de calcular mi insulina para las comidas${period}' scope="request"/>
+	<c:set var="question3_2"  value='Me aplico la insulina antes de las comidas${period}' scope="request"/>
+	<c:set var="question4_2"  value='Me aplico la insulina antes de comer refrigerios${period}' scope="request"/>
+	<c:set var="question5_2"  value='Ajusto mis propias dosis de insulina en funci${oAcute}n de las lecturas del az${uAcute}car en la sangre${period}' scope="request"/>
+	<c:set var="question6_2"  value='Ajusto mis propias dosis de insulina en funci${oAcute}n de cu${aAcute}nto me ejercito${period}' scope="request"/>
 	
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />

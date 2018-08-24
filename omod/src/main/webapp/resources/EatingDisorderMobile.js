@@ -85,11 +85,11 @@ function setLanguage(patientName, birthdate) {
     
    /*-----Need Spanish Translation----*/
     if (!english) {
-    	formTitleText = "Eating Habits Questionnaire(SPANISH)";
+    	formTitleText = "Cuestionario sobre los h"+ aAcute +"bitos alimenticios";
         langButtonText = "English"; 
         startButtonText = "Comienzo";
         quitButtonText = "Dejar";    
-        instructions = "<p> Please choose the option that best describes your eating habits.(SPANISH)</p>"; 
+        instructions = "<p> Escoja la opci"+ oAcute +"n que mejor describa sus h"+ aAcute +"bitos alimenticios.</p>"; 
 	}
     
     $("#confirmLangButton .ui-btn-text").html(langButtonText);
@@ -221,12 +221,12 @@ function insertChoices(questionNumber){
 	
 	/* ---Need Spanish Translation ----*/
 	if (isSpanishQuestion(questionNumber)){
-		 choiceNever = "Never(SPANISH)";
-		 choiceRarely = "Rarely(SPANISH)";
-		 choiceSometimes = "Sometimes(SPANISH)";
-		 choiceOften = "Often(SPANISH)";
-		 choiceUsually = "Usually(SPANISH)";
-		 choiceAlways = "Always(SPANISH)";
+		 choiceNever = "Nunca";
+		 choiceRarely = "Muy pocas veces";
+		 choiceSometimes = "Algunas veces";
+		 choiceOften = "Con frecuencia";
+		 choiceUsually = "Usualmente";
+		 choiceAlways = "Siempre";
 	}
 	
 	fieldSetElement = $(document.createElement("fieldset"));

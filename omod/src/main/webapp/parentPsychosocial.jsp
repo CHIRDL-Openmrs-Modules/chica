@@ -30,15 +30,15 @@
 
 	<!-- Titles/Headers/Footers/Buttons/Copyright  -->
 	<c:set var="formName" value="Parent Psychosocial Questionnaire"/>
-	<c:set var="formName_sp" value="Parent Psychosocial Questionnaire(SPANISH)"/>
-	<c:set var="formNameHeader" value="${formName}:"/>
-	<c:set var="formNameHeader_sp" value="${formName_sp}:"/>
+	<c:set var="formName_sp" value="Cuestionario psicosocial para los padres"/>
+	<c:set var="formNameHeader" value="${formName}${colon}"/>
+	<c:set var="formNameHeader_sp" value="${formName_sp}${colon}"/>
 	<input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	<c:set var="prefix" value="ParentPsychosocialQuestionEntry_" />
 
-	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Please hand tablet to the parent/caregiver." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions for your parent. Please hand them the tablet." />
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Please hand tablet to the parent${slash}caregiver${period}" />
+	<c:set var="instructions_additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales para su padre${slash}madre${slash}cuidador. Entregue la tableta a su padre/madre/cuidador${period}" />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='In the past four weeks, did you worry that your household would not have enough food${questionMark}' scope="request"/>
@@ -50,19 +50,19 @@
 	<c:set var="question7"  value='Are there any concerns or problems a diabetes educator can help you with${questionMark}' scope="request"/>
 
 	<!-- Questions (Spanish) -->
-	<c:set var="question1_2"  value='${invQuestionMark} ${questionMark} one' scope="request"/>
-	<c:set var="question2_2"  value='${invQuestionMark} ${questionMark} two' scope="request"/>
-	<c:set var="question3_2"  value='${invQuestionMark} ${questionMark} three' scope="request"/>
-	<c:set var="question4_2"  value='${invQuestionMark} ${questionMark} four' scope="request"/>
-	<c:set var="question5_2"  value='${invQuestionMark} ${questionMark} five' scope="request"/>
-	<c:set var="question6_2"  value='${invQuestionMark} ${questionMark} six' scope="request"/>
-	<c:set var="question7_2"  value='${invQuestionMark} ${questionMark} seven' scope="request"/>
+	<c:set var="question1_2"  value='En las ${uAcute}ltimas cuatro semanas ${invQuestionMark}se preocup${oAcute} usted de que no hubiese suficiente alimento en su casa${questionMark}' scope="request"/>
+	<c:set var="question2_2"  value='${invQuestionMark}Tiene usted problemas para llegar a la cl${iAcute}nica debido a que no tiene transporte o alguien que lo lleve${questionMark}' scope="request"/>
+	<c:set var="question3_2"  value='${invQuestionMark}Ha cambiado o perdido usted su empleo desde la ${uAcute}ltima visita${questionMark}' scope="request"/>
+	<c:set var="question4_2"  value='${invQuestionMark}Ha cambiado o perdido usted su cobertura de seguro desde la ${uAcute}ltima visita${questionMark}' scope="request"/>
+	<c:set var="question5_2"  value='${invQuestionMark}Tiene usted preocupaciones o problemas sobre los cuales nuestro trabajador social pueda ayudarle${questionMark}' scope="request"/>
+	<c:set var="question6_2"  value='${invQuestionMark}Tiene usted preocupaciones o problemas sobre los cuales nuestro dietista pueda ayudarle${questionMark}' scope="request"/>
+	<c:set var="question7_2"  value='${invQuestionMark}Tiene usted preocupaciones o problemas sobre los cuales un educador de diabetes pueda ayudarle${questionMark}' scope="request"/>
 	
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
 	
-	<c:set var="instructions_part2" value="If your parent/caregiver is not present, please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below." />
-	<c:set var="instructions_part2_sp" value="(SPANISH) If your parent/caregiver is not present, please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below." />
+	<c:set var="instructions_part2" value="If your parent${slash}caregiver is not present${comma} please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below${period}" />
+	<c:set var="instructions_part2_sp" value="Si su padre${slash}madre${slash}cuidador no est${aAcute} presente${comma} omita las preguntas haciendo clic en el bot${oAcute}n &lt;span style='text-decoration: underline;'&gt; No Padre&lt;/span&gt;&nbsp;m${aAcute}s adelante${period}" />
 	<input type="hidden" name="instructions_part2" id="instructions_part2" value="${instructions_part2}" />
 	<input type="hidden" name="instructions_part2_sp" id="instructions_part2_sp" value="${instructions_part2_sp}" />
 
