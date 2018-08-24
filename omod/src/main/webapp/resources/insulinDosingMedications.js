@@ -1,3 +1,4 @@
+var aAcute = "&#225";
 
 $(document).on("pageinit", function() {
 	pageInit();
@@ -15,7 +16,7 @@ function insertChoices(prefix, questionNumber, isSpanish){
 	{
 		choiceNever = "Casi nunca";
 		choiceSometimes = "Algunas veces (menos de la mitad del tiempo)";
-		choiceUsually = "Usualmente (más de la mitad del tiempo)";
+		choiceUsually = "Usualmente (m"+ aAcute +"s de la mitad del tiempo)";
 		choiceAlways = "Siempre";
 		questionNumber = questionNumber + "_2";
 	}

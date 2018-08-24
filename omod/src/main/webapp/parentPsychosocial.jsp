@@ -62,7 +62,7 @@
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
 	
 	<c:set var="instructions_part2" value="If your parent${slash}caregiver is not present${comma} please skip the questions by clicking the &lt;span style='text-decoration: underline;'&gt; No Parent&lt;/span&gt;&nbsp;button below${period}" />
-	<c:set var="instructions_part2_sp" value="Si su padre${slash}madre${slash}cuidador no est${aAcute} presente${comma} omita las preguntas haciendo clic en el bot${oAcute}n &lt;span style='text-decoration: underline;'&gt; No Padre&lt;/span&gt;&nbsp; (El padre${slash}madre${slash}cuidador no est${aAcute} presente) m${aAcute}s adelante${period}" />
+	<c:set var="instructions_part2_sp" value="Si su padre${slash}madre${slash}cuidador no est${aAcute} presente${comma} omita las preguntas haciendo clic en el bot${oAcute}n &lt;span style='text-decoration: underline;'&gt; No Padre&lt;/span&gt;&nbsp;m${aAcute}s adelante${period}" />
 	<input type="hidden" name="instructions_part2" id="instructions_part2" value="${instructions_part2}" />
 	<input type="hidden" name="instructions_part2_sp" id="instructions_part2_sp" value="${instructions_part2_sp}" />
 
