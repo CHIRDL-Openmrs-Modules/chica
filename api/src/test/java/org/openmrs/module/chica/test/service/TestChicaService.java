@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -12,16 +14,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Form;
 import org.openmrs.FormField;
+import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
+import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
+import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
@@ -31,6 +40,10 @@ import org.openmrs.test.SkipBaseSetup;
  */
 public class TestChicaService extends BaseModuleContextSensitiveTest
 {
+
+    //ChicaService chicaService = Context.getService(ChicaService.class);
+    private static final String PROPERTY_KEY_CONCEPT = "concept";
+    public static final String DBUNIT_SETUP_FILE = "dbunitFiles/chicaServiceTableSetup.xml";
 
 	/**
 	 * Set up the database with the initial dataset before every test method in
@@ -43,12 +56,14 @@ public class TestChicaService extends BaseModuleContextSensitiveTest
 	public void runBeforeEachTest() throws Exception {
 		// create the basic user and give it full rights
 		initializeInMemoryDatabase();
-//		executeDataSet(TestUtil.DBUNIT_SETUP_FILE);
+		executeDataSet(TestUtil.PATIENT_FORMS_FILE);
+		executeDataSet(DBUNIT_SETUP_FILE);
+		
 		// authenticate to the temp database
 		authenticate();
 	}
-
-	/**
+	
+ 	/**
 	 * @throws Exception
 	 */
 	@Test
@@ -130,7 +145,7 @@ public class TestChicaService extends BaseModuleContextSensitiveTest
      * @throws Exception
      */
     @Test
-    public void should_getActiveStudies() {
+    public void test_getActiveStudies() {
         ChicaService chicaService = Context.getService(ChicaService.class);
         List<Study> activeStudies = chicaService.getActiveStudies();
         Assert.assertNotNull("Active Studies not found.", activeStudies);
@@ -145,11 +160,60 @@ public class TestChicaService extends BaseModuleContextSensitiveTest
     public void should_getStudyAttributeValue() {
         ChicaService chicaService = Context.getService(ChicaService.class);
         List<Study> studies = chicaService.getActiveStudies();
-        String studyName = null;
         StudyAttributeValue studyAttributeValue = null;
         for (Study study : studies) {
-            studyAttributeValue = chicaService.getStudyAttributeValue(study,"Test Study");
+            studyAttributeValue = chicaService.getStudyAttributeValue(study,"Custom Randomizer");
+            Assert.assertNotNull("Active Studies not found.", studyAttributeValue);
+            Assert.assertEquals("FamilyBasedStudyRandomizer", studyAttributeValue.getValue());
         }
-        Assert.assertNotNull("Active Studies not found.", studyAttributeValue.);
     }
+    
+    /**
+     * Tests retrieving EncountersForEnrolledPatients
+     * @see org.openmrs.module.chica.service.ChicaService#getEncountersForEnrolledPatients(concept, startDateTime,  endDateTime)
+     * @throws Exception
+     */
+    @Test
+    public void should_getEncountersForEnrolledPatients() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE,  -4);
+        Date startDateTime = DateUtil.getStartOfDay(c.getTime());
+        Date endDateTime = DateUtil.getEndOfDay(c.getTime());
+        ConceptService conceptService = Context.getConceptService();
+        Concept concept = conceptService.getConceptByName("testConcept");
+        ChicaService chicaService = Context.getService(ChicaService.class);
+        List<Encounter> encounters = chicaService.getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
+        Assert.assertNotNull("Encounters for Enrolled Patients not found.", encounters);
+    }
+    
+    /**
+     * Tests retrieving StudySubject
+     * @see org.openmrs.module.chica.service.ChicaService#getStudySubject()
+     * @throws Exception
+     */
+    @Test
+    public void should_getStudySubject() {
+        PatientService patientService = Context.getPatientService();
+        int patientId = 2298;
+        Patient patient = patientService.getPatient(patientId);
+        ChicaService chicaService = Context.getService(ChicaService.class);
+        Study study = chicaService.getStudyByTitle("Smoking Cessation Study");
+        StudySubject studySubject = chicaService.getStudySubject(patient,study);
+        Assert.assertNotNull("Study subject not found.", studySubject);
+    }
+    
+    /**
+     * Tests retrieving StudySubject by StudyTitle
+     * @see org.openmrs.module.chica.service.ChicaService#getStudyByTitle()
+     * @throws Exception
+     */
+    @Test
+    public void should_getStudyByTitle(){
+        ChicaService chicaService = Context.getService(ChicaService.class);
+        Study study = chicaService.getStudyByTitle("Smoking Cessation Study");
+        Assert.assertNotNull("Study Title not found.", study);
+    }
+    
+    
+    
 }

@@ -39,6 +39,7 @@ public class TestChicaObsDatasource extends BaseModuleContextSensitiveTest
 	public void testChicaObsDatasource()throws Exception
 	{
 		executeDataSet(TestUtil.PATIENT_PROVIDER_FILE);
+		executeDataSet(TestUtil.PATIENT_FORMS_FILE);
 		executeDataSet(TestUtil.ENCOUNTERS_FILE);
 		executeDataSet(TestUtil.CONCEPTS_FILE);
 		executeDataSet(TestUtil.RULES_FILE);

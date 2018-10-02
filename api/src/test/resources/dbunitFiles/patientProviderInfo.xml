@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
 <dataset>
-	<person person_id="222" gender="M" birthdate="1970-01-01"
+	<person person_id="2298" gender="M" birthdate="1970-01-01"
 		birthdate_estimated="false" dead="false" creator="1"
 		date_created="2005-01-01 00:00:00.0" voided="false"
 		uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b80" />
@@ -20,6 +20,7 @@
 	<patient patient_id="30520" creator="1" date_created="2008-12-08 15:11:52.0"
 		changed_by="1" date_changed="2008-12-08 15:11:52.0" voided="true"
 		voided_by="1" date_voided="2008-12-08 15:11:52.0" void_reason="Merged with patient #30520" />
+	<patient patient_id="2298" creator="1" date_created="2016-01-01 00:00:00.0" voided="false" />
 	<patient_identifier_type
 		patient_identifier_type_id="1" name="OpenMRS Identification Number"
 		description="Unique number used in OpenMRS" format=""
@@ -279,7 +280,7 @@
 	<person_name person_name_id="8" preferred="true" person_id="30520"
 		given_name="John" middle_name="James" family_name="Patient" creator="1"
 		date_created="2008-08-27 09:09:00.0" voided="false" void_reason="" />
-	<provider provider_id="502" person_id="222" name="Hippocrates  of Cos"
+	<provider provider_id="502" person_id="2298" name="Hippocrates  of Cos"
 		creator="1" date_created="2008-08-19 00:00:00.0" retired="false"
 		uuid="66443d12-1896-11e7-93ae-92361f002671" />
 </dataset>

@@ -2,8 +2,12 @@
 <!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
 <dataset>
     <person person_id="777" gender="F" dead="false" creator="1" date_created="2008-08-15 15:46:47.0" voided="false" uuid="7e93b11f-fc1f-4c3a-ab5f-cc6e3ded6c73"/>
+	<person person_id="1654" gender="F" dead="false" creator="1" date_created="2008-08-15 15:46:47.0" voided="false" uuid="7e93b11f-fc1f-4c3a-ab5f-cc6e3ded6c44"/>
     <person person_id="2298" gender="M" birthdate="2016-01-01" birthdate_estimated="false" dead="false" creator="1" date_created="2016-01-01 00:00:00.0" voided="false" uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b80" />
+	<person person_id="30520" gender="M" birthdate="2016-01-02" birthdate_estimated="false" dead="false" creator="1" date_created="2016-01-02 00:00:00.0" voided="false" uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b81" />
     <patient patient_id="2298" creator="1" date_created="2016-01-01 00:00:00.0" voided="false" />
+	<patient patient_id="30520" creator="1" date_created="2016-01-02 00:00:00.0" voided="false" />
+	<patient patient_id="1654" creator="1" date_created="2016-01-02 00:00:00.0" voided="false" />
     <users user_id="777" person_id="777" system_id="6-7" username="user1" password="0c1e358be64b7ac6412cbf4748aaa902152f97d3833f81dbaa8ab39a7505cb0b6011cac629ec3e20c29681ad05e9d67ad9a15d8fff81e77ea91246edf518af85" salt="32fdfbaec5cb5829a1277f869b17404806c1b1f25fc7c00ddcf4265d0adb2b78812650af86ca03b7a59b4a8317e3b5d28974cfd42f036de7311c9b51a6662676" secret_question="" creator="1" date_created="2008-08-15 15:57:09.0" changed_by="1" date_changed="2008-08-18 11:51:56.0" retired="false" retire_reason="" uuid="fbbc8bec-e135-11de-babe-001e378eb67e"/>
     <role role="System Developer" description="OpenMRS developer role" uuid="2394872987s89d789sdf789"/>
     <user_role user_id="777" role="System Developer"/>
@@ -25,6 +29,7 @@
     <form form_id="8972" name="Form3" version="1.0" published="false" creator="1" date_created="2017-08-15 15:46:47.0" retired="false" uuid="98193872388sdf89sdg" />
     <form form_id="8973" name="Form4" version="1.0" published="false" creator="1" date_created="2017-08-15 15:46:47.0" retired="false" uuid="98193872388sdf89sdh" />
     <form form_id="8974" name="Form5" version="1.0" published="false" creator="1" date_created="2017-08-15 15:46:47.0" retired="false" uuid="98193872388sdf89sdi" />
+	<form form_id="1" name="Form6" version="1.0" published="false" creator="1" date_created="2017-08-18 15:46:47.0" retired="false" uuid="98193872388sdf89sss" />
     <chirdlutilbackports_form_instance form_id="8971" form_instance_id="298237" location_id="8992" />
     <chirdlutilbackports_form_instance form_id="8972" form_instance_id="298238" location_id="8992" />
     <chirdlutilbackports_form_instance form_id="8973" form_instance_id="298239" location_id="8992" />

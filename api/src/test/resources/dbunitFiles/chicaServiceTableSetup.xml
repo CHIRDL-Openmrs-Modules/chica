@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
+<dataset>
+	<concept_datatype concept_datatype_id="2" name="Coded" hl7_abbreviation="CWE" description="Value determined by term dictionary lookup (i.e., term identifier)" creator="1" date_created="2004-02-02 00:00:00.0" retired="0"/>
+	<concept concept_id="15452" retired="0" datatype_id="2" class_id="17" is_set="false" creator="1" date_created="2008-08-20 15:41:12.0" changed_by="1" date_changed="2008-08-20 15:41:12.0"/>
+	<concept concept_id="1755" retired="0" datatype_id="2" class_id="17" is_set="false" creator="1" date_created="2008-08-20 15:19:38.0"/>
+	<concept_answer concept_answer_id="15896" concept_id="15452" answer_concept="1755" creator="1" date_created="2008-08-20 15:41:12.0"/>
+	<concept_name concept_id="15452" name="smoking_study_arm" locale="en" creator="1" date_created="2008-08-20 15:41:12" concept_name_id="60469" voided="0"  uuid="371cd193-7cbf-11e0-b8a1-00059a3c7800" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>"
+	<concept_name concept_id="1755" name="Control" locale="en" creator="1" date_created="2008-08-20 15:19:38" concept_name_id="46772" voided="0"  uuid="36816e0c-7cbf-11e0-b8a1-00059a3c7800" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>"
+	<chica_study study_id="7" title="Smoking Cessation Study" study_concept_id="15452" status="1"/>
+	<chica_study_attribute study_attribute_id="1" name="Custom Randomizer" description="Custom randomization class" />
+	<chica_study_attribute_value study_attribute_value_id="4" study_id="7" value="FamilyBasedStudyRandomizer" study_attribute_id="1" />
+	<chica_study_subject subject_id="1" patient_id="2298" study_id="7" />
+</dataset>

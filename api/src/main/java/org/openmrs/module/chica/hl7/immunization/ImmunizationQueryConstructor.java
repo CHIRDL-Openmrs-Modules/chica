@@ -76,7 +76,6 @@ public class ImmunizationQueryConstructor extends
 	private static String CPT_CODING_SYSTEM = "CPT";
 	private String ourFacility = "";
 	private String ourApplication = "";
-	private String version = "2.3.1";
 	private String attributeRace = "Race";
 	private String messageType = ""; // VXQ or VXU
 	private String triggerEvent = ""; // V01 or V04
@@ -142,7 +141,7 @@ public class ImmunizationQueryConstructor extends
 			ourApplication = props.getProperty("our_app");
 			receivingApp = props.getProperty("receiving_app");
 			receivingFacility = props.getProperty("receiving_facility");
-			version = props.getProperty("version");
+			props.getProperty("version");
 			messageType = props.getProperty("message_type");
 			triggerEvent = props.getProperty("event_type_code");
 			// Acknowlegment Type AL=always; NE=never, ER= Error only, and
@@ -346,13 +345,11 @@ public class ImmunizationQueryConstructor extends
 			String birthState = "";
 			String BirthRegistrationNumber = "";
 			String motherLastName = "";
-			String motherFirstName = "";
 			String motherMaidenName = "";
 			String motherSSN = "";
 			String fatherSSN = "";
 			String medicareNumber = "";
 			boolean useNextOfKin = false;
-			boolean useDOB = false;
 			if (useNK != null
 					&& (useNK.equalsIgnoreCase("true")
 							|| useNK.equalsIgnoreCase("yes") || useNK
@@ -376,7 +373,6 @@ public class ImmunizationQueryConstructor extends
 				String name = nextOfKinAttribute.getValue();
 				StringTokenizer names = new StringTokenizer(name, "|", false);
 				if (names.hasMoreTokens()) {
-					motherFirstName = names.nextToken();
 				}
 				if (names.hasMoreTokens()) {
 					motherLastName = names.nextToken();
@@ -549,7 +545,8 @@ public class ImmunizationQueryConstructor extends
 		return props;
 	}
 
-	public void setProps(Properties props) {
+	@SuppressWarnings("static-access")
+    public void setProps(Properties props) {
 		this.props = props;
 	}
 
@@ -1122,7 +1119,6 @@ public class ImmunizationQueryConstructor extends
 		SimpleDateFormat dateformat = new SimpleDateFormat("yyyyMMdd");
 		ChirdlUtilBackportsService service = Context
 				.getService(ChirdlUtilBackportsService.class);
-		ObsService obsService = Context.getObsService();
 		String facility = "";
 		String lotNumber = "";
 		String date = "";
