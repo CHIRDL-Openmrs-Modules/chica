@@ -332,7 +332,7 @@ function calculateScore() {
 			 score['avoidchecking'] > often ||
 			 score['takebettercare'] > often )
 			{
-				$("#EDS_interpretation").val("positive");
+                $("#EDS_interpretation").val("positive");
 			}
 	}
 }
