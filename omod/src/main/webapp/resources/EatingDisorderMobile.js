@@ -289,9 +289,9 @@ function calculateScore() {
 	answer[7] = 'avoidchecking';
 	answer[8] = 'makevomit';
 	answer[9] = 'keephigh';
-	answer[10] = 'skipmeals';
-	answer[11] = 'spillketones';
-	answer[12] = 'feelfat';
+	answer[10] = 'spillketones';
+	answer[11] = 'feelfat';
+	answer[12] = 'takebettercare';
 	answer[13] = 'skipdose';
 	answer[14] = 'outofcontrol';
 	answer[15] = 'alternateeating';
@@ -301,34 +301,40 @@ function calculateScore() {
 	var edscore = 0;
 	var never = 0;
 	var often = 3;
+	var atLeastOneAnswer = false;
+	
 	for(var i = 1; i<= numberOfQuestions;  i++){
 		var value = parseInt($("input[name=EatingDisorderQuestionEntry_" + i + "]:checked").val());
 		if (!isNaN(value)){
 			score[answer[i]] = value;
 			edscore = edscore + value;
+			atLeastOneAnswer = true;
 		}
 	}
-	$("#EDS_interpretation").val("negative");
-	if (edscore >= 20 ||
-		 score['toolittleinsulin'] > never ||
-		 score['makevomit'] > never ||
-		 score['keephigh'] > never ||
-		 score['spillketones'] > never ||
-		 score['feelfat'] > never ||
-		 score['skipdose'] > never ||
-		 score['outofcontrol'] > never ||
-		 score['alternateeating'] > never ||
-		 score['ratherbethin'] > never ||
-		 score['losingweight'] > often ||
-		 score['skipmeals'] > often ||
-		 score['otheroutofcontrol'] > often ||
-		 score['morealone'] > often ||
-		 score['hardloseweight'] > often ||
-		 score['avoidchecking'] > often ||
-		 score['takebettercare'] > often )
-		{
-		 	$("#EDS_interpretation").val("positive");
-		}
+	
+	if (atLeastOneAnswer){
+		$("#EDS_interpretation").val("negative");
+		if (edscore >= 22 ||
+			 score['toolittleinsulin'] > never ||
+			 score['makevomit'] > never ||
+			 score['keephigh'] > never ||
+			 score['spillketones'] > never ||
+			 score['feelfat'] > never ||
+			 score['skipdose'] > never ||
+			 score['outofcontrol'] > never ||
+			 score['alternateeating'] > never ||
+			 score['ratherbethin'] > never ||
+			 score['losingweight'] > often ||
+			 score['skipmeals'] > often ||
+			 score['otheroutofcontrol'] > often ||
+			 score['morealone'] > often ||
+			 score['hardloseweight'] > often ||
+			 score['avoidchecking'] > often ||
+			 score['takebettercare'] > often )
+			{
+                $("#EDS_interpretation").val("positive");
+			}
+	}
 }
 
 
