@@ -304,7 +304,12 @@ function calculateScore() {
     var atLeastOneAnswer = false;
     
     for(var i = 1; i<= numberOfQuestions;  i++){
-        var value = parseInt($("input[name=EatingDisorderQuestionEntry_" + i + "]:checked").val());
+        var value = null;
+        if (english){
+            value = parseInt($("input[name=EatingDisorderQuestionEntry_" + i + "]:checked").val());
+        }else{
+            value = parseInt($("input[name=EatingDisorderQuestionEntry_" + i + "_2]:checked").val());
+        }
         if (!isNaN(value)){
             score[answer[i]] = value;
             edscore = edscore + value;
