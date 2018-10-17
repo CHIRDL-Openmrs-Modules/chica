@@ -258,6 +258,11 @@ $(function() {
 	});
 	
 	$("#saveDraftButtonBottom, #saveDraftButtonTop").click(function(event) {
+		saveDraft(this.id);
+		event.preventDefault();
+	});
+	
+	$(":checkbox").change(function(event) {
 		saveDraft();
 		event.preventDefault();
 	});
@@ -464,6 +469,7 @@ $(function() {
             $(this).click(function() {
                 if ($(this).data("wasChecked"))
                     this.checked = false;
+				saveDraft();
             });
         });
 
@@ -815,8 +821,10 @@ function renewSession() {
      	});
 }
 
-function saveDraft() {
-	$("#saveDraftWaitDialog").dialog("open");
+function saveDraft(eventId) {
+	if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
+		$("#saveDraftWaitDialog").dialog("open");
+	}
 	processCheckboxes();
 	var submitForm = $("#pwsForm"); 
     $.ajax({
@@ -827,13 +835,15 @@ function saveDraft() {
         "timeout": 30000, // optional if you want to handle timeouts (which you should)
         "error": handleSaveDraftError, // this sets up jQuery to give me errors
         "success": function (text) {
-        	$("#saveDraftWaitDialog").dialog("close");
-        	if (text === "success") {
-	        	$("#saveDraftSuccessDialog").dialog("open");
-        	} else {
-        		$("#saveDraftErrorMessage").html(text);
+			if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
+				$("#saveDraftWaitDialog").dialog("close"); 
+			}
+			if (text != "success" ) {
+				$("#saveDraftErrorMessage").html(text);
         		$("#saveDraftErrorDialog").dialog("open");
-        	}
+			} else if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
+				$("#saveDraftSuccessDialog").dialog("open"); 
+			}
         }
     });
 }
