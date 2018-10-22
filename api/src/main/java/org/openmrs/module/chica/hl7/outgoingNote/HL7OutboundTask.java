@@ -137,6 +137,7 @@ public class HL7OutboundTask extends AbstractTask
 			catch (InterruptedException e) 
 			{
 				log.error("Error occurred while stopping HL7OutboundHandler thread.", e);
+				Thread.currentThread().interrupt();
 			}
 		}
 		

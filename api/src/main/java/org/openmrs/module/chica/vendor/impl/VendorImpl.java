@@ -41,7 +41,7 @@ public class VendorImpl implements Vendor {
 	
 	protected static final String PARAM_MRN = "mrn";
 	protected static final String PARAM_PROVIDER_ID = "providerId";
-	protected static final String PARAM_PASSWORD = "password";
+	protected static final String PARAM_PASS = "password";
 	protected static final String PARAM_USERNAME = "username";
 	private static final char CHARACTER_SPACE = ' ';
 	private static final String STRING_SPACE = " ";
@@ -130,9 +130,9 @@ public class VendorImpl implements Vendor {
 	 * @see org.openmrs.module.chica.vendor.Vendor#getPassword()
 	 */
 	public String getPassword() {
-		String password = request.getParameter(PARAM_PASSWORD);
+		String password = request.getParameter(PARAM_PASS);
 		if (password == null || password.trim().length() == 0) {
-			log.error("No " + PARAM_PASSWORD + " parameter found in HTTP request.");
+			log.error("No " + PARAM_PASS + " parameter found in HTTP request.");
 			return null;
 		}
 		

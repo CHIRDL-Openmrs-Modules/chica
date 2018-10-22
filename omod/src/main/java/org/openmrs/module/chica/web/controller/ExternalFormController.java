@@ -103,7 +103,7 @@ public class ExternalFormController {
 		String password = vendor.getPassword();
 		if (StringUtils.isBlank(password)) {
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PASSWORD, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
+			map.put(ChirdlUtilConstants.PARAMETER_MISSING_PASSPHRASE, ChirdlUtilConstants.PARAMETER_VAL_TRUE);
 			return ChicaConstants.FORM_VIEW_EXTERNAL_FORM_LOADER;
 		}
 		

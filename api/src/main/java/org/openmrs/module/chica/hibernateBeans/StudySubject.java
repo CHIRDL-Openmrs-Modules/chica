@@ -95,4 +95,43 @@ public class StudySubject implements Serializable {
         
         return hash;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof StudySubject)) {
+            return false;
+        }
+        StudySubject other = (StudySubject) obj;
+        if (patient == null) {
+            if (other.patient != null) {
+                return false;
+            }
+        } else if (!patient.equals(other.patient)) {
+            return false;
+        }
+        if (study == null) {
+            if (other.study != null) {
+                return false;
+            }
+        } else if (!study.equals(other.study)) {
+            return false;
+        }
+        if (subjectId == null) {
+            if (other.subjectId != null) {
+                return false;
+            }
+        } else if (!subjectId.equals(other.subjectId)) {
+            return false;
+        }
+        return true;
+    }
 }

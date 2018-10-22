@@ -30,21 +30,21 @@
 
 	<!-- Titles/Headers/Footers/Buttons/Copyright  -->
 	<c:set var="formName" value="Diabetes History Questionnaire"/>
-	<c:set var="formName_sp" value="Diabetes History Questionnaire(SPANISH)"/>
-	<c:set var="formNameHeader" value="${formName}:"/>
-	<c:set var="formNameHeader_sp" value="${formName_sp}:"/>
+	<c:set var="formName_sp" value="Cuestionario sobre historia de diabetes"/>
+	<c:set var="formNameHeader" value="${formName}${colon}"/>
+	<c:set var="formNameHeader_sp" value="${formName_sp}${colon}"/>
 	<input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	<c:set var="headerInterimDiabetesHistory" value='INTERIM DIABETES HISTORY${colon}'/>
-	<c:set var="headerInterimDiabetesHistory_sp" value='INTERIM DIABETES HISTORY (SPANISH)'/>
+	<c:set var="headerInterimDiabetesHistory_sp" value='HISTORIA DE DIABETES EN EL ENTRETANTO${colon}'/>
 	<c:set var="headerHypoglycemia" value='HYPOGLYCEMIA${colon}'/>
-	<c:set var="headerHypoglycemia_sp" value='HYPOGLYCEMIA(SPANISH)'/>
+	<c:set var="headerHypoglycemia_sp" value='HIPOGLICEMIA${colon}'/>
 	<c:set var="headerHyperglycemia" value='HYPERGLYCEMIA${colon}'/>
-	<c:set var="headerHyperglycemia_sp" value='HYPERGLYCEMIA(SPANISH)'/>
+	<c:set var="headerHyperglycemia_sp" value='HIPERGLICEMIA${colon}'/>
 	<c:set var="prefix" value="DiabetesHistory_" />
 	
-	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about your diabetes history." />
-	<c:set var="instructions_additionalQuestions_sp" value="(SPANISH)The following are some additional questions about your diabetes history." />
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions about your diabetes history${period}" />
+	<c:set var="instructions_additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales sobre su historia de diabetes${period}" />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='Have you been hospitalized or in the Emergency Room since your last clinic visit${questionMark}' scope="request"/>
@@ -62,19 +62,19 @@
 	<c:set var="question9" value='Do you check for ketones every time you feel sick${comma} throw up or have an illness${questionMark}' scope="request"/>
 
 	<!-- Questions (Spanish) -->
-	<c:set var="question1_2" value='${invQuestionMark} ${questionMark} one' scope="request"/>
-	<c:set var="question2_2" value='${invQuestionMark} ${questionMark} two' scope="request"/>
-	<c:set var="question10_2" value='${invQuestionMark} ${questionMark} ten' scope="request"/>
-	<c:set var="question11_2" value='${invQuestionMark} ${questionMark} eleven' scope="request"/>
-	<c:set var="question12_2"  value='${invQuestionMark} ${questionMark} twelve' scope="request"/>
-	<c:set var="question13_2"  value='${invQuestionMark} ${questionMark} thirteen' scope="request"/>
-	<c:set var="question3_2" value='${invQuestionMark} ${questionMark} three' scope="request"/>
-	<c:set var="question4_2" value='${invQuestionMark} ${questionMark} four' scope="request"/>
-	<c:set var="question5_2" value='${invQuestionMark} ${questionMark} five' scope="request"/>
-	<c:set var="question6_2" value='${invQuestionMark} ${questionMark} six' scope="request"/>
-	<c:set var="question7_2" value='${invQuestionMark} ${questionMark} seven' scope="request"/>
-	<c:set var="question8_2" value='${invQuestionMark} ${questionMark} eight' scope="request"/>
-	<c:set var="question9_2" value='${invQuestionMark} ${questionMark} nine' scope="request"/>
+	<c:set var="question1_2" value='${invQuestionMark}Ha estado usted hospitalizado o en la sala de emergencia desde su ${uAcute}ltima visita a la cl${iAcute}nica${questionMark}' scope="request"/>
+	<c:set var="question2_2" value='${invQuestionMark}C${oAcute}mo se aplica usted la insulina${questionMark}' scope="request"/>
+	<c:set var="question10_2" value='${invQuestionMark}Qui${eAcute}n le aplica a usted las inyecciones de insulina${questionMark}' scope="request"/>
+	<c:set var="question11_2" value='${invQuestionMark}Con cu${aAcute}nta frecuencia olvida${slash}deja usted de aplicarse las inyecciones de insulina${questionMark}' scope="request"/>
+	<c:set var="question12_2"  value='${invQuestionMark}Puede usted hacer cambios en su bomba de insulina por s${iAcute} mismo${questionMark}' scope="request"/>
+	<c:set var="question13_2"  value='${invQuestionMark}Con cu${aAcute}nta frecuencia olvida${slash}deja usted de aplicarse la insulina embolada cuando come${questionMark}' scope="request"/>
+	<c:set var="question3_2" value='${invQuestionMark}Toma usted la insulina antes de comenzar a comer${questionMark}' scope="request"/>
+	<c:set var="question4_2" value='${invQuestionMark}Tiene usted s${iAcute}ntomas de baja az${uAcute}car en la sangre cuando el az${uAcute}car en la sangre est${aAcute} entre 60-70${questionMark}' scope="request"/>
+	<c:set var="question5_2" value='Desde su ${uAcute}ltima visita a la cl${iAcute}nica, ${invQuestionMark}se ha sentido usted confundido e incapaz de tratar una baja de az${uAcute}car sin ayuda${questionMark}' scope="request"/>
+	<c:set var="question6_2" value='Desde su ${uAcute}ltima visita a la cl${iAcute}nica, ${invQuestionMark}ha tenido usted una convulsi${oAcute}n o ha estado inconsciente cuando tuvo una baja de az${uAcute}car en la sangre${questionMark}' scope="request"/>
+	<c:set var="question7_2" value='${invQuestionMark}Cuenta usted con un kit de emergencia de glucagon${questionMark}' scope="request"/>
+	<c:set var="question8_2" value='${invQuestionMark}Tiene usted bandas de cetona${questionMark}' scope="request"/>
+	<c:set var="question9_2" value='${invQuestionMark}Realiza usted el control de las cetonas cada vez que se siente enfermo, vomita o tiene una enfermedad${questionMark}' scope="request"/>
 	
 	<input type="hidden" name="instructions_additionalQuestions" id="instructions_additionalQuestions" value="${instructions_additionalQuestions}" />
 	<input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
@@ -346,11 +346,11 @@
 	        <div class="choice_2_2" data-role="fieldcontain" style="margin-top:0px;">
 				<fieldset data-role="controlgroup" data-type="vertical">
 					<input type="radio" name="DiabetesHistory_2_2" id="DiabetesHistory_2_2_NOT_ON_INSULIN" value="1" data-theme="b" />
-					<label for="DiabetesHistory_2_2_NOT_ON_INSULIN">I am not on insulin(SP)</label>
+					<label for="DiabetesHistory_2_2_NOT_ON_INSULIN">No estoy en tratamiento de insulina</label>
 					<input type="radio" name="DiabetesHistory_2_2" id="DiabetesHistory_2_2_SHOTS" value="2" data-theme="b" />
-					<label for="DiabetesHistory_2_2_SHOTS">Shots(SP)</label>
+					<label for="DiabetesHistory_2_2_SHOTS">Inyecciones</label>
 					<input type="radio" name="DiabetesHistory_2_2" id="DiabetesHistory_2_2_INSULIN_PUMP" value="3" data-theme="b" />
-					<label for="DiabetesHistory_2_2_INSULIN_PUMP">Insulin pump(SP)</label>
+					<label for="DiabetesHistory_2_2_INSULIN_PUMP">Bomba de insulina</label>
 				</fieldset>
 			</div>
 			
@@ -381,11 +381,11 @@
 				<div class="choice_10_2" data-role="fieldcontain" style="margin-top:0px;">
 					<fieldset data-role="controlgroup" data-type="vertical">
 						<input type="radio" name="DiabetesHistory_10_2" id="DiabetesHistory_10_2_ME" value="1" data-theme="b" />
-						<label for="DiabetesHistory_10_2_ME">Me(SP)</label>
+						<label for="DiabetesHistory_10_2_ME">Yo</label>
 						<input type="radio" name="DiabetesHistory_10_2" id="DiabetesHistory_10_2_PARENT_OTHER" value="2" data-theme="b" />
-						<label for="DiabetesHistory_10_2_PARENT_OTHER">A parent / someone else(SP)</label>
+						<label for="DiabetesHistory_10_2_PARENT_OTHER">Uno de los padres/alguien m${aAcute}s</label>
 						<input type="radio" name="DiabetesHistory_10_2" id="DiabetesHistory_10_2_ALL" value="3" data-theme="b" />
-						<label for="DiabetesHistory_10_2_ALL">Both me and a parent/someone else(SP)</label>
+						<label for="DiabetesHistory_10_2_ALL">Uno de los padres/alguien m${aAcute}s y yo</label>
 					</fieldset>
 				</div>
 
@@ -394,15 +394,15 @@
 				<div class="choice_11_2" data-role="fieldcontain" style="margin-top:0px;">
 					<fieldset data-role="controlgroup" data-type="vertical">
 						<input type="radio" name="DiabetesHistory_11_2" id="DiabetesHistory_11_2_MORE_THAN_ONCE_WEEK" value="1" data-theme="b" />
-						<label for="DiabetesHistory_11_2_MORE_THAN_ONCE_WEEK">More than once a week(SP)</label>
+						<label for="DiabetesHistory_11_2_MORE_THAN_ONCE_WEEK">M${aAcute}s de una vez a la semana</label>
 						<input type="radio" name="DiabetesHistory_11_2" id="DiabetesHistory_11_2_ONCE_A_WEEK" value="2" data-theme="b" />
-						<label for="DiabetesHistory_11_2_ONCE_A_WEEK">About once a week(SP)</label>
+						<label for="DiabetesHistory_11_2_ONCE_A_WEEK">Aproximadamente una vez a la semana</label>
 						<input type="radio" name="DiabetesHistory_11_2" id="DiabetesHistory_11_2_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
-						<label for="DiabetesHistory_11_2_MORE_THAN_ONCE_MONTH">More than once a month but less than once a week(SP)</label>
+						<label for="DiabetesHistory_11_2_MORE_THAN_ONCE_MONTH">M${aAcute}s de una vez al mes pero menos de una vez a la semana</label>
 						<input type="radio" name="DiabetesHistory_11_2" id="DiabetesHistory_11_2_ONCE_A_MONTH" value="4" data-theme="b" />
-						<label for="DiabetesHistory_11_2_ONCE_A_MONTH">About once a month(SP)</label>
+						<label for="DiabetesHistory_11_2_ONCE_A_MONTH">Aproximadamente una vez al mes</label>
 						<input type="radio" name="DiabetesHistory_11_2" id="DiabetesHistory_11_2_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
-						<label for="DiabetesHistory_11_2_LESS_THAN_ONCE_MONTH">Less than once a month(SP)</label>
+						<label for="DiabetesHistory_11_2_LESS_THAN_ONCE_MONTH">Menos de una vez al mes</label>
 					</fieldset>
 				</div>
 			</div>
@@ -416,15 +416,15 @@
 				<div class="choice_13_2" data-role="fieldcontain" style="margin-top:0px;">
 					<fieldset data-role="controlgroup" data-type="vertical">
 						<input type="radio" name="DiabetesHistory_13_2" id="DiabetesHistory_13_2_MORE_THAN_ONCE_WEEK" value="1" data-theme="b" />
-						<label for="DiabetesHistory_13_2_MORE_THAN_ONCE_WEEK">More than once a week(SP)</label>
+						<label for="DiabetesHistory_13_2_MORE_THAN_ONCE_WEEK">M${aAcute}s de una vez a la semana</label>
 						<input type="radio" name="DiabetesHistory_13_2" id="DiabetesHistory_13_2_ONCE_A_WEEK" value="2" data-theme="b" />
-						<label for="DiabetesHistory_13_2_ONCE_A_WEEK">About once a week(SP)</label>
+						<label for="DiabetesHistory_13_2_ONCE_A_WEEK">Aproximadamente una vez a la semana</label>
 						<input type="radio" name="DiabetesHistory_13_2" id="DiabetesHistory_13_2_MORE_THAN_ONCE_MONTH" value="3" data-theme="b" />
-						<label for="DiabetesHistory_13_2_MORE_THAN_ONCE_MONTH">More than once a month but less than once a week(SP)</label>
+						<label for="DiabetesHistory_13_2_MORE_THAN_ONCE_MONTH">M${aAcute}s de una vez al mes pero menos de una vez a la semana</label>
 						<input type="radio" name="DiabetesHistory_13_2" id="DiabetesHistory_13_2_ONCE_A_MONTH" value="4" data-theme="b" />
-						<label for="DiabetesHistory_13_2_ONCE_A_MONTH">About once a month(SP)</label>
+						<label for="DiabetesHistory_13_2_ONCE_A_MONTH">Aproximadamente una vez al mes</label>
 						<input type="radio" name="DiabetesHistory_13_2" id="DiabetesHistory_13_2_LESS_THAN_ONCE_MONTH" value="5" data-theme="b" />
-						<label for="DiabetesHistory_13_2_LESS_THAN_ONCE_MONTH">Less than once a month(SP)</label>
+						<label for="DiabetesHistory_13_2_LESS_THAN_ONCE_MONTH">Menos de una vez al mes</label>
 					</fieldset>
 				</div>
 			</div>

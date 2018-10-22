@@ -67,7 +67,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 			AdministrationService adminService = Context.getAdministrationService();
 			Context.authenticate(adminService
 					.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), adminService
-					.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+					.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
 			
 			String message = createHL7ORU();
 			

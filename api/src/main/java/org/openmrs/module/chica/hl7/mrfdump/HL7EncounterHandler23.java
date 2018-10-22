@@ -179,23 +179,25 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 	public Date getEncounterDate(Message message)
 	{
 		MSH msh = getMSH(message);
-		TS timeStamp = null;
-		if (message instanceof ORU_R01)
-		{
-			OBR obr = HL7ObsHandler23.getOBR((ORU_R01) message, 0);
-			timeStamp = obr.getObservationDateTime();
-		} 
-		if (timeStamp != null)
-		{
-			TSComponentOne dtm = timeStamp.getTimeOfAnEvent();
-			if (dtm == null || dtm.getValue() == null)
-			{
-				timeStamp = msh.getDateTimeOfMessage();
-			}
-		}
-		if (timeStamp != null)
-		{
-			return TranslateDate(timeStamp);
+		if(msh != null){
+		    TS timeStamp = null;
+	        if (message instanceof ORU_R01)
+	        {
+	            OBR obr = HL7ObsHandler23.getOBR((ORU_R01) message, 0);
+	            timeStamp = obr.getObservationDateTime();
+	        } 
+	        if (timeStamp != null)
+	        {
+	            TSComponentOne dtm = timeStamp.getTimeOfAnEvent();
+	            if (dtm == null || dtm.getValue() == null)
+	            {
+	                timeStamp = msh.getDateTimeOfMessage();
+	            }
+	        }
+	        if (timeStamp != null)
+	        {
+	            return TranslateDate(timeStamp);
+	        }
 		}
 		return null;
 	}

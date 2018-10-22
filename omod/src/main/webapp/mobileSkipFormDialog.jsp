@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
+<%@ include file="specialCharacters.jsp" %>
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/mobileSkipFormDialog.form" />
         
         <!-- English version of the dialog to display before skipping an eJIT -->
@@ -21,7 +22,7 @@
                 <h1>Skip Form</h1>
             </div>
             <div data-role="content">
-                <span>Are you sure you want to skip this form?</span>
+                <span>${invQuestionMark}Est${aAcute} usted seguro que desea omitir este formulario${questionMark}</span>
                 <div style="margin: 0 auto;text-align: center;">
                     <a href=""  onclick="finishForm()" data-inline="true" data-role="button" data-theme="b" style="width: 150px;">S&#237</a>
                     <a href="" data-inline="true" data-rel="back" data-role="button" data-theme="b" style="width: 150px;">No</a>

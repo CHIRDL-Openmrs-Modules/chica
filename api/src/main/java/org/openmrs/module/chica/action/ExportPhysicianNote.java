@@ -165,7 +165,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			}
 			catch (Exception e) {
 				
-				e.printStackTrace();
+				log.error("Error occurred while creating outgoing note (encounterId: " + encounterId + ")", e);
 			}
 			finally {
 				if (reader != null) {

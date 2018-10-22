@@ -129,7 +129,7 @@ public class DisplayViewEncounterFormController {
 				}
 				catch (URISyntaxException e) {
 					log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF + 
-							" tiff file location: " + imagefile.getPath(), e);
+							" tiff file location: " + (imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING), e);
 				}
 			}
 		}

@@ -48,7 +48,7 @@ public class HL7OutboundHandler implements Runnable
 		{	
 			AdministrationService adminService = Context.getAdministrationService();
 			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
 
 			SocketHL7ListenerService socketHL7ListenerService = Context.getService(SocketHL7ListenerService.class);
 
@@ -68,7 +68,7 @@ public class HL7OutboundHandler implements Runnable
 					closeSocket();
 				}
 				
-				Thread.sleep(sleepTime * 1000);
+				Thread.sleep(sleepTime * 1000L);
 			}
 		}
 		catch(ContextAuthenticationException e)

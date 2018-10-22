@@ -64,7 +64,7 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 		{	
 			AdministrationService adminService = Context.getAdministrationService();
 			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSWORD));
+					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
 			
 			// Look up the patient using the glookoCode
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class); 

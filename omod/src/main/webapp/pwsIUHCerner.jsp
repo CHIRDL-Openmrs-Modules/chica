@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
     <!DOCTYPE html>
-    <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/pws.form" />
+    <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/login.htm" redirect="/module/chica/pwsIUHCerner.form" />
     <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head>
@@ -28,7 +28,7 @@
         </c:if>
         <div class="page_container">
             <div class="main_container">
-                <form id="pwsForm" name="pwsForm" action="pws.form" method="post">
+                <form id="pwsForm" name="pwsForm" action="pwsIUHCerner.form" method="post">
                     <header class="main_header">
                         <div class="main_header_container">
                             <div class="mrn_container">

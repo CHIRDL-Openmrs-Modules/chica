@@ -130,19 +130,21 @@ public class Util {
 			FormService formService = Context.getFormService();
 			Form form = formService.getForm(formInstance.getFormId());
 			formName = form.getName();
+			
+			boolean usePrintedTimestamp = false;
+	        
+	        String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
+	        if (formName != null && 
+	                (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) 
+	                || formName.equalsIgnoreCase("ImmunizationSchedule")
+	                || formName.equalsIgnoreCase("ImmunizationSchedule7yrOrOlder"))) {
+	            usePrintedTimestamp = true;
+	        }
+	        return org.openmrs.module.atd.util.Util.saveObsWithStatistics(patient, currConcept, encounterId, value,
+	            formInstance, ruleId, locationTagId, usePrintedTimestamp, formFieldId);
 		}
 		
-		boolean usePrintedTimestamp = false;
-		
-		String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
-		if (formName != null && 
-				(ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) 
-				|| formName.equalsIgnoreCase("ImmunizationSchedule")
-				|| formName.equalsIgnoreCase("ImmunizationSchedule7yrOrOlder"))) {
-			usePrintedTimestamp = true;
-		}
-		return org.openmrs.module.atd.util.Util.saveObsWithStatistics(patient, currConcept, encounterId, value,
-		    formInstance, ruleId, locationTagId, usePrintedTimestamp, formFieldId);
+		return null;
 	}
 	
 	

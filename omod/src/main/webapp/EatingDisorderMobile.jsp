@@ -35,7 +35,7 @@
 <!-- Titles/Headers/Footers/Buttons/Copyright  -->
 <c:set var="formName" value='Eating Habits Questionnaire'/>
 <!--  Spanish translation for form name is not available-->
-<c:set var="formName_sp" value='Eating Habits Questionnaire (SPANISH)'/>
+<c:set var="formName_sp" value='Cuestionario sobre los h${aAcute}bitos alimenticios'/>
 
 <c:set var="quitButtonText" value="Quit"/>
 <c:set var="quitButtonText_sp" value="Dejar"/>
@@ -61,22 +61,22 @@
 <!-- Questions (Spanish) -->
 <!-- Currently not available-->
 <!-- Created Spanish question vars and filled with English until Spanish is available. -->
-<c:set var="question1_2"  value='${invQuestionMark}Question1 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question2_2"  value='${invQuestionMark}Question2 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question3_2"  value='${invQuestionMark}Question3 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question4_2"  value='${invQuestionMark}Question4 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question5_2"  value='${invQuestionMark}Question5 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question6_2"  value='${invQuestionMark}Question6 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question7_2"  value='${invQuestionMark}Question7 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question8_2"  value='${invQuestionMark}Question8 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question9_2"  value='${invQuestionMark}Question9 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question10_2" value='${invQuestionMark}Question10 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question11_2" value='${invQuestionMark}Question11 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question12_2" value='${invQuestionMark}Question12 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question13_2" value='${invQuestionMark}Question13 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question14_2" value='${invQuestionMark}Question14 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question15_2" value='${invQuestionMark}Question15 (SPANISH)${questionMark}' scope="request"/>
-<c:set var="question16_2" value='${invQuestionMark}Question16 (SPANISH)${questionMark}' scope="request"/>
+<c:set var="question1_2"  value='Perder peso es una meta importante para m${iAcute}${period}' scope="request"/>
+<c:set var="question2_2"  value='Omito comidas y${slash}o refrigerios${period}' scope="request"/>
+<c:set var="question3_2"  value='Otras personas me han dicho que mis h${aAcute}bitos alimenticios est${aAcute}n fuera de control${period}' scope="request"/>
+<c:set var="question4_2"  value='Cuando como demasiado${comma} no tomo suficiente insulina para compensar los alimentos${period}' scope="request"/>
+<c:set var="question5_2"  value='Como m${aAcute}s cuando estoy solo que cuando estoy con otros${period}' scope="request"/>
+<c:set var="question6_2"  value='Siento que es dif${iAcute}cil perder peso y controlar mi diabetes al mismo tiempo${period}' scope="request"/>
+<c:set var="question7_2"  value='Evito realizar el control de concentraci${oAcute}n de az${uAcute}car en la sangre cuando siento que est${aAcute} fuera del margen${period}' scope="request"/>
+<c:set var="question8_2"  value='Me provoco el v${oAcute}mito${period}' scope="request"/>
+<c:set var="question9_2"  value='Trato de conservar alta el az${uAcute}car en mi sangre para poder perder peso${period}' scope="request"/>
+<c:set var="question10_2" value='Trato de comer hasta el punto de derramar cetonas en mi orina${period}' scope="request"/>
+<c:set var="question11_2" value='Me siento gordo cuando tomo toda mi insulina${period}' scope="request"/>
+<c:set var="question12_2" value='Otras personas me dicen que me ocupe mejor de mi diabetes${period}' scope="request"/>
+<c:set var="question13_2" value='Despu${eAcute}s de comer demasiado, omito la pr${oAcute}xima dosis de insulina${period}' scope="request"/>
+<c:set var="question14_2" value='Siento que mi alimentaci${oAcute}n est${aAcute} fuera de control${period}' scope="request"/>
+<c:set var="question15_2" value='Alterno entre comer muy poco y comer grandes cantidades${period}' scope="request"/>
+<c:set var="question16_2" value='Preferir${iAcute}a ser delgado que tener buen control de mi diabetes${period}' scope="request"/>
 
 
 <body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
