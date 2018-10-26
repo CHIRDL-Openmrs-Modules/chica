@@ -21,7 +21,7 @@
     <require_modules>
         <require_module version="0.5.5">org.openmrs.logic</require_module>
         <require_module version="3.1.0">org.openmrs.module.dss</require_module>
-        <require_module version="2.15.0">org.openmrs.module.atd</require_module>
+        <require_module version="2.15.1">org.openmrs.module.atd</require_module>
         <require_module version="1.12.1">org.openmrs.module.sockethl7listener</require_module>
         <require_module version="1.19.0">org.openmrs.module.chirdlutil</require_module>
         <require_module version="2.11.0">org.openmrs.module.chirdlutilbackports</require_module> 
