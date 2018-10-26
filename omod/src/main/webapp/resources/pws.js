@@ -822,25 +822,33 @@ function renewSession() {
 }
 
 function saveDraft(eventId) {
-	if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
+    if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
 		$("#saveDraftWaitDialog").dialog("open");
-	}
+    }
 	processCheckboxes();
 	var submitForm = $("#pwsForm"); 
     $.ajax({
-    	"cache": false,
+		"cache": false,
         "data": submitForm.serialize(),
         "type": "POST",
         "url": saveDraftURL,
         "timeout": 30000, // optional if you want to handle timeouts (which you should)
-        "error": handleSaveDraftError, // this sets up jQuery to give me errors
+        "error": function (xhr, textStatus, error) {
+			if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
+			   $("#saveDraftWaitDialog").dialog("close");
+			   $("#saveDraftErrorMessage").html("<p><b>An error occurred saving the draft: " + error + "</b></p>");
+			   $("#saveDraftErrorDialog").dialog("open");
+			} else {
+				console.error(error);
+			}
+        }, // this sets up jQuery to give me errors
         "success": function (text) {
 			if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
 				$("#saveDraftWaitDialog").dialog("close"); 
 			}
 			if (text != "success" ) {
 				$("#saveDraftErrorMessage").html(text);
-        		$("#saveDraftErrorDialog").dialog("open");
+				$("#saveDraftErrorDialog").dialog("open");
 			} else if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
 				$("#saveDraftSuccessDialog").dialog("open"); 
 			}
@@ -848,8 +856,3 @@ function saveDraft(eventId) {
     });
 }
 
-function handleSaveDraftError(xhr, textStatus, error) {
-	$("#saveDraftWaitDialog").dialog("close");
-	$("#saveDraftErrorMessage").html("<p><b>An error occurred saving the draft: " + error + "</b></p>");
-	$("#saveDraftErrorDialog").dialog("open");
-}
