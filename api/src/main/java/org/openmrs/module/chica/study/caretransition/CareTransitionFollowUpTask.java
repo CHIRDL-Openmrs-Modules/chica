@@ -59,7 +59,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	
 	private static final Integer DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN = Integer.valueOf(6);
 	
-	private static final String CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT = "Confidential: Care Transition Follow Up";
+	private static final String PROPERTY_CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT = "careTransitionFollowUpFromEmailSubject"; 
 	
 	private static final String PROPERTY_CARE_TRANSITION_FOLLOW_UP_FROM_EMAIL_ADDRESS = 
 	        "careTransitionFollowUpFromEmailAddress";
@@ -101,6 +101,12 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 				return;
 			}
 			
+			String emailSubject = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT);
+            if (StringUtils.isBlank(emailSubject)) {
+                log.error("Task property " + PROPERTY_CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT + 
+                    " does not contain a value.");
+            }
+			
 			ConceptService conceptService = Context.getConceptService();
 			Concept transitionConcept = conceptService.getConceptByName(CONCEPT_TRANSITION);
 			if (transitionConcept == null) {
@@ -115,7 +121,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 			}
 			
 			for (EmailInfo emailInfo : emailInfoList) {
-				sendCareTransitionEmail(emailInfo, mailHost, fromEmailAddress, transitionConcept);
+				sendCareTransitionEmail(emailInfo, mailHost, fromEmailAddress, emailSubject, transitionConcept);
 			}
 		}
 		catch (Exception e) {
@@ -396,9 +402,10 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	 * @param emailInfo Contains the information needed to construct the email.
 	 * @param mailHost The SMTP mail host used to send the email.
 	 * @param fromEmailAddress The address the email is from.
+	 * @param emailSubject The subject for the email.
 	 * @param transitionConcept Concept for the email status 
 	 */
-	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress, 
+	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress, String emailSubject, 
 	        Concept transitionConcept) {
 		List<Encounter> encounters = emailInfo.getEncounters();
 		Properties mailProps = new Properties();
@@ -443,7 +450,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		body.append("CHICA Care Transition");
 		
 		boolean success = mailSender.sendMail(fromEmailAddress, emailInfo.getProviderEmails(), 
-			CARE_TRANSITION_FOLLOW_UP_EMAIL_SUBJECT, body.toString());
+		    emailSubject, body.toString());
 		Integer providerId = emailInfo.getProvider().getProviderId();
 		if (!success) {
 			log.error("An error occurred sending Care Transition followup email for provider ID " + providerId + ".");

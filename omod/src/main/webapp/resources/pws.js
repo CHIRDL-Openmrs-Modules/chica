@@ -833,7 +833,15 @@ function saveDraft(eventId) {
         "type": "POST",
         "url": saveDraftURL,
         "timeout": 30000, // optional if you want to handle timeouts (which you should)
-        "error": handleSaveDraftError, // this sets up jQuery to give me errors
+        "error": function (xhr, textStatus, error) {
+			if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
+			   $("#saveDraftWaitDialog").dialog("close");
+			   $("#saveDraftErrorMessage").html("<p><b>An error occurred saving the draft: " + error + "</b></p>");
+			   $("#saveDraftErrorDialog").dialog("open");
+			} else {
+				console.error(error);
+			}
+        }, // this sets up jQuery to give me errors
         "success": function (text) {
 			if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
 				$("#saveDraftWaitDialog").dialog("close"); 
@@ -846,10 +854,4 @@ function saveDraft(eventId) {
 			}
         }
     });
-}
-
-function handleSaveDraftError(xhr, textStatus, error) {
-	$("#saveDraftWaitDialog").dialog("close");
-	$("#saveDraftErrorMessage").html("<p><b>An error occurred saving the draft: " + error + "</b></p>");
-	$("#saveDraftErrorDialog").dialog("open");
 }
