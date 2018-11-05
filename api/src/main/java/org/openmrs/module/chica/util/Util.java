@@ -134,10 +134,7 @@ public class Util {
 			boolean usePrintedTimestamp = false;
 	        
 	        String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
-	        if (formName != null && 
-	                (ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) 
-	                || formName.equalsIgnoreCase("ImmunizationSchedule")
-	                || formName.equalsIgnoreCase("ImmunizationSchedule7yrOrOlder"))) {
+	        if (formName != null && ChirdlUtilConstants.PHYSICIAN_FORM_TYPE.equalsIgnoreCase(formType) ){
 	            usePrintedTimestamp = true;
 	        }
 	        return org.openmrs.module.atd.util.Util.saveObsWithStatistics(patient, currConcept, encounterId, value,

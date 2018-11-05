@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.chica.util;
 
-import org.openmrs.module.chica.ImmunizationQueryOutput;
-
-
 /**
  * Constants class for chica modules specific items.
  * 
@@ -23,21 +20,12 @@ import org.openmrs.module.chica.ImmunizationQueryOutput;
  */
 public class ChicaConstants {
 	
-	/*
-	 * Constants for cache
-	 */
-	public static final String CACHE_IMMUNIZATION = "immunization";
-	public static final Class<Integer> CACHE_IMMUNIZATION_KEY_CLASS = Integer.class;
-    public static final Class<ImmunizationQueryOutput> CACHE_IMMUNIZATION_VALUE_CLASS = ImmunizationQueryOutput.class;
-	/*
-	 * 
-	 */
     /** Form views */
 	public static final String FORM_VIEW_EXTERNAL_FORM_LOADER = "/module/chica/externalFormLoader";
 	public static final String FORM_VIEW_GREASE_BOARD = "/module/chica/greaseBoard";
 	
 	/** Parameters used in CHICA */
-	public static final String PARAMETER_RIGHT_FORM_LOCATION_ID = "rightFormLocationId";
+	public static final String PARAMETER_RIGHT_FORM_LOCATION_ID = "rightFimmnormLocationId";
 	public static final String PARAMETER_RIGHT_FORM_FORM_ID = "rightFormFormId";
 	public static final String PARAMETER_RIGHT_FORM_FORM_INSTANCE_ID = "rightFormFormInstanceId";
 	public static final String PARAMETER_RIGHT_FORM_STYLESHEET = "rightFormStylesheet";
