@@ -226,12 +226,6 @@ public interface ChicaService
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
 	
 	@Authorized()
-	public Integer getMergeFieldCount(String form_name, String vaccine_name);
-	
-	@Authorized()
-	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
-	
-	@Authorized()
 	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
 		FormInstance formInstance, int encounterId, Patient patient);
 	

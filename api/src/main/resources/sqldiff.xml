@@ -4618,6 +4618,26 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
 		</sql>
 	</diff>    
+     <diff>
+        <version>1.10.9</version>
+        <author>Meena Sheley</author>
+        <date>November 7, 2018</date>
+        <description>
+            Remove immunization global properties
+        </description>
+        <sql>
+            delete from global_property where property = 'chica.ImmunizationQueryPassword';
+            delete from global_property where property = 'chica.ImmunizationQueryURL';
+            delete from global_property where property = 'chica.ImmunizationQueryConfigFile';
+            delete from global_property where property = 'chica.ImmunizationQueryActivated';
+            delete from global_property where property = 'chica.ImmunizationOutputDirectory';
+            delete from global_property where property = 'chica.immunizationInputDirectory';
+            delete from global_property where property = 'chica.immunizationListTimeout';
+            delete from global_property where property = 'chica.immunXSLT';
+            delete from global_property where property = 'chica.ImmunizationQueryUserId';
+            
+        </sql>
+    </diff>    
 </sqldiff>
 
 

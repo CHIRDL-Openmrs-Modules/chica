@@ -25,7 +25,7 @@ public class ChicaConstants {
 	public static final String FORM_VIEW_GREASE_BOARD = "/module/chica/greaseBoard";
 	
 	/** Parameters used in CHICA */
-	public static final String PARAMETER_RIGHT_FORM_LOCATION_ID = "rightFimmnormLocationId";
+	public static final String PARAMETER_RIGHT_FORM_LOCATION_ID = "rightFormLocationId";
 	public static final String PARAMETER_RIGHT_FORM_FORM_ID = "rightFormFormId";
 	public static final String PARAMETER_RIGHT_FORM_FORM_INSTANCE_ID = "rightFormFormInstanceId";
 	public static final String PARAMETER_RIGHT_FORM_STYLESHEET = "rightFormStylesheet";
