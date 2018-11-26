@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Field;
 import org.openmrs.FieldType;
@@ -36,7 +35,6 @@ import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
@@ -179,8 +177,6 @@ public class ChicaServlet extends HttpServlet {
 	private static final String MAX_CACHE_AGE = "600";
 	
 	private static final String WILL_KEEP_ALIVE = "OK";
-	
-	private static final String PROVIDER_SAVE_DRAFT = "_provider_save_draft";
 	
 	private static final Log LOG = LogFactory.getLog(ChicaServlet.class);
 	
@@ -1743,72 +1739,8 @@ public class ChicaServlet extends HttpServlet {
     		return;
 		}
 		
-		String providerId = request.getParameter(PARAM_PROVIDER_ID);
-		String patientId = request.getParameter(PARAM_PATIENT_ID);
-		String encounterId = request.getParameter(PARAM_ENCOUNTER_ID);
-		// Save who created a draft.
-		if (providerId != null && providerId.trim().length() > 0 && patientId != null && patientId.trim().length() > 0 && 
-				encounterId != null && encounterId.trim().length() > 0) {
-			try {
-				saveProviderDraft(Integer.parseInt(patientId), Integer.parseInt(encounterId), providerId, formInstTag);
-			} catch (NumberFormatException e) {
-				LOG.error("Error saving provider ID for draft form ID: " + formId + " patient ID: " + patientId + 
-					" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
-						formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
-						" location tag ID: " + formInstTag.getLocationTagId());
-			}
-		} else {
-			LOG.error("Cannot LOG who is saving a draft for form ID: " + formId + " patient ID: " + patientId + 
-				" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
-					formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
-					" location tag ID: " + formInstTag.getLocationTagId());
-		}
-		
 		pw.write(RESULT_SUCCESS);
     }
-    
-    /**
-	 * Saves the user's provider ID to an observation for saving a draft.
-	 * 
-	 * @param patientId The ID of the patient who owns the form.
-	 * @param formId The ID of the form being viewed.
-	 * @param encounterId The encounter ID of the encounter where the form was created.
-	 * @param providerId The ID of the provider to be stored.
-	 * @param formInstTag The form instance tag information
-	 */
-	private void saveProviderDraft(Integer patientId, Integer encounterId, String providerId, FormInstanceTag formInstTag) {
-		Form form = Context.getFormService().getForm(formInstTag.getFormId());
-		String conceptName = form.getName() + PROVIDER_SAVE_DRAFT;
-		saveProviderInfo(patientId, encounterId, providerId, conceptName, formInstTag);
-	}
-	
-	/**
-	 * Saves the submitter's provider ID to an observation.
-	 * 
-	 * @param patient The ID of the patient who owns the form.
-	 * @param formId The ID of the form being viewed.
-	 * @param encounterId The encounter ID of the encounter where the form was created.
-	 * @param providerId The ID of the provider to be stored.
-	 * @param conceptName The name of the concept.
-	 * @param formInstTag The form instance tag information
-	 */
-	private void saveProviderInfo(Integer patientId, Integer encounterId, String providerId, String conceptName, FormInstanceTag formInstTag) {
-		PatientService patientService = Context.getPatientService();
-		Patient patient = patientService.getPatient(patientId);
-		if (patient == null) {
-			LOG.error("Could not log provider info.  Patient " + patientId + " not found.");
-			return;
-		}
-		
-		ConceptService conceptService = Context.getConceptService();
-		Concept concept = conceptService.getConceptByName(conceptName);
-		if (concept == null) {
-			LOG.error("Could not log provider info.  Concept " + conceptName + " not found.");
-			return;
-		}
-		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(),formInstTag.getFormId(),formInstTag.getFormInstanceId());
-		org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, encounterId, providerId, formInstance, null, formInstTag.getLocationTagId(), null);
-	}
 	
 	/**
 	 * Clears an individual form instance from the form draft cache.
