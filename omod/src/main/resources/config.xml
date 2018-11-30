@@ -448,6 +448,18 @@
         <property>chica.dataSourceMedicalRecord</property>
         <description>Data source for medical records dump</description>
     </globalProperty>
+    <globalProperty>
+        <property>chica.exportRegenstriefObsHost</property>
+        <defaultValue>localhost</defaultValue>
+        <description>IP address of where to send obs when the regenstrief worksheet is submitted.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.exportRegenstriefObsPort</property>
+        <defaultValue>0</defaultValue>
+        <description>Port to send obs when the regenstrief worksheet is submitted.
+        </description>
+    </globalProperty>
   
     <!-- Servlets -->
     <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->

@@ -4617,7 +4617,31 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			ON a.form_id=b.form_id AND a.form_attribute_id=b.form_attribute_id AND a.location_tag_id=b.location_tag_id
 			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
 		</sql>
-	</diff>    
+	</diff>
+	<diff>
+    	<version>1.10.9</version>
+        <author>Seema Sarala</author>
+        <date>Nov 7, 2018</date>
+        <description>
+            CHICA-1322 Add a new state to export regenstrief obs when the PSF is submitted.
+        </description>
+        <sql>
+           	INSERT INTO chirdlutilbackports_state_action (action_name, action_description, action_class)
+			VALUES ('EXPORT REGENSTRIEF OBS', 'Send obs to Regenstrief', 'org.openmrs.module.chica.action.ExportRegenstriefObs');
+
+			INSERT INTO chirdlutilbackports_state (name, description, state_action_id)
+			VALUES ('EXPORT REGENSTRIEF OBS', 'Send obs to Regenstrief after the PSF has been submitted', (select state_action_id from chirdlutilbackports_state_action where action_name = 'EXPORT REGENSTRIEF OBS'));
+
+			UPDATE chirdlutilbackports_state_mapping set next_state = (select state_id from chirdlutilbackports_state where name = 'EXPORT REGENSTRIEF OBS')
+			WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'EXPORT OBS') 
+			AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_epic');
+
+			INSERT INTO chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
+			VALUES ((select state_id from chirdlutilbackports_state where name = 'EXPORT REGENSTRIEF OBS')
+			,(select state_id from chirdlutilbackports_state where name = 'Query CDA PWS')
+			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+        </sql>
+    </diff>    
 </sqldiff>
 
 

@@ -27,7 +27,6 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class ExportObs implements ProcessStateAction
 {
 	private Log log = LogFactory.getLog(this.getClass());
-	private static final String CONCEPT_SOURCE_OUTBOUND_OBS = "Outbound Obs";
 	
 	@Override
 	public void processAction(StateAction stateAction, Patient patient, PatientState patientState, HashMap<String, Object> parameters) {
@@ -41,8 +40,8 @@ public class ExportObs implements ProcessStateAction
 		try
 		{
 			AdministrationService adminService = Context.getAdministrationService();
-			String host = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_HOST);
-			String portString = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_PORT);
+			String host = adminService.getGlobalProperty(getHost());
+            String portString = adminService.getGlobalProperty(getPort());
 			Integer port;
 			
 			// If host and port are not set, allow the record to be created with localhost and port 0
@@ -72,7 +71,7 @@ public class ExportObs implements ProcessStateAction
 			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 			
 			ThreadManager threadManager = ThreadManager.getInstance();
-			threadManager.execute(new HL7ExportObsRunnable(patient.getPatientId(), encounterId, CONCEPT_SOURCE_OUTBOUND_OBS, host, port), encounter.getLocation().getLocationId());
+			threadManager.execute(new HL7ExportObsRunnable(patient.getPatientId(), encounterId, getConceptSource(), host, port), encounter.getLocation().getLocationId());
 		}
 		catch(Exception e)
 		{
@@ -87,11 +86,35 @@ public class ExportObs implements ProcessStateAction
 	}
 
 	/**
-	 * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#changeState(org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState,
-	 *      java.util.HashMap)
-	 */
-	@Override
-	public void changeState(PatientState patientState, HashMap<String, Object> parameters) {
-		// Deliberately empty because processAction changes the state	
-	}
+     * Gets the Concept Source for Outbound Obs
+     * @return Concept Source Outbound Obs
+     */
+    public String getConceptSource() {
+        return ChirdlUtilConstants.CONCEPT_SOURCE_OUTBOUND_OBS;
+    }
+    
+    /**
+     * Gets the Host for Export Obs
+     * @return exportObsHost
+     */
+    public String getHost() {
+        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_HOST ;
+    }
+    
+    /**
+     * Gets the Port for Export Obs
+     * @return exportObsPort
+     */
+    public String getPort() {
+        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_PORT;
+    }
+
+    /**
+     * @see org.openmrs.module.chirdlutilbackports.action.ProcessStateAction#changeState(org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState,
+     *      java.util.HashMap)
+     */
+    @Override
+    public void changeState(PatientState patientState, HashMap<String, Object> parameters) {
+        // Deliberately empty because processAction changes the state   
+    }
 }
