@@ -188,24 +188,6 @@ public class MobileGreaseBoardController {
 				        ". The confidentiality notice will not be displayed on the mobile greaseboard.", e);
 			}	
 		}
-				
-		try {
-			ArrayList<PatientRow> rows = new ArrayList<>();
-			// DWE CHICA-761 Added parameter so that all patients are not displayed by default
-			String result = org.openmrs.module.chica.util.Util.getPatientsWithPrimaryForms(rows, null, false); 
-			if (result != null) {
-				map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE, result);
-				return FORM_VIEW;
-			}
-			
-			map.put(PARAMETER_PATIENT_ROWS, rows);
-		} catch (UnexpectedRollbackException | APIAuthenticationException ex) {
-			//ignore these exceptions since they happen with an APIAuthenticationException or during the redirect to 
-		    //the login page
-		} catch (Exception e) {
-			log.error("Error retrieving awaiting patients", e);
-			map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE, e.getMessage());
-		}
 		
 		return FORM_VIEW;
 	}

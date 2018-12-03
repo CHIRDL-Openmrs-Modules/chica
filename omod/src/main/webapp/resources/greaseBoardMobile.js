@@ -233,12 +233,6 @@ function parsePatientList(responseXML) {
             var patientId = $(this).find("id").text();
             var encounterId = $(this).find("encounterId").text();
             var sessionId = $(this).find("sessionId").text();
-            var reprintStatus = $(this).find("reprintStatus").text();
-            var flagStatus = "";
-            if (reprintStatus === "true") {
-            	flagStatus = "* ";
-            }
-            
             var theme = "b";
             if ((count%2) == 1) {
             	theme = "b";
@@ -252,7 +246,7 @@ function parsePatientList(responseXML) {
             var ageInYears = $(this).find("ageInYears").text();
             var newFirstName = firstName.replace(/'/g, "\\'");
             
-            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ', ' + ageInYears + ', \'' + newFirstName + '\');" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;"><span style="color:red">' + flagStatus + "</span>" + firstName + ' ' + lastName + '</h1></li>';
+            content = content + '<li data-theme ="' + theme + '"onclick="finishForm(' + patientId + ', ' + encounterId + ', ' + sessionId + ', ' + ageInYears + ', \'' + newFirstName + '\');" id="' + patientId + '" data-role="list-divider" data-mrn="' + mrn + '" data-fullname="' + fullName + '"><h1 style="font-size:20px;">' + firstName + ' ' + lastName + '</h1></li>';
             count++;
         });
 
