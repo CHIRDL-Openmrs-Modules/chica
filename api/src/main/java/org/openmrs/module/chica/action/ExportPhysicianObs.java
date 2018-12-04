@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.action;
 
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 /**
@@ -20,7 +21,7 @@ public class ExportPhysicianObs extends ExportObs
      * @return exportPhysicianObsHost
      */
     public String getHost() {
-        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_PHYSICIAN_OBS_HOST ;
+        return Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_PHYSICIAN_OBS_HOST) ;
     }
     
     /**
@@ -28,7 +29,7 @@ public class ExportPhysicianObs extends ExportObs
      * @return exportPhysicianObsPort
      */
     public String getPort() {
-        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_PHYSICIAN_OBS_PORT;
+        return Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_PHYSICIAN_OBS_PORT);
     }
     
 }

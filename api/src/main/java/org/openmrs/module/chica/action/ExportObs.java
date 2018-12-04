@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.HL7ExportObsRunnable;
@@ -39,9 +38,8 @@ public class ExportObs implements ProcessStateAction
 
 		try
 		{
-			AdministrationService adminService = Context.getAdministrationService();
-			String host = adminService.getGlobalProperty(getHost());
-            String portString = adminService.getGlobalProperty(getPort());
+			String host = getHost();
+            String portString = getPort();
 			Integer port;
 			
 			// If host and port are not set, allow the record to be created with localhost and port 0
@@ -98,7 +96,7 @@ public class ExportObs implements ProcessStateAction
      * @return exportObsHost
      */
     public String getHost() {
-        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_HOST ;
+        return Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_HOST);
     }
     
     /**
@@ -106,7 +104,7 @@ public class ExportObs implements ProcessStateAction
      * @return exportObsPort
      */
     public String getPort() {
-        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_PORT;
+        return Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_OBS_PORT);
     }
 
     /**

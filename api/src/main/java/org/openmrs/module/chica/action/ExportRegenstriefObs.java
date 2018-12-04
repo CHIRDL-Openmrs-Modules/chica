@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.action;
 
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class ExportRegenstriefObs extends ExportObs {
@@ -17,7 +18,7 @@ public class ExportRegenstriefObs extends ExportObs {
      * @return exportRegenstriefObsHost
      */
     public String getHost() {
-        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_REGENSTRIEF_OBS_HOST ;
+        return Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_REGENSTRIEF_OBS_HOST) ;
     }
     
     /**
@@ -25,6 +26,6 @@ public class ExportRegenstriefObs extends ExportObs {
      * @return exportRegenstriefObsPort
      */
     public String getPort() {
-        return ChirdlUtilConstants.GLOBAL_PROP_EXPORT_REGENSTRIEF_OBS_PORT;
+        return Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EXPORT_REGENSTRIEF_OBS_PORT);
     }
  }
