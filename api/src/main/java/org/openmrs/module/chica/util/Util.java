@@ -40,7 +40,6 @@ import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -54,12 +53,10 @@ import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClient;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClients;
@@ -277,7 +274,6 @@ public class Util {
 		}
 		
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		ChicaService chicaService = Context.getService(ChicaService.class);
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		
 		Calendar todaysDate = Calendar.getInstance();
@@ -288,7 +284,7 @@ public class Util {
 		
 		String locationTags = user.getUserProperty("locationTags");
 		String locationString = user.getUserProperty("location");
-		ArrayList<Integer> locationTagIds = new ArrayList<Integer>();
+		ArrayList<Integer> locationTagIds = new ArrayList<>();
 		LocationService locationService = Context.getLocationService();
 		
 		Integer locationId = null;
@@ -321,7 +317,7 @@ public class Util {
 			}
 		}
 		
-		List<PatientState> unfinishedStates = new ArrayList<PatientState>();
+		List<PatientState> unfinishedStates = new ArrayList<>();
 		if(showAllPatients) // DWE CHICA-761 Get unfinished patient states for all patients by location so that all patients registered to the location can be displayed
 		{
 			try
@@ -364,7 +360,7 @@ public class Util {
 		}
 		
 		// DWE CHICA-761 Moved this block out of the loop below
-		List<MobileForm> mobileFormsList = new ArrayList<MobileForm>();
+		List<MobileForm> mobileFormsList = new ArrayList<>();
 		switch(formType) {
 		case PRIMARY_FORM:
 			MobileForm primaryForm = config.getPrimaryForm(username);
@@ -378,14 +374,16 @@ public class Util {
 			mobileFormsList.addAll(mobileForms);
 
 			break;
+		default:
+		    break;
 		}
 		
 		// DWE CHICA-761 Create a hashmap of mobile form start/end states so we don't query for them in the loop
 		// Also create a map of forms so we don't have to query for them below
 		FormService formService = Context.getFormService();
-		Map<String, Form> formMap = new HashMap<String, Form>();
-		Map<String, HashMap<String, State>> mobileFormStartEndStateMap = new HashMap<String, HashMap<String, State>>();
-		Map<String, State> stateNameToStateMap = new HashMap<String, State>();
+		Map<String, Form> formMap = new HashMap<>();
+		Map<String, HashMap<String, State>> mobileFormStartEndStateMap = new HashMap<>();
+		Map<String, State> stateNameToStateMap = new HashMap<>();
 		for (MobileForm mobileForm : mobileFormsList)
 		{
 			Form form = formService.getForm(mobileForm.getName());
@@ -394,7 +392,7 @@ public class Util {
 				continue;
 			}
 			formMap.put(mobileForm.getName(), form);
-			HashMap<String, State> startEndStateMap = new HashMap<String, State>();
+			HashMap<String, State> startEndStateMap = new HashMap<>();
 			String startStateName = mobileForm.getStartState();
 			String endStateName = mobileForm.getEndState();
 			State startState = stateNameToStateMap.get(startStateName);
@@ -415,7 +413,9 @@ public class Util {
 		}
 		
 		stateNameToStateMap.clear();
-		Map<String, PatientRow> patientEncounterRowMap = new HashMap<String, PatientRow>();
+		Map<String, PatientRow> patientEncounterRowMap = new HashMap<>();
+		Map<Integer, Encounter> encounterMap = new HashMap<>();
+		Map<Integer, Session> sessionMap = new HashMap<>();
 		DecimalFormat decimalFormat = new DecimalFormat("#.#");
 		Double maxWeight = userClient.getMaxSecondaryFormWeight();
 		String checkoutStateString = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_CHECKOUT_STATE);
@@ -436,10 +436,15 @@ public class Util {
 			}
 			
 			Integer patientId = currState.getPatientId();
-			Session session = chirdlUtilBackportsService.getSession(sessionId);
+			Session session = sessionMap.get(sessionId);
+			if (session == null) {
+			    session = chirdlUtilBackportsService.getSession(sessionId);
+			    sessionMap.put(sessionId, session);
+			}
+			
 			Integer encounterId = session.getEncounterId();
-			Map<Integer, List<PatientState>> formPatientStateCreateMap = new HashMap<Integer, List<PatientState>>();
-			Map<Integer, List<PatientState>> formPatientStateProcessMap = new HashMap<Integer, List<PatientState>>();
+			Map<Integer, List<PatientState>> formPatientStateCreateMap = new HashMap<>();
+			Map<Integer, List<PatientState>> formPatientStateProcessMap = new HashMap<>();
 			PatientRow row = patientEncounterRowMap.get(patientId + "_" + encounterId);
 			if (row == null) {
 				row = new PatientRow();
@@ -447,8 +452,8 @@ public class Util {
 			}
 			
 			Double accumWeight = 0.0d;
-			Map<Integer, Double> formWeightMap = new HashMap<Integer, Double>();
-			Set<Integer> completedFormIds = new HashSet<Integer>();
+			Map<Integer, Double> formWeightMap = new HashMap<>();
+			Set<Integer> completedFormIds = new HashSet<>();
 			for (MobileForm mobileForm : mobileFormsList) {
 				State startState;
 				State endState;
@@ -457,14 +462,12 @@ public class Util {
 				{
 					continue;
 				}
-				else
+					
+				startState = startEndStateMap.get(START_STATE);
+				endState = startEndStateMap.get(END_STATE);
+				if(startState == null || endState == null)
 				{
-					startState = startEndStateMap.get(START_STATE);
-					endState = startEndStateMap.get(END_STATE);
-					if(startState == null || endState == null)
-					{
-						continue;
-					}
+					continue;
 				}
 				
 				getPatientStatesByEncounterId(chirdlUtilBackportsService, formPatientStateCreateMap, encounterId,
@@ -572,24 +575,18 @@ public class Util {
 			
 			// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
 			String mrn = org.openmrs.module.chirdlutil.util.Util.formatMRN(patient);
-			String dob = DateUtil.formatDate(patient.getBirthdate(), ChirdlUtilConstants.DATE_FORMAT_MMM_d_yyyy);
 			
 			// DWE CHICA-884 Get patient age. This will be used to determine if the confidentiality pop-up should be
 			// displayed for patients >= 12 years old
 			Integer ageInYears = org.openmrs.module.chirdlutil.util.Util.getAgeInUnits(patient.getBirthdate(), Calendar.getInstance().getTime(), YEAR_ABBR);
 						
-			String sex = patient.getGender();
-			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-			
-			// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
-			String appointment = "";
-			if(encounter != null)
-			{
-				appointment = DateUtil.formatDate(encounter.getScheduledTime(), ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
+			Encounter encounter = encounterMap.get(encounterId);
+			if (encounter == null) {
+			    encounter = (Encounter) encounterService.getEncounter(encounterId);
+			    encounterMap.put(encounterId, encounter);
 			}
 			
 			Date encounterDate = null;
-			
 			if (encounter != null) {
 				row.setEncounter(encounter);
 					
@@ -597,72 +594,12 @@ public class Util {
 				if (encounterDate != null && !org.openmrs.module.chirdlutil.util.Util.isToday(encounterDate)) {
 					continue;
 				}
-				// DWE CHICA-761 Replaced call to formatting rules with util methods to improve performance
-				String checkin = DateUtil.formatDate(encounter.getEncounterDatetime(), ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
-				
-				// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
-				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
-				
-				String mdName = "";
-				if (provider != null) {
-					Person person = provider.getPerson();
-					String firstInit = org.openmrs.module.chirdlutil.util.Util.toProperCase(person.getGivenName());
-					if (firstInit != null && firstInit.length() > 0) {
-						firstInit = firstInit.substring(0, 1);
-					} else {
-						firstInit = "";
-					}
-					
-					String middleInit = org.openmrs.module.chirdlutil.util.Util.toProperCase(person.getMiddleName());
-					if (middleInit != null && middleInit.length() > 0) {
-						middleInit = middleInit.substring(0, 1);
-					} else {
-						middleInit = "";
-					}
-					if (firstInit != null && firstInit.length() > 0) {
-						mdName += firstInit + ".";
-						if (middleInit != null && middleInit.length() > 0) {
-							mdName += " " + middleInit + ".";
-						}
-					}
-					if (mdName.length() > 0) {
-						mdName += " ";
-					}
-					String familyName = org.openmrs.module.chirdlutil.util.Util.toProperCase(person.getFamilyName());
-					if (familyName == null) {
-						familyName = "";
-					}
-					mdName += familyName;
-				}
-				
-				row.setCheckin(checkin);
-				row.setMdName(mdName);
-			}
-			
-			boolean reprint = false;
-			// DWE CHICA-761 Changed this query to scan for reprint states using a list of locationTagIds
-			// Also changed this so that we query by sessionId instead of encounterId
-			try
-			{
-				List<PatientState> currReprintRescanStates = chicaService.getReprintRescanStatesBySessionId(sessionId,
-					    todaysDate.getTime(), locationTagIds, locationId);
-					if (currReprintRescanStates != null && currReprintRescanStates.size() > 0) {
-						reprint = true;;
-					}
-			}
-			catch(Exception e)
-			{
-				log.error("Error getting reprint/rescan states", e);
 			}
 		
-			row.setReprintStatus(reprint);
-			row.setAppointment(appointment);
-			row.setDob(dob);
 			row.setFirstName(firstName);
 			row.setLastName(lastName);
 			
 			row.setMrn(mrn);
-			row.setSex(sex);
 			row.setPatientId(patient.getPatientId());
 			row.setSessionId(sessionId);
 			row.setAgeInYears(ageInYears);
@@ -671,6 +608,8 @@ public class Util {
 		}
 		
 		patientEncounterRowMap.clear();
+		encounterMap.clear();
+		sessionMap.clear();
 		//sort arraylist by encounterDatetime
 		Collections.sort(rows, new PatientRowComparator());
 		return null;
