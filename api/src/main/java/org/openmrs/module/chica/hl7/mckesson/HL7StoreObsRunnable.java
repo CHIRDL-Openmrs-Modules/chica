@@ -245,7 +245,7 @@ public class HL7StoreObsRunnable implements Runnable {
 						savedToDB = true;
 					}catch(APIException apie){
 						// CHICA-1017 Catch the exception and log it so that we can continue processing the message
-						log.error("APIException while saving obs.", apie);
+						log.error("APIException while saving obs " + currObs + ".", apie);
 					}
 				}
 				
