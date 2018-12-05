@@ -4643,7 +4643,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </sql>
     </diff>  
      <diff>
-        <version>1.10.9</version>
+        <version>1.11.0</version>
         <author>Meena Sheley</author>
         <date>November 7, 2018</date>
         <description>
