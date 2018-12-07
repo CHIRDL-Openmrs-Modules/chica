@@ -95,7 +95,6 @@
     <div data-role="footer" data-theme="a" data-position="fixed" style="text-align: left;">
         <h4>
         <div class="ui-grid-b">
-            <div class="ui-block-a" style="text-align: left;"><span style="color:red">*</span> = Pre-screener reprinted</div>               
         </div>
         </h4>
     </div>

@@ -182,7 +182,7 @@ public class ChicaMobileServlet extends HttpServlet {
 		String sessionIdStr = request.getParameter(PARAM_SESSION_ID);
 		if (sessionIdStr != null) {
 			try {
-				sessionId = Integer.parseInt(sessionIdStr);
+				sessionId = Integer.valueOf(sessionIdStr);
 			} catch(NumberFormatException e) {
 			    LOG.error("Error parsing sessionId: " + sessionIdStr, e);
 			}
@@ -192,7 +192,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
 		PrintWriter pw = response.getWriter();
 		pw.write(XML_PATIENTS_WITH_FORMS_START);
-		ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
+		ArrayList<PatientRow> rows = new ArrayList<>();
 		String result = "";
 		StringWriter stringWriter = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -213,6 +213,8 @@ public class ChicaMobileServlet extends HttpServlet {
 				case SECONDARY_FORMS:
 					result = org.openmrs.module.chica.util.Util.getPatientSecondaryForms(rows, sessionId);
 					break;
+				default:
+				    break;
 			}
 				
 			if (result == null) {
@@ -248,36 +250,25 @@ public class ChicaMobileServlet extends HttpServlet {
 					ServletUtil.writeTag(XML_MRN, row.getMrn(), printWriter);
 					ServletUtil.writeTag(XML_FIRST_NAME, ServletUtil.escapeXML(row.getFirstName()), printWriter);
 					ServletUtil.writeTag(XML_LAST_NAME, ServletUtil.escapeXML(row.getLastName()), printWriter);
-					ServletUtil.writeTag(XML_APPOINTMENT, ServletUtil.escapeXML(row.getAppointment()), printWriter);
-					ServletUtil.writeTag(XML_CHECKIN, ServletUtil.escapeXML(row.getCheckin()), printWriter);
-					ServletUtil.writeTag(XML_DATE_OF_BIRTH, ServletUtil.escapeXML(row.getDob()), printWriter);
-					ServletUtil.writeTag(XML_AGE, ServletUtil.escapeXML(row.getAgeAtVisit()), printWriter);
 					ServletUtil.writeTag(XML_AGE_IN_YEARS, row.getAgeInYears(), printWriter); // DWE CHICA-884 patient age used to determine if confidentiality pop-up should be displayed
-					ServletUtil.writeTag(XML_MD_NAME, ServletUtil.escapeXML(row.getMdName()), printWriter);
-					ServletUtil.writeTag(XML_SEX, row.getSex(), printWriter);
-					ServletUtil.writeTag(XML_STATION, ServletUtil.escapeXML(row.getStation()), printWriter);
-					ServletUtil.writeTag(XML_STATUS, ServletUtil.escapeXML(row.getStatus()), printWriter);
 					ServletUtil.writeTag(XML_SESSION_ID, row.getSessionId(), printWriter);
 					ServletUtil.writeTag(XML_ENCOUNTER_ID, row.getEncounter().getEncounterId(), printWriter);
-					ServletUtil.writeTag(XML_REPRINT_STATUS, row.isReprintStatus(), printWriter);
 					printWriter.write(XML_FORM_INSTANCES_START);
 					
-					if (formInstances != null) {
-						for (FormInstance formInstance : formInstances) {
-							printWriter.write(XML_FORM_INSTANCE_START);
-							ServletUtil.writeTag(XML_FORM_ID, formInstance.getFormId(), printWriter);
-							ServletUtil.writeTag(XML_FORM_INSTANCE_ID, formInstance.getFormInstanceId(), printWriter);
-							ServletUtil.writeTag(XML_LOCATION_ID, formInstance.getLocationId(), printWriter);
-							// If we're looking for a specific patient, lookup the form url
-							if (sessionId != null) {
-								String url = Util.getFormUrl(formInstance.getFormId());
-								if (url != null) {
-									ServletUtil.writeTag(XML_URL, ServletUtil.escapeXML(url), printWriter);
-								}
+					for (FormInstance formInstance : formInstances) {
+						printWriter.write(XML_FORM_INSTANCE_START);
+						ServletUtil.writeTag(XML_FORM_ID, formInstance.getFormId(), printWriter);
+						ServletUtil.writeTag(XML_FORM_INSTANCE_ID, formInstance.getFormInstanceId(), printWriter);
+						ServletUtil.writeTag(XML_LOCATION_ID, formInstance.getLocationId(), printWriter);
+						// If we're looking for a specific patient, lookup the form url
+						if (sessionId != null) {
+							String url = Util.getFormUrl(formInstance.getFormId());
+							if (url != null) {
+								ServletUtil.writeTag(XML_URL, ServletUtil.escapeXML(url), printWriter);
 							}
-							
-							printWriter.write(XML_FORM_INSTANCE_END);
 						}
+						
+						printWriter.write(XML_FORM_INSTANCE_END);
 					}
 					
 					printWriter.write(XML_FORM_INSTANCES_END);

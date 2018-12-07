@@ -809,7 +809,7 @@ public class DynamicFormAccess {
 			Integer fieldId = (Integer) currDssElement.getParameter("fieldId");
 			PatientATD patientATD = waitForScanFieldIdToAtdMap.get(fieldId);
 			if (patientATD == null) {
-				atdService.addPatientATD(patientId, formInstance, currDssElement, encounterId);
+				atdService.addPatientATD(formInstance, currDssElement, encounterId, patientId);
 				addStatistic(dssService, atdService, patient, currDssElement, formInstanceId, i, encounter, formName,
 				    locationTagId, locationId);
 			} else if (currDssElement.getRuleId() != patientATD.getRule().getRuleId()) {
