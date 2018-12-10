@@ -4636,7 +4636,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			WHERE initial_state = (select state_id from chirdlutilbackports_state where name = 'EXPORT OBS') 
 			AND program_id = (select program_id from chirdlutilbackports_program where name = 'chica_epic');
 
-			INSERT INTO chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
+			INSERT IGNORE INTO chirdlutilbackports_state_mapping (initial_state,next_state,program_id) 
 			VALUES ((select state_id from chirdlutilbackports_state where name = 'EXPORT REGENSTRIEF OBS')
 			,(select state_id from chirdlutilbackports_state where name = 'Query CDA PWS')
 			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
