@@ -4617,7 +4617,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			ON a.form_id=b.form_id AND a.form_attribute_id=b.form_attribute_id AND a.location_tag_id=b.location_tag_id
 			AND a.location_id=b.location_id WHERE b.form_id IS NULL;
 		</sql>
-	</diff>
+	</diff>    
 	<diff>
     	<version>1.10.9</version>
         <author>Seema Sarala</author>
@@ -4640,6 +4640,26 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			VALUES ((select state_id from chirdlutilbackports_state where name = 'EXPORT REGENSTRIEF OBS')
 			,(select state_id from chirdlutilbackports_state where name = 'Query CDA PWS')
 			,(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+        </sql>
+    </diff>  
+     <diff>
+        <version>1.11.0</version>
+        <author>Meena Sheley</author>
+        <date>November 7, 2018</date>
+        <description>
+            Remove immunization global properties
+        </description>
+        <sql>
+            delete from global_property where property = 'chica.ImmunizationQueryPassword';
+            delete from global_property where property = 'chica.ImmunizationQueryURL';
+            delete from global_property where property = 'chica.ImmunizationQueryConfigFile';
+            delete from global_property where property = 'chica.ImmunizationQueryActivated';
+            delete from global_property where property = 'chica.ImmunizationOutputDirectory';
+            delete from global_property where property = 'chica.immunizationInputDirectory';
+            delete from global_property where property = 'chica.immunizationListTimeout';
+            delete from global_property where property = 'chica.immunXSLT';
+            delete from global_property where property = 'chica.ImmunizationQueryUserId';
+            
         </sql>
     </diff>    
 </sqldiff>

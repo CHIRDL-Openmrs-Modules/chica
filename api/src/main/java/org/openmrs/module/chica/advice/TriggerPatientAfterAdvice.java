@@ -12,7 +12,6 @@ import org.openmrs.Location;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.TeleformFileState;
-import org.openmrs.module.chica.ImmunizationForecastLookup;
 import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
@@ -48,13 +47,6 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					//spawn the checkin thread
 					threadManager.execute(new CheckinPatient(encounter.getEncounterId()), location.getLocationId());
 					
-					String executeImmunization = adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_IMMUNIZATION_QUERY_ACTIVATED);
-					if (ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(executeImmunization)) {
-						//spawn the immunization query thread
-						Thread immunThread = new Thread(new QueryImmunizationForecast(encounter.getEncounterId()));
-						immunThread.start();
-						//ImmunizationForecastLookup.queryImmunizationList(encounter, true);
-					}
 				}
 			} catch (Exception e)
 			{
@@ -99,7 +91,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 		{
             log.info("clear regenObs and medicationList");
             ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY)).clearObs();
-            ImmunizationForecastLookup.clearimmunizationLists();
+
         }
 	}
 

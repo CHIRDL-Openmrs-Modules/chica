@@ -149,27 +149,6 @@
         </description>
     </globalProperty>
     <globalProperty>
-        <property>chica.immunizationInputDirectory</property>
-        <description>Directory containing results of immunization queries of mrf dump. Becomes input to immunization forecasting.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.immunizationOutputDirectory</property>
-        <description>Directory containing results of the immunization forecasting.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.immunXSLT</property>
-        <description>Directory containing xslt transform needed for immunization query result xml.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.immunizationListTimeout</property>
-        <defaultValue>1</defaultValue>
-        <description>Timeout for immunization list queries (in seconds).
-        </description>
-    </globalProperty>
-    <globalProperty>
         <property>chica.stylesheetDirectory</property>
         <description>Directory where XSLT stylesheets are contained.
         </description>
@@ -205,47 +184,6 @@
         <property>chica.allowableHL7MessageSources</property>
         <defaultValue>ECW</defaultValue>
         <description>Comma delimited list of allowable sources for hl7 ADT messages.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryActivated</property>
-        <defaultValue>true</defaultValue>
-        <description>Activate query to CHIRP registry
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryConfigFile</property>
-        <description>Location the configuration file for the hl7 immunization query.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryPassword</property>
-        <description>Password to CHIRP registry.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryURL</property>
-        <description>CHIRP URL
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryUserId</property>
-        <description>Userid for access to CHIRP.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.chica.activateVXU</property>
-        <defaultValue>false</defaultValue>
-        <description>Allow hl7 VXU update to CHIRP immunization registry</description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationOutputDirectory</property>
-        <description>CHIRP hl7 query and response file directory
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.activateVXUToCreatePatient</property>
-        <description>Activate VXU to create a patient in the CHIRP registry.
         </description>
     </globalProperty>
     <globalProperty>

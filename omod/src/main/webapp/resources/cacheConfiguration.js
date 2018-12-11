@@ -1,7 +1,7 @@
 var chicaServletUrl = ctx + "/moduleServlet/chica/chica?";
 $(function() {
     $( "#cacheTabs" ).tabs();
-    $( "#submitButton, #clearEHRMedicalRecordCacheButton, #clearImmunizationCacheButton, #clearFormDraftCacheButton, #clearFormDraftButton" ).button();
+    $( "#submitButton, #clearEHRMedicalRecordCacheButton, #clearFormDraftCacheButton, #clearFormDraftButton" ).button();
     $("#submitButton").click(function(event) {
 		$("#submitConfirmationDialog").dialog("open");
 		event.preventDefault();
@@ -9,11 +9,6 @@ $(function() {
     
     $("#clearEHRMedicalRecordCacheButton").click(function(event) {
 		$("#clearEHRMedicalRecordCacheConfirmationDialog").dialog("open");
-		event.preventDefault();
-	});
-    
-    $("#clearImmunizationCacheButton").click(function(event) {
-		$("#clearImmunizationCacheConfirmationDialog").dialog("open");
 		event.preventDefault();
 	});
     
@@ -118,39 +113,6 @@ $(function() {
         ]
     });
     
-    $("#clearImmunizationCacheConfirmationDialog").dialog({
-        open: function() { 
-            $(".ui-dialog").addClass("ui-dialog-shadow"); 
-            $(".ui-dialog").addClass("no-close");
-        },
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        show: {
-          effect: "fade",
-          duration: 500
-        },
-        hide: {
-          effect: "fade",
-          duration: 500
-        },
-        buttons: [
-          {
-	          text:"Yes",
-	          click: function() {
-	        	  $(this).dialog("close");
-	        	  clearImmunizationCache();
-	          }
-          },
-          {
-	          text:"No",
-	          click: function() {
-	        	  $(this).dialog("close");
-	          }
-          }
-        ]
-    });
-    
     $("#clearFormDraftCacheConfirmationDialog").dialog({
         open: function() { 
             $(".ui-dialog").addClass("ui-dialog-shadow"); 
@@ -218,15 +180,6 @@ $(function() {
 
 function clearEHRMedicalRecordCache() {
 	clearCache("ehrMedicalRecord", "java.lang.Integer", "java.util.HashMap");
-}
-
-function clearImmunizationCache() {
-	clearCache("immunization", "java.lang.Integer", "org.openmrs.module.chica.ImmunizationQueryOutput");
-}
-
-function clearFormDraftCache() {
-	clearCache("formDraft", "org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag", 
-			"org.openmrs.module.atd.xmlBeans.Records");
 }
 
 function clearCache(cacheName, keyType, valueType) {

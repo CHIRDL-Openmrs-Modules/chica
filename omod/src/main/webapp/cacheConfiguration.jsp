@@ -24,7 +24,6 @@
 	    <div id="cacheTabs">
 	        <ul>
 	            <li><a href="#ehrCacheTab">EHR Medical Record</a></li>
-	            <li><a href="#immunizationCacheTab">Immunization</a></li>
 	            <li><a href="#formDraftCacheTab">Form Draft</a></li>
 	        </ul>
 	        <div id="ehrCacheTab">
@@ -61,40 +60,7 @@
 	               <input type="button" id="clearEHRMedicalRecordCacheButton" class="clearCacheButtons" value="Clear Cache"/>
 	            </div>
 	        </div>
-	        <div id="immunizationCacheTab">
-                <fieldset>
-                    <div class="item">Configuration Location: </div>
-                    <div class="value">
-                        <c:out value="${cacheConfigurationLocation}"/>
-                    </div>
-                    <div class="item">Items Expiry: </div>
-                    <div class="value">
-                        <c:out value="${immunizationCacheExpiry}"/>&nbsp;<c:out value="${immunizationCacheExpiryUnit}"/>&nbsp;(not modifiable)
-                    </div>
-                    <div class="item">Disk Size: </div>
-                    <div class="value">
-                        <c:out value="${immunizationCacheDiskSize}"/>&nbsp;<c:out value="${immunizationCacheDiskSizeUnit}"/>&nbsp;(not modifiable)
-                    </div>
-                    <div class="item">Heap Size: </div>
-                    <div class="value">
-                        <input type="number" id="immunizationCacheHeapSize" name="immunizationCacheHeapSize" value="<c:out value='${immunizationCacheHeapSize}'/>">
-                        &nbsp;<c:out value="${immunizationCacheHeapSizeUnit}"/>
-                    </div>
-                </fieldset>
-                <br/>
-                <div id="immunizationCacheStatistics">
-                   <h3>Statistics</h3>
-                   <span>(times are in microseconds)</span>
-                   <ul>
-                       <c:forEach items="${immunizationCacheStatistics}" var="stat">
-                           <li><div align="left" style="width: 100%;"><c:out value="${stat.name}"/>:&nbsp;<c:out value="${stat.value}"/></div></li>
-                       </c:forEach>
-                   </ul>
-                </div>
-                <div id="clearImmunizationCache">
-                   <input type="button" id="clearImmunizationCacheButton" class="clearCacheButtons" value="Clear Cache"/>
-                </div>
-            </div>
+	        
             <div id="formDraftCacheTab">
                 <fieldset>
                     <div class="item">Configuration Location: </div>
@@ -170,11 +136,6 @@
         <div id="clearEHRMedicalRecordCacheConfirmationDialog" title="Confirm Clear Cache" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
             <div style="margin: 0 auto;text-align: center;">
                 <div style="color:#000000;">Are you sure you want to clear the EHR Medical Record Cache?</div>
-            </div>
-        </div>
-        <div id="clearImmunizationCacheConfirmationDialog" title="Confirm Clear Cache" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-            <div style="margin: 0 auto;text-align: center;">
-                <div style="color:#000000;">Are you sure you want to clear the Immunization Cache?</div>
             </div>
         </div>
         <div id="clearFormDraftCacheConfirmationDialog" title="Confirm Clear Cache" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
