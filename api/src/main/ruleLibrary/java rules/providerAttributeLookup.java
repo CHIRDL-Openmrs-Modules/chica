@@ -99,7 +99,7 @@ public class providerAttributeLookup implements Rule {
 			}
 		}
 		catch (Exception e) {
-		    log.error("Unable to "(org.openmrs.module.chirdlutil.util.Util
+		    log.error("Unable to " + (org.openmrs.module.chirdlutil.util.Util
                     .getStackTrace(e)));
 		}
 		
