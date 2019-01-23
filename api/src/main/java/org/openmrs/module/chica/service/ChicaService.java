@@ -226,12 +226,6 @@ public interface ChicaService
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
 	
 	@Authorized()
-	public Integer getMergeFieldCount(String form_name, String vaccine_name);
-	
-	@Authorized()
-	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
-	
-	@Authorized()
 	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
 		FormInstance formInstance, int encounterId, Patient patient);
 	
@@ -246,26 +240,6 @@ public interface ChicaService
 	@Authorized()
 	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
 			Date startDateTime, Date endDateTime);
-	/**
-	 * Query the mrf dump to find the list of immunizations for the patient
-     * @see org.openmrs.module.chica.service.ChicaService#immunizationQuery(java.io.OutputS
-	 * 
-	 * @param outputFile
-	 * @param locationId
-	 * @param formId
-	 * @param encounter
-	 * @param locationTagId
-	 * @param sessionId
-	 */
-	/* 
-     * Used by Vivienne's immunization forecasting service
-     * Commenting out since we are using CHIRP's
-     * 
-	public void immunizationQuery(OutputStream outputFile, Integer locationId,
-	                              Integer formId, org.openmrs.Encounter encounter,
-	                              Integer locationTagId, Integer sessionId);
-
-	*/
 	
 	/**
 	 * Retrieve the patient's study subject ID based on patient and study.  This will create a new StudySubject for the patient 

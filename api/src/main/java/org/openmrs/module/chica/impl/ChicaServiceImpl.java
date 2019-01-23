@@ -1046,14 +1046,6 @@ public class ChicaServiceImpl implements ChicaService
 		public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName) {
 			return getChicaDAO().getQuestionsScannedAnswered(formName, locationName);
 		}
-        
-		public Integer getMergeFieldCount(String form_name, String vaccine_name){
-			return getChicaDAO().getMergeFieldCount(form_name, vaccine_name);
-		}
-		
-		public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source){
-			return getChicaDAO().getConceptMapsByVaccine(concept, source);
-		}
             
 		public List< org.openmrs.module.chica.hibernateBeans.Encounter> getEncountersForEnrolledPatients(Concept concept,
 				Date startDateTime, Date endDateTime){

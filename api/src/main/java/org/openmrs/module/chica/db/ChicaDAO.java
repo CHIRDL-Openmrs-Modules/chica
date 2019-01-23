@@ -149,10 +149,6 @@ public interface ChicaDAO {
 
 	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName);
 	
-	public Integer getMergeFieldCount(String form_name, String vaccine_name);
-	
-	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String source);
-	
 	public List<Encounter> getEncountersForEnrolledPatients(Concept concept, Date startDateTime, Date endDateTime);
 	
 	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,

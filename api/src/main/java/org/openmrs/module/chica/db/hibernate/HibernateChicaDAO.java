@@ -962,56 +962,6 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public Integer getMergeFieldCount(String form_name, String vaccine_name){
-		
-		Integer vaccineCode = null;
-		ConceptService conceptService = Context.getConceptService();
-		Concept vaccineConcept = conceptService.getConceptByName(vaccine_name);
-		if (vaccineConcept != null){
-			vaccineCode = vaccineConcept.getConceptId();
-		}
-		try
-		{
-			
-			String SQL = 
-				"select count(*) from form_field ff " +
-				"join (select field.* from field " +
-				"join concept_name cn on field.concept_id = cn.concept_id " +
-				"where cn.name like ? )b " +
-				"on ff.field_id = b.field_id " +
-				"join form on ff.form_id = form.form_id " +
-				"where form.name like ? " +
-				"and form.retired =0 " +
-				"and b.default_value not like 'vaccinestarrule'";
-
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(SQL);
-			qry.setString(0, vaccine_name);
-			qry.setString(1, form_name);
-			BigInteger count = (BigInteger)qry.uniqueResult();
-			return count.intValue();
-			
-		} catch (Exception e)
-		{
-			this.LOG.error(Util.getStackTrace(e));
-		}
-		return null;
-		
-	}
-	
-	//Get maps for a concepts for a specific type 
-	public List<ConceptMap> getConceptMapsByVaccine(Concept concept, String sourceName){
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConceptMap.class, "map");
-		if (sourceName != null){
-			criteria.createAlias("source", "conceptSource");
-			criteria.add(Restrictions.eq("conceptSource.name", sourceName));
-		}
-		
-		criteria.add(Restrictions.eq("concept", concept));
-		List<ConceptMap> conceptMaps = (List<ConceptMap>) criteria.list();
-		return conceptMaps;
-	}
-	
 	@SuppressWarnings("unchecked")
 	public List<Encounter> getEncountersForEnrolledPatients(Concept concept,
 			Date startDateTime, Date endDateTime){

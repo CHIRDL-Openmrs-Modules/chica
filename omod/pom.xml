@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>chica</artifactId>
-		<version>1.81.2</version>
+		<version>1.82.0</version>
 	</parent>
 	<artifactId>chica-omod</artifactId>
 	<packaging>jar</packaging>

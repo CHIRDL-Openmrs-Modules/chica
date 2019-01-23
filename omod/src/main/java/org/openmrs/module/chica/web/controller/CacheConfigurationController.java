@@ -50,13 +50,6 @@ public class CacheConfigurationController {
 	private static final String PARAM_EHR_CACHE_EXPIRY = "EHRCacheExpiry";
 	private static final String PARAM_EHR_CACHE_EXPIRY_UNIT = "EHRCacheExpiryUnit";
 	private static final String PARAM_EHR_CACHE_STATISTICS = "EHRCacheStatistics";
-	private static final String PARAM_IMMUNIZATION_CACHE_HEAP_SIZE = "immunizationCacheHeapSize";
-	private static final String PARAM_IMMUNIZATION_CACHE_HEAP_SIZE_UNIT = "immunizationCacheHeapSizeUnit";
-	private static final String PARAM_IMMUNIZATION_CACHE_DISK_SIZE = "immunizationCacheDiskSize";
-	private static final String PARAM_IMMUNIZATION_CACHE_DISK_SIZE_UNIT = "immunizationCacheDiskSizeUnit";
-	private static final String PARAM_IMMUNIZATION_CACHE_EXPIRY = "immunizationCacheExpiry";
-	private static final String PARAM_IMMUNIZATION_CACHE_EXPIRY_UNIT = "immunizationCacheExpiryUnit";
-	private static final String PARAM_IMMUNIZATION_CACHE_STATISTICS = "immunizationCacheStatistics";
 	private static final String PARAM_FORM_DRAFT_CACHE_HEAP_SIZE = "formDraftCacheHeapSize";
 	private static final String PARAM_FORM_DRAFT_CACHE_HEAP_SIZE_UNIT = "formDraftCacheHeapSizeUnit";
 	private static final String PARAM_FORM_DRAFT_CACHE_DISK_SIZE = "formDraftCacheDiskSize";
@@ -75,7 +68,6 @@ public class CacheConfigurationController {
     protected ModelAndView processSubmit(HttpServletRequest request) {
 		Map<String, Object> model = new HashMap<>();
 		String ehrCacheHeapSizeStr = request.getParameter(PARAM_EHR_CACHE_HEAP_SIZE);
-		String immunizationCacheHeapSizeStr = request.getParameter(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE);
 		String formDraftCacheHeapSizeStr = request.getParameter(PARAM_FORM_DRAFT_CACHE_HEAP_SIZE);
 		
 		// Update the EHR Medical Record Cache heap size
@@ -88,12 +80,6 @@ public class CacheConfigurationController {
 		if (!model.isEmpty()) {
 			return new ModelAndView(new RedirectView(SUCCESS_VIEW), model);
 		}
-		
-		// Update the Immunization Cache heap size
-		updateCacheHeapSize(ChicaConstants.CACHE_IMMUNIZATION, 
-							ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-							ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS, 
-							immunizationCacheHeapSizeStr, model);
 		
 		// A non-empty model reflects errors occurred updating the heap size
 		if (!model.isEmpty()) {
@@ -139,9 +125,6 @@ public class CacheConfigurationController {
 		
 		// Retrieve data for the EHR cache
 		loadEHRMedicalRecordCacheInfo(cacheManager, map);
-		
-		// Retrieve data for the immunization cache
-		loadImmunizationCacheInfo(cacheManager, map);
 		
 		// Retrieve data for the form draft cache
 		loadFormDraftCacheInfo(cacheManager, map);
@@ -200,59 +183,9 @@ public class CacheConfigurationController {
 		model.put(PARAM_EHR_CACHE_STATISTICS, stats);
 	}
 	
-	/**
-	 * Loads all the specific information about the Immunization Cache.
-	 * 
-	 * @param cacheManager The Application Cache Manger to access the cache information
-	 * @param model Map containing the HTTP information to display to the client
-	 */
-	private void loadImmunizationCacheInfo(ApplicationCacheManager cacheManager, Map<String, Object> model) {
-		Long immunizationCacheHeapSize = cacheManager.getCacheHeapSize(
-			ChicaConstants.CACHE_IMMUNIZATION, 
-			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE, immunizationCacheHeapSize);
-		
-		String immunizationCacheHeapSizeUnit = cacheManager.getCacheHeapSizeUnit(
-			ChicaConstants.CACHE_IMMUNIZATION, 
-			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_HEAP_SIZE_UNIT, immunizationCacheHeapSizeUnit);
-		
-		Long immunizationCacheDiskSize = cacheManager.getCacheDiskSize(
-			ChicaConstants.CACHE_IMMUNIZATION, 
-			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE, immunizationCacheDiskSize);
-		
-		String immunizationCacheDiskSizeUnit = cacheManager.getCacheDiskSizeUnit(
-			ChicaConstants.CACHE_IMMUNIZATION, 
-			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_DISK_SIZE_UNIT, immunizationCacheDiskSizeUnit);
-		
-		Long immunizationCacheExpiry = cacheManager.getCacheExpiry(
-			ChicaConstants.CACHE_IMMUNIZATION, 
-			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY, immunizationCacheExpiry);
-		
-		String immunizationCacheExpiryUnit = cacheManager.getCacheExpiryUnit(
-			ChicaConstants.CACHE_IMMUNIZATION, 
-			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_EXPIRY_UNIT, immunizationCacheExpiryUnit);
-		
-		// load the cache statistics
-		List<CacheStatistic> stats = cacheManager.getCacheStatistics(
-			ChicaConstants.CACHE_IMMUNIZATION, 
-			ChicaConstants.CACHE_IMMUNIZATION_KEY_CLASS, 
-			ChicaConstants.CACHE_IMMUNIZATION_VALUE_CLASS);
-		model.put(PARAM_IMMUNIZATION_CACHE_STATISTICS, stats);
-	}
 	
 	/**
-	 * Loads all the specific information about the Immunization Cache.
+	 * Loads all the specific information about the Form Draft.
 	 * 
 	 * @param cacheManager The Application Cache Manger to access the cache information
 	 * @param model Map containing the HTTP information to display to the client

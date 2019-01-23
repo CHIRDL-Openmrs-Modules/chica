@@ -19,12 +19,11 @@
     
     <require_version>2.0.6</require_version>
     <require_modules>
-        <require_module version="0.5.5">org.openmrs.logic</require_module>
         <require_module version="3.1.0">org.openmrs.module.dss</require_module>
-        <require_module version="2.15.1">org.openmrs.module.atd</require_module>
-        <require_module version="1.12.1">org.openmrs.module.sockethl7listener</require_module>
-        <require_module version="1.19.0">org.openmrs.module.chirdlutil</require_module>
-        <require_module version="2.11.0">org.openmrs.module.chirdlutilbackports</require_module> 
+        <require_module version="2.16.0">org.openmrs.module.atd</require_module>
+        <require_module version="1.13.0">org.openmrs.module.sockethl7listener</require_module>
+        <require_module version="1.20.0">org.openmrs.module.chirdlutil</require_module>
+        <require_module version="2.12.0">org.openmrs.module.chirdlutilbackports</require_module> 
         <require_module version="1.3.1">org.openmrs.module.legacyui</require_module>
     </require_modules>
     <extension>
@@ -150,27 +149,6 @@
         </description>
     </globalProperty>
     <globalProperty>
-        <property>chica.immunizationInputDirectory</property>
-        <description>Directory containing results of immunization queries of mrf dump. Becomes input to immunization forecasting.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.immunizationOutputDirectory</property>
-        <description>Directory containing results of the immunization forecasting.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.immunXSLT</property>
-        <description>Directory containing xslt transform needed for immunization query result xml.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.immunizationListTimeout</property>
-        <defaultValue>1</defaultValue>
-        <description>Timeout for immunization list queries (in seconds).
-        </description>
-    </globalProperty>
-    <globalProperty>
         <property>chica.stylesheetDirectory</property>
         <description>Directory where XSLT stylesheets are contained.
         </description>
@@ -206,47 +184,6 @@
         <property>chica.allowableHL7MessageSources</property>
         <defaultValue>ECW</defaultValue>
         <description>Comma delimited list of allowable sources for hl7 ADT messages.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryActivated</property>
-        <defaultValue>true</defaultValue>
-        <description>Activate query to CHIRP registry
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryConfigFile</property>
-        <description>Location the configuration file for the hl7 immunization query.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryPassword</property>
-        <description>Password to CHIRP registry.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryURL</property>
-        <description>CHIRP URL
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationQueryUserId</property>
-        <description>Userid for access to CHIRP.
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.chica.activateVXU</property>
-        <defaultValue>false</defaultValue>
-        <description>Allow hl7 VXU update to CHIRP immunization registry</description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.ImmunizationOutputDirectory</property>
-        <description>CHIRP hl7 query and response file directory
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>chica.activateVXUToCreatePatient</property>
-        <description>Activate VXU to create a patient in the CHIRP registry.
         </description>
     </globalProperty>
     <globalProperty>
@@ -448,6 +385,18 @@
      <globalProperty>
         <property>chica.dataSourceMedicalRecord</property>
         <description>Data source for medical records dump</description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.exportRegenstriefObsHost</property>
+        <defaultValue>localhost</defaultValue>
+        <description>IP address of where to send obs when the regenstrief worksheet is submitted.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>chica.exportRegenstriefObsPort</property>
+        <defaultValue>0</defaultValue>
+        <description>Port to send obs when the regenstrief worksheet is submitted.
+        </description>
     </globalProperty>
   
     <!-- Servlets -->

@@ -3,6 +3,8 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
@@ -16,10 +18,12 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chirdlutil.util.Util;
 
 public class providerAttributeLookup implements Rule {
 	
 	private LogicService logicService = Context.getLogicService();
+	private Log log = LogFactory.getLog(this.getClass());
 	
 	/**
 	 * *
@@ -57,11 +61,11 @@ public class providerAttributeLookup implements Rule {
 		return Datatype.CODED;
 	}
 	
-	/*
-	 * hpvStudyArm := call personAttributeLookup With "hpvStudyArm";
-		If (hpvStudyArm = null) OR NOT (hpvStudyArm = "prompt only arm") then conclude False;
-		If (hpvStudyArm = null) OR NOT (hpvStudyArm = "prompt plus handout arm") then conclude False;
-		If (hpvStudyArm = null) OR NOT (hpvStudyArm = "control") then conclude False;
+	/* Call from mlm to to look up provider's person attribute by attribute name.
+	 * Can be used for studies randomized by provider to look up study arm.
+	 * Sample mlm call:
+	 *   attributeValue := call providerAttributeLookup With "[attribute name]";
+		
 	 */
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
 	
@@ -75,7 +79,7 @@ public class providerAttributeLookup implements Rule {
 				
 				// CHICA-1151 Use the provider that has the "Attending Provider" role for the encounter
 				Person person = null;
-				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
+				org.openmrs.Provider provider =Util.getProviderByAttendingProviderEncounterRole(encounter);
 				if(provider != null)
 				{
 					person = provider.getPerson();
@@ -84,6 +88,7 @@ public class providerAttributeLookup implements Rule {
 				if (person != null) {
 					Integer personId = person.getPersonId();
 					if (personAttributeName != null) {
+					    //verify that person attribute name exists
 						PersonAttribute personAttributeValue = personService.getPerson(personId).getAttribute(
 						    personAttributeName);
 						if (personAttributeValue != null) {
@@ -93,8 +98,9 @@ public class providerAttributeLookup implements Rule {
 				}
 			}
 		}
-		catch (NumberFormatException e) {
-			System.out.println("HPV study:  providerAttributeLookup person attribute lookup exception");
+		catch (Exception e) {
+		    log.error("Unable to " + (org.openmrs.module.chirdlutil.util.Util
+                    .getStackTrace(e)));
 		}
 		
 		return Result.emptyResult();

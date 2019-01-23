@@ -822,13 +822,13 @@ function renewSession() {
 }
 
 function saveDraft(eventId) {
-    if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
+	if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
 		$("#saveDraftWaitDialog").dialog("open");
-    }
+	}
 	processCheckboxes();
 	var submitForm = $("#pwsForm"); 
     $.ajax({
-		"cache": false,
+    	"cache": false,
         "data": submitForm.serialize(),
         "type": "POST",
         "url": saveDraftURL,
@@ -848,11 +848,10 @@ function saveDraft(eventId) {
 			}
 			if (text != "success" ) {
 				$("#saveDraftErrorMessage").html(text);
-				$("#saveDraftErrorDialog").dialog("open");
+        		$("#saveDraftErrorDialog").dialog("open");
 			} else if (eventId === "saveDraftButtonBottom" || eventId === "saveDraftButtonTop") {
 				$("#saveDraftSuccessDialog").dialog("open"); 
 			}
         }
     });
 }
-
