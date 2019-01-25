@@ -5,35 +5,43 @@
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/GAD7Mobile.form" />
 <html>
 	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
-		<script>var ctx = "${pageContext.request.contextPath}";</script>
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/GAD7Mobile.js" charset="utf-8"></script>
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/GAD7Mobile.css">
-	
-	</head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/diabetesHistory.css">
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
+        <script>var ctx = "${pageContext.request.contextPath}";</script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.js" charset="utf-8"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/diabetesHistory.js" charset="utf-8"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/chica.js"></script>
+    </head>
+    
+<%@ include file="specialCharacters.jsp" %>
     <c:set var="search" value="'" />
     <c:set var="replace" value="\\'" />
     <c:set var="newFirstName" value="${fn:replace(patient.givenName, search, replace)}"/>
     <c:set var="newLastName" value="${fn:replace(patient.familyName, search, replace)}"/>
 
-
-    <%@ include file="specialCharacters.jsp" %>
 	
 	<!-- Titles/Headers/Footers/Buttons/Copyright  -->
-	<c:set var="formName" value='Generalized Anxiety Disorder ${openParen}GAD-7${closeParen}'/>
-	<c:set var="formName_sp" value=''/>
+	<c:set var="formName" value='GAD-7'/>
+	<c:set var="formName_sp" value='GAD-7'/>
+	<c:set var="formNameHeader" value="${formName}${colon}"/>
+    <c:set var="formNameHeader_sp" value="${formName_sp}${colon}"/>
+    <input type="hidden" name="formNameHeader" id="formNameHeader" value="${formNameHeader}" />
+    <input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
+    <c:set var="prefix" value="GAD7QuestionEntry_" />
 	<c:set var="headerScreenQuestion" value='Over the last 2 weeks${comma} how often have you been bothered by the following problems${questionMark}'/>
 	<c:set var="headerScreenQuestion_sp" value='Durante las ${uAcute}ltimas 2 semanas, ${invQuestionMark}con qu${eAcute} frecuencia ha sentido molestias por los siguientes problemas${questionMark}' />
+	<c:set var="additionalQuestions" value="The following are some additional questions about anxiety${period}" />
+    <c:set var="additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales acerca de la ansiedad ${period}" />
+
 	
 	<c:set var="quitButtonText" value="Quit"/>
 	<c:set var="quitButtonText_sp" value="Dejar"/>
@@ -57,38 +65,72 @@
 	<c:set var="question6_2" value='Molestarse o ponerse irritable fácilmente' scope="request"/>
 	<c:set var="question7_2" value='Sentir miedo como si algo terrible pudiera pasar' scope="request"/>
 	
-	<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
-	
-	<form id="GAD7Form" method="POST" action="GAD7Mobile.form" method="post" enctype="multipart/form-data">
-		<c:if test="${c != null}">
-		    <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false"
-		        data-theme="b" data-overlay-theme="c">
-		        <div data-role="header" data-theme="b"><h1>Error</h1></div>
-		        <div data-role="content"><span>${errorMessage}</span>
-		            <div style="margin: 0 auto;text-align: center;">
-		            	<a href="#" data-role="button" data-inline="true" data-theme="b" onclick="submitEmptyForm()" style="width: 150px;">OK</a>
-		            </div>
-		        </div>
-		    </div>
-		</c:if>
+<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}')">
+<form id="GAD7Form" method="POST" action="GAD7Mobile.form" enctype="multipart/form-data">
+		<c:if test="${errorMessage != null}">
+	        <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
+	            <div data-role="header" data-theme="b">
+	                <h1>Error</h1>
+	            </div>
+	            <div data-role="content">
+	                <span>${errorMessage}</span>
+	                <div style="margin: 0 auto;text-align: center;">
+	                    <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="submitEmptyForm()" style="width: 150px;">OK</a>
+	                </div>
+	            </div>
+	        </div>
+        </c:if>
 		
-		
-	<!-- Instructions/Start page -->
-		<div data-role="page" id="instruction_page" data-theme="b">
-		    <div data-role="header">
-		        <h1 id="formTitle">${formName}</h1>
-		        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-		        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-		        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${quitButtonText}</a>
-		    </div>
-		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+
+    </div><!-- /content -->
+<!-- Instructions/Start page -->
+<div data-role="page" id="instruction_page" data-theme="b">
+    <div data-role="header">
+        <h1>${formNameHeader}</h1>
+        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
+        <a id="confirmLangButton" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguage('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
+        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${quitButtonText}</a>
+    </div>
+    <div data-role="content" >
+        <div data-role="content" >
+            <strong><span id="additionalQuestions">${additionalQuestions}</span></strong>
+            <div><br/></div>
+        </div>
+    </div>
+	<div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 		        <a id="startButton" href="#" data-role="button" data-theme="b" onclick="changePage(1)" style="width: 150px;">Start</a>
-		    </div>
+    </div>
 		
-		</div>
-		
-		
-	<!-- Form pages (English) - two questions per page -->	
+</div>
+
+<div data-role="page" id="form_completed_page" data-theme="b">
+    <div data-role="header" >
+        <h1>${formName} Form Completed</h1>
+    </div>
+    <div data-role="content" style="margin: 0 auto;text-align: center;" >
+        <strong><span>The ${formName} form has already been completed and successfully submitted.  It cannot be accessed again.</span></strong>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-inline="true" data-theme="b" data-role="button" data-rel="back" style="width: 150px;">Back</a>
+    </div>
+</div>
+
+<%@ include file="mobileQuitConfirmDialog.jsp" %>
+	
+	<div data-role="page" id="form_completed_page" data-theme="b">
+    <div data-role="header" >
+        <h1>PHQ-9 Form Completed</h1>
+    </div>
+    <div data-role="content" style="margin: 0 auto;text-align: center;" >
+        <strong><span>The PHQ-9 form has already been completed and successfully submitted.  It cannot be accessed again.</span></strong>
+    </div>
+    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
+        <a href="#" data-inline="true" data-theme="b" data-role="button" data-rel="back" style="width: 150px;">Back</a>
+    </div>
+</div>
+
+<!-- Form pages (English) - two questions per page -->	
+	
 		<c:set var="PNumber" value="1" />
 		<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
 		    <div data-role="header">
@@ -103,17 +145,23 @@
 		        <div><h3>${headerScreenQuestion}</h3><hr/></div>
 		            
 		        <c:set var="QNumber" value="1" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
+		        <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
 		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script> insertChoices("${QNumber}");</script></div>
+		        <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		        <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
 		        
 		        <c:set var="QNumber" value="2" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
+		        <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
+                
+                <c:set var="QNumber" value="3" />
+                <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
+                
 		        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 		    </div>
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -134,18 +182,30 @@
 		    
 		        <div><h3>${headerScreenQuestion}</h3><hr/></div>
 		            
-		        <c:set var="QNumber" value="3" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		        <c:set var="QNumber" value="4" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
+		      <div id="content_${PNumber}" data-role="content">
+            
+                <div><h3>${headerScreenQuestion}</h3><hr/></div>
+                    
+                <c:set var="QNumber" value="4" />
+                <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
+                
+                <c:set var="QNumber" value="5" />
+                <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
+          
+                 <c:set var="QNumber" value="6" />
+                <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
+              
+                <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
+            </div>
 		        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 		    </div>
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -167,63 +227,23 @@
 		    
 		        <div><h3>${headerScreenQuestion}</h3><hr/></div>
 		            
-		        <c:set var="QNumber" value="5" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		        <c:set var="QNumber" value="6" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
+		        <c:set var="QNumber" value="7" />
+                <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
+      
 		        <div style="float: right;">
 		            <span style="float: right; font-size: 75%;">${copyright}</span>
 		        </div>
 		    </div>
+		    
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
 		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
 		    </div>
 		</div>
 		
-		<c:set var="PNumber" value="4" />
-		<div id="question_page_${PNumber}" data-role="page" data-theme="b" type="question_page">
-		    <div data-role="header">
-		        <h1>${formName}</h1>
-		        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-		        <a id="langPage${PNumber}Button" data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">Espa&#241;ol</a>
-		        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${quitButtonText}</a>
-		    </div>
-		    
-		    <div id="content_${PNumber}" data-role="content">
-		    
-		        <div><h3>${headerScreenQuestion}</h3><hr/></div>
-		            
-		        <c:set var="QNumber" value="7" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		        <c:set var="QNumber" value="8" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		        <div style="float: right;">
-		            <span style="float: right; font-size: 75%;">${copyright}</span>
-		        </div>
-		    </div>
-		   <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
-		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
-		    </div>
-		</div>
-	
 		
 	
 	<!-- Form pages (Spanish) - two questions per page -->
@@ -241,18 +261,24 @@
 		        <div><h3>${headerScreenQuestion_sp}</h3><hr/></div>
 		
 		        <c:set var="QNumber" value="1_2" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
+		        <input id="CADQuestion_${QNumber}" name="CADQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
 		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
+		        <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
 		        
 		
 		        <c:set var="QNumber" value="2_2" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
+                <input id="CADQuestion_${QNumber}" name="CADQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
+         	    
+         	    <c:set var="QNumber" value="3_2" />
+                <input id="CADQuestion_${QNumber}" name="CADQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
+                  
 		        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 		    </div>
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -274,20 +300,24 @@
 	     
 	            <div><h3>${headerScreenQuestion_sp}</h3><hr/></div>
 		            
-		        <c:set var="QNumber" value="3_2" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		
 		        <c:set var="QNumber" value="4_2" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		        
+                <input id="CADQuestion_${QNumber}" name="CADQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
+		
+                <c:set var="QNumber" value="5_2" />
+                <input id="CADQuestion_${QNumber}" name="CADQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
+
+                <c:set var="QNumber" value="6_2" />
+                <input id="CADQuestion_${QNumber}" name="CADQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
+   		        
 		        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
 		    </div>
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
@@ -310,19 +340,12 @@
 	     
 				<div><h3>${headerScreenQuestion_sp}</h3><hr/></div>
 		
-		        <c:set var="QNumber" value="5_2" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		
-		        <c:set var="QNumber" value="6_2" />
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}" />
-		        <c:set var="questionName" value="question${QNumber}" />
-		        <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-		        <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
+	             <c:set var="QNumber" value="7_2" />
+                <input id="CADQuestion_${QNumber}" name="CADQuestion_${QNumber}" type="hidden" value="question${QNumber}" />
+                <c:set var="questionName" value="question${QNumber}" />
+                <strong>${questionName}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
+                <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
+   
 		        <div style="float: right;">
 		            <span style="float: right; font-size: 75%;">${copyright}</span>
 		        </div>
@@ -332,40 +355,6 @@
 		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
 		    </div>
 		</div>
-		
-		
-		<c:set var="PNumber" value="4" />
-		<div id="question_page_${PNumber}_sp" data-role="page" data-theme="b" type="question_page">
-		    <div data-role="header" >
-		        <h1>${formName_sp}</h1>
-		        <h1>${patient.givenName}&nbsp;${patient.familyName}</h1>
-		        <a id="langPage${PNumber}SPButton"  data-role="button" href="#" class="ui-btn-left" data-theme="b" onclick="setLanguageFromForm('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}')">English</a>
-		        <a data-role="button" onclick="parent.quitForm()" data-theme="b" class="quitButton ui-btn-right" data-icon="forward" data-transition="pop">${quitButtonText_sp}</a>
-		    </div>
-		    
-		    <div id="content_${PNumber}" data-role="content"><div><h3>${headerScreenQuestion_sp}</h3><hr/></div>
-		        
-		        <c:set var="QNumber" value="7_2"/>
-		        <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}"/>
-		        <c:set var="questionName"  value="question${QNumber}"/>
-			    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-			    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-			    
-			    <c:set var="QNumber" value="8_2"/>
-			    <input id="Question_${QNumber}" name="Question_${QNumber}" type="hidden" value="question${QNumber}"/>
-		        <c:set var="questionName"  value="question${QNumber}"/>
-			    <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
-			    <div class="choice${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${QNumber}");</script></div>
-		        
-		        <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
-		    </div>
-		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-		       	  <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
-			      <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>    
-		    </div>
-		</div>
-		
 	
 		<div id="empty_page" data-role="page" data-theme="b">
 		</div>
@@ -379,6 +368,8 @@
 		<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
 		<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
 	    <input id="language" name="language" type="hidden" value="${language}"/>
+	    <input id="GAD7Score" name="GAD7Score" type="hidden"/>
+        <input id="GAD7Interpretation" name="GAD7Interpretation" type="hidden"/>
 	
 	</form>
 	</body>
