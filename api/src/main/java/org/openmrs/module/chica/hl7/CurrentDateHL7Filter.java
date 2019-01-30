@@ -6,9 +6,14 @@ package org.openmrs.module.chica.hl7;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 
@@ -29,7 +34,12 @@ public class CurrentDateHL7Filter implements HL7Filter {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	public boolean ignoreMessage(HL7EncounterHandler hl7EncounterHandler, Message message, String incomingMessageString) {
+	/**
+	 * @see org.openmrs.module.sockethl7listener.HL7Filter#ignoreMessage(
+	 * org.openmrs.module.sockethl7listener.HL7EncounterHandler, ca.uhn.hl7v2.model.Message, java.lang.String)
+	 */
+	@Override
+    public boolean ignoreMessage(HL7EncounterHandler hl7EncounterHandler, Message message, String incomingMessageString) {
 		
 		String messageType = null;
 		//get msh-9-2 (message type)
@@ -50,52 +60,64 @@ public class CurrentDateHL7Filter implements HL7Filter {
 			String locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
 			        .getLocation(message);
 			
-			//only filter messages for IU Health
-			if (locationString.equals(ChirdlUtilConstants.LOCATION_RIIUMG)) {
+			if (StringUtils.isBlank(locationString)) {
+			    return false;
+			}
+			
+		    Location location = Context.getLocationService().getLocation(locationString);
+		    if (location == null) {
+		        return false;
+		    }
+		    
+		    //Filter messages by appointment if location specifies
+		    ChirdlUtilBackportsService cubService = Context.getService(ChirdlUtilBackportsService.class);
+            ChirdlLocationAttributeValue filterByAppointment = cubService.getLocationAttributeValue(
+                location.getLocationId(), ChirdlUtilConstants.LOCATION_ATTR_FILTER_HL7_BY_APPOINTMENT);
+            
+            if (filterByAppointment == null || 
+                    !ChirdlUtilConstants.GENERAL_INFO_TRUE.equalsIgnoreCase(filterByAppointment.getValue())) {
+                return false;
+            }
+			
+			Calendar appointment = Calendar.getInstance();
+			Calendar today = Calendar.getInstance();
+			
+			//process A04 messages
+			if (HL7_MESSAGE_TYPE_A04.equals(messageType)) {
 				
-				Calendar appointment = Calendar.getInstance();
-				Calendar today = Calendar.getInstance();
-				
-				//process A04 messages
-				if (HL7_MESSAGE_TYPE_A04.equals(messageType)) {
-					
-					//if there is no appointment time, process the A04
-					//it is a walkin
-					if (appointmentTime == null) {
-						return false;
-					}
-					
-					appointment.setTime(appointmentTime);
-					
-					//if there is an appointment time and it is today,
-					//process the A04. If not, it is a preregistration and
-					//should be ignored
-					if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR)
-					        && appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH)
-					        && appointment.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)) {
-						return false;
-					}
+				//if there is no appointment time, process the A04
+				//it is a walkin
+				if (appointmentTime == null) {
+					return false;
 				}
 				
-				//Only process A08's with a non-null appointment time
-				//and an appointment time that is today
-				//This will ignore updates on different days
-				if (HL7_MESSAGE_TYPE_A08.equals(messageType)) {
-					if (appointmentTime == null) {
-						return true;
-					}
-					
-					appointment.setTime(appointmentTime);
-					
-					if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR)
-					        && appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH)
-					        && appointment.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)) {
-						return false;
-					}
+				appointment.setTime(appointmentTime);
+				
+				//if there is an appointment time and it is today,
+				//process the A04. If not, it is a preregistration and
+				//should be ignored
+				if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR)
+				        && appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+				        && appointment.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)) {
+					return false;
 				}
-			} else {
-				//don't ignore the message if it is not IU Health
-				return false;
+			}
+			
+			//Only process A08's with a non-null appointment time
+			//and an appointment time that is today
+			//This will ignore updates on different days
+			if (HL7_MESSAGE_TYPE_A08.equals(messageType)) {
+				if (appointmentTime == null) {
+					return true;
+				}
+				
+				appointment.setTime(appointmentTime);
+				
+				if (appointment.get(Calendar.YEAR) == today.get(Calendar.YEAR)
+				        && appointment.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+				        && appointment.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)) {
+					return false;
+				}
 			}
 		}
 		
