@@ -37,8 +37,8 @@
 	<input type="hidden" name="formNameHeader_sp" id="formNameHeader_sp" value="${formNameHeader_sp}" />
 	<c:set var="prefix" value="ParentPsychosocialQuestionEntry_" />
 
-	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Please hand tablet to the parent${slash}caregiver${period}" />
-	<c:set var="instructions_additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales para su padre${slash}madre${slash}cuidador. Entregue la tableta a su padre/madre/cuidador${period}" />
+	<c:set var="instructions_additionalQuestions" value="The following are some additional questions for your parent. Your parents will not be able to look back at your previous answers${period} Please hand tablet to the parent${slash}caregiver${period}" />
+	<c:set var="instructions_additionalQuestions_sp" value="Las siguientes son algunas preguntas adicionales para su padre${slash}madre${slash}cuidador. Sus padres no podr${aAcute}n ver sus respuestas anteriores${period} Entregue la tableta a su padre/madre/cuidador${period}" />
 
 	<!-- Questions (English) -->
 	<c:set var="question1"  value='In the past four weeks, did you worry that your household would not have enough food${questionMark}' scope="request"/>
