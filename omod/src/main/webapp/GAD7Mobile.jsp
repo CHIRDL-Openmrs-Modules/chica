@@ -349,6 +349,8 @@
 		        <div style="float: right;">
 		            <span style="float: right; font-size: 75%;">${copyright}</span>
 		        </div>
+		        
+		        <%@ include file="mobileFinishDialogs_SP.jsp" %>
 		    </div>
 		    <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
 		        <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
@@ -368,8 +370,8 @@
 		<input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
 		<input id="sessionId" name="sessionId" type="hidden" value="${sessionId}"/>
 	    <input id="language" name="language" type="hidden" value="${language}"/>
-	    <input id="GAD7Score" name="GAD7Score" type="hidden"/>
-        <input id="GAD7Interpretation" name="GAD7Interpretation" type="hidden"/>
+	    <input id="GAD7_Score" name="GAD7_Score" type="hidden"/>
+        <input id="GAD7_Interpretation" name="GAD7_Interpretation" type="hidden"/>
 	
 	</form>
 	</body>
