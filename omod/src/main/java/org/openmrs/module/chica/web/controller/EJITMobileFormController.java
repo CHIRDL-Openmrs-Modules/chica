@@ -1,7 +1,12 @@
 package org.openmrs.module.chica.web.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.chica.web.ServletUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class EJITMobileFormController {
+	
+	protected final Log log = LogFactory.getLog(getClass());
     
     /** Form views */
     private static final String FORM_VIEW_PQH9_MOBILE = "/module/chica/phq9Mobile";
@@ -224,6 +231,15 @@ public class EJITMobileFormController {
      */
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView processSubmit(HttpServletRequest request) {
-        return MobileFormControllerUtil.handleMobileFormSubmission(request, SUCCESS_VIEW);
+    	try {
+			boolean authenticated = ServletUtil.authenticateUser(request);
+			if (authenticated!=true) {
+				log.error("Second user authentication request failed when submitting EJIT after a timeout.");
+			}
+		} catch (IOException e) {
+			log.error("IOException in EJITMobileFormController.", e);
+		}
+       
+    	return MobileFormControllerUtil.handleMobileFormSubmission(request, SUCCESS_VIEW);
     }
 }
