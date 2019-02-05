@@ -234,7 +234,7 @@ public class EJITMobileFormController {
     	try {
 			boolean authenticated = ServletUtil.authenticateUser(request);
 			if (authenticated!=true) {
-				log.error("Second user authentication request failed when submitting EJIT after a timeout.");
+				log.error("Second authentication request failed for EJIT submit.");
 			}
 		} catch (IOException e) {
 			log.error("IOException in EJITMobileFormController.", e);
