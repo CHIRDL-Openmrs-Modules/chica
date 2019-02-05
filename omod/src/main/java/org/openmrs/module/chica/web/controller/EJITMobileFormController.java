@@ -231,15 +231,14 @@ public class EJITMobileFormController {
      */
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView processSubmit(HttpServletRequest request) {
-    	try {
-			boolean authenticated = ServletUtil.authenticateUser(request);
-			if (authenticated!=true) {
-				log.error("Second authentication request failed for EJIT submit.");
-			}
-		} catch (IOException e) {
-			log.error("IOException in EJITMobileFormController.", e);
-		}
-       
-    	return MobileFormControllerUtil.handleMobileFormSubmission(request, SUCCESS_VIEW);
+        try {
+            boolean authenticated = ServletUtil.authenticateUser(request);
+            if (authenticated!=true) {
+                log.error("Second authentication request failed for EJIT submit.");
+            }
+        } catch (IOException e) {
+            log.error("IOException in EJITMobileFormController.", e);
+        }
+        return MobileFormControllerUtil.handleMobileFormSubmission(request, SUCCESS_VIEW);
     }
 }
