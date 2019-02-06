@@ -232,9 +232,8 @@ public class EJITMobileFormController {
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView processSubmit(HttpServletRequest request) {
         try {
-            boolean authenticated = ServletUtil.authenticateUser(request);
-            if (authenticated!=true) {
-                log.error("Second authentication request failed for EJIT submit.");
+            if (!ServletUtil.authenticateUser(request)) {
+                log.error("Authentication request failed for EJIT submit.");
             }
         } catch (IOException e) {
             log.error("IOException in EJITMobileFormController.", e);
