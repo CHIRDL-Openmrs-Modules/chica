@@ -129,7 +129,9 @@ public class displayHeight implements Rule
 			if(location!= null){
 				//if this is Pecar or IU Health, just return inches or cm based on age
 				String locationName = location.getName();
-				if(locationName.equalsIgnoreCase("PEPS") || locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)){
+				if(locationName.equalsIgnoreCase("PEPS") || 
+				        locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG) || 
+				        locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_PHEDMSR)){
 					return inchesOrCmResult(ruleResult,
 							parameters,patient);
 				}else{
