@@ -74,7 +74,8 @@ public class heightUnits implements Rule
 			String locationName = location.getName(); 
 			if(locationName.equalsIgnoreCase("PEPS")){
 				return cmOrInchesResult(parameters);
-			} else if (locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)) {
+			} else if (locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG) || 
+                    locationName.equalsIgnoreCase(ChirdlUtilConstants.LOCATION_PHEDMSR)) {
 				return new Result(CM);
 			} else {
 				//return "in."
