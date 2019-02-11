@@ -94,7 +94,8 @@ public class temperatureDisplay implements Rule {
 		Integer locationId = (Integer) parameters.get("locationId");
 		Location location = Context.getLocationService().getLocation(locationId);
 		
-		if(location != null && location.getName().equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG)) {
+		if(location != null && (location.getName().equalsIgnoreCase(ChirdlUtilConstants.LOCATION_RIIUMG) || 
+		        location.getName().equalsIgnoreCase(ChirdlUtilConstants.LOCATION_PHEDMSR))) {
 			// Convert to metric
 			double metricTemp = org.openmrs.module.chirdlutil.util.Util.convertUnitsToMetric(
 				temp, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_FAHRENHEIT);
