@@ -4661,7 +4661,19 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
             delete from global_property where property = 'chica.ImmunizationQueryUserId';
             
         </sql>
-    </diff>    
+    </diff>
+    <diff>
+        <version>1.11.1</version>
+        <author>Steve McKee</author>
+        <date>January 28, 2018</date>
+        <description>
+            Add new filterHL7ByAppointment location attribute
+        </description>
+        <sql>
+            INSERT INTO chirdlutilbackports_location_attribute (name, description)
+            VALUES ('filterHL7ByAppointment', 'If A04 and A08 messages should only be allowed if appointment time is null or today.');
+        </sql>
+     </diff>
 </sqldiff>
 
 

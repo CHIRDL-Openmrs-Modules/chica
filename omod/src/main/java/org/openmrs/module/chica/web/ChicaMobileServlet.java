@@ -37,7 +37,7 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final int PRIMARY_FORM = 0;
 	private static final int SECONDARY_FORMS = 1;
 	private static final String PATIENTS_WITH_PRIMARY_FORM = "patientsWithPrimaryForm";
-	private static final String GET_PATTIENT_SECONDARY_FORMS = "getPatientSecondaryForms";
+	private static final String GET_PATIENT_SECONDARY_FORMS = "getPatientSecondaryForms";
 	private static final String VERIFY_PASSCODE = "verifyPasscode";
 	private static final String IS_AUTHENTICATED = "isAuthenticated";
 	private static final String AUTHENTICATE_USER = "authenticateUser";
@@ -117,7 +117,7 @@ public class ChicaMobileServlet extends HttpServlet {
 	        String action = request.getParameter(PARAM_ACTION);
 	        if (PATIENTS_WITH_PRIMARY_FORM.equals(action)) {
 	            getPatientsWithPrimaryForm(request, response);
-	        } else if (GET_PATTIENT_SECONDARY_FORMS.equals(action)) {
+	        } else if (GET_PATIENT_SECONDARY_FORMS.equals(action)) {
 	            getPatientSecondaryForms(request, response);
 	        } else if (VERIFY_PASSCODE.equals(action)) {
 	            verifyPasscode(request, response);
