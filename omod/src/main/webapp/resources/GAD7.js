@@ -1,5 +1,5 @@
 var aAcute = "&#225";
-var iAcute = "&#237"/>
+var iAcute = "&#237";
 
 $(document).on("pageinit", function() {
 	pageInit();
@@ -33,13 +33,13 @@ function insertChoices(prefix, questionNumber, isSpanish){
 	var fieldSet = '';
 	
 	fieldSet += '<input type="radio" name="' + prefix + questionNumber + '" id="' + prefix + questionNumber + '_NOT_AT_ALL" value="0" data-theme="b" />';
-	fieldSet += '<label for="' + prefix + questionNumber + '_NOT_AT_ALL">' + choiceNever + '</label>';
+	fieldSet += '<label for="' + prefix + questionNumber + '_NOT_AT_ALL">' + choiceNotAtAll + '</label>';
 	fieldSet += '<input type="radio" name="' + prefix + questionNumber + '" id="' + prefix + questionNumber + '_SEVERAL_DAYS" value="1" data-theme="b" />';
-    fieldSet += '<label for="' + prefix + questionNumber + '_SEVERAL_DAYS">' + choiceSometimes + '</label>';
+    fieldSet += '<label for="' + prefix + questionNumber + '_SEVERAL_DAYS">' + choiceSeveralDays + '</label>';
     fieldSet += '<input type="radio" name="' + prefix + questionNumber + '" id="' + prefix + questionNumber + '_MORE_THAN_HALF_DAYS" value="2" data-theme="b" />';
-    fieldSet += '<label for="' + prefix + questionNumber + '_MORE_THAN_HALF_DAYS">' + choiceUsually + '</label>';
-	fieldSet += '<input type="radio" name="' + prefix + questionNumber + '" id="' + prefix + questionNumber + '_EVERY_DAYS" value="3" data-theme="b" />';
-    fieldSet += '<label for="' + prefix + questionNumber + '_EVERY_DAY">' + choiceAlways + '</label>';
+    fieldSet += '<label for="' + prefix + questionNumber + '_MORE_THAN_HALF_DAYS">' + choiceMoreThanHalfDays + '</label>';
+	fieldSet += '<input type="radio" name="' + prefix + questionNumber + '" id="' + prefix + questionNumber + '_EVERY_DAY" value="3" data-theme="b" />';
+    fieldSet += '<label for="' + prefix + questionNumber + '_EVERY_DAY">' + choiceNearlyEveryDay + '</label>';
 	
 	fieldSetElement.append(fieldSet);
 	
