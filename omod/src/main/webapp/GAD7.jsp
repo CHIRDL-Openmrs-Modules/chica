@@ -71,7 +71,7 @@
     <input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
 	
 	
-<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'GAD7', 'GAD7QuestionEntry_', 'GAD7QuestionEntry_')">
+<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'GAD7', 'CAD7Question_', 'GAD7QuestionEntry_')">
 <form id="GAD7" method="POST" action="GAD7.form" enctype="multipart/form-data">
 		<c:if test="${errorMessage != null}">
 	        <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
@@ -225,7 +225,7 @@
 		         <span style="float: right; font-size: 75%;">${copyright}</span>
 		    </div>
 		    </div>
-		    
+		     <%@ include file="mobileFinishDialogs.jsp" %>
 	       <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
                 <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)"  style="width: 150px;">Previous</a>
                 <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
@@ -337,6 +337,7 @@
             <div style="float:right;"><span style="float: right;font-size: 75%;">${copyright}</span></div>
             
             </div>
+            <%@ include file="mobileFinishDialogs_SP.jsp" %>
             <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
                 <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)"  style="width: 150px;">Previous</a>
                 <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
