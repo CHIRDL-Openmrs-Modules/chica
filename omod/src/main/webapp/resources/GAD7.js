@@ -1,6 +1,6 @@
 var aAcute = "&#225";
 var iAcute = "&#237";
-
+var numQuestions = 7;
 $(document).on("pageinit", function() {
 	pageInit();
 });
@@ -50,33 +50,61 @@ function insertChoices(prefix, questionNumber, isSpanish){
 
 function calculateScore() {
 	var score = 0;
+	var NOT_AT_ALL = 0;
+	var SEVERAL_DAYS = 1;
+	var GT_HALF_THE_DAYS = 2;
+	var NEARLY_EVERY_DAY = 3;
+	var subtotal_not_at_all = 0;
+	var subtotal_several_days = 0;
+	var subtotal_GT_half_days = 0;
+	var subtotal_nearly_ever_day = 0;
 	var valueFound = false;
 	var spanish_extension = "";
 	if (!english){
 		spanish_extension = "_2";
 	}
 	
-	for (var i = 1; i < 10; i++) {
-		//value = $("input:radio[name=PHQ9QuestionEntry_" + i + "]").val();
-    	$("input[name=CAD7QuestionEntry_" + i + spanish_extension + "]:checked").each(function() {
+	for (var i = 1; i < numQuestions; i++) {
+		//Calculate the total score and also sub-totals of each choice.  
+		//Sub-totals are needed for the GAD-7 results form.
+    	$("input[name=GAD7QuestionEntry_" + i + spanish_extension + "]:checked").each(function() {
     		valueFound = true;
     		var value = parseInt($(this).val())
-            score = score + value;
+    		switch (value){
+	    		case (NOT_AT_ALL):
+	    			subtotal_not_at_all += value;
+	    			break;
+	    		case (SEVERAL_DAYS):
+	    			subtotal_several_days += value;
+	    			break;
+	    		case (GT_HALF_THE_DAYS):
+	    			subtotal_GT_half_days += value;
+	    			break;
+	    		case (NEARLY_EVERY_DAY):
+	    			subtotal_nearly_ever_day += value;
+    		}
+    		
+            score += value;
         });
 		
     }
 	
 	if (valueFound) {
-		$("#CAD7Score").val(score);
 		
+		$("#GAD7_Score").val(score);
+		
+		$("#GAD7_Score_NotAtAll").val(subtotal_not_at_all);
+		$("#GAD7_Score_SeveralDays").val(subtotal_several_days);
+		$("#GAD7_Score_GTHalfDays").val(subtotal_GT_half_days);
+		$("#GAD7_Score_NearlyEveryDay").val(subtotal_nearly_ever_day);
 		if (score <= 4) {
-			$("#CAD7Interpretation").val("minimal");
+			$("#GAD7_Interpretation").val("minimal");
 		} else if (score >= 5  && score <=9) {
-			$("#CAD7Interpretation").val("mild");
+			$("#GAD7_Interpretation").val("mild");
 		} else if (score >=10 && score <= 14) {
-			$("#CAD7Interpretation").val("moderate");
+			$("#GAD7_Interpretation").val("moderate");
 		} else if (score >=15 ){
-			$("#CAD7Interpretation").val("severe");
+			$("#GAD7_Interpretation").val("severe");
 		}
 	}
 }

@@ -359,6 +359,11 @@
 	    <input id="language" name="language" type="hidden" value="${language}"/>
 	    <input id="GAD7_Score" name="GAD7_Score" type="hidden"/>
         <input id="GAD7_Interpretation" name="GAD7_Interpretation" type="hidden"/>
+        <input id="GAD7_Score_NotAtAll" name="GAD7_Score_NotAtAll" type="hidden"/>
+        <input id="GAD7_Score_SeveralDays" name="GAD7_Score_SeveralDays" type="hidden"/>
+        <input id="GAD7_Score_GTHalfDays" name="GAD7_Score_GTHalfDays" type="hidden"/>
+        <input id="GAD7_Score_NearlyEveryDay" name="GAD7_Score_NearlyEveryDay" type="hidden"/>                        
+        
 	
 	</form>
 	</body>
