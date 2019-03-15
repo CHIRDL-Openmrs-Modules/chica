@@ -97,14 +97,6 @@ function calculateScore() {
 		$("#GAD7_Score_SeveralDays").val(subtotal_several_days);
 		$("#GAD7_Score_GTHalfDays").val(subtotal_GT_half_days);
 		$("#GAD7_Score_NearlyEveryDay").val(subtotal_nearly_ever_day);
-		if (score <= 4) {
-			$("#GAD7_Interpretation").val("minimal");
-		} else if (score >= 5  && score <=9) {
-			$("#GAD7_Interpretation").val("mild");
-		} else if (score >=10 && score <= 14) {
-			$("#GAD7_Interpretation").val("moderate");
-		} else if (score >=15 ){
-			$("#GAD7_Interpretation").val("severe");
-		}
+		
 	}
 }
