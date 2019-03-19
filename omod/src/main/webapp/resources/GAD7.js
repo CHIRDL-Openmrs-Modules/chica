@@ -19,9 +19,6 @@ function insertChoices(prefix, questionNumber, isSpanish){
 		choiceSeveralDays = "Varios d" + iAcute + "as";
 		choiceMoreThanHalfDays = "M" + aAcute + "s de la mitad de los d" + iAcute + "as";
 		choiceNearlyEveryDay = "Casi todos los d" + iAcute + "as";
-		if (!questionNumber.endsWith("_2")){
-			questionNumber = questionNumber + "_2";
-		}
 	}
 	
 	var fieldSetElement = $(document.createElement("fieldset"));
@@ -64,7 +61,7 @@ function calculateScore() {
 		spanish_extension = "_2";
 	}
 	
-	for (var i = 1; i < numQuestions; i++) {
+	for (var i = 1; i <= numQuestions; i++) {
 		//Calculate the total score and also sub-totals of each choice.  
 		//Sub-totals are needed for the GAD-7 results form.
     	$("input[name=GAD7QuestionEntry_" + i + spanish_extension + "]:checked").each(function() {
@@ -92,7 +89,6 @@ function calculateScore() {
 	if (valueFound) {
 		
 		$("#GAD7_Score").val(score);
-		
 		$("#GAD7_Score_NotAtAll").val(subtotal_not_at_all);
 		$("#GAD7_Score_SeveralDays").val(subtotal_several_days);
 		$("#GAD7_Score_GTHalfDays").val(subtotal_GT_half_days);

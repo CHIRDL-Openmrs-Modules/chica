@@ -136,7 +136,7 @@
             <div><h3>${headerScreenQuestion}</h3><hr/></div>
             
              <c:set var="QNumber" value="1" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="${question1}" />
+            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}"/>
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
@@ -270,7 +270,7 @@
             
             </div>
              <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Next</a>
+                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber} + 1)" style="width: 150px;">Proximo</a>
             </div>
         </div>
 			
@@ -310,8 +310,8 @@
             
             </div>
             <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Previous</a>
-                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Next</a>
+                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)" style="width: 150px;">Anterior</a>
+                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}+1)" style="width: 150px;">Proximo</a>
             </div> 
         </div>
         
@@ -339,8 +339,8 @@
             </div>
             <%@ include file="mobileFinishDialogs_SP.jsp" %>
             <div data-role="footer" style="text-align:center;padding-bottom:20px;padding-top:20px;">
-                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)"  style="width: 150px;">Previous</a>
-                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continue</a>
+                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="changePage(${PNumber}-1)"  style="width: 150px;">Anterior</a>
+                <a href="#" data-role="button" data-inline="true" data-theme="b" onclick="attemptFinishForm()" style="width: 150px;">Continuar</a>
             </div>
         </div>
         
