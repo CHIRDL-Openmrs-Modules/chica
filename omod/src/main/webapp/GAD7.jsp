@@ -71,7 +71,7 @@
     <input type="hidden" name="instructions_additionalQuestions_sp" id="instructions_additionalQuestions_sp" value="${instructions_additionalQuestions_sp}" />
 	
 	
-<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'GAD7', 'CAD7Question_', 'GAD7QuestionEntry_')">
+<body onLoad="init('${newFirstName}&nbsp;${newLastName}', '${patient.birthdate}', '${formInstance}', '${language}', 'GAD7', 'GAD7Question_', 'GAD7QuestionEntry_')">
 <form id="GAD7" method="POST" action="GAD7.form" enctype="multipart/form-data">
 		<c:if test="${errorMessage != null}">
 	        <div id="error_dialog" class="extended-header" data-role="dialog" data-close-btn="none" data-dismissible="false" data-theme="b" data-overlay-theme="c">
@@ -136,19 +136,19 @@
             <div><h3>${headerScreenQuestion}</h3><hr/></div>
             
              <c:set var="QNumber" value="1" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}"/>
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
             
             <c:set var="QNumber" value="2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}"/>
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
             
             <c:set var="QNumber" value="3" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}"/>
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
@@ -176,19 +176,19 @@
             <div><h3>${headerScreenQuestion}</h3><hr/></div>
             
              <c:set var="QNumber" value="4" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
             
             <c:set var="QNumber" value="5" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
             
             <c:set var="QNumber" value="6" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
@@ -216,7 +216,7 @@
 		        <div><h3>${headerScreenQuestion}</h3><hr/></div>
 		            
             <c:set var="QNumber" value="7" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", false);</script></div>
@@ -249,19 +249,19 @@
             <div><h3>${headerScreenQuestion_sp}</h3><hr/></div>
             
              <c:set var="QNumber" value="1_2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
             
             <c:set var="QNumber" value="2_2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
             
             <c:set var="QNumber" value="3_2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
@@ -289,19 +289,19 @@
             <div><h3>${headerScreenQuestion_sp}</h3><hr/></div>
             
              <c:set var="QNumber" value="4_2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
             
             <c:set var="QNumber" value="5_2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
             
             <c:set var="QNumber" value="6_2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
@@ -329,7 +329,7 @@
             <div><h3>${headerScreenQuestion_sp}</h3><hr/></div>
             
              <c:set var="QNumber" value="7_2" />
-            <input id="CAD7Question_${QNumber}" name="CAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
+            <input id="GAD7Question_${QNumber}" name="GAD7Question_${QNumber}" type="hidden" value="question${QNumber}" />
             <c:set var="questionName" value="question${QNumber}" />
             <strong>${requestScope[questionName]}</strong><a data-role="button" data-inline="true" class="custom-button" onclick='readText("question${QNumber}")'></a>
             <div class="choice_${QNumber}" data-role="fieldcontain" style="margin-top:0px;"><script>insertChoices("${prefix}", "${QNumber}", true);</script></div>
