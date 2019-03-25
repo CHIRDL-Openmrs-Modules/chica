@@ -20,6 +20,7 @@ public class DetermineShouldAutoPrintPWS implements Rule
 {
 	private static final String LOCATION_TEPS = "TEPS";
 	private static final String LOCATION_PCPS = "PCPS";
+	private static final String LOCATION_PEPS = "PEPS";
 	
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException 
 	{
@@ -53,8 +54,9 @@ public class DetermineShouldAutoPrintPWS implements Rule
 			locationName = (String) locationNameObj;
 		}
 		
-		// Don't auto print if it's from 38th Street (TEPS) or OCC (PCPS), but still do if it's from the GreaseBoard
-		if ((locationName.equalsIgnoreCase(LOCATION_TEPS) || locationName.equalsIgnoreCase(LOCATION_PCPS)) && 
+		// Don't auto print if it's from 38th Street (TEPS), OCC (PCPS), or Pecar (PEPS) but still do if it's from the GreaseBoard
+		if ((locationName.equalsIgnoreCase(LOCATION_TEPS) || locationName.equalsIgnoreCase(LOCATION_PCPS)
+		        || locationName.equalsIgnoreCase(LOCATION_PEPS)) && 
 				!printedFromGreaseBoard.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE)) 
 		{
 			return new Result(ChirdlUtilConstants.GENERAL_INFO_FALSE);
