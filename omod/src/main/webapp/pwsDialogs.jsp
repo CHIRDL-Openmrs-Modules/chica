@@ -49,37 +49,6 @@
                         <span>Saving Draft...</span>
                     </div>
                 </div>
-                <div id="formSelectionDialog" title="CHICA Recommended Handouts" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-                    <div id="formSelectionDialogContainer">
-                        <div id="formLoading">
-                           <span id="formLoadingPanel"><img src="${pageContext.request.contextPath}/moduleResources/chica/images/ajax-loader.gif"/>Loading forms...</span>
-                        </div>
-                        <div id="formServerError">
-                            <div id="formServerErrorText" class="ui-state-error"></div>
-                            <br/><br/><a href="#" id="retryButton" class="icon-button ui-state-default ui-corner-all">Retry</a>
-                        </div>
-                        <div id="noForms">
-                            There are no recommended handouts for ${PatientName}.
-                        </div>
-                        <div id="recommendedHandoutsContainer">
-                            <div class="recommendedHandoutsMultiselect">Ctrl+click to select multiple forms</div>
-				            <div class="recommendedHandoutsFormListContainer">
-				               <ol id="recommendedHandoutsFormList"></ol>
-				            </div>
-				            <div class="recommendedHandoutsCombineButtonPanel">
-				            <a href="#" id="recommendedHandoutsSelectAllButton" class="force-print-icon-button ui-state-default ui-corner-all">Select All</a>
-	                           <a href="#" id="recommendedHandoutsCombineButton" class="force-print-icon-button ui-state-default ui-corner-all">Combine Forms</a>
-	                        </div>
-                        </div>
-			            <div class="recommendedHandoutContainer">
-			            <!-- CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page. -->
-				           <object class="recommendedHandoutObject" onreadystatechange="return formLoaded();" onload="formLoaded();">
-				              <span class="force-print-black-text">It appears your Web browser is not configured to display PDF files. 
-				              <a style="color:blue" href='http://get.adobe.com/reader/'>Click here to download the Adobe PDF Reader.</a>  Please restart your browser once the installation is complete.</span>
-				           </object>
-				        </div>
-                    </div>
-                </div>
                 <div id="notesDialog" title="CHICA Notes" class="ui-dialog-titlebar ui-widget-header" >
                     <div id="notesDialogContainer">                   
                         <div id="notesTabContainer">
@@ -100,11 +69,6 @@
                         </div>
                     </div>
                 </div>
-                <div id="noSelectedFormsDialog" title="No Selection" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
-				    <div style="margin: 0 auto;text-align: center;">
-				        <div style="color:#000000;"><p><b>Please select at least two forms to combine.</b></p></div>
-				    </div>
-				</div>
 				<div id="saveDraftErrorDialog" title="Save Draft Error" class="ui-dialog-titlebar ui-widget-header" style="overflow-x: hidden;">
                     <div style="margin: 0 auto;text-align: center;">
                         <div id="saveDraftErrorMessage" style="color:#000000;"><p><b>An error occurred saving the draft.</b></p></div>
@@ -121,3 +85,4 @@
                     </div>
                 </div>
                 <%@ include file="forcePrintJITs.jsp" %>
+                <%@ include file="recommendedHandouts.jsp" %>

@@ -23,6 +23,15 @@ body {
     width:270px;
     height:70px;
     margin: 0 auto;
+    padding-bottom:50px;
+}
+
+.button {
+	padding-bottom:15px;
+}
+
+.largeButton {
+    width: 220px;
 }
 
 .buttonsData {

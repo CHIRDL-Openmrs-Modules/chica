@@ -1,0 +1,101 @@
+#recommended-handouts-form-selection-dialog-container {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    overflow-y: hidden;
+}
+#recommended-handouts-form-loading {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+#recommended-handouts-form-loading-panel {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 75px;
+    color: #000;
+}
+#recommended-handouts-form-server-error { 
+    margin:0 auto;
+    text-align: center;
+    color: red;
+}
+#recommended-handouts-form-server-error-text {
+    height: 60px;
+    line-height: 60px;
+}
+#recommended-handouts-no-forms {
+    text-align: center;
+    margin: 0 auto;
+    color: #000;
+}
+#recommended-handouts-container {
+	cursor: default;
+    text-align: center;
+    margin: 0 auto;
+    color: #000;
+    height: 96%;
+    width: 330px;
+    background: #cc9966;
+    float: left;
+    border-radius: 7px;
+    padding-top: 0px;
+}
+.recommended-handouts-multiselect {
+    color: #FFFFFF;
+    font-size: 0.7em;
+    margin-top: 4px;
+}
+.recommended-handouts-form-list-container {
+    width: 99%;
+    overflow-y:auto;
+}
+#recommended-handouts-form-list .ui-selecting { 
+    background: #81F781; 
+    color: black;
+}
+#recommended-handouts-form-list .ui-selected { 
+    background: #81F781; 
+    color: black; 
+}
+#recommended-handouts-form-list { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0; 
+    width: 100%;
+    height: 100%;
+    text-align: left;
+}
+#recommended-handouts-form-list li { 
+    margin: 3px; 
+    padding: 0.4em;  
+    height: 18px; 
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.recommended-handouts-combine-button-panel {
+    height: 15%;
+    padding-top: 0.4em;
+}
+.recommended-handout-container {
+    height: 99%;
+    width: 550px;
+    float: left;
+    padding-left: 10px;
+    overflow-x:auto;
+}
+.recommended-handout-object {
+    width:550px;
+    height: 100%;
+    background-color:#F5FBEF;
+    float: left;
+}
+.recommended-handouts-black-text {
+    color: #000;
+}
