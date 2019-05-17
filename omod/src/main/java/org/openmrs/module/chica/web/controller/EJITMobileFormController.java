@@ -39,6 +39,7 @@ public class EJITMobileFormController {
     private static final String FORM_VIEW_EATING_DISORDER_MOBILE = "/module/chica/EatingDisorderMobile";
     private static final String FORM_VIEW_INSULIN_DOSING_MEDICATIONS = "/module/chica/insulinDosingMedications";
     private static final String FORM_VIEW_SUDEP_MOBILE = "/module/chica/SUDEPMobile";
+    private static final String FORM_VIEW_GAD7_MOBILE = "/module/chica/GAD7";
     
     /**Success view */
     private static final String SUCCESS_VIEW = "finishFormsMobile.form";
@@ -221,6 +222,18 @@ public class EJITMobileFormController {
     @RequestMapping(value = "module/chica/SUDEPMobile.form", method = RequestMethod.GET)
     protected String initSUDEPForm(HttpServletRequest request, ModelMap map) {
         return MobileFormControllerUtil.loadMobileFormInformation(request, map, FORM_VIEW_SUDEP_MOBILE);
+    }
+    
+    /**
+     * Form initialization method.
+     * 
+     * @param request The HTTP request information
+     * @param map The map to populate for return to the client
+     * @return The form view name
+     */
+    @RequestMapping(value = "module/chica/GAD7.form", method = RequestMethod.GET)
+    protected String initGAD7Form(HttpServletRequest request, ModelMap map) {
+        return MobileFormControllerUtil.loadMobileFormInformation(request, map, FORM_VIEW_GAD7_MOBILE);
     }
     
     /**
