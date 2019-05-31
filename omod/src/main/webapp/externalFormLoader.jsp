@@ -6,6 +6,7 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/externalFormLoader.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/recommendedHandouts.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
@@ -14,6 +15,7 @@
 <script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/externalFormLoader.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
+<script src="${pageContext.request.contextPath}/moduleResources/chica/recommendedHandouts.js"></script>
 <title>CHICA ${formName}</title>
 </head>
 <body>
@@ -96,7 +98,12 @@
 	        <c:if test="${showHandouts eq 'true'}">
 	           <div id="buttons">
 		           <div class="buttonsData">
-	                   <a href="#" id="forcePrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Handouts</a>
+		               <div class="button">
+	                       <a href="#" id="recommendedHandoutsButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Recommended Handouts</a>
+	                   </div>
+	                   <div class="button">
+	                       <a href="#" id="forcePrintButton" class="icon-button largeButton ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>Other Handouts</a>
+	                   </div>
 	               </div>
                </div>
 	        </c:if>
@@ -116,8 +123,18 @@
         <input id="patientId" name="patientId" type="hidden" value="${patientId}"/>
         <input id="locationId" name="locationId" type="hidden" value="${locationId}"/>
         <input id="locationTagId" name="locationTagId" type="hidden" value="${locationTagId}"/>
+        <input id="encounterId" name="encounterId" type="hidden" value="${encounterId}" />
+        <c:choose>
+            <c:when test="${showHandouts eq 'true'}">
+                <input id="loadRecommendedHandouts" name="loadRecommendedHandouts" type="hidden" value="true" />
+            </c:when>
+            <c:otherwise>
+                <input id="loadRecommendedHandouts" name="loadRecommendedHandouts" type="hidden" value="false" />
+            </c:otherwise>
+        </c:choose>
     </form>
 </div>
 <%@ include file="forcePrintJITs.jsp" %>
+<%@ include file="recommendedHandouts.jsp" %>
 </body>
 </html>

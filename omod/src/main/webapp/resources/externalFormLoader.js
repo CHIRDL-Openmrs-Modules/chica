@@ -1,9 +1,14 @@
 var loadedOptionalHandouts = false;
 $(document).ready(function() {
-	$("#forcePrintButton").button();
+	$("#forcePrintButton, #recommendedHandoutsButton").button();
 	$("#forcePrintButton").click(function(event) {
 		$("#force-print-dialog").css("cursor", "default");
 		$("#force-print-dialog").dialog("open");
+		event.preventDefault();
+	});
+	
+	$("#recommendedHandoutsButton").click(function(event) {
+		$("#recommended-handouts-form-selection-dialog").dialog("open");
 		event.preventDefault();
 	});
 	

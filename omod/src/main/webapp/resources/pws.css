@@ -313,32 +313,6 @@ a.icon-button span.ui-icon {
 .round_corners {
 	border-radius: 10px 10px 10px 10px;
 }
-.recommendedHandoutsMultiselect {
-    color: #FFFFFF;
-    font-size: 0.7em;
-    margin-top: 4px;
-}
-.recommendedHandoutsFormListContainer {
-    width: 99%;
-    overflow-y:auto;
-}
-.recommendedHandoutsCombineButtonPanel {
-    height: 15%;
-    padding-top: 0.4em;
-}
-.recommendedHandoutContainer {
-    height: 99%;
-    width: 550px;
-    float: left;
-    padding-left: 10px;
-    overflow-x:auto;
-}
-.recommendedHandoutObject {
-    width:550px;
-    height: 100%;
-    background-color:#F5FBEF;
-    float: left;
-}
 
 #submitButtonTop, #saveDraftButtonTop {
     margin-top:8px;
@@ -350,15 +324,6 @@ a.icon-button span.ui-icon {
     border: 4px solid #FA8258;
     text-align: center;
 }
-#formSelectionDialogContainer {
-    width: 100%;
-    height: 100%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    overflow-y: hidden;
-}
 #confirmText {
     text-align:center;
     color:#000;
@@ -367,66 +332,4 @@ a.icon-button span.ui-icon {
 #submitWaitText {
     text-align:center;
     color:#000;
-}
-#formLoading {
-    text-align: center;
-    margin: 0 auto;
-    width: 100%;
-    height: 100%;
-}
-#formLoadingPanel {
-    text-align: center;
-    margin: 0 auto;
-    width: 100%;
-    height: 75px;
-    color: #000;
-}
-#formServerError { 
-    margin:0 auto;
-    text-align: center;
-    color: red;
-}
-#formServerErrorText {
-    height: 60px;
-    line-height: 60px;
-}
-#noForms {
-    text-align: center;
-    margin: 0 auto;
-    color: #000;
-}
-#recommendedHandoutsContainer {
-    text-align: center;
-    margin: 0 auto;
-    color: #000;
-    height: 96%;
-    width: 330px;
-    background: #cc9966;
-    float: left;
-    border-radius: 7px;
-    padding-top: 0px;
-}
-#recommendedHandoutsFormList .ui-selecting { 
-    background: #81F781; 
-    color: black;
-}
-#recommendedHandoutsFormList .ui-selected { 
-    background: #81F781; 
-    color: black; 
-}
-#recommendedHandoutsFormList { 
-    list-style-type: none; 
-    margin: 0; 
-    padding: 0; 
-    width: 100%;
-    height: 100%;
-	text-align: left;
-}
-#recommendedHandoutsFormList li { 
-    margin: 3px; 
-    padding: 0.4em;  
-    height: 18px; 
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }

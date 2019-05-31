@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/pwsIUHCerner.css" type="text/css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/recommendedHandouts.css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
@@ -18,6 +19,7 @@
         </script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/pws.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
+        <script src="${pageContext.request.contextPath}/moduleResources/chica/recommendedHandouts.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.js"></script>
         <title>CHICA Physician Encounter Form</title>
     </head>

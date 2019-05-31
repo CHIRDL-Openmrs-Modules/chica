@@ -1,63 +1,8 @@
 var chicaServletUrl = ctx + "/moduleServlet/chica/chica?";
-var recommendedHandoutsAction = "action=getPatientJITs&formInstances=";
-var pageOptions = "#page=1&view=FitH,top&navpanes=0";
-var previousRecommendedHandoutSelection = -1;
 var timeoutDialog = null;
 var keepAliveURL = ctx + "/moduleServlet/chica/chica?action=keepAlive";
 var saveDraftURL = chicaServletUrl + "action=saveFormDraft";
 var type = "application/pdf";
-
-function handleGetAvailableJITsError(xhr, textStatus, error) {
-	$("#noForms").hide();
-	$("#formServerErrorText").html('<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span><span>Error occurred locating recommended forms: ' + error + '</span>');
-	$("#formServerError").show();
-}
-
-function parseAvailableJITs(responseXML) {
-    // no matches returned
-    if (responseXML === null) {
-    	$("#recommendedHandoutsFormList").selectable();
-    	$("#loading").hide();
-        return false;
-    } else {	
-        var count = 0;
-        $(responseXML).find("availableJIT").each(function () {
-        	var formName = $(this).find("formName").text();
-            var formId = $(this).find("formId").text();
-            var formInstanceId = $(this).find("formInstanceId").text();
-            var locationId = $(this).find("locationId").text();
-            var locationTagId = $(this).find("locationTagId").text();
-            
-        	var formInstance = locationId + "_" + locationTagId + "_" + formId + "_" + formInstanceId;
-            count++;
-            
-            $('<li id="' + formInstance + '" title="' + formName + '">' + formName + '</li>').addClass('ui-widget-content').appendTo($('#recommendedHandoutsFormList'));
-        });
-        
-    	if (count == 0){
-    		$("#recommendedHandoutsContainer").hide();
-        	$("#noForms").show();
-        }
-    	
-    	$('#recommendedHandoutsFormList').selectable();
-    }
-}
-
-//DWE CHICA-500
-function combineSelected(selectedForms)
-{
-	var obj = $(".recommendedHandoutObject");
-	var container = obj.parent();
-	var newUrl = chicaServletUrl + recommendedHandoutsAction + selectedForms.toString() + pageOptions;
-	var newobj = obj.clone();
-	obj.remove();
-	newobj.attr("data", newUrl);
-	newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
-	$(".recommendedHandoutContainer").show();
-	
-	container.append(newobj);
-	restartSessionCounter(true);
-}
 
 function getSelected(opt) {
 	var selected = new Array();
@@ -91,37 +36,10 @@ function processCheckboxes(form1) {
 	outputSelected($("input[name='sub_Choice6']"), $("#Choice6"));
 }
 
-function getAvailableJits() {
-	$("#noForms").hide();
-	var encounterId = $("#encounterId").val();
-	var action = "action=getAvailablePatientJITs&encounterId=" + encounterId;
-	$.ajax({
-	  beforeSend: function(){
-		  $("#formServerError").hide();
-		  $("#formLoading").show();
-      },
-      complete: function(){
-    	  $("#formLoading").hide();
-      },
-	  "cache": false,
-	  "dataType": "xml",
-	  "data": action,
-	  "type": "POST",
-	  "url": chicaServletUrl,
-	  "timeout": 30000, // optional if you want to handle timeouts (which you should)
-	  "error": handleGetAvailableJITsError, // this sets up jQuery to give me errors
-	  "success": function (xml) {
-          parseAvailableJITs(xml);
-      }
-	});
-}
-
 $(function() {
 	$("button, input:submit, input:button").button();
 	$("#submitButtonTop, #submitButtonBottom, #saveDraftButtonTop, #saveDraftButtonBottom").button();
-	$("#retryButton, #notesButton, #formPrintButton, #problemButton, #forcePrintButton").button();
-	
-	getAvailableJits();
+	$("#notesButton, #formPrintButton, #problemButton, #forcePrintButton").button();
 	
     $("#problemDialog").dialog({
       open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
@@ -162,7 +80,7 @@ $(function() {
 	});
 	
 	$("#formPrintButton").click(function(event) {
-		$("#formSelectionDialog").dialog("open");
+		$("#recommended-handouts-form-selection-dialog").dialog("open");
 		event.preventDefault();
 	});
 	
@@ -267,11 +185,6 @@ $(function() {
 		event.preventDefault();
 	});
 	
-	$("#retryButton").click(function(event) {
-		getAvailableJits();
-		event.preventDefault();
-	});
-	
 	$("#submitWaitDialog").dialog({
 		open: function() { $(".ui-dialog").addClass("ui-dialog-shadow"); },
         autoOpen: false,
@@ -307,89 +220,6 @@ $(function() {
             duration: 500
           }
     }).dialog("widget").find(".ui-dialog-titlebar").hide();
-	
-	$("#formSelectionDialog").dialog({
-    	open: function() { 
-    		$(".recommendedHandoutContainer").hide();
-    		$(".ui-dialog").addClass("ui-dialog-shadow"); 
-    		$("#formSelectionDialog").scrollTop(0);
-    		updateRecommendedHandoutDimensions();
-    		displayFirstJIT();
-    	},
-    	beforeClose: function() { 
-    		$(".recommendedHandoutContainer").hide();
-        	var obj = $(".recommendedHandoutObject");
-        	var container = obj.parent();
-        	var newobj = obj.clone();
-        	obj.remove();
-        	
-        	// CHICA-948 Remove data and type attributes so IE doesn't cause an authentication error when loading the page.
-			newobj.removeAttr("data");
-			newobj.removeAttr("type");
-        	container.append(newobj);
-    	},
-    	close: function() { 
-    		$('#recommendedHandoutsFormList .ui-selected').removeClass('ui-selected')
-    	},
-        autoOpen: false,
-        modal: true,
-        minHeight: 350,
-        minWidth: 950,
-        width: 950,
-        height: $(window).height() * 0.90,
-        show: {
-          effect: "fade",
-          duration: 500
-        },
-        hide: {
-          effect: "fade",
-          duration: 500
-        },
-        resizable: false,
-        buttons: [
-          {
-	          text:"Close",
-	          click: function() {
-	        	  $("#formSelectionDialog").dialog("close");
-	          }
-          }
-        ]
-    });
-	
-	$("#noSelectedFormsDialog").dialog({
-        resizable: false,
-        modal: true,
-        autoOpen: false,
-        open: function() { 
-            $(".ui-dialog").addClass("ui-dialog-shadow");
-            $("#recommendedHandoutsFormList").selectable("disable");
-          },
-        close: function() { 
-        	$("#recommendedHandoutsFormList").selectable("enable");
-        	var selectedForms = getSelectedForms();
-        	if (selectedForms.length === 1) {
-        		$(".recommendedHandoutContainer").show();
-        	}
-          },
-        show: {
-            effect: "fade",
-            duration: 500
-          },
-          hide: {
-            effect: "fade",
-            duration: 500
-          },
-        buttons: {
-          "Close": function() {
-        	$("#recommendedHandoutsFormList").selectable("enable");
-            $(this).dialog("close");
-            var selectedForms = getSelectedForms();
-        	if (selectedForms.length === 1) {
-        		$(".recommendedHandoutContainer").show();
-        	}
-          }
-        }
-    });
 	
 	$("#saveDraftErrorDialog").dialog({
         resizable: false,
@@ -452,8 +282,6 @@ $(function() {
 		$("#serverErrorDialog").dialog("open");
 	}
 	
-    $("#formSelectionDialogContainer").css("background", "#f4f0ec"); 
-	
 	$("#forcePrintButton").click(function(event) {
 		$("#force-print-dialog").dialog("open");
 		event.preventDefault();
@@ -478,64 +306,6 @@ $(function() {
 	$(".uncheckableRadioButton").uncheckableRadio();
 	var patientName = $("#patientNameForcePrint").val();
 	$(".force-print-patient-name").html("<p>Please choose form(s) for " + patientName + ".</p>");
-	
-	$("#recommendedHandoutsSelectAllButton").button();
-	$("#recommendedHandoutsSelectAllButton").click(function() {
-		$("#recommendedHandoutsFormList li").not(".ui-selected").addClass("ui-selected");
-		var selectedForms = getSelectedForms();
-    	if (selectedForms.length > 1) {
-    		$(".recommendedHandoutContainer").hide();
-    	} else if (selectedForms.length == 1) {
-    		combineSelected(selectedForms);
-    	}
-    });
-	
-	$("#recommendedHandoutsCombineButton").button();
-    $("#recommendedHandoutsCombineButton").click(function() {
-    	var selectedForms = getSelectedForms();
-    	if (selectedForms.length < 2) {
-    		$(".recommendedHandoutContainer").hide();
-    		$("#noSelectedFormsDialog").dialog("open");
-    	} else {
-    		combineSelected(selectedForms);
-    	}
-    });
-    
-    $("#recommendedHandoutsFormList").selectable({
-	  stop: function() {
-		var selectedForms = new Array();
-	    $(".ui-selected", this ).each(function() {
-	    	var id = this.id;
-	    	selectedForms.push(id);
-	    });
-	    
-	    if (selectedForms.length === 1) {
-	    	var formInstance = selectedForms[0];
-	    	var obj = $(".recommendedHandoutObject");
-	    	var container = obj.parent();
-	    	var newUrl = chicaServletUrl + recommendedHandoutsAction + formInstance + pageOptions;
-	    	var newobj = obj.clone();
-	    	obj.remove();
-	    	newobj.attr("data", newUrl);
-	    	newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
-	    	$(".recommendedHandoutContainer").show();
-	    	
-	    	container.append(newobj);
-	    	restartSessionCounter(true);
-	    } else {
-	    	$(".recommendedHandoutContainer").hide();
-	    }
-	  },
-	  selecting: function(e, ui) { // on select
-        var curr = $(ui.selecting.tagName, e.target).index(ui.selecting); // get selecting item index
-        if(e.shiftKey && previousRecommendedHandoutSelection > -1) { // if shift key was pressed and there is previous - select them all
-            $(ui.selecting.tagName, e.target).slice(Math.min(previousRecommendedHandoutSelection, curr), 1 + Math.max(previousRecommendedHandoutSelection, curr)).addClass('ui-selected');
-            previousRecommendedHandoutSelection = -1; // and reset prev
-        } else {
-        	previousRecommendedHandoutSelection = curr; // othervise just save prev
-        }
-      }
-	});
     
     // Leave this at the very end of the function
     $(document).ajaxStart(function() {
@@ -719,80 +489,6 @@ function validateTextNotes()
 	{
 		$("#notesDialog").dialog("close");
 	}	
-}
-
-// DWE CLINREQ-90
-function displayFirstJIT()
-{
-    var count = 0;
-    var formInstance = null;
-    $("#recommendedHandoutsFormList li").each(function() {
-    	if (count === 0) {
-    		$(this).addClass("ui-selected");
-    		formInstance = this.id;
-    		previousRecommendedHandoutSelection = count;
-    	}
-    	
-    	count++;
-    });
-    
-    if (count === 1) {
-    	$(".recommendedHandoutsCombineButtonPanel").hide();
-    } else if (count > 1) {
-    	$(".recommendedHandoutsCombineButtonPanel").show();
-    }
-    
-    if (formInstance != null) {
-		var obj = $(".recommendedHandoutObject");
-		var container = obj.parent();
-		var newUrl = chicaServletUrl + recommendedHandoutsAction + formInstance + pageOptions;
-		var newobj = obj.clone();
-		obj.remove();
-		newobj.attr("data", newUrl);
-		newobj.attr("type", type); // CHICA-948 Set the type since it was removed in the close event
-		$(".recommendedHandoutContainer").show();;
-		
-		container.append(newobj);
-		restartSessionCounter(true);
-    }
-}
-
-function formLoaded() {
-	var obj = $(".recommendedHandoutObject");
-	if (obj != null) {
-		var url = obj.attr("data");
-		if (url != null && url.length > 0) {
-			$(".formLoading").hide();
-			$(".recommendedHandoutContainer").show();
-		}
-	}
-}
-
-function getSelectedForms() {
-	var selectedForms = new Array();
-	$(".ui-selected", "#recommendedHandoutsFormList").each(function() {
-    	var id = this.id;
-    	selectedForms.push(id);
-    });
-	
-	return selectedForms;
-}
-
-function updateRecommendedHandoutDimensions() {
-	var divHeight = $("#formSelectionDialogContainer").height();
-	var instructHeight = $(".recommendedHandoutsMultiselect").height();
-	var listHeight = $("#recommendedHandoutsFormList").height();
-	var newDivHeight = divHeight * 0.75;
-	if ((newDivHeight > listHeight) && (listHeight != 0)) {
-		newDivHeight = listHeight;
-	}
-	
-    // Update the height of the select
-    $("#recommendedHandoutsFormList").selectable().css({"height":(newDivHeight) + "px"});
-    $(".recommendedHandoutsFormListContainer").css({"height":(newDivHeight + 10) + "px"});
-    $("#recommendedHandoutsContainer").css({"height":"100%"});
-    divHeight = $("#recommendedHandoutsContainer").height();
-    $("#recommendedHandoutsCombineButtonPanel").css({"height":(divHeight - instructHeight - (newDivHeight + 10)) + "px"});
 }
 
 function restartSessionCounter(doRenewSession) {

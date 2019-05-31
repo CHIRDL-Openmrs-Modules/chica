@@ -456,13 +456,17 @@ public class ExternalFormController {
      */
     private void addHandoutsInfo(ChirdlUtilBackportsService backportsService, Patient patient, Encounter encounter, String mrn, 
                                  Map<String, Object> map) {
+        Encounter handoutsEncounter = null;
     	if (encounter == null) {
 	    	// Check to see if the patient has at least one encounter to display the Handouts button on the page.
-			encounter = getLastEncounter(patient); 
+    	    handoutsEncounter = getLastEncounter(patient); 
+    	} else {
+    	    handoutsEncounter = encounter;
     	}
     	
-		if (encounter != null) {
-			Location location = encounter.getLocation();
+		if (handoutsEncounter != null) {
+		    map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, handoutsEncounter.getEncounterId());
+			Location location = handoutsEncounter.getLocation();
 			if (location != null) {
 				map.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, location.getLocationId());
 			} else {
@@ -477,7 +481,7 @@ public class ExternalFormController {
 				return;
 			}
 			
-			List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
+			List<Session> sessions = backportsService.getSessionsByEncounter(handoutsEncounter.getEncounterId());
 			if (sessions != null && sessions.size() > 0) {
 				map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessions.get(0).getSessionId());
 			} else {
