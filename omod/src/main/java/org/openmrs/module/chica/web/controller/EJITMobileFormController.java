@@ -1,7 +1,12 @@
 package org.openmrs.module.chica.web.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.chica.web.ServletUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class EJITMobileFormController {
+	
+	protected final Log log = LogFactory.getLog(getClass());
     
     /** Form views */
     private static final String FORM_VIEW_PQH9_MOBILE = "/module/chica/phq9Mobile";
@@ -32,6 +39,7 @@ public class EJITMobileFormController {
     private static final String FORM_VIEW_EATING_DISORDER_MOBILE = "/module/chica/EatingDisorderMobile";
     private static final String FORM_VIEW_INSULIN_DOSING_MEDICATIONS = "/module/chica/insulinDosingMedications";
     private static final String FORM_VIEW_SUDEP_MOBILE = "/module/chica/SUDEPMobile";
+    private static final String FORM_VIEW_GAD7_MOBILE = "/module/chica/GAD7";
     
     /**Success view */
     private static final String SUCCESS_VIEW = "finishFormsMobile.form";
@@ -217,6 +225,18 @@ public class EJITMobileFormController {
     }
     
     /**
+     * Form initialization method.
+     * 
+     * @param request The HTTP request information
+     * @param map The map to populate for return to the client
+     * @return The form view name
+     */
+    @RequestMapping(value = "module/chica/GAD7.form", method = RequestMethod.GET)
+    protected String initGAD7Form(HttpServletRequest request, ModelMap map) {
+        return MobileFormControllerUtil.loadMobileFormInformation(request, map, FORM_VIEW_GAD7_MOBILE);
+    }
+    
+    /**
      * Handles submission of the page.
      * 
      * @param request The HTTP request information
@@ -224,6 +244,13 @@ public class EJITMobileFormController {
      */
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView processSubmit(HttpServletRequest request) {
+        try {
+            if (!ServletUtil.authenticateUser(request)) {
+                log.error("Authentication request failed for EJIT submit.");
+            }
+        } catch (IOException e) {
+            log.error("IOException in EJITMobileFormController.", e);
+        }
         return MobileFormControllerUtil.handleMobileFormSubmission(request, SUCCESS_VIEW);
     }
 }
