@@ -112,22 +112,18 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<dependency>
-				<groupId>org.icepdf</groupId>
-				<artifactId>icepdf-core</artifactId>
-				<version>4.2.2</version>
-				<scope>provided</scope>
-				<exclusions>
-					<exclusion>
-						<artifactId>jai-codec</artifactId>
-						<groupId>com.sun.media</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>jai-core</artifactId>
-						<groupId>com.sun.media</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>2.0.16</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox-tools</artifactId>
+                <version>2.0.16</version>
+                <scope>compile</scope>
+            </dependency>
 			<dependency>
 				<groupId>com.itextpdf</groupId>
 				<artifactId>itextpdf</artifactId>
