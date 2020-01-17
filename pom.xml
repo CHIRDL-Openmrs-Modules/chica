@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chica</artifactId>
-	<version>1.85.0-SNAPSHOT</version>
+	<version>1.85.0</version>
 	<packaging>pom</packaging>
 	<name>Chica</name>
 	<description>Parent project for Chica</description>
