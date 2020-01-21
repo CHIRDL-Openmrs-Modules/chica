@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>chica</artifactId>
-		<version>1.84.0</version>
+		<version>1.85.0</version>
 	</parent>
 	<artifactId>chica-api</artifactId>
 	<packaging>jar</packaging>
@@ -82,6 +82,14 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>			
 		</dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-tools</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>
