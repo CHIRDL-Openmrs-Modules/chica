@@ -16,6 +16,24 @@
 		<property name="apptPwsId" type="java.lang.Integer" column="appt_pws_id" />
 		<property name="openmrsEncounterId" type="java.lang.Integer" column="openmrs_encounter_id" />
 		<property name="skipLoadReason" type="java.lang.String" column="skip_load_reason" />
+		
+		<property name="uuid" type="java.lang.String" column="uuid" length="38" unique="true" />
+ 
+		<property name="dateCreated" type="java.util.Date" column="date_created" not-null="true" length="19" />
+ 
+		<property name="dateChanged" type="java.util.Date" column="date_changed" length="19" />
+ 
+		<property name="dateVoided" type="java.util.Date" column="date_voided" length="19" />
+ 
+		<property name="voided" type="boolean" not-null="true" length="1" />
+ 
+		<property name="voidReason" type="java.lang.String" column="void_reason" length="255" />
+		
+		<many-to-one name="creator" class="org.openmrs.User" column="creator" not-null="true" />
+ 
+		<many-to-one name="changedBy" class="org.openmrs.User" column="changed_by" />
+ 
+		<many-to-one name="voidedBy" class="org.openmrs.User" column="voided_by" />
 	</class>
 	
 </hibernate-mapping>

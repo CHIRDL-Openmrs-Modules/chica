@@ -22,6 +22,7 @@ import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
@@ -40,6 +41,8 @@ import org.openmrs.module.chica.hibernateBeans.DDST_Milestone;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
+import org.openmrs.module.chica.hibernateBeans.HighBP;
+import org.openmrs.module.chica.hibernateBeans.InsuranceMapping;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
@@ -1091,4 +1094,185 @@ public class HibernateChicaDAO implements ChicaDAO
     	qry.addEntity(PatientState.class);
     	return qry.list();
     }
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveChica1Appointment(org.openmrs.module.chica.hibernateBeans.Chica1Appointment)
+	 */
+    public Chica1Appointment saveChica1Appointment(Chica1Appointment chica1Appointment) {
+		try {
+			this.sessionFactory.getCurrentSession().save(chica1Appointment);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return chica1Appointment;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveChica1Patient(org.openmrs.module.chica.hibernateBeans.Chica1Patient)
+	 */
+    public Chica1Patient saveChica1Patient(Chica1Patient chica1Patient) {
+		try {
+			this.sessionFactory.getCurrentSession().save(chica1Patient);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return chica1Patient;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveChica1PatientObsv(org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv)
+	 */
+    public Chica1PatientObsv saveChica1PatientObsv(Chica1PatientObsv chica1PatientObsv) {
+		try {
+			this.sessionFactory.getCurrentSession().save(chica1PatientObsv);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return chica1PatientObsv;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudySubject(org.openmrs.module.chica.hibernateBeans.StudySubject)
+	 */
+    public StudySubject saveStudySubject(StudySubject studySubject) {
+		try {
+			this.sessionFactory.getCurrentSession().save(studySubject);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return studySubject;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveChicaHL7ExportStatus(org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus)
+	 */
+    public ChicaHL7ExportStatus saveChicaHL7ExportStatus(ChicaHL7ExportStatus chicaHL7ExportStatus) {
+		try {
+			this.sessionFactory.getCurrentSession().save(chicaHL7ExportStatus);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return chicaHL7ExportStatus;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#StudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
+	 */
+    public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) {
+		try {
+			this.sessionFactory.getCurrentSession().save(studyAttribute);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return studyAttribute;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveDDST_Milestone(org.openmrs.module.chica.hibernateBeans.DDST_Milestone)
+	 */
+    public DDST_Milestone saveDDST_Milestone(DDST_Milestone ddst_Milestone) {
+		try {
+			this.sessionFactory.getCurrentSession().save(ddst_Milestone);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return ddst_Milestone;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveInsuranceMapping(org.openmrs.module.chica.hibernateBeans.InsuranceMapping)
+	 */
+    public InsuranceMapping saveInsuranceMapping(InsuranceMapping insuranceMapping) {
+		try {
+			this.sessionFactory.getCurrentSession().save(insuranceMapping);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return insuranceMapping;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
+	 */
+    public Study saveStudy(Study study) throws APIException {
+		try {
+			this.sessionFactory.getCurrentSession().save(study);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return study;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
+	 */
+    public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
+		try {
+			this.sessionFactory.getCurrentSession().save(studyAttributeValue);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return studyAttributeValue;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveWtageinf(org.openmrs.module.chica.hibernateBeans.Wtageinf)
+	 */
+    public Wtageinf saveWtageinf(Wtageinf wtageinf) {
+		try {
+			this.sessionFactory.getCurrentSession().save(wtageinf);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return wtageinf;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveBmiage(org.openmrs.module.chica.hibernateBeans.Bmiage)
+	 */
+    public Bmiage saveBmiage(Bmiage bmiage) {
+		try {
+			this.sessionFactory.getCurrentSession().save(bmiage);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return bmiage;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveHcageinf(org.openmrs.module.chica.hibernateBeans.Hcageinf)
+	 */
+    public Hcageinf saveHcageinf(Hcageinf hcageinf) {
+		try {
+			this.sessionFactory.getCurrentSession().save(hcageinf);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return hcageinf;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveLenageinf(org.openmrs.module.chica.hibernateBeans.Lenageinf)
+	 */
+    public Lenageinf saveLenageinf(Lenageinf lenageinf) {
+		try {
+			this.sessionFactory.getCurrentSession().save(lenageinf);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return lenageinf;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveHighBP(org.openmrs.module.chica.hibernateBeans.HighBP)
+	 */
+    public HighBP saveHighBP(HighBP highBP) {
+		try {
+			this.sessionFactory.getCurrentSession().save(highBP);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return highBP;
+	}
+    
 }

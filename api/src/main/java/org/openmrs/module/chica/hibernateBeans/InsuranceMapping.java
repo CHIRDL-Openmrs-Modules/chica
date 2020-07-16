@@ -1,12 +1,19 @@
 package org.openmrs.module.chica.hibernateBeans;
 
+import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
+
 /**
  * Holds information to store in the chica_insurance_mapping table
  * 
  * @author Tammy Dugan
  */
-public class InsuranceMapping implements java.io.Serializable
+public class InsuranceMapping extends BaseChirdlMetadata implements java.io.Serializable
 {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Integer insuranceId;
 
 	private String category;
@@ -16,6 +23,8 @@ public class InsuranceMapping implements java.io.Serializable
 	private String insCode;
 	private String sendingApplication;
 	private String sendingFacility;
+	private String name = null;
+	private String description = null;
 
 	
 	public InsuranceMapping()
@@ -130,4 +139,49 @@ public class InsuranceMapping implements java.io.Serializable
     public void setSendingFacility(String sendingFacility) {
     	this.sendingFacility = sendingFacility;
     }
+
+	@Override
+	public Integer getId() {
+		return getInsuranceId();
+	}
+
+	@Override
+	public void setId(Integer id) {
+		setInsuranceId(id);
+		
+	}
+	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return this.name;
+	}
+
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription()
+	{
+		return this.description;
+	}
+
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 }

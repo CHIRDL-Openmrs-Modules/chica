@@ -9,6 +9,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.db.DAOException;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -17,14 +18,19 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
+import org.openmrs.module.chica.hibernateBeans.DDST_Milestone;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
+import org.openmrs.module.chica.hibernateBeans.HighBP;
+import org.openmrs.module.chica.hibernateBeans.InsuranceMapping;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
+import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
+import org.openmrs.module.chica.hibernateBeans.Wtageinf;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -182,4 +188,131 @@ public interface ChicaDAO {
 	 * @return
 	 */
 	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException;
+	
+	/**
+	 * Saves a chica appointment
+	 * 
+	 * @param chica1Appointment to be saved
+	 * @throws DAOException
+	 */
+	public Chica1Appointment saveChica1Appointment(Chica1Appointment chica1Appointment) throws DAOException;
+	
+	/**
+	 * Saves a new chica patient
+	 * 
+	 * @param chica1Patient to be saved
+	 * @throws DAOException
+	 */
+	public Chica1Patient saveChica1Patient(Chica1Patient chica1Patient) throws DAOException;
+	
+	/**
+	 * Saves a new chica patient obsv
+	 * 
+	 * @param chica1PatientObsv to be saved
+	 * @throws DAOException
+	 */
+	public Chica1PatientObsv saveChica1PatientObsv(Chica1PatientObsv chica1PatientObsv) throws DAOException;
+	
+	/**
+	 * Saves a new chica study subject
+	 * 
+	 * @param studySubject to be saved
+	 * @throws DAOException
+	 */
+	public StudySubject saveStudySubject(StudySubject studySubject) throws DAOException;
+	
+	/**
+	 * Saves a new chica HL7Export Status
+	 * 
+	 * @param chicaHL7ExportStatus to be saved
+	 * @throws DAOException
+	 */
+	public ChicaHL7ExportStatus saveChicaHL7ExportStatus(ChicaHL7ExportStatus chicaHL7ExportStatus) throws DAOException;
+	
+	/**
+	 * Saves a new chica study attribute
+	 * 
+	 * @param studyAttribute to be saved
+	 * @throws DAOException
+	 */
+	public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) throws DAOException;
+	
+	/**
+	 * Saves a new chica ddst
+	 * 
+	 * @param ddst_Milestone to be saved
+	 * @throws DAOException
+	 */
+	public DDST_Milestone saveDDST_Milestone(DDST_Milestone ddst_Milestone) throws DAOException;
+	
+	/**
+	 * Saves a new chica insurance mapping
+	 * 
+	 * @param insuranceMapping to be saved
+	 * @throws DAOException
+	 */
+	public InsuranceMapping saveInsuranceMapping(InsuranceMapping insuranceMapping) throws DAOException;
+	
+	/**
+	 * Saves a new chica study
+	 * 
+	 * @param study to be saved
+	 * @throws DAOException
+	 */
+	public Study saveStudy(Study study) throws DAOException;
+	
+	/**
+	 * Saves a chica study attribute value
+	 * 
+	 * @param studyAttributeValue to be saved
+	 * @throws DAOException
+	 */
+	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws DAOException;
+	
+	/**
+	 * Saves a chica wtageinf
+	 * 
+	 * @param wtageinf to be saved
+	 * @throws DAOException
+	 */
+	public Wtageinf saveWtageinf(Wtageinf wtageinf) throws DAOException;
+	
+	/**
+	 * Saves a chica bmiage
+	 * 
+	 * @param bmiage to be saved
+	 * @throws DAOException
+	 */
+	public Bmiage saveBmiage(Bmiage bmiage) throws DAOException;
+	
+	/**
+	 * Saves a chica hcageinf
+	 * 
+	 * @param hcageinf to be saved
+	 * @throws DAOException
+	 */
+	public Hcageinf saveHcageinf(Hcageinf hcageinf) throws DAOException;
+	
+	/**
+	 * Saves a chica lenageinf
+	 * 
+	 * @param lenageinf to be saved
+	 * @throws DAOException
+	 */
+	public Lenageinf saveLenageinf(Lenageinf lenageinf) throws DAOException;
+	
+	/**
+	 * Saves a chica highBP
+	 * 
+	 * @param highBP to be saved
+	 * @throws DAOException
+	 */
+	public HighBP saveHighBP(HighBP highBP) throws DAOException;
+	
+	/**
+	 * Saves a chica appointment
+	 * 
+	 * @param chica1Appointment to be saved
+	 * @throws DAOException
+	 */
 }

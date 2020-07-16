@@ -1,11 +1,18 @@
 package org.openmrs.module.chica.hibernateBeans;
 
+import org.openmrs.BaseOpenmrsData;
+
 /**
- * Holds information to store in the chica_study_attribute_value table
+ * Holds information to store in the chica1_appointments table
  * 
  * @author Tammy Dugan
  */
-public class Chica1Appointment implements java.io.Serializable {
+public class Chica1Appointment extends BaseOpenmrsData implements java.io.Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	// Fields
 	private Integer apptId = null;
@@ -70,4 +77,16 @@ public class Chica1Appointment implements java.io.Serializable {
 	{
 		this.skipLoadReason = skipLoadReason;
 	}
+
+	@Override
+	public Integer getId() {
+		return getApptId();
+	}
+
+	@Override
+	public void setId(Integer id) {
+		setApptId(id);
+		
+	}
+	
 }

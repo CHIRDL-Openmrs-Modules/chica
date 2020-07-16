@@ -1,11 +1,18 @@
 package org.openmrs.module.chica.hibernateBeans;
 
+import org.openmrs.BaseOpenmrsData;
+
 /**
  * Holds information to store in the chica1_patient_obsv table
  * 
  * @author Tammy Dugan
  */
-public class Chica1PatientObsv implements java.io.Serializable {
+public class Chica1PatientObsv extends BaseOpenmrsData implements java.io.Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	// Fields
 	private Integer idNum = null;
@@ -88,5 +95,16 @@ public class Chica1PatientObsv implements java.io.Serializable {
 	public void setSkipLoadReason(String skipLoadReason)
 	{
 		this.skipLoadReason = skipLoadReason;
+	}
+
+	@Override
+	public Integer getId() {
+		return getIdNum();
+	}
+
+	@Override
+	public void setId(Integer id) {
+		setIdNum(id);
+		
 	}
 }
