@@ -64,14 +64,17 @@ import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.module.chirdlutilbackports.util.PatientStateStartDateComparator;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
+import org.openmrs.parameter.EncounterSearchCriteria;
 
 /**
  * @author Tammy Dugan
@@ -1208,5 +1211,103 @@ public class Util {
 			return null;
 		}
 		return formsToDisplayConfig;
+	}
+	
+	/**
+	 * Retrieves the most recent encounters as a List within the past configured amount of days
+	 * @param patient Patient object
+	 * @return Encounter List or null if one is not found
+	 */
+	public static List<org.openmrs.Encounter> getEncounterList(Patient patient) {
+		Calendar startCal = Calendar.getInstance();
+		startCal.set(Calendar.DAY_OF_MONTH, startCal.get(Calendar.DAY_OF_MONTH) - getFormTimeLimit().intValue());
+		Date startDate = startCal.getTime();
+		Date endDate = Calendar.getInstance().getTime();
+		EncounterSearchCriteria searchCriteria = 
+				new EncounterSearchCriteria(patient, null, startDate, endDate, null, null, null, null, null, null, false);
+		return Context.getEncounterService().getEncounters(searchCriteria);
+   }
+	
+	/**
+	 * Retrieves the primary physician form name configured for the provided
+	 * location and location tag.
+	 * 
+	 * @param locationId    The location identifier
+	 * @param locationTagId The location tag identifier
+	 * @return The name of the primary physician form
+	 */
+	public static String getPrimaryPhysicianFormName(Integer locationId, Integer locationTagId) {
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		LocationTagAttributeValue locationTagAttributeValueForm = null;
+		if (locationTagId != null && locationId != null) {
+			locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId,
+					ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM, locationId);
+		}
+
+		if (locationTagAttributeValueForm != null) {
+			return locationTagAttributeValueForm.getValue();
+		}
+
+		return null;
+	}
+	
+	/**
+	 * Gets the form instance information from the data provided
+	 * 
+	 * @param encounterId      The encounter identifier
+	 * @param formId           The form identifier
+	 * @param startStateId     The start state identifier
+	 * @param endStateId       The end state identifier
+	 * @param backportsService ChirdlUtilBackportsService object
+	 * @return FormInstanceTag object or null if form information cannot be found.
+	 */
+	public static FormInstanceTag getFormInstanceInfo(Integer encounterId, Integer formId, Integer startStateId,
+			Integer endStateId, ChirdlUtilBackportsService backportsService) {
+		Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<>();
+		Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<>();
+
+		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapStart, encounterId, startStateId,
+				true);
+		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, true);
+
+		boolean containsStartState = formIdToPatientStateMapStart.containsKey(formId);
+		boolean containsEndState = formIdToPatientStateMapEnd.containsKey(formId);
+
+		if (containsStartState) {
+			List<PatientState> patientStates = null;
+			if (!containsEndState) {
+				patientStates = formIdToPatientStateMapStart.get(formId);
+				if (patientStates != null) {
+					Collections.sort(patientStates,
+							new PatientStateStartDateComparator(PatientStateStartDateComparator.DESCENDING));
+					for (PatientState patientState : patientStates) {
+						FormInstance formInstance = patientState.getFormInstance();
+						if (formInstance != null) {
+							FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId,
+									patientState.getFormInstanceId(), patientState.getLocationTagId());
+							return tag;
+						}
+					}
+				}
+			} else {
+				patientStates = formIdToPatientStateMapEnd.get(formId);
+				if (patientStates != null) {
+					Collections.sort(patientStates,
+							new PatientStateStartDateComparator(PatientStateStartDateComparator.DESCENDING));
+					for (PatientState patientState : patientStates) {
+						if (patientState.getEndTime() == null) {
+							FormInstance formInstance = patientState.getFormInstance();
+							if (formInstance != null) {
+								FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId,
+										patientState.getFormInstanceId(), patientState.getLocationTagId());
+								return tag;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 }
