@@ -83,7 +83,7 @@ public class FormCompletionController {
      */
     @RequestMapping(value = "module/chica/finishFormsMobile.form", method = RequestMethod.GET)
     protected String initFinishFormsMobile(HttpServletRequest request, ModelMap map) {
-        return finishForm(request, map, FORM_VIEW_FINISH_FORMS_MOBILE);
+        return ControllerUtil.finishForm(request, map, FORM_VIEW_FINISH_FORMS_MOBILE);
 	}
     
     /**
@@ -95,7 +95,7 @@ public class FormCompletionController {
      */
     @RequestMapping(value = "module/chica/finishFormsWeb.form", method = RequestMethod.GET)
     protected String initFinishFormsWeb(HttpServletRequest request, ModelMap map) {
-        return finishForm(request, map, FORM_VIEW_FINISH_FORMS_WEB);
+        return ControllerUtil.finishForm(request, map, FORM_VIEW_FINISH_FORMS_WEB);
     }
     
     /**
@@ -133,25 +133,6 @@ public class FormCompletionController {
         map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
         
         return FORM_VIEW_FINISH_FORMS_NOTIFICATION_MOBILE;
-    }
-    
-    /**
-     * Completes the form and returns the next view.
-     * 
-     * @param request The HTTP request information
-     * @param map map to populate for return to the client
-     * @param formView The form view to display next
-     * @return The form view to display next
-     */
-    private String finishForm(HttpServletRequest request, ModelMap map, String formView) {
-        String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
-        Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
-        map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
-        String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
-        map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
-        String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
-        map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
-        return formView;
     }
     
     /**
