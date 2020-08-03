@@ -37,4 +37,13 @@ public class ChicaConstants {
 	public static final String PARAMETER_LEFT_FORM_DIRECTORY = "leftFormDirectory";
     public static final String PARAMETER_LANGUAGE = "language";
     public static final String PARAMETER_USER_QUIT_FORM = "userQuitForm";
+    public static final String PARAMETER_ERROR_PREVIOUS_SUBMISSION = "errorPreviousSubmission";
+    public static final String PARAMETER_SESSION_TIMEOUT_WARNING = "sessionTimeoutWarning";
+    
+    /** Session attributes */
+    public static final String SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES = "submittedFormInstances";
+    
+    /** Form concepts */
+    public static final String PROVIDER_VIEW = "_provider_view";
+    public static final String PROVIDER_SUBMIT = "_provider_submit";
 }
