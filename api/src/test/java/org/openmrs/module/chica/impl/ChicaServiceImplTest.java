@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,26 +19,28 @@ import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
-import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
-import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chica.hibernateBeans.Study;
+import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
+import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
-import org.openmrs.test.SkipBaseSetup;
+
+import com.itextpdf.text.pdf.codec.Base64.InputStream;
 
 /**
  * This Class tests the ChicaServiceImpl class.
@@ -601,5 +605,38 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 	{
 //		// TODO auto-generated
 //		Assert.fail("Not yet implemented");
+	}
+	
+	@Test
+	@Ignore
+	public void testSaveStudyAttribute() throws Exception	{
+		executeDataSet(TestUtil.STUDY_FILE);
+		
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		Study study = chicaService.getStudyByTitle("K22STUDY1");
+		StudyAttribute studyAtt = new StudyAttribute();
+
+		studyAtt.setName("TEST NAME");
+		studyAtt.setDescription("DESCRIPTION");
+		studyAtt.setCreator(Context.getAuthenticatedUser());
+		studyAtt.setDateCreated(new Date());
+		studyAtt.setRetired(false);
+		studyAtt.setUuid(UUID.randomUUID().toString());
+		chicaService.saveStudyAttribute(studyAtt);
+		
+		StudyAttributeValue studyAttVal = new StudyAttributeValue();
+		studyAttVal.setStudyId(study.getStudyId());
+		studyAttVal.setValue("DobGtSentinelDateK22Randomizer");
+		studyAttVal.setStudyAttributeId(1);
+		studyAttVal.setName("TEST");
+		studyAttVal.setDescription("DESC");
+		studyAttVal.setCreator(Context.getAuthenticatedUser());
+		studyAttVal.setDateCreated(new Date());
+		studyAttVal.setRetired(false);
+		studyAttVal.setUuid(UUID.randomUUID().toString());
+		chicaService.saveStudyAttributeValue(studyAttVal);
+		
+		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1"), "TEST NAME");
+		Assert.assertEquals("Match","DobGtSentinelDateK22Randomizer", studyAttr.getValue());
 	}
 }

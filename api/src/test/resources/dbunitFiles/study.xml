@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
+<dataset>
+	<person person_id="777" gender="F" dead="false" creator="1" date_created="2008-08-15 15:46:47.0" voided="false" uuid="7e93b11f-fc1f-4c3a-ab5f-cc6e3ded6c73"/>
+	<users user_id="777" person_id="777" system_id="6-7" username="user1" password="0c1e358be64b7ac6412cbf4748aaa902152f97d3833f81dbaa8ab39a7505cb0b6011cac629ec3e20c29681ad05e9d67ad9a15d8fff81e77ea91246edf518af85" salt="32fdfbaec5cb5829a1277f869b17404806c1b1f25fc7c00ddcf4265d0adb2b78812650af86ca03b7a59b4a8317e3b5d28974cfd42f036de7311c9b51a6662676" secret_question="" creator="1" date_created="2008-08-15 15:57:09.0" changed_by="1" date_changed="2008-08-18 11:51:56.0" retired="false" retire_reason="" uuid="fbbc8bec-e135-11de-babe-001e378eb67e"/>
+	<concept_datatype concept_datatype_id="1" name="Numeric" hl7_abbreviation="NM" description="Numeric value, including integer or float (e.g., creatinine, weight)" creator="1" date_created="2004-02-02 00:00:00.0" retired="0"/>
+	<concept_class concept_class_id="1" name="Misc" description="Terms which don&apos;t fit other categories" creator="1" date_created="2004-03-02 00:00:00.0" retired="0"/>
+	<concept concept_id="9676" retired="0" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2008-08-20 15:21:00.0"/>
+	
+	<chica_study study_id="1" start_date="2008-08-19 00:00:00.0" end_date="2008-09-19 00:00:00.0" title="K22STUDY1" study_concept_id="9676" status="false" purpose="test" />
+	
+	<chica_study_attribute study_attribute_id="1" name="Custom Randomizer" description="Custom randomization class" creator="1" date_created="2008-08-19 00:00:00.0" retired="false" uuid="5f2aca44-d697-11ea-813d-c03ebac448f9" />
+	<chica_study_attribute study_attribute_id="2" name="presnetUrl" description="URL used to send information to the PresNet website" creator="1" date_created="2008-08-19 00:00:00.0" retired="false" uuid="5f2acc45-d697-11ea-813d-c03ebac448f9" />
+	<chica_study_attribute study_attribute_id="3" name="TEST" description="DESC" creator="1" date_created="2020-07-19 00:00:00.0" retired="false" uuid="dc89444a-1b1d-4c2d-8230-fb8bda246cde" />
+	
+	<chica_study_attribute_value study_attribute_value_id="1" study_id="1" value="DobGtSentinelDateK22Randomizer" study_attribute_id="1" description="DESC" creator="1" date_created="2020-08-19 00:00:00.0" retired="false" uuid="5f36342c-d697-11ea-813d-c03ebac448f9" />
+  
+</dataset>

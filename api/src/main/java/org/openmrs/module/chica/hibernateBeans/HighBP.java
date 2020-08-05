@@ -1,14 +1,12 @@
 package org.openmrs.module.chica.hibernateBeans;
 
-import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
-
 /**
  * Holds information to store in the chica_high_bp table
  * 
  * @author Tammy Dugan
  * @version 1.0
  */
-public class HighBP extends BaseChirdlMetadata implements java.io.Serializable {
+public class HighBP implements java.io.Serializable {
 
 	/**
 	 * 
@@ -33,8 +31,6 @@ public class HighBP extends BaseChirdlMetadata implements java.io.Serializable {
 	private Integer bpPercentile=null;
 	private Integer age=null;
 	private String sex=null;
-	private String name = null;
-	private String description = null;
 
 	// Constructors
 
@@ -222,48 +218,4 @@ public class HighBP extends BaseChirdlMetadata implements java.io.Serializable {
 		this.sex = sex;
 	}
 
-	@Override
-	public Integer getId() {
-		return getHiBPId();
-	}
-
-	@Override
-	public void setId(Integer id) {
-		setHiBPId(id);
-		
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return this.name;
-	}
-
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return this.description;
-	}
-
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
 }

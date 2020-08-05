@@ -1,13 +1,11 @@
 package org.openmrs.module.chica.hibernateBeans;
 
-import org.openmrs.BaseOpenmrsData;
-
 /**
  * Holds information to store in the chica1_appointments table
  * 
  * @author Tammy Dugan
  */
-public class Chica1Appointment extends BaseOpenmrsData implements java.io.Serializable {
+public class Chica1Appointment implements java.io.Serializable {
 
 	/**
 	 * 
@@ -76,17 +74,6 @@ public class Chica1Appointment extends BaseOpenmrsData implements java.io.Serial
 	public void setSkipLoadReason(String skipLoadReason)
 	{
 		this.skipLoadReason = skipLoadReason;
-	}
-
-	@Override
-	public Integer getId() {
-		return getApptId();
-	}
-
-	@Override
-	public void setId(Integer id) {
-		setApptId(id);
-		
 	}
 	
 }

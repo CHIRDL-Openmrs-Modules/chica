@@ -1,7 +1,6 @@
 package org.openmrs.module.chica.hibernateBeans;
 
 import org.openmrs.module.chica.Percentile;
-import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
 
 /**
  * Holds information to store in the chica_bmiage table
@@ -9,7 +8,7 @@ import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
  * @author Tammy Dugan
  * @version 1.0
  */
-public class Bmiage extends BaseChirdlMetadata implements java.io.Serializable,Percentile {
+public class Bmiage implements java.io.Serializable,Percentile {
 
 	/**
 	 * 
@@ -22,8 +21,6 @@ public class Bmiage extends BaseChirdlMetadata implements java.io.Serializable,P
 	private Double l = null;
 	private Double agemos = null;
 	private Integer sex = null;
-	private String name = null;
-	private String description = null;
 
 	// Constructors
 
@@ -127,48 +124,4 @@ public class Bmiage extends BaseChirdlMetadata implements java.io.Serializable,P
 		this.sex = sex;
 	}
 
-	@Override
-	public Integer getId() {
-		return getBmiageId();
-	}
-
-	@Override
-	public void setId(Integer id) {
-		setBmiageId(id);
-		
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return this.name;
-	}
-
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return this.description;
-	}
-
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
 }

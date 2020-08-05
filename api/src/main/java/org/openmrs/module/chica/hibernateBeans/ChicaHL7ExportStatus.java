@@ -2,15 +2,13 @@ package org.openmrs.module.chica.hibernateBeans;
 
 import java.util.Date;
 
-import org.openmrs.BaseOpenmrsMetadata;
-
 /**
  * Holds information to store in the chica_hl7_export_status table
  * 
  * @author msheley
  * 
  */
-public class ChicaHL7ExportStatus extends BaseOpenmrsMetadata implements java.io.Serializable {
+public class ChicaHL7ExportStatus implements java.io.Serializable {
 
 	/**
 	 * 
@@ -46,17 +44,5 @@ public class ChicaHL7ExportStatus extends BaseOpenmrsMetadata implements java.io
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
 	}
-	@Override
-	public Integer getId() {
-		return getHl7ExportStatusId();
-	}
-	@Override
-	public void setId(Integer id) {
-		setHl7ExportStatusId(id);
-		
-	}
-	
-	
-
 	
 }

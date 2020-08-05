@@ -15,7 +15,6 @@ package org.openmrs.module.chica.hibernateBeans;
 
 import java.io.Serializable;
 
-import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Patient;
 
 
@@ -24,7 +23,7 @@ import org.openmrs.Patient;
  * 
  * @author Steve McKee
  */
-public class StudySubject extends BaseOpenmrsData implements Serializable {
+public class StudySubject implements Serializable {
 	
     private static final long serialVersionUID = 1L;
 	private Integer subjectId;
@@ -136,14 +135,4 @@ public class StudySubject extends BaseOpenmrsData implements Serializable {
         return true;
     }
 
-	@Override
-	public Integer getId() {
-		return getSubjectId();
-	}
-
-	@Override
-	public void setId(Integer id) {
-		setSubjectId(id);
-		
-	}
 }

@@ -2,15 +2,13 @@ package org.openmrs.module.chica.hibernateBeans;
 
 import java.util.Date;
 
-import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
-
 /**
  * Holds information to store in the chica_study table
  * 
  * @author Tammy Dugan
  * @version 1.0
  */
-public class Study extends BaseChirdlMetadata implements java.io.Serializable {
+public class Study implements java.io.Serializable {
 
 	/**
 	 * 
@@ -25,8 +23,6 @@ public class Study extends BaseChirdlMetadata implements java.io.Serializable {
 	private Integer studyConceptId = null;
 	private Boolean status = false;
 	private String purpose = null;
-	private String name = null;
-	private String description = null;
 
 	// Constructors
 
@@ -270,48 +266,4 @@ public class Study extends BaseChirdlMetadata implements java.io.Serializable {
         return true;
     }
 
-	@Override
-	public Integer getId() {
-		return getStudyId();
-	}
-
-	@Override
-	public void setId(Integer id) {
-		setStudyId(id);
-		
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return this.name;
-	}
-
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return this.description;
-	}
-
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
 }

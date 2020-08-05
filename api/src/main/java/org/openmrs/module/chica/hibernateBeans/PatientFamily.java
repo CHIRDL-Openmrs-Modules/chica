@@ -2,14 +2,12 @@ package org.openmrs.module.chica.hibernateBeans;
 
 import java.util.Date;
 
-import org.openmrs.BaseOpenmrsData;
-
 /**
  * Holds information to store in the chica_patient_family table
  * 
  * @author Tammy Dugan
  */
-public class PatientFamily extends BaseOpenmrsData implements java.io.Serializable {
+public class PatientFamily implements java.io.Serializable {
 
 	/**
 	 * 
@@ -100,14 +98,4 @@ public class PatientFamily extends BaseOpenmrsData implements java.io.Serializab
 		this.phoneNum = phoneNum;
 	}
 
-	@Override
-	public Integer getId() {
-		return getPatientFamilyId();
-	}
-
-	@Override
-	public void setId(Integer id) {
-		setPatientFamilyId(id);
-		
-	}
 }

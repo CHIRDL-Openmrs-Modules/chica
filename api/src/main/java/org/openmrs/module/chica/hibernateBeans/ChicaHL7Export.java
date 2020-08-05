@@ -8,6 +8,10 @@ import java.util.Date;
  */
 public class ChicaHL7Export implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer queueId = null;
 	private Integer encounterId = null;
 	private Integer status = null;

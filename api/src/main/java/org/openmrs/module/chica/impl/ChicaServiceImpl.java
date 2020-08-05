@@ -15,7 +15,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -50,19 +49,15 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
-import org.openmrs.module.chica.hibernateBeans.DDST_Milestone;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
-import org.openmrs.module.chica.hibernateBeans.HighBP;
-import org.openmrs.module.chica.hibernateBeans.InsuranceMapping;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
-import org.openmrs.module.chica.hibernateBeans.Wtageinf;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.study.dp3.DeviceSyncRunnable;
@@ -1107,116 +1102,6 @@ public class ChicaServiceImpl implements ChicaService
 		}
 		
 		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveChica1Appointment(org.openmrs.module.chica.hibernateBeans.Chica1Appointment)
-		  */
-		public Chica1Appointment saveChica1Appointment(Chica1Appointment chica1Appointment) throws APIException {
-			return getChicaDAO().saveChica1Appointment(chica1Appointment);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#voidChica1Appointment(org.openmrs.module.chica.hibernateBeans.Chica1Appointment,
-		  * java.lang.String)
-		  */
-		public Chica1Appointment voidChica1Appointment(Chica1Appointment chica1Appointment, String reason) throws APIException {
-		        return getChicaDAO().saveChica1Appointment(chica1Appointment);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unvoidChica1Appointment(org.openmrs.module.chica.hibernateBeans.Chica1Appointment)
-		  */
-		public Chica1Appointment unvoidChica1Appointment(Chica1Appointment chica1Appointment) throws APIException {
-		        return getChicaDAO().saveChica1Appointment(chica1Appointment);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveChica1Patient(org.openmrs.module.chica.hibernateBeans.Chica1Patient)
-		  */
-		public Chica1Patient saveChica1Patient(Chica1Patient chica1Patient) throws APIException {
-			return getChicaDAO().saveChica1Patient(chica1Patient);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#voidChica1Appointment(org.openmrs.module.chica.hibernateBeans.Chica1Patient,
-		  * java.lang.String)
-		  */
-		public Chica1Patient voidChica1Patient(Chica1Patient chica1Patient, String reason) throws APIException {
-		        return getChicaDAO().saveChica1Patient(chica1Patient);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unvoidChica1Patient(org.openmrs.module.chica.hibernateBeans.Chica1Patient)
-		  */
-		public Chica1Patient unvoidChica1Patient(Chica1Patient chica1Patient) throws APIException {
-		        return getChicaDAO().saveChica1Patient(chica1Patient);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveChica1PatientObsv(org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv)
-		  */
-		public Chica1PatientObsv saveChica1PatientObsv(Chica1PatientObsv chica1PatientObsv) throws APIException {
-			return getChicaDAO().saveChica1PatientObsv(chica1PatientObsv);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#voidChica1PatientObsv(org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv,
-		  * java.lang.String)
-		  */
-		public Chica1PatientObsv voidChica1PatientObsv(Chica1PatientObsv chica1PatientObsv, String reason) throws APIException {
-		        return getChicaDAO().saveChica1PatientObsv(chica1PatientObsv);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unvoidChica1PatientObsv(org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv)
-		  */
-		public Chica1PatientObsv unvoidChica1PatientObsv(Chica1PatientObsv chica1PatientObsv) throws APIException {
-		        return getChicaDAO().saveChica1PatientObsv(chica1PatientObsv);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveStudySubject(org.openmrs.module.chica.hibernateBeans.StudySubject)
-		  */
-		public StudySubject saveStudySubject(StudySubject studySubject) throws APIException {
-			return getChicaDAO().saveStudySubject(studySubject);
-		}	
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#voidStudySubject(org.openmrs.module.chica.hibernateBeans.StudySubject,
-		  * java.lang.String)
-		  */
-		public StudySubject voidStudySubject(StudySubject studySubject, String reason) throws APIException {
-		        return getChicaDAO().saveStudySubject(studySubject);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unvoidStudySubject(org.openmrs.module.chica.hibernateBeans.StudySubject)
-		  */
-		public StudySubject unvoidStudySubject(StudySubject studySubject) throws APIException {
-		        return getChicaDAO().saveStudySubject(studySubject);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveChicaHL7ExportStatus(org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus)
-		  */
-		public ChicaHL7ExportStatus saveChicaHL7ExportStatus(ChicaHL7ExportStatus chicaHL7ExportStatus) throws APIException {
-			return getChicaDAO().saveChicaHL7ExportStatus(chicaHL7ExportStatus);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireChicaHL7ExportStatus(org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus,
-		  * java.lang.String)
-		  */
-		public ChicaHL7ExportStatus retireChicaHL7ExportStatus(ChicaHL7ExportStatus chicaHL7ExportStatus, String reason) throws APIException {
-		        return getChicaDAO().saveChicaHL7ExportStatus(chicaHL7ExportStatus);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireChicaHL7ExportStatus(org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus)
-		  */
-		public ChicaHL7ExportStatus unretireChicaHL7ExportStatus(ChicaHL7ExportStatus chicaHL7ExportStatus) throws APIException {
-		        return getChicaDAO().saveChicaHL7ExportStatus(chicaHL7ExportStatus);
-		}
-		
-		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#saveStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
 		  */
 		public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) throws APIException {
@@ -1236,72 +1121,6 @@ public class ChicaServiceImpl implements ChicaService
 		  */
 		public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute) throws APIException {
 		        return getChicaDAO().saveStudyAttribute(studyAttribute);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveDDST_Milestone(org.openmrs.module.chica.hibernateBeans.DDST_Milestone)
-		  */
-		public DDST_Milestone saveDDST_Milestone(DDST_Milestone ddst_Milestone) throws APIException {
-			return getChicaDAO().saveDDST_Milestone(ddst_Milestone);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireDDST_Milestone(org.openmrs.module.chica.hibernateBeans.DDST_Milestone,
-		  * java.lang.String)
-		  */
-		public DDST_Milestone retireDDST_Milestone(DDST_Milestone ddst_Milestone, String reason) throws APIException {
-		        return getChicaDAO().saveDDST_Milestone(ddst_Milestone);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireDDST_Milestone(org.openmrs.module.chica.hibernateBeans.DDST_Milestone)
-		  */
-		public DDST_Milestone unretireDDST_Milestone(DDST_Milestone ddst_Milestone) throws APIException {
-		        return getChicaDAO().saveDDST_Milestone(ddst_Milestone);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveInsuranceMapping(org.openmrs.module.chica.hibernateBeans.InsuranceMapping)
-		  */
-		public InsuranceMapping saveInsuranceMapping(InsuranceMapping insuranceMapping) throws APIException {
-			return getChicaDAO().saveInsuranceMapping(insuranceMapping);
-		}	
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireInsuranceMapping(org.openmrs.module.chica.hibernateBeans.InsuranceMapping,
-		  * java.lang.String)
-		  */
-		public InsuranceMapping retireInsuranceMapping(InsuranceMapping insuranceMapping, String reason) throws APIException {
-		        return getChicaDAO().saveInsuranceMapping(insuranceMapping);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireInsuranceMapping(org.openmrs.module.chica.hibernateBeans.InsuranceMapping)
-		  */
-		public InsuranceMapping unretireInsuranceMapping(InsuranceMapping insuranceMapping) throws APIException {
-		        return getChicaDAO().saveInsuranceMapping(insuranceMapping);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
-		  */
-		public Study saveStudy(Study study) throws APIException {
-			return getChicaDAO().saveStudy(study);
-		}	
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireStudy(org.openmrs.module.chica.hibernateBeans.Study,
-		  * java.lang.String)
-		  */
-		public Study retireStudy(Study study, String reason) throws APIException {
-		        return getChicaDAO().saveStudy(study);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudy(org.openmrs.module.chica.hibernateBeans.Study)
-		  */
-		public Study unretireStudy(Study study) throws APIException {
-		        return getChicaDAO().saveStudy(study);
 		}
 		
 		/**
@@ -1326,144 +1145,5 @@ public class ChicaServiceImpl implements ChicaService
 		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}
 		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveWtageinf(org.openmrs.module.chica.hibernateBeans.Wtageinf)
-		  */
-		public Wtageinf saveWtageinf(Wtageinf wtageinf) throws APIException {
-			return getChicaDAO().saveWtageinf(wtageinf);
-		}	
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireWtageinf(org.openmrs.module.chica.hibernateBeans.Wtageinf,
-		  * java.lang.String)
-		  */
-		public Wtageinf retireWtageinf(Wtageinf wtageinf, String reason) throws APIException {
-		        return getChicaDAO().saveWtageinf(wtageinf);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireWtageinf(org.openmrs.module.chica.hibernateBeans.Wtageinf)
-		  */
-		public Wtageinf unretireWtageinf(Wtageinf wtageinf) throws APIException {
-		        return getChicaDAO().saveWtageinf(wtageinf);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveBmiage(org.openmrs.module.chica.hibernateBeans.Bmiage)
-		  */
-		public Bmiage saveBmiage(Bmiage bmiage) throws APIException {
-			return getChicaDAO().saveBmiage(bmiage);
-		}	
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireBmiage(org.openmrs.module.chica.hibernateBeans.Bmiage,
-		  * java.lang.String)
-		  */
-		public Bmiage retireBmiage(Bmiage bmiage, String reason) throws APIException {
-		        return getChicaDAO().saveBmiage(bmiage);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireBmiage(org.openmrs.module.chica.hibernateBeans.Bmiage)
-		  */
-		public Bmiage unretireBmiage(Bmiage bmiage) throws APIException {
-		        return getChicaDAO().saveBmiage(bmiage);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveHcageinf(org.openmrs.module.chica.hibernateBeans.Hcageinf)
-		  */
-		public Hcageinf saveHcageinf(Hcageinf hcageinf) throws APIException {
-			return getChicaDAO().saveHcageinf(hcageinf);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireHcageinf(org.openmrs.module.chica.hibernateBeans.Hcageinf,
-		  * java.lang.String)
-		  */
-		public Hcageinf retireHcageinf(Hcageinf hcageinf, String reason) throws APIException {
-		        return getChicaDAO().saveHcageinf(hcageinf);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireHcageinf(org.openmrs.module.chica.hibernateBeans.Hcageinf)
-		  */
-		public Hcageinf unretireHcageinf(Hcageinf hcageinf) throws APIException {
-		        return getChicaDAO().saveHcageinf(hcageinf);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveLenageinf(org.openmrs.module.chica.hibernateBeans.Lenageinf)
-		  */
-		public Lenageinf saveLenageinf(Lenageinf lenageinf) throws APIException {
-			return getChicaDAO().saveLenageinf(lenageinf);
-		}	
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireLenageinf(org.openmrs.module.chica.hibernateBeans.Lenageinf,
-		  * java.lang.String)
-		  */
-		public Lenageinf retireLenageinf(Lenageinf lenageinf, String reason) throws APIException {
-		        return getChicaDAO().saveLenageinf(lenageinf);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireLenageinf(org.openmrs.module.chica.hibernateBeans.Lenageinf)
-		  */
-		public Lenageinf unretireLenageinf(Lenageinf lenageinf) throws APIException {
-		        return getChicaDAO().saveLenageinf(lenageinf);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#saveHighBP(org.openmrs.module.chica.hibernateBeans.HighBP)
-		  */
-		public HighBP saveHighBP(HighBP highBP) throws APIException {
-			return getChicaDAO().saveHighBP(highBP);
-		}	
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#retireHighBP(org.openmrs.module.chica.hibernateBeans.HighBP,
-		  * java.lang.String)
-		  */
-		public HighBP retireHighBP(HighBP highBP, String reason) throws APIException {
-		        return getChicaDAO().saveHighBP(highBP);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unretireHighBP(org.openmrs.module.chica.hibernateBeans.HighBP)
-		  */
-		public HighBP unretireHighBP(HighBP highBP) throws APIException {
-		        return getChicaDAO().saveHighBP(highBP);
-		}
 	
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#voidPatientFamily(org.openmrs.module.chica.hibernateBeans.PatientFamily,
-		  * java.lang.String)
-		  */
-		public void voidPatientFamily(PatientFamily patientFamily, String reason) throws APIException {
-		        getChicaDAO().savePatientFamily(patientFamily);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unvoidPatientFamily(org.openmrs.module.chica.hibernateBeans.PatientFamily)
-		  */
-		public void unvoidPatientFamily(PatientFamily patientFamily) throws APIException {
-		        getChicaDAO().savePatientFamily(patientFamily);
-		}
-		
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#voidFamily(org.openmrs.module.chica.hibernateBeans.Family,
-		  * java.lang.String)
-		  */
-		public void voidFamily(Family family, String reason) throws APIException {
-		        getChicaDAO().saveFamily(family);
-		}
-
-		/**
-		  * @see org.openmrs.module.chica.service.ChicaService#unvoidFamily(org.openmrs.module.chica.hibernateBeans.Family)
-		  */
-		public void unvoidFamily(Family family) throws APIException {
-		        getChicaDAO().saveFamily(family);
-		}
-
 }

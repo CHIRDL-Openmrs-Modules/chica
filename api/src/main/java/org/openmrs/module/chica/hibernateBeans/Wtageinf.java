@@ -1,7 +1,6 @@
 package org.openmrs.module.chica.hibernateBeans;
 
 import org.openmrs.module.chica.Percentile;
-import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
 
 /**
  * Holds information to store in the chica_wtageinf table
@@ -9,7 +8,7 @@ import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
  * @author Tammy Dugan
  * @version 1.0
  */
-public class Wtageinf extends BaseChirdlMetadata implements java.io.Serializable,Percentile {
+public class Wtageinf implements java.io.Serializable,Percentile {
 
 	/**
 	 * 
@@ -22,8 +21,6 @@ public class Wtageinf extends BaseChirdlMetadata implements java.io.Serializable
 	private Double l = null;
 	private Double agemos = null;
 	private Integer sex = null;
-	private String name = null;
-	private String description = null;
 
 	// Constructors
 
@@ -125,51 +122,6 @@ public class Wtageinf extends BaseChirdlMetadata implements java.io.Serializable
 	public void setSex(Integer sex)
 	{
 		this.sex = sex;
-	}
-
-	@Override
-	public Integer getId() {
-		return getWtageinfId();
-	}
-
-	@Override
-	public void setId(Integer id) {
-		setWtageinfId(id);
-		
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return this.name;
-	}
-
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return this.description;
-	}
-
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
 	}
 	
 }

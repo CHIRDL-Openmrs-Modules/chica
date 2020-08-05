@@ -1,13 +1,12 @@
 package org.openmrs.module.chica.hibernateBeans;
 
-import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
 
 /**
  * Holds information to store in the chica_ddst table
  * 
  * @author Tammy Dugan
  */
-public class DDST_Milestone extends BaseChirdlMetadata implements java.io.Serializable
+public class DDST_Milestone implements java.io.Serializable
 {	
 	/**
 	 * 
@@ -20,9 +19,6 @@ public class DDST_Milestone extends BaseChirdlMetadata implements java.io.Serial
 	private String milestone;
 	private Integer cutoff_age;
 	private String reportable;
-	private String name = null;
-	private String description = null;
-	
 
 	
 	public DDST_Milestone()
@@ -88,55 +84,6 @@ public class DDST_Milestone extends BaseChirdlMetadata implements java.io.Serial
 
 	public void setReportable(String reportable) {
 		this.reportable = reportable;
-	}
-
-
-
-	@Override
-	public Integer getId() {
-		return getDdst_id();
-	}
-
-
-
-	@Override
-	public void setId(Integer id) {
-		setDdst_id(id);
-	}
-	
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return this.name;
-	}
-
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return this.description;
-	}
-
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
 	}
 	
 }
