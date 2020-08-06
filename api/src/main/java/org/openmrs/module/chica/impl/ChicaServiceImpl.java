@@ -1145,5 +1145,27 @@ public class ChicaServiceImpl implements ChicaService
 		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}
 		
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
+		  */
+		public Study saveStudy(Study study) throws APIException {
+			return getChicaDAO().saveStudy(study);
+		}	
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#retireStudy(org.openmrs.module.chica.hibernateBeans.Study,
+		  * java.lang.String)
+		  */
+		public Study retireStudy(Study study, String reason) throws APIException {
+		        return getChicaDAO().saveStudy(study);
+		}
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudy(org.openmrs.module.chica.hibernateBeans.Study)
+		  */
+		public Study unretireStudy(Study study) throws APIException {
+		        return getChicaDAO().saveStudy(study);
+		}
+		
 	
 }

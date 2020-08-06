@@ -13,6 +13,6 @@
 	<chica_study_attribute study_attribute_id="2" name="presnetUrl" description="URL used to send information to the PresNet website" creator="1" date_created="2008-08-19 00:00:00.0" retired="false" uuid="5f2acc45-d697-11ea-813d-c03ebac448f9" />
 	<chica_study_attribute study_attribute_id="3" name="TEST" description="DESC" creator="1" date_created="2020-07-19 00:00:00.0" retired="false" uuid="dc89444a-1b1d-4c2d-8230-fb8bda246cde" />
 	
-	<chica_study_attribute_value study_attribute_value_id="1" study_id="1" value="DobGtSentinelDateK22Randomizer" study_attribute_id="1" description="DESC" creator="1" date_created="2020-08-19 00:00:00.0" retired="false" uuid="5f36342c-d697-11ea-813d-c03ebac448f9" />
+	<chica_study_attribute_value study_attribute_value_id="1" study_id="1" value="DobGtSentinelDateK22Randomizer" study_attribute_id="1" creator="1" date_created="2020-08-19 00:00:00.0" retired="false" uuid="5f36342c-d697-11ea-813d-c03ebac448f9" />
   
 </dataset>

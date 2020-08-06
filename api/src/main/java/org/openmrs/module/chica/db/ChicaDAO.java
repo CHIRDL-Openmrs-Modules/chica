@@ -200,4 +200,12 @@ public interface ChicaDAO {
 	 */
 	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws DAOException;
 	
+	/**
+	 * Saves a new chica study
+	 * 
+	 * @param study to be saved
+	 * @throws DAOException
+	 */
+	public Study saveStudy(Study study) throws DAOException;
+	
 }

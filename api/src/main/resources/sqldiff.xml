@@ -4715,14 +4715,12 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 		<author>Seema Sarala</author>
 		<date>July 17, 2020</date>
 		<description>
-			Alter chica_study_attribute_value table to add new columns name, description, creator, date_created, retired, retired_by, date_retired, retire_reason, uuid, changed_by and date_changed.
+			Alter chica_study_attribute_value table to add new columns creator, date_created, retired, retired_by, date_retired, retire_reason, uuid, changed_by and date_changed.
 			Add constraints to the fields.
 			Update the field values uuid, changed_by and date_changed for existing rows.
 		</description>
 		<sql>
 			ALTER TABLE chica_study_attribute_value 
-			ADD COLUMN name varchar(255) NOT NULL,
-			ADD COLUMN description varchar(255) default NULL,
 			ADD COLUMN creator int(11) NOT NULL default 0,
 			ADD COLUMN date_created datetime NOT NULL default '0000-00-00 00:00:00',
 			ADD COLUMN retired tinyint(1) NOT NULL default 0,
@@ -4742,22 +4740,46 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			a.date_changed = NOW()
 			WHERE a.study_attribute_value_id = b.study_id and a.study_attribute_id = c.study_attribute_id ;
 			
-			UPDATE chica_study_attribute_value
-			SET name = "Family Based Study Randomizer"
-			WHERE value = "FamilyBasedStudyRandomizer";
-			
-			UPDATE chica_study_attribute_value
-			SET name = "New To Clinic Since Study Start Randomizer"
-			WHERE value = "NewToClinicSinceStudyStartRandomizer";
-			
-			UPDATE chica_study_attribute_value
-			SET name = "DobGtSentinelDateK22Randomizer"
-			WHERE value = "DobGtSentinelDateK22Randomizer";
-			
 			ALTER TABLE chica_study_attribute_value 
 			ADD CONSTRAINT chica_study_attribute_value_user_created_fk FOREIGN KEY (creator) REFERENCES users (user_id),
 			ADD CONSTRAINT chica_study_attribute_value_user_retired_by_fk FOREIGN KEY (retired_by) REFERENCES users (user_id),
 			ADD CONSTRAINT chica_study_attribute_value_user_changed_by_fk FOREIGN KEY(changed_by) REFERENCES users(user_id);
+		</sql>
+	</diff>
+	<diff>
+		<version>1.11.4</version>
+		<author>Seema Sarala</author>
+		<date>August 05, 2020</date>
+		<description>
+			Alter chica_study table to add new columns creator, date_created, retired, retired_by, date_retired, retire_reason, uuid, changed_by and date_changed.
+			Add constraints to the fields.
+			Update the field values uuid, changed_by and date_changed for existing rows.
+		</description>
+		<sql>
+			ALTER TABLE chica_study 
+			ADD COLUMN creator int(11) NOT NULL default 0,
+			ADD COLUMN date_created datetime NOT NULL default '0000-00-00 00:00:00',
+			ADD COLUMN retired tinyint(1) NOT NULL default 0,
+			ADD COLUMN retired_by int(11) default NULL,
+			ADD COLUMN date_retired datetime default NULL,
+			ADD COLUMN retire_reason varchar(255) default NULL,
+			ADD COLUMN uuid char(38) NOT NULL,
+			ADD COLUMN changed_by int(11)default NULL,
+			ADD COLUMN date_changed datetime default NULL;
+			
+			UPDATE chica_study 
+			SET
+			uuid = UUID(),
+			changed_by = 1,
+			creator = 1,
+			date_created = NOW(),
+			date_changed = NOW()
+			WHERE study_id is NOT NULL;
+			
+			ALTER TABLE chica_study
+			ADD CONSTRAINT chica_study_user_created_fk FOREIGN KEY (creator) REFERENCES users (user_id),
+			ADD CONSTRAINT chica_study_user_retired_by_fk FOREIGN KEY (retired_by) REFERENCES users (user_id),
+			ADD CONSTRAINT chica_study_user_changed_by_fk FOREIGN KEY(changed_by) REFERENCES users(user_id);
 		</sql>
 	</diff>
 </sqldiff>

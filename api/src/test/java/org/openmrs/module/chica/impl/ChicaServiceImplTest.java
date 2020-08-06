@@ -628,8 +628,6 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		studyAttVal.setStudyId(study.getStudyId());
 		studyAttVal.setValue("DobGtSentinelDateK22Randomizer");
 		studyAttVal.setStudyAttributeId(1);
-		studyAttVal.setName("TEST");
-		studyAttVal.setDescription("DESC");
 		studyAttVal.setCreator(Context.getAuthenticatedUser());
 		studyAttVal.setDateCreated(new Date());
 		studyAttVal.setRetired(false);

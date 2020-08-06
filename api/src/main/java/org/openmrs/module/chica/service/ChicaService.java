@@ -107,10 +107,10 @@ public interface ChicaService
 	public Family getFamilyByPhone(String phone);
 
 	@Authorized()
-	public void savePatientFamily(PatientFamily patientFamily) throws APIException;
+	public void savePatientFamily(PatientFamily patientFamily);
 
 	@Authorized()
-	public void saveFamily(Family family) throws APIException;
+	public void saveFamily(Family family);
 
 	@Authorized()
 	public void updateFamily(Family family);
@@ -352,6 +352,34 @@ public interface ChicaService
 	 */
 	@Authorized()
 	public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws APIException;
+	
+	/**
+	 * Saves a new chica study or updates an existing chica study
+	 * 
+	 * @param study to be saved
+	 * @throws APIException
+	 */
+	@Authorized()
+	public Study saveStudy(Study study) throws APIException;
+
+	/**
+	 * retires chica study
+	 * 
+	 * @param study to be saved
+	 * @param reason to retire chica study
+	 * @throws APIException
+	 */
+	@Authorized()
+	public Study retireStudy(Study study, String reason) throws APIException;
+
+	/**
+	 * unretires chica study 
+	 * 
+	 * @param study to be saved
+	 * @throws APIException
+	 */
+	@Authorized()
+	public Study unretireStudy(Study study) throws APIException;
 	
 		
 }

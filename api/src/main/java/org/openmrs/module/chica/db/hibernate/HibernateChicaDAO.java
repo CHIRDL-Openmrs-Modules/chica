@@ -156,10 +156,11 @@ public class HibernateChicaDAO implements ChicaDAO
 	{
 		try
 		{
-			String sql = "select * from chica_study where status=?";
+			String sql = "select * from chica_study where status=? and retired=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setInteger(0, 1);
+			qry.setBoolean(1, false);
 			qry.addEntity(Study.class);
 			return qry.list();
 		} catch (Exception e)
@@ -174,10 +175,11 @@ public class HibernateChicaDAO implements ChicaDAO
 		try
 		{
 			String sql = "select * from chica_study_attribute "
-					+ "where name=?";
+					+ "where name=? and retired=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setString(0, studyAttributeName);
+			qry.setBoolean(1, false);
 			qry.addEntity(StudyAttribute.class);
 
 			List<StudyAttribute> list = qry.list();
@@ -207,12 +209,13 @@ public class HibernateChicaDAO implements ChicaDAO
 				Integer studyId = study.getStudyId();
 				Integer studyAttributeId = studyAttribute.getStudyAttributeId();
 
-				String sql = "select * from chica_study_attribute_value where study_id=? and study_attribute_id=?";
+				String sql = "select * from chica_study_attribute_value where study_id=? and study_attribute_id=? and retired=?";
 				SQLQuery qry = this.sessionFactory.getCurrentSession()
 						.createSQLQuery(sql);
 
 				qry.setInteger(0, studyId);
 				qry.setInteger(1, studyAttributeId);
+				qry.setBoolean(2, false);
 				qry.addEntity(StudyAttributeValue.class);
 
 				List<StudyAttributeValue> list = qry.list();
@@ -1111,6 +1114,18 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.LOG.error(Util.getStackTrace(e));
 		}
 		return studyAttributeValue;
+	}
+    
+    /**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
+	 */
+    public Study saveStudy(Study study) {
+		try {
+			this.sessionFactory.getCurrentSession().save(study);
+		} catch (Exception e){
+			this.LOG.error(Util.getStackTrace(e));
+		}
+		return study;
 	}
   
 }

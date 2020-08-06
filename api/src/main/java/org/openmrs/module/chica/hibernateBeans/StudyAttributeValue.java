@@ -18,8 +18,6 @@ public class StudyAttributeValue extends BaseChirdlMetadata implements java.io.S
 	private Integer studyId = null;
 	private Integer studyAttributeId = null;
 	private String value = null;
-	private String name = null;
-	private String description = null;
 
 	// Constructors
 
@@ -101,38 +99,5 @@ public class StudyAttributeValue extends BaseChirdlMetadata implements java.io.S
 		setStudyAttributeValueId(id);
 		
 	}
-	/**
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return this.name;
-	}
 
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return this.description;
-	}
-
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
 }
