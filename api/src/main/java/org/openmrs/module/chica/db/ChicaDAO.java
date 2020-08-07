@@ -69,8 +69,10 @@ public interface ChicaDAO {
 	public Lenageinf getLenageinf(double ageMos,int sex);
 	
 	public List<Study> getActiveStudies();
-		
-	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
+	
+	public StudyAttribute getStudyAttributeByName(String studyAttributeName, boolean includeRetired);
+	
+	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName, boolean includeRetired);
 	
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,Integer patientId);
 	public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,Integer patientId);
@@ -169,9 +171,10 @@ public interface ChicaDAO {
 	 * Retrieve a Study by title.
 	 * 
 	 * @param studyTitle The title of the study.
+	 * @param includeRetired retired value
 	 * @return Study object with the provided title or null if one is not found with the provided title.
 	 */
-	public Study getStudyByTitle(String studyTitle);
+	public Study getStudyByTitle(String studyTitle, boolean includeRetired);
 	
 	/**
 	 * DWE CHICA-761

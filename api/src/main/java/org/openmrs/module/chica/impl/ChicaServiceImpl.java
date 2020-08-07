@@ -622,11 +622,17 @@ public class ChicaServiceImpl implements ChicaService
 	{
 		return getChicaDAO().getActiveStudies();
 	}
+	
+	public StudyAttribute getStudyAttributeByName(String studyAttributeName, 
+			boolean includeRetired)
+	{
+		return getChicaDAO().getStudyAttributeByName(studyAttributeName, includeRetired);
+	}
 
 	public StudyAttributeValue getStudyAttributeValue(Study study,
-			String studyAttributeName)
+			String studyAttributeName, boolean includeRetired)
 	{
-		return getChicaDAO().getStudyAttributeValue(study, studyAttributeName);
+		return getChicaDAO().getStudyAttributeValue(study, studyAttributeName, includeRetired);
 	}
 
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
@@ -1066,10 +1072,10 @@ public class ChicaServiceImpl implements ChicaService
         }
 
 		/**
-		 * @see org.openmrs.module.chica.service.ChicaService#getStudyByTitle(java.lang.String)
+		 * @see org.openmrs.module.chica.service.ChicaService#getStudyByTitle(java.lang.String, boolean)
 		 */
-        public Study getStudyByTitle(String studyTitle) {
-	        return getChicaDAO().getStudyByTitle(studyTitle);
+        public Study getStudyByTitle(String studyTitle, boolean includeRetired) {
+	        return getChicaDAO().getStudyByTitle(studyTitle, includeRetired);
         }
 
         /**

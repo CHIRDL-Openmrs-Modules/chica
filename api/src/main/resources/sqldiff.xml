@@ -4681,7 +4681,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 		<description>
 			Alter chica_study_attribute table to add new columns creator, date_created, retired, retired_by, date_retired, retire_reason, uuid, changed_by and date_changed.
 			Add constraints to the fields.
-			Update the field values uuid, changed_by and date_changed for existing rows.
+			Update the field values uuid, creator and date_created for existing rows.
 		</description>
 		<sql>
 			ALTER TABLE chica_study_attribute 
@@ -4698,11 +4698,8 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			UPDATE chica_study_attribute
 			SET 
 			uuid = UUID(),
-			changed_by = 1,
 			creator = 1,
-			date_created = NOW(),
-			date_changed = NOW()
-			WHERE name IN ('Custom Randomizer', 'presnetUrl');
+			date_created = NOW();
 			
 			ALTER TABLE chica_study_attribute 
 			ADD CONSTRAINT chica_study_attribute_user_created_fk FOREIGN KEY (creator) REFERENCES users (user_id),
@@ -4717,7 +4714,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 		<description>
 			Alter chica_study_attribute_value table to add new columns creator, date_created, retired, retired_by, date_retired, retire_reason, uuid, changed_by and date_changed.
 			Add constraints to the fields.
-			Update the field values uuid, changed_by and date_changed for existing rows.
+			Update the field values uuid, creator and date_created for existing rows.
 		</description>
 		<sql>
 			ALTER TABLE chica_study_attribute_value 
@@ -4731,15 +4728,12 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			ADD COLUMN changed_by int(11)default NULL,
 			ADD COLUMN date_changed datetime default NULL;
 			
-			UPDATE chica_study_attribute_value a, chica_study b, chica_study_attribute c 
+			UPDATE chica_study_attribute_value
 			SET
-			a.uuid = UUID(),
-			a.changed_by = 1,
-			a.creator = 1,
-			a.date_created = NOW(),
-			a.date_changed = NOW()
-			WHERE a.study_attribute_value_id = b.study_id and a.study_attribute_id = c.study_attribute_id ;
-			
+			uuid = UUID(),
+			creator = 1,
+			date_created = NOW();
+
 			ALTER TABLE chica_study_attribute_value 
 			ADD CONSTRAINT chica_study_attribute_value_user_created_fk FOREIGN KEY (creator) REFERENCES users (user_id),
 			ADD CONSTRAINT chica_study_attribute_value_user_retired_by_fk FOREIGN KEY (retired_by) REFERENCES users (user_id),
@@ -4753,7 +4747,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 		<description>
 			Alter chica_study table to add new columns creator, date_created, retired, retired_by, date_retired, retire_reason, uuid, changed_by and date_changed.
 			Add constraints to the fields.
-			Update the field values uuid, changed_by and date_changed for existing rows.
+			Update the field values uuid, creator and date_created for existing rows.
 		</description>
 		<sql>
 			ALTER TABLE chica_study 
@@ -4770,12 +4764,9 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
 			UPDATE chica_study 
 			SET
 			uuid = UUID(),
-			changed_by = 1,
 			creator = 1,
-			date_created = NOW(),
-			date_changed = NOW()
-			WHERE study_id is NOT NULL;
-			
+			date_created = NOW();
+
 			ALTER TABLE chica_study
 			ADD CONSTRAINT chica_study_user_created_fk FOREIGN KEY (creator) REFERENCES users (user_id),
 			ADD CONSTRAINT chica_study_user_retired_by_fk FOREIGN KEY (retired_by) REFERENCES users (user_id),

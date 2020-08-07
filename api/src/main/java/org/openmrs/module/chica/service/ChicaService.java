@@ -77,10 +77,14 @@ public interface ChicaService
 
 	@Authorized()
 	public List<Study> getActiveStudies();
+	
+	@Authorized()
+	public StudyAttribute getStudyAttributeByName(String studyAttributeName, 
+			boolean includeRetired);
 
 	@Authorized()
 	public StudyAttributeValue getStudyAttributeValue(Study study,
-			String studyAttributeName);
+			String studyAttributeName, boolean includeRetired);
 
 	@Authorized()
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
@@ -257,10 +261,11 @@ public interface ChicaService
 	 * Retrieve a Study by title.
 	 * 
 	 * @param studyTitle The title of the study.
+	 * @param includeRetired retired value
 	 * @return Study object with the provided title or null if one is not found with the provided title.
 	 */
 	@Authorized()
-	public Study getStudyByTitle(String studyTitle);
+	public Study getStudyByTitle(String studyTitle, boolean includeRetired);
 	
 	/**
 	 * DWE CHICA-761

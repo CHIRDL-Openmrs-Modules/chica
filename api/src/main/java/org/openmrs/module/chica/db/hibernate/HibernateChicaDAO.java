@@ -170,7 +170,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	private StudyAttribute getStudyAttributeByName(String studyAttributeName)
+	public StudyAttribute getStudyAttributeByName(String studyAttributeName, boolean includeRetired)
 	{
 		try
 		{
@@ -179,7 +179,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setString(0, studyAttributeName);
-			qry.setBoolean(1, false);
+			qry.setBoolean(1, includeRetired);
 			qry.addEntity(StudyAttribute.class);
 
 			List<StudyAttribute> list = qry.list();
@@ -197,12 +197,12 @@ public class HibernateChicaDAO implements ChicaDAO
 	}
 
 	public StudyAttributeValue getStudyAttributeValue(Study study,
-			String studyAttributeName)
+			String studyAttributeName, boolean includeRetired)
 	{
 		try
 		{
 			StudyAttribute studyAttribute = this
-					.getStudyAttributeByName(studyAttributeName);
+					.getStudyAttributeByName(studyAttributeName, false);
 
 			if (study != null && studyAttribute != null)
 			{
@@ -215,7 +215,7 @@ public class HibernateChicaDAO implements ChicaDAO
 
 				qry.setInteger(0, studyId);
 				qry.setInteger(1, studyAttributeId);
-				qry.setBoolean(2, false);
+				qry.setBoolean(2, includeRetired);
 				qry.addEntity(StudyAttributeValue.class);
 
 				List<StudyAttributeValue> list = qry.list();
@@ -1037,13 +1037,14 @@ public class HibernateChicaDAO implements ChicaDAO
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyByTitle(java.lang.String)
 	 */
     @SuppressWarnings("unchecked")
-    public Study getStudyByTitle(String studyTitle) {
+    public Study getStudyByTitle(String studyTitle, boolean includeRetired) {
 		if (studyTitle == null) {
     		return null;
     	}
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Study.class);
 		criteria.add(Restrictions.eq("title", studyTitle));
+		criteria.add(Restrictions.eq("retired", includeRetired));
 		
 		List<Study> list = criteria.list();
 		if (list != null && list.size() > 0) {

@@ -62,7 +62,7 @@ public class Randomize implements ProcessStateAction
 		{
 			StudyAttributeValue studyAttributeValue = chicaService
 					.getStudyAttributeValue(currActiveStudy,
-							"Custom Randomizer");
+							"Custom Randomizer", false);
 
 			Randomizer randomizer = null;
 

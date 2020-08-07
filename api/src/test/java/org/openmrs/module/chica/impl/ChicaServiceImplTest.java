@@ -613,7 +613,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		executeDataSet(TestUtil.STUDY_FILE);
 		
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		Study study = chicaService.getStudyByTitle("K22STUDY1");
+		Study study = chicaService.getStudyByTitle("K22STUDY1", false);
 		StudyAttribute studyAtt = new StudyAttribute();
 
 		studyAtt.setName("TEST NAME");
@@ -634,7 +634,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		studyAttVal.setUuid(UUID.randomUUID().toString());
 		chicaService.saveStudyAttributeValue(studyAttVal);
 		
-		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1"), "TEST NAME");
+		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1", false), "TEST NAME", false);
 		Assert.assertEquals("Match","DobGtSentinelDateK22Randomizer", studyAttr.getValue());
 	}
 }
