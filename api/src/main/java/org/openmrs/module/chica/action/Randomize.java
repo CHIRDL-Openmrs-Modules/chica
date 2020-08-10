@@ -11,6 +11,11 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chica.hibernateBeans.Study;
+import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
+import org.openmrs.module.chica.randomizer.Randomizer;
+import org.openmrs.module.chica.service.ChicaService;
+import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -19,12 +24,6 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.chica.hibernateBeans.Study;
-import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
-import org.openmrs.module.chica.randomizer.BasicRandomizer;
-import org.openmrs.module.chica.randomizer.Randomizer;
-import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 
 /**
  * @author tmdugan
@@ -62,7 +61,7 @@ public class Randomize implements ProcessStateAction
 		{
 			StudyAttributeValue studyAttributeValue = chicaService
 					.getStudyAttributeValue(currActiveStudy,
-							"Custom Randomizer", false);
+							"Custom Randomizer");
 
 			Randomizer randomizer = null;
 

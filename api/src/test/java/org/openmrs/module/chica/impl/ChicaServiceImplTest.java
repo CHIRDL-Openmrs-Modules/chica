@@ -634,7 +634,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		studyAttVal.setUuid(UUID.randomUUID().toString());
 		chicaService.saveStudyAttributeValue(studyAttVal);
 		
-		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1", false), "TEST NAME", false);
+		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1"), "TEST NAME");
 		Assert.assertEquals("Match","DobGtSentinelDateK22Randomizer", studyAttr.getValue());
 	}
 }

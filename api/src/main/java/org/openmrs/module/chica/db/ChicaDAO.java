@@ -70,9 +70,26 @@ public interface ChicaDAO {
 	
 	public List<Study> getActiveStudies();
 	
+	/**
+	 * Retrieve a StudyAttribute by name.
+	 * 
+	 * @param studyAttributeName The name of the study attribute.
+	 * @param includeRetired 
+	 * @return StudyAttribute object with the provided study attribute name or null if one is not found with the provided name.
+	 */
 	public StudyAttribute getStudyAttributeByName(String studyAttributeName, boolean includeRetired);
 	
-	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName, boolean includeRetired);
+	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
+	
+	/**
+	 * Retrieve list of StudyAttributeValue by Study and StudyAttributeName.
+	 * 
+	 * @param study The study object
+	 * @param studyAttributeName The name of the study attribute.
+	 * @param includeRetired 
+	 * @return StudyAttributeValue object with the provided study and study attribute name.
+	 */
+	public List<StudyAttributeValue> getStudyAttributeValue(Study study,String studyAttributeName, boolean includeRetired);
 	
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,Integer patientId);
 	public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,Integer patientId);
@@ -166,6 +183,14 @@ public interface ChicaDAO {
 	 * @return A StudySubject or null if the patient or Study is null.
 	 */
 	public StudySubject getStudySubject(Patient patient, Study study);
+	
+	/**
+	 * Retrieve a Study by title.
+	 * 
+	 * @param studyTitle The title of the study.
+	 * @return Study object with the provided title or null if one is not found with the provided title.
+	 */
+	public Study getStudyByTitle(String studyTitle);
 	
 	/**
 	 * Retrieve a Study by title.

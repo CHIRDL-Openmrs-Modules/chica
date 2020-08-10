@@ -76,7 +76,7 @@ public class getStudySubjectId implements Rule {
 		PatientService patientService = Context.getPatientService();
 		Patient patient = patientService.getPatient(patientId);
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		Study study = chicaService.getStudyByTitle(studyTitle, false);
+		Study study = chicaService.getStudyByTitle(studyTitle);
 		if (study == null) {
 			return Result.emptyResult();
 		}

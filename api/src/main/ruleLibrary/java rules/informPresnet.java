@@ -273,7 +273,7 @@ public class informPresnet implements Rule {
 		
 		for (Study study : studies) {
 			if (studyName.equalsIgnoreCase(study.getTitle())) {
-				StudyAttributeValue studyVal = chicaService.getStudyAttributeValue(study, "presnetUrl", false);
+				StudyAttributeValue studyVal = chicaService.getStudyAttributeValue(study, "presnetUrl");
 				if (studyVal == null || studyVal.getValue() == null || studyVal.getValue().trim().length() == 0) {
 					log.error("No study attribute value 'presnetUrl' specified for study: " + studyName);
 					return null;
