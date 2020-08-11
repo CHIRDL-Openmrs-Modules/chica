@@ -75,21 +75,22 @@ public interface ChicaDAO {
 	 * 
 	 * @param studyAttributeName The name of the study attribute.
 	 * @param includeRetired 
-	 * @return StudyAttribute object with the provided study attribute name or null if one is not found with the provided name.
+	 * @return StudyAttribute list with the provided study attribute name or null if one is not found with the provided name.
 	 */
-	public StudyAttribute getStudyAttributeByName(String studyAttributeName, boolean includeRetired);
+	public List<StudyAttribute> getStudyAttributeByName(String studyAttributeName, boolean includeRetired);
 	
 	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
 	
 	/**
 	 * Retrieve list of StudyAttributeValue by Study and StudyAttributeName.
 	 * 
-	 * @param study The study object
-	 * @param studyAttributeName The name of the study attribute.
+	 * @param studyList The study list object.
+	 * @param studyAttributeList The study attribute list object.
 	 * @param includeRetired 
-	 * @return StudyAttributeValue object with the provided study and study attribute name.
+	 * @return StudyAttributeValue list with the provided study and study attribute.
 	 */
-	public List<StudyAttributeValue> getStudyAttributeValue(Study study,String studyAttributeName, boolean includeRetired);
+	public List<StudyAttributeValue> getStudyAttributeValue(List<Study> studyList,
+			List<StudyAttribute> studyAttributeList, boolean includeRetired);
 	
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,Integer patientId);
 	public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,Integer patientId);
@@ -197,9 +198,9 @@ public interface ChicaDAO {
 	 * 
 	 * @param studyTitle The title of the study.
 	 * @param includeRetired retired value
-	 * @return Study object with the provided title or null if one is not found with the provided title.
+	 * @return Study list with the provided title or null if one is not found with the provided title.
 	 */
-	public Study getStudyByTitle(String studyTitle, boolean includeRetired);
+	public List<Study> getStudyByTitle(String studyTitle, boolean includeRetired);
 	
 	/**
 	 * DWE CHICA-761

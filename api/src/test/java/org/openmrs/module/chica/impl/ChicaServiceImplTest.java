@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -613,7 +614,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		executeDataSet(TestUtil.STUDY_FILE);
 		
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		Study study = chicaService.getStudyByTitle("K22STUDY1", false);
+		List<Study> study = chicaService.getStudyByTitle("K22STUDY1", false);
 		StudyAttribute studyAtt = new StudyAttribute();
 
 		studyAtt.setName("TEST NAME");
@@ -625,7 +626,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		chicaService.saveStudyAttribute(studyAtt);
 		
 		StudyAttributeValue studyAttVal = new StudyAttributeValue();
-		studyAttVal.setStudyId(study.getStudyId());
+		
+		studyAttVal.setStudyId(study.get(0).getStudyId());
 		studyAttVal.setValue("DobGtSentinelDateK22Randomizer");
 		studyAttVal.setStudyAttributeId(1);
 		studyAttVal.setCreator(Context.getAuthenticatedUser());

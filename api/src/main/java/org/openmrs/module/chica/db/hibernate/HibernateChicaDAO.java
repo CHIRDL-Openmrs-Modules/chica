@@ -237,7 +237,7 @@ public class HibernateChicaDAO implements ChicaDAO
 	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributeByName(java.lang.String, boolean)
 	 */
-	public StudyAttribute getStudyAttributeByName(String studyAttributeName, boolean includeRetired)
+	public List<StudyAttribute> getStudyAttributeByName(String studyAttributeName, boolean includeRetired)
 	{
 		try
 		{
@@ -253,7 +253,7 @@ public class HibernateChicaDAO implements ChicaDAO
 
 			if (list != null && list.size() > 0)
 			{
-				return list.get(0);
+				return list;
 			}
 			return null;
 		} catch (Exception e)
@@ -263,26 +263,26 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<StudyAttributeValue> getStudyAttributeValue(Study study,
-			String studyAttributeName, boolean includeRetired)
+	/**
+	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributeValue(java.util.List, java.util.List, boolean)
+	 */
+	public List<StudyAttributeValue> getStudyAttributeValue(List<Study> studyList,
+			List<StudyAttribute> studyAttributeList, boolean includeRetired)
 	{
 		try
 		{
-			StudyAttribute studyAttribute = this
-					.getStudyAttributeByName(studyAttributeName);
-
-			if (study != null && studyAttribute != null)
+			if (studyList != null && studyAttributeList != null)
 			{
-				Integer studyId = study.getStudyId();
-				Integer studyAttributeId = studyAttribute.getStudyAttributeId();
+				List<Integer> studyIds = this.getStudyIds(studyList);
+				List<Integer> studyAttributeIds = this.getStudyAttributeIds(studyAttributeList);
 
-				String sql = "select * from chica_study_attribute_value where study_id=? and study_attribute_id=? and retired=?";
+				String sql = "select * from chica_study_attribute_value where study_id IN (:studyIds) and "
+						+ "study_attribute_id IN (:studyAttributeIds) and retired = :includeRetired";
 				SQLQuery qry = this.sessionFactory.getCurrentSession()
 						.createSQLQuery(sql);
-
-				qry.setInteger(0, studyId);
-				qry.setInteger(1, studyAttributeId);
-				qry.setBoolean(2, includeRetired);
+				qry.setParameterList("studyIds", studyIds);
+				qry.setParameterList("studyAttributeIds", studyAttributeIds);
+				qry.setBoolean("includeRetired", includeRetired);
 				qry.addEntity(StudyAttributeValue.class);
 
 				List<StudyAttributeValue> list = qry.list();
@@ -299,6 +299,34 @@ public class HibernateChicaDAO implements ChicaDAO
 			this.LOG.error(Util.getStackTrace(e));
 		}
 		return null;
+	}
+	
+	/**
+	 * Extract studyIds from the list of Study objects provided.
+	 *
+	 * @param studyList
+	 * @return studyIds
+	 */
+	private List<Integer> getStudyIds(List<Study> studyLists) {
+		List<Integer> studyIds = new ArrayList<Integer>();
+		for (Study studyList : studyLists) {
+			studyIds.add(studyList.getStudyId());
+		}
+		return studyIds;
+	}
+	
+	/**
+	 * Extract studyAttributeIds from the list of Study Attribute objects provided.
+	 *
+	 * @param studyAttributeLists
+	 * @return studyAttrIds
+	 */
+	private List<Integer> getStudyAttributeIds(List<StudyAttribute> studyAttributeLists) {
+		List<Integer> studyAttrIds = new ArrayList<Integer>();
+		for (StudyAttribute studyAttributeList : studyAttributeLists) {
+			studyAttrIds.add(studyAttributeList.getStudyAttributeId());
+		}
+		return studyAttrIds;
 	}
 
 	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication)
@@ -1125,7 +1153,7 @@ public class HibernateChicaDAO implements ChicaDAO
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyByTitle(java.lang.String, boolean)
 	 */
     @SuppressWarnings("unchecked")
-    public Study getStudyByTitle(String studyTitle, boolean includeRetired) {
+    public List<Study> getStudyByTitle(String studyTitle, boolean includeRetired) {
 		if (studyTitle == null) {
     		return null;
     	}
@@ -1136,7 +1164,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		
 		List<Study> list = criteria.list();
 		if (list != null && list.size() > 0) {
-			return list.get(0);
+			return list;
 		}
 		
 		return null;
