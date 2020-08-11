@@ -614,7 +614,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		executeDataSet(TestUtil.STUDY_FILE);
 		
 		ChicaService chicaService = Context.getService(ChicaService.class);
-		List<Study> study = chicaService.getStudyByTitle("K22STUDY1", false);
+		Study study = chicaService.getStudyByTitle("K22STUDY1");
 		StudyAttribute studyAtt = new StudyAttribute();
 
 		studyAtt.setName("TEST NAME");
@@ -627,7 +627,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		
 		StudyAttributeValue studyAttVal = new StudyAttributeValue();
 		
-		studyAttVal.setStudyId(study.get(0).getStudyId());
+		studyAttVal.setStudyId(study.getStudyId());
 		studyAttVal.setValue("DobGtSentinelDateK22Randomizer");
 		studyAttVal.setStudyAttributeId(1);
 		studyAttVal.setCreator(Context.getAuthenticatedUser());

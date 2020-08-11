@@ -77,9 +77,7 @@ public interface ChicaDAO {
 	 * @param includeRetired 
 	 * @return StudyAttribute list with the provided study attribute name or null if one is not found with the provided name.
 	 */
-	public List<StudyAttribute> getStudyAttributeByName(String studyAttributeName, boolean includeRetired);
-	
-	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
+	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired);
 	
 	/**
 	 * Retrieve list of StudyAttributeValue by Study and StudyAttributeName.
@@ -89,7 +87,7 @@ public interface ChicaDAO {
 	 * @param includeRetired 
 	 * @return StudyAttributeValue list with the provided study and study attribute.
 	 */
-	public List<StudyAttributeValue> getStudyAttributeValue(List<Study> studyList,
+	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
 			List<StudyAttribute> studyAttributeList, boolean includeRetired);
 	
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,Integer patientId);
@@ -200,7 +198,7 @@ public interface ChicaDAO {
 	 * @param includeRetired retired value
 	 * @return Study list with the provided title or null if one is not found with the provided title.
 	 */
-	public List<Study> getStudyByTitle(String studyTitle, boolean includeRetired);
+	public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired);
 	
 	/**
 	 * DWE CHICA-761

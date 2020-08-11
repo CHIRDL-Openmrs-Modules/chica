@@ -170,74 +170,10 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	private StudyAttribute getStudyAttributeByName(String studyAttributeName)
-	{
-		try
-		{
-			String sql = "select * from chica_study_attribute "
-					+ "where name=? and retired=?";
-			SQLQuery qry = this.sessionFactory.getCurrentSession()
-					.createSQLQuery(sql);
-			qry.setString(0, studyAttributeName);
-			qry.setBoolean(1, false);
-			qry.addEntity(StudyAttribute.class);
-
-			List<StudyAttribute> list = qry.list();
-
-			if (list != null && list.size() > 0)
-			{
-				return list.get(0);
-			}
-			return null;
-		} catch (Exception e)
-		{
-			this.LOG.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
-	
-	public StudyAttributeValue getStudyAttributeValue(Study study,
-			String studyAttributeName)
-	{
-		try
-		{
-			StudyAttribute studyAttribute = this
-					.getStudyAttributeByName(studyAttributeName);
-
-			if (study != null && studyAttribute != null)
-			{
-				Integer studyId = study.getStudyId();
-				Integer studyAttributeId = studyAttribute.getStudyAttributeId();
-
-				String sql = "select * from chica_study_attribute_value where study_id=? and study_attribute_id=? and retired=?";
-				SQLQuery qry = this.sessionFactory.getCurrentSession()
-						.createSQLQuery(sql);
-
-				qry.setInteger(0, studyId);
-				qry.setInteger(1, studyAttributeId);
-				qry.setBoolean(2, false);
-				qry.addEntity(StudyAttributeValue.class);
-
-				List<StudyAttributeValue> list = qry.list();
-
-				if (list != null && list.size() > 0)
-				{
-					return list.get(0);
-				}
-
-			}
-			return null;
-		} catch (Exception e)
-		{
-			this.LOG.error(Util.getStackTrace(e));
-		}
-		return null;
-	}
-	
 	/**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributeByName(java.lang.String, boolean)
+	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributesByName(java.lang.String, boolean)
 	 */
-	public List<StudyAttribute> getStudyAttributeByName(String studyAttributeName, boolean includeRetired)
+	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired)
 	{
 		try
 		{
@@ -264,9 +200,9 @@ public class HibernateChicaDAO implements ChicaDAO
 	}
 
 	/**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributeValue(java.util.List, java.util.List, boolean)
+	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributeValues(java.util.List, java.util.List, boolean)
 	 */
-	public List<StudyAttributeValue> getStudyAttributeValue(List<Study> studyList,
+	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
 			List<StudyAttribute> studyAttributeList, boolean includeRetired)
 	{
 		try
@@ -1150,10 +1086,10 @@ public class HibernateChicaDAO implements ChicaDAO
     }
 
 	/**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyByTitle(java.lang.String, boolean)
+	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudiesByTitle(java.lang.String, boolean)
 	 */
     @SuppressWarnings("unchecked")
-    public List<Study> getStudyByTitle(String studyTitle, boolean includeRetired) {
+    public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
 		if (studyTitle == null) {
     		return null;
     	}
@@ -1213,11 +1149,7 @@ public class HibernateChicaDAO implements ChicaDAO
 	 * @see org.openmrs.module.chica.db.ChicaDAO#StudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
 	 */
     public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) {
-		try {
-			this.sessionFactory.getCurrentSession().save(studyAttribute);
-		} catch (Exception e){
-			this.LOG.error(Util.getStackTrace(e));
-		}
+    	this.sessionFactory.getCurrentSession().save(studyAttribute);
 		return studyAttribute;
 	}
     
@@ -1225,23 +1157,15 @@ public class HibernateChicaDAO implements ChicaDAO
 	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
 	 */
     public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
-		try {
-			this.sessionFactory.getCurrentSession().save(studyAttributeValue);
-		} catch (Exception e){
-			this.LOG.error(Util.getStackTrace(e));
-		}
+		this.sessionFactory.getCurrentSession().save(studyAttributeValue);
 		return studyAttributeValue;
 	}
-    
+     
     /**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
 	 */
     public Study saveStudy(Study study) {
-		try {
-			this.sessionFactory.getCurrentSession().save(study);
-		} catch (Exception e){
-			this.LOG.error(Util.getStackTrace(e));
-		}
+		this.sessionFactory.getCurrentSession().save(study);
 		return study;
 	}
   

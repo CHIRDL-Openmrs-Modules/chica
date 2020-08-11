@@ -624,26 +624,30 @@ public class ChicaServiceImpl implements ChicaService
 	}
 	
 	/**
-	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributeByName(java.lang.String, boolean)
+	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributesByName(java.lang.String, boolean)
 	 */
-	public List<StudyAttribute> getStudyAttributeByName(String studyAttributeName, boolean includeRetired)
+	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired)
 	{
-		return getChicaDAO().getStudyAttributeByName(studyAttributeName, includeRetired);
+		return getChicaDAO().getStudyAttributesByName(studyAttributeName, includeRetired);
 	}
 	
 	public StudyAttributeValue getStudyAttributeValue(Study study,
 			String studyAttributeName)
 	{
-		return getChicaDAO().getStudyAttributeValue(study, studyAttributeName);
+		List<Study> studyList = new ArrayList<Study>();
+		studyList.add(study);
+		List<StudyAttribute> studyAttributeList = new ArrayList<StudyAttribute>();
+		studyAttributeList.add(getStudyAttributesByName(studyAttributeName, false).get(0));
+		return getChicaDAO().getStudyAttributeValues(studyList, studyAttributeList, false).get(0);
 	}
 
 	/**
-	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributeValue(java.util.List, java.util.List, boolean)
+	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributeValues(java.util.List, java.util.List, boolean)
 	 */
-	public List<StudyAttributeValue> getStudyAttributeValue(List<Study> studyList,
+	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
 			List<StudyAttribute> studyAttributeList, boolean includeRetired)
 	{
-		return getChicaDAO().getStudyAttributeValue(studyList, studyAttributeList, includeRetired);
+		return getChicaDAO().getStudyAttributeValues(studyList, studyAttributeList, includeRetired);
 	}
 
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
@@ -1090,10 +1094,10 @@ public class ChicaServiceImpl implements ChicaService
         }
         
         /**
-		 * @see org.openmrs.module.chica.service.ChicaService#getStudyByTitle(java.lang.String, boolean)
+		 * @see org.openmrs.module.chica.service.ChicaService#getStudiesByTitle(java.lang.String, boolean)
 		 */
-        public List<Study> getStudyByTitle(String studyTitle, boolean includeRetired) {
-	        return getChicaDAO().getStudyByTitle(studyTitle, includeRetired);
+        public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
+	        return getChicaDAO().getStudiesByTitle(studyTitle, includeRetired);
         }
 
         /**
@@ -1190,6 +1194,4 @@ public class ChicaServiceImpl implements ChicaService
 		public Study unretireStudy(Study study) throws APIException {
 		        return getChicaDAO().saveStudy(study);
 		}
-		
-	
 }

@@ -86,7 +86,7 @@ public interface ChicaService
 	 * @return StudyAttribute list with the provided study attribute name or null if one is not found with the provided name.
 	 */
 	@Authorized()
-	public List<StudyAttribute> getStudyAttributeByName(String studyAttributeName, 
+	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, 
 			boolean includeRetired);
 
 	@Authorized()
@@ -102,7 +102,7 @@ public interface ChicaService
 	 * @return StudyAttributeValue list with the provided study and study attribute.
 	 */
 	@Authorized()
-	public List<StudyAttributeValue> getStudyAttributeValue(List<Study> studyList,
+	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
 			List<StudyAttribute> studyAttributeList, boolean includeRetired);
 
 	@Authorized()
@@ -293,7 +293,7 @@ public interface ChicaService
 	 * @return Study object with the provided title or null if one is not found with the provided title.
 	 */
 	@Authorized()
-	public List<Study> getStudyByTitle(String studyTitle, boolean includeRetired);
+	public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired);
 	
 	/**
 	 * DWE CHICA-761
