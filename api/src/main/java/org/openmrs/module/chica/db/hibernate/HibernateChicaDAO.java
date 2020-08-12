@@ -187,16 +187,16 @@ public class HibernateChicaDAO implements ChicaDAO
 
 			List<StudyAttribute> list = qry.list();
 
-			if (list != null && list.size() > 0)
+			if (list != null && !list.isEmpty())
 			{
 				return list;
 			}
-			return null;
+			return new ArrayList<>();
 		} catch (Exception e)
 		{
-			this.LOG.error(Util.getStackTrace(e));
+			LOG.error(Util.getStackTrace(e));
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	/**
@@ -223,18 +223,18 @@ public class HibernateChicaDAO implements ChicaDAO
 
 				List<StudyAttributeValue> list = qry.list();
 
-				if (list != null && list.size() > 0)
+				if (list != null && !list.isEmpty())
 				{
 					return list;
 				}
 
 			}
-			return null;
+			return new ArrayList<>();
 		} catch (Exception e)
 		{
-			this.LOG.error(Util.getStackTrace(e));
+			LOG.error(Util.getStackTrace(e));
 		}
-		return null;
+		return new ArrayList<>();
 	}
 	
 	/**
@@ -244,7 +244,7 @@ public class HibernateChicaDAO implements ChicaDAO
 	 * @return studyIds
 	 */
 	private List<Integer> getStudyIds(List<Study> studyLists) {
-		List<Integer> studyIds = new ArrayList<Integer>();
+		List<Integer> studyIds = new ArrayList<>();
 		for (Study studyList : studyLists) {
 			studyIds.add(studyList.getStudyId());
 		}
@@ -258,7 +258,7 @@ public class HibernateChicaDAO implements ChicaDAO
 	 * @return studyAttrIds
 	 */
 	private List<Integer> getStudyAttributeIds(List<StudyAttribute> studyAttributeLists) {
-		List<Integer> studyAttrIds = new ArrayList<Integer>();
+		List<Integer> studyAttrIds = new ArrayList<>();
 		for (StudyAttribute studyAttributeList : studyAttributeLists) {
 			studyAttrIds.add(studyAttributeList.getStudyAttributeId());
 		}
@@ -1078,7 +1078,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		criteria.add(Restrictions.eq("retired", false));
 		
 		List<Study> list = criteria.list();
-		if (list != null && list.size() > 0) {
+		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
 		
@@ -1091,7 +1091,7 @@ public class HibernateChicaDAO implements ChicaDAO
     @SuppressWarnings("unchecked")
     public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
 		if (studyTitle == null) {
-    		return null;
+    		return new ArrayList<>();
     	}
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Study.class);
@@ -1099,11 +1099,11 @@ public class HibernateChicaDAO implements ChicaDAO
 		criteria.add(Restrictions.eq("retired", includeRetired));
 		
 		List<Study> list = criteria.list();
-		if (list != null && list.size() > 0) {
+		if (list != null && !list.isEmpty()) {
 			return list;
 		}
 		
-		return null;
+		return new ArrayList<>();
     }
     
     /**

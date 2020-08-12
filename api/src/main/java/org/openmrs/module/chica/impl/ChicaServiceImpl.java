@@ -24,7 +24,6 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
-import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
@@ -634,11 +633,14 @@ public class ChicaServiceImpl implements ChicaService
 	public StudyAttributeValue getStudyAttributeValue(Study study,
 			String studyAttributeName)
 	{
-		List<Study> studyList = new ArrayList<Study>();
+		List<Study> studyList = new ArrayList<>();
 		studyList.add(study);
-		List<StudyAttribute> studyAttributeList = new ArrayList<StudyAttribute>();
-		studyAttributeList.add(getStudyAttributesByName(studyAttributeName, false).get(0));
-		return getChicaDAO().getStudyAttributeValues(studyList, studyAttributeList, false).get(0);
+		List<StudyAttribute> studyAttributeList = getStudyAttributesByName(studyAttributeName, false);
+		List<StudyAttributeValue> studyAttributeValueList = getStudyAttributeValues(studyList, studyAttributeList, false);
+		if (studyAttributeValueList != null && !studyAttributeValueList.isEmpty()) {
+            return studyAttributeValueList.get(0);
+        }
+		return null;
 	}
 
 	/**
@@ -1132,7 +1134,7 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#saveStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
 		  */
-		public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) throws APIException {
+		public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) {
 			return getChicaDAO().saveStudyAttribute(studyAttribute);
 		}
 
@@ -1140,21 +1142,21 @@ public class ChicaServiceImpl implements ChicaService
 		  * @see org.openmrs.module.chica.service.ChicaService#retireStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute,
 		  * java.lang.String)
 		  */
-		public StudyAttribute retireStudyAttribute(StudyAttribute studyAttribute, String reason) throws APIException {
+		public StudyAttribute retireStudyAttribute(StudyAttribute studyAttribute, String reason) {
 		        return getChicaDAO().saveStudyAttribute(studyAttribute);
 		}
 
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
 		  */
-		public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute) throws APIException {
+		public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute) {
 		        return getChicaDAO().saveStudyAttribute(studyAttribute);
 		}
 		
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#saveStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
 		  */
-		public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws APIException {
+		public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
 			return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}	
 
@@ -1162,21 +1164,21 @@ public class ChicaServiceImpl implements ChicaService
 		  * @see org.openmrs.module.chica.service.ChicaService#retireStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue,
 		  * java.lang.String)
 		  */
-		public StudyAttributeValue retireStudyAttributeValue(StudyAttributeValue studyAttributeValue, String reason) throws APIException {
+		public StudyAttributeValue retireStudyAttributeValue(StudyAttributeValue studyAttributeValue, String reason) {
 		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}
 
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
 		  */
-		public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws APIException {
+		public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
 		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}
 		
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
 		  */
-		public Study saveStudy(Study study) throws APIException {
+		public Study saveStudy(Study study) {
 			return getChicaDAO().saveStudy(study);
 		}	
 
@@ -1184,14 +1186,14 @@ public class ChicaServiceImpl implements ChicaService
 		  * @see org.openmrs.module.chica.service.ChicaService#retireStudy(org.openmrs.module.chica.hibernateBeans.Study,
 		  * java.lang.String)
 		  */
-		public Study retireStudy(Study study, String reason) throws APIException {
+		public Study retireStudy(Study study, String reason) {
 		        return getChicaDAO().saveStudy(study);
 		}
 
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudy(org.openmrs.module.chica.hibernateBeans.Study)
 		  */
-		public Study unretireStudy(Study study) throws APIException {
+		public Study unretireStudy(Study study) {
 		        return getChicaDAO().saveStudy(study);
 		}
 }

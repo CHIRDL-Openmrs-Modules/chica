@@ -217,7 +217,7 @@ public interface ChicaDAO {
 	 * @param studyAttribute to be saved
 	 * @throws DAOException
 	 */
-	public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) throws DAOException;
+	public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) ;
 	
 	/**
 	 * Saves a chica study attribute value
@@ -225,7 +225,7 @@ public interface ChicaDAO {
 	 * @param studyAttributeValue to be saved
 	 * @throws DAOException
 	 */
-	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws DAOException;
+	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue);
 	
 	/**
 	 * Saves a new chica study
@@ -233,6 +233,6 @@ public interface ChicaDAO {
 	 * @param study to be saved
 	 * @throws DAOException
 	 */
-	public Study saveStudy(Study study) throws DAOException;
+	public Study saveStudy(Study study) ;
 	
 }

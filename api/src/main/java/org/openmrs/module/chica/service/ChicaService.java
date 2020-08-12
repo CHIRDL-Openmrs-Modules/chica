@@ -337,7 +337,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) throws APIException;
+	public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute);
 
 	/**
 	 * retires chica study attribute
@@ -347,7 +347,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public StudyAttribute retireStudyAttribute(StudyAttribute studyAttribute, String reason) throws APIException;
+	public StudyAttribute retireStudyAttribute(StudyAttribute studyAttribute, String reason);
 
 	/**
 	 * unretires chica study attribute 
@@ -356,7 +356,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute) throws APIException;
+	public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute);
 	
 	/**
 	 * Saves a new chica study attribute value or updates an existing chica study attribute value
@@ -365,7 +365,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws APIException;
+	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) ;
 
 	/**
 	 * retires chica study attribute value
@@ -375,7 +375,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public StudyAttributeValue retireStudyAttributeValue(StudyAttributeValue studyAttributeValue, String reason) throws APIException;
+	public StudyAttributeValue retireStudyAttributeValue(StudyAttributeValue studyAttributeValue, String reason);
 
 	/**
 	 * unretires chica study attribute value
@@ -384,7 +384,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue) throws APIException;
+	public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue);
 	
 	/**
 	 * Saves a new chica study or updates an existing chica study
@@ -393,7 +393,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public Study saveStudy(Study study) throws APIException;
+	public Study saveStudy(Study study) ;
 
 	/**
 	 * retires chica study
@@ -403,7 +403,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public Study retireStudy(Study study, String reason) throws APIException;
+	public Study retireStudy(Study study, String reason);
 
 	/**
 	 * unretires chica study 
@@ -412,7 +412,7 @@ public interface ChicaService
 	 * @throws APIException
 	 */
 	@Authorized()
-	public Study unretireStudy(Study study) throws APIException;
+	public Study unretireStudy(Study study);
 	
 		
 }
