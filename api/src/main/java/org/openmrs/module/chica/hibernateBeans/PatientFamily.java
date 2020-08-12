@@ -3,12 +3,16 @@ package org.openmrs.module.chica.hibernateBeans;
 import java.util.Date;
 
 /**
- * Holds information to store in the chica_study_attribute_value table
+ * Holds information to store in the chica_patient_family table
  * 
  * @author Tammy Dugan
  */
 public class PatientFamily implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer patientFamilyId=null;
 	private Integer patientId=null;
@@ -93,4 +97,5 @@ public class PatientFamily implements java.io.Serializable {
 	{
 		this.phoneNum = phoneNum;
 	}
+
 }

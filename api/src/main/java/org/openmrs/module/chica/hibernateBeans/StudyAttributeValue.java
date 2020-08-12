@@ -1,12 +1,18 @@
 package org.openmrs.module.chica.hibernateBeans;
 
+import org.openmrs.module.chirdlutilbackports.BaseChirdlMetadata;
+
 /**
  * Holds information to store in the chica_study_attribute_value table
  * 
  * @author Tammy Dugan
  */
-public class StudyAttributeValue implements java.io.Serializable {
+public class StudyAttributeValue extends BaseChirdlMetadata implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer studyAttributeValueId = null;
 	private Integer studyId = null;
@@ -82,4 +88,16 @@ public class StudyAttributeValue implements java.io.Serializable {
 	{
 		this.value = value;
 	}
+
+	@Override
+	public Integer getId() {
+		return getStudyAttributeValueId();
+	}
+
+	@Override
+	public void setId(Integer id) {
+		setStudyAttributeValueId(id);
+		
+	}
+
 }
