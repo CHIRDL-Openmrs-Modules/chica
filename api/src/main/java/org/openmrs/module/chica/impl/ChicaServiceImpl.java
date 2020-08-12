@@ -638,7 +638,9 @@ public class ChicaServiceImpl implements ChicaService
 		List<StudyAttribute> studyAttributeList = getStudyAttributesByName(studyAttributeName, false);
 		if (studyAttributeList != null && !studyAttributeList.isEmpty()) {
 		    List<StudyAttributeValue> studyAttributeValueList = getStudyAttributeValues(studyList, studyAttributeList, false);
-	        return studyAttributeValueList.get(0);
+		    if (studyAttributeValueList != null && !studyAttributeValueList.isEmpty()) {
+		        return studyAttributeValueList.get(0);
+		    }
         }
 		return null;
 	}
