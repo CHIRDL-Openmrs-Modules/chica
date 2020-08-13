@@ -1,5 +1,6 @@
 package org.openmrs.module.chica.db.hibernate;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,9 +18,11 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
@@ -156,11 +159,10 @@ public class HibernateChicaDAO implements ChicaDAO
 	{
 		try
 		{
-			String sql = "select * from chica_study where status=? and retired=?";
+			String sql = "select * from chica_study where status=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setInteger(0, 1);
-			qry.setBoolean(1, false);
 			qry.addEntity(Study.class);
 			return qry.list();
 		} catch (Exception e)
@@ -170,99 +172,66 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	/**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributesByName(java.lang.String, boolean)
-	 */
-	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired)
+	private StudyAttribute getStudyAttributeByName(String studyAttributeName)
 	{
 		try
 		{
 			String sql = "select * from chica_study_attribute "
-					+ "where name=? and retired=?";
+					+ "where name=?";
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 					.createSQLQuery(sql);
 			qry.setString(0, studyAttributeName);
-			qry.setBoolean(1, includeRetired);
 			qry.addEntity(StudyAttribute.class);
 
 			List<StudyAttribute> list = qry.list();
 
-			if (list != null && !list.isEmpty())
+			if (list != null && list.size() > 0)
 			{
-				return list;
+				return list.get(0);
 			}
-			return new ArrayList<>();
+			return null;
 		} catch (Exception e)
 		{
-			LOG.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
-		return new ArrayList<>();
+		return null;
 	}
 
-	/**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributeValues(java.util.List, java.util.List, boolean)
-	 */
-	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
-			List<StudyAttribute> studyAttributeList, boolean includeRetired)
+	public StudyAttributeValue getStudyAttributeValue(Study study,
+			String studyAttributeName)
 	{
 		try
 		{
-			if (studyList != null && studyAttributeList != null)
-			{
-				List<Integer> studyIds = this.getStudyIds(studyList);
-				List<Integer> studyAttributeIds = this.getStudyAttributeIds(studyAttributeList);
+			StudyAttribute studyAttribute = this
+					.getStudyAttributeByName(studyAttributeName);
 
-				String sql = "select * from chica_study_attribute_value where study_id IN (:studyIds) and "
-						+ "study_attribute_id IN (:studyAttributeIds) and retired = :includeRetired";
+			if (study != null && studyAttribute != null)
+			{
+				Integer studyId = study.getStudyId();
+				Integer studyAttributeId = studyAttribute.getStudyAttributeId();
+
+				String sql = "select * from chica_study_attribute_value where study_id=? and study_attribute_id=?";
 				SQLQuery qry = this.sessionFactory.getCurrentSession()
 						.createSQLQuery(sql);
-				qry.setParameterList("studyIds", studyIds);
-				qry.setParameterList("studyAttributeIds", studyAttributeIds);
-				qry.setBoolean("includeRetired", includeRetired);
+
+				qry.setInteger(0, studyId);
+				qry.setInteger(1, studyAttributeId);
 				qry.addEntity(StudyAttributeValue.class);
 
 				List<StudyAttributeValue> list = qry.list();
 
-				if (list != null && !list.isEmpty())
+				if (list != null && list.size() > 0)
 				{
-					return list;
+					return list.get(0);
 				}
 
 			}
-			return new ArrayList<>();
+			return null;
 		} catch (Exception e)
 		{
-			LOG.error(Util.getStackTrace(e));
+			this.LOG.error(Util.getStackTrace(e));
 		}
-		return new ArrayList<>();
-	}
-	
-	/**
-	 * Extract studyIds from the list of Study objects provided.
-	 *
-	 * @param studyList
-	 * @return studyIds
-	 */
-	private List<Integer> getStudyIds(List<Study> studyLists) {
-		List<Integer> studyIds = new ArrayList<>();
-		for (Study studyList : studyLists) {
-			studyIds.add(studyList.getStudyId());
-		}
-		return studyIds;
-	}
-	
-	/**
-	 * Extract studyAttributeIds from the list of Study Attribute objects provided.
-	 *
-	 * @param studyAttributeLists
-	 * @return studyAttrIds
-	 */
-	private List<Integer> getStudyAttributeIds(List<StudyAttribute> studyAttributeLists) {
-		List<Integer> studyAttrIds = new ArrayList<>();
-		for (StudyAttribute studyAttributeList : studyAttributeLists) {
-			studyAttrIds.add(studyAttributeList.getStudyAttributeId());
-		}
-		return studyAttrIds;
+		return null;
 	}
 
 	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication)
@@ -1063,8 +1032,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		session.saveOrUpdate(subject);
 		return subject;
     }
-    
-    /**
+
+	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyByTitle(java.lang.String)
 	 */
     @SuppressWarnings("unchecked")
@@ -1075,35 +1044,13 @@ public class HibernateChicaDAO implements ChicaDAO
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Study.class);
 		criteria.add(Restrictions.eq("title", studyTitle));
-		criteria.add(Restrictions.eq("retired", false));
 		
 		List<Study> list = criteria.list();
-		if (list != null && !list.isEmpty()) {
+		if (list != null && list.size() > 0) {
 			return list.get(0);
 		}
 		
 		return null;
-    }
-
-	/**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudiesByTitle(java.lang.String, boolean)
-	 */
-    @SuppressWarnings("unchecked")
-    public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
-		if (studyTitle == null) {
-    		return new ArrayList<>();
-    	}
-		
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Study.class);
-		criteria.add(Restrictions.eq("title", studyTitle));
-		criteria.add(Restrictions.eq("retired", includeRetired));
-		
-		List<Study> list = criteria.list();
-		if (list != null && !list.isEmpty()) {
-			return list;
-		}
-		
-		return new ArrayList<>();
     }
     
     /**
@@ -1144,29 +1091,4 @@ public class HibernateChicaDAO implements ChicaDAO
     	qry.addEntity(PatientState.class);
     	return qry.list();
     }
-    
-    /**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#StudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
-	 */
-    public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) {
-    	this.sessionFactory.getCurrentSession().save(studyAttribute);
-		return studyAttribute;
-	}
-    
-    /**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
-	 */
-    public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
-		this.sessionFactory.getCurrentSession().save(studyAttributeValue);
-		return studyAttributeValue;
-	}
-     
-    /**
-	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
-	 */
-    public Study saveStudy(Study study) {
-		this.sessionFactory.getCurrentSession().save(study);
-		return study;
-	}
-  
 }

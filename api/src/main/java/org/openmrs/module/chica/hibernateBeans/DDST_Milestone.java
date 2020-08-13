@@ -1,24 +1,19 @@
 package org.openmrs.module.chica.hibernateBeans;
 
-
 /**
- * Holds information to store in the chica_ddst table
+ * Holds information to store in the ddst_milestone table
  * 
  * @author Tammy Dugan
  */
 public class DDST_Milestone implements java.io.Serializable
 {	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 	private Integer ddst_id;
 
 	private String category;
 	private String milestone;
 	private Integer cutoff_age;
 	private String reportable;
+	
 
 	
 	public DDST_Milestone()
@@ -85,5 +80,6 @@ public class DDST_Milestone implements java.io.Serializable
 	public void setReportable(String reportable) {
 		this.reportable = reportable;
 	}
+	
 	
 }

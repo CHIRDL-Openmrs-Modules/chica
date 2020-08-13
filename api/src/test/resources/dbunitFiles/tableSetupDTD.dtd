@@ -354,14 +354,6 @@
     study_attribute_id CDATA #REQUIRED
     name CDATA #REQUIRED
     description CDATA #IMPLIED
-    creator CDATA #REQUIRED
-    date_created CDATA #REQUIRED
-    retired CDATA #REQUIRED
-    retired_by CDATA #IMPLIED
-    date_retired CDATA #IMPLIED
-    retire_reason CDATA #IMPLIED
-    changed_by CDATA #IMPLIED
-    date_changed CDATA #IMPLIED
 >
 
 <!ELEMENT chica_study_attribute_value EMPTY>
@@ -370,16 +362,6 @@
     study_id CDATA #REQUIRED
     value CDATA #IMPLIED
     study_attribute_id CDATA #REQUIRED
-    name CDATA #REQUIRED
-    description CDATA #IMPLIED
-    creator CDATA #REQUIRED
-    date_created CDATA #REQUIRED
-    retired CDATA #REQUIRED
-    retired_by CDATA #IMPLIED
-    date_retired CDATA #IMPLIED
-    retire_reason CDATA #IMPLIED
-    changed_by CDATA #IMPLIED
-    date_changed CDATA #IMPLIED
 >
 
 <!ELEMENT chica_wtageinf EMPTY>

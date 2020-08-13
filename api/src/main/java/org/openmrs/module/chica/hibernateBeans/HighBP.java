@@ -1,17 +1,13 @@
 package org.openmrs.module.chica.hibernateBeans;
 
 /**
- * Holds information to store in the chica_high_bp table
+ * Holds information to store in the bmiage table
  * 
  * @author Tammy Dugan
  * @version 1.0
  */
 public class HighBP implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer hiBPId=null;
 	private Integer systolicHT5=null;
@@ -217,5 +213,4 @@ public class HighBP implements java.io.Serializable {
 	{
 		this.sex = sex;
 	}
-
 }

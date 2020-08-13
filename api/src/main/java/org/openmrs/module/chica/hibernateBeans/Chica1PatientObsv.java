@@ -7,11 +7,6 @@ package org.openmrs.module.chica.hibernateBeans;
  */
 public class Chica1PatientObsv implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 	// Fields
 	private Integer idNum = null;
 
@@ -94,5 +89,4 @@ public class Chica1PatientObsv implements java.io.Serializable {
 	{
 		this.skipLoadReason = skipLoadReason;
 	}
-
 }

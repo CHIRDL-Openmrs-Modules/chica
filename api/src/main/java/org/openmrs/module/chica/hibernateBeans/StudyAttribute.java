@@ -1,18 +1,12 @@
 package org.openmrs.module.chica.hibernateBeans;
 
-import org.openmrs.BaseOpenmrsMetadata;
-
 /**
  * Holds information to store in the chica_study_attribute table
  * 
  * @author Tammy Dugan
  */
-public class StudyAttribute extends BaseOpenmrsMetadata implements java.io.Serializable {
+public class StudyAttribute implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer studyAttributeId = null;
 	private String name = null;
@@ -77,18 +71,5 @@ public class StudyAttribute extends BaseOpenmrsMetadata implements java.io.Seria
 	public void setDescription(String description)
 	{
 		this.description = description;
-	}
-
-
-	@Override
-	public Integer getId() {
-		return getStudyAttributeId();
-	}
-
-
-	@Override
-	public void setId(Integer id) {
-		setStudyAttributeId(id);
-		
 	}
 }

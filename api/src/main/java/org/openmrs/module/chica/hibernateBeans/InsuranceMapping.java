@@ -7,11 +7,6 @@ package org.openmrs.module.chica.hibernateBeans;
  */
 public class InsuranceMapping implements java.io.Serializable
 {	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 	private Integer insuranceId;
 
 	private String category;
@@ -135,5 +130,4 @@ public class InsuranceMapping implements java.io.Serializable
     public void setSendingFacility(String sendingFacility) {
     	this.sendingFacility = sendingFacility;
     }
-
 }

@@ -9,10 +9,6 @@ import java.util.Date;
  */
 public class Family implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer familyId = null;
 	private String streetAddress = null;
@@ -97,5 +93,4 @@ public class Family implements java.io.Serializable {
 	{
 		this.numKids = numKids;
 	}
-
 }

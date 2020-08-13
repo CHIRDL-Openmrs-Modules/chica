@@ -51,7 +51,6 @@
                     <property name="preInterceptors">
                         <list>
                             <ref bean="authorizationInterceptor"/>
-                            <ref bean="requiredDataInterceptor"/>
                         </list>
                     </property>
                     <property name="transactionAttributeSource">
