@@ -183,6 +183,7 @@ public class ChicaServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 	    try{
     		boolean authenticated = ServletUtil.authenticateUser(request);
@@ -207,6 +208,7 @@ public class ChicaServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try{
 		    boolean authenticated = ServletUtil.authenticateUser(request);
@@ -262,6 +264,7 @@ public class ChicaServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		try{
 		    doGet(request, response);
@@ -284,7 +287,7 @@ public class ChicaServlet extends HttpServlet {
 		PrintWriter pw = response.getWriter();
 		pw.write(XML_AVAILABLE_JITS_START);
 		
-		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
+		Integer encounterId = Integer.valueOf(request.getParameter(PARAM_ENCOUNTER_ID));
 		
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
@@ -296,7 +299,7 @@ public class ChicaServlet extends HttpServlet {
 			return;
 		}
 		
-		Map<String, FormInstanceTag> formInfoMap = new HashMap<String, FormInstanceTag>();
+		Map<String, FormInstanceTag> formInfoMap = new HashMap<>();
 		List<PatientState> patientStates = 
 				backportsService.getPatientStateByEncounterState(encounterId, createState.getStateId());
 		for (PatientState patientState : patientStates) {
@@ -377,7 +380,7 @@ public class ChicaServlet extends HttpServlet {
 		// Sort the form names and write them to the print writer.
 		if (!formInfoMap.isEmpty()) {
 			Set<String> formNameSet = formInfoMap.keySet();
-			List<String> formNameList = new ArrayList<String>(formNameSet);
+			List<String> formNameList = new ArrayList<>(formNameSet);
 			Collections.sort(formNameList);
 			
 			for (String formName : formNameList) {
@@ -434,9 +437,9 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-		List<String> pdfFiles = new ArrayList<String>();
-		List<FormInstanceTag> teleformFiles = new ArrayList<FormInstanceTag>();
-		List<FormInstanceTag> failedFiles = new ArrayList<FormInstanceTag>();
+		List<String> pdfFiles = new ArrayList<>();
+		List<FormInstanceTag> teleformFiles = new ArrayList<>();
+		List<FormInstanceTag> failedFiles = new ArrayList<>();
 		for (String formInstance : formInstances.split(ChirdlUtilConstants.GENERAL_INFO_COMMA)) {
 			FormInstanceTag formInstanceTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 			if (formInstanceTag == null) {
@@ -537,7 +540,7 @@ public class ChicaServlet extends HttpServlet {
 		// Get the fields
 		AcroFields form = stamper.getAcroFields();
 		// Loop over the fields
-		Set<String> keys = new HashSet<String>(form.getFields().keySet());
+		Set<String> keys = new HashSet<>(form.getFields().keySet());
 		for (String key : keys) {
 			// rename the fields
 			form.renameField(key, String.format("%s_%d", key, instance));
@@ -570,12 +573,12 @@ public class ChicaServlet extends HttpServlet {
 			}
 		} else {
 			try {
-				Integer patientId = Integer.parseInt(patientIdString);
+				Integer patientId = Integer.valueOf(patientIdString);
 				patient = Context.getPatientService().getPatient(patientId);
 			}
 			catch (Exception e) {
 				String message = "Invalid patientId parameter provided: " + patientIdString;
-				LOG.error(message);
+				LOG.error(message, e);
 				throw new IllegalArgumentException(message);
 			}
 		}
@@ -608,11 +611,11 @@ public class ChicaServlet extends HttpServlet {
 		Integer sessionId = null;
 		if (sessionIdString != null && sessionIdString.trim().length() > 0) {
 			try {
-				sessionId = Integer.parseInt(sessionIdString);
+				sessionId = Integer.valueOf(sessionIdString);
 			}
 			catch (Exception e) {
 				String message = "Invalid sessionId parameter provided: " + sessionIdString;
-				LOG.error(message);
+				LOG.error(message, e);
 				throw new IllegalArgumentException(message);
 			}
 		} else {
@@ -635,11 +638,11 @@ public class ChicaServlet extends HttpServlet {
 			location = locationService.getLocation(locationString);
 		} else {
 			try {
-				Integer locationId = Integer.parseInt(locationString);
+				Integer locationId = Integer.valueOf(locationString);
 				location = locationService.getLocation(locationId);
 			} catch (NumberFormatException e) {
 				String message = "Invalid locationId parameter: " + locationString;
-				LOG.error(message);
+				LOG.error(message, e);
 				throw new IllegalArgumentException(message);
 			}
 		}
@@ -651,10 +654,10 @@ public class ChicaServlet extends HttpServlet {
 			locationId = location.getLocationId();
 			if (locationTags != null && locationTags.trim().length() > 0) {
 				try {
-					locationTagId = Integer.parseInt(locationTags);
+					locationTagId = Integer.valueOf(locationTags);
 				} catch (NumberFormatException e) {
 					String message = "Invalid locationTagId parameter: " + locationTags;
-					LOG.error(message);
+					LOG.error(message, e);
 					throw new IllegalArgumentException(message);
 				}
 			} else {
@@ -683,9 +686,9 @@ public class ChicaServlet extends HttpServlet {
 		
 		List<FormAttributeValue> attributes = chirdlutilbackportsService.getFormAttributeValues(
 			forcePrintAttr.getFormAttributeId(), locationId, locationTagId);
-		Map<String, Integer> ageUnitsMinMap = new HashMap<String, Integer>();
-		Map<String, Integer> ageUnitsMaxMap = new HashMap<String, Integer>();
-		Set<FormDisplay> printableJits = new TreeSet<FormDisplay>();
+		Map<String, Integer> ageUnitsMinMap = new HashMap<>();
+		Map<String, Integer> ageUnitsMaxMap = new HashMap<>();
+		Set<FormDisplay> printableJits = new TreeSet<>();
 		
 		FormAttribute ageMinAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MIN);
 		FormAttribute ageMaxAttr = chirdlutilbackportsService.getFormAttributeByName(ChirdlUtilConstants.FORM_ATTR_AGE_MAX);
@@ -798,14 +801,14 @@ public class ChicaServlet extends HttpServlet {
 				}
 			}
 		}
-		List<String> generalFrmsArray = new ArrayList<String>();
-		HashMap<String, List<String>> groupMap = new HashMap<String, List<String>>();
+		List<String> generalFrmsArray = new ArrayList<>();
+		HashMap<String, List<String>> groupMap = new HashMap<>();
 		for (FormDisplay formDisplay: printableJits) {
 			
 			String strFormDisplay = formDisplay.getFormId()+","+formDisplay.getDisplayName()+","+formDisplay.getOutputType();
 			if (formDisplay.getDisplayGpHeader() != null && !formDisplay.getDisplayGpHeader().isEmpty()) {
 				if (!groupMap.containsKey(formDisplay.getDisplayGpHeader())) { 
-					List<String> list = new ArrayList<String>();
+					List<String> list = new ArrayList<>();
 				    list.add(strFormDisplay);
 				    groupMap.put(formDisplay.getDisplayGpHeader(), list);
 				}  else {
@@ -816,8 +819,8 @@ public class ChicaServlet extends HttpServlet {
 			}
 		}
 		
-		List<String> generalFormNames = new ArrayList<String>();
-		Map<String, String> generalMap = new HashMap<String, String>();
+		List<String> generalFormNames = new ArrayList<>();
+		Map<String, String> generalMap = new HashMap<>();
 		
 		for (String value : generalFrmsArray) {
 			String[] values = value.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
@@ -825,11 +828,9 @@ public class ChicaServlet extends HttpServlet {
 			generalMap.put(values[1], values[0]+","+values[2]);
 		}
 		
-		List<String> frmHeaderLst = new ArrayList<String>();
+		List<String> frmHeaderLst = new ArrayList<>();
 		frmHeaderLst.addAll(generalFormNames);
-		if (groupMap != null) {
-		 frmHeaderLst.addAll(groupMap.keySet());
-		}
+		frmHeaderLst.addAll(groupMap.keySet());
 		Collections.sort(frmHeaderLst);
 		
 		for (String value : frmHeaderLst) {
@@ -846,8 +847,8 @@ public class ChicaServlet extends HttpServlet {
 				pw.write(XML_GROUP_END);
 			} else {
 				List<String> groupForms  = groupMap.get(value);
-				List<String> displayName = new ArrayList<String>();
-				Map<String, String> branchMap = new HashMap<String, String>();
+				List<String> displayName = new ArrayList<>();
+				Map<String, String> branchMap = new HashMap<>();
 				
 				pw.write(ChirdlUtilConstants.XML_START_TAG + XML_GROUP + " " + XML_GROUP_NAME + "=\"" + value + "\"" + ChirdlUtilConstants.XML_END_TAG);
 				for (String gpForm : groupForms) {
@@ -909,7 +910,7 @@ public class ChicaServlet extends HttpServlet {
 			}
 		} else {
 			try {
-				patientId = Integer.parseInt(patientIdString);
+				patientId = Integer.valueOf(patientIdString);
 			}
 			catch (Exception e) {
 				String message = "Invalid patientId parameter provided: " + patientIdString;
@@ -927,7 +928,7 @@ public class ChicaServlet extends HttpServlet {
 		Integer sessionId = null;
 		if (sessionIdString != null && sessionIdString.trim().length() > 0) {
 			try {
-				sessionId = Integer.parseInt(sessionIdString);
+				sessionId = Integer.valueOf(sessionIdString);
 			}
 			catch (Exception e) {
 				String message = "Invalid sessionId parameter provided: " + sessionIdString;
@@ -956,11 +957,11 @@ public class ChicaServlet extends HttpServlet {
 			location = locationService.getLocation(locationString);
 		} else {
 			try {
-				Integer locationId = Integer.parseInt(locationString);
+				Integer locationId = Integer.valueOf(locationString);
 				location = locationService.getLocation(locationId);
 			} catch (NumberFormatException e) {
 				String message = "Invalid locationId parameter: " + locationString;
-				LOG.error(message);
+				LOG.error(message, e);
 				throw new IllegalArgumentException(message);
 			}
 		}
@@ -977,10 +978,10 @@ public class ChicaServlet extends HttpServlet {
 		locationId = location.getLocationId();
 		if (locationTags != null && locationTags.trim().length() > 0) {
 			try {
-				locationTagId = Integer.parseInt(locationTags);
+				locationTagId = Integer.valueOf(locationTags);
 			} catch (NumberFormatException e) {
 				String message = "Invalid locationTagId parameter: " + locationTags;
-				LOG.error(message);
+				LOG.error(message, e);
 				throw new IllegalArgumentException(message);
 			}
 		} else {
@@ -1000,11 +1001,11 @@ public class ChicaServlet extends HttpServlet {
 			}
 		}
 		
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		Map<String, Object> parameters = new HashMap<>();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		FormService formService = Context.getFormService();
 		
-		parameters = new HashMap<String, Object>();
+		parameters = new HashMap<>();
 		parameters.put(PARAM_SESSION_ID, sessionId);
 		parameters.put(PARAM_LOCATION_TAG_ID, locationTagId);
 		FormInstance formInstance = new FormInstance();
@@ -1017,17 +1018,17 @@ public class ChicaServlet extends HttpServlet {
 			throw new IllegalArgumentException(message);
 		}
 		
-		List<String> errorList = new ArrayList<String>();
+		List<String> errorList = new ArrayList<>();
 		String[] formIds = formIdsString.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
 		for (String formIdStr : formIds) {
 			// print the form
 			formIdStr = formIdStr.trim();
 			Integer formId = null;
 			try {
-				formId = Integer.parseInt(formIdStr);
+				formId = Integer.valueOf(formIdStr);
 			} catch (Exception e) {
 				String message = "Invalid formId parameter: " + formIdStr;
-				LOG.error(message);
+				LOG.error(message, e);
 				continue;
 			}
 			
@@ -1127,19 +1128,20 @@ public class ChicaServlet extends HttpServlet {
 	private Patient getPatientByMRN(String mrn) {
 		PatientService patientService = Context.getPatientService();
 		Patient patient = null;
-		mrn = Util.removeLeadingZeros(mrn);
-		if (mrn != null && !mrn.contains("-") && mrn.length() > 1) {
-			mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
+		String formattedMrn = Util.removeLeadingZeros(mrn);
+		if (formattedMrn != null && !formattedMrn.contains("-") && formattedMrn.length() > 1) {
+			formattedMrn = formattedMrn.substring(
+				0, formattedMrn.length() - 1) + "-" + formattedMrn.substring(formattedMrn.length() - 1);
 		}
 		
 		PatientIdentifierType identifierType = patientService
 				.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
-		List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+		List<PatientIdentifierType> identifierTypes = new ArrayList<>();
 		identifierTypes.add(identifierType);
-		List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
+		List<Patient> patients = patientService.getPatientsByIdentifier(null, formattedMrn,
 				identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		if (patients.size() == 0){
-			patients = patientService.getPatientsByIdentifier(null, "0" + mrn,
+			patients = patientService.getPatientsByIdentifier(null, "0" + formattedMrn,
 					identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		}
 
@@ -1172,19 +1174,19 @@ public class ChicaServlet extends HttpServlet {
 			return;
 		}
 		
-		List<String> errorList = new ArrayList<String>();
+		List<String> errorList = new ArrayList<>();
 		String[] formIds = formIdsStr.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
 		for (String formIdStr : formIds) {
 			try {
-				formId = Integer.parseInt(formIdStr);
+				formId = Integer.valueOf(formIdStr);
 			} catch (NumberFormatException e) {
-				LOG.error("Invalid argument formId: " + formIdStr);
+				LOG.error("Invalid argument formId: " + formIdStr, e);
 				errorList.add(formIdStr);
 				continue;
 			}
 			
 			try {
-				locationId = Integer.parseInt(locationIdStr);
+				locationId = Integer.valueOf(locationIdStr);
 			} catch (NumberFormatException e) {
 				// DWE CHICA-576 Add some additional logging
 				StringBuilder errorMsg = new StringBuilder();
@@ -1199,15 +1201,15 @@ public class ChicaServlet extends HttpServlet {
 					errorMsg.append(" locationTagId: ")
 					.append(locationTagIdStr);
 				}
-				LOG.error(errorMsg.toString());
+				LOG.error(errorMsg.toString(), e);
 				errorList.add(formIdStr);
 				continue;
 			}
 			
 			try {
-				locationTagId = Integer.parseInt(locationTagIdStr);
+				locationTagId = Integer.valueOf(locationTagIdStr);
 			} catch (NumberFormatException e) {
-				LOG.error("Invalid argument locationTagId: " + locationTagIdStr);
+				LOG.error("Invalid argument locationTagId: " + locationTagIdStr, e);
 				errorList.add(formIdStr);
 				continue;
 			}
@@ -1249,7 +1251,7 @@ public class ChicaServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
     private void getGreaseboardPatients(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		GreaseBoardBuilder.generatePatientRows(map);
 		List<PatientRow> patientRows = (List<PatientRow>)map.get(PARAM_PATIENT_ROWS);
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -1278,7 +1280,7 @@ public class ChicaServlet extends HttpServlet {
 	
 	private Map<Integer, String> getFormAttributeValues(ChirdlUtilBackportsService backportsService, Integer attributeId, 
 		Integer locationId, Integer locationTagId) {
-		Map<Integer, String> formToValueMap = new HashMap<Integer, String>();
+		Map<Integer, String> formToValueMap = new HashMap<>();
 		List<FormAttributeValue> values = backportsService.getFormAttributeValues(attributeId, locationId, locationTagId);
 		if (values == null) {
 			return formToValueMap;
@@ -1855,7 +1857,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		String formIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_ID);
 		try {
-			formId = Integer.parseInt(formIdStr);
+			formId = Integer.valueOf(formIdStr);
 		} catch (NumberFormatException e) {
 			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_ID + " is invalid: " + formIdStr, e);
 			pw.write(errorHtml);
@@ -1864,7 +1866,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		String locationTagIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
 		try {
-			locationTagId = Integer.parseInt(locationTagIdStr);
+			locationTagId = Integer.valueOf(locationTagIdStr);
 		} catch (NumberFormatException e) {
 			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + " is invalid: " + locationTagIdStr, e);
 			pw.write(errorHtml);
@@ -1873,7 +1875,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		String locationIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID);
 		try {
-			locationId = Integer.parseInt(locationIdStr);
+			locationId = Integer.valueOf(locationIdStr);
 		} catch (NumberFormatException e) {
 			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_ID + " is invalid: " + locationIdStr, e);
 			pw.write(errorHtml);
@@ -1882,7 +1884,7 @@ public class ChicaServlet extends HttpServlet {
 		
 		String formInstanceIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID);
 		try {
-			formInstanceId = Integer.parseInt(formInstanceIdStr);
+			formInstanceId = Integer.valueOf(formInstanceIdStr);
 		} catch (NumberFormatException e) {
 			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID + " is invalid: " + formInstanceIdStr, e);
 			pw.write(errorHtml);
