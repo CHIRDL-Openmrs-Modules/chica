@@ -15,7 +15,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -55,6 +54,7 @@ import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
+import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.service.ChicaService;
@@ -621,11 +621,37 @@ public class ChicaServiceImpl implements ChicaService
 	{
 		return getChicaDAO().getActiveStudies();
 	}
-
+	
+	/**
+	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributesByName(java.lang.String, boolean)
+	 */
+	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired)
+	{
+		return getChicaDAO().getStudyAttributesByName(studyAttributeName, includeRetired);
+	}
+	
 	public StudyAttributeValue getStudyAttributeValue(Study study,
 			String studyAttributeName)
 	{
-		return getChicaDAO().getStudyAttributeValue(study, studyAttributeName);
+		List<Study> studyList = new ArrayList<>();
+		studyList.add(study);
+		List<StudyAttribute> studyAttributeList = getStudyAttributesByName(studyAttributeName, false);
+		if (studyAttributeList != null && !studyAttributeList.isEmpty()) {
+		    List<StudyAttributeValue> studyAttributeValueList = getStudyAttributeValues(studyList, studyAttributeList, false);
+		    if (studyAttributeValueList != null && !studyAttributeValueList.isEmpty()) {
+		        return studyAttributeValueList.get(0);
+		    }
+        }
+		return null;
+	}
+
+	/**
+	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributeValues(java.util.List, java.util.List, boolean)
+	 */
+	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
+			List<StudyAttribute> studyAttributeList, boolean includeRetired)
+	{
+		return getChicaDAO().getStudyAttributeValues(studyList, studyAttributeList, includeRetired);
 	}
 
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
@@ -1070,6 +1096,13 @@ public class ChicaServiceImpl implements ChicaService
         public Study getStudyByTitle(String studyTitle) {
 	        return getChicaDAO().getStudyByTitle(studyTitle);
         }
+        
+        /**
+		 * @see org.openmrs.module.chica.service.ChicaService#getStudiesByTitle(java.lang.String, boolean)
+		 */
+        public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
+	        return getChicaDAO().getStudiesByTitle(studyTitle, includeRetired);
+        }
 
         /**
     	 * DWE CHICA-761
@@ -1098,5 +1131,71 @@ public class ChicaServiceImpl implements ChicaService
 		{
 			ThreadManager threadManager = ThreadManager.getInstance();
 			threadManager.execute(new NewGlookoUserRunnable(firstName, lastName, dateOfBirth, glookoCode), 0);
+		}
+		
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#saveStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
+		  */
+		public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) {
+			return getChicaDAO().saveStudyAttribute(studyAttribute);
+		}
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#retireStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute,
+		  * java.lang.String)
+		  */
+		public StudyAttribute retireStudyAttribute(StudyAttribute studyAttribute, String reason) {
+		        return getChicaDAO().saveStudyAttribute(studyAttribute);
+		}
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
+		  */
+		public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute) {
+		        return getChicaDAO().saveStudyAttribute(studyAttribute);
+		}
+		
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#saveStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
+		  */
+		public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
+			return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
+		}	
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#retireStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue,
+		  * java.lang.String)
+		  */
+		public StudyAttributeValue retireStudyAttributeValue(StudyAttributeValue studyAttributeValue, String reason) {
+		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
+		}
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
+		  */
+		public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
+		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
+		}
+		
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
+		  */
+		public Study saveStudy(Study study) {
+			return getChicaDAO().saveStudy(study);
+		}	
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#retireStudy(org.openmrs.module.chica.hibernateBeans.Study,
+		  * java.lang.String)
+		  */
+		public Study retireStudy(Study study, String reason) {
+		        return getChicaDAO().saveStudy(study);
+		}
+
+		/**
+		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudy(org.openmrs.module.chica.hibernateBeans.Study)
+		  */
+		public Study unretireStudy(Study study) {
+		        return getChicaDAO().saveStudy(study);
 		}
 }

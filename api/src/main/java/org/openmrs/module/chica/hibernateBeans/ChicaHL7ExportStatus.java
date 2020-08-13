@@ -3,11 +3,17 @@ package org.openmrs.module.chica.hibernateBeans;
 import java.util.Date;
 
 /**
+ * Holds information to store in the chica_hl7_export_status table
+ * 
  * @author msheley
  * 
  */
 public class ChicaHL7ExportStatus implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer hl7ExportStatusId = null;
 	private String name = null;
 	private String description = null;
@@ -38,8 +44,5 @@ public class ChicaHL7ExportStatus implements java.io.Serializable {
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
 	}
-	
-	
-
 	
 }
