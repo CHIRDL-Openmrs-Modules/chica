@@ -8,13 +8,13 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.annotation.Authorized;
-import org.openmrs.api.APIException;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
@@ -30,7 +30,6 @@ import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
-import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
@@ -77,33 +76,10 @@ public interface ChicaService
 
 	@Authorized()
 	public List<Study> getActiveStudies();
-	
-	/**
-	 * Retrieve a StudyAttribute by name.
-	 * 
-	 * @param studyAttributeName The name of the study attribute.
-	 * @param includeRetired 
-	 * @return StudyAttribute list with the provided study attribute name or null if one is not found with the provided name.
-	 */
-	@Authorized()
-	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, 
-			boolean includeRetired);
 
 	@Authorized()
 	public StudyAttributeValue getStudyAttributeValue(Study study,
 			String studyAttributeName);
-	
-	/**
-	 * Retrieve list of StudyAttributeValue by Study and StudyAttributeName.
-	 * 
-	 * @param studyList The study list object.
-	 * @param studyAttributeList The study attribute list object.
-	 * @param includeRetired 
-	 * @return StudyAttributeValue list with the provided study and study attribute.
-	 */
-	@Authorized()
-	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
-			List<StudyAttribute> studyAttributeList, boolean includeRetired);
 
 	@Authorized()
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
@@ -286,16 +262,6 @@ public interface ChicaService
 	public Study getStudyByTitle(String studyTitle);
 	
 	/**
-	 * Retrieve a Study by title.
-	 * 
-	 * @param studyTitle The title of the study.
-	 * @param includeRetired retired value
-	 * @return Study object with the provided title or null if one is not found with the provided title.
-	 */
-	@Authorized()
-	public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired);
-	
-	/**
 	 * DWE CHICA-761
 	 * Get reprint/rescan states by session Id
 	 * @param sessionId
@@ -329,90 +295,4 @@ public interface ChicaService
 	 */
 	@Authorized()
 	public void addGlookoCodePersonAttribute(String firstName, String lastName, String dateOfBirth, String glookoCode);
-	
-	/**
-	 * Saves a new chica study attribute or updates an existing chica study attribute
-	 * 
-	 * @param studyAttribute to be saved
-	 * @throws APIException
-	 */
-	@Authorized()
-	public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute);
-
-	/**
-	 * retires chica study attribute
-	 * 
-	 * @param studyAttribute to be saved
-	 * @param reason to retire study attribute
-	 * @throws APIException
-	 */
-	@Authorized()
-	public StudyAttribute retireStudyAttribute(StudyAttribute studyAttribute, String reason);
-
-	/**
-	 * unretires chica study attribute 
-	 * 
-	 * @param studyAttribute to be saved
-	 * @throws APIException
-	 */
-	@Authorized()
-	public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute);
-	
-	/**
-	 * Saves a new chica study attribute value or updates an existing chica study attribute value
-	 * 
-	 * @param studyAttributeValue to be saved
-	 * @throws APIException
-	 */
-	@Authorized()
-	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) ;
-
-	/**
-	 * retires chica study attribute value
-	 * 
-	 * @param studyAttributeValue to be saved
-	 * @param reason to retire chica study attribute value
-	 * @throws APIException
-	 */
-	@Authorized()
-	public StudyAttributeValue retireStudyAttributeValue(StudyAttributeValue studyAttributeValue, String reason);
-
-	/**
-	 * unretires chica study attribute value
-	 * 
-	 * @param studyAttributeValue to be saved
-	 * @throws APIException
-	 */
-	@Authorized()
-	public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue);
-	
-	/**
-	 * Saves a new chica study or updates an existing chica study
-	 * 
-	 * @param study to be saved
-	 * @throws APIException
-	 */
-	@Authorized()
-	public Study saveStudy(Study study) ;
-
-	/**
-	 * retires chica study
-	 * 
-	 * @param study to be saved
-	 * @param reason to retire chica study
-	 * @throws APIException
-	 */
-	@Authorized()
-	public Study retireStudy(Study study, String reason);
-
-	/**
-	 * unretires chica study 
-	 * 
-	 * @param study to be saved
-	 * @throws APIException
-	 */
-	@Authorized()
-	public Study unretireStudy(Study study);
-	
-		
 }

@@ -19,7 +19,7 @@ import org.openmrs.Patient;
 
 
 /**
- * Hibernate mapping to the chica_study_subject table.
+ * Hibernate mapping to the chica_subject table.
  * 
  * @author Steve McKee
  */
@@ -134,5 +134,4 @@ public class StudySubject implements Serializable {
         }
         return true;
     }
-
 }

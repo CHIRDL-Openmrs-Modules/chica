@@ -3,17 +3,13 @@ package org.openmrs.module.chica.hibernateBeans;
 import org.openmrs.module.chica.Percentile;
 
 /**
- * Holds information to store in the chica_hcageinf table
+ * Holds information to store in the hcageinf table
  * 
  * @author Tammy Dugan
  * @version 1.0
  */
 public class Hcageinf implements java.io.Serializable, Percentile {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer hcageinfId = null;
 	private Double s = null;
@@ -21,7 +17,7 @@ public class Hcageinf implements java.io.Serializable, Percentile {
 	private Double l = null;
 	private Double agemos = null;
 	private Integer sex = null;
-	
+
 	// Constructors
 
 	/** default constructor */
@@ -123,5 +119,5 @@ public class Hcageinf implements java.io.Serializable, Percentile {
 	{
 		this.sex = sex;
 	}
-
+	
 }
