@@ -18,6 +18,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.FaxStatus;
 import org.openmrs.module.chica.web.ChicaServlet;
+import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
@@ -233,13 +234,13 @@ public class FaxStatusController {
 
 			try {
 				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
-				uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
+				uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.CONVERT_TIFF_TO_PDF);
+				uriBuilder.addParameter(ServletUtil.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
 
 				String imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 				status.setImageFileLocation(imageFilename);
 			} catch (Exception e) {
-				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF
+				log.error("Error generating URI form image filename for action: " + ServletUtil.CONVERT_TIFF_TO_PDF
 						+ " tiff file location: " + imagefile.getPath(), e);
 			}
 		}
