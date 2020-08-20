@@ -65,28 +65,49 @@ public class ControllerUtil {
 	 * @param map     Map where all the page parameters will be written
 	 */
 	public static void loadFormData(HttpServletRequest request, Map<String, Object> map) {
-		map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE,
-				request.getParameter(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE));
-
+		String errorMessage = request.getParameter(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE);
+		String providerId = request.getParameter(ChirdlUtilConstants.PARAMETER_PROVIDER_ID);
+		String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
 		String encounterIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-		map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterIdStr);
-		map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID,
-				request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID));
-
+		Integer encounterId = Integer.valueOf(encounterIdStr);
+		String sessionIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID);
+		Integer sessionId = Integer.valueOf(sessionIdStr);
 		String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
-		org.openmrs.Patient patient = Context.getPatientService().getPatient(Integer.valueOf(patientIdStr));
+		Integer patientId = Integer.valueOf(patientIdStr);
+		
+		loadFormData(
+				request.getSession(), errorMessage, providerId, formInstance, encounterId, sessionId, patientId, map);
+	}
+	
+	/**
+	 * Loads the data for the page to display.
+	 * 
+	 * @param session The HTTP session
+	 * @param errorMessage An error message to load if present
+	 * @param providerId The provider identifier
+	 * @param formInstance The form instance identifier
+	 * @param encounterId The encounter identifier
+	 * @param sessionId The session identifier
+	 * @param patientId the patient identifier
+	 * @param map Map where all the page parameters will be written
+	 */
+	public static void loadFormData(HttpSession session, String errorMessage, String providerId, String formInstance, 
+			Integer encounterId, Integer sessionId, Integer patientId, Map<String, Object> map) {
+		map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE, errorMessage);
+
+		map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
+		map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessionId);
+
+		org.openmrs.Patient patient = Context.getPatientService().getPatient(patientId);
 		map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
 
-		String providerId = request.getParameter(ChirdlUtilConstants.PARAMETER_PROVIDER_ID);
 		map.put(ChirdlUtilConstants.PARAMETER_PROVIDER_ID, providerId);
 
-		String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
 		FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
 		Integer locationId = formInstTag.getLocationId();
 		Integer formId = formInstTag.getFormId();
 		Integer formInstanceId = formInstTag.getFormInstanceId();
 		Integer locationTagId = formInstTag.getLocationTagId();
-		Integer encounterId = Integer.valueOf(encounterIdStr);
 		map.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, formInstance);
 		map.put(ChirdlUtilConstants.PARAMETER_FORM_ID, formId);
 		map.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID, formInstanceId);
@@ -97,9 +118,9 @@ public class ControllerUtil {
 		// variable
 		// This will prevent the user from accessing a submitted form using the
 		// browser's back arrow
-		if (checkForPreviousSubmission(request, formInstance)) {
+		if (checkForPreviousSubmission(session, formInstance)) {
 			map.put(ChicaConstants.PARAMETER_ERROR_PREVIOUS_SUBMISSION, Boolean.TRUE);
-			map.put(ChirdlUtilConstants.PARAMETER_PATIENT_ID, patientIdStr);
+			map.put(ChirdlUtilConstants.PARAMETER_PATIENT_ID, patientId);
 			return;
 		}
 
@@ -120,7 +141,7 @@ public class ControllerUtil {
 		if (providerId != null && providerId.trim().length() > 0) {
 			saveProviderViewer(patient, encounterId, providerId, formInstTag);
 		} else {
-			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientIdStr
+			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientId
 					+ " encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: "
 					+ formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
 		}
@@ -150,14 +171,13 @@ public class ControllerUtil {
 	 * CHICA-1004 Check for previous form submission by checking the session
 	 * variable to see if the form instance exists
 	 * 
-	 * @param request
+	 * @param session
 	 * @param formInstance
 	 * @return returns true if the formInstance exists in the submittedFormInstances
 	 *         session variable
 	 */
 	@SuppressWarnings("unchecked")
-	public static boolean checkForPreviousSubmission(HttpServletRequest request, String formInstance) {
-		HttpSession session = request.getSession();
+	public static boolean checkForPreviousSubmission(HttpSession session, String formInstance) {
 		List<String> submittedFormInstances = null;
 		Object submittedFormInstancesObj = session
 				.getAttribute(ChicaConstants.SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
@@ -494,19 +514,35 @@ public class ControllerUtil {
 	/**
      * Completes the form and returns the next view.
      * 
+     * @param patientId The patient identifier
+     * @param language The language of the patient
+     * @param userQuitForm Indicates if the user quit the form
+     * @param map map to populate for return to the client
+     * @param formView The form view to display next
+     * @return The form view to display next
+     */
+    public static String finishForm(
+    		Integer patientId, String language, String userQuitForm, ModelMap map, String formView) {
+    	Patient patient = Context.getPatientService().getPatient(patientId);
+        map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
+        map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
+        map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
+        return formView;
+    }
+	
+	/**
+     * Completes the form and returns the next view.
+     * 
      * @param request The HTTP request information
      * @param map map to populate for return to the client
      * @param formView The form view to display next
      * @return The form view to display next
      */
     public static String finishForm(HttpServletRequest request, ModelMap map, String formView) {
-        String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
-        org.openmrs.Patient patient = Context.getPatientService().getPatient(Integer.valueOf(patientIdStr));
-        map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
-        String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
-        map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
-        String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
-        map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
-        return formView;
+    	String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
+    	Integer patientId = Integer.valueOf(patientIdStr);
+    	String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
+    	String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
+    	return finishForm(patientId, language, userQuitForm, map, formView);
     }
 }

@@ -3,18 +3,19 @@ package org.openmrs.module.chica.web.controller;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.utils.URIBuilder;
-import org.openmrs.Location;
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.web.ChicaServlet;
+import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -99,18 +100,18 @@ public class DisplayViewEncounterFormController {
 					String transformUrl = null;
 					try {
 						URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-						uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.TRANSFORM_FORM_XML);
+						uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.TRANSFORM_FORM_XML);
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_ID, String.valueOf(formId));
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, String.valueOf(locationTagId));
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID, String.valueOf(locationId));
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID, String.valueOf(formInstanceId));
-						uriBuilder.addParameter(ChicaServlet.STYLESHEET, stylesheet);
-						uriBuilder.addParameter(ChicaServlet.FORM_DIRECTORY, formDirectory);
+						uriBuilder.addParameter(ServletUtil.STYLESHEET, stylesheet);
+						uriBuilder.addParameter(ServletUtil.FORM_DIRECTORY, formDirectory);
 
 						transformUrl = uriBuilder.toString();
 					}
 					catch (URISyntaxException e) {
-						log.error("Error generating URI for form image location for action: " + ChicaServlet.TRANSFORM_FORM_XML + 
+						log.error("Error generating URI for form image location for action: " + ServletUtil.TRANSFORM_FORM_XML + 
 								" form ID: " + formId + " location tag ID: " + locationTagId + " location ID " + locationId + 
 								" form instance ID: " + formInstanceId + " stylesheet: " + stylesheet, e);
 					}
@@ -121,14 +122,14 @@ public class DisplayViewEncounterFormController {
 			{
 				try {
 					URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-					uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
-					uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
+					uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.CONVERT_TIFF_TO_PDF);
+					uriBuilder.addParameter(ServletUtil.PARAM_TIFF_FILE_LOCATION, imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
 
 					imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 					map.put(filenameParameterName, imageFilename);
 				}
 				catch (URISyntaxException e) {
-					log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF + 
+					log.error("Error generating URI form image filename for action: " + ServletUtil.CONVERT_TIFF_TO_PDF + 
 							" tiff file location: " + (imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING), e);
 				}
 			}
@@ -138,12 +139,12 @@ public class DisplayViewEncounterFormController {
 			// We weren't able to locate the form. We still need to return something so an error page gets displayed.
 			try {
 				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
+				uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.CONVERT_TIFF_TO_PDF);
 				imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 				map.put(filenameParameterName, imageFilename);
 			}
 			catch (URISyntaxException e) {
-				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF, e);
+				log.error("Error generating URI form image filename for action: " + ServletUtil.CONVERT_TIFF_TO_PDF, e);
 			}
 		}
 	}
