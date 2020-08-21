@@ -1237,11 +1237,36 @@ public class Util {
 	 * @return The name of the primary physician form
 	 */
 	public static String getPrimaryPhysicianFormName(Integer locationId, Integer locationTagId) {
+		return getPrimaryFormName(locationId, locationTagId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM);
+	}
+	
+	/**
+	 * Retrieves the primary patient form name configured for the provided
+	 * location and location tag.
+	 * 
+	 * @param locationId    The location identifier
+	 * @param locationTagId The location tag identifier
+	 * @return The name of the primary patient form
+	 */
+	public static String getPrimaryPatientFormName(Integer locationId, Integer locationTagId) {
+		return getPrimaryFormName(locationId, locationTagId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+	}
+	
+	/**
+	 * Retrieves the primary patient form name configured for the provided
+	 * location and location tag.
+	 * 
+	 * @param locationId    The location identifier
+	 * @param locationTagId The location tag identifier
+	 * @param locationTagAttrName The name of the location tag attribute that defines the primary form requested
+	 * @return The name of the primary patient form
+	 */
+	private static String getPrimaryFormName(Integer locationId, Integer locationTagId, String locationTagAttrName) {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		LocationTagAttributeValue locationTagAttributeValueForm = null;
 		if (locationTagId != null && locationId != null) {
 			locationTagAttributeValueForm = chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId,
-					ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM, locationId);
+				locationTagAttrName, locationId);
 		}
 
 		if (locationTagAttributeValueForm != null) {
