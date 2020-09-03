@@ -501,9 +501,9 @@ public class ControllerUtil {
 		Integer locationTagId = locationTag.getLocationTagId();
 		String formName = null;
 		if (physicianForm) {
-			Util.getPrimaryPhysicianFormName(locationId, locationTagId);
+			formName = Util.getPrimaryPhysicianFormName(locationId, locationTagId);
 		} else {
-			Util.getPrimaryPatientFormName(locationId, locationTagId);
+			formName = Util.getPrimaryPatientFormName(locationId, locationTagId);
 		}
 		
 		map.put(ChirdlUtilConstants.PARAMETER_FORM_NAME, formName);
