@@ -54,6 +54,7 @@ import org.openmrs.module.atd.TeleformTranslator;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
+import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttribute;
@@ -95,8 +96,8 @@ public class ServletUtil {
 	public static final String SAVE_FORM_DRAFT = "saveFormDraft";
 	public static final String CONVERT_TIFF_TO_PDF = "convertTiffToPDF";
 	public static final String TRANSFORM_FORM_XML = "transformFormXML";
+	public static final String GET_PRIORITIZED_ELEMENTS = "getPrioritizedElements";
 	
-	public static final String PARAM_ENCOUNTER_ID = "encounterId";
 	public static final String PARAM_SESSION_ID = "sessionId";
 	public static final String PARAM_FORM_IDS = "formIds";
 	public static final String PARAM_LOCATION_ID = "locationId";
@@ -115,6 +116,7 @@ public class ServletUtil {
 	public static final String PARAM_PROVIDER_ID = "providerId";
 	public static final String PARAM_ACTION = "action";
 	public static final String PARAM_TIFF_FILE_LOCATION = "tiffFileLocation";
+	public static final String PARAM_MAX_ELEMENTS = "maxElements";
 	
 	public static final String XML_AVAILABLE_JITS_START = "<availableJITs>";
 	public static final String XML_AVAILABLE_JITS_END = "</availableJITs>";
@@ -152,6 +154,14 @@ public class ServletUtil {
 	public static final String XML_ERROR_MESSAGES_START = "<errorMessages>";
 	public static final String XML_ERROR_MESSAGES_END = "</errorMessages>";
 	public static final String XML_ERROR_MESSAGE = "errorMessage";
+	public static final String XML_RECORDS_START = "<Records>";
+	public static final String XML_RECORDS_END = "</Records>";
+	public static final String XML_RECORD_START = "<Record>";
+	public static final String XML_RECORD_END = "</Record>";
+	public static final String XML_VALUE = "Value";
+	public static final String XML_FIELD = "Field";
+	public static final String XML_FIELD_END = "</Field>";
+	public static final String XML_ID = "id";
 	
 	public static final String STYLESHEET = "stylesheet";
 	public static final String FORM_DIRECTORY = "formDirectory";
@@ -321,7 +331,7 @@ public class ServletUtil {
 	 */
 	public static void getAvailablePatientJITs(HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
-		Integer encounterId = Integer.valueOf(request.getParameter(PARAM_ENCOUNTER_ID));
+		Integer encounterId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID));
 		getAvailablePatientJITs(encounterId, response);
 	}
 	
@@ -1352,5 +1362,56 @@ public class ServletUtil {
 		if (!errorList.isEmpty()) {
 			response.getWriter().write("There were errors encountered processing form(s).");
 		}
+	}
+	
+	/**
+	 * Retrieves prioritized elements for a form.
+	 * 
+	 * @param formId The form identifier
+	 * @param formInstanceId The form instance identifier
+	 * @param encounterId The encounter identifier
+	 * @param maxElements The maximum number of elements to provide
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
+	public static void getPrioritizedElements(Integer formId, Integer formInstanceId, Integer encounterId, 
+			Integer maxElements, HttpServletResponse response) throws IOException {
+		DynamicFormAccess formAccess = new DynamicFormAccess();
+		List<org.openmrs.module.atd.xmlBeans.Field> fields = 
+				formAccess.getPrioritizedElements(formId, formInstanceId, encounterId, maxElements);
+		
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setHeader(
+			ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		PrintWriter pw = response.getWriter();
+		pw.write(XML_RECORDS_START);
+		pw.write(XML_RECORD_START);
+		for(org.openmrs.module.atd.xmlBeans.Field field : fields){
+			pw.write(ChirdlUtilConstants.XML_START_TAG + XML_FIELD + " " + XML_ID + "=\"" + field.getId() + "\"" + 
+					ChirdlUtilConstants.XML_END_TAG);
+			writeTag(XML_VALUE, ServletUtil.escapeXML(field.getValue()), pw);
+			pw.write(XML_FIELD_END);
+		}
+		
+		pw.write(XML_RECORD_END);
+		pw.write(XML_RECORDS_END);
+	}
+	
+	/**
+	 * Retrieves prioritized elements for a form.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
+	public static void getPrioritizedElements(HttpServletRequest request, HttpServletResponse response) 
+			throws IOException {
+		Integer formId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_ID));
+		Integer formInstanceId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID));
+		Integer encounterId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID));
+		Integer maxElements = Integer.valueOf(request.getParameter(PARAM_MAX_ELEMENTS));
+		
+		getPrioritizedElements(formId, formInstanceId, encounterId, maxElements, response);
 	}
 }

@@ -41,16 +41,12 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String VERIFY_PASSCODE = "verifyPasscode";
 	private static final String IS_AUTHENTICATED = "isAuthenticated";
 	private static final String AUTHENTICATE_USER = "authenticateUser";
-	private static final String GET_PRIORITIZED_ELEMENTS = "getPrioritizedElements";
 	private static final String SAVE_EXPORT_ELEMENTS = "saveExportElements";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
 	private static final String PARAM_SESSION_ID = "sessionId";
 	private static final String PARAM_PASSCODE = "passcode";
-	private static final String PARAM_FORM_ID = "formId";
-	private static final String PARAM_FORM_INSTANCE_ID = "formInstanceId";
-	private static final String PARAM_MAX_ELEMENTS = "maxElements";
 	private static final String PARAM_PATIENT_ID = "patientId";
 	private static final String PARAM_LOCATION_ID = "locationId";
 	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
@@ -61,7 +57,6 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String XML_ERROR_END = "</error>";
 	private static final String XML_PATIENT_START = "<patient>";
 	private static final String XML_PATIENT_END = "</patient>";
-	private static final String XML_ID = "id";
 	private static final String XML_MRN = "mrn";
 	private static final String XML_FIRST_NAME = "firstName";
 	private static final String XML_LAST_NAME = "lastName";
@@ -88,13 +83,6 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String XML_PASSCODE_RESULT_END = "</passcodeResult>";
 	private static final String XML_RESULT_START = "<result>";
 	private static final String XML_RESULT_END = "</result>";
-	private static final String XML_RECORDS_START = "<Records>";
-	private static final String XML_RECORDS_END = "</Records>";
-	private static final String XML_RECORD_START = "<Record>";
-	private static final String XML_RECORD_END = "</Record>";
-	private static final String XML_VALUE = "Value";
-	private static final String XML_FIELD = "Field";
-	private static final String XML_FIELD_END = "</Field>";
 	private static final String XML_SAVE_RESULT_START = "<saveResult>";
 	private static final String XML_SAVE_RESULT_END = "</saveResult>";
 	private static final String XML_RESULT = "result";
@@ -125,8 +113,8 @@ public class ChicaMobileServlet extends HttpServlet {
 	            ServletUtil.isUserAuthenticated(response);
 	        } else if (AUTHENTICATE_USER.equals(action)) {
 	            ServletUtil.authenticateUser(request, response);
-	        } else if (GET_PRIORITIZED_ELEMENTS.equals(action)) {
-	            getPrioritizedElements(request, response);
+	        } else if (ServletUtil.GET_PRIORITIZED_ELEMENTS.equals(action)) {
+	            ServletUtil.getPrioritizedElements(request, response);
 	        } else if (SAVE_EXPORT_ELEMENTS.equals(action)) {
 	            saveExportElements(request, response);
 	        }
@@ -246,7 +234,7 @@ public class ChicaMobileServlet extends HttpServlet {
 					}
 					
 					printWriter.write(XML_PATIENT_START);
-					ServletUtil.writeTag(XML_ID, row.getPatientId(), printWriter);
+					ServletUtil.writeTag(ServletUtil.XML_ID, row.getPatientId(), printWriter);
 					ServletUtil.writeTag(XML_MRN, row.getMrn(), printWriter);
 					ServletUtil.writeTag(XML_FIRST_NAME, ServletUtil.escapeXML(row.getFirstName()), printWriter);
 					ServletUtil.writeTag(XML_LAST_NAME, ServletUtil.escapeXML(row.getLastName()), printWriter);
@@ -324,38 +312,6 @@ public class ChicaMobileServlet extends HttpServlet {
 	}
 	
 	/**
-	 * Retrieves prioritized elements for a form.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
-	private void getPrioritizedElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
-		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
-		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
-		Integer maxElements = Integer.parseInt(request.getParameter(PARAM_MAX_ELEMENTS));
-		
-		DynamicFormAccess formAccess = new DynamicFormAccess();
-		List<Field> fields = formAccess.getPrioritizedElements(formId, formInstanceId, encounterId, maxElements);
-		
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
-		PrintWriter pw = response.getWriter();
-		pw.write(XML_RECORDS_START);
-		pw.write(XML_RECORD_START);
-		for(Field field : fields){
-			pw.write(ChirdlUtilConstants.XML_START_TAG + XML_FIELD + " " + XML_ID + "=\"" + field.getId() + "\"" + 
-					ChirdlUtilConstants.XML_END_TAG);
-			ServletUtil.writeTag(XML_VALUE, ServletUtil.escapeXML(field.getValue()), pw);
-			pw.write(XML_FIELD_END);
-		}
-		
-		pw.write(XML_RECORD_END);
-		pw.write(XML_RECORDS_END);
-	}
-	
-	/**
 	 * Saves a form's export elements to the database.
 	 * 
 	 * @param request HttServletRequest
@@ -365,8 +321,8 @@ public class ChicaMobileServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
     private void saveExportElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Integer patientId = Integer.parseInt(request.getParameter(PARAM_PATIENT_ID));
-		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
-		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
+		Integer formId = Integer.parseInt(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_ID));
+		Integer formInstanceId = Integer.parseInt(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID));
 		Integer locationId = Integer.parseInt(request.getParameter(PARAM_LOCATION_ID));
 		Integer locationTagId = Integer.parseInt(request.getParameter(PARAM_LOCATION_TAG_ID));
 		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
