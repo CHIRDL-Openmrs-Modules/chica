@@ -50,10 +50,12 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.TeleformTranslator;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
+import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -97,6 +99,7 @@ public class ServletUtil {
 	public static final String CONVERT_TIFF_TO_PDF = "convertTiffToPDF";
 	public static final String TRANSFORM_FORM_XML = "transformFormXML";
 	public static final String GET_PRIORITIZED_ELEMENTS = "getPrioritizedElements";
+	public static final String SAVE_EXPORT_ELEMENTS = "saveExportElements";
 	
 	public static final String PARAM_SESSION_ID = "sessionId";
 	public static final String PARAM_FORM_IDS = "formIds";
@@ -162,6 +165,9 @@ public class ServletUtil {
 	public static final String XML_FIELD = "Field";
 	public static final String XML_FIELD_END = "</Field>";
 	public static final String XML_ID = "id";
+	public static final String XML_SAVE_RESULT_START = "<saveResult>";
+	public static final String XML_SAVE_RESULT_END = "</saveResult>";
+	public static final String XML_RESULT = "result";
 	
 	public static final String STYLESHEET = "stylesheet";
 	public static final String FORM_DIRECTORY = "formDirectory";
@@ -1413,5 +1419,59 @@ public class ServletUtil {
 		Integer maxElements = Integer.valueOf(request.getParameter(PARAM_MAX_ELEMENTS));
 		
 		getPrioritizedElements(formId, formInstanceId, encounterId, maxElements, response);
+	}
+	
+	/**
+	 * Saves a form's export elements to the database.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @param patientId The patient identifier
+	 * @param encounterId The encounter identifier
+	 * @param formInstance The form instance information needed to locate the form instance
+	 * @throws IOException
+	 */
+    @SuppressWarnings("unchecked")
+	public static void saveExportElements(HttpServletRequest request, HttpServletResponse response, Integer patientId, 
+    		Integer encounterId, FormInstanceTag formInstance) throws IOException {
+		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
+		response.setHeader(
+			ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
+		PrintWriter pw = response.getWriter();
+		pw.write(XML_SAVE_RESULT_START);
+		try {
+			ParameterHandler parameterHandler = new ChicaParameterHandler();
+			DynamicFormAccess formAccess = new DynamicFormAccess();
+			Patient patient = Context.getPatientService().getPatient(patientId);
+			Map<String, String[]> parameterMap = request.getParameterMap();
+			formAccess.saveExportElements(new FormInstance(formInstance.getLocationId(), formInstance.getFormId(), 
+				formInstance.getFormInstanceId()), formInstance.getLocationTagId(), encounterId, patient, parameterMap, 
+				parameterHandler);
+			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_TRUE, pw);
+		} catch (Exception e) {
+		    LOG.error("Error saving prioritized elements", e);
+			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_FALSE, pw);
+		}
+		
+		pw.write(XML_SAVE_RESULT_END);
+	}
+	
+	/**
+	 * Saves a form's export elements to the database.
+	 * 
+	 * @param request HttServletRequest
+	 * @param response HttpServletResponse
+	 * @throws IOException
+	 */
+	public static void saveExportElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Integer patientId = Integer.valueOf(request.getParameter(PARAM_PATIENT_ID));
+		Integer formId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_ID));
+		Integer formInstanceId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID));
+		Integer locationId = Integer.valueOf(request.getParameter(PARAM_LOCATION_ID));
+		Integer locationTagId = Integer.valueOf(request.getParameter(PARAM_LOCATION_TAG_ID));
+		Integer encounterId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID));
+		
+		FormInstanceTag formInstance = new FormInstanceTag(locationId, formId, formInstanceId, locationTagId);
+		saveExportElements(request, response, patientId, encounterId, formInstance);
 	}
 }
