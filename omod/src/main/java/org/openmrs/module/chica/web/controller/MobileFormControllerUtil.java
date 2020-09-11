@@ -42,29 +42,26 @@ public class MobileFormControllerUtil {
      * Handles for submission for mobile forms
      * @param request The HTTP request containing the information from the client
      * @param successView The page to display after the form is submitted
+     * @param patientId The patient identifier
+     * @param encounterId The encounter identifier
+     * @param sessionId The session identifier
+     * @param formInstanceTag The information needed to locate the form instance being submitted
      * @return The view to be displayed next
      */
-    public static ModelAndView handleMobileFormSubmission(HttpServletRequest request, String successView) {
-        String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
-        Integer patientId = Integer.parseInt(patientIdStr);
-        Integer formId = Integer.parseInt(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_ID));
-        Integer formInstanceId = Integer.parseInt(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID));
-        String locationIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID);
-        Integer locationId = Integer.parseInt(locationIdStr);
-        String locationTagIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
-        Integer locationTagId = Integer.parseInt(locationTagIdStr);
-        String encounterIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-        Integer encounterId = Integer.parseInt(encounterIdStr);
-        String sessionIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID);
-        Integer sessionId = Integer.parseInt(sessionIdStr);
-        
-        Map<String, String[]> parameterMap = request.getParameterMap();
+    public static ModelAndView handleMobileFormSubmission(HttpServletRequest request, String successView, 
+    		Integer patientId, Integer encounterId, Integer sessionId, FormInstanceTag formInstanceTag) {
+    	@SuppressWarnings("unchecked")
+		Map<String, String[]> parameterMap = request.getParameterMap();
+    	Integer locationId = formInstanceTag.getLocationId();
+    	Integer formId = formInstanceTag.getFormId();
+    	Integer formInstanceId = formInstanceTag.getFormInstanceId();
+    	Integer locationTagId = formInstanceTag.getLocationTagId();
         try {
             ParameterHandler parameterHandler = new ChicaParameterHandler();
             DynamicFormAccess formAccess = new DynamicFormAccess();
             Patient patient = Context.getPatientService().getPatient(patientId);
-            formAccess.saveExportElements(new FormInstance(locationId, formId, formInstanceId), locationTagId, encounterId, 
-                patient, parameterMap, parameterHandler);
+            formAccess.saveExportElements(new FormInstance(locationId, formId, formInstanceId), locationTagId, 
+            	encounterId, patient, parameterMap, parameterHandler);
             
             // Run null priority rules
             HashMap<String, Object> parameters = new HashMap<>();
@@ -83,17 +80,41 @@ public class MobileFormControllerUtil {
         }
         
         Map<String, Object> map = new HashMap<>();
-        map.put(ChirdlUtilConstants.PARAMETER_PATIENT_ID, patientIdStr);
-        map.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationIdStr);
-        map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, locationTagIdStr);
-        map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterIdStr);
-        map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessionIdStr);
+        map.put(ChirdlUtilConstants.PARAMETER_PATIENT_ID, patientId);
+        map.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
+        map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, locationTagId);
+        map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
+        map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessionId);
         String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
         map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
         String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
         map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
         
         return new ModelAndView(new RedirectView(successView), map);
+    }
+    
+    /**
+     * Handles for submission for mobile forms
+     * @param request The HTTP request containing the information from the client
+     * @param successView The page to display after the form is submitted
+     * @return The view to be displayed next
+     */
+    public static ModelAndView handleMobileFormSubmission(HttpServletRequest request, String successView) {
+        String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
+        Integer patientId = Integer.valueOf(patientIdStr);
+        Integer formId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_ID));
+        Integer formInstanceId = Integer.valueOf(request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID));
+        String locationIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID);
+        Integer locationId = Integer.valueOf(locationIdStr);
+        String locationTagIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
+        Integer locationTagId = Integer.valueOf(locationTagIdStr);
+        String encounterIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+        Integer encounterId = Integer.valueOf(encounterIdStr);
+        String sessionIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID);
+        Integer sessionId = Integer.valueOf(sessionIdStr);
+        
+        FormInstanceTag formInstanceTag = new FormInstanceTag(locationId, formId, formInstanceId, locationTagId);
+        return handleMobileFormSubmission(request, successView, patientId, encounterId, sessionId, formInstanceTag);
     }
     
     /**
@@ -106,7 +127,7 @@ public class MobileFormControllerUtil {
      */
     public static String loadMobileFormInformation(HttpServletRequest request, ModelMap map, String formView) {
         String encounterIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-        Integer encounterId = Integer.parseInt(encounterIdStr);
+        Integer encounterId = Integer.valueOf(encounterIdStr);
         map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterIdStr);
         
         String sessionIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID);
@@ -116,7 +137,7 @@ public class MobileFormControllerUtil {
         map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
         
         String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
-        Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
+        Patient patient = Context.getPatientService().getPatient(Integer.valueOf(patientIdStr));
         map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
         
         String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
