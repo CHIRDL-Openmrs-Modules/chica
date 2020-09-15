@@ -123,46 +123,65 @@ public class MobileFormControllerUtil {
      * @param request The HTTP request containing the information from the client
      * @param map Model map to be populated for client use
      * @param formView The view to display once the form is loaded.
+     * @param encounterId The encounter identifier
+     * @param sessionid The session identifier
+     * @param patientid The patient identifier
+     * @param language The language of the patient
+     * @param formInstanceTag Contains the relevant form information.
      * @return The view to display once the form is loaded.
      */
-    public static String loadMobileFormInformation(HttpServletRequest request, ModelMap map, String formView) {
-        String encounterIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-        Integer encounterId = Integer.valueOf(encounterIdStr);
-        map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterIdStr);
-        
-        String sessionIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID);
-        map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessionIdStr);
-        
-        String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
-        map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
-        
-        String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
-        Patient patient = Context.getPatientService().getPatient(Integer.valueOf(patientIdStr));
-        map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
-        
-        String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
-        FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
-        Integer locationId = formInstTag.getLocationId();
-        Integer formId = formInstTag.getFormId();
-        Integer formInstanceId = formInstTag.getFormInstanceId();
+    public static String loadMobileFormInformation(HttpServletRequest request, ModelMap map, String formView, 
+    		Integer encounterId, Integer sessionId, Integer patientId, String language, 
+    		FormInstanceTag formInstanceTag) {
+    	Integer locationId = formInstanceTag.getLocationId();
+        Integer formId = formInstanceTag.getFormId();
+        Integer formInstanceId = formInstanceTag.getFormInstanceId();
         map.put(ChirdlUtilConstants.PARAMETER_FORM_ID, formId);
         map.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID, formInstanceId);
         map.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
-        map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, formInstTag.getLocationTagId());
-        map.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, formInstance);
+        map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, formInstanceTag.getLocationTagId());
+        map.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, formInstanceTag);
+        map.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
+        map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessionId);
+        map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
+        Patient patient = Context.getPatientService().getPatient(patientId);
+        map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
         
         //Run this to show the form
         try {
             showForm(map, formId, formInstanceId, encounterId);
         } catch (Exception e) {
             String message = 
-                "Error retrieving data to display a form. Please contact support with the following information: Form ID: " + 
-                formId + " Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
+                "Error retrieving data to display a form. Please contact support with the following information: "
+                + "Form ID: " + formId + " Form Instance ID: " + formInstanceId + " Location ID: " + locationId;
             log.error(message, e);
             map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE, message);
         }
         
         return formView;
+    }
+    
+    /**
+     * Loads the form information for client use.
+     * 
+     * @param request The HTTP request containing the information from the client
+     * @param map Model map to be populated for client use
+     * @param formView The view to display once the form is loaded.
+     * @return The view to display once the form is loaded.
+     */
+    public static String loadMobileFormInformation(HttpServletRequest request, ModelMap map, String formView) {
+        String encounterIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+        Integer encounterId = Integer.valueOf(encounterIdStr);
+        String sessionIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID);
+        Integer sessionId = Integer.valueOf(sessionIdStr);
+        String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
+        String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
+        Integer patientId = Integer.valueOf(patientIdStr);
+        String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
+        FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
+        
+        return loadMobileFormInformation(
+        	request, map, formView, encounterId, sessionId, patientId, language, formInstTag);
     }
     
     /**
