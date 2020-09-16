@@ -238,6 +238,79 @@ public class Util {
 	}
 	
 	/**
+	 * Returns patients that have secondary forms available for the current authenticated user specified in the server  
+	 * configuration file.
+	 * 
+	 * @param rows List that will be populated with any PatientRow objects found.
+	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @param locationId The location identifier
+	 * @param locationTagId The location tag identifier
+	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
+	 * @throws Exception
+	 */
+	public static String getPatientSecondaryForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, 
+			Integer locationId, Integer locationTagId) throws Exception {
+		List<Integer> locationTagIds = new ArrayList<>();
+		if (locationTagId != null) {
+			locationTagIds.add(locationTagId);
+		}
+		
+		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS, false, locationId, locationTagIds);
+	}
+	
+	/**
+	 * Returns patients that have forms available for the current authenticated user specified in the server configuration 
+	 * file.
+	 * 
+	 * @param rows List that will be populated with any PatientRow objects found.
+	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @param formType Indicating if the forms are primary or secondary
+	 * @param showAllPatients - true to show all patients for the user's location
+	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
+	 * @throws Exception
+	 */
+	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType, 
+			boolean showAllPatients) throws Exception {
+		User user = Context.getUserContext().getAuthenticatedUser();
+		String locationTags = user.getUserProperty("locationTags");
+		String locationString = user.getUserProperty("location");
+		ArrayList<Integer> locationTagIds = new ArrayList<>();
+		LocationService locationService = Context.getLocationService();
+		
+		Integer locationId = null;
+		Location location = null;
+		if (locationString != null) {
+			location = locationService.getLocation(locationString);
+			if (location != null) {
+				locationId = location.getLocationId();
+				if(showAllPatients) // DWE CHICA-761 Add all tags to the list
+				{
+					for (LocationTag tag : location.getTags()) 
+					{
+						locationTagIds.add(tag.getLocationTagId());	
+					}
+				}
+				else if (locationTags != null) {					
+					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
+					while (tokenizer.hasMoreTokens()) {
+						String locationTagName = tokenizer.nextToken();
+						locationTagName = locationTagName.trim();
+						Set<LocationTag> tags = location.getTags();
+						for (LocationTag tag : tags) {
+							if (tag.getName().equalsIgnoreCase(locationTagName)) {
+								locationTagIds.add(tag.getLocationTagId());
+							}
+						}
+					}
+					
+				}
+			}
+		}
+		
+		return getPatientsWithForms(rows, sessionIdMatch, formType, showAllPatients, locationId, locationTagIds);
+	}
+	
+	/**
 	 * Returns patients that have forms available for the current authenticated user specified in the server configuration 
 	 * file.
 	 * 
@@ -247,8 +320,8 @@ public class Util {
 	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
 	 * @throws Exception
 	 */
-	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType, boolean showAllPatients) 
-	throws Exception {
+	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType, 
+			boolean showAllPatients, Integer locationId, List<Integer> locationTagIds) throws Exception {
 		User user = Context.getUserContext().getAuthenticatedUser();
 		ServerConfig config = org.openmrs.module.chirdlutil.util.Util.getServerConfig();
 		if (config == null) {
@@ -284,41 +357,6 @@ public class Util {
 		todaysDate.set(Calendar.HOUR_OF_DAY, 0);
 		todaysDate.set(Calendar.MINUTE, 0);
 		todaysDate.set(Calendar.SECOND, 0);
-		
-		String locationTags = user.getUserProperty("locationTags");
-		String locationString = user.getUserProperty("location");
-		ArrayList<Integer> locationTagIds = new ArrayList<>();
-		LocationService locationService = Context.getLocationService();
-		
-		Integer locationId = null;
-		Location location = null;
-		if (locationString != null) {
-			location = locationService.getLocation(locationString);
-			if (location != null) {
-				locationId = location.getLocationId();
-				if(showAllPatients) // DWE CHICA-761 Add all tags to the list
-				{
-					for (LocationTag tag : location.getTags()) 
-					{
-						locationTagIds.add(tag.getLocationTagId());	
-					}
-				}
-				else if (locationTags != null) {					
-					StringTokenizer tokenizer = new StringTokenizer(locationTags, ",");
-					while (tokenizer.hasMoreTokens()) {
-						String locationTagName = tokenizer.nextToken();
-						locationTagName = locationTagName.trim();
-						Set<LocationTag> tags = location.getTags();
-						for (LocationTag tag : tags) {
-							if (tag.getName().equalsIgnoreCase(locationTagName)) {
-								locationTagIds.add(tag.getLocationTagId());
-							}
-						}
-					}
-					
-				}
-			}
-		}
 		
 		List<PatientState> unfinishedStates = new ArrayList<>();
 		if(showAllPatients) // DWE CHICA-761 Get unfinished patient states for all patients by location so that all patients registered to the location can be displayed
