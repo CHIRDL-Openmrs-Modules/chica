@@ -146,25 +146,7 @@ public class ControllerUtil {
 					+ formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
 		}
 
-		// Add session timeout information
-		Integer sessionTimeoutWarning = new Integer(180);
-		String sessionTimeoutWarningStr = Context.getAdministrationService()
-				.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
-		if (sessionTimeoutWarningStr == null || sessionTimeoutWarningStr.trim().length() == 0) {
-			log.warn("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
-					+ " global property does not have a " + "value set.  180 seconds will be used as a default value.");
-		} else {
-			try {
-				sessionTimeoutWarning = Integer.valueOf(sessionTimeoutWarningStr);
-			} catch (NumberFormatException e) {
-				log.error("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
-						+ " global property is not a " + "valid Integer.  180 seconds will be used as a default value",
-						e);
-				sessionTimeoutWarning = new Integer(180);
-			}
-		}
-
-		map.put(ChicaConstants.PARAMETER_SESSION_TIMEOUT_WARNING, sessionTimeoutWarning);
+		map.put(ChicaConstants.PARAMETER_SESSION_TIMEOUT_WARNING, getSessionTimeoutWarning());
 	}
 
 	/**
@@ -607,5 +589,31 @@ public class ControllerUtil {
     	String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
     	String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
     	return finishForm(patientId, language, userQuitForm, map, formView);
+    }
+    
+    /**
+     * Returns the session timeout warning.
+     * 
+     * @return The session timeout warning
+     */
+    public static Integer getSessionTimeoutWarning() {
+		Integer sessionTimeoutWarning = new Integer(180);
+		String sessionTimeoutWarningStr = Context.getAdministrationService()
+				.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
+		if (sessionTimeoutWarningStr == null || sessionTimeoutWarningStr.trim().length() == 0) {
+			log.warn("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
+					+ " global property does not have a " + "value set.  180 seconds will be used as a default value.");
+		} else {
+			try {
+				sessionTimeoutWarning = Integer.valueOf(sessionTimeoutWarningStr);
+			} catch (NumberFormatException e) {
+				log.error("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
+						+ " global property is not a " + "valid Integer.  180 seconds will be used as a default value",
+						e);
+				sessionTimeoutWarning = new Integer(180);
+			}
+		}
+		
+		return sessionTimeoutWarning;
     }
 }
