@@ -41,6 +41,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Utility class for shared methods between controllers.
@@ -566,13 +567,13 @@ public class ControllerUtil {
      * @param formView The form view to display next
      * @return The form view to display next
      */
-    public static String finishForm(
+    public static ModelAndView finishForm(
     		Integer patientId, String language, String userQuitForm, ModelMap map, String formView) {
     	Patient patient = Context.getPatientService().getPatient(patientId);
         map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
         map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
         map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
-        return formView;
+        return new ModelAndView(formView, map);
     }
 	
 	/**
@@ -583,7 +584,7 @@ public class ControllerUtil {
      * @param formView The form view to display next
      * @return The form view to display next
      */
-    public static String finishForm(HttpServletRequest request, ModelMap map, String formView) {
+    public static ModelAndView finishForm(HttpServletRequest request, ModelMap map, String formView) {
     	String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
     	Integer patientId = Integer.valueOf(patientIdStr);
     	String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
