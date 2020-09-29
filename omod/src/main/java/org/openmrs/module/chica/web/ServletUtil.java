@@ -995,7 +995,7 @@ public class ServletUtil {
 			}
 		} else {
 			locationTags = user.getUserProperty(ChirdlUtilConstants.USER_PROPERTY_LOCATION_TAGS);
-			if (locationTags != null) {
+			if (location != null && locationTags != null) {
 				StringTokenizer tokenizer = new StringTokenizer(locationTags, ChirdlUtilConstants.GENERAL_INFO_COMMA);
 				while (tokenizer.hasMoreTokens()) {
 					String locationTagName = tokenizer.nextToken();

@@ -120,7 +120,6 @@ public class MobileFormControllerUtil {
     /**
      * Loads the form information for client use.
      * 
-     * @param request The HTTP request containing the information from the client
      * @param map Model map to be populated for client use
      * @param formView The view to display once the form is loaded.
      * @param encounterId The encounter identifier
@@ -130,9 +129,8 @@ public class MobileFormControllerUtil {
      * @param formInstanceTag Contains the relevant form information.
      * @return The view to display once the form is loaded.
      */
-    public static String loadMobileFormInformation(HttpServletRequest request, ModelMap map, String formView, 
-    		Integer encounterId, Integer sessionId, Integer patientId, String language, 
-    		FormInstanceTag formInstanceTag) {
+    public static String loadMobileFormInformation(ModelMap map, String formView, Integer encounterId, 
+    		Integer sessionId, Integer patientId, String language, FormInstanceTag formInstanceTag) {
     	Integer locationId = formInstanceTag.getLocationId();
         Integer formId = formInstanceTag.getFormId();
         Integer formInstanceId = formInstanceTag.getFormInstanceId();
@@ -180,8 +178,7 @@ public class MobileFormControllerUtil {
         String formInstance = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE);
         FormInstanceTag formInstTag = FormInstanceTag.parseFormInstanceTag(formInstance);
         
-        return loadMobileFormInformation(
-        	request, map, formView, encounterId, sessionId, patientId, language, formInstTag);
+        return loadMobileFormInformation(map, formView, encounterId, sessionId, patientId, language, formInstTag);
     }
     
     /**
