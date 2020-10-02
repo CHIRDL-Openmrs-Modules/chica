@@ -168,9 +168,9 @@ public class ExternalFormController {
 			org.openmrs.module.chica.service.EncounterService encounterService = Context.getService(org.openmrs.module.chica.service.EncounterService.class);
 			Integer encounterId = encounterList.get(0).getEncounterId();
 			encounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterId);
-			ControllerUtil.setURLAttributes(encounter, map);
+			ControllerUtil.setPhysicianFormURLAttributes(encounter, map);
 		} else if (encounterList!=null && encounterList.size() > 1) {
-			encounter = ControllerUtil.getEncounterWithoutScannedTimeStamp(encounterList, backportsService, map);
+			encounter = ControllerUtil.getPhysicianEncounterWithoutScannedTimeStamp(encounterList, backportsService, map);
 		} 
 		
 		if (encounterList == null || encounter == null ) {
