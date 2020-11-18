@@ -140,7 +140,6 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return maiden;
 	}
 
-	//----MRN for chica messages has an explicit check digit
 	public String getMRN(CX ident)
 	{
 		String stIdent = null;
@@ -154,9 +153,8 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			if (checkDigitST!=null&&checkDigitST.getValue() != null)
 			{
 				String checkDigit = checkDigitST.getValue();
-				stIdent += "-" + checkDigit;
+				stIdent += checkDigit;
 			}
-			stIdent = Util.removeLeadingZeros(stIdent);
 		}
 		return stIdent;
 	}

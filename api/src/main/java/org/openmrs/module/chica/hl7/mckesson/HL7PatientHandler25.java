@@ -164,13 +164,8 @@ public class HL7PatientHandler25 extends
 					&& checkDigitST.getValue().length()>0)
 			{
 				String checkDigit = checkDigitST.getValue();
-				stIdent += "-" + checkDigit;
-			}else{
-				if(stIdent!=null&&stIdent.length()>=2){
-					stIdent = stIdent.substring(0, stIdent.length()-1)+"-"+stIdent.substring(stIdent.length()-1);
-				}
+				stIdent += checkDigit;
 			}
-			stIdent = Util.removeLeadingZeros(stIdent);
 		}
 		return stIdent;
 	}
