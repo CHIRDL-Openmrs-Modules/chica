@@ -25,7 +25,6 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.hl7.HL7Constants;
 import org.openmrs.module.chica.hl7.mrfdump.HL7EncounterHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
@@ -123,7 +122,7 @@ public class HL7SocketHandler implements Application {
 	public Message processMessage(Message message) throws ApplicationException {
 		Date startTime = Calendar.getInstance().getTime();
 		Message response = null;
-		AdministrationService adminService = Context.getAdministrationService();
+
 		boolean error = false;
 		try {
 			Context.openSession();
@@ -133,8 +132,10 @@ public class HL7SocketHandler implements Application {
 				
 				incomingMessageString = this.parser.encode(message);
 				
-				Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-				    adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+				Context.authenticate(
+				        org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+				        org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+				
 				Context.addProxyPrivilege(PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE); // CHICA-1151 replaced HL7Constants.PRIV_ADD_HL7_IN_QUEUE with PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE
 				if (!Context.hasPrivilege(PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE)) { // CHICA-1151 replaced HL7Constants.PRIV_ADD_HL7_IN_QUEUE with PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE
 					logger.error("You do not have HL7 add privilege!!");

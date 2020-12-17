@@ -19,6 +19,7 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.openmrs.module.chirdlutilbackports.util.Util;
 
 /**
  * CHICA-1063
@@ -50,16 +51,18 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 	 * This thread does the following
 	 * Attempts to match the patient using first name, last name, and date of birth
 	 * If a match is found, the GlookoCode person attribute is created
-	 */
+	 */    
 	@Override
 	public void run() 
 	{
 		Context.openSession();
 		try
 		{	
-			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+		    
+            Context.authenticate(
+                    Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+                    Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+
 
 			List<Patient> patients = Context.getPatientService().getPatients(firstName + ChirdlUtilConstants.GENERAL_INFO_COMMA + lastName, null, null, false);
 			if(patients != null && patients.size() > 0)
