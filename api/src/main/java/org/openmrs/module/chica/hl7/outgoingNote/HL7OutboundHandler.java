@@ -5,12 +5,13 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.util.Util;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 
@@ -46,9 +47,8 @@ public class HL7OutboundHandler implements Runnable
 		Context.openSession();
 		try
 		{	
-			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+            Context.authenticate(Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+                    Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
 
 			SocketHL7ListenerService socketHL7ListenerService = Context.getService(SocketHL7ListenerService.class);
 

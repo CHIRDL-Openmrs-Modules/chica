@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -40,6 +39,7 @@ import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.module.chirdlutilbackports.util.Util;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -81,9 +81,10 @@ public class HL7StoreObsRunnable implements Runnable {
 	public void run() {
 		Context.openSession();
 		try {
-			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-			    adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+			
+            Context.authenticate(Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+                    Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+	        
 			Patient patient = Context.getPatientService().getPatient(patientId);
 			if (patient == null) {
 				log.error("Invalid patient ID: " + patientId);

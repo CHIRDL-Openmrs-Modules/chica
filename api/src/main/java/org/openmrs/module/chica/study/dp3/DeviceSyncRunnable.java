@@ -3,16 +3,15 @@ package org.openmrs.module.chica.study.dp3;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.module.chica.action.QueryGlooko;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -62,9 +61,10 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 		Context.openSession();
 		try
 		{	
-			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+		    Context.authenticate(
+		            org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+		            org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+
 			
 			// Look up the patient using the glookoCode
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class); 

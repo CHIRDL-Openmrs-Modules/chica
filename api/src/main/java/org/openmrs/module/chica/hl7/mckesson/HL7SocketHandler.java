@@ -14,7 +14,6 @@
 package org.openmrs.module.chica.hl7.mckesson;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,7 +67,6 @@ import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
-import org.openmrs.util.PrivilegeConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -1374,14 +1372,14 @@ public class HL7SocketHandler extends
 	private boolean isValidAge(Message message, String printerLocation, String locationString){
 
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		AdministrationService adminService = Context.getAdministrationService();
 		LocationService locationService = Context.getLocationService();
 		
 		Context.openSession();
-		Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
-				adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
-		Context.addProxyPrivilege(PrivilegeConstants.GET_LOCATIONS); // CHICA-1151 Replace OpenmrsConstants.PRIV_VIEW_LOCATIONS with PrivilegeConstants.GET_LOCATIONS
-		String attribute = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
+        Context.authenticate(
+                org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+                org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+        
+        String attribute = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
 		
 		boolean ageOk = true;
 
