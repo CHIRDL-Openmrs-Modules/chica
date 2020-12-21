@@ -10,11 +10,12 @@ import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.util.Util;
 
 /**
  * @author tmdugan
@@ -59,11 +60,9 @@ public class ChangeState implements ChirdlRunnable
 		Context.openSession();
 		try
 		{
-			AdministrationService adminService = Context
-					.getAdministrationService();
-			Context.authenticate(adminService
-					.getGlobalProperty("scheduler.username"), adminService
-					.getGlobalProperty("scheduler.password"));
+		    Context.authenticate(Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
+	                Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+
 			BaseStateActionHandler.getInstance().changeState(patientState,
 					parameters);
 		} 
