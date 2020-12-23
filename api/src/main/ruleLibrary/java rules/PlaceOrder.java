@@ -13,6 +13,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.Rule;
@@ -82,6 +83,7 @@ public class PlaceOrder implements Rule {
 		OrderType orderType = Context.getOrderService().getOrderTypeByName(orderTypeName);
 		if (orderType == null) {
 			this.log.error("Cannot place order.  Order type with the following name cannot be found: " + orderTypeName);
+			return Result.emptyResult();
 		}
 		
 		String careSettingName = (String)parameters.get("param3");
@@ -151,7 +153,23 @@ public class PlaceOrder implements Rule {
 			return Result.emptyResult();
 		}
 		
-		Order order = new Order();
+		Order order = null;
+		try {
+			order = (Order)orderType.getJavaClass().newInstance();
+		}
+		catch (InstantiationException e) {
+			this.log.error("Error instantiating order for order type " + orderType.getOrderTypeId(), e);
+			return Result.emptyResult();
+		}
+		catch (IllegalAccessException e) {
+			this.log.error("Illegal access error instantiating order for order type " + orderType.getOrderTypeId(), e);
+			return Result.emptyResult();
+		}
+		catch (APIException e) {
+			this.log.error("API exception instantiating order for order type " + orderType.getOrderTypeId(), e);
+			return Result.emptyResult();
+		}
+		
 		order.setPatient(patient);
 		order.setEncounter(encounter);
 		order.setConcept(orderConcept);
