@@ -1326,12 +1326,31 @@ public class Util {
 	 */
 	public static FormInstanceTag getFormInstanceInfo(Integer encounterId, Integer formId, Integer startStateId,
 			Integer endStateId, ChirdlUtilBackportsService backportsService) {
+		return getFormInstanceInfo(encounterId, formId, startStateId, endStateId, backportsService, true, true);
+	}
+	
+	/**
+	 * Gets the form instance information from the data provided
+	 * 
+	 * @param encounterId      The encounter identifier
+	 * @param formId           The form identifier
+	 * @param startStateId     The start state identifier
+	 * @param endStateId       The end state identifier
+	 * @param backportsService ChirdlUtilBackportsService object
+	 * @param requireStartStateEndTime Whether or not an end time must exist when searching for start states
+	 * @param requireEndSttateEndTime Whether or not an end time must exist when searching for end states
+	 * @return FormInstanceTag object or null if form information cannot be found.
+	 */
+	public static FormInstanceTag getFormInstanceInfo(Integer encounterId, Integer formId, Integer startStateId,
+			Integer endStateId, ChirdlUtilBackportsService backportsService, boolean requireStartStateEndTime, 
+			boolean requireEndStateEndTime) {
 		Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<>();
 		Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<>();
 
 		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapStart, encounterId, startStateId,
-				true);
-		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, true);
+			requireStartStateEndTime);
+		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, 
+			requireEndStateEndTime);
 
 		boolean containsStartState = formIdToPatientStateMapStart.containsKey(formId);
 		boolean containsEndState = formIdToPatientStateMapEnd.containsKey(formId);
@@ -1346,9 +1365,8 @@ public class Util {
 					for (PatientState patientState : patientStates) {
 						FormInstance formInstance = patientState.getFormInstance();
 						if (formInstance != null) {
-							FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId,
+							return new FormInstanceTag(patientState.getLocationId(), formId,
 									patientState.getFormInstanceId(), patientState.getLocationTagId());
-							return tag;
 						}
 					}
 				}
@@ -1361,9 +1379,8 @@ public class Util {
 						if (patientState.getEndTime() == null) {
 							FormInstance formInstance = patientState.getFormInstance();
 							if (formInstance != null) {
-								FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId,
+								return new FormInstanceTag(patientState.getLocationId(), formId,
 										patientState.getFormInstanceId(), patientState.getLocationTagId());
-								return tag;
 							}
 						}
 					}
