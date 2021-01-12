@@ -459,20 +459,11 @@ public class Util {
 		Map<Integer, Session> sessionMap = new HashMap<>();
 		DecimalFormat decimalFormat = new DecimalFormat("#.#");
 		Double maxWeight = userClient.getMaxSecondaryFormWeight();
-		String checkoutStateString = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_CHECKOUT_STATE);
-		State checkoutState = chirdlUtilBackportsService.getStateByName(checkoutStateString);
 		
 		for (PatientState currState : unfinishedStates) {
 			boolean addedForm = false;
 			Integer sessionId = currState.getSessionId();
 			if ((sessionIdMatch != null && !sessionIdMatch.equals(sessionId))) {
-				continue;
-			}
-			
-			// CHICA-1143 Make sure the patient isn't already in the finished/checkout state (PWS submitted)
-			// This is how the desktop greaseboard behaves
-			List<PatientState> checkoutPatientStates = chirdlUtilBackportsService.getPatientStateBySessionState(sessionId, checkoutState.getStateId());
-			if (checkoutPatientStates != null && checkoutPatientStates.size() > 0) {
 				continue;
 			}
 			
