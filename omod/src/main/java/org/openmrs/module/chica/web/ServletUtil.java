@@ -1489,9 +1489,13 @@ public class ServletUtil {
     public static void savePSFCompletedBy(HttpServletRequest request, Integer locationId, Integer patientId) {
         String completedby = request.getParameter(ChirdlUtilConstants.PARAMETER_COMPLETED_BY);
         String ageStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_AGE);
-        int age = 0; 
         if (StringUtils.isNotBlank(ageStr)) {
-            age = Integer.parseInt(ageStr);
+            int age = 0;
+            try {
+                age = Integer.parseInt(ageStr);
+            } catch (NumberFormatException e) {
+                LOG.error("Error formatting age: " + ageStr, e); 
+            }
             if (age < 12) {
                 completedby = ChirdlUtilConstants.PARAMETER_CAREGIVER;
             }
@@ -1500,7 +1504,10 @@ public class ServletUtil {
         Obs obs = new Obs();
         ConceptService conceptService = Context.getConceptService();
         Concept concept = conceptService.getConceptByName(ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY);
-        Concept answer = conceptService.getConceptByName(completedby);
+        Concept answer = null;
+        if (StringUtils.isNotBlank(completedby)) {
+            answer = conceptService.getConceptByName(completedby);
+        }
         if (concept == null || answer == null) {
             LOG.error("Could not save preferred language for concept: " + ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY + ""
                     + " and answer: "  + completedby);
