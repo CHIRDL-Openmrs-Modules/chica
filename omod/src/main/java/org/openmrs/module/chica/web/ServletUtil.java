@@ -44,6 +44,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
+import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
@@ -1509,7 +1510,7 @@ public class ServletUtil {
             answer = conceptService.getConceptByName(completedby);
         }
         if (concept == null || answer == null) {
-            LOG.error("Could not save preferred language for concept: " + ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY + ""
+            LOG.error("Could not save the concepts: " + ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY + ""
                     + " and answer: "  + completedby);
         } else {
             obs.setConcept(concept);
@@ -1517,7 +1518,11 @@ public class ServletUtil {
             obs.setObsDatetime(new Date());
             obs.setPerson(Context.getPatientService().getPatient(patientId));
             obs.setValueCoded(answer);
-            Context.getObsService().saveObs(obs, null);
+            try {
+                Context.getObsService().saveObs(obs, null);
+            } catch (APIException e) {
+                LOG.error("Error saving observations", e); 
+            }
         }
     }
 }
