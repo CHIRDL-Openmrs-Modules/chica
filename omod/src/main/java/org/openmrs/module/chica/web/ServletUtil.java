@@ -1510,8 +1510,8 @@ public class ServletUtil {
             answer = conceptService.getConceptByName(completedby);
         }
         if (concept == null || answer == null) {
-            LOG.error("Could not save the concepts: " + ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY + ""
-                    + " and answer: "  + completedby);
+            LOG.error("Could not save the concept: " + ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY + 
+                " and answer: "  + completedby);
         } else {
             obs.setConcept(concept);
             obs.setLocation(Context.getLocationService().getLocation(locationId));
@@ -1521,7 +1521,7 @@ public class ServletUtil {
             try {
                 Context.getObsService().saveObs(obs, null);
             } catch (APIException e) {
-                LOG.error("Error saving observations", e); 
+                LOG.error("Error saving answer" + answer.getConceptId() + " for concept " + concept.getConceptId(), e); 
             }
         }
     }
