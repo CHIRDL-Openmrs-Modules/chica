@@ -1521,7 +1521,7 @@ public class ServletUtil {
             try {
                 Context.getObsService().saveObs(obs, null);
             } catch (APIException e) {
-                LOG.error("Error saving answer" + answer.getConceptId() + " for concept " + concept.getConceptId(), e); 
+                LOG.error("Error saving answer " + answer.getConceptId() + " for concept " + concept.getConceptId(), e); 
             }
         }
     }
