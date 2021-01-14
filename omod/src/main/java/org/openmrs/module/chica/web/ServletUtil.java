@@ -1118,6 +1118,7 @@ public class ServletUtil {
 			parameters.put(ChirdlUtilConstants.PARAMETER_2, ChirdlUtilConstants.FORM_INST_ATTR_VAL_FORCE_PRINT);
 			parameters.put(ChirdlUtilConstants.PARAMETER_3, ChirdlUtilConstants.GENERAL_INFO_FALSE);
 			parameters.put(ChirdlUtilConstants.PARAMETER_4, ChirdlUtilConstants.GENERAL_INFO_TRUE);
+			parameters.put(ChirdlUtilConstants.PARAMETER_5, ChirdlUtilConstants.GENERAL_INFO_FALSE);
 			Result result = logicService.eval(foundPatientId, ChirdlUtilConstants.RULE_CREATE_JIT, parameters);
 			
 			// Check the output type
