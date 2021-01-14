@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Field;
 import org.openmrs.FieldType;
@@ -39,9 +40,12 @@ import org.openmrs.Form;
 import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.User;
+import org.openmrs.api.APIException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
@@ -100,6 +104,7 @@ public class ServletUtil {
 	public static final String TRANSFORM_FORM_XML = "transformFormXML";
 	public static final String GET_PRIORITIZED_ELEMENTS = "getPrioritizedElements";
 	public static final String SAVE_EXPORT_ELEMENTS = "saveExportElements";
+	public static final String SAVE_PSF_COMPLETED_BY = "savePSFCompletedBy";
 	
 	public static final String PARAM_SESSION_ID = "sessionId";
 	public static final String PARAM_FORM_IDS = "formIds";
@@ -1474,4 +1479,50 @@ public class ServletUtil {
 		FormInstanceTag formInstance = new FormInstanceTag(locationId, formId, formInstanceId, locationTagId);
 		saveExportElements(request, response, patientId, encounterId, formInstance);
 	}
+	
+	/**
+     * Saves who completes the PSF form.
+     * 
+     * @param request HttServletRequest
+     * @param locationId The location identifier
+     * @param patientId The patient identifier
+     */
+    public static void savePSFCompletedBy(HttpServletRequest request, Integer locationId, Integer patientId) {
+        String completedby = request.getParameter(ChirdlUtilConstants.PARAMETER_COMPLETED_BY);
+        String ageStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_AGE);
+        if (StringUtils.isNotBlank(ageStr)) {
+            int age = 0;
+            try {
+                age = Integer.parseInt(ageStr);
+            } catch (NumberFormatException e) {
+                LOG.error("Error formatting age: " + ageStr, e); 
+            }
+            if (age < 12) {
+                completedby = ChirdlUtilConstants.PARAMETER_CAREGIVER;
+            }
+        }
+        
+        Obs obs = new Obs();
+        ConceptService conceptService = Context.getConceptService();
+        Concept concept = conceptService.getConceptByName(ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY);
+        Concept answer = null;
+        if (StringUtils.isNotBlank(completedby)) {
+            answer = conceptService.getConceptByName(completedby);
+        }
+        if (concept == null || answer == null) {
+            LOG.error("Could not save the concept: " + ChirdlUtilConstants.PARAMETER_SCREENER_COMPLETED_BY + 
+                " and answer: "  + completedby);
+        } else {
+            obs.setConcept(concept);
+            obs.setLocation(Context.getLocationService().getLocation(locationId));
+            obs.setObsDatetime(new Date());
+            obs.setPerson(Context.getPatientService().getPatient(patientId));
+            obs.setValueCoded(answer);
+            try {
+                Context.getObsService().saveObs(obs, null);
+            } catch (APIException e) {
+                LOG.error("Error saving answer " + answer.getConceptId() + " for concept " + concept.getConceptId(), e); 
+            }
+        }
+    }
 }
