@@ -41,13 +41,13 @@ public class PlaceOrder implements Rule {
 		}
 		
 		if (parameters == null) {
-			this.log.error("Cannot place order.  Paremters are null.");
+			this.log.error("Cannot place order.  Parameters are null.");
 			return Result.emptyResult();
 		}
 		
 		String conceptName = (String)parameters.get("param1");
 		if (StringUtils.isBlank(conceptName)) {
-			this.log.error("Cannot place order.  No order name provided.");
+			this.log.error("Cannot place order.  No order concept name provided.");
 			return Result.emptyResult();
 		}
 		
@@ -178,7 +178,15 @@ public class PlaceOrder implements Rule {
 		order.setCareSetting(careSetting);
 		order.setOrderType(orderType);
 		
-		Context.getOrderService().saveOrder(order, null);
+		try {
+			Context.getOrderService().saveOrder(order, null);
+		}
+		catch (APIException e) {
+			this.log.error("Error saving order for patient ID " + patient.getPatientId() + ", encounter ID " 
+				+ encounter.getEncounterId() + ", and order concpet ID " + orderConcept.getConceptId());
+			return Result.emptyResult();
+		}
+		
 		return new Result(orderConcept);
 	}
 }
