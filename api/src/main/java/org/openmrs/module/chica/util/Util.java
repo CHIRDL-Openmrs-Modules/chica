@@ -255,7 +255,7 @@ public class Util {
 			locationTagIds.add(locationTagId);
 		}
 		
-		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS, false, locationId, locationTagIds);
+		return getPatientsWithForms(rows, sessionIdMatch, SECONDARY_FORMS, false, locationId, locationTagIds, true);
 	}
 	
 	/**
@@ -307,7 +307,7 @@ public class Util {
 			}
 		}
 		
-		return getPatientsWithForms(rows, sessionIdMatch, formType, showAllPatients, locationId, locationTagIds);
+		return getPatientsWithForms(rows, sessionIdMatch, formType, showAllPatients, locationId, locationTagIds, false);
 	}
 	
 	/**
@@ -316,12 +316,18 @@ public class Util {
 	 * 
 	 * @param rows List that will be populated with any PatientRow objects found.
 	 * @param sessionIdMatch If not null, only patient rows will be returned pertaining to the specified session ID.
+	 * @param formType PRIMARY_FORM or SECONDARY_FORM
 	 * @param showAllPatients - true to show all patients for the user's location
+	 * @param locationId location identifier
+	 * @param locationTagIds list of location tag identifiers
+	 * @param excludeFinishState if true, forms will not be returned if the FINISHED state exists.  Otherwise, it will 
+	 * ignore checking for this state
 	 * @return String containing any error messages encountered during the process.  If null, no errors occurred.
 	 * @throws Exception
 	 */
 	private static String getPatientsWithForms(ArrayList<PatientRow> rows, Integer sessionIdMatch, int formType, 
-			boolean showAllPatients, Integer locationId, List<Integer> locationTagIds) throws Exception {
+			boolean showAllPatients, Integer locationId, List<Integer> locationTagIds, boolean excludeFinishState) 
+					throws Exception {
 		User user = Context.getUserContext().getAuthenticatedUser();
 		ServerConfig config = org.openmrs.module.chirdlutil.util.Util.getServerConfig();
 		if (config == null) {
@@ -459,8 +465,12 @@ public class Util {
 		Map<Integer, Session> sessionMap = new HashMap<>();
 		DecimalFormat decimalFormat = new DecimalFormat("#.#");
 		Double maxWeight = userClient.getMaxSecondaryFormWeight();
-		String checkoutStateString = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_CHECKOUT_STATE);
-		State checkoutState = chirdlUtilBackportsService.getStateByName(checkoutStateString);
+		State checkoutState = null;
+		if (!excludeFinishState) {
+			String checkoutStateString = Context.getAdministrationService().getGlobalProperty(
+				ChirdlUtilConstants.GLOBAL_PROP_GREASEBOARD_CHECKOUT_STATE);
+			checkoutState = chirdlUtilBackportsService.getStateByName(checkoutStateString);
+		}
 		
 		for (PatientState currState : unfinishedStates) {
 			boolean addedForm = false;
@@ -471,8 +481,9 @@ public class Util {
 			
 			// CHICA-1143 Make sure the patient isn't already in the finished/checkout state (PWS submitted)
 			// This is how the desktop greaseboard behaves
-			List<PatientState> checkoutPatientStates = chirdlUtilBackportsService.getPatientStateBySessionState(sessionId, checkoutState.getStateId());
-			if (checkoutPatientStates != null && checkoutPatientStates.size() > 0) {
+			if (!excludeFinishState 
+					&& !chirdlUtilBackportsService.getPatientStateBySessionState(
+						sessionId, checkoutState.getStateId()).isEmpty()) {
 				continue;
 			}
 			
@@ -1326,12 +1337,31 @@ public class Util {
 	 */
 	public static FormInstanceTag getFormInstanceInfo(Integer encounterId, Integer formId, Integer startStateId,
 			Integer endStateId, ChirdlUtilBackportsService backportsService) {
+		return getFormInstanceInfo(encounterId, formId, startStateId, endStateId, backportsService, true, true);
+	}
+	
+	/**
+	 * Gets the form instance information from the data provided
+	 * 
+	 * @param encounterId      The encounter identifier
+	 * @param formId           The form identifier
+	 * @param startStateId     The start state identifier
+	 * @param endStateId       The end state identifier
+	 * @param backportsService ChirdlUtilBackportsService object
+	 * @param requireStartStateEndTime Whether or not an end time must exist when searching for start states
+	 * @param requireEndSttateEndTime Whether or not an end time must exist when searching for end states
+	 * @return FormInstanceTag object or null if form information cannot be found.
+	 */
+	public static FormInstanceTag getFormInstanceInfo(Integer encounterId, Integer formId, Integer startStateId,
+			Integer endStateId, ChirdlUtilBackportsService backportsService, boolean requireStartStateEndTime, 
+			boolean requireEndStateEndTime) {
 		Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<>();
 		Map<Integer, List<PatientState>> formIdToPatientStateMapEnd = new HashMap<>();
 
 		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapStart, encounterId, startStateId,
-				true);
-		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, true);
+			requireStartStateEndTime);
+		Util.getPatientStatesByEncounterId(backportsService, formIdToPatientStateMapEnd, encounterId, endStateId, 
+			requireEndStateEndTime);
 
 		boolean containsStartState = formIdToPatientStateMapStart.containsKey(formId);
 		boolean containsEndState = formIdToPatientStateMapEnd.containsKey(formId);
@@ -1346,9 +1376,8 @@ public class Util {
 					for (PatientState patientState : patientStates) {
 						FormInstance formInstance = patientState.getFormInstance();
 						if (formInstance != null) {
-							FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId,
+							return new FormInstanceTag(patientState.getLocationId(), formId,
 									patientState.getFormInstanceId(), patientState.getLocationTagId());
-							return tag;
 						}
 					}
 				}
@@ -1361,9 +1390,8 @@ public class Util {
 						if (patientState.getEndTime() == null) {
 							FormInstance formInstance = patientState.getFormInstance();
 							if (formInstance != null) {
-								FormInstanceTag tag = new FormInstanceTag(patientState.getLocationId(), formId,
+								return new FormInstanceTag(patientState.getLocationId(), formId,
 										patientState.getFormInstanceId(), patientState.getLocationTagId());
-								return tag;
 							}
 						}
 					}
