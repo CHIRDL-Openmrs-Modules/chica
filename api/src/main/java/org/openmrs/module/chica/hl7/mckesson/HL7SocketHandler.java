@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Location;
-import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -47,15 +46,16 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.threadmgmt.RunnableResult;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -69,6 +69,7 @@ import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
@@ -393,7 +394,7 @@ public class HL7SocketHandler extends
 	 */
 	@Override
 	public Message processMessage(Message message,
-			HashMap<String, Object> parameters)  {
+			HashMap<String, Object> parameters)  throws ApplicationException {
 		
 		AdministrationService adminService = Context.getAdministrationService();
 		parameters.put(PROCESS_HL7_CHECKIN_START, new java.util.Date());
@@ -487,7 +488,7 @@ public class HL7SocketHandler extends
 		if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
 			String printerLocation = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 					.getPrinterLocation(message, incomingMessageString);
-			String locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) hl7EncounterHandler)
+			String locationString = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler)
 					.getLocation(message);
 
 			if ((printerLocation != null && printerLocation.equals(PRINTER_LOCATION_FOR_SHOTS))||
@@ -1370,62 +1371,24 @@ public class HL7SocketHandler extends
 	 * @return ageOk
 	 */
 	private boolean isValidAge(Message message, String printerLocation, String locationString){
-
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		LocationService locationService = Context.getLocationService();
+		if (printerLocation == null || locationString == null) {
+			return true;
+		}
 		
-		Context.openSession();
-        Context.authenticate(
-                org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-                org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+        RunnableResult<Boolean> validAgeRunnable = 
+        		new AgeCheckRunnable(message, printerLocation, locationString);
         
-        String attribute = ChirdlUtilConstants.LOC_TAG_ATTR_AGE_LIMIT_AT_CHECKIN;
-		
-		boolean ageOk = true;
-
-		try {
-			
-			if (printerLocation == null || locationString == null){
-				return ageOk;
-			}
-			
-			LocationTag locationTag = locationService.getLocationTagByName(printerLocation);
-			Location location = locationService.getLocation(locationString);
-			if (locationTag == null || location == null){
-				return ageOk;
-			}
-			
-			LocationTagAttributeValue ageLimitAttributeValue = chirdlutilbackportsService
-					.getLocationTagAttributeValue(locationTag.getLocationTagId(), attribute ,location.getLocationId());
-			
-			if (ageLimitAttributeValue == null ) {
-				return ageOk;
-			}
-			
-			String ageLimitString = ageLimitAttributeValue.getValue();
-			Integer ageLimit = Integer.valueOf(ageLimitString);
-			
-			HL7PatientHandler25 patientHandler = new HL7PatientHandler25();
-			Date dob = patientHandler.getBirthdate(message);
-			int age = Util.getAgeInUnits(dob, new java.util.Date(), ChirdlUtilConstants.YEAR_ABBR);
-
-			if (age >= ageLimit){
-				return !ageOk;
-			}
-			
-			
-		} catch (NumberFormatException e) {
-			//String was either null, empty, or not a digit
-			//No age limit value could be retrieved from attributes, so do not filter
-			return ageOk;
-		} catch (Exception e){
-			log.error("Exception while verifying patient age. ", e);
-		} finally {
-			Context.closeSession();
+        Thread ageCheckThread = Daemon.runInDaemonThread(
+        	validAgeRunnable, org.openmrs.module.chica.util.Util.getDaemonToken());
+        try {
+			ageCheckThread.join(30000);
+		}
+		catch (InterruptedException e) {
+			log.error("Error determining age validity.", e);
+			Thread.currentThread().interrupt();
 		}
 
-		return ageOk;
-
+		return validAgeRunnable.getResult().booleanValue();
 	}
 	
 
@@ -1571,8 +1534,7 @@ public class HL7SocketHandler extends
 	                        String printerLocation) {
 		Runnable hl7ObsRunnable = new HL7StoreObsRunnable(patient.getPatientId(), location.getLocationId(), 
 			 session.getSessionId(), message, printerLocation);
-		Thread hl7ObsThread = new Thread(hl7ObsRunnable);
-		hl7ObsThread.start();
+		Daemon.runInDaemonThread(hl7ObsRunnable, Util.getDaemonToken());
 	}
 	
 	/**

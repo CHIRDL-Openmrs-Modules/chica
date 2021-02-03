@@ -41,6 +41,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.FormWriter;
@@ -53,7 +54,6 @@ import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
-import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -981,8 +981,7 @@ public class DynamicFormAccess {
 	 */
 	private void serializeFields(FormInstance formInstance, Integer locationTagId, List<Field> fields, List<String> elementsToRemoveList) {
 		ChirdlRunnable runnable = new FormWriter(formInstance, locationTagId, fields, elementsToRemoveList); // DWE CHICA-430 Add elementsToRemoveList;
-		ThreadManager manager = ThreadManager.getInstance();
-		manager.execute(runnable, formInstance.getLocationId());
+		Daemon.runInDaemonThread(runnable, org.openmrs.module.chica.util.Util.getDaemonToken());
 	}
 	
 	/**

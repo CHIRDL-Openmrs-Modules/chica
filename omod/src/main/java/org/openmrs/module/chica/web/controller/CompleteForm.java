@@ -9,12 +9,10 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.chirdlutilbackports.util.Util;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
@@ -54,41 +52,30 @@ public class CompleteForm implements Runnable {
      */
     @Override
     public void run() {
-        Context.openSession();
         try {
-            try {
-                
-                Context.authenticate(
-                    Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-                    Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+            Patient patient = Context.getPatientService().getPatient(this.patientId);
+            Form form = Context.getFormService().getForm(this.formId);
 
-
-                Patient patient = Context.getPatientService().getPatient(patientId);
-                Form form = Context.getFormService().getForm(formId);
-
-                DssService dssService = Context.getService(DssService.class);
-                List<RuleEntry> nonPriorRuleEntries = dssService.getNonPrioritizedRuleEntries(form.getName());
-                
-                for (RuleEntry currRuleEntry : nonPriorRuleEntries) {
-                    Rule currRule = currRuleEntry.getRule();
-                    if (currRule.checkAgeRestrictions(patient)) {
-                        currRule.setParameters(parameters);
-                        dssService.runRule(patient, currRule);
-                    }
+            DssService dssService = Context.getService(DssService.class);
+            List<RuleEntry> nonPriorRuleEntries = dssService.getNonPrioritizedRuleEntries(form.getName());
+            
+            for (RuleEntry currRuleEntry : nonPriorRuleEntries) {
+                Rule currRule = currRuleEntry.getRule();
+                if (currRule.checkAgeRestrictions(patient)) {
+                    currRule.setParameters(this.parameters);
+                    dssService.runRule(patient, currRule);
                 }
-            } catch (Exception e) {
-                this.log.error(e.getMessage());
-                this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
-            } 
-        
-            try {
-                changeState(formInstance, parameters);
-            } catch (Exception e) {
-                this.log.error(e.getMessage());
-                this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
             }
-        } finally {
-            Context.closeSession();
+        } catch (Exception e) {
+            this.log.error(e.getMessage());
+            this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+        } 
+    
+        try {
+            changeState(this.formInstance, this.parameters);
+        } catch (Exception e) {
+            this.log.error(e.getMessage());
+            this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
         }
     }
     
@@ -113,8 +100,8 @@ public class CompleteForm implements Runnable {
                     BaseStateActionHandler.getInstance().changeState(formInstState, (HashMap)stateChangeParameters);
                 }
                 catch (Exception e) {
-                    log.error(e.getMessage());
-                    log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+                    this.log.error(e.getMessage());
+                    this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
                 }
             }
         }

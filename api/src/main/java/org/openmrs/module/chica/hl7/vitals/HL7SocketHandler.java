@@ -24,7 +24,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chica.hl7.mrfdump.HL7EncounterHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
@@ -40,8 +40,6 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
-import org.openmrs.util.PrivilegeConstants;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
@@ -92,6 +90,7 @@ public class HL7SocketHandler implements Application {
 	 * 
 	 * @returns true
 	 */
+	@Override
 	public boolean canProcess(Message message) {
 		return message != null && message instanceof ca.uhn.hl7v2.model.v23.message.ORU_R01;
 	}
@@ -119,87 +118,28 @@ public class HL7SocketHandler implements Application {
 		}
 	}
 	
+	/**
+	 * @see ca.uhn.hl7v2.app.Application#processMessage(ca.uhn.hl7v2.model.Message)
+	 */
+	@Override
 	public Message processMessage(Message message) throws ApplicationException {
-		Date startTime = Calendar.getInstance().getTime();
-		Message response = null;
-
-		boolean error = false;
+		ProcessMessageRunnable processMessageRunnable = new ProcessMessageRunnable(message, this, this.parser);
+		Thread messageProcessThread = 
+				Daemon.runInDaemonThread(processMessageRunnable, org.openmrs.module.chica.util.Util.getDaemonToken());
 		try {
-			Context.openSession();
-			
-			if (canProcess(message)) {
-				String incomingMessageString = "";
-				
-				incomingMessageString = this.parser.encode(message);
-				
-				Context.authenticate(
-				        org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-				        org.openmrs.module.chirdlutilbackports.util.Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
-				
-				Context.addProxyPrivilege(PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE); // CHICA-1151 replaced HL7Constants.PRIV_ADD_HL7_IN_QUEUE with PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE
-				if (!Context.hasPrivilege(PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE)) { // CHICA-1151 replaced HL7Constants.PRIV_ADD_HL7_IN_QUEUE with PrivilegeConstants.PRIV_ADD_HL7_IN_QUEUE
-					logger.error("You do not have HL7 add privilege!!");
-					System.exit(0);
-				}
-				
-				error = processMessageSegments(message, incomingMessageString,startTime);
-			}
-			try {
-				if (message instanceof ca.uhn.hl7v2.model.v25.message.ORU_R01 || message instanceof ca.uhn.hl7v2.model.v25.message.ADT_A01)
-				{
-					ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-					response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
-				}
-				else if(message instanceof ca.uhn.hl7v2.model.v23.message.ORU_R01)
-				{
-					ca.uhn.hl7v2.model.v23.segment.MSH msh = HL7ObsHandler23.getMSH((ca.uhn.hl7v2.model.v23.message.ORU_R01)message);
-					response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
-				}
-				else
-				{
-					response = null;
-				}
-				
-			}
-			catch (IOException e) {
-				logger.error("Error creating ACK message." + e.getMessage());
-			}catch (HL7Exception e) {
-				logger.error("Parser error constructing ACK.", e);
-			}catch (Exception e){
-				logger.error("Exception processing inbound vitals HL7 message.", e);
-			}
-			
-			Context.clearSession();
-			
+			messageProcessThread.join();
 		}
-		catch (ContextAuthenticationException e) {
-			logger.error("Context Authentication exception: ", e);
-			Context.closeSession();
-			System.exit(0);
-		}
-		catch (ClassCastException e) {
-			logger.error("Error casting to " + message.getClass().getName() + " ", e);
-			throw new ApplicationException("Invalid message type for handler");
-		}
-		catch (HL7Exception e) {
-			logger.error("Error while processing hl7 message", e);
-			throw new ApplicationException(e);
-		}
-		finally {
-			if (response == null) {
-				try {
-					error = true;
-					ca.uhn.hl7v2.model.v25.segment.MSH msh = HL7ObsHandler25.getMSH(message);
-					response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
-				}
-				catch (Exception e) {
-					logger.error("Could not send acknowledgement", e);
-				}
-			}
-			Context.closeSession();
+		catch (InterruptedException e) {
+			logger.error("Process message thread interrupted.", e);
+			Thread.currentThread().interrupt();
 		}
 		
-		return response;
+		Exception exception = processMessageRunnable.getException();
+		if (exception instanceof ApplicationException) {
+			throw (ApplicationException)exception;
+		}
+		
+		return processMessageRunnable.getResult();
 	}
 	
 	/**
@@ -250,7 +190,7 @@ public class HL7SocketHandler implements Application {
 		return patientState;
 	}
 	
-	private boolean processMessageSegments(Message message, String incomingMessageString,Date startTime) throws HL7Exception {
+	protected boolean processMessageSegments(Message message, String incomingMessageString,Date startTime) throws HL7Exception {
 		
 		PatientState patientState = null;
 		Patient patient = null;
@@ -272,11 +212,6 @@ public class HL7SocketHandler implements Application {
 			CX patId = hl7PatientHandler.getPID(message).getPatientIDInternalID(0);
 			
 			String mrn = hl7PatientHandler.getMRN(patId);
-			
-			//add the dash
-			if (mrn.indexOf("-") == -1) {
-				mrn = mrn.substring(0, mrn.length() - 1) + "-" + mrn.substring(mrn.length() - 1);
-			}
 			
 			//writeMessageToFile(mrn, incomingMessageString); // Commenting this out in case we want to turn it back on
 			
