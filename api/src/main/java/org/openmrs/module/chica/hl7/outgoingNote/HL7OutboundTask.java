@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
-import org.openmrs.module.atd.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
@@ -24,8 +23,8 @@ public class HL7OutboundTask extends AbstractTask
 	private Integer sleepTime;
 	private HL7OutboundHandler hl7OutboundHandler;
 	private Thread hl7OutboundHandlerThread;
-	private static final Integer DEFAULT_SOCKET_READ_TIMEOUT = 5; // seconds
-	private static final Integer DEFAULT_THREAD_SLEEP_TIME = 1; // seconds
+	private static final Integer DEFAULT_SOCKET_READ_TIMEOUT = Integer.valueOf(5); // seconds
+	private static final Integer DEFAULT_THREAD_SLEEP_TIME = Integer.valueOf(1); // seconds
 	
 	@Override
 	public void initialize(TaskDefinition config) 
@@ -52,11 +51,7 @@ public class HL7OutboundTask extends AbstractTask
 				return;
 			}
 
-			if (portString != null)
-			{
-				this.port = Integer.valueOf(portString);
-			} 
-			
+			this.port = Integer.valueOf(portString);
 			if (socketReadTimeoutString != null && socketReadTimeoutString.length() > 0)
 			{
 				this.socketReadTimeout = Integer.valueOf(socketReadTimeoutString);
@@ -97,7 +92,7 @@ public class HL7OutboundTask extends AbstractTask
 				this.log.error("Starting HL7OutboundHandler...");
 				
 				this.hl7OutboundHandler = new HL7OutboundHandler(this.host, this.port, this.socketReadTimeout, this.sleepTime);
-				this.hl7OutboundHandlerThread = Daemon.runInDaemonThread(this.hl7OutboundHandler, Util.getDaemonToken());
+				this.hl7OutboundHandlerThread = Daemon.runInNewDaemonThread(this.hl7OutboundHandler);
 				
 				this.log.error("Finished starting HL7OutboundHandler.");
 			}
