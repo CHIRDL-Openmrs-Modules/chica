@@ -10,7 +10,6 @@ import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
@@ -18,8 +17,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.util.Util;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
 
@@ -62,27 +61,16 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 	{
 		try
 		{
-			Context.openSession();
-			
-			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService
-					.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), adminService
-					.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
-			
 			String message = createHL7ORU();
 			
 			if(message != null)
 			{
-				org.openmrs.module.chica.util.Util.createHL7OutboundRecord(message, encounterId, host, port); // Store message in the sockethl7listner_hl7_out_queue to be processed by the scheduled task
+				org.openmrs.module.chica.util.Util.createHL7OutboundRecord(message, this.encounterId, this.host, this.port); // Store message in the sockethl7listner_hl7_out_queue to be processed by the scheduled task
 			}
 		}
 		catch(Exception e)
 		{
-			log.error("Exception exporting obs for encounterId: " + encounterId, e);
-		}
-		finally
-		{
-			Context.closeSession();
+			this.log.error("Exception exporting obs for encounterId: " + this.encounterId, e);
 		}
 	}
 	
@@ -93,9 +81,9 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 	private String createHL7ORU()
 	{
 		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		Encounter encounter = (Encounter) encounterService.getEncounter(this.encounterId);
 		PatientService patientService = Context.getPatientService();
-		Patient patient = patientService.getPatient(patientId);
+		Patient patient = patientService.getPatient(this.patientId);
 		
 		int orderRep = 0;
 		HL7ORU hl7ORU = new HL7ORU(patient, encounter);
@@ -108,11 +96,11 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		// and create OBX segments
 		ObsService obsService = Context.getObsService();
 		ConceptService conceptService = Context.getConceptService();
-		ConceptSource conceptSource = conceptService.getConceptSourceByName(conceptSourceString);
+		ConceptSource conceptSource = conceptService.getConceptSourceByName(this.conceptSourceString);
 		List<ConceptMap> mappedConcepts = conceptService.getConceptMappingsToSource(conceptSource);
-		List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+		List<org.openmrs.Encounter> encounters = new ArrayList<>();
 		encounters.add(encounter);
-		List<Concept> concepts = new ArrayList<Concept>();
+		List<Concept> concepts = new ArrayList<>();
 		int numOBXs = 0;
 		for(ConceptMap conceptMap : mappedConcepts)
 		{
@@ -136,7 +124,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		
 		if(hl7ORU.getORU().getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATIONReps() == 0)
 		{
-			log.info("Error creating ORU message. No OBX segments were created for encounterId: " + encounterId + " conceptSource: " + conceptSourceString);
+			this.log.info("Error creating ORU message. No OBX segments were created for encounterId: " + this.encounterId + " conceptSource: " + this.conceptSourceString);
 			return null; // We don't want to send a message that doesn't have at least 1 OBX
 		}
 
@@ -147,7 +135,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		}
 		catch(HL7Exception e)
 		{
-			log.error("Exception parsing HL7 message for encounter: " + encounterId + ".", e);
+			this.log.error("Exception parsing HL7 message for encounter: " + this.encounterId + ".", e);
 		}
 		
 		return message;
@@ -168,7 +156,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 	@Override
 	public String getName() 
 	{
-		return this.getClass().getName() + " (Encounter: " + encounterId + ")";
+		return this.getClass().getName() + " (Encounter: " + this.encounterId + ")";
 	}
 
 }

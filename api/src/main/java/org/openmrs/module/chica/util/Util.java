@@ -49,6 +49,7 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.EmptyResult;
 import org.openmrs.logic.result.Result;
+import org.openmrs.module.DaemonToken;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
@@ -104,6 +105,7 @@ public class Util {
 	private static long lastUpdatedViewEncountersConfig = System.currentTimeMillis();
 	private static final long VIEW_ENCOUNTERS_CONFIG_UPDATE_CYCLE = 900000; // fifteen minutes
 	private static final String GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG = "chica.ViewEncountersConfigFile";
+	private static DaemonToken daemonToken;
 	
 	/**
 	 * 
@@ -1400,5 +1402,19 @@ public class Util {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * @return the daemonToken
+	 */
+	public static DaemonToken getDaemonToken() {
+		return daemonToken;
+	}
+	
+	/**
+	 * @param daemonToken the daemonToken to set
+	 */
+	public static void setDaemonToken(DaemonToken daemonToken) {
+		Util.daemonToken = daemonToken;
 	}
 }

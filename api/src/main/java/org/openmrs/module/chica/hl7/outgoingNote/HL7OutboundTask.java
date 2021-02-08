@@ -3,6 +3,7 @@ package org.openmrs.module.chica.hl7.outgoingNote;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
@@ -22,8 +23,8 @@ public class HL7OutboundTask extends AbstractTask
 	private Integer sleepTime;
 	private HL7OutboundHandler hl7OutboundHandler;
 	private Thread hl7OutboundHandlerThread;
-	private static final Integer DEFAULT_SOCKET_READ_TIMEOUT = 5; // seconds
-	private static final Integer DEFAULT_THREAD_SLEEP_TIME = 1; // seconds
+	private static final Integer DEFAULT_SOCKET_READ_TIMEOUT = Integer.valueOf(5); // seconds
+	private static final Integer DEFAULT_THREAD_SLEEP_TIME = Integer.valueOf(1); // seconds
 	
 	@Override
 	public void initialize(TaskDefinition config) 
@@ -34,50 +35,46 @@ public class HL7OutboundTask extends AbstractTask
 		try 
 		{
 			String portString = this.taskDefinition.getProperty(ChirdlUtilConstants.TASK_PROPERTY_PORT);
-			host = this.taskDefinition.getProperty(ChirdlUtilConstants.TASK_PROPERTY_HOST);
+			this.host = this.taskDefinition.getProperty(ChirdlUtilConstants.TASK_PROPERTY_HOST);
 			String socketReadTimeoutString = this.taskDefinition.getProperty(ChirdlUtilConstants.TASK_PROPERTY_SOCKET_READ_TIMEOUT);
 			String sleepTimeString = this.taskDefinition.getProperty(ChirdlUtilConstants.TASK_PROPERTY_THREAD_SLEEP_TIME);
 			
-			if (host == null)
+			if (this.host == null)
 			{
-				log.error("Could not start " + this.getClass().getName() + ". Host has not been set.");
+				this.log.error("Could not start " + this.getClass().getName() + ". Host has not been set.");
 				return;
 			}
 			
 			if(portString == null)
 			{
-				log.error("Could not start " + this.getClass().getName() + ". Port has not been set.");
+				this.log.error("Could not start " + this.getClass().getName() + ". Port has not been set.");
 				return;
 			}
 
-			if (portString != null)
-			{
-				port = Integer.parseInt(portString);
-			} 
-			
+			this.port = Integer.valueOf(portString);
 			if (socketReadTimeoutString != null && socketReadTimeoutString.length() > 0)
 			{
-				socketReadTimeout = Integer.parseInt(socketReadTimeoutString);
+				this.socketReadTimeout = Integer.valueOf(socketReadTimeoutString);
 			} 
 			else 
 			{
-				socketReadTimeout = DEFAULT_SOCKET_READ_TIMEOUT;
+				this.socketReadTimeout = DEFAULT_SOCKET_READ_TIMEOUT;
 			}
 			
 			if (sleepTimeString != null && sleepTimeString.length() > 0)
 			{
-				sleepTime = Integer.parseInt(sleepTimeString);
+				this.sleepTime = Integer.valueOf(sleepTimeString);
 			} 
 			else 
 			{
-				sleepTime = DEFAULT_THREAD_SLEEP_TIME;
+				this.sleepTime = DEFAULT_THREAD_SLEEP_TIME;
 			}
 			
 		} 
 		catch(Exception e)
 		{
-			log.error("Error starting " + this.getClass().getName() + "...", e);
-			host = null;
+			this.log.error("Error starting " + this.getClass().getName() + "...", e);
+			this.host = null;
 			return;
 		}
 		
@@ -90,15 +87,14 @@ public class HL7OutboundTask extends AbstractTask
 		Context.openSession();
 		try
 		{
-			if(host != null && port != null)
+			if(this.host != null && this.port != null)
 			{
-				log.error("Starting HL7OutboundHandler...");
+				this.log.error("Starting HL7OutboundHandler...");
 				
-				hl7OutboundHandler = new HL7OutboundHandler(host, port, socketReadTimeout, sleepTime);
-				hl7OutboundHandlerThread = new Thread(hl7OutboundHandler);
-				hl7OutboundHandlerThread.start();
+				this.hl7OutboundHandler = new HL7OutboundHandler(this.host, this.port, this.socketReadTimeout, this.sleepTime);
+				this.hl7OutboundHandlerThread = Daemon.runInNewDaemonThread(this.hl7OutboundHandler);
 				
-				log.error("Finished starting HL7OutboundHandler.");
+				this.log.error("Finished starting HL7OutboundHandler.");
 			}
 			else
 			{
@@ -122,21 +118,21 @@ public class HL7OutboundTask extends AbstractTask
 	@Override 
 	public void shutdown()
 	{
-		if(hl7OutboundHandler != null)
+		if(this.hl7OutboundHandler != null)
 		{
-			hl7OutboundHandler.setKeepRunning(false);
+			this.hl7OutboundHandler.setKeepRunning(false);
 			try 
 			{
-				hl7OutboundHandlerThread.join(10000);
+				this.hl7OutboundHandlerThread.join(10000);
 				
-				if(hl7OutboundHandlerThread.isAlive())
+				if(this.hl7OutboundHandlerThread.isAlive())
 				{
-					log.error("Unable to stop HL7OutboundHandler.");
+					this.log.error("Unable to stop HL7OutboundHandler.");
 				}
 			} 
 			catch (InterruptedException e) 
 			{
-				log.error("Error occurred while stopping HL7OutboundHandler thread.", e);
+				this.log.error("Error occurred while stopping HL7OutboundHandler thread.", e);
 				Thread.currentThread().interrupt();
 			}
 		}

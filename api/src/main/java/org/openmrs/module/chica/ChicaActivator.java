@@ -8,6 +8,8 @@ import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.DaemonToken;
+import org.openmrs.module.DaemonTokenAware;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 
@@ -17,13 +19,14 @@ import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
  * @author Tammy Dugan
  *
  */
-public class ChicaActivator extends BaseModuleActivator {
+public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAware {
 
 	private Log log = LogFactory.getLog(this.getClass());
 
 	/**
 	 * @see org.openmrs.module.BaseModuleActivator#started()
 	 */
+	@Override
 	public void started() {
 		this.log.info("Starting Chica Module");
 		
@@ -70,8 +73,17 @@ public class ChicaActivator extends BaseModuleActivator {
 	/**
 	 * @see org.openmrs.module.BaseModuleActivator#stopped()
 	 */
+	@Override
 	public void stopped() {
 		this.log.info("Shutting down Chica Module");
+	}
+
+	/**
+	 * @see org.openmrs.module.DaemonTokenAware#setDaemonToken(org.openmrs.module.DaemonToken)
+	 */
+	@Override
+	public void setDaemonToken(DaemonToken token) {
+		org.openmrs.module.chica.util.Util.setDaemonToken(token);
 	}
 
 }

@@ -16,13 +16,11 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.module.chirdlutilbackports.util.Util;
 
 /**
  * @author tmdugan
@@ -43,18 +41,14 @@ public class CheckinPatient implements ChirdlRunnable
 	 * 
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run()
 	{
-		log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+		this.log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
 			new Timestamp(new Date().getTime()) + ")");
-		Context.openSession();
 		
 		try
 		{
-            Context.authenticate(Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-                    Util.decryptGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
-
-
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			
 			org.openmrs.module.chica.service.EncounterService encounterService = Context
@@ -100,8 +94,7 @@ public class CheckinPatient implements ChirdlRunnable
 			this.log.error(e.getMessage());
 			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}finally{
-			Context.closeSession();
-			log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+			this.log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
 				new Timestamp(new Date().getTime()) + ")");
 		}
 	}
@@ -109,14 +102,16 @@ public class CheckinPatient implements ChirdlRunnable
 	/**
 	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
 	 */
-    public String getName() {
-	    return "Checkin Patient (Encounter: " + encounterId + ")";
+    @Override
+	public String getName() {
+	    return "Checkin Patient (Encounter: " + this.encounterId + ")";
     }
 
 	/**
 	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getPriority()
 	 */
-    public int getPriority() {
+    @Override
+	public int getPriority() {
 	    return ChirdlRunnable.PRIORITY_ONE;
     }
 }

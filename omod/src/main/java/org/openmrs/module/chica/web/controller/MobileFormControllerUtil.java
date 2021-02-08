@@ -10,10 +10,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.chica.ChicaParameterHandler;
 import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chica.util.ChicaConstants;
+import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
@@ -191,8 +193,7 @@ public class MobileFormControllerUtil {
      */
     private static void completeForm(Integer formId, Patient patient, HashMap<String, Object> parameters, FormInstance formInstance) {
         Runnable runnable = new CompleteForm(patient.getPatientId(), formId, parameters, formInstance); 
-        Thread thread = new Thread(runnable);  
-        thread.start();  
+        Daemon.runInDaemonThread(runnable, Util.getDaemonToken()); 
     }
     
     /**

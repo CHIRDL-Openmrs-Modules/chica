@@ -30,6 +30,7 @@ import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
 import org.openmrs.module.atd.TeleformTranslator;
@@ -65,7 +66,6 @@ import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswerErrs;
 import org.openmrs.module.chica.xmlBeans.PWSPromptAnswers;
 import org.openmrs.module.chica.xmlBeans.StatsConfig;
-import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
@@ -1119,8 +1119,8 @@ public class ChicaServiceImpl implements ChicaService
     	 */
     	public void createPatientStateQueryGlooko(String glookoCode, String syncTimestamp, String dataType)
     	{
-    		ThreadManager threadManager = ThreadManager.getInstance();
-			threadManager.execute(new DeviceSyncRunnable(glookoCode, syncTimestamp, dataType), 0);
+			Runnable deviceSync = new DeviceSyncRunnable(glookoCode, syncTimestamp, dataType);
+			Daemon.runInDaemonThread(deviceSync, org.openmrs.module.chica.util.Util.getDaemonToken());
     	}
 
 		/**
@@ -1129,8 +1129,8 @@ public class ChicaServiceImpl implements ChicaService
 		 */
 		public void addGlookoCodePersonAttribute(String firstName, String lastName, String dateOfBirth, String glookoCode) 
 		{
-			ThreadManager threadManager = ThreadManager.getInstance();
-			threadManager.execute(new NewGlookoUserRunnable(firstName, lastName, dateOfBirth, glookoCode), 0);
+			Runnable newUser = new NewGlookoUserRunnable(firstName, lastName, dateOfBirth, glookoCode);
+			Daemon.runInDaemonThread(newUser, org.openmrs.module.chica.util.Util.getDaemonToken());
 		}
 		
 		/**
