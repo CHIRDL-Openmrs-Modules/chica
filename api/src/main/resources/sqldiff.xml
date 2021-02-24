@@ -2493,6 +2493,9 @@ alter table encounter add column printer_location varchar(255);
 alter table encounter add column insurance_carrier_code varchar(255);
 alter table encounter add column insurance_plan_code varchar(255);
 
+insert into concept_class (name, description, creator, date_created, uuid)
+values ('CHICA', 'chica term', 1, NOW(), UUID());
+
 </sql>
 </diff>
 
