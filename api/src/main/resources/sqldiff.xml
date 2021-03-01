@@ -2493,6 +2493,9 @@ alter table encounter add column printer_location varchar(255);
 alter table encounter add column insurance_carrier_code varchar(255);
 alter table encounter add column insurance_plan_code varchar(255);
 
+insert into concept_class (name, description, creator, date_created, uuid)
+values ('CHICA', 'chica term', 1, NOW(), UUID());
+
 </sql>
 </diff>
 
@@ -3250,6 +3253,14 @@ and next_state=(select state_id from chirdlutilbackports_state where name='PSF_p
 
 delete from chirdlutilbackports_state_mapping where initial_state=(select state_id from chirdlutilbackports_state where name='PWS_create')
 and next_state=(select state_id from chirdlutilbackports_state where name='PWS_printed');
+
+update chirdlutilbackports_state
+set state_action_id = (select state_action_id from chirdlutilbackports_state_action where action_name = 'PRODUCE FORM INSTANCE')
+where name = 'PWS_create';
+
+update chirdlutilbackports_state
+set state_action_id = (select state_action_id from chirdlutilbackports_state_action where action_name = 'Purge XML datasource')
+where name = 'FINISHED';
 	
 	</sql>
 	</diff>
@@ -3996,6 +4007,74 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
             insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_fax'),(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
             insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT_mobile_create'),(select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR ELECTRONIC SUBMISSION'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
             insert into chirdlutilbackports_state_mapping(initial_state,next_state,program_id) values ((select state_id from chirdlutilbackports_state where name = 'JIT WAIT FOR ELECTRONIC SUBMISSION'),(select state_id from chirdlutilbackports_state where name = 'JIT_FINISHED'),(select program_id from chirdlutilbackports_program where name = 'chica_epic'));
+            
+            insert into concept (datatype_id, class_id, creator, date_created, uuid)
+            values ((select concept_datatype_id from concept_datatype where name = 'Text'),
+            (select concept_class_id from concept_class where name = 'CHICA'), 1, NOW(), UUID());
+            
+            insert into concept_name (concept_id, name, locale, locale_preferred, creator, date_created, concept_name_type, uuid)
+            values ((select MAX(concept_id) from concept), 'CHICA_Note', 'en', true, 1, NOW(), 'FULLY_SPECIFIED', UUID());
+            
+            insert into concept_description (concept_id, description, locale, creator, date_created, uuid)
+            values ((select MAX(concept_id) from concept), 'Contains the note created by CHICA', 'en', 1, NOW(), UUID());
+            
+            insert into concept (datatype_id, class_id, creator, date_created, uuid)
+            values ((select concept_datatype_id from concept_datatype where name = 'Text'),
+            (select concept_class_id from concept_class where name = 'CHICA'), 1, NOW(), UUID());
+            
+            insert into concept_name (concept_id, name, locale, locale_preferred, creator, date_created, concept_name_type, uuid)
+            values ((select MAX(concept_id) from concept), 'PWS_provider_view', 'en', true, 1, NOW(), 'FULLY_SPECIFIED', UUID());
+            
+            insert into concept_description (concept_id, description, locale, creator, date_created, uuid)
+            values ((select MAX(concept_id) from concept), 'Information for the provider viewing the PWS', 'en', 1, NOW(), UUID());
+            
+            insert into concept (datatype_id, class_id, creator, date_created, uuid)
+            values ((select concept_datatype_id from concept_datatype where name = 'Text'),
+            (select concept_class_id from concept_class where name = 'CHICA'), 1, NOW(), UUID());
+            
+            insert into concept_name (concept_id, name, locale, locale_preferred, creator, date_created, concept_name_type, uuid)
+            values ((select MAX(concept_id) from concept), 'PWS_provider_submit', 'en', true, 1, NOW(), 'FULLY_SPECIFIED', UUID());
+            
+            insert into concept_description (concept_id, description, locale, creator, date_created, uuid)
+            values ((select MAX(concept_id) from concept), 'Information for the provider submitting the PWS', 'en', 1, NOW(), UUID());
+            
+            insert into concept (datatype_id, class_id, creator, date_created, uuid)
+            values ((select concept_datatype_id from concept_datatype where name = 'Coded'),
+            (select concept_class_id from concept_class where name = 'CHICA'), 1, NOW(), UUID());
+            
+            insert into concept_name (concept_id, name, locale, locale_preferred, creator, date_created, concept_name_type, uuid)
+            values ((select MAX(concept_id) from concept), 'English', 'en', true, 1, NOW(), 'FULLY_SPECIFIED', UUID());
+            
+            insert into concept_description (concept_id, description, locale, creator, date_created, uuid)
+            values ((select MAX(concept_id) from concept), 'English', 'en', 1, NOW(), UUID());
+            
+            insert into concept (datatype_id, class_id, creator, date_created, uuid)
+            values ((select concept_datatype_id from concept_datatype where name = 'Coded'),
+            (select concept_class_id from concept_class where name = 'CHICA'), 1, NOW(), UUID());
+            
+            insert into concept_name (concept_id, name, locale, locale_preferred, creator, date_created, concept_name_type, uuid)
+            values ((select MAX(concept_id) from concept), 'Spanish', 'en', true, 1, NOW(), 'FULLY_SPECIFIED', UUID());
+            
+            insert into concept_description (concept_id, description, locale, creator, date_created, uuid)
+            values ((select MAX(concept_id) from concept), 'Spanish', 'en', 1, NOW(), UUID());
+            
+            insert into concept (datatype_id, class_id, creator, date_created, uuid)
+            values ((select concept_datatype_id from concept_datatype where name = 'Coded'),
+            (select concept_class_id from concept_class where name = 'CHICA'), 1, NOW(), UUID());
+            
+            insert into concept_name (concept_id, name, locale, locale_preferred, creator, date_created, concept_name_type, uuid)
+            values ((select MAX(concept_id) from concept), 'preferred_language', 'en', true, 1, NOW(), 'FULLY_SPECIFIED', UUID());
+            
+            insert into concept_description (concept_id, description, locale, creator, date_created, uuid)
+            values ((select MAX(concept_id) from concept), 'The preferred language of a patient', 'en', 1, NOW(), UUID());
+            
+            insert into concept_answer (concept_id, answer_concept, creator, date_created, uuid)
+            values((select concept_id from concept_name where name = 'preferred_language'),
+            (select concept_id from concept_name where name = 'English'), 1, NOW(), UUID());
+            
+            insert into concept_answer (concept_id, answer_concept, creator, date_created, uuid)
+            values((select concept_id from concept_name where name = 'preferred_language'),
+            (select concept_id from concept_name where name = 'Spanish'), 1, NOW(), UUID());
         </sql>
     </diff>
     
