@@ -34,6 +34,7 @@ import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -114,6 +115,7 @@ public class ControllerUtil {
 		map.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID, formInstanceId);
 		map.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
 		map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, locationTagId);
+		map.put(ChirdlUtilConstants.PARAMETER_PDF_VIEWER, getPdfViewer(locationId));
 
 		// CHICA-1004 Check for previous form submission by checking the session
 		// variable
@@ -616,5 +618,23 @@ public class ControllerUtil {
 		}
 		
 		return sessionTimeoutWarning;
+    }
+    
+    /**
+     * Returns the pdf viewer display format
+     * 
+     * @param locationId
+     * @return Pdf Viewer display format
+     */
+    public static String getPdfViewer(Integer locationId) {
+        ChirdlLocationAttributeValue attrVal = 
+                Context.getService(ChirdlUtilBackportsService.class).getLocationAttributeValue(
+                    locationId, ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
+        if (attrVal == null || StringUtils.isBlank(attrVal.getValue())) {
+            log.error("No location attribute value specified for location " + locationId + " and attribute name " 
+                    + ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
+            return null;
+        }
+        return attrVal.getValue();
     }
 }
