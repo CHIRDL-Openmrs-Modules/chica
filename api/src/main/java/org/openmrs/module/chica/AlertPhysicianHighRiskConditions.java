@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +27,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.MailSender;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
@@ -239,17 +237,8 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 									        + " found for personId " + personId + ".  No one will be emailed.");
 									return;
 								}
-								String[] emailList = emailAddys.split(",");
 								try {
 									
-									String smtpMailHost = Context.getAdministrationService().getGlobalProperty(
-									    "chirdlutil.smtpMailHost");
-									if (smtpMailHost == null) {
-										log.error("Please specify global property chirdlutil.smtpMailHost for correct email operability.");
-										return;
-									}
-									
-									String sendingEmail = fromEmail;
 									Patient patient = chicaEncounter.getPatient();
 									
 									String body = riskText
@@ -268,10 +257,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 									body += "mrn: " + patient.getPatientIdentifier() + "\nname: " + patient.getGivenName()
 									        + " " + patient.getFamilyName()+"\ndate risk factor identified: "+riskDateString;
 									
-									Properties mailProps = new Properties();
-									mailProps.put("mail.smtp.host", smtpMailHost);
-									MailSender mailSender = new MailSender(mailProps);
-									mailSender.sendMail(sendingEmail, emailList, subject, body, null);
+							        Context.getMessageService().sendMessage(emailAddys, fromEmail, subject, body);
 								}
 								catch (Exception e) {
 									log.error("Error sending email for high risk condition", e);

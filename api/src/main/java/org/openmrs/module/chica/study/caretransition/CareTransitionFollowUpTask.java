@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,8 +38,8 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.MailSender;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.notification.MessageException;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
@@ -87,10 +86,10 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		List<EmailInfo> emailInfoList = new ArrayList<>();
 		try {
 			String mailHost = 
-					Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EMAIL_SMTP_HOST);
+					Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_MAIL_SMTP_HOST);
 			if (StringUtils.isBlank(mailHost)) {
 				log.error("SMTP mail host not specified in global property " + 
-				    ChirdlUtilConstants.GLOBAL_PROP_EMAIL_SMTP_HOST + ".  No Care Transition follow up emails will be sent.");
+				    ChirdlUtilConstants.GLOBAL_PROPERTY_MAIL_SMTP_HOST + ".  No Care Transition follow up emails will be sent.");
 				return;
 			}
 			
@@ -408,9 +407,6 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress, String emailSubject, 
 	        Concept transitionConcept) {
 		List<Encounter> encounters = emailInfo.getEncounters();
-		Properties mailProps = new Properties();
-		mailProps.put(ChirdlUtilConstants.EMAIL_SMTP_HOST_PROPERTY, mailHost);
-		MailSender mailSender = new MailSender(mailProps);
 		StringBuilder body = new StringBuilder("The following ");
 		body.append(encounters.size() == 1 ? "patient was" : "patients were");
 		body.append(" counseled for adult care transition six months ago.  ");
@@ -449,19 +445,21 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
 		body.append("CHICA Care Transition");
 		
-		boolean success = mailSender.sendMail(fromEmailAddress, emailInfo.getProviderEmails(), 
-		    emailSubject, body.toString());
 		Integer providerId = emailInfo.getProvider().getProviderId();
-		if (!success) {
-			log.error("An error occurred sending Care Transition followup email for provider ID " + providerId + ".");
+		String[] emailArray = emailInfo.getProviderEmails();
+		String emails = String.join(ChirdlUtilConstants.GENERAL_INFO_COMMA, emailArray);
+		
+		try {
+            Context.getMessageService().sendMessage(emails, fromEmailAddress, emailSubject, body.toString());
+    		log.info("Care Transition Follow Up Email sent for provider ID " + providerId + " containing " + 
+    				successfulSaves + " patient(s).");
+        } catch (MessageException e) {
+        	log.error("An error occurred sending Care Transition followup email for provider ID " + providerId + ".");
 			ObsService obsService = Context.getObsService();
 			for (Obs obs : savedObs) {
 				obsService.voidObs(obs, "Care Transition follow up email was unable to be sent.");
 			}
-		} else {
-			log.info("Care Transition Follow Up Email sent for provider ID " + providerId + " containing " + 
-					successfulSaves + " patient(s).");
-		}
+        }
 	}
 	
 	/**
