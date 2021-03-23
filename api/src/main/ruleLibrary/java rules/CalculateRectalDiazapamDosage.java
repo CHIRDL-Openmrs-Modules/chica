@@ -186,7 +186,7 @@ public class CalculateRectalDiazapamDosage implements Rule {
 	}
 	
 	/**
-	 * Rounds the provided dose value to the nearest 2.5.
+	 * Rounds the provided dose value up to the nearest 2.5.
 	 * 
 	 * @param dose The dose to round
 	 * @return Dose rounded to the nearest 2.5
