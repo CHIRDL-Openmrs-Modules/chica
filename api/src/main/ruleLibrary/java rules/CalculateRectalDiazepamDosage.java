@@ -24,7 +24,7 @@ import org.openmrs.module.chirdlutil.util.ObsDateComparator;
 import org.openmrs.module.chirdlutil.util.Util;
 
 /**
- * Calculates Rectal Diazapam dosage based upon patient's age and weight.  The value must be rounded UP to the nearest 
+ * Calculates Rectal Diazepam dosage based upon patient's age and weight.  The value must be rounded UP to the nearest 
  * 2.5 (i.e. 2.5, 5.0, 7.5, 10.0).
  * <pre>{@code
  * If (age >=2) and (age <6) then
@@ -40,7 +40,7 @@ import org.openmrs.module.chirdlutil.util.Util;
  * @author Steve McKee
  *
  */
-public class CalculateRectalDiazapamDosage implements Rule {
+public class CalculateRectalDiazepamDosage implements Rule {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
