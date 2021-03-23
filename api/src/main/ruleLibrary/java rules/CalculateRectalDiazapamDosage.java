@@ -189,7 +189,7 @@ public class CalculateRectalDiazapamDosage implements Rule {
 	 * Rounds the provided dose value up to the nearest 2.5.
 	 * 
 	 * @param dose The dose to round
-	 * @return Dose rounded to the nearest 2.5
+	 * @return Dose rounded up to the nearest 2.5
 	 */
 	private double roundDose(double dose) {
 		double result = 2.5 * (Math.ceil(Math.abs(dose / 2.5)));
