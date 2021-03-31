@@ -204,7 +204,7 @@ public class MobileFormControllerUtil {
      * @param formInstanceId The form instance identifier.
      * @param encounterId The encounter identifier.
      */
-    private static void showForm(Map<String, Object> map, Integer formId, Integer formInstanceId, Integer encounterId) {
+    public static void showForm(Map<String, Object> map, Integer formId, Integer formInstanceId, Integer encounterId) {
         DynamicFormAccess formAccess = new DynamicFormAccess();
         
         List<org.openmrs.module.atd.xmlBeans.Field> fields = 
