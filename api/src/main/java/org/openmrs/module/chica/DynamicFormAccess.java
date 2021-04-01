@@ -364,7 +364,18 @@ public class DynamicFormAccess {
 			}
 			
 			parameters.put("formFieldId", currFormField.getFormFieldId()); // DWE CHICA-437
-			
+			Concept currConcept = currField.getConcept();
+            if (currConcept != null) {
+                try {
+                    String elementString = ((ConceptName) currConcept.getNames().toArray()[0]).getName();
+                    parameters.put("concept", elementString);
+                }
+                catch (Exception e) {
+                    parameters.put("concept", null);
+                }
+            } else {
+                parameters.put("concept", null);
+            }
 			//store the leaf index as the result if the
 			//current field has a parent
 			if (currFormField.getParent() == null) {
