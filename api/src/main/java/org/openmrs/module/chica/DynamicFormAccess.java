@@ -202,6 +202,7 @@ public class DynamicFormAccess {
 					}
 					catch (Exception e) {
 						ruleParameters.put("concept", null);
+						this.log.error("Error getting concept name for form field: " + currField.getFieldId(), e);
 					}
 				} else {
 					ruleParameters.put("concept", null);
@@ -372,6 +373,7 @@ public class DynamicFormAccess {
                 }
                 catch (Exception e) {
                     parameters.put("concept", null);
+                    this.log.error("Error getting concept name for form field: " + currField.getFieldId(), e);
                 }
             } else {
                 parameters.put("concept", null);
