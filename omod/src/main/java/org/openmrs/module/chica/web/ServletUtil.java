@@ -1487,8 +1487,9 @@ public class ServletUtil {
      * @param request HttServletRequest
      * @param locationId The location identifier
      * @param patientId The patient identifier
+     * @param encounterId The encounter identifier
      */
-    public static void savePSFCompletedBy(HttpServletRequest request, Integer locationId, Integer patientId) {
+    public static void savePSFCompletedBy(HttpServletRequest request, Integer locationId, Integer patientId, Integer encounterId) {
         String completedby = request.getParameter(ChirdlUtilConstants.PARAMETER_COMPLETED_BY);
         String ageStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_AGE);
         if (StringUtils.isNotBlank(ageStr)) {
@@ -1518,6 +1519,7 @@ public class ServletUtil {
             obs.setLocation(Context.getLocationService().getLocation(locationId));
             obs.setObsDatetime(new Date());
             obs.setPerson(Context.getPatientService().getPatient(patientId));
+            obs.setEncounter(Context.getEncounterService().getEncounter(encounterId));
             obs.setValueCoded(answer);
             try {
                 Context.getObsService().saveObs(obs, null);
