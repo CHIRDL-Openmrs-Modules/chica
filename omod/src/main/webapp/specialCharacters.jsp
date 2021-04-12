@@ -44,6 +44,7 @@
 <c:set var="colon" value="&#58"/>			 <%-- : --%>
 <c:set var="comma" value="&#44"/>			 <%-- , --%>
 <c:set var="copyrightSymbol" value="&#169"/> <%-- © --%>
+<c:set var="regTrademark" value="&#174"/>    <%-- ® --%>
 <c:set var="degree" value="&#176"/> 		 <%-- ° --%>
 <c:set var="dollar" value="&#36"/> 			 <%-- $ --%>
 <c:set var="exclamation" value="&#33"/> 	 <%-- ! --%>
