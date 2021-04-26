@@ -64,7 +64,7 @@
 <c:set var="plus" value="&#43;"/>			    <%-- + --%>
 <c:set var="questionMark" value="&#63;"/>	    <%-- ? --%>
 <c:set var="slash" value="&#47;"/> 			    <%-- / --%>
-<c:set var="semicolon" value="&#58;"/>		    <%-- ; --%>
+<c:set var="semicolon" value="&#59;"/>		    <%-- ; --%>
 <c:set var="tilde" value="&#126;"/>			    <%-- ~ --%>
 <c:set var="underscore" value="&#95;"/>		    <%-- | --%>
 <c:set var="pipe" value="&#124;"/>			    <%-- _ --%>
