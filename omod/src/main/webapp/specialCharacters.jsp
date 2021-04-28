@@ -30,8 +30,8 @@
 <c:set var="nTilde" value ="&#241;"/>		    <%-- ñ --%>
 <c:set var="NTilde" value="&#181;"/>			<%-- Ñ --%>
 <c:set var="invQuestionMark" value="&#191;"/>   <%-- ¿ --%>
-<c:set var="Uumlaut" value="&#220;"/>           <%-- ¿ --%>
-<c:set var="uumlaut" value="&#252;"/>           <%-- ¿ --%>
+<c:set var="Uumlaut" value="&#220;"/>           <%-- Ü --%>
+<c:set var="uumlaut" value="&#252;"/>           <%-- ü --%>
 
 
 
