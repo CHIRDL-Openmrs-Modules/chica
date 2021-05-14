@@ -2,12 +2,12 @@ package org.openmrs.module.chica.rule;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -16,52 +16,36 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.Util;
 
 /**
- * Calculates Midazolam dosage based upon patients's age and weight.
- * <pre>{@code
- * If age>= 12 years then
- *		Dose := "One 5mg spray in one nostril, repeat ONCE after 10 min in other nostril prn"
- * ElseIf age <12 years then
- *		Calc := integer(0.2 * weight) (*Round to nearest 0.1*)
- *		Vol := Calc/5  (*Round to nearest 0.1*)
- *		If Calc > 10 then
- *			Dose := "5 mg (1 ml of 5mg/ml) in each nostril."
- *		Else Dose := Calc "mg( " Vol "ml of 5mg/ml) half in each nostril."
- * EndIf
- * 
- * }</pre>
+ * Calculates weight percentile based upon a provided weight, the patient's age, and gender.
  * 
  * @author Steve McKee
- *
  */
-public class CalculateMidazolamDosage implements Rule {
+public class CalculateWeightPercentile implements Rule {
+	
+	private static final String CALCULATION_WEIGHT_PERCENTILE = "weight";
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		if (parameters == null || parameters.isEmpty()) {
 			return Result.emptyResult();
 		}
 		
-		// Ensure the parameter is a list
+		// Ensure the parameter is a Result
 		Object weightResultsObject = parameters.get(ChirdlUtilConstants.PARAMETER_1);
-		if (!(weightResultsObject instanceof List<?>)) {
+		if (!(weightResultsObject instanceof Result)) {
 			return Result.emptyResult();
 		}
 		
-		// Ensure there is at least one weight present
-		List<Result> weightResults = (List<Result>)weightResultsObject;
-		if (weightResults.isEmpty()) {
-			return Result.emptyResult();
-		}
+		Result weightResults = (Result)weightResultsObject;
 		
 		// Ensure the patient exists
 		Patient patient = Context.getPatientService().getPatient(patientId);
@@ -77,16 +61,29 @@ public class CalculateMidazolamDosage implements Rule {
 			return Result.emptyResult();
 		}
 		
-		// Get the patient's age in years
-		int age = Util.getAgeInUnits(birthDate, new Date(), Util.YEAR_ABBR);
+		// Get the weight observation
+		Object weightObsObj = weightResults.getResultObject();
+		if (!(weightObsObj instanceof Obs)) {
+			return Result.emptyResult();
+		}
 		
-		// Get the latest weight observation
-		Double weight = Util.getLatestNumericValue(weightResults);
+		Obs weightObs = (Obs)weightObsObj;
+		Double weight = weightObs.getValueNumeric();
 		if (weight == null) {
 			return Result.emptyResult();
 		}
 		
-		return calculateDosage(age, weight.doubleValue());
+		// Calculate the weight percentile
+		Calculator calc = new Calculator();
+		try {
+			Double weightPercentile = calc.calculatePercentile(weight, patient.getGender(), birthDate, 
+				CALCULATION_WEIGHT_PERCENTILE, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG, 
+				weightObs.getObsDatetime());
+			return new Result(weightPercentile);
+		} catch (Exception e) {
+			this.log.error("Error calculating weight percentile for patient " + patientId, e);
+			return Result.emptyResult();
+		}
 	}
 	
 	/**
@@ -121,33 +118,4 @@ public class CalculateMidazolamDosage implements Rule {
 		return Datatype.NUMERIC;
 	}
 	
-	/**
-	 * Calculates the dosage for Midazolam based on age and weight.
-	 * 
-	 * @param age The patient's age
-	 * @param weight The patient's weight
-	 * @return The dosage message
-	 */
-	private Result calculateDosage(int age, double weight) {
-		if (age >= 12) {
-			return new Result("One 5mg spray in one nostril, repeat ONCE after 10 min in other nostril prn.");
-		}
-			
-		Double calcObj = Util.round(Double.valueOf(0.2 * weight), 1);
-		if (calcObj == null) {
-			return Result.emptyResult();
-		}
-		
-		double calc = calcObj.doubleValue();
-		if (calc > 10) {
-			return new Result("5 mg (1 ml of 5mg/ml) in each nostril.");
-		}
-		
-		Double vol = Util.round(Double.valueOf(calcObj.doubleValue() / 5.0), 1);
-		if (vol == null) {
-			return Result.emptyResult();
-		}
-		
-		return new Result(calc + "mg(" + vol.doubleValue() + "ml of 5mg/ml) half in each nostril.");
-	}
 }
