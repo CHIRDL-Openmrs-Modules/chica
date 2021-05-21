@@ -1,7 +1,5 @@
 package org.openmrs.module.chica.rule;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -20,7 +17,6 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.ObsDateComparator;
 import org.openmrs.module.chirdlutil.util.Util;
 
 /**
@@ -86,7 +82,7 @@ public class CalculateRectalDiazepamDosage implements Rule {
 		int age = Util.getAgeInUnits(birthDate, new Date(), Util.YEAR_ABBR);
 		
 		// Get the latest weight observation
-		Double weight = getLatestWeight(weightResults);
+		Double weight = Util.getLatestNumericValue(weightResults);
 		if (weight == null) {
 			return Result.emptyResult();
 		}
@@ -124,36 +120,6 @@ public class CalculateRectalDiazepamDosage implements Rule {
 	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.NUMERIC;
-	}
-	
-	/**
-	 * Returns the newest weight observation from the list of results.
-	 * 
-	 * @param resultList The list of results containing weight observations
-	 * @return Obs object or null if one is not found
-	 */
-	private Double getLatestWeight(List<Result> resultList) {
-		List<Obs> obsList = new ArrayList<>();
-		for (Result result : resultList) {
-			Object resultObj = result.getResultObject();
-			if (resultObj instanceof Obs) {
-				Obs obs = (Obs)resultObj;
-				if (obs.getValueNumeric() != null) {
-					obsList.add((Obs)resultObj);
-				}
-			}
-		}
-		
-		if (obsList.isEmpty()) {
-			return null;
-		}
-		
-		// Sort the weights so the latest is first
-		Collections.sort(obsList, new ObsDateComparator());
-		Collections.reverse(obsList);
-		
-		Obs obs = obsList.get(0);
-		return obs.getValueNumeric();
 	}
 	
 	/**
