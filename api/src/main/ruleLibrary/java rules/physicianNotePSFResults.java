@@ -14,15 +14,13 @@
 package org.openmrs.module.chica.rule;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openmrs.Encounter;
-import org.openmrs.Patient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -43,12 +41,33 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
  */
 public class physicianNotePSFResults implements Rule {
 	
+	private Log log = LogFactory.getLog(this.getClass());
+	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		long startTime = System.currentTimeMillis();
-		String note = buildPSFNote(patientId);
+		
+		Integer encounterId = null;
+		Object encounterIdObj = parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		if (encounterIdObj instanceof Integer) {
+			encounterId = (Integer)encounterIdObj;
+		} else if (encounterIdObj instanceof String) {
+			String encounterIdStr = (String)encounterIdObj;
+			try {
+				encounterId = Integer.valueOf(encounterIdStr);
+			} catch (NumberFormatException e) {
+				this.log.error("Error parsing value " + encounterIdStr + " into an encounter ID integer.", e);
+				return Result.emptyResult();
+			}
+		} else {
+			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			return Result.emptyResult();
+		}
+		
+		String note = buildPSFNote(patientId, encounterId);
 		if (note.trim().length() > 0) {
 			System.out.println("chicaNotePSFResults: " + (System.currentTimeMillis() - startTime) + "ms");
 			return new Result(note);
@@ -61,6 +80,7 @@ public class physicianNotePSFResults implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.CODED;
 	}
@@ -68,6 +88,7 @@ public class physicianNotePSFResults implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[]{};
 	}
@@ -75,21 +96,23 @@ public class physicianNotePSFResults implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
-		return null;
+		return new HashSet<>();
 	}
 	
 	/**
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
 	}
 	
-	private String buildPSFNote(Integer patientId) {
-		StringBuffer noteBuffer = new StringBuffer();
-		List<PSFQuestionAnswer> psfVals = getQuestionsAnswers(patientId);
-		if (psfVals.size() == 0) {
+	private String buildPSFNote(Integer patientId, Integer encounterId) {
+		StringBuilder noteBuffer = new StringBuilder();
+		List<PSFQuestionAnswer> psfVals = getQuestionsAnswers(patientId, encounterId);
+		if (psfVals.isEmpty()) {
 			return noteBuffer.toString();
 		}
 		
@@ -106,60 +129,20 @@ public class physicianNotePSFResults implements Rule {
 		return noteBuffer.toString();
 	}
 	
-	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId) {
-		
-		// Get last encounter with last day
-		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
-		Date startDate = startCal.getTime();
-		Date endDate = Calendar.getInstance().getTime();
-		Patient patient = Context.getPatientService().getPatient(patientId);
-		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-		if (encounters == null || encounters.size() == 0) {
-			return new ArrayList<PSFQuestionAnswer>();
-		}
-
-		Encounter lastEncounter = null;
-		String lastFormName = null;
-		if (encounters.size() == 1) {
-			lastEncounter =  encounters.get(0);
-			// Passing the enounterId instead of encounter to prevent possible ClassCastException while iterating through list of encounters.
-			lastFormName = Util.getPrimaryFormNameByLocationTag(lastEncounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
-		} else {
-			// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
-			ATDService atdService = Context.getService(ATDService.class);
-			for (int i = encounters.size() - 1; i >= 0 && lastEncounter == null; i--) {
-				Encounter encounter = encounters.get(i);
-				// Passing the enounterId instead of encounter to prevent possible ClassCastException while iterating through list of encounters.
-				lastFormName = Util.getPrimaryFormNameByLocationTag(encounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
-				List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), lastFormName);
-				if (stats == null || stats.size() == 0) {
-					continue;
-				}
-				
-				for (Statistics stat : stats) {
-					if (stat.getScannedTimestamp() != null) {
-						lastEncounter = encounter;
-						break;
-					}
-				}
-			}
-		}
-		
-		if (lastEncounter == null) {
-			return new ArrayList<PSFQuestionAnswer>();
-		}
-
+	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId, Integer encounterId) {
+		String lastFormName = Util.getPrimaryFormNameByLocationTag(
+			encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 		ATDService atdService = Context.getService(ATDService.class);
-		List<Statistics> stats = atdService.getStatsByEncounterForm(lastEncounter.getEncounterId(), lastFormName);
-		if (stats == null || stats.size() == 0) {
-			return new ArrayList<PSFQuestionAnswer>();
+		
+		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, lastFormName);
+		if (stats == null || stats.isEmpty()) {
+			return new ArrayList<>();
 		}
 		
 		Statistics stat = stats.get(0);
 		Integer formInstanceId = stat.getFormInstanceId();
 		Integer locationId = stat.getLocationId();
-		return Context.getService(ATDService.class).getPatientFormQuestionAnswers(formInstanceId, locationId, patientId, lastFormName);
+		return Context.getService(ATDService.class).getPatientFormQuestionAnswers(
+			formInstanceId, locationId, patientId, lastFormName);
 	}
 }

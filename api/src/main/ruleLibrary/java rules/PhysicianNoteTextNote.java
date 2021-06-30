@@ -3,9 +3,8 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.openmrs.Encounter;
-import org.openmrs.Patient;
-import org.openmrs.api.context.Context;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.logic.Duration;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -24,6 +23,9 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
  */
 public class PhysicianNoteTextNote implements Rule
 {
+	
+	private Log log = LogFactory.getLog(this.getClass());
+	
 	/*
 	 * Enumeration of characters that must be replaced before sending them in HL7 or XML
 	 * If we need to add more message formats, they can be added here as well
@@ -60,26 +62,44 @@ public class PhysicianNoteTextNote implements Rule
 		
 		public String getValueToReplace()
 		{
-			return valueToReplace;
+			return this.valueToReplace;
 		}
 		
 		public String getHL7Value()
 		{
-			return hl7Value;
+			return this.hl7Value;
 		}
 		
 		public String getXMLValue()
 		{
-			return xmlValue;
+			return this.xmlValue;
 		}
 	}
 
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		long startTime = System.currentTimeMillis();
-		String examNote = buildTextNote(patientId, parameters);
+		Integer encounterId = null;
+		Object encounterIdObj = parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		if (encounterIdObj instanceof Integer) {
+			encounterId = (Integer)encounterIdObj;
+		} else if (encounterIdObj instanceof String) {
+			String encounterIdStr = (String)encounterIdObj;
+			try {
+				encounterId = Integer.valueOf(encounterIdStr);
+			} catch (NumberFormatException e) {
+				this.log.error("Error parsing value " + encounterIdStr + " into an encounter ID integer.", e);
+				return Result.emptyResult();
+			}
+		} else {
+			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			return Result.emptyResult();
+		}
+		
+		String examNote = buildTextNote(patientId, parameters, encounterId);
 		if (examNote.trim().length() > 0) {
 			System.out.println("chicaNoteTextNote: " + (System.currentTimeMillis() - startTime) + "ms");
 			return new Result(examNote);
@@ -92,6 +112,7 @@ public class PhysicianNoteTextNote implements Rule
 	/**
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.TEXT;
 	}
@@ -99,6 +120,7 @@ public class PhysicianNoteTextNote implements Rule
 	/**
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[]{};
 	}
@@ -106,6 +128,7 @@ public class PhysicianNoteTextNote implements Rule
 	/**
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
 		return null;
 	}
@@ -113,6 +136,7 @@ public class PhysicianNoteTextNote implements Rule
 	/**
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
 	}
@@ -122,20 +146,14 @@ public class PhysicianNoteTextNote implements Rule
 	 * 
 	 * @param patientId The ID of the patient used to lookup text note observations for the current day.
 	 * @param parameters
+	 * @param encounterId The ID of the patient encounter
 	 * @return String containing the text note portion of the physician note.  This will not return null.
 	 */
-	private static String buildTextNote(Integer patientId, Map<String, Object> parameters) {
-		StringBuffer noteBuffer = new StringBuffer();
-		Patient patient = Context.getPatientService().getPatient(patientId);
+	private static String buildTextNote(Integer patientId, Map<String, Object> parameters, Integer encounterId) {
+		StringBuilder noteBuffer = new StringBuilder();
 		LogicContext context = new LogicContextImpl(patientId);
 		LogicDataSource obsDataSource = context.getLogicDataSource("obs");
 
-		Encounter encounter = Util.getLastEncounter(patient);
-		if (encounter == null) {
-			return noteBuffer.toString();
-		}
-
-		Integer encounterId = encounter.getEncounterId();
 		String conceptName = parameters.get("param1") != null ? parameters.get("param1").toString() : "";
 		if(!conceptName.isEmpty()){
 			Result textNote = context.read(patientId, obsDataSource, 

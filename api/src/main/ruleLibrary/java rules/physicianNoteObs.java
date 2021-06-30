@@ -17,10 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,9 +46,6 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
-import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.ObsComparator;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttributeValue;
@@ -74,16 +68,34 @@ public class physicianNoteObs implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		long startTime = System.currentTimeMillis();
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			log.error("Patient cannot be found with ID: " + patientId);
+			this.log.error("Patient cannot be found with ID: " + patientId);
 			System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
 			return Result.emptyResult();
 		}
 		
-		String obsNote = buildObsNote(patient);
+		Integer encounterId = null;
+		Object encounterIdObj = parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		if (encounterIdObj instanceof Integer) {
+			encounterId = (Integer)encounterIdObj;
+		} else if (encounterIdObj instanceof String) {
+			String encounterIdStr = (String)encounterIdObj;
+			try {
+				encounterId = Integer.valueOf(encounterIdStr);
+			} catch (NumberFormatException e) {
+				this.log.error("Error parsing value " + encounterIdStr + " into an encounter ID integer.", e);
+				return Result.emptyResult();
+			}
+		} else {
+			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			return Result.emptyResult();
+		}
+		
+		String obsNote = buildObsNote(patient, encounterId);
 		if (obsNote.trim().length() > 0) {
 			System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
 			return new Result(obsNote);
@@ -96,6 +108,7 @@ public class physicianNoteObs implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.CODED;
 	}
@@ -103,6 +116,7 @@ public class physicianNoteObs implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[]{};
 	}
@@ -110,13 +124,15 @@ public class physicianNoteObs implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
-		return null;
+		return new HashSet<>();
 	}
 	
 	/**
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
 	}
@@ -125,73 +141,43 @@ public class physicianNoteObs implements Rule {
      * Builds a note with all observations for the day containing the provided question Concept.
      * 
      * @param patient The patient used to retrieve the observations.
+     * @param encounterId The current encounter identifier
      * @return String containing a note with the observations for the day for the provided patient and question Concept.  
      * This will not return null.
      */
-    private String buildObsNote(Patient patient) {
-    	StringBuffer noteBuffer = new StringBuffer();  
+    private String buildObsNote(Patient patient, Integer encounterId) {
+    	StringBuilder noteBuffer = new StringBuilder();  
     	Concept noteConcept = Context.getConceptService().getConceptByName("CHICA_Note");
 		if (noteConcept == null) {
-			log.error("Physician note observations cannot be constructed because concept \"CHICA_Note\" does not exist.");
+			this.log.error(
+				"Physician note observations cannot be constructed because concept \"CHICA_Note\" does not exist.");
 			return noteBuffer.toString();
 		}
 		
-		// Get last encounter with last day
-		Calendar startCal = Calendar.getInstance();
-		startCal.set(GregorianCalendar.DAY_OF_MONTH, startCal.get(GregorianCalendar.DAY_OF_MONTH) - Util.getFormTimeLimit());
-		Date startDate = startCal.getTime();
-		Date endDate = Calendar.getInstance().getTime();
-		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
-			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-		Encounter latestEncounter = null;
-		if (encounters == null || encounters.size() == 0) {
-			return noteBuffer.toString();
-		} else if (encounters.size() == 1) {
-			latestEncounter = encounters.get(0);
-		}
-		
-		// Do a check to find the latest encounters with observations with a scanned timestamp for the PSF.
-		ATDService atdService = Context.getService(ATDService.class);
-		for (int i = encounters.size() - 1; i >= 0 && latestEncounter == null; i--) {
-			Encounter encounter = encounters.get(i);
-			// Passing the enounterId instead of encounter to prevent possible ClassCastException while iterating through list of encounters. 
-			String formName = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
-			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), formName);
-			if (stats == null || stats.size() == 0) {
-				continue;
-			}
-			
-			for (Statistics stat : stats) {
-				if (stat.getScannedTimestamp() != null) {
-					latestEncounter = encounter;
-					break;
-				}
-			}
-		}
-		
+		Encounter latestEncounter = Context.getEncounterService().getEncounter(encounterId);
 		if (latestEncounter == null) {
 			return noteBuffer.toString();
 		}
 		
-		List<Encounter> encounterList = new ArrayList<Encounter>();
+		List<Encounter> encounterList = new ArrayList<>();
 		encounterList.add(latestEncounter);
 		
     	// Get Observations for the encounter.
-		List<Person> persons = new ArrayList<Person>();
+		List<Person> persons = new ArrayList<>();
 		persons.add(patient);
 		
-		List<Concept> questions = new ArrayList<Concept>();
+		List<Concept> questions = new ArrayList<>();
 		questions.add(noteConcept);
-		List<Obs> obs = Context.getObsService().getObservations(persons, encounterList, questions, null, null, null, null, null, 
-			null, null, null, false);
-		if (obs == null || obs.size() == 0) {
+		List<Obs> obs = Context.getObsService().getObservations(
+			persons, encounterList, questions, null, null, null, null, null, null, null, null, false);
+		if (obs == null || obs.isEmpty()) {
 			return noteBuffer.toString();
 		}
 		
-		Map<String,Map<String,List<Obs>>> headingMap = new HashMap<String,Map<String,List<Obs>>>();
-		List<Obs> addtnlObs = new ArrayList<Obs>();
+		Map<String,Map<String,List<Obs>>> headingMap = new HashMap<>();
+		List<Obs> addtnlObs = new ArrayList<>();
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
-		Set<String> ruleIdOrder = new LinkedHashSet<String>();
+		Set<String> ruleIdOrder = new LinkedHashSet<>();
 		// Order the list by observation ID
 		Collections.sort(obs, new ObsComparator());
 		for (Obs ob :obs) {
@@ -206,7 +192,7 @@ public class physicianNoteObs implements Rule {
 			String heading = obsAttrVal.getValue();
 			Map<String,List<Obs>> obsMap = headingMap.get(heading);
 			if (obsMap == null) {
-				obsMap = new HashMap<String,List<Obs>>();
+				obsMap = new HashMap<>();
 				obsMap.put("default", new ArrayList<Obs>());
 				headingMap.put(heading, obsMap);
 			}
@@ -224,7 +210,7 @@ public class physicianNoteObs implements Rule {
 			String ruleId = ruleIdObsAttrVal.getValue();
 			List<Obs> obsList = obsMap.get(ruleId);
 			if (obsList == null) {
-				obsList = new ArrayList<Obs>();
+				obsList = new ArrayList<>();
 				obsMap.put(ruleId, obsList);
 			}
 			
@@ -238,10 +224,10 @@ public class physicianNoteObs implements Rule {
 	        config = getPhysicianNoteConfig();
         }
         catch (FileNotFoundException e) {
-	        log.error("Physician note configuration file could not be found", e);
+	        this.log.error("Physician note configuration file could not be found", e);
         }
         catch (JiBXException e) {
-	        log.error("Exception occurred loading the physician note configuration file", e);
+	        this.log.error("Exception occurred loading the physician note configuration file", e);
         }
 		
         if (config == null) {
@@ -263,10 +249,10 @@ public class physicianNoteObs implements Rule {
         	}
         }
         
-		if (addtnlObs.size() > 0) {
+		if (!addtnlObs.isEmpty()) {
 			int counter = 1;
 			noteBuffer.append("ADDITIONAL OBSERVATIONS\n");
-			Set<String> noteSet = new HashSet<String>();
+			Set<String> noteSet = new HashSet<>();
 			for (Obs ob : addtnlObs) {
 				String value = ob.getValueText();
 				if (value != null && value.trim().length() > 0) {
@@ -287,7 +273,7 @@ public class physicianNoteObs implements Rule {
     	return noteBuffer.toString();
     }
     
-    private void buildObsNoteFromMap(Map<String,Map<String,List<Obs>>> headingMap, StringBuffer noteBuffer, 
+    private void buildObsNoteFromMap(Map<String,Map<String,List<Obs>>> headingMap, StringBuilder noteBuffer, 
                                      Set<String> ruleIdOrder) {
     	Set<Entry<String,Map<String,List<Obs>>>> mapEntries = headingMap.entrySet();
 		Iterator<Entry<String,Map<String,List<Obs>>>> iter = mapEntries.iterator();
@@ -299,7 +285,7 @@ public class physicianNoteObs implements Rule {
 		}
     }
     
-    private void buildObsNoteFromMapWithHeadings(Map<String,Map<String,List<Obs>>> headingMap, StringBuffer noteBuffer, 
+    private void buildObsNoteFromMapWithHeadings(Map<String,Map<String,List<Obs>>> headingMap, StringBuilder noteBuffer, 
                                                  String[] headings, Set<String> ruleIdOrder) {
     	for (String heading : headings) {
     		Map<String,List<Obs>> obsMap = headingMap.get(heading);
@@ -310,7 +296,7 @@ public class physicianNoteObs implements Rule {
     	}
     }
     
-    private void writeObsToNote(String heading, Map<String,List<Obs>> obsMap, StringBuffer noteBuffer, 
+    private void writeObsToNote(String heading, Map<String,List<Obs>> obsMap, StringBuilder noteBuffer, 
                                 Set<String> ruleIdOrder) {
     	if (obsMap.isEmpty()) {
     		return;
@@ -323,7 +309,7 @@ public class physicianNoteObs implements Rule {
     		String ruleId = iter.next();
     		List<Obs> obsList = obsMap.get(ruleId);
     		if (obsList != null && obsList.size() > 0) {
-    			Set<String> noteSet = new HashSet<String>();
+    			Set<String> noteSet = new HashSet<>();
 				for (Obs ob : obsList) {
 					String value = ob.getValueText();
 					if (value != null && value.trim().length() > 0) {
@@ -360,14 +346,14 @@ public class physicianNoteObs implements Rule {
 			String configFileStr = adminService.getGlobalProperty(
 				"dss.physicianNoteConfigFile");
 			if (configFileStr == null) {
-				log.error("You must set a value for global property: "
+				this.log.error("You must set a value for global property: "
 					+ "dss.physicianNoteConfigFile");
 				return physicianNoteConfig;
 			}
 			
 			File configFile = new File(configFileStr);
 			if (!configFile.exists()) {
-				log.error("The file location specified for the global property "
+				this.log.error("The file location specified for the global property "
 					+ "dss.physicianNoteConfigFile does not exist.");
 				return physicianNoteConfig;
 			}

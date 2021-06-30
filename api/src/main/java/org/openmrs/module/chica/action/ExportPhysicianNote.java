@@ -114,6 +114,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		
 		Map<String, Object> ruleParams = new HashMap<String, Object>();
 		ruleParams.put(MODE, PRODUCE);
+		ruleParams.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
 		
 		Rule rule = new Rule();
 		rule.setTokenName(PHYSICIAN_NOTE);

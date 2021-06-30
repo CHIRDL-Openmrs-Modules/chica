@@ -14,10 +14,12 @@
 package org.openmrs.module.chica.rule;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openmrs.Encounter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.Duration;
@@ -30,6 +32,7 @@ import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.dss.service.DssService;
 
@@ -40,12 +43,33 @@ import org.openmrs.module.dss.service.DssService;
 public class physicianNotePhysicalExam implements Rule {
 	
 	public static final String ABNORMAL_EXAM = "abnormal";
+	
+	private Log log = LogFactory.getLog(this.getClass());
+	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		long startTime = System.currentTimeMillis();
-		String examNote = buildPhysicalExamNote(patientId);
+		Integer encounterId = null;
+		Object encounterIdObj = parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		if (encounterIdObj instanceof Integer) {
+			encounterId = (Integer)encounterIdObj;
+		} else if (encounterIdObj instanceof String) {
+			String encounterIdStr = (String)encounterIdObj;
+			try {
+				encounterId = Integer.valueOf(encounterIdStr);
+			} catch (NumberFormatException e) {
+				this.log.error("Error parsing value " + encounterIdStr + " into an encounter ID integer.", e);
+				return Result.emptyResult();
+			}
+		} else {
+			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			return Result.emptyResult();
+		}
+		
+		String examNote = buildPhysicalExamNote(patientId, encounterId);
 		if (examNote.trim().length() > 0) {
 			System.out.println("chicaNotePhysicalExam: " + (System.currentTimeMillis() - startTime) + "ms");
 			return new Result(examNote);
@@ -57,6 +81,7 @@ public class physicianNotePhysicalExam implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.CODED;
 	}
@@ -64,6 +89,7 @@ public class physicianNotePhysicalExam implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[]{};
 	}
@@ -71,13 +97,15 @@ public class physicianNotePhysicalExam implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
-		return null;
+		return new HashSet<>();
 	}
 	
 	/**
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
 	}
@@ -86,28 +114,23 @@ public class physicianNotePhysicalExam implements Rule {
      * Builds the physical exam portion of the physician note.
      * 
      * @param patientId The ID of the patient used to lookup physical exam observations for the current day.
+     * @param encounterId The ID of the patient encounter
      * @return String containing the physical exam portion of the physician note.  This will not return null.
      */
-    private static String buildPhysicalExamNote(Integer patientId) {
-    	StringBuffer noteBuffer = new StringBuffer();
+    private static String buildPhysicalExamNote(Integer patientId, Integer encounterId) {
+    	StringBuilder noteBuffer = new StringBuilder();
     	DssService dssService = Context.getService(DssService.class);
     	org.openmrs.module.dss.hibernateBeans.Rule rule = new org.openmrs.module.dss.hibernateBeans.Rule();
     	Patient patient = Context.getPatientService().getPatient(patientId);
     	LogicContext context = new LogicContextImpl(patientId);
     	LogicDataSource obsDataSource = context.getLogicDataSource("obs");
     	
-    	Encounter encounter = org.openmrs.module.chica.util.Util.getLastEncounter(patient);
-    	if (encounter == null) {
-    		return noteBuffer.toString();
-    	}
-    	
-    	Integer encounterId = encounter.getEncounterId();
     	String conceptName = "HEIGHT";
     	Result heightResult = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
     	if (heightResult != null && !heightResult.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, heightResult)) {
     		noteBuffer.append("Height: ");
-    		Map<String,Object> map = new HashMap<String,Object>();
+    		Map<String,Object> map = new HashMap<>();
     		map.put("param0", heightResult);
     		map.put("concept", conceptName);
     		rule.setTokenName("roundOnePlace");
@@ -131,7 +154,7 @@ public class physicianNotePhysicalExam implements Rule {
 			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
     	if (weightResult != null && !weightResult.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, weightResult)) {
     		noteBuffer.append("Weight: ");
-    		Map<String,Object> map = new HashMap<String,Object>();
+    		Map<String,Object> map = new HashMap<>();
     		map.put("param0", weightResult);
     		map.put("concept", conceptName);
     		rule.setTokenName("roundTwoPlace");
@@ -160,7 +183,7 @@ public class physicianNotePhysicalExam implements Rule {
 	    	Result result = dssService.runRule(patient, rule);
 	    	if (result != null && result.toString() != null && result.toString().trim().length() > 0) {
 	    		noteBuffer.append("BMI: ");
-	    		Map<String,Object> map = new HashMap<String,Object>();
+	    		Map<String,Object> map = new HashMap<>();
 	    		map.put("param0", result);
 	    		rule.setTokenName("roundOnePlace");
 				rule.setParameters(map);
@@ -179,7 +202,7 @@ public class physicianNotePhysicalExam implements Rule {
 			new LogicCriteriaImpl(conceptName).within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Head Circumference: ");
-    		Map<String,Object> map = new HashMap<String,Object>();
+    		Map<String,Object> map = new HashMap<>();
     		map.put("param0", result);
     		map.put("concept", conceptName);
     		rule.setTokenName("roundOnePlace");
@@ -199,8 +222,8 @@ public class physicianNotePhysicalExam implements Rule {
     		noteBuffer.append("Blood Pressure: ");
     		noteBuffer.append(result.toString());
 			org.openmrs.module.dss.hibernateBeans.Rule bpPercentRule = new org.openmrs.module.dss.hibernateBeans.Rule();
-    		Map<String,Object> map = new HashMap<String,Object>();
-    		map.put("encounterId", encounter.getEncounterId());
+    		Map<String,Object> map = new HashMap<>();
+    		map.put("encounterId", encounterId);
     		bpPercentRule.setTokenName("bpPercentage");
     		bpPercentRule.setParameters(map);
     		Result bpPercentResult = dssService.runRule(patient, bpPercentRule);
@@ -216,7 +239,7 @@ public class physicianNotePhysicalExam implements Rule {
 			new LogicCriteriaImpl("TEMPERATURE CHICA").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Temperature: ");
-    		Map<String,Object> map = new HashMap<String,Object>();
+    		Map<String,Object> map = new HashMap<>();
     		map.put("param0", result);
     		rule.setTokenName("roundOnePlace");
 			rule.setParameters(map);
@@ -234,7 +257,7 @@ public class physicianNotePhysicalExam implements Rule {
 			new LogicCriteriaImpl("PULSE CHICA").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Pulse: ");
-    		Map<String,Object> map = new HashMap<String,Object>();
+    		Map<String,Object> map = new HashMap<>();
     		map.put("param0", result);
     		rule.setTokenName("integerResult");
 			rule.setParameters(map);
@@ -247,7 +270,7 @@ public class physicianNotePhysicalExam implements Rule {
 			new LogicCriteriaImpl("PULSEOX").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("Pulse Ox: ");
-    		Map<String,Object> map = new HashMap<String,Object>();
+    		Map<String,Object> map = new HashMap<>();
     		map.put("param0", result);
     		rule.setTokenName("integerResult");
 			rule.setParameters(map);
@@ -260,7 +283,7 @@ public class physicianNotePhysicalExam implements Rule {
     		new LogicCriteriaImpl("VISIONL").within(Duration.days(-3)).last());		
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {		
     		noteBuffer.append("Vision Left: 20/");		
-    		Map<String,Object> map = new HashMap<String,Object>();		
+    		Map<String,Object> map = new HashMap<>();		
     		map.put("param0", result);		
     		rule.setTokenName("integerResult");		
 			rule.setParameters(map);		
@@ -273,7 +296,7 @@ public class physicianNotePhysicalExam implements Rule {
 			new LogicCriteriaImpl("VISIONR").within(Duration.days(-3)).last());		
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {		
     		noteBuffer.append("Vision Right: 20/");		
-    		Map<String,Object> map = new HashMap<String,Object>();		
+    		Map<String,Object> map = new HashMap<>();		
     		map.put("param0", result);		
     		rule.setTokenName("integerResult");		
 			rule.setParameters(map);		
@@ -286,7 +309,7 @@ public class physicianNotePhysicalExam implements Rule {
 			new LogicCriteriaImpl("RR CHICA").within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
     		noteBuffer.append("RR: ");
-    		Map<String,Object> map = new HashMap<String,Object>();
+    		Map<String,Object> map = new HashMap<>();
     		map.put("param0", result);
     		rule.setTokenName("integerResult");
 			rule.setParameters(map);
@@ -343,7 +366,7 @@ public class physicianNotePhysicalExam implements Rule {
     }
 	
     private static void appendPhysicalExam(LogicContext context, LogicDataSource obsDataSource, Integer patientId, 
-                                    StringBuffer noteBuffer, String concept, String heading, Integer encounterId) {
+    		StringBuilder noteBuffer, String concept, String heading, Integer encounterId) {
     	Result result = context.read(patientId, obsDataSource, 
 			new LogicCriteriaImpl(concept).within(Duration.days(-3)).last());
     	if (result != null && !result.isEmpty() && org.openmrs.module.chica.util.Util.equalEncounters(encounterId, result)) {
