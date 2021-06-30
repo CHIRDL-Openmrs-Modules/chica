@@ -19,8 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -28,11 +33,12 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.hibernateBeans.PSFQuestionAnswer;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 
 
 /**
@@ -49,31 +55,38 @@ public class physicianNotePSFResults implements Rule {
 	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		long startTime = System.currentTimeMillis();
+		Patient patient = Context.getPatientService().getPatient(patientId);
+		if (patient == null) {
+			this.log.error("Patient cannot be found with ID: " + patientId);
+			System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
+			return Result.emptyResult();
+		}
 		
-		Integer encounterId = null;
-		Object encounterIdObj = parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-		if (encounterIdObj instanceof Integer) {
-			encounterId = (Integer)encounterIdObj;
-		} else if (encounterIdObj instanceof String) {
-			String encounterIdStr = (String)encounterIdObj;
-			try {
-				encounterId = Integer.valueOf(encounterIdStr);
-			} catch (NumberFormatException e) {
-				this.log.error("Error parsing value " + encounterIdStr + " into an encounter ID integer.", e);
-				return Result.emptyResult();
-			}
-		} else {
+		Integer encounterId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		if (encounterId == null) {
 			this.log.error("Cannot determine encounter ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		
-		String note = buildPSFNote(patientId, encounterId);
-		if (note.trim().length() > 0) {
-			System.out.println("chicaNotePSFResults: " + (System.currentTimeMillis() - startTime) + "ms");
-			return new Result(note);
+		Integer locationTagId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
+		if (locationTagId == null) {
+			this.log.error("Cannot determine location tag ID.  No note will be created.");
+			return Result.emptyResult();
 		}
 		
-		System.out.println("chicaNotePSFResults: " + (System.currentTimeMillis() - startTime) + "ms");
+		Integer locationId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_LOCATION_ID);
+		if (locationId == null) {
+			this.log.error("Cannot determine location ID.  No note will be created.");
+			return Result.emptyResult();
+		}
+		
+		String obsNote = buildObsNote(patient, encounterId, locationId, locationTagId);
+		if (obsNote.trim().length() > 0) {
+			System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
+			return new Result(obsNote);
+		}
+		
+		System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
 		return Result.emptyResult();
 	}
 	
@@ -109,40 +122,52 @@ public class physicianNotePSFResults implements Rule {
 		return 0; // 60 * 30; // 30 minutes
 	}
 	
-	private String buildPSFNote(Integer patientId, Integer encounterId) {
-		StringBuilder noteBuffer = new StringBuilder();
-		List<PSFQuestionAnswer> psfVals = getQuestionsAnswers(patientId, encounterId);
-		if (psfVals.isEmpty()) {
-			return noteBuffer.toString();
+	/**
+     * Builds a note with all observations for the day containing the provided question Concept.
+     * 
+     * @param patient The patient used to retrieve the observations.
+     * @param encounterId The current encounter identifier
+     * @param locationId The location identifier
+     * @param locationTagId The location tag identifier
+     * @return String containing a note with the observations for the day for the provided patient and question Concept.  
+     * This will not return null.
+     */
+    private String buildObsNote(Patient patient, Integer encounterId, Integer locationId, Integer locationTagId) {
+    	Concept noteConcept = Context.getConceptService().getConceptByName("CHICA_Note");
+		if (noteConcept == null) {
+			this.log.error(
+				"Physician note observations cannot be constructed because concept \"CHICA_Note\" does not exist.");
+			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 		
-		noteBuffer.append("PATIENT SURVEY RESULTS\n");
-		noteBuffer.append("Response--Question\n");
-		for (PSFQuestionAnswer val : psfVals) {
-			noteBuffer.append(val.getAnswer());
-			noteBuffer.append("--");
-			noteBuffer.append(val.getQuestion());
-			noteBuffer.append("\n");
+		LocationTagAttributeValue attrVal = 
+				Context.getService(ChirdlUtilBackportsService.class).getLocationTagAttributeValue(
+					locationTagId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM, locationId);
+		if (attrVal == null || StringUtils.isBlank(attrVal.getValue())) {
+			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 		
-		noteBuffer.append("\n");
-		return noteBuffer.toString();
-	}
-	
-	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId, Integer encounterId) {
-		String lastFormName = Util.getPrimaryFormNameByLocationTag(
-			encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+		String formName = attrVal.getValue();
 		ATDService atdService = Context.getService(ATDService.class);
-		
-		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, lastFormName);
+		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, formName);
 		if (stats == null || stats.isEmpty()) {
-			return new ArrayList<>();
+			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 		
-		Statistics stat = stats.get(0);
-		Integer formInstanceId = stat.getFormInstanceId();
-		Integer locationId = stat.getLocationId();
-		return Context.getService(ATDService.class).getPatientFormQuestionAnswers(
-			formInstanceId, locationId, patientId, lastFormName);
-	}
+		ObsService obsService = Context.getObsService();
+		List<Obs> obs = new ArrayList<>();
+		for (Statistics stat : stats) {
+			Integer obsId = stat.getObsvId();
+			if (obsId == null) {
+				continue;
+			}
+			
+			Obs ob = obsService.getObs(obsId);
+			if (ob != null && ob.getConcept() != null && noteConcept.equals(ob.getConcept())) {
+				obs.add(ob);
+			}
+		}
+		
+		return Util.createClinicalNote(obs);
+    }
 }

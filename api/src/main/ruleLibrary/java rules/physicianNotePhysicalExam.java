@@ -52,19 +52,9 @@ public class physicianNotePhysicalExam implements Rule {
 	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		long startTime = System.currentTimeMillis();
-		Integer encounterId = null;
-		Object encounterIdObj = parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
-		if (encounterIdObj instanceof Integer) {
-			encounterId = (Integer)encounterIdObj;
-		} else if (encounterIdObj instanceof String) {
-			String encounterIdStr = (String)encounterIdObj;
-			try {
-				encounterId = Integer.valueOf(encounterIdStr);
-			} catch (NumberFormatException e) {
-				this.log.error("Error parsing value " + encounterIdStr + " into an encounter ID integer.", e);
-				return Result.emptyResult();
-			}
-		} else {
+		Integer encounterId = org.openmrs.module.chica.util.Util.getIntegerFromMap(
+			parameters, ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+		if (encounterId == null) {
 			this.log.error("Cannot determine encounter ID.  No note will be created.");
 			return Result.emptyResult();
 		}
@@ -74,6 +64,7 @@ public class physicianNotePhysicalExam implements Rule {
 			System.out.println("chicaNotePhysicalExam: " + (System.currentTimeMillis() - startTime) + "ms");
 			return new Result(examNote);
 		}
+		
 		System.out.println("chicaNotePhysicalExam: " + (System.currentTimeMillis() - startTime) + "ms");
 		return Result.emptyResult();
 	}
