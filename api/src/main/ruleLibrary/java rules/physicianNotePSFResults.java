@@ -23,9 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.api.ObsService;
+import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -33,7 +34,6 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -149,24 +149,44 @@ public class physicianNotePSFResults implements Rule {
 		
 		String formName = attrVal.getValue();
 		ATDService atdService = Context.getService(ATDService.class);
-		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, formName);
-		if (stats == null || stats.isEmpty()) {
+		Encounter latestEncounter = Context.getEncounterService().getEncounter(encounterId);
+		if (latestEncounter == null) {
 			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 		
-		ObsService obsService = Context.getObsService();
-		List<Obs> obs = new ArrayList<>();
-		for (Statistics stat : stats) {
-			Integer obsId = stat.getObsvId();
-			if (obsId == null) {
-				continue;
-			}
-			
-			Obs ob = obsService.getObs(obsId);
-			if (ob != null && ob.getConcept() != null && noteConcept.equals(ob.getConcept())) {
-				obs.add(ob);
-			}
-		}
+		List<Encounter> encounterList = new ArrayList<>();
+		encounterList.add(latestEncounter);
+		
+    	// Get Observations for the encounter.
+		List<Person> persons = new ArrayList<>();
+		persons.add(patient);
+		
+		List<Concept> questions = new ArrayList<>();
+		questions.add(noteConcept);
+		List<Obs> obs = atdService.getObservations(
+			persons, encounterList, questions, null, null, null, null, null, null, null, null, false, null, formName);
+		
+		// The below code is an alternate way to get the observations.  Neither way is as efficient as just getting the
+		// observations, ignoring the check in the atd_statistics table to ensure it's from the PSF.
+		
+//		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, formName);
+//		if (stats == null || stats.isEmpty()) {
+//			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
+//		}
+//		
+//		ObsService obsService = Context.getObsService();
+//		List<Obs> obs = new ArrayList<>();
+//		for (Statistics stat : stats) {
+//			Integer obsId = stat.getObsvId();
+//			if (obsId == null) {
+//				continue;
+//			}
+//			
+//			Obs ob = obsService.getObs(obsId);
+//			if (ob != null && ob.getConcept() != null && noteConcept.equals(ob.getConcept())) {
+//				obs.add(ob);
+//			}
+//		}
 		
 		return Util.createClinicalNote(obs);
     }
