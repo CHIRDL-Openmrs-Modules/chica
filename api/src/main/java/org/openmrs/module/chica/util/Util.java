@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -58,6 +59,7 @@ import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.ObsComparator;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClient;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClients;
@@ -67,12 +69,15 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.ObsAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.chirdlutilbackports.util.PatientStateStartDateComparator;
+import org.openmrs.module.dss.xmlBeans.physiciannote.HeadingOrder;
+import org.openmrs.module.dss.xmlBeans.physiciannote.PhysicianNoteConfig;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.openmrs.parameter.EncounterSearchCriteria;
@@ -106,6 +111,9 @@ public class Util {
 	private static final long VIEW_ENCOUNTERS_CONFIG_UPDATE_CYCLE = 900000; // fifteen minutes
 	private static final String GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG = "chica.ViewEncountersConfigFile";
 	private static DaemonToken daemonToken;
+	private static PhysicianNoteConfig physicianNoteConfig = null;
+	private static long lastUpdatedPhysicianNoteConfig = System.currentTimeMillis();
+	private static final long PHYSICIAN_NOTE_CONFIG_UPDATE_CYCLE = 3600000; // 1 hour
 	
 	/**
 	 * 
@@ -1416,5 +1424,290 @@ public class Util {
 	 */
 	public static void setDaemonToken(DaemonToken daemonToken) {
 		Util.daemonToken = daemonToken;
+	}
+	
+	/**
+	 * Returns an integer from the provided map with the provided key name.
+	 * 
+	 * @param parameters The map to search
+	 * @param paramName The key for the map value
+	 * @return Integer or null if not found or not an integer
+	 */
+	public static Integer getIntegerFromMap(Map<String, Object> parameters, String paramName) {
+    	Integer value = null;
+		Object valueObj = parameters.get(paramName);
+		if (valueObj instanceof Integer) {
+			value = (Integer)valueObj;
+		} else if (valueObj instanceof String) {
+			String valueStr = (String)valueObj;
+			try {
+				value = Integer.valueOf(valueStr);
+			} catch (NumberFormatException e) {
+				log.error("Error parsing value " + valueStr + " into an integer.", e);
+				return null;
+			}
+		}
+		
+		return value;
+    }
+	
+	/**
+	 * Create a clinical note from the provided observations.
+	 * 
+	 * @param obs The observations used to create the note
+	 * @return String representing the clinical note
+	 */
+	public static String createClinicalNote(List<Obs> obs) {
+		StringBuilder noteBuilder = new StringBuilder();
+		if (obs == null || obs.isEmpty()) {
+			return noteBuilder.toString();
+		}
+		
+		Map<String,Map<String,List<Obs>>> headingMap = new HashMap<>();
+		List<Obs> addtnlObs = new ArrayList<>();
+		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
+		Set<String> ruleIdOrder = new LinkedHashSet<>();
+		// Order the list by observation ID
+		Collections.sort(obs, new ObsComparator());
+		for (Obs ob :obs) {
+			// Get the heading attribute
+			ObsAttributeValue obsAttrVal = service.getObsAttributeValue(ob.getObsId(), "primaryHeading");
+			if (obsAttrVal == null || obsAttrVal.getValue() == null || obsAttrVal.getValue().trim().length() == 0) {
+				// No heading attribute was found.  We'll just add it to a generic heading.
+				addtnlObs.add(ob);
+				continue;
+			}
+			
+			String heading = obsAttrVal.getValue();
+			Map<String,List<Obs>> obsMap = headingMap.get(heading);
+			if (obsMap == null) {
+				obsMap = new HashMap<>();
+				obsMap.put("default", new ArrayList<Obs>());
+				headingMap.put(heading, obsMap);
+			}
+			
+			// Get the ruleId attribute
+			ObsAttributeValue ruleIdObsAttrVal = service.getObsAttributeValue(ob.getObsId(), "ruleId");
+			if (ruleIdObsAttrVal == null || ruleIdObsAttrVal.getValue() == null || 
+					ruleIdObsAttrVal.getValue().trim().length() == 0) {
+				// No ruleId attribute was found.  We'll just add it to a generic heading.
+				List<Obs> defaultList = obsMap.get("default");
+				defaultList.add(ob);
+				continue;
+			}
+			
+			String ruleId = ruleIdObsAttrVal.getValue();
+			List<Obs> obsList = obsMap.get(ruleId);
+			if (obsList == null) {
+				obsList = new ArrayList<>();
+				obsMap.put(ruleId, obsList);
+			}
+			
+			ruleIdOrder.add(ruleId);
+			obsList.add(ob);
+		}
+		
+		// Get the physician note configuration file
+		PhysicianNoteConfig config = null;
+		try {
+	        config = getPhysicianNoteConfig();
+        }
+        catch (FileNotFoundException e) {
+	        log.error("Physician note configuration file could not be found", e);
+        }
+        catch (JiBXException e) {
+	        log.error("Exception occurred loading the physician note configuration file", e);
+        }
+		
+        if (config == null) {
+        	buildObsNoteFromMap(headingMap, noteBuilder, ruleIdOrder);
+        } else {
+        	HeadingOrder headingOrder = config.getHeadingOrder();
+        	if (headingOrder == null) {
+        		buildObsNoteFromMap(headingMap, noteBuilder, ruleIdOrder);
+        	} else {
+        		String[] headings = headingOrder.getHeadings();
+        		if (headings == null || headings.length == 0) {
+        			buildObsNoteFromMap(headingMap, noteBuilder, ruleIdOrder);
+        		} else {
+        			// Build the note in the order of the headings in the configuration file.
+        			buildObsNoteFromMapWithHeadings(headingMap, noteBuilder, headings, ruleIdOrder);
+        			// Run this in case there are some headings left that aren't in the configuration file.
+        			buildObsNoteFromMap(headingMap, noteBuilder, ruleIdOrder);
+        		}
+        	}
+        }
+        
+		if (!addtnlObs.isEmpty()) {
+			int counter = 1;
+			Set<String> noteSet = new HashSet<>();
+			noteBuilder.append("ADDITIONAL OBSERVATIONS\n");
+			for (Obs ob : addtnlObs) {
+				String value = ob.getValueText();
+				if (value != null && value.trim().length() > 0) {
+					value = replaceRiskIndicators(value);
+					boolean newAddition = noteSet.add(value);
+					if (newAddition) {
+						noteBuilder.append(counter++);
+						noteBuilder.append(". ");
+						noteBuilder.append(value);
+						noteBuilder.append("\n");
+					}
+				}
+			}
+			
+			noteSet.clear();
+		}
+    	
+    	return noteBuilder.toString();
+	}
+	
+	/**
+	 * Builds a clinical note from the observations in the provided map.
+	 * 
+	 * @param headingMap Map of headings to observations
+	 * @param noteBuilder The string builder containing the note text
+	 * @param ruleIdOrder The order of rules
+	 */
+	private static void buildObsNoteFromMap(Map<String, Map<String, List<Obs>>> headingMap, StringBuilder noteBuilder,
+	        Set<String> ruleIdOrder) {
+		Set<Entry<String, Map<String, List<Obs>>>> mapEntries = headingMap.entrySet();
+		Iterator<Entry<String, Map<String, List<Obs>>>> iter = mapEntries.iterator();
+		while (iter.hasNext()) {
+			Entry<String, Map<String, List<Obs>>> entry = iter.next();
+			String heading = entry.getKey();
+			Map<String, List<Obs>> obsMap = entry.getValue();
+			writeObsToNote(heading, obsMap, noteBuilder, ruleIdOrder);
+		}
+	}
+	
+	/**
+	 * Builds a clinical note from the observations in the provided map.
+	 * 
+	 * @param headingMap Map of headings to observations
+	 * @param noteBuilder The string builder containing the note text
+	 * @param headings Array of headings
+	 * @param ruleIdOrder The order of rules
+	 */
+	private static void buildObsNoteFromMapWithHeadings(Map<String, Map<String, List<Obs>>> headingMap, 
+			StringBuilder noteBuilder, String[] headings, Set<String> ruleIdOrder) {
+		for (String heading : headings) {
+			Map<String, List<Obs>> obsMap = headingMap.get(heading);
+			if (obsMap != null) {
+				writeObsToNote(heading, obsMap, noteBuilder, ruleIdOrder);
+				headingMap.remove(heading);
+			}
+		}
+	}
+	
+	/**
+	 * Builds a clinical note from the observations in the provided map.
+	 * 
+	 * @param heading The heading for the notes
+	 * @param obsMap Map of headings to observations
+	 * @param noteBuilder The string builder containing the note text
+	 * @param ruleIdOrder The order of rules
+	 */
+	private static void writeObsToNote(String heading, Map<String, List<Obs>> obsMap, StringBuilder noteBuilder,
+	        Set<String> ruleIdOrder) {
+		if (obsMap.isEmpty()) {
+			return;
+		}
+		
+		noteBuilder.append("==" + heading + "==");
+		noteBuilder.append("\n");
+		Iterator<String> iter = ruleIdOrder.iterator();
+		while (iter.hasNext()) {
+			String ruleId = iter.next();
+			List<Obs> obsList = obsMap.get(ruleId);
+			if (obsList != null && obsList.size() > 0) {
+				Set<String> noteSet = new HashSet<>();
+				for (Obs ob : obsList) {
+					String value = ob.getValueText();
+					if (value != null && value.trim().length() > 0) {
+						value = replaceRiskIndicators(value);
+						boolean newAddition = noteSet.add(value);
+						if (newAddition) {
+							noteBuilder.append(value);
+							noteBuilder.append("  ");
+						}
+					}
+				}
+				
+				noteSet.clear();
+				noteBuilder.append("\n");
+			}
+			
+		}
+		
+		noteBuilder.append("\n");
+	}
+	
+	/**
+	 * Returns the physician note configuration object.
+	 * 
+	 * @return PhysicianNoteConfig object or null if the XML file cannot be found.
+	 * @throws JiBXException
+	 * @throws FileNotFoundException
+	 */
+	private static PhysicianNoteConfig getPhysicianNoteConfig() throws JiBXException, FileNotFoundException {
+		long currentTime = System.currentTimeMillis();
+		if (physicianNoteConfig == null || (currentTime - lastUpdatedPhysicianNoteConfig) > PHYSICIAN_NOTE_CONFIG_UPDATE_CYCLE) {
+			lastUpdatedPhysicianNoteConfig = currentTime;
+			AdministrationService adminService = Context.getAdministrationService();
+			String configFileStr = adminService.getGlobalProperty("dss.physicianNoteConfigFile");
+			if (configFileStr == null) {
+				log.error("You must set a value for global property: " + "dss.physicianNoteConfigFile");
+				return physicianNoteConfig;
+			}
+			
+			File configFile = new File(configFileStr);
+			if (!configFile.exists()) {
+				log.error(
+				    "The file location specified for the global property " + "dss.physicianNoteConfigFile does not exist.");
+				return physicianNoteConfig;
+			}
+			
+			IBindingFactory bfact = BindingDirectory.getFactory(PhysicianNoteConfig.class);
+			
+			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
+			physicianNoteConfig = (PhysicianNoteConfig) uctx.unmarshalDocument(new FileInputStream(configFile), null);
+		}
+		
+		return physicianNoteConfig;
+	}
+	
+	/**
+	 * Replaces the high risk indicator symbols around a note.
+	 * 
+	 * @param note The String that will have the indicators replaced.
+	 * @return String with the indicators replaced.
+	 */
+	private static String replaceRiskIndicators(String note) {
+		if (note == null) {
+			return null;
+		}
+		
+		String updatedNote = note;
+		if (updatedNote.startsWith("***")) {
+			updatedNote = updatedNote.replaceFirst("\\*\\*\\*", "+++");
+		} else if (updatedNote.startsWith("**")) {
+			updatedNote = updatedNote.replaceFirst("\\*\\*", "++");
+		} else if (updatedNote.startsWith("*")) {
+			updatedNote = updatedNote.replaceFirst("\\*", "+");
+		}
+		
+		if (updatedNote.endsWith("***")) {
+			updatedNote = updatedNote.substring(0, updatedNote.length() - 3);
+			updatedNote = updatedNote + "+++";
+		} else if (updatedNote.endsWith("**")) {
+			updatedNote = updatedNote.substring(0, updatedNote.length() - 2);
+			updatedNote = updatedNote + "++";
+		} else if (updatedNote.endsWith("*")) {
+			updatedNote = updatedNote.substring(0, updatedNote.length() - 1);
+			updatedNote = updatedNote + "+";
+		}
+		
+		return updatedNote;
 	}
 }
