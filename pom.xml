@@ -205,7 +205,7 @@
 	</dependencyManagement>
 
 	<properties>
-		<openMRSVersion>2.0.6.2</openMRSVersion>
+		<openMRSVersion>2.0.6.3</openMRSVersion>
 	</properties>
 
 	<build>
