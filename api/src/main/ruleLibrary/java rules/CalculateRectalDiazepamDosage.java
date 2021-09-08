@@ -40,7 +40,7 @@ public class CalculateRectalDiazepamDosage implements Rule {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	private static final String MESSAGE_DOSAGE = "mg diazepam per rectum.";
+	private static final String MESSAGE_DOSAGE = "mg diazepam per rectum";
 	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
