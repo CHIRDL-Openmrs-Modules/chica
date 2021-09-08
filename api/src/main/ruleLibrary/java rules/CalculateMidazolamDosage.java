@@ -130,7 +130,7 @@ public class CalculateMidazolamDosage implements Rule {
 	 */
 	private Result calculateDosage(int age, double weight) {
 		if (age >= 12) {
-			return new Result("One 5mg spray in one nostril, repeat ONCE after 10 min in other nostril prn.");
+			return new Result("one 5mg spray in one nostril, repeat ONCE after 10 min in other nostril prn");
 		}
 			
 		Double calcObj = Util.round(Double.valueOf(0.2 * weight), 1);
@@ -140,7 +140,7 @@ public class CalculateMidazolamDosage implements Rule {
 		
 		double calc = calcObj.doubleValue();
 		if (calc > 10) {
-			return new Result("5 mg (1 ml of 5mg/ml) in each nostril.");
+			return new Result("5 mg (1 ml of 5mg/ml) in each nostril");
 		}
 		
 		Double vol = Util.round(Double.valueOf(calcObj.doubleValue() / 5.0), 1);
@@ -148,6 +148,6 @@ public class CalculateMidazolamDosage implements Rule {
 			return Result.emptyResult();
 		}
 		
-		return new Result(calc + "mg(" + vol.doubleValue() + "ml of 5mg/ml) half in each nostril.");
+		return new Result(calc + "mg (" + vol.doubleValue() + "ml of 5mg/ml) half in each nostril");
 	}
 }
