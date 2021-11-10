@@ -1,16 +1,11 @@
 package org.openmrs.module.chica.web;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.cache.Cache;
 import javax.servlet.ServletException;
@@ -21,30 +16,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.util.AtdConstants;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
-import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
-import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.BadPdfFormatException;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Servlet giving access to CHICA information.
@@ -107,7 +85,7 @@ public class ChicaServlet extends HttpServlet {
 		    } else if (ServletUtil.AUTHENTICATE_USER.equals(action)) {
 		        ServletUtil.authenticateUser(request, response);
 		    } else if (ServletUtil.GET_PATIENT_JITS.equals(action)) {
-		    	getPatientJITs(request, response);
+		    	ServletUtil.getPatientJITs(request, response);
 		    } else if (ServletUtil.GET_AVAILABLE_PATIENT_JITS.equals(action)) {
 		    	ServletUtil.getAvailablePatientJITs(request, response);
 		    } else if (ServletUtil.GET_FORCE_PRINT_FORMS.equals(action)) {
@@ -115,7 +93,7 @@ public class ChicaServlet extends HttpServlet {
 		    } else if (ServletUtil.FORCE_PRINT_FORMS.equals(action)) {
 		    	ServletUtil.forcePrintForms(request, response);
 		    } else if (ServletUtil.DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
-		    	getPatientJITs(request, response);
+		    	ServletUtil.getPatientJITs(request, response);
 		    } else if (ServletUtil.GET_GREASEBOARD_PATIENTS.equals(action)) {
 		        getGreaseboardPatients(request, response);
 		    } else if (ServletUtil.VERIFY_MRN.equals(action)) {
@@ -154,86 +132,6 @@ public class ChicaServlet extends HttpServlet {
 		}catch(ServletException e){
             LOG.error("ServletException in ChicaServlet", e);
         }
-	}
-	
-	/**
-	 * Retrieves the patient's JITs based on form instances provided.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
-	private void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String formInstances = request.getParameter(ServletUtil.PARAM_FORM_INSTANCES);
-		locatePatientJITs(response, formInstances);
-	}
-	
-	/**
-	 * Locates and loads the patient JITs based on the formInstances provided.
-	 * 
-	 * @param response HttpServletResponse
-	 * @param formInstances The form instances to load.  This should be a comma delimited list.
-	 * @throws IOException
-	 */
-	private void locatePatientJITs(HttpServletResponse response, String formInstances) 
-			throws IOException {	
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
-		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, ServletUtil.CONTENT_DISPOSITION_PDF);
-		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_CACHE_CONTROL_PUBLIC + ", " + 
-				ChirdlUtilConstants.HTTP_CACHE_CONTROL_MAX_AGE + "=" + ServletUtil.MAX_CACHE_AGE);
-		
-		if (formInstances == null) {
-			try {
-	            writePdfTextToResponse("There are no forms to display.", response);
-            }
-            catch (DocumentException e) {
-                LOG.error("Error creating error message PDF", e);
-	            return;
-            }
-			
-			return;
-		}
-		
-		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
-		List<String> pdfFiles = new ArrayList<>();
-		List<FormInstanceTag> teleformFiles = new ArrayList<>();
-		List<FormInstanceTag> failedFiles = new ArrayList<>();
-		for (String formInstance : formInstances.split(ChirdlUtilConstants.GENERAL_INFO_COMMA)) {
-			FormInstanceTag formInstanceTag = FormInstanceTag.parseFormInstanceTag(formInstance);
-			if (formInstanceTag == null) {
-				continue;
-			}
-			
-			File mergeFile = locatePatientJIT(formInstanceTag, backportsService);
-			if (mergeFile == null) {
-				failedFiles.add(formInstanceTag);
-			} else if (mergeFile.getAbsolutePath().toLowerCase().endsWith(ChirdlUtilConstants.FILE_PDF)) {
-				pdfFiles.add(mergeFile.getAbsolutePath());
-			} else {
-				teleformFiles.add(formInstanceTag);
-			}
-		}
-		
-		int pdfListSize = pdfFiles.size();
-		if (pdfListSize == 0 && teleformFiles.size() > 0) {
-			loadPatientTeleformJITs(response, teleformFiles);
-			return;
-		} else if (pdfListSize == 0 && failedFiles.size() > 0) {
-			loadPatientErrorJITs(response, failedFiles);
-			return;
-		} else if (pdfListSize == 0) {
-			String message = "An error occurred locating the file(s) to display.";
-			try {
-	            writePdfTextToResponse(message, response);
-            }
-            catch (DocumentException e) {
-                LOG.error("Error creating error PDF document", e);
-            }
-			
-			return;
-		} 
-		
-		loadPatientPdfJITs(response, pdfFiles);
 	}
 	
 	/**
@@ -534,293 +432,5 @@ public class ChicaServlet extends HttpServlet {
 		}
 		
 		pw.write(output);
-	}
-	
-	/**
-	 * Creates a PDF with an error message for the forms the failed and writes it to the HTTP response.
-	 * 
-	 * @param response The HttpServletResponse where the PDF will be written.
-	 * @param errorFiles List of FormInstanceTag objects that failed.
-	 * @throws IOException
-	 */
-	private void loadPatientErrorJITs(HttpServletResponse response, List<FormInstanceTag> errorFiles) 
-			throws IOException {
-		String subject = "form";
-		if (errorFiles.size() > 1) {
-			subject = "forms";
-		}
-		
-		StringBuffer message = new StringBuffer("An error occurred creating the following ").append(subject).append(": ");
-		for (int i = 0; i < errorFiles.size(); i++) {
-			FormInstanceTag formInstanceTag = errorFiles.get(i);
-			if (i != 0) {
-				message.append(", ");
-			}
-			
-			String formName = ServletUtil.getFormName(
-				formInstanceTag.getFormId(), formInstanceTag.getLocationId(), formInstanceTag.getLocationTagId());
-			message.append(formName);
-		}
-		
-		message.append(".");
-		try {
-            writePdfTextToResponse(message.toString(), response);
-        }
-        catch (DocumentException e) {
-            LOG.error("Error creating error PDF document", e);
-        }
-	}
-	
-	/**
-	 * Creates a PDF with an informational message about the Teleform files that were processed 
-	 * and writes it to the HTTP response.
-	 * 
-	 * @param response The HttpServletResponse where the PDF will be written.
-	 * @param teleformFiles List of FormInstanceTag objects that used for Teleform.
-	 * @throws IOException
-	 */
-	private void loadPatientTeleformJITs(HttpServletResponse response, List<FormInstanceTag> teleformFiles) 
-			throws IOException {
-		String subject = "form";
-		String verb = "has";
-		if (teleformFiles.size() > 1) {
-			subject = "forms";
-			verb = "have";
-		}
-		
-		StringBuffer message = new StringBuffer("The following ").append(subject).append(" ").append(verb).append(
-			" been successfully sent to the printer: ");
-		for (int i = 0; i < teleformFiles.size(); i++) {
-			FormInstanceTag formInstanceTag = teleformFiles.get(i);
-			if (i != 0) {
-				message.append(", ");
-			}
-			
-			String formName = ServletUtil.getFormName(
-				formInstanceTag.getFormId(), formInstanceTag.getLocationId(), formInstanceTag.getLocationTagId());
-			message.append(formName);
-		}
-		
-		message.append(".");
-		
-		// CHICA-962
-		message.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED)
-		.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED)
-		.append("Please pick the ").append(subject).append(" up at the printer. DO NOT print this page.");
-		
-		try {
-            writePdfTextToResponse(message.toString(), response);
-        }
-        catch (DocumentException e) {
-            LOG.error("Error creating error PDF document", e);
-        }
-	}
-	
-	/**
-	 * Creates a new PDF with the provided text and writes it to the HttpServletResponse object
-	 * 
-	 * @param text The text to insert into the PDF
-	 * @param response The HttpServletResponse object where the PDF will be written
-	 * @throws DocumentException
-	 * @throws IOException
-	 */
-	private void writePdfTextToResponse(String text, HttpServletResponse response) 
-			throws DocumentException, IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		Document document = new Document();
-		try {
-	        PdfWriter.getInstance(document, output);
-	        document.open();
-	        document.add(new Paragraph(text));
-	        document.close();
-		    response.setContentLength(output.size());
-		    response.getOutputStream().write(output.toByteArray());
-		} finally {
-			output.flush();
-		    output.close();
-		}
-	}
-	
-	/**
-	 * Locates the merge file for the JIT whether it be PDF or Teleform XML.
-	 * 
-	 * @param formInstanceTag The form instance tag information needed to locate the merge file.
-	 * @param backportsService ChirdlUtilBackportsService object used to find the form's merge directory.
-	 * @return File containing the merge file location or null if it could not be found.
-	 */
-	private File locatePatientJIT(FormInstanceTag formInstanceTag, ChirdlUtilBackportsService backportsService) {
-		Integer locationId = formInstanceTag.getLocationId();
-		Integer formId = formInstanceTag.getFormId();
-		Integer formInstanceId = formInstanceTag.getFormInstanceId();
-		Integer locationTagId = formInstanceTag.getLocationTagId();
-		
-		// Get the merge directory for the form.
-		FormAttributeValue fav = 
-				backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, 
-					locationTagId, locationId);
-		if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
-			return null;
-		}
-		
-		// Attempt to find the merge PDF file.
-		String mergeDirectory = fav.getValue();
-		File pdfDir = new File(mergeDirectory, ChirdlUtilConstants.FILE_PDF);
-		File mergeFile = new File(pdfDir, locationId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + 
-			ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formInstanceId + ChirdlUtilConstants.FILE_EXTENSION_PDF);
-		if (!mergeFile.exists() || mergeFile.length() == 0) {
-			mergeFile = new File(pdfDir, ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + locationId + 
-				ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
-				formInstanceId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + ChirdlUtilConstants.FILE_EXTENSION_PDF);
-			if (mergeFile.exists() && mergeFile.length() > 0) {
-				return mergeFile;
-			}
-		} else {
-			return mergeFile;
-		}
-		
-		// Attempt to find the XML file.
-		mergeFile = XMLUtil.findMergeXmlFile(mergeDirectory, locationId, formId, formInstanceId);
-		if (mergeFile != null && mergeFile.exists() && mergeFile.length() > 0) {
-			return mergeFile;
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Combines the provided PDF files into one PDF document and writes it to the HTTP response.
-	 * 
-	 * @param response The HttpServletResponse where the PDF will be written.
-	 * @param pdfFiles List of files locations for PDF forms to combine.
-	 * @throws IOException
-	 */
-	private void loadPatientPdfJITs(HttpServletResponse response, List<String> pdfFiles) throws IOException {
-		if (pdfFiles.size() == 1) {
-			String filePath = null;
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			try {
-				Document document = new Document();
-		        PdfCopy copy = new PdfCopy(document, output);
-		        document.open();
-		        PdfReader reader;
-		        int n;
-	        	filePath = pdfFiles.get(0);
-	            reader = new PdfReader(filePath);
-	            // loop over the pages in that document
-	            n = reader.getNumberOfPages();
-	            for (int page = 0; page < n; ) {
-	            	try {
-	            		copy.addPage(copy.getImportedPage(reader, ++page));
-	            	} catch (Exception e) {
-	            		LOG.error("Error adding page", e);
-	            	}
-	            }
-	            
-	            copy.freeReader(reader);
-	            reader.close();
-	
-		        document.close();
-		        copy.close();
-		        response.setContentLength(output.size());
-		        response.getOutputStream().write(output.toByteArray());
-			} catch (BadPdfFormatException e) {
-				LOG.error("Bad PDF found: " + filePath, e);
-				throw new IOException(e);
-			} catch (DocumentException e) {
-				LOG.error("Error handling PDF document: " + filePath, e);
-				throw new IOException(e);
-			} finally {
-				output.flush();
-		        output.close();
-			}
-		} else {
-			// DWE CHICA-500 Allow multiple PDFs to be selected/combined into 
-			// a single document for printing. If the document has an odd number of pages,
-			// a blank page will be added so that the next document will not be printed on the back of the 
-			// previous document when printing duplex
-			String filePath = "";
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			try {
-				Document doc = new Document();
-		        PdfCopy copy = new PdfCopy(doc, baos);
-		        doc.open();
-		        PdfReader reader = null;
-		        
-		        for (int i = 0; i < pdfFiles.size(); i++) {
-		        	filePath = pdfFiles.get(i);
-		        	reader = new PdfReader(renamePdfFields(filePath, i));
-		        	
-		        	// Loop over the pages in the document
-		            int numOfPages = reader.getNumberOfPages();
-		            
-		            for (int page = 1; page <= numOfPages; page++) {
-		            	try {		            		
-		            		// When forms are combined, we need to check to see if the view is landscape
-		            		// If it is, we need to rotate it otherwise Firefox will shrink the pages to fit in portrait
-		            		// which causes pages that should be printed in portrait to be shrunk as well
-		            		int rot = reader.getPageRotation(page);
-		            		if(rot == 90 || rot == 270)
-		            		{
-		            			PdfDictionary pageDict = reader.getPageN(page);
-			            		pageDict.put(PdfName.ROTATE, new PdfNumber(0));
-		            		}
-		            					            	
-		                copy.addPage(copy.getImportedPage(reader, page));
-		            	} catch (Exception e) {
-		            		LOG.error("Error adding page", e);
-		            	}
-		            }
-		            
-		            // Add blank page if the document has an odd number of pages
-		            if(numOfPages % 2 != 0)
-		            {		            	
-		            	copy.addPage(reader.getPageSize(1), reader.getPageRotation(1));
-		            }
-		        }
-		        		        
-		        copy.freeReader(reader);
-	            reader.close();
-		        doc.close();		        
-		        copy.close();
-		       
-		        response.setContentLength(baos.size());
-		        response.getOutputStream().write(baos.toByteArray());
-			} catch (BadPdfFormatException e) {
-				LOG.error("Bad PDF found: " + filePath, e);
-				throw new IOException(e);
-			} catch (DocumentException e) {
-				LOG.error("Error handling PDF document", e);
-				throw new IOException(e);
-			} finally {
-				baos.flush();
-		        baos.close();
-			}
-		}
-	}
-	
-	/**
-	 * Renames the fields in the PDF.  This needs to be done due to fields with the same name in the document.
-	 * 
-	 * @param pdfFile The PDF file that will have its fields renamed.
-	 * @param instance The instance of the field in the PDF document.
-	 * @return Array of bytes of the PDF document after the fields are renamed.
-	 * @throws IOException
-	 * @throws DocumentException
-	 */
-	private byte[] renamePdfFields(String pdfFile, int instance) throws IOException, DocumentException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		// Create the stamper
-		PdfStamper stamper = new PdfStamper(new PdfReader(pdfFile), baos);
-		// Get the fields
-		AcroFields form = stamper.getAcroFields();
-		// Loop over the fields
-		Set<String> keys = new HashSet<>(form.getFields().keySet());
-		for (String key : keys) {
-			// rename the fields
-			form.renameField(key, String.format("%s_%d", key, instance));
-		}
-		// close the stamper
-		stamper.close();
-		return baos.toByteArray();
 	}
 }
