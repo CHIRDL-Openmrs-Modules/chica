@@ -51,7 +51,7 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>dss-api</artifactId>
-				<version>3.1.0</version>
+				<version>3.2.0-SNAPSHOT</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
