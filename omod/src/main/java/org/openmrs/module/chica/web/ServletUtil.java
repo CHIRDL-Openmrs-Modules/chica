@@ -1564,7 +1564,7 @@ public class ServletUtil {
 	public static void locatePatientJITs(HttpServletResponse response, String formInstances, String formName) 
 			throws IOException {	
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
-		String contentDispositionPdf = "inline;filename=" + formName.replaceAll("\\s+", "") + ".pdf";
+		String contentDispositionPdf = "inline;filename=" + formName.replaceAll("\\s+", "") + ChirdlUtilConstants.FILE_EXTENSION_PDF;
 		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, contentDispositionPdf);
 		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_CACHE_CONTROL_PUBLIC + ", " + 
 				ChirdlUtilConstants.HTTP_CACHE_CONTROL_MAX_AGE + "=" + ServletUtil.MAX_CACHE_AGE);
