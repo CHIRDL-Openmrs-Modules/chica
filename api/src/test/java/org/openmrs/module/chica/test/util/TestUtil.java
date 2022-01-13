@@ -3,12 +3,12 @@
  */
 package org.openmrs.module.chica.test.util;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Calendar;
 
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
 /**

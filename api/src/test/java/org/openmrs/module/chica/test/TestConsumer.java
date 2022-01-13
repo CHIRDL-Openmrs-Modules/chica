@@ -1,6 +1,6 @@
 package org.openmrs.module.chica.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,9 +10,9 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.FormService;
@@ -29,7 +29,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
  * @author Tammy Dugan
@@ -45,7 +45,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 	 * Require authorization before every test method in this class
 	 * 
 	 */
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception {
 		// create the basic user and give it full rights
 		initializeInMemoryDatabase();
@@ -55,7 +55,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testConsume() throws Exception
 	{
 		LocationService locationService = Context.getLocationService();

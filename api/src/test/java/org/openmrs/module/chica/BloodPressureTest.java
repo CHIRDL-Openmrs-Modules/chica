@@ -3,11 +3,12 @@ package org.openmrs.module.chica;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.module.chica.test.TestUtil;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+//import org.openmrs.web.test.jupiter.BaseModuleWebContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
-public class BloodPressureTest extends BaseModuleContextSensitiveTest {
+public class BloodPressureTest extends BaseModuleContextSensitiveTest  {
 	
 	@Test
 	public void testBloodPressure() throws Exception {

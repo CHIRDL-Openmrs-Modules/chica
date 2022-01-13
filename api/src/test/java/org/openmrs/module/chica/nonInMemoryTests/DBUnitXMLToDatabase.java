@@ -6,10 +6,10 @@ package org.openmrs.module.chica.nonInMemoryTests;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openmrs.module.chica.test.TestUtil;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
 /**
@@ -20,7 +20,7 @@ public class DBUnitXMLToDatabase extends BaseModuleContextSensitiveTest {
 	
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testDBUnitXML() throws Exception {
 		dumpDatabaseDTD();
 		

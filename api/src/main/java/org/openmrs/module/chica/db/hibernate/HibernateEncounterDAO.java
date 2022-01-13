@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.hibernate.SessionFactory;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.module.chica.db.EncounterDAO;
@@ -18,6 +21,7 @@ public class HibernateEncounterDAO extends
 		org.openmrs.api.db.hibernate.HibernateEncounterDAO implements
 		EncounterDAO
 {
+    private static final Log LOG = LogFactory.getLog(HibernateEncounterDAO.class);
 
 	/**
 	 * Hibernate session factory
@@ -76,8 +80,8 @@ public class HibernateEncounterDAO extends
 						.getCurrentSession().get(Encounter.class, encounterId);
 			} catch (Exception e)
 			{
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				LOG.error(e.getMessage());
+				LOG.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 		}
 

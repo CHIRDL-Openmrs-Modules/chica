@@ -16,7 +16,7 @@ package org.openmrs.module.chica.util;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -25,9 +25,9 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
-import  org.junit.Assert;
+import  org.junit.jupiter.api.Assertions;
 
 
 /**
@@ -44,8 +44,8 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		
 		ArrayList<PatientRow> rows = new ArrayList<PatientRow>();
 		String errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assert.assertNull(errorMessage);
-		Assert.assertEquals("Number of patient rows did not match", 0, rows.size());
+		Assertions.assertNull(errorMessage);
+		Assertions.assertEquals(0, rows.size(), "Number of patient rows did not match");
 		
 		Encounter encounter = Context.getEncounterService().getEncounter(23189);
 		encounter.setEncounterDatetime(new Date());
@@ -59,25 +59,25 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		
 		rows.clear();
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assert.assertNull("The error message was not null", errorMessage);
-		Assert.assertEquals("Number of patient rows did not match", 1, rows.size());
-		Assert.assertEquals("Number of form instances did not match", 1, rows.get(0).getFormInstances().size());
+		Assertions.assertNull("The error message was not null", errorMessage);
+		Assertions.assertEquals(1, rows.size(), "Number of patient rows did not match");
+		Assertions.assertEquals(1, rows.get(0).getFormInstances().size(), "Number of form instances did not match");
 		
 		rows.clear();
 		FormInstance formInstance2 = new FormInstance(8992, 8972, 298238);
 		createPatientState(formInstance2, patient, 23189, createState);
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assert.assertNull("The error message was not null", errorMessage);
-		Assert.assertEquals("Number of patient rows did not match", 1, rows.size());
-		Assert.assertEquals("Number of form instances did not match", 2, rows.get(0).getFormInstances().size());
+		Assertions.assertNull("The error message was not null", errorMessage);
+		Assertions.assertEquals(1, rows.size(), "Number of patient rows did not match");
+		Assertions.assertEquals(2, rows.get(0).getFormInstances().size(), "Number of form instances did not match");
 		
 		rows.clear();
 		FormInstance formInstance3 = new FormInstance(8992, 8973, 298239);
 		createPatientState(formInstance3, patient, 23189, createState);
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assert.assertNull("The error message was not null", errorMessage);
-		Assert.assertEquals("Number of patient rows did not match", 1, rows.size());
-		Assert.assertEquals("Number of form instances did not match", 2, rows.get(0).getFormInstances().size());
+		Assertions.assertNull("The error message was not null", errorMessage);
+		Assertions.assertEquals(1, rows.size(),"Number of patient rows did not match");
+		Assertions.assertEquals(2, rows.get(0).getFormInstances().size(),"Number of form instances did not match");
 		
 		// CHICA-1143 Create the finished state and make sure the patient is no longer in the list of rows
 		rows.clear();
@@ -85,7 +85,7 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		State finishedState = backportsService.getState(98793);
 		createPatientState(formInstance4, patient, 23189, finishedState);
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assert.assertEquals("Number of patient rows did not match", 0, rows.size());
+		Assertions.assertEquals(0, rows.size(), "Number of patient rows did not match");
 		
 	}
 	

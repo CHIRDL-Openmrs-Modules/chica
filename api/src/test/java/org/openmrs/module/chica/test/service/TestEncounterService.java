@@ -1,7 +1,7 @@
 package org.openmrs.module.chica.test.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -9,15 +9,15 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Encounter;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.test.TestUtil;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
 /**
@@ -33,7 +33,7 @@ public class TestEncounterService extends BaseModuleContextSensitiveTest
 	 * Require authorization before every test method in this class
 	 * 
 	 */
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception 
 	{
 		// create the basic user and give it full rights
@@ -87,7 +87,7 @@ public class TestEncounterService extends BaseModuleContextSensitiveTest
 		for (Method method : allMethods) {
 		    if (Modifier.isPublic(method.getModifiers())) {
 		        Authorized authorized = method.getAnnotation(Authorized.class);
-		        Assert.assertNotNull("Authorized annotation not found on method " + method.getName(), authorized);
+		        Assertions.assertNotNull(authorized, "Authorized annotation not found on method " + method.getName());
 		    }
 		}
 	}

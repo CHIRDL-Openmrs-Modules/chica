@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Field;
@@ -195,7 +195,7 @@ public class ServletUtil {
 	public static final String MAX_CACHE_AGE = "600";
 	public static final String RESULT_SUCCESS = "success";
 	
-	private static final Log LOG = LogFactory.getLog(ServletUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ServletUtil.class);
 	
 	public static void isUserAuthenticated(HttpServletResponse response) throws IOException {
 		response.setContentType("text/xml");
@@ -289,7 +289,7 @@ public class ServletUtil {
 	 * @param errorMessageParts The pieces used to build the log messages.
 	 * @return The HTML formatted message
 	 */
-	public static String writeHtmlErrorMessage(PrintWriter pw, Exception e, Log log, String... errorMessageParts) {
+	public static String writeHtmlErrorMessage(PrintWriter pw, Exception e, Logger log, String... errorMessageParts) {
 		if (errorMessageParts == null || errorMessageParts.length == 0) {
 			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}

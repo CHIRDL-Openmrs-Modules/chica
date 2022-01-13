@@ -1,6 +1,6 @@
 package org.openmrs.module.chica.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,14 +10,11 @@ import java.io.FileWriter;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openmrs.Encounter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -39,9 +36,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
-
-import com.itextpdf.text.pdf.codec.Base64.InputStream;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
  * This Class tests the ChicaServiceImpl class.
@@ -55,10 +50,6 @@ import com.itextpdf.text.pdf.codec.Base64.InputStream;
  */
 public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 {
-	/**
-	 * @verifies {@link ChicaServiceImpl#getHighBP(Patient,Integer,String,Encounter)}
-	 *           test = should checkHighBP
-	 */
 	@Test
 	public void getHighBP_shouldCheckHighBP() throws Exception
 	{
@@ -82,13 +73,13 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setGender("F");
 		Double highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// test M
 		patient.setGender("M");
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(98, highBP, 2);
+		assertEquals(98, highBP, 2);
 
 		// test age
 		// 0 years
@@ -101,7 +92,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97, highBP, 0);
+		assertEquals(97, highBP, 0);
 
 		// 9 months
 		birthDate = Calendar.getInstance();
@@ -109,7 +100,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97, highBP, 0);
+		assertEquals(97, highBP, 0);
 
 		// 1 year
 		birthDate = Calendar.getInstance();
@@ -117,7 +108,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97, highBP, 0);
+		assertEquals(97, highBP, 0);
 
 		// 15 months
 		birthDate = Calendar.getInstance();
@@ -125,7 +116,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97.5, highBP, 0);
+		assertEquals(97.5, highBP, 0);
 
 		// 16.5 years
 		birthDate = Calendar.getInstance();
@@ -133,7 +124,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(122, highBP, 0);
+		assertEquals(122, highBP, 0);
 
 		// 17 years
 		birthDate = Calendar.getInstance();
@@ -141,7 +132,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(122, highBP, 0);
+		assertEquals(122, highBP, 0);
 
 		// 18 years
 		birthDate = Calendar.getInstance();
@@ -149,7 +140,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(null, highBP);
+		assertEquals(null, highBP);
 
 		// test systolic/diastolic
 		// systolic
@@ -161,13 +152,13 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		bpType = "systolic";
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// diastolic
 		bpType = "diastolic";
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(57, highBP, 0);
+		assertEquals(57, highBP, 0);
 
 		// test height percentile
 		patient.setBirthdate(baseBirthDate.getTime());
@@ -179,43 +170,43 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		heightPercentile = 0.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 3 height percentile
 		heightPercentile = 3.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 5 height percentile
 		heightPercentile = 5.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 7 height percentile
 		heightPercentile = 7.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 10 height percentile
 		heightPercentile = 10.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 95 height percentile
 		heightPercentile = 95.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(105, highBP, 0);
+		assertEquals(105, highBP, 0);
 
 		// 97 height percentile
 		heightPercentile = 97.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(105, highBP, 0);
+		assertEquals(105, highBP, 0);
 
 		// test BP percentile
 		// 90
@@ -227,16 +218,16 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		bpPercentile = 90;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 95
 		bpPercentile = 95;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(102, highBP, 0);
+		assertEquals(102, highBP, 0);
 	}
 
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception
 	{
 		// create the basic user and give it full rights
@@ -246,12 +237,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		authenticate();
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#produce(OutputStream,PatientState,Patient,Integer,String,int)}
-	 *           test = should testPSFProduce
-	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void produce_shouldTestPSFProduce() throws Exception
 	{
 		LocationService locationService = Context.getLocationService();
@@ -420,12 +407,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		}
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#produce(OutputStream,PatientState,Patient,Integer,String,int)}
-	 *           test = should testPWSProduce
-	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void produce_shouldTestPWSProduce() throws Exception
 	{
 		LocationService locationService = Context.getLocationService();
@@ -586,30 +569,22 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		}
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#consume(InputStream,Patient,Integer,Integer,Integer,Integer)}
-	 *           test = should testPSFConsume
-	 */
 	@Test
 	public void consume_shouldTestPSFConsume() throws Exception
 	{
 //		// TODO auto-generated
-//		Assert.fail("Not yet implemented");
+//		Assertions.fail("Not yet implemented");
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#consume(InputStream,Patient,Integer,Integer,Integer,Integer)}
-	 *           test = should testPWSConsume
-	 */
 	@Test
 	public void consume_shouldTestPWSConsume() throws Exception
 	{
 //		// TODO auto-generated
-//		Assert.fail("Not yet implemented");
+//		Assertions.fail("Not yet implemented");
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testSaveStudyAttribute() throws Exception	{
 		executeDataSet(TestUtil.STUDY_FILE);
 		
@@ -637,6 +612,6 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		chicaService.saveStudyAttributeValue(studyAttVal);
 		
 		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1"), "TEST NAME");
-		Assert.assertEquals("Match","DobGtSentinelDateK22Randomizer", studyAttr.getValue());
+		assertEquals("Match","DobGtSentinelDateK22Randomizer", studyAttr.getValue());
 	}
 }

@@ -2,9 +2,9 @@ package org.openmrs.module.chica.nonInMemoryTests;
 
 import java.io.OutputStream;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -13,7 +13,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.dss.DssManager;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
 /**
@@ -31,7 +31,7 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 	 * Require authorization before every test method in this class
 	 * 
 	 */
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception
 	{
 //		// authenticate to the temp database
@@ -39,7 +39,7 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testMergeXMLToTable() throws Exception
 	{
 		AdministrationService adminService = Context.getAdministrationService();
