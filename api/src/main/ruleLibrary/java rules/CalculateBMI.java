@@ -18,6 +18,7 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.EncounterDateComparator;
+import org.openmrs.module.chirdlutil.util.Util;
 
 /**
  * Calculates a patient's BMI.  The caller must provide a list of heights and weights as parameters.
@@ -152,6 +153,7 @@ public class CalculateBMI implements Rule {
 			// The height is stored in centimeters, so we need to convert to meters first
 			double heightMeters = heightNum.doubleValue() / 100;
 			double bmi = (weightNum.doubleValue() / (heightMeters * heightMeters));
+			bmi = Util.round(bmi, 2);
 			return new Result(Double.valueOf(bmi));
 		}
 		
