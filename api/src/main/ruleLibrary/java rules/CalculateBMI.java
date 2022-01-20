@@ -154,7 +154,9 @@ public class CalculateBMI implements Rule {
 			double heightMeters = heightNum.doubleValue() / 100;
 			double bmi = (weightNum.doubleValue() / (heightMeters * heightMeters));
 			bmi = Util.round(bmi, 2);
-			return new Result(Double.valueOf(bmi));
+			Result result = new Result(Double.valueOf(bmi));
+			result.setResultDate(height.getObsDatetime());
+			return result;
 		}
 		
 		return Result.emptyResult();

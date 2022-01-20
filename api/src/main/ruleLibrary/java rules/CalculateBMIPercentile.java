@@ -48,10 +48,12 @@ public class CalculateBMIPercentile implements Rule {
 		
 		Calculator calculator = new Calculator();
 		Double percentile = calculator.calculatePercentile(bmiResult.toNumber(), patient.getGender(),
-		    patient.getBirthdate(), CALCULATION_BMI_PERCENTILE, null);
+		    patient.getBirthdate(), CALCULATION_BMI_PERCENTILE, null, bmiResult.getResultDate());
 		if (percentile != null) {
 			percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2);
-			return new Result(percentile);
+			Result result = new Result(percentile);
+			result.setResultDate(bmiResult.getResultDate());
+			return result;
 		}
 		
 		return Result.emptyResult();
