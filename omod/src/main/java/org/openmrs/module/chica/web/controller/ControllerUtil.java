@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
@@ -41,6 +39,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,7 +51,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class ControllerUtil {
 
-	private static final Log log = LogFactory.getLog(ControllerUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(ControllerUtil.class);
 	
 	/**
 	 * Private constructor

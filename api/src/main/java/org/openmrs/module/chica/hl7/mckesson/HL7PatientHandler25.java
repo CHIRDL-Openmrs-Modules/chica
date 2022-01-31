@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.openmrs.PersonAddress;
-import org.openmrs.module.chirdlutil.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.datatype.CE;
 import ca.uhn.hl7v2.model.v25.datatype.CX;
@@ -32,6 +32,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class HL7PatientHandler25 extends
 		org.openmrs.module.sockethl7listener.HL7PatientHandler25
 {
+	private static final Logger log = LoggerFactory.getLogger(HL7PatientHandler25.class);
 	
 	//------get additional person attributes for chica patients
 	public String getSSN(Message message)
@@ -52,8 +53,7 @@ public class HL7PatientHandler25 extends
 				}
 			} catch (RuntimeException e1)
 			{
-				logger
-						.debug("Warning: SSN information not available in PID segment.");
+				log.debug("Warning: SSN information not available in PID segment.");
 			}
 		}
 		return ssn;
@@ -77,8 +77,7 @@ public class HL7PatientHandler25 extends
 
 			} catch (RuntimeException e1)
 			{
-				logger
-						.debug("Warning: religion information not available in PID segment.");
+				log.debug("Warning: religion information not available in PID segment.");
 			}
 		}
 		return religion;
@@ -103,8 +102,7 @@ public class HL7PatientHandler25 extends
 
 			} catch (RuntimeException e1)
 			{
-				logger
-						.debug("Warning: marital information not available in PID segment.");
+				log.debug("Warning: marital information not available in PID segment.");
 			}
 
 		}
@@ -135,15 +133,13 @@ public class HL7PatientHandler25 extends
 					}
 				} catch (RuntimeException e1)
 				{
-					logger
-							.debug("Warning: maiden information not available in PID segment.");
+					log.debug("Warning: maiden information not available in PID segment.");
 				}
 
 			}
 		} catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		return maiden;
 	}
@@ -226,7 +222,7 @@ public class HL7PatientHandler25 extends
 
 		} catch (Exception e)
 		{
-			logger.warn("Unable to collect address from PID or NK1 for", e);
+			log.warn("Unable to collect address from PID or NK1 for", e);
 		}
 		return addresses;
 	}
@@ -241,7 +237,7 @@ public class HL7PatientHandler25 extends
 			Terser terser = new Terser(newMessage);
 			pid = terser.get("/.PID-3-1");
 		} catch (Exception e) {
-			logger.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
+			log.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
 		} 
 		return pid;
 	}

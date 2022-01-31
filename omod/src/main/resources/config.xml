@@ -423,7 +423,7 @@
         lenageinf.hbm.xml
         wtageinf.hbm.xml
         bmiage.hbm.xml
-        encounter.hbm.xml
+       <!--  encounter.hbm.xml -->
         study.hbm.xml
         study_attribute.hbm.xml
         study_attribute_value.hbm.xml

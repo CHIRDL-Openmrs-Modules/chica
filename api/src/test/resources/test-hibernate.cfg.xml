@@ -13,7 +13,7 @@
 		<mapping resource="chica1_patient_obsv.hbm.xml" />
 		<mapping resource="chica1_patient.hbm.xml" />
 		<mapping resource="ddst.hbm.xml" />
-		<mapping resource="encounter.hbm.xml" />
+		<!--<mapping resource="encounter.hbm.xml" /> -->
 		<mapping resource="family.hbm.xml" />
 		<mapping resource="hcageinf.hbm.xml" />
 		<mapping resource="high_bp.hbm.xml" />
@@ -27,14 +27,14 @@
 		<mapping resource="wtageinf.hbm.xml" />
 	    <mapping resource="form_attribute.hbm.xml"/>
 	    <mapping resource="form_attribute_value.hbm.xml"/>
-	    <mapping resource="program.hbm.xml"/>
+	    <!-- <mapping resource="program.hbm.xml"/>-->
 	    <mapping resource="state.hbm.xml"/>
 	    <mapping resource="state_action.hbm.xml"/>
 	    <mapping resource="state_mapping.hbm.xml"/>
 	    <mapping resource="error_category.hbm.xml"/>
 	    <mapping resource="rule.hbm.xml"/>
 	    <mapping resource="session.hbm.xml"/>
-	    <mapping resource="patient_state.hbm.xml"/>
+	    <!--<mapping resource="patient_state.hbm.xml"/>-->
 	    <mapping resource="form_instance.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

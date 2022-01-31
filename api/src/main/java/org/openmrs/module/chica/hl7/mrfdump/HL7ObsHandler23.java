@@ -8,9 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
@@ -26,7 +23,8 @@ import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Varies;
@@ -52,7 +50,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class HL7ObsHandler23 implements HL7ObsHandler
 {
 
-	protected static final Log log = LogFactory.getLog(HL7ObsHandler23.class);
+	private static final Logger log = LoggerFactory.getLogger(HL7ObsHandler23.class);
 
 	public static MSH getMSH(ORU_R01 oru)
 	{
@@ -395,7 +393,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 		return dVal;
 	}
 
-	private Concept processCEType(Varies value, Logger logger,
+	private Concept processCEType(Varies value,
 			String pIdentifierString, String conceptQuestionId)
 	{
 		String conceptName = ((CE) value.getData()).getText().toString();
@@ -426,12 +424,12 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 				return answer;
 			} catch (RuntimeException e)
 			{
-				logger.error("createObs() failed. MRN: " + pIdentifierString
+				log.error("createObs() failed. MRN: " + pIdentifierString
 						+ ";Invalid OBX value: " + stConceptId
 						+ ";concept question id: " + conceptQuestionId
 						+ "; concept name: " + conceptName);
-				logger.error(e.getMessage());
-				logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				log.error(e.getMessage());
+				log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 
 		}
@@ -439,8 +437,8 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 	}
 
 	public Concept getCodedResult(Message message, int orderRep, int obxRep,
-			Logger logger, String pIdentifierString, String obsvID,
-			String obsValueType, Logger conceptNotFoundLogger)
+			 String pIdentifierString, String obsvID,
+			String obsValueType)
 	{
 	    OBX obx = getOBX(message, orderRep, obxRep);
 	    if(obx != null){
@@ -453,7 +451,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 
 	            if (obsValueType.equals("CE"))
 	            {
-	                return processCEType(value, logger, pIdentifierString, obsvID);
+	                return processCEType(value, pIdentifierString, obsvID);
 	            }
 	        }
 	    }
