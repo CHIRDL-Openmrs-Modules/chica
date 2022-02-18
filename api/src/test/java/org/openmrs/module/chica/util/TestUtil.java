@@ -48,9 +48,11 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		Assertions.assertEquals(0, rows.size(), "Number of patient rows did not match");
 		
 		Encounter encounter = Context.getEncounterService().getEncounter(23189);
+		Assertions.assertNotNull(encounter);
 		encounter.setEncounterDatetime(new Date());
 		Context.getEncounterService().saveEncounter(encounter);
 		
+		//JIT_mobile_create
 		Patient patient = Context.getPatientService().getPatient(2298);
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State createState = backportsService.getState(98791);
@@ -59,7 +61,7 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		
 		rows.clear();
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assertions.assertNull("The error message was not null", errorMessage);
+		Assertions.assertNull(errorMessage);
 		Assertions.assertEquals(1, rows.size(), "Number of patient rows did not match");
 		Assertions.assertEquals(1, rows.get(0).getFormInstances().size(), "Number of form instances did not match");
 		
@@ -67,7 +69,7 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		FormInstance formInstance2 = new FormInstance(8992, 8972, 298238);
 		createPatientState(formInstance2, patient, 23189, createState);
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assertions.assertNull("The error message was not null", errorMessage);
+		Assertions.assertNull(errorMessage);
 		Assertions.assertEquals(1, rows.size(), "Number of patient rows did not match");
 		Assertions.assertEquals(2, rows.get(0).getFormInstances().size(), "Number of form instances did not match");
 		
@@ -75,11 +77,13 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		FormInstance formInstance3 = new FormInstance(8992, 8973, 298239);
 		createPatientState(formInstance3, patient, 23189, createState);
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
-		Assertions.assertNull("The error message was not null", errorMessage);
+		Assertions.assertNull( errorMessage);
 		Assertions.assertEquals(1, rows.size(),"Number of patient rows did not match");
 		Assertions.assertEquals(2, rows.get(0).getFormInstances().size(),"Number of form instances did not match");
 		
 		// CHICA-1143 Create the finished state and make sure the patient is no longer in the list of rows
+		
+		//FINISHED
 		rows.clear();
 		FormInstance formInstance4 = new FormInstance(8992, 8974, 298240);
 		State finishedState = backportsService.getState(98793);
@@ -90,15 +94,26 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 	}
 	
 	private PatientState createPatientState(FormInstance formInstance, Patient patient, Integer sessionId, State state) {
+		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		
+		//Check if chirdlutilbackports service method recognized PatientState
+		PatientState patientStateTest = chirdlUtilBackportsService.getPatientState(1);
+		if (patientStateTest == null) {
+			System.out.println("patientStateTest is null");
+		} else {
+			System.out.println("patientStateTest is " + patientStateTest.getPatientId());
+		}
+		
 		PatientState createPatientState = new PatientState();
+	//	createPatientState.setPatientStateId(2);
 		createPatientState.setStartTime(new Date());
 		createPatientState.setEndTime(new Date());
 		createPatientState.setFormInstance(formInstance);
 		createPatientState.setLocationTagId(2987);
-		createPatientState.setPatient(patient);
 		createPatientState.setPatientId(patient.getPatientId());
-		createPatientState.setSessionId(23189);
+		createPatientState.setSessionId(sessionId);
 		createPatientState.setState(state);
-		return Context.getService(ChirdlUtilBackportsService.class).updatePatientState(createPatientState);
+		createPatientState.setRetired(false);
+		return chirdlUtilBackportsService.updatePatientState(createPatientState);
 	}
 }

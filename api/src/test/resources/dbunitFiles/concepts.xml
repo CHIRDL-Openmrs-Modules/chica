@@ -30,6 +30,6 @@
     <concept_class concept_class_id="16" name="RMRS" description="rmrs term" creator="1" date_created="2008-06-02 14:06:19.0" retired="0"/>
     <concept_class concept_class_id="17" name="CHICA" description="chica term" creator="1" date_created="2008-06-02 14:06:37.0" retired="0"/>
     <concept concept_id="2853" retired="0" datatype_id="1" class_id="16" is_set="false" creator="1" date_created="2008-08-20 15:21:00.0"/>
-    <concept_numeric concept_id="2853" units="mg/dL" precise="false"/>
+     <!--<concept_numeric concept_id="2853" units="mg/dL" precise="0"/> -->
     <concept_name concept_id="2853" name="CALCIUM (SMA)" locale="en" creator="1" date_created="2008-08-20 15:21:00" concept_name_id="47870" voided="0"  uuid="36875dd0-7cbf-11e0-b8a1-00059a3c7800" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>"
 </dataset>

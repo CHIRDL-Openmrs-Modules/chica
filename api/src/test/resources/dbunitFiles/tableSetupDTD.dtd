@@ -49,7 +49,7 @@
     drug_ingredient*,
     drug_order*,
     dss_rule*,
-    encounter*,
+    chica_encounter*,
     encounter_type*,
     field*,
     field_answer*,

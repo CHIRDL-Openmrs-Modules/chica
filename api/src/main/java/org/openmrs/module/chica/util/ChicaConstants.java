@@ -46,4 +46,6 @@ public class ChicaConstants {
     /** Form concepts */
     public static final String PROVIDER_VIEW = "_provider_view";
     public static final String PROVIDER_SUBMIT = "_provider_submit";
+    
+    public static final String ENCOUNTER_TYPE_VALUE_CHICA = "5";
 }

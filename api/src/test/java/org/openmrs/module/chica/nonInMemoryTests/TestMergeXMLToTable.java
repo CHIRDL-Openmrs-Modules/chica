@@ -21,6 +21,7 @@ import org.openmrs.test.SkipBaseSetup;
  * 
  */
 @SkipBaseSetup
+@Disabled
 public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 {
 
@@ -39,7 +40,7 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
-	@Disabled
+
 	public void testMergeXMLToTable() throws Exception
 	{
 		AdministrationService adminService = Context.getAdministrationService();
@@ -73,7 +74,7 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 			
 		} catch (Exception e)
 		{
-
+			System.out.println(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 

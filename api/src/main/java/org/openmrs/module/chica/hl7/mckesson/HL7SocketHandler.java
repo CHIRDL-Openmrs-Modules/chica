@@ -748,7 +748,7 @@ public class HL7SocketHandler extends
 			if(StringUtils.isNotEmpty(sendingApplication) && StringUtils.isNotEmpty(sendingFacility) && StringUtils.isNotEmpty(planCode))
 			{
 				ChicaService chicaService = Context.getService(ChicaService.class);
-				category = chicaService.getInsCategoryByInsCode(planCode, sendingApplication, sendingFacility);
+				category = chicaService.getInsCategoryByInsCode(planCode, sendingFacility, sendingApplication);
 			}
 
 			if (category != null)

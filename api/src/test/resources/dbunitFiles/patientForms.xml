@@ -14,8 +14,9 @@
     <location location_id="8992" name="location8992" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="23498719928797382971827391"/>
     <location_tag location_tag_id="2987" name="tag2987" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="2987398273792872983789273"/>
     <location_tag_map location_id="8992" location_tag_id="2987"/>
-    <encounter_type encounter_type_id="23981" name="HL7Message" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="kla9009812as9s8df908asdf"/>
-    <encounter encounter_id="23189" encounter_type="23981" patient_id="2298" location_id="8992" encounter_datetime="2017-08-15 15:46:47.0" creator="1" date_created="2017-08-15 15:46:47.0" voided="false" uuid="asdf98asd08asd908sadf98" />
+    <encounter_type encounter_type_id="1" name="HL7Message" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="kla9009812as9s8df908asdf"/>
+     <encounter_type encounter_type_id="5" name="CHICA" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="false"/>
+    <encounter encounter_id="23189" encounter_type="5" patient_id="2298" location_id="8992" encounter_datetime="2017-08-15 15:46:47.0" creator="1" date_created="2017-08-15 15:46:47.0" voided="false" uuid="asdf98asd08asd908sadf98" />
     <chirdlutilbackports_session session_id="23189" encounter_id="23189"/>
     <chirdlutilbackports_state state_id="98791" name="JIT_mobile_create" />
     <chirdlutilbackports_state state_id="98792" name="JIT_FINISHED" />
@@ -29,4 +30,5 @@
     <chirdlutilbackports_form_instance form_id="8972" form_instance_id="298238" location_id="8992" />
     <chirdlutilbackports_form_instance form_id="8973" form_instance_id="298239" location_id="8992" />
     <chirdlutilbackports_form_instance form_id="8974" form_instance_id="298240" location_id="8992" />
+   <!--<chirdlutilbackports_patient_state patient_state_id="1"  start_time="2017-08-15 15:46:48.0" end_time="2017-08-15 15:46:49.0" form_instance_id="8971" location_tag_id="2987" patient_id="2298" session_id="23189" state="98791" retired="false" location_id="8992"/>    -->
 </dataset>

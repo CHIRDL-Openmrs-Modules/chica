@@ -17,7 +17,7 @@ import org.openmrs.test.SkipBaseSetup;
  * @author Tammy Dugan
  * 
  */
-@SkipBaseSetup
+@Disabled
 public class TestSetConceptRule extends BaseModuleContextSensitiveTest
 {
 
@@ -25,8 +25,8 @@ public class TestSetConceptRule extends BaseModuleContextSensitiveTest
 	public void runBeforeEachTest() throws Exception {
 //		authenticate();
 	}
+
 	@Test
-	@Disabled
 	public void testSetConceptRule() throws Exception
 	{
 		DssService dssService = Context.getService(DssService.class);

@@ -24,6 +24,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
+import org.openmrs.annotation.Authorized;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.FormService;
@@ -1198,4 +1199,6 @@ public class ChicaServiceImpl implements ChicaService
 		public Study unretireStudy(Study study) {
 		        return getChicaDAO().saveStudy(study);
 		}
+		
+		
 }
