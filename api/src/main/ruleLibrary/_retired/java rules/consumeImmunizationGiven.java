@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -29,7 +29,7 @@ import org.openmrs.module.dss.logic.op.OperandObject;
 public class consumeImmunizationGiven implements Rule
 {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(consumeImmunizationGiven.class);
 	private LogicService logicService = Context.getLogicService();
 
 	/**

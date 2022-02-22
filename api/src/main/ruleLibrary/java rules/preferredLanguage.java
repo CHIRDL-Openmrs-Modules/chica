@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -28,7 +28,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 
 public class preferredLanguage implements Rule {
 	
-	private Log log = LogFactory.getLog(preferredLanguage.class);
+	private static final Logger log = LoggerFactory.getLogger(preferredLanguage.class);
 	
 	/**
 	 * *

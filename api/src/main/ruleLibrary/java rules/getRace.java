@@ -3,8 +3,8 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Patient;
@@ -22,7 +22,7 @@ public class getRace implements Rule {
 	
 	private final String SOURCE = "Wishard Race Codes";
 	private final String RACE = "Race";
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(getRace.class);
 	
 	/**
 	 * *

@@ -19,8 +19,8 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
@@ -62,7 +62,7 @@ public class ManualCheckin
 {
 
 	/** Logger for this class and subclasses */
-	protected static final Log log = LogFactory.getLog(ManualCheckin.class);
+	private static final Logger log = LoggerFactory.getLogger(ManualCheckin.class);
 	private static final String PARAM_MRN = "mrn";
 	
 	public static void getManualCheckinPatient(HttpServletRequest request, HttpServletResponse response) throws IOException {

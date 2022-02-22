@@ -3,8 +3,8 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
@@ -23,7 +23,7 @@ import org.openmrs.module.chirdlutil.util.Util;
 public class providerAttributeLookup implements Rule {
 	
 	private LogicService logicService = Context.getLogicService();
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(providerAttributeLookup.class);
 	
 	/**
 	 * *

@@ -11,8 +11,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -45,7 +45,7 @@ import com.biscom.MessageStatus;
 @RequestMapping(value = "module/chica/faxStatus.form") 
 public class FaxStatusController {
 	
-	private final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(FaxStatusController.class);
 	
 	private static final String FORM_VIEW = "/module/chica/faxStatus";
 	private static final boolean ASCENDING = false;

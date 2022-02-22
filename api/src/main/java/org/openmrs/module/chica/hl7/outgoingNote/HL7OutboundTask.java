@@ -1,7 +1,7 @@
 package org.openmrs.module.chica.hl7.outgoingNote;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -16,7 +16,7 @@ import org.openmrs.scheduler.tasks.AbstractTask;
  */
 public class HL7OutboundTask extends AbstractTask
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7OutboundTask.class);
 	private String host;
 	private Integer port;
 	private Integer socketReadTimeout;

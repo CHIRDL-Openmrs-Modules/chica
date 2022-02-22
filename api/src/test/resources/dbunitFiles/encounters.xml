@@ -1,22 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
+<!DOCTYPE dataset SYSTEM "tableSetupDTD.dtd">
 <dataset>
-  <location location_id="1" name="Unknown Location" address1="" address2="" city_village="" state_province="" postal_code="" country="" creator="1" date_created="2005-09-22 00:00:00.0" retired="0"/>
-  <location location_id="2" name="INPC" creator="1" date_created="2008-05-14 08:47:20.0" retired="0"/>
-  <location location_id="3" name="PEDIATRICS" creator="1" date_created="2008-05-14 08:50:21.0" retired="0"/>
-  <location location_id="4" name="PEDS" creator="1" date_created="2008-08-19 15:02:19.0" retired="0"/>
-  <location location_id="5" name="PEPS" creator="1" date_created="2008-12-08 14:21:20.0" retired="0"/>
-  <!--<person person_id="2298" gender="M" birthdate="2016-01-01" birthdate_estimated="0" dead="0" creator="1" date_created="2016-01-01 00:00:00.0" voided="0" deathdate_estimated="0" uuid="222" />
-  <patient patient_id="2298" creator="1" date_created="2016-01-01 00:00:00.0" voided="0" allergy_status="unknown"/>
-  <patient patient_id="7" creator="1" date_created="2016-01-01 00:00:00.0" voided="0" allergy_status="unknown"/>-->
-  <encounter_type encounter_type_id="1" name="ADULTINITIAL" description="Outpatient Adult Initial Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0"/>
-  <encounter_type encounter_type_id="2" name="ADULTRETURN" description="Outpatient Adult Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0"/>
-  <encounter_type encounter_type_id="3" name="PEDSINITIAL" description="Outpatient Pediatric Initial Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0"/>
-  <encounter_type encounter_type_id="4" name="PEDSRETURN" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0"/>
-   <encounter_type encounter_type_id="5" name="CHICA" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0"/>
-  <encounter  encounter_id="1" patient_id="30520" location_id="3" encounter_type="5" encounter_datetime="2008-08-27 09:09:00.0" creator="1" date_created="2008-12-30 07:43:12.0" voided="0" scheduled_datetime="2008-04-04 09:09:00.0" insurance_sms_code="B50" printer_location="1" uuid="1e76b7e2-1894-11e7-93ae-92361f002674"/>
-  <encounter  encounter_id="30" patient_id="30520" location_id="2" form_id="1" encounter_datetime="2008-08-19 00:00:00.0" creator="1" date_created="2008-08-19 12:34:40.0" voided="0" encounter_type="5" uuid="5e76b7e2-1894-11e7-93ae-92361f002674" />
-  <encounter_role encounter_role_id="22" name="Attending Provider" creator="1" date_created="2008-08-19 00:00:00.0" retired="0" uuid="7280c75c-1897-11e7-93ae-92361f002673" />
-  <encounter_provider encounter_provider_id="502" encounter_id="1" provider_id="502" encounter_role_id="22" creator="1" date_created="2008-08-19 00:00:00.0" voided="0" uuid="cce28722-1896-11e7-93ae-92361f002671" />
-  <encounter_provider encounter_provider_id="2" encounter_id="30" provider_id="502" encounter_role_id="22" creator="1" date_created="2008-08-19 00:00:00.0" voided="0" uuid="cce28722-1896-11e7-93ae-92361f002672" />
+  <location location_id="1" name="Unknown Location" address1="" address2="" city_village="" state_province="" postal_code="" country="" creator="1" date_created="2005-09-22 00:00:00.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f002172"/>
+  <location location_id="2" name="INPC" creator="1" date_created="2008-05-14 08:47:20.0" retired="0" uuid="cce28722-1896-11e7-93ae-92362f002672"/>
+  <location location_id="3" name="PEDIATRICS" creator="1" date_created="2008-05-14 08:50:21.0" retired="0" uuid="cce28722-1896-11e7-93ae-92364f002672"/>
+  <location location_id="4" name="PEDS" creator="1" date_created="2008-08-19 15:02:19.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f002572"/>
+  <location location_id="5" name="PEPS" creator="1" date_created="2008-12-08 14:21:20.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f002672"/>
+  <encounter_type encounter_type_id="1" name="ADULTINITIAL" description="Outpatient Adult Initial Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f002172"/>
+  <encounter_type encounter_type_id="2" name="ADULTRETURN" description="Outpatient Adult Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f002672"/>
+  <encounter_type encounter_type_id="3" name="PEDSINITIAL" description="Outpatient Pediatric Initial Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f032672"/>
+  <encounter_type encounter_type_id="4" name="PEDSRETURN" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f002572"/>
+  <encounter_type encounter_type_id="5" name="CHICA" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="cce28722-1896-11e7-93ae-92361f072672"/>
+  <encounter encounter_id="1" patient_id="30520" location_id="3" encounter_datetime="2008-08-27 09:09:00.0" creator="1" date_created="2008-12-30 07:43:12.0" voided="false" scheduled_datetime="2008-04-04 09:09:00.0" insurance_sms_code="B50" printer_location="1" uuid="5e76b7e2-1894-11e7-93ae-92361f002676"/>
+  <encounter encounter_id="30" patient_id="7" location_id="2" form_id="1" encounter_datetime="2008-08-19 00:00:00.0" creator="1" date_created="2008-08-19 12:34:40.0" voided="false" encounter_type="4" uuid="5e76b7e2-1894-11e7-93ae-92361f002674" />
+  <encounter_role encounter_role_id="22" name="Attending Provider" creator="1" date_created="2008-08-19 00:00:00.0" retired="false" uuid="7280c75c-1897-11e7-93ae-92361f002673" />
+  <encounter_provider encounter_provider_id="1" encounter_id="1" provider_id="502" encounter_role_id="22" creator="1" date_created="2008-08-19 00:00:00.0" voided="false" uuid="cce28722-1896-11e7-93ae-92361f002671" />
+  <encounter_provider encounter_provider_id="2" encounter_id="30" provider_id="502" encounter_role_id="22" creator="1" date_created="2008-08-19 00:00:00.0" voided="false" uuid="cce28722-1896-11e7-93ae-92361f002672" />
 </dataset>

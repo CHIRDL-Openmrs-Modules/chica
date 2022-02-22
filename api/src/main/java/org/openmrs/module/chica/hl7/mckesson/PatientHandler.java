@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -25,7 +25,7 @@ import ca.uhn.hl7v2.model.Message;
 
 public class PatientHandler extends org.openmrs.module.sockethl7listener.PatientHandler
 {
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(PatientHandler.class);
 
 	public PatientHandler()
 	{

@@ -6,8 +6,8 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -22,7 +22,7 @@ import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
  */
 public class HL7OutboundHandler implements Runnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7OutboundHandler.class);
 	private String host;
 	private Integer port;
 	private Integer socketReadTimeout;

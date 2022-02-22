@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
@@ -24,7 +24,7 @@ import ca.uhn.hl7v2.parser.Parser;
  */
 public class ProcessMessageRunnable implements RunnableResult<Message> {
 	
-	private Log logger = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ProcessMessageRunnable.class);
 	private Message message;
 	private Message response;
 	private HL7SocketHandler socketHandler;
@@ -73,30 +73,30 @@ public class ProcessMessageRunnable implements RunnableResult<Message> {
 				
 			}
 			catch (IOException e) {
-				this.logger.error("Error creating ACK message." + e.getMessage());
+				log.error("Error creating ACK message." + e.getMessage());
 				this.exception = e;
 			}
 			catch (HL7Exception e) {
-				this.logger.error("Parser error constructing ACK.", e);
+				log.error("Parser error constructing ACK.", e);
 				this.exception = e;
 			}
 			catch (Exception e) {
-				this.logger.error("Exception processing inbound vitals HL7 message.", e);
+				log.error("Exception processing inbound vitals HL7 message.", e);
 				this.exception = e;
 			}
 			
 			Context.clearSession();
 		}
 		catch (ContextAuthenticationException e) {
-			this.logger.error("Context Authentication exception: ", e);
+			log.error("Context Authentication exception: ", e);
 			this.exception = e;
 		}
 		catch (ClassCastException e) {
-			this.logger.error("Error casting to " + this.message.getClass().getName() + " ", e);
+			log.error("Error casting to " + this.message.getClass().getName() + " ", e);
 			this.exception = new ApplicationException("Invalid message type for handler");
 		}
 		catch (HL7Exception e) {
-			this.logger.error("Error while processing hl7 message", e);
+			log.error("Error while processing hl7 message", e);
 			this.exception = new ApplicationException(e);
 		}
 		finally {
@@ -107,7 +107,7 @@ public class ProcessMessageRunnable implements RunnableResult<Message> {
 					this.response = org.openmrs.module.sockethl7listener.util.Util.makeACK(msh, error, null, null);
 				}
 				catch (Exception e) {
-					this.logger.error("Could not send acknowledgement", e);
+					log.error("Could not send acknowledgement", e);
 					this.exception = e;
 				}
 			}

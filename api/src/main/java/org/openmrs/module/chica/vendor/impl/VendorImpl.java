@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Form;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.vendor.Vendor;
@@ -37,7 +37,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class VendorImpl implements Vendor {
 	
-	private static Log log = LogFactory.getLog(VendorImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(VendorImpl.class);
 	
 	protected static final String PARAM_MRN = "mrn";
 	protected static final String PARAM_PROVIDER_ID = "providerId";

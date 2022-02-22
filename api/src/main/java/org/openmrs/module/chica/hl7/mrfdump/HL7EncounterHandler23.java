@@ -6,8 +6,8 @@ package org.openmrs.module.chica.hl7.mrfdump;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.PersonName;
 import org.openmrs.module.chica.hl7.ZPV;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.model.v23.segment.OBR;
  */
 public class HL7EncounterHandler23 implements HL7EncounterHandler{
 	
-	protected final Log logger = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7EncounterHandler23.class);
 	
 	//doctor name has a different format in chica messages
 	protected PersonName getDoctorName(Message message)
@@ -48,7 +48,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 			doctor = pv1.getAttendingDoctor(0);
 		} catch (Exception e)
 		{
-			this.logger.warn("Unable to parse doctor name from PV1. Message: "
+			log.warn("Unable to parse doctor name from PV1. Message: "
 					+ e.getMessage());
 		}
 		if (doctor != null)
@@ -242,9 +242,9 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 
 		} catch (Exception e2)
 		{
-			this.logger.error("Unable to collect provider id from PV1 segment");
-			this.logger.error(e2.getMessage());
-			this.logger.error(Util.getStackTrace(e2));
+			log.error("Unable to collect provider id from PV1 segment");
+			log.error(e2.getMessage());
+			log.error(Util.getStackTrace(e2));
 		}
 		return null;
 	}
@@ -274,7 +274,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 		} 
 		catch (RuntimeException e)
 		{
-			logger.error("Unable to parse visit number from PV1-19.", e);
+			log.error("Unable to parse visit number from PV1-19.", e);
 		}
 
 		if (visitNumber != null)
@@ -285,7 +285,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 			} 
 			catch (RuntimeException e1)
 			{
-				logger.error("Visit number not available in PV1-19 segment.", e1);
+				log.error("Visit number not available in PV1-19 segment.", e1);
 			}
 		}
 		return null;

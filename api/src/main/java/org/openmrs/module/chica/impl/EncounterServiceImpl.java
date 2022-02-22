@@ -1,6 +1,5 @@
 package org.openmrs.module.chica.impl;
 
-import org.openmrs.annotation.Authorized;
 import org.openmrs.module.chica.service.EncounterService;
 
 /**
@@ -28,6 +27,5 @@ public class EncounterServiceImpl extends org.openmrs.api.impl.EncounterServiceI
 		this.dao = dao;
 		super.setEncounterDAO(this.dao);
 	}
-	
 	
 }

@@ -13,8 +13,8 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
@@ -33,7 +33,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 
 public class sendCHIRPUpdate implements Rule
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(sendCHIRPUpdate.class);
 	/**
 	 * *
 	 * 

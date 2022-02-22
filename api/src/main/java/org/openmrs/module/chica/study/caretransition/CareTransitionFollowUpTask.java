@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
@@ -51,7 +51,7 @@ import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
  */
 public class CareTransitionFollowUpTask extends AbstractTask {
 	
-    protected Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(CareTransitionFollowUpTask.class);
 	
 	protected static final String GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS = 
             "chica.careTransitionFollowUpEmailBackupRecipients";

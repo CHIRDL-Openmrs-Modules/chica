@@ -53,16 +53,14 @@ public class TestEncounterService extends BaseModuleContextSensitiveTest
 		executeDataSet(TestUtil.ENCOUNTERS_FILE);
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		int patientId = 30520;
-		int encounterId = 1;
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(1, Calendar.OCTOBER, 2007);
 		Iterator<Encounter> iter = null;
 
 		// test all methods that return encounters from chica Encounter Service
 
-		Encounter encounter = encounterService.getEncounter(encounterId);
-		Assertions.assertNotNull(encounter, "Encounter not found for encounter id " + encounterId);
-		
+		Encounter encounter = encounterService.getEncounter(1);
+		Assertions.assertNotNull(encounter, "Encounter not found for encounter id 1");	
 		List<Encounter> encounterList = encounterService
 				.getEncountersByPatientId(patientId);
 		

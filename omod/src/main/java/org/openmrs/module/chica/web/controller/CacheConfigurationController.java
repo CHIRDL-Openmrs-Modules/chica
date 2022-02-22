@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.util.AtdConstants;
@@ -32,7 +32,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = "module/chica/cacheConfiguration.form")
 public class CacheConfigurationController {
 	
-	private final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(CacheConfigurationController.class);
 	
 	/** Form view */
     private static final String FORM_VIEW = "/module/chica/cacheConfiguration";

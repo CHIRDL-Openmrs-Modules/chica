@@ -1,130 +1,130 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
+<!DOCTYPE dataset SYSTEM "tableSetupDTD.dtd">
 <dataset>
 	<person person_id="222" gender="M" birthdate="1970-01-01"
-		birthdate_estimated="0" dead="0" creator="1"
-		date_created="2005-01-01 00:00:00.0" voided="0"
-		uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b80" />
-	<person person_id="1" gender="" dead="0" creator="1"
-		date_created="2005-01-01 00:00:00.0" voided="0" />
+		birthdate_estimated="false" dead="false" creator="1"
+		date_created="2005-01-01 00:00:00.0" voided="false"
+		uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b66"/>
+	<person person_id="1" gender="" dead="false" creator="1"
+		date_created="2005-01-01 00:00:00.0" voided="false" uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b10" />
 	<person person_id="9350" gender="M" birthdate="2006-01-01"
-		birthdate_estimated="true" dead="0" creator="1"
+		birthdate_estimated="true" dead="false" creator="1"
 		date_created="2007-11-01 13:38:17.0" changed_by="1"
-		date_changed="2007-11-01 00:00:00.0" voided="0" void_reason="" />
-	<person person_id="30515" gender="U" birthdate_estimated="0"
-		dead="0" creator="1" date_created="2008-09-12 09:18:50.0" voided="0" />
+		date_changed="2007-11-01 00:00:00.0" voided="false" void_reason="" uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b20" />
+	<person person_id="30515" gender="U" birthdate_estimated="false"
+		dead="false" creator="1" date_created="2008-09-12 09:18:50.0" voided="false" uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0280" />
 	<person person_id="30520" gender="M" birthdate="2002-08-02"
-		birthdate_estimated="0" dead="0" creator="1"
+		birthdate_estimated="false" dead="false" creator="1"
 		date_created="2008-12-08 15:11:52.0" changed_by="1"
-		date_changed="2008-12-08 15:11:52.0" voided="0" />
+		date_changed="2008-12-08 15:11:52.0" voided="false" uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c1b80" />
 	<patient patient_id="30520" creator="1" date_created="2008-12-08 15:11:52.0"
 		changed_by="1" date_changed="2008-12-08 15:11:52.0" voided="true"
 		voided_by="1" date_voided="2008-12-08 15:11:52.0" void_reason="Merged with patient #30520" />
 	<patient_identifier_type
 		patient_identifier_type_id="1" name="OpenMRS Identification Number"
 		description="Unique number used in OpenMRS" format=""
-		creator="1" date_created="2005-09-22 00:00:00.0" required="0"
+		creator="1" date_created="2005-09-22 00:00:00.0" required="false"
 		validator="org.openmrs.patient.impl.LuhnIdentifierValidator" retired="0" />
 	<patient_identifier_type
 		patient_identifier_type_id="2" name="Old Identification Number"
-		description="Number given out prior to the OpenMRS system (No check digit)"
-		format="" creator="1" date_created="2005-09-22 00:00:00.0"
-		required="0" retired="0" />
+		description="Number given out prior to the OpenMRS system No check digit" 
+        format="" creator="1" date_created="2005-09-22 00:00:00.0"
+		required="false" retired="0" />
 	<patient_identifier_type
 		patient_identifier_type_id="3" name="MRN_OTHER" description="Other medical record number"
 		creator="1" date_created="2008-05-14 08:48:57.0"
-		required="0" validator="org.openmrs.patient.impl.LuhnIdentifierValidator"
+		required="false" validator="org.openmrs.patient.impl.LuhnIdentifierValidator"
 		retired="0" />
 	<patient_identifier_type
 		patient_identifier_type_id="4" name="SSN" description="social security number"
 		creator="1" date_created="2008-09-10 11:26:21.0"
-		required="0" validator="org.openmrs.module.chica.hl7.SSNValidator"
+		required="false" validator="org.openmrs.module.chica.hl7.SSNValidator"
 		retired="0" />
 	<person_address person_address_id="1" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" latitude=""
-		longitude="" creator="1" date_created="2008-08-27 09:09:00.0" voided="0"
+		longitude="" creator="1" date_created="2008-08-27 09:09:00.0" voided="false"
 		void_reason="" />
 	<person_address person_address_id="2" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="3" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="4" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="5" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="6" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="7" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="8" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="9" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="10" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="11" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="12" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="13" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="14" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="15" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="16" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="17" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="18" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="19" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="20" person_id="30520"
-		preferred="0" address1="555 TEST ST" address2="" city_village="TEST CITY"
+		preferred="false" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_address person_address_id="22" person_id="30520"
 		preferred="true" address1="555 TEST ST" address2="" city_village="TEST CITY"
 		state_province="IN" postal_code="55555" country="" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_attribute_type person_attribute_type_id="1"
 		name="Race" description="Group of persons related by common descent or heredity"
 		format="java.lang.String" searchable="0" creator="1" date_created="2007-05-04 00:00:00"
@@ -181,15 +181,15 @@
 		searchable="1" creator="1" date_created="2009-06-02 15:28:41" retired="0"
 		uuid="38c15127-7cbf-11e0-b8a1-00059a3c7800" sort_weight="17" />
 	<person_attribute_type person_attribute_type_id="14"
-		name="MatDepressionStudy_Repeat (10541)" description="MatDepressionStudy_Repeat (10541)"
+		name="MatDepressionStudy_Repeat 10541" description="MatDepressionStudy_Repeat 10541"
 		format="java.lang.String" searchable="0" creator="1" date_created="2009-06-02 16:06:17"
 		retired="0" uuid="38c15328-7cbf-11e0-b8a1-00059a3c7800" sort_weight="7" />
 	<person_attribute_type person_attribute_type_id="15"
-		name="smoking_study_arm (15452)" description="smoking_study_arm (15452)"
+		name="smoking_study_arm 15452" description="smoking_study_arm 15452"
 		format="java.lang.String" searchable="0" creator="1" date_created="2009-06-02 16:06:17"
 		retired="0" uuid="38c1551d-7cbf-11e0-b8a1-00059a3c7800" sort_weight="18" />
 	<person_attribute_type person_attribute_type_id="16"
-		name="K22STUDY1 (9676)" description="K22STUDY1 (9676)" format="java.lang.String"
+		name="K22STUDY1 9676" description="K22STUDY1 9676" format="java.lang.String"
 		searchable="0" creator="1" date_created="2009-06-18 08:47:46" retired="0"
 		uuid="38c15722-7cbf-11e0-b8a1-00059a3c7800" sort_weight="6" />
 	<person_attribute_type person_attribute_type_id="17"
@@ -214,33 +214,33 @@
 		uuid="38c16129-7cbf-11e0-b8a1-00059a3c7800" sort_weight="0" />
 	<person_attribute person_attribute_id="83" person_id="30515"
 		value="055555" person_attribute_type_id="13" creator="1"
-		date_created="2008-09-12 09:18:50.0" voided="0" />
+		date_created="2008-09-12 09:18:50.0" voided="false" />
 	<person_attribute person_attribute_id="108" person_id="30520"
 		value="1" person_attribute_type_id="1" creator="1" date_created="2008-08-27 09:09:00.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="109" person_id="30520"
 		value=" " person_attribute_type_id="2" creator="1" date_created="2008-08-27 09:09:00.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="110" person_id="30520"
 		value=" " person_attribute_type_id="3" creator="1" date_created="2008-08-27 09:09:00.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="111" person_id="30520"
 		value="S" person_attribute_type_id="5" creator="1" date_created="2008-08-27 09:09:00.0"
 		voided="true" voided_by="1" void_reason="New value: " />
 	<person_attribute person_attribute_id="112" person_id="30520"
-		value="(555)555-5555" person_attribute_type_id="8" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		value="555 555-5555" person_attribute_type_id="8" creator="1"
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_attribute person_attribute_id="113" person_id="30520"
 		value="mrn:999-3;fn:John;ln:Patient;race:1;" person_attribute_type_id="9"
-		creator="1" date_created="2008-08-27 09:09:00.0" voided="0" />
+		creator="1" date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_attribute person_attribute_id="114" person_id="30520"
 		value="OTH" person_attribute_type_id="11" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_attribute person_attribute_id="115" person_id="30520"
 		value="JENNY" person_attribute_type_id="12" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" />
+		date_created="2008-08-27 09:09:00.0" voided="false" />
 	<person_attribute person_attribute_id="116" person_id="30520"
-		value="Control (1755)" person_attribute_type_id="14" creator="1"
+		value="Control 1755" person_attribute_type_id="14" creator="1"
 		date_created="2008-10-08 10:44:12.0" voided="true" voided_by="1"
 		void_reason="New value: " />
 	<person_attribute person_attribute_id="117" person_id="30520"
@@ -251,35 +251,35 @@
 		voided="true" voided_by="1" void_reason="New value: S" />
 	<person_attribute person_attribute_id="119" person_id="30520"
 		value="" person_attribute_type_id="6" creator="1" date_created="2008-12-05 14:35:15.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="120" person_id="30520"
 		value="" person_attribute_type_id="7" creator="1" date_created="2008-12-05 14:35:15.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="121" person_id="30520"
 		value="" person_attribute_type_id="13" creator="1" date_created="2008-12-05 14:35:15.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="122" person_id="30520"
 		value="" person_attribute_type_id="14" creator="1" date_created="2008-12-05 14:35:15.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="123" person_id="30520"
 		value="" person_attribute_type_id="15" creator="1" date_created="2008-12-05 14:35:15.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="124" person_id="30520"
 		value="" person_attribute_type_id="16" creator="1" date_created="2008-12-05 14:35:15.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="125" person_id="30520"
 		value="" person_attribute_type_id="17" creator="1" date_created="2008-12-05 14:35:15.0"
-		voided="0" />
+		voided="false" />
 	<person_attribute person_attribute_id="126" person_id="30520"
 		value="S" person_attribute_type_id="5" creator="1" date_created="2008-08-27 09:09:00.0"
-		voided="0" />
-	<person_name person_name_id="3" preferred="0"
+		voided="false" />
+	<person_name person_name_id="3" preferred="false"
 		person_id="30515" given_name="JOHN" middle_name="" family_name="SMITH"
-		creator="1" date_created="2008-09-12 09:18:50.0" voided="0" />
+		creator="1" date_created="2008-09-12 09:18:50.0" voided="false" />
 	<person_name person_name_id="8" preferred="true" person_id="30520"
 		given_name="John" middle_name="James" family_name="Patient" creator="1"
-		date_created="2008-08-27 09:09:00.0" voided="0" void_reason="" />
+		date_created="2008-08-27 09:09:00.0" voided="false" void_reason="" />
 	<provider provider_id="502" person_id="222" name="Hippocrates  of Cos"
-		creator="1" date_created="2008-08-19 00:00:00.0" retired="0"
+		creator="1" date_created="2008-08-19 00:00:00.0" retired="false"
 		uuid="66443d12-1896-11e7-93ae-92361f002671" />
 </dataset>

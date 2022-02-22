@@ -14,8 +14,8 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Location;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
@@ -46,7 +46,7 @@ public class Pager {
 	private static final String FAIL = "fail";
 	
 	/** Logger for this class and subclasses */
-	protected final static Log log = LogFactory.getLog(Pager.class);
+	private static final Logger log = LoggerFactory.getLogger(Pager.class);
 	private static HashMap<Integer, Date> thresholdDateByLocation = new HashMap<Integer, Date>();
 	
 	public static void sendPage(HttpServletRequest request, HttpServletResponse response) throws IOException {

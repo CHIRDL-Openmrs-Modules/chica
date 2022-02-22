@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.model.v23.datatype.XTN;
 public class HL7PatientHandler23 implements HL7PatientHandler
 {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7PatientHandler23.class);
 	
 	public String getMothersName(Message message)
 	{
@@ -66,7 +66,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				}
 			} catch (RuntimeException e1)
 			{
-				this.logger
+				log
 						.debug("Warning: SSN information not available in PID segment.");
 			}
 		}
@@ -85,7 +85,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				religion = religionCE.getValue();
 			} catch (RuntimeException e1)
 			{
-				this.logger
+				log
 						.debug("Warning: religion information not available in PID segment.");
 			}
 		}
@@ -106,7 +106,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 			} catch (RuntimeException e1)
 			{
-				this.logger
+				log
 						.debug("Warning: marital information not available in PID segment.");
 			}
 
@@ -132,7 +132,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				}
 			} catch (RuntimeException e1)
 			{
-				this.logger
+				log
 						.debug("Warning: maiden information not available in PID segment.");
 			}
 
@@ -197,7 +197,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to collect  address from PID);", e);
+			log.warn("Unable to collect  address from PID);", e);
 		}
 		return addresses;
 	}
@@ -261,7 +261,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			}
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse birthplace from PID. Message: ", e);
+			log.warn("Unable to parse birthplace from PID. Message: ", e);
 		}
 		return birthPlace;
 	}
@@ -312,7 +312,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			}
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse gender from PID. Message: ", e);
+			log.warn("Unable to parse gender from PID. Message: ", e);
 		}
 		return null;
 	}
@@ -331,13 +331,13 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		} catch (RuntimeException e2)
 		{
 			// Unable to extract identifier from PID segment
-			this.logger
+			log
 					.error("Error extracting identifier from PID segment (MRN). ");
 			// Still need to continue. Execute find match without the identifer
 		}
 		if (identList == null)
 		{
-			this.logger.warn(" No patient identifier available for this message.");
+			log.warn(" No patient identifier available for this message.");
 			// Still need to continue. Execute find match without the identifer
 			return identifiers;
 		}
@@ -367,7 +367,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 						pit = patientService
 								.getPatientIdentifierTypeByName("MRN_OTHER");
 						// this is temporary for gathering data
-						this.logger
+						log
 								.error("insert into patient_identifier_type"
 										+ "(name, description, format, check_digit, "
 										+ "creator, date_created, required, format_description) "
@@ -383,7 +383,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 				} else
 				{
-					this.logger.error("No MRN in PID segement. ");
+					log.error("No MRN in PID segement. ");
 				}
 
 			}
@@ -454,7 +454,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse patient name. Message: "
+			log.warn("Unable to parse patient name. Message: "
 					+ e.getMessage());
 		}
 
@@ -470,7 +470,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			ceRace = pid.getRace();
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse race from PID. Message: "
+			log.warn("Unable to parse race from PID. Message: "
 					+ e.getMessage());
 		}
 
@@ -481,7 +481,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				return ceRace.getValue();
 			} catch (RuntimeException e1)
 			{
-				this.logger
+				log
 						.debug("Warning: Race information not available in PID segment.");
 			}
 		}

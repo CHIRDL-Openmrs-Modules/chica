@@ -12,8 +12,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.SslConfigurator;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -39,7 +39,7 @@ import org.springframework.http.HttpStatus;
  */
 public class QueryGlooko implements ProcessStateAction
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(QueryGlooko.class);
 	
 	// This is expensive to create 
 	// I'm not sure that we'll need to initialize with SSLContext if the Glooko server doesn't need our certificate

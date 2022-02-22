@@ -6,8 +6,8 @@ package org.openmrs.module.chica.action;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.api.FormService;
@@ -44,7 +44,7 @@ public class LoadHL7ExportQueue implements ProcessStateAction
 	private static final String FORM_ATTRIBUTE_EXPORTABLE = "exportForm";
 	
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(LoadHL7ExportQueue.class);
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)

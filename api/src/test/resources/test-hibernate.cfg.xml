@@ -5,15 +5,15 @@
 
 <hibernate-configuration>
 	<session-factory>
-	    <mapping resource="bmiage.hbm.xml" />
+		<mapping resource="bmiage.hbm.xml" />
 		<mapping resource="chica_hl7_export_map.hbm.xml" />
 		<mapping resource="chica_hl7_export_status.hbm.xml" />
 		<mapping resource="chica_hl7_export.hbm.xml" />
 		<mapping resource="chica1_appointments.hbm.xml" />
 		<mapping resource="chica1_patient_obsv.hbm.xml" />
 		<mapping resource="chica1_patient.hbm.xml" />
-		<mapping resource="ddst.hbm.xml" /> 
-		<!--<mapping resource="encounter.hbm.xml" /> -->
+		<mapping resource="ddst.hbm.xml" />
+		<mapping resource="encounter.hbm.xml" />
 		<mapping resource="family.hbm.xml" />
 		<mapping resource="hcageinf.hbm.xml" />
 		<mapping resource="high_bp.hbm.xml" />
@@ -28,7 +28,7 @@
 	    <mapping resource="form_attribute.hbm.xml"/>
 	    <mapping resource="form_attribute_value.hbm.xml"/>
 	    <mapping resource="program.hbm.xml"/>
-        <mapping resource="state.hbm.xml"/> 
+	    <mapping resource="state.hbm.xml"/>
 	    <mapping resource="state_action.hbm.xml"/>
 	    <mapping resource="state_mapping.hbm.xml"/>
 	    <mapping resource="error_category.hbm.xml"/>

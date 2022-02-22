@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.atd.TeleformFileState;
@@ -21,7 +21,7 @@ import org.springframework.aop.AfterReturningAdvice;
  */
 public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(TriggerPatientAfterAdvice.class);
 
 	@Override
 	public void afterReturning(Object returnValue, Method method,

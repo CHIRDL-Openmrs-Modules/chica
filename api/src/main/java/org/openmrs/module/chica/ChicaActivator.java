@@ -2,8 +2,8 @@ package org.openmrs.module.chica;
 
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.EncounterType;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
@@ -22,7 +22,7 @@ import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
  */
 public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAware {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChicaActivator.class);
 	private static final String CHICA = "chica";
 	private static String encounterTypeValue = "";
 	

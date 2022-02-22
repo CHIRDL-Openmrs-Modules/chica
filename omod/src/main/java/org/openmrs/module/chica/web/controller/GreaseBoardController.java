@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -48,7 +48,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = "module/chica/greaseBoard.form")
 public class GreaseBoardController {
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(GreaseBoardController.class);
 	private static final String FORM = "greaseBoard.form";
 	
 	private static int numRefreshes = 0;

@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
@@ -49,7 +49,7 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class HL7StoreObsRunnable implements Runnable {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7StoreObsRunnable.class);
 	private Integer patientId;
 	private Integer locationId;
 	private Integer sessionId;

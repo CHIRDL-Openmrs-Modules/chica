@@ -10,8 +10,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
@@ -39,7 +39,7 @@ import org.openmrs.scheduler.tasks.AbstractTask;
 
 public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(AlertPhysicianHighRiskConditions.class);
 	
 	private static final String LOC_TAG_ATTR_HIGH_RISK_CONTACT = "HighRiskContact";
 	private static final String SUICIDE_CONCEPT = "suicide_concerns";

@@ -18,8 +18,8 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
@@ -43,7 +43,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 
 public class queryCHIRP implements Rule
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(queryCHIRP.class);
 	
 	/**
 	 * *

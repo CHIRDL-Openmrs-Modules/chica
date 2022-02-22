@@ -29,14 +29,13 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 import org.openmrs.Concept;
-import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -55,7 +54,6 @@ import org.openmrs.module.DaemonToken;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
-import org.openmrs.module.chica.ChicaActivator;
 import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
@@ -101,7 +99,7 @@ public class Util {
 	
 	public static final String DAY_ABBR = "do";
 	
-	private static Log log = LogFactory.getLog(Util.class);
+	private static final Logger log = LoggerFactory.getLogger(Util.class);
 	
 	public static final Random GENERATOR = new Random();
 	
@@ -116,7 +114,6 @@ public class Util {
 	private static PhysicianNoteConfig physicianNoteConfig = null;
 	private static long lastUpdatedPhysicianNoteConfig = System.currentTimeMillis();
 	private static final long PHYSICIAN_NOTE_CONFIG_UPDATE_CYCLE = 3600000; // 1 hour
-	public static final  String ENCOUNTER_TYPE_VALUE = "";
 	
 	/**
 	 * 
@@ -1712,10 +1709,5 @@ public class Util {
 		}
 		
 		return updatedNote;
-	}
-	
-	private  String setEncounterTypeValue(String encounterTypeValue) {
-return "";
-		//ENCOUNTER_TYPE_VALUE = encounterTypeValue;
 	}
 }

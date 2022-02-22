@@ -28,8 +28,8 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -100,7 +100,7 @@ public class HL7SocketHandler extends
 
 	private static final String HYPHEN = "-";
 
-	protected final static Log log = LogFactory.getLog(HL7SocketHandler.class);
+	private static final Logger log = LoggerFactory.getLogger(HL7SocketHandler.class);
 	
 	private static final String GLOBAL_PROPERTY_PARSE_ERROR_DIRECTORY = "chica.mckessonParseErrorDirectory";
 	

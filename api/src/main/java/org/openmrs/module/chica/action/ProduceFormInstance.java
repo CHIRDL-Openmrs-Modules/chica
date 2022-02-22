@@ -6,8 +6,8 @@ package org.openmrs.module.chica.action;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
@@ -30,7 +30,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFormInstance
 {
-	private static Log log = LogFactory.getLog(ProduceFormInstance.class);
+	private static final Logger log = LoggerFactory.getLogger(ProduceFormInstance.class);
 
 	/*
 	 * (non-Javadoc)

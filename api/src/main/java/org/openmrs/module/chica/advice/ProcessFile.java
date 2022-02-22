@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Hibernate;
 import org.openmrs.module.atd.TeleformFileState;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
@@ -23,7 +23,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
  */
 public class ProcessFile implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ProcessFile.class);
 
 	private PatientState patientState = null;
 	private String filename = null;

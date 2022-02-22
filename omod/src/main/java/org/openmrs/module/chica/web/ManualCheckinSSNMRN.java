@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
@@ -21,7 +21,7 @@ import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 public class ManualCheckinSSNMRN {
 	
 	/** Logger for this class and subclasses */
-	protected static final Log log = LogFactory.getLog(ManualCheckinSSNMRN.class);
+	private static final Logger log = LoggerFactory.getLogger(ManualCheckinSSNMRN.class);
 	private static final String PARAM_MRN = "mrn";
 	private static final String XML_MRN_VERIFICATION_START = "<mrnVerification>";
 	private static final String XML_MRN_VERIFICATION_END = "</mrnVerification>";

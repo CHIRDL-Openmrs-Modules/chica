@@ -9,8 +9,8 @@ import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -32,7 +32,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 public class FaxStatus {
 
 
-	private static final Log LOG = LogFactory.getLog(FaxStatus.class);
+	private static final Logger log = LoggerFactory.getLogger(FaxStatus.class);
 
 	private short id;
 	private XMLGregorianCalendar transmitTime;
@@ -117,7 +117,7 @@ public class FaxStatus {
 		        }
 		        
 		    } catch (Exception e) {
-		        LOG.error("Error setting fax patient information from form instance " + formInstance.toString() + ".", e);
+		        log.error("Error setting fax patient information from form instance " + formInstance.toString() + ".", e);
 		    }
 		}
 	}
@@ -440,7 +440,7 @@ public class FaxStatus {
 			//Do not print to log.
 			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		} catch (Exception e2){
-		    LOG.error("Unable to determine fax status form instance from idTag " + idTag, e2);
+		    log.error("Unable to determine fax status form instance from idTag " + idTag, e2);
 		}
 
 		return formInstance;
@@ -510,7 +510,7 @@ public class FaxStatus {
 			}
 
 		} catch (Exception e) {
-		    LOG.error("Unable to extract fax location (clinic) from form instance  " + formInstance.toString() + ".", e);
+		    log.error("Unable to extract fax location (clinic) from form instance  " + formInstance.toString() + ".", e);
 		}
 
 
@@ -571,7 +571,7 @@ public class FaxStatus {
 			}
 
 		} catch (Exception e) {
-		    LOG.error("Error setting fax patient information from form instance " + formInstance.toString() + "." , e);
+		    log.error("Error setting fax patient information from form instance " + formInstance.toString() + "." , e);
 		}
 
 	}

@@ -57,8 +57,12 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		State createState = backportsService.getState(98791);
 		FormInstance formInstance = new FormInstance(8992, 8971, 298237);
-		createPatientState(formInstance, patient, 23189, createState);
-		
+		PatientState patientState = createPatientState(formInstance, patient, 23189, createState);
+		if (patientState == null) {
+			System.out.println("patientstate was null");
+		} else {
+			System.out.println("patient state id is " + patientState.getPatientStateId());
+		}
 		rows.clear();
 		errorMessage = Util.getPatientSecondaryForms(rows, 23189);
 		Assertions.assertNull(errorMessage);
@@ -96,16 +100,8 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 	private PatientState createPatientState(FormInstance formInstance, Patient patient, Integer sessionId, State state) {
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
-		//Check if chirdlutilbackports service method recognized PatientState
-		PatientState patientStateTest = chirdlUtilBackportsService.getPatientState(1);
-		if (patientStateTest == null) {
-			System.out.println("patientStateTest is null");
-		} else {
-			System.out.println("patientStateTest is " + patientStateTest.getPatientId());
-		}
-		
 		PatientState createPatientState = new PatientState();
-	//	createPatientState.setPatientStateId(2);
+		createPatientState.setPatientStateId(1);
 		createPatientState.setStartTime(new Date());
 		createPatientState.setEndTime(new Date());
 		createPatientState.setFormInstance(formInstance);

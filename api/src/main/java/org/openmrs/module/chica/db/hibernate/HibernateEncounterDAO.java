@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.hibernate.SessionFactory;
 import org.openmrs.api.db.DAOException;
@@ -21,8 +21,8 @@ public class HibernateEncounterDAO extends
 		org.openmrs.api.db.hibernate.HibernateEncounterDAO implements
 		EncounterDAO
 {
-    private static final Log LOG = LogFactory.getLog(HibernateEncounterDAO.class);
-
+	private static final Logger log = LoggerFactory.getLogger(HibernateEncounterDAO.class);
+    private static final String ENCOUNTER_ENTITY_NAME = "chicaEncounter";	  
 	/**
 	 * Hibernate session factory
 	 */
@@ -68,7 +68,7 @@ public class HibernateEncounterDAO extends
 	public org.openmrs.Encounter getEncounter(Integer encounterId)
 	{
 		org.openmrs.Encounter encounter = (org.openmrs.Encounter) this.sessionFactory
-				.getCurrentSession().get(Encounter.class, encounterId);
+				.getCurrentSession().get("chicaEncounter", encounterId);
 
 		if (encounter == null)
 		{
@@ -77,11 +77,11 @@ public class HibernateEncounterDAO extends
 				// try refreshing the session
 				this.sessionFactory.getCurrentSession().clear();
 				encounter = (org.openmrs.Encounter) this.sessionFactory
-						.getCurrentSession().get(Encounter.class, encounterId);
+						.getCurrentSession().get("chicaEncounter", encounterId);
 			} catch (Exception e)
 			{
-				LOG.error(e.getMessage());
-				LOG.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				log.error(e.getMessage());
+				log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 		}
 

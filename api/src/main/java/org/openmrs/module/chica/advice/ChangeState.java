@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Hibernate;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
@@ -20,7 +20,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
  */
 public class ChangeState implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChangeState.class);
 
 	private PatientState patientState = null;
 	private HashMap<String, Object> parameters = null;

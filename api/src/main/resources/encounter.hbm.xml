@@ -4,7 +4,7 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 
  <hibernate-mapping auto-import="false">
-    <subclass name="org.openmrs.module.chica.hibernateBeans.Encounter" 
+    <subclass name="org.openmrs.module.chica.hibernateBeans.Encounter"  entity-name="chicaEncounter"
     extends="org.openmrs.Encounter" discriminator-value="not null">
           <property name="scheduledTime" type="java.util.Date"
            		column="scheduled_datetime"/>

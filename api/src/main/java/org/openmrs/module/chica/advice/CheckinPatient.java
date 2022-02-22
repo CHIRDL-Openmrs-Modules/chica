@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
@@ -28,7 +28,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class CheckinPatient implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(CheckinPatient.class);
 	private Integer encounterId = null; // Use encounterId instead of an encounter object to prevent lazy initialization errors
 
 	public CheckinPatient(Integer encounterId)

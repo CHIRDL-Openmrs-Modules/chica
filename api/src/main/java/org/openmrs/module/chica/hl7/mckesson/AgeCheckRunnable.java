@@ -2,8 +2,8 @@ package org.openmrs.module.chica.hl7.mckesson;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.api.LocationService;
@@ -23,7 +23,7 @@ import ca.uhn.hl7v2.model.Message;
  *
  */
 public class AgeCheckRunnable implements RunnableResult<Boolean> {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(AgeCheckRunnable.class);
 	private Boolean ageOk = Boolean.TRUE;
 	private Message message;
 	private String printerLocation;

@@ -3,8 +3,8 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
@@ -30,7 +30,7 @@ import org.openmrs.module.atd.service.ATDService;
 
 public class consumeWeight implements Rule
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(consumeWeight.class);
 	private LogicService logicService = Context.getLogicService();
 
 	/**

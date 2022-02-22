@@ -2,8 +2,8 @@ package org.openmrs.module.chica.hl7;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptNumeric;
@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.model.v25.segment.PV1;
 public class HL7ORU
 {
 	private ORU_R01 oru;
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7ORU.class);
 	private Encounter encounter = null;
 	private Patient patient = null;
 	

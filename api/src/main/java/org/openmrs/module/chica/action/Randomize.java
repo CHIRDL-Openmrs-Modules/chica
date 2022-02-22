@@ -6,8 +6,8 @@ package org.openmrs.module.chica.action;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -31,7 +31,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class Randomize implements ProcessStateAction
 {
-	private static Log log = LogFactory.getLog(Randomize.class);
+	private static final Logger log = LoggerFactory.getLogger(Randomize.class);
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)

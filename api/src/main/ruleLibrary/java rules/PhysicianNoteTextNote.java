@@ -3,8 +3,8 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.logic.Duration;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -24,7 +24,7 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 public class PhysicianNoteTextNote implements Rule
 {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(PhysicianNoteTextNote.class);
 	
 	/*
 	 * Enumeration of characters that must be replaced before sending them in HL7 or XML

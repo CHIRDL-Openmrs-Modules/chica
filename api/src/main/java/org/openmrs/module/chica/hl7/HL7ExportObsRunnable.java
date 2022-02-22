@@ -3,8 +3,8 @@ package org.openmrs.module.chica.hl7;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
@@ -29,7 +29,7 @@ import ca.uhn.hl7v2.model.v25.segment.OBX;
  */
 public class HL7ExportObsRunnable implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7ExportObsRunnable.class);
 	private Integer encounterId = null;
 	private Integer patientId = null;
 	private String conceptSourceString = null;

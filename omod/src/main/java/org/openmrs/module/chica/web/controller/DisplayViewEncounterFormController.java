@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
@@ -34,7 +34,8 @@ import org.springframework.web.servlet.view.RedirectView;
 public class DisplayViewEncounterFormController {
 	
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(DisplayViewEncounterFormController.class);
 	
 	private static final String FORM_VIEW = "/module/chica/displayViewEncounterForm";
 	private static final String PARAMETER_RIGHT_FORM_NAME = "rightFormName";

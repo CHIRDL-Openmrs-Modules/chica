@@ -20,8 +20,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -77,7 +77,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	
 	private static final String MODE = "mode";
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ExportPhysicianNote.class);
 	
 	private static final String TXA_ID = "1";
 	private static final String PV1_PATIENT_CLASS = "Outpatient";

@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -42,7 +42,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class GetPWSFieldValuesFromXML implements Rule{
 
-	private Log log = LogFactory.getLog(GetPWSFieldValuesFromXML.class);
+	private static final Logger log = LoggerFactory.getLogger(GetPWSFieldValuesFromXML.class);
 	private static final String PWS_PDF = "PWS_PDF";
 	private static final String RESULT_DELIM = "^^";
 	private static final String AT_CHAR = "@";

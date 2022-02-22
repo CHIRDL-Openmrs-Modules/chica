@@ -7,7 +7,6 @@ import java.util.Date;
 
 import org.openmrs.PersonName;
 import org.openmrs.module.chica.hl7.ZPV;
-import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

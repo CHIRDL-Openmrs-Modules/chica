@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
-<dataset>
+<!DOCTYPE dataset SYSTEM "tableSetupDTD.dtd">
+<dataset>  
     <person person_id="777" gender="F" dead="false" creator="1" date_created="2008-08-15 15:46:47.0" voided="false" uuid="7e93b11f-fc1f-4c3a-ab5f-cc6e3ded6c73"/>
     <person person_id="2298" gender="M" birthdate="2016-01-01" birthdate_estimated="false" dead="false" creator="1" date_created="2016-01-01 00:00:00.0" voided="false" uuid="f1b719b8-76d0-4515-9a9c-3ce5a50c0b80" />
     <patient patient_id="2298" creator="1" date_created="2016-01-01 00:00:00.0" voided="false" />
@@ -15,7 +15,7 @@
     <location_tag location_tag_id="2987" name="tag2987" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="2987398273792872983789273"/>
     <location_tag_map location_id="8992" location_tag_id="2987"/>
     <encounter_type encounter_type_id="1" name="HL7Message" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="kla9009812as9s8df908asdf"/>
-     <encounter_type encounter_type_id="5" name="CHICA" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="false"/>
+     <encounter_type encounter_type_id="5" name="CHICA" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="false" uuid="cce28722-1896-11e7-93ae-911361f002672"/>
     <encounter encounter_id="23189" encounter_type="5" patient_id="2298" location_id="8992" encounter_datetime="2017-08-15 15:46:47.0" creator="1" date_created="2017-08-15 15:46:47.0" voided="false" uuid="asdf98asd08asd908sadf98" />
     <chirdlutilbackports_session session_id="23189" encounter_id="23189"/>
     <chirdlutilbackports_state state_id="98791" name="JIT_mobile_create" />
@@ -30,5 +30,4 @@
     <chirdlutilbackports_form_instance form_id="8972" form_instance_id="298238" location_id="8992" />
     <chirdlutilbackports_form_instance form_id="8973" form_instance_id="298239" location_id="8992" />
     <chirdlutilbackports_form_instance form_id="8974" form_instance_id="298240" location_id="8992" />
-   <!--<chirdlutilbackports_patient_state patient_state_id="1"  start_time="2017-08-15 15:46:48.0" end_time="2017-08-15 15:46:49.0" form_instance_id="8971" location_tag_id="2987" patient_id="2298" session_id="23189" state="98791" retired="false" location_id="8992"/>    -->
-</dataset>
+   </dataset>

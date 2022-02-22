@@ -3,8 +3,8 @@
  */
 package org.openmrs.module.chica.hl7.vitals;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
@@ -18,7 +18,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class VitalsProcessor extends AbstractTask {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(VitalsProcessor.class);
 	
 	private VitalsHL7ListenerServer server = null;
 	
