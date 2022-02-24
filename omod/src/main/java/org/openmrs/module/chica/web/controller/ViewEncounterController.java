@@ -12,17 +12,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.APIException;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
@@ -30,6 +30,7 @@ import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -385,7 +386,7 @@ public class ViewEncounterController {
 				Integer encounterId = enc.getEncounterId();
 				PatientRow row = new PatientRow();
 				
-				Encounter enct = (Encounter) encounterService.getEncounter(encounterId);
+				Encounter enct = encounterService.getEncounter(encounterId);
 				if (enct == null)
 				{
 					continue;
@@ -409,13 +410,22 @@ public class ViewEncounterController {
 				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(enct);
 				String providerName = getProviderName(provider);
 				
+				//Get printer location from encounter attribute
+				String printerLocation = null;
+				EncounterAttributeValue printerLocationAttributeValue = chirdlutilbackportsService
+						.getEncounterAttributeValueByName(enct.getEncounterId(),
+								ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+				if (printerLocationAttributeValue != null) {
+					 printerLocation = printerLocationAttributeValue.getValueText();
+				}
+				
 				row.setPatientId(patient.getPatientId());
 				row.setFirstName(patient.getGivenName());
 				row.setLastName(patient.getFamilyName());
 				row.setMdName(providerName);
 				row.setCheckin(checkinDateString);
 				row.setEncounter(enct);
-				row.setStation(enct.getPrinterLocation());
+				row.setStation(printerLocation);
 				row.setAgeAtVisit(org.openmrs.module.chirdlutil.util.Util.adjustAgeUnits(patient.getBirthdate(), checkin));
 
 				// This section will add form instances to the row, which is used to populate the Action drop-down

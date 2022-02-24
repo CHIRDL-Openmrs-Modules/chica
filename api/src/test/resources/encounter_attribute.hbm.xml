@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<!-- DWE CHICA-633 Created new chirdlutilbackports_encounter_attribute table -->
+<hibernate-mapping package="org.openmrs.module.chirdlutilbackports">
+
+	<class name="org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute" table="chirdlutilbackports_encounter_attribute">
+		
+		<id name="encounterAttributeId" type="java.lang.Integer" column="encounter_attribute_id">
+			<generator class="native" />
+		</id>
+		
+		<discriminator column="encounter_attribute_id" insert="false" />
+		
+		<property name="name" type="java.lang.String" column="name" />
+		<property name="description" type="java.lang.String" column="description" />
+	</class>
+	
+</hibernate-mapping>

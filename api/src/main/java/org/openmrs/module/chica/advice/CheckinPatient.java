@@ -10,14 +10,18 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -45,37 +49,42 @@ public class CheckinPatient implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		this.log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+		log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
 			new Timestamp(new Date().getTime()) + ")");
 		
 		try
 		{
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			
-			org.openmrs.module.chica.service.EncounterService encounterService = Context
-								        .getService(org.openmrs.module.chica.service.EncounterService.class);
-			Encounter chicaEncounter = (Encounter) encounterService.getEncounter(this.encounterId);
-			
-			if(chicaEncounter == null){
+			EncounterService encounterService = Context.getEncounterService();
+			Encounter encounter = encounterService.getEncounter(encounterId);
+					
+			if(encounter == null){
 				return;
 			}
-								
-			Patient patient = chicaEncounter.getPatient();
+			
+			Patient patient = encounter.getPatient();
 
 			//The session is unique because only 1 session exists at checkin
-			List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(chicaEncounter.getEncounterId());
+			List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(encounter.getEncounterId());
 			Session session = sessions.get(0);
 			
 			Integer sessionId = session.getSessionId();
 			
 			Integer locationTagId = null;
 			Integer locationId = null;
+			String printerLocation =  null;	
 			
-			// lookup location tag id by printer location
-			String printerLocation = chicaEncounter.getPrinterLocation();
-			if (printerLocation != null)
-			{
-				Location location = chicaEncounter.getLocation();
+			// lookup location tag id by printer location					
+			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService
+					.getEncounterAttributeValueByName(encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+			
+			if (encounterAttributeValue != null) {
+				printerLocation =  encounterAttributeValue.getValueText();	
+			}
+						
+			if (printerLocation != null){
+				Location location = encounter.getLocation();
 				Set<LocationTag> tags = location.getTags();
 				for(LocationTag tag:tags){
 					if(printerLocation.equalsIgnoreCase(tag.getName())){ // CHICA-1151 replaced getTag() with getName()
@@ -92,10 +101,10 @@ public class CheckinPatient implements ChirdlRunnable
 					locationTagId,locationId,BaseStateActionHandler.getInstance());
 		} catch (Exception e)
 		{
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error(e.getMessage());
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}finally{
-			this.log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
+			log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
 				new Timestamp(new Date().getTime()) + ")");
 		}
 	}

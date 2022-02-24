@@ -6,6 +6,8 @@
     atd_patient_state*,
     chirdlutilbackports_program*,
     atd_session*,
+    chirdlutilbackports_encounter_attribute*,
+    chirdlutilbackports_encounter_attribute_value*,
     chirdlutilbackports_session*,
     chirdlutilbackports_form_instance*,
     chirdlutilbackports_state*,
@@ -229,6 +231,30 @@
     cutoff_age CDATA #REQUIRED
     reportable CDATA #IMPLIED
     ddst_id CDATA #REQUIRED
+>
+
+<!ELEMENT chirdlutilbackports_encounter_attribute EMPTY>
+<!ATTLIST chirdlutilbackports_encounter_attribute
+    encounter_attribute_id CDATA #REQUIRED
+    name CDATA #REQUIRED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT chirdlutilbackports_encounter_attribute_value EMPTY>
+<!ATTLIST chirdlutilbackports_encounter_attribute_value
+    encounter_attribute_value_id CDATA #REQUIRED
+    encounter_attribute_id CDATA #REQUIRED
+    encounter_id CDATA #REQUIRED
+    value_text CDATA #IMPLIED
+    creator CDATA #REQUIRED
+    date_created CDATA #REQUIRED
+    changed_by CDATA #IMPLIED
+    date_changed CDATA #IMPLIED
+    voided CDATA #REQUIRED
+    voided_by CDATA #IMPLIED
+    date_voided CDATA #IMPLIED
+    void_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT chirdlutilbackports_error EMPTY>

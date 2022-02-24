@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -24,7 +25,6 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
@@ -258,7 +258,7 @@ public interface ChicaService
 		FormInstance formInstance, int encounterId, Patient patient, Set<FormField> formFieldsToSave);
 	
 	@Authorized()
-	public List<org.openmrs.module.chica.hibernateBeans.Encounter> getEncountersForEnrolledPatients(Concept concept,
+	public List<Encounter> getEncountersForEnrolledPatients(Concept concept,
 			Date startDateTime, Date endDateTime);
 	
 	@Authorized()

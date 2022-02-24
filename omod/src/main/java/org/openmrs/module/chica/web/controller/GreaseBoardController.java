@@ -13,19 +13,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -166,7 +166,7 @@ public class GreaseBoardController {
 				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
 				EncounterService encounterService = Context.getService(EncounterService.class);
-				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+				Encounter encounter =  encounterService.getEncounter(encounterId);
 				String formName = Util.getFormNameByPrintOptionString(encounter, optionsString); 
 
 				if (StringUtils.isNotBlank(formName)) {

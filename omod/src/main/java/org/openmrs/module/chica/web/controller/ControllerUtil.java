@@ -1,6 +1,7 @@
 package org.openmrs.module.chica.web.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -20,6 +22,7 @@ import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PersonName;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
@@ -33,6 +36,7 @@ import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -353,8 +357,8 @@ public class ControllerUtil {
 	 * @param map              Map that will be returned to the client
 	 * @return Encounter object or null if one is not found.
 	 */
-	public static org.openmrs.module.chica.hibernateBeans.Encounter getPhysicianEncounterWithoutScannedTimeStamp(
-			List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService,
+	public static Encounter getPhysicianEncounterWithoutScannedTimeStamp(
+			List<Encounter> encounters, ChirdlUtilBackportsService backportsService,
 			Map<String, Object> map) {
 		return getEncounterWithoutScannedTimeStamp(encounters, backportsService, map, true);
 	}
@@ -368,8 +372,8 @@ public class ControllerUtil {
 	 * @param map              Map that will be returned to the client
 	 * @return Encounter object or null if one is not found.
 	 */
-	public static org.openmrs.module.chica.hibernateBeans.Encounter getPatientEncounterWithoutScannedTimeStamp(
-			List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService,
+	public static Encounter getPatientEncounterWithoutScannedTimeStamp(
+			List<Encounter> encounters, ChirdlUtilBackportsService backportsService,
 			Map<String, Object> map) {
 		return getEncounterWithoutScannedTimeStamp(encounters, backportsService, map, false);
 	}
@@ -383,21 +387,19 @@ public class ControllerUtil {
 	 * @param map              Map that will be returned to the client
 	 * @return Encounter object or null if one is not found.
 	 */
-	private static org.openmrs.module.chica.hibernateBeans.Encounter getEncounterWithoutScannedTimeStamp(
-			List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService,
+	private static Encounter getEncounterWithoutScannedTimeStamp(
+			List<Encounter> encounters, ChirdlUtilBackportsService backportsService,
 			Map<String, Object> map, boolean physicianForm) {
-		org.openmrs.module.chica.service.EncounterService encounterService = Context
-				.getService(org.openmrs.module.chica.service.EncounterService.class);
+		    EncounterService encounterService = Context.getEncounterService();
 		for (int i = encounters.size() - 1; i >= 0; i--) {
 			// Look up the encounter through the CHICA encounter service to prevent class
 			// cast exceptions.
 			Integer encounterId = encounters.get(i).getEncounterId();
-			org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = 
-					(org.openmrs.module.chica.hibernateBeans.Encounter) encounterService.getEncounter(encounterId);
+			Encounter encounter = encounterService.getEncounter(encounterId);
 			if (physicianForm) {
-				setPhysicianFormURLAttributes(chicaEncounter, map);
+				setPhysicianFormURLAttributes(encounter, map);
 			} else {
-				setPatientFormURLAttributes(chicaEncounter, map);
+				setPatientFormURLAttributes(encounter, map);
 			}
 			
 			String formName = (String) map.get(ChirdlUtilConstants.PARAMETER_FORM_NAME);
@@ -407,7 +409,7 @@ public class ControllerUtil {
 
 			if (StringUtils.isBlank(formName) || StringUtils.isBlank(formPage) || StringUtils.isBlank(startStateStr)
 					|| StringUtils.isBlank(endStateStr)) {
-				return chicaEncounter;
+				return encounter;
 			}
 
 			Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<>();
@@ -427,7 +429,7 @@ public class ControllerUtil {
 				boolean containsEndState = formIdToPatientStateMapEnd.containsKey(form.getFormId());
 
 				if (containsStartState && !containsEndState) {
-					return chicaEncounter;
+					return encounter;
 				}
 			}
 		}
@@ -441,7 +443,7 @@ public class ControllerUtil {
 	 * @param encounter Patient encounter object.
 	 * @param map       Map that will be returned to the client.
 	 */
-	public static void setPhysicianFormURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter,
+	public static void setPhysicianFormURLAttributes(Encounter encounter,
 			Map<String, Object> map) {
 		setURLAttributes(encounter, map, true);
 	}
@@ -452,7 +454,7 @@ public class ControllerUtil {
 	 * @param encounter Patient encounter object.
 	 * @param map       Map that will be returned to the client.
 	 */
-	public static void setPatientFormURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter,
+	public static void setPatientFormURLAttributes(Encounter encounter,
 			Map<String, Object> map) {
 		setURLAttributes(encounter, map, false);
 	}
@@ -464,19 +466,32 @@ public class ControllerUtil {
 	 * @param map       Map that will be returned to the client.
 	 * @param formName  The form name used to load URL attributes.
 	 */
-	private static void setURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter,
+	private static void setURLAttributes(Encounter encounter,
 			Map<String, Object> map, boolean physicianForm) {
+		
+		ChirdlUtilBackportsService chirdlUtilBackportsService = Context
+				.getService(ChirdlUtilBackportsService.class);
+		
 		Location location = encounter.getLocation();
 		if (location == null) {
 			return;
 		}
 
 		Integer locationId = location.getLocationId();
-		String locationTagString = encounter.getPrinterLocation();
+		
+		EncounterAttributeValue attributeValue = chirdlUtilBackportsService
+				.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+
+		String printerLocation =  null;	
+		
+		if (attributeValue != null) {
+			printerLocation =  attributeValue.getValueText();	
+		}
+			
 		LocationTag locationTag = null;
-		if (StringUtils.isNotBlank(locationTagString)) {
+		if (StringUtils.isNotBlank(printerLocation)) {
 			LocationService locationService = Context.getLocationService();
-			locationTag = locationService.getLocationTagByName(locationTagString);
+			locationTag = locationService.getLocationTagByName(printerLocation);
 		}
 
 		if (locationTag == null) {

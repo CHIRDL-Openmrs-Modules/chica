@@ -5,11 +5,11 @@
   
 <beans>
     
-    <bean parent="serviceContext">
+   <!--  <bean parent="serviceContext"> 
         <property name="moduleService">
             <list>
-                <value>org.openmrs.module.chica.service.EncounterService</value> <!-- service interface name -->
-                <bean class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+                <value>org.openmrs.module.chica.service.EncounterService</value> 
+                 <bean class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
                     <property name="transactionManager"><ref bean="transactionManager"/></property>
                     <property name="target">
                         <bean class="org.openmrs.module.chica.impl.EncounterServiceImpl">
@@ -31,8 +31,7 @@
                 </bean>
             </list>
         </property>
-    </bean>
-    
+    </bean> -->  
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>

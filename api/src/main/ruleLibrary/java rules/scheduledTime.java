@@ -1,5 +1,7 @@
 package org.openmrs.module.chica.rule;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,9 +14,12 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.Encounter;
+import org.openmrs.api.EncounterService;
+import java.text.ParseException;
 
 /**
  * 
@@ -34,20 +39,37 @@ public class scheduledTime implements Rule
 	public Result eval(LogicContext context, Integer patientId,
 			Map<String, Object> parameters) throws LogicException
 	{
-		EncounterService encounterService = (EncounterService) Context
-				.getService(EncounterService.class);
-
+		
 		Encounter encounter = null;
-		Integer encounterId = (Integer) parameters.get("encounterId");
-
-		if (encounterId != null)
-		{
-			encounter = (Encounter) encounterService.getEncounter(encounterId);
-			if(encounter != null)
-			{
-				return new Result(encounter.getScheduledTime());
-			}
+		Integer encounterIdParam = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
+ 
+		if (encounterIdParam == null) {
+			return Result.emptyResult();
 		}
+		
+		EncounterService encounterService = (EncounterService) Context.getService(EncounterService.class);
+		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
+		
+		encounter =  encounterService.getEncounter(encounterIdParam);
+		if(encounter == null){
+			return Result.emptyResult();
+		}
+		
+		EncounterAttributeValue encounterAttributeValue = chirdlUtilBackportsService
+				.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		
+		if (encounterAttributeValue == null) {
+			return Result.emptyResult(); 
+		}
+		
+		String scheduledTimeString  = encounterAttributeValue.getValueText();
+	
+		try {
+			Date scheduledDate =new SimpleDateFormat(ChirdlUtilConstants.DATE_FORMAT_HYPHEN_yyyy_MM_dd_hh_mm_ss).parse(scheduledTimeString); 
+			return new Result(scheduledDate);
+		} catch (ParseException e) {
+			//ignore
+		}		
 
 		return Result.emptyResult();
 	}

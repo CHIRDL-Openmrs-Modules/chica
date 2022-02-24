@@ -36,6 +36,7 @@ import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -44,6 +45,7 @@ import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
@@ -54,8 +56,6 @@ import org.openmrs.module.DaemonToken;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -65,6 +65,8 @@ import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClient;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClients;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
@@ -603,7 +605,7 @@ public class Util {
 			}
 			
 			// Filter out forms based on weight
-			Set<FormInstance> formInstances = new LinkedHashSet<FormInstance>(row.getFormInstances());
+			Set<FormInstance> formInstances = new LinkedHashSet<>(row.getFormInstances());
 			row.getFormInstances().clear();
 			Iterator<FormInstance> iter = formInstances.iterator();
 			while (iter.hasNext() && accumWeight < maxWeight) {
@@ -708,10 +710,10 @@ public class Util {
 	
 	public static void calculatePercentiles(Integer encounterId, Patient patient, Integer locationTagId) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		Encounter encounter = encounterService.getEncounter(encounterId);
 		ObsService obsService = Context.getObsService();
 		ATDService atdService = Context.getService(ATDService.class);
-		List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+		List<Encounter> encounters = new ArrayList<>();
 		encounters.add(encounter);
 		List<Concept> questions = new ArrayList<Concept>();
 		HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -818,15 +820,20 @@ public class Util {
 	public static Integer getLocationTagId(Encounter encounter) {
 		if (encounter != null) {
 			// lookup location tag id that matches printer location
-			if (encounter.getPrinterLocation() != null) {
-				Location location = encounter.getLocation();
-				Set<LocationTag> tags = location.getTags();
-
-				if (tags != null) {
-					for (LocationTag tag : tags) {
-						if (tag.getName().equalsIgnoreCase(
-								encounter.getPrinterLocation())) {
-							return tag.getLocationTagId();
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context
+					.getService(ChirdlUtilBackportsService.class);
+			EncounterAttributeValue printerEncounterAttributeValue  = chirdlutilbackportsService.
+					getEncounterAttributeValueByName( encounter.getEncounterId(), ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			if (printerEncounterAttributeValue != null) {
+				String printerLocation = printerEncounterAttributeValue.getValueText();
+				if (printerLocation!= null ) {
+					Location location = encounter.getLocation();
+					Set<LocationTag> tags = location.getTags();
+					if (tags != null) {
+						for (LocationTag tag : tags) {
+							if (tag.getName().equalsIgnoreCase(printerLocation)) {
+								return tag.getLocationTagId();
+							}
 						}
 					}
 				}
@@ -928,12 +935,20 @@ public class Util {
 					.getService(EncounterService.class);
 			Encounter encounter = (Encounter) encounterService
 					.getEncounter(encounterId);
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context
+					.getService(ChirdlUtilBackportsService.class);
 
 			if (encounter != null)
 			{
 				// see if the encounter has a printer location
 				// this will give us the location tag id
-				printerLocation = encounter.getPrinterLocation();
+				EncounterAttributeValue encounterAttributeValue =  chirdlutilbackportsService
+						.getEncounterAttributeValueByName( encounter.getEncounterId(), 
+								ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+				
+				if (encounterAttributeValue != null) {
+					printerLocation = encounterAttributeValue.getValueText();
+				}
 
 				// if the printer location is null, pick
 				// any location tag id for the given location
@@ -951,6 +966,7 @@ public class Util {
 						}
 					}
 				}
+				
 				if (printerLocation != null)
 				{
 					LocationService locationService = Context

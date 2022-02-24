@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -26,6 +27,7 @@ import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
@@ -49,7 +51,6 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
@@ -59,7 +60,6 @@ import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.study.dp3.DeviceSyncRunnable;
 import org.openmrs.module.chica.study.dp3.NewGlookoUserRunnable;
 import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
@@ -354,7 +354,7 @@ public class ChicaServiceImpl implements ChicaService
 
 		Map<Integer, PatientATD> fieldIdToPatientATDMap = new HashMap<Integer, PatientATD>();
 		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		Encounter encounter =  encounterService.getEncounter(encounterId);
 		Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
 		String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 
@@ -498,7 +498,7 @@ public class ChicaServiceImpl implements ChicaService
 		if (languageResponse != null) {
 			HashMap<Integer, String> answers = maxAnswers;
 			if (answers != null) {
-				String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+				String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 				Integer formInstanceId = formInstance.getFormInstanceId();
 				Integer locationId = formInstance.getLocationId();
 				for (Integer currRuleId : answers.keySet())
@@ -1073,12 +1073,12 @@ public class ChicaServiceImpl implements ChicaService
 			return getChicaDAO().getQuestionsScannedAnswered(formName, locationName);
 		}
             
-		public List< org.openmrs.module.chica.hibernateBeans.Encounter> getEncountersForEnrolledPatients(Concept concept,
+		public List<org.openmrs.Encounter> getEncountersForEnrolledPatients(Concept concept,
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
     	}
 		
-		public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
+		public  List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatientsExcludingConcepts(includeConcept, excludeConcept, startDateTime, endDateTime);
 		}

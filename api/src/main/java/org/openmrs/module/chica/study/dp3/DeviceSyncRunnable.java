@@ -10,9 +10,9 @@ import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -21,6 +21,8 @@ import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 
 /**
  * CHICA-1063
@@ -74,14 +76,20 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 					todaysDate.set(Calendar.HOUR_OF_DAY, 0);
 					todaysDate.set(Calendar.MINUTE, 0);
 					todaysDate.set(Calendar.SECOND, 0);
-					
-					List<Encounter> encounters = Context.getService(EncounterService.class).getEncounters(patient, null, todaysDate.getTime(), null, null, null, null, null, null, false);
+					EncounterService encounterService = Context.getService(EncounterService.class);
+		
+					EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder()
+							.setPatient(patient)
+							.setIncludeVoided(false)
+							.setFromDate(todaysDate.getTime())
+							.createEncounterSearchCriteria();
+					List<Encounter> encounters = encounterService.getEncounters(encounterSearchCriteria);
 					
 					if(encounters != null && encounters.size() > 0)
 					{
 						// Use the most recent encounter since the device sync happened right now, 
 						// we should be working off of the most recent encounter for the day
-						org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounters.get(0);
+						Encounter chicaEncounter = (Encounter)encounters.get(0);
 						
 						// Store the data type as an encounter attribute
 						// We could pass this through to the state action,

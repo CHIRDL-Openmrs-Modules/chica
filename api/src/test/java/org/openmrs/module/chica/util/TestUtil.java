@@ -58,9 +58,7 @@ public class TestUtil extends BaseModuleContextSensitiveTest {
 		State createState = backportsService.getState(98791);
 		FormInstance formInstance = new FormInstance(8992, 8971, 298237);
 		PatientState patientState = createPatientState(formInstance, patient, 23189, createState);
-		if (patientState == null) {
-			System.out.println("patientstate was null");
-		} else {
+		if (patientState != null) {
 			System.out.println("patient state id is " + patientState.getPatientStateId());
 		}
 		rows.clear();

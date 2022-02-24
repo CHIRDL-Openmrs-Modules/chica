@@ -5,8 +5,8 @@ package org.openmrs.module.chica.util;
 
 import java.util.Comparator;
 
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 
 /**
  * @author tmdugan

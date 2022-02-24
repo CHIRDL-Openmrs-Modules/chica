@@ -12,9 +12,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -29,8 +31,11 @@ import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
@@ -253,27 +258,39 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		Integer formInstanceId = 1;
 		Integer sessionId = 1;
 
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		PatientService patientService = Context.getPatientService();
 
-		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
+		Encounter encounter = new Encounter();
 		encounter.setEncounterType(new EncounterType(3));
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
 
 		encounter.setLocation(locationService.getLocation("Unknown Location"));
 		encounter.setPatient(patient);
+		Encounter savedEncounter = encounterService.saveEncounter(encounter);
+		Assertions.assertNotNull(savedEncounter);	
+		
 		Calendar scheduledTime = Calendar.getInstance();
 		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
-		encounter.setScheduledTime(scheduledTime.getTime());
-		encounterService.saveEncounter(encounter);
+		
+		EncounterAttribute encounterAttributeScheduledTime = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		Assertions.assertNotNull(encounterAttributeScheduledTime);	
+		EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeScheduledTime, savedEncounter.getEncounterId(), scheduledTime.getTime().toString());
+		chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+		encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName(savedEncounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		Assertions.assertNotNull(encounterAttributeValue);	
+
+		System.out.println(encounterAttributeValue.getValueText());
+		
+		
 		Integer encounterId = encounter.getEncounterId();
 		String generatedOutput = null;
 		String booleanString = adminService
 				.getGlobalProperty("atd.mergeTestCaseXML");
 		boolean merge = Boolean.parseBoolean(booleanString);
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+	
 
 		String PSFMergeDirectory = null;
 		FormService formService = Context.getFormService();
@@ -419,7 +436,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				.getService(EncounterService.class);
 		PatientService patientService = Context.getPatientService();
 		ATDService atdService = Context.getService(ATDService.class);
-		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
+		Encounter encounter = new Encounter();
 		encounter.setEncounterType(new EncounterType(3));
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
@@ -428,7 +445,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		encounter.setPatient(patient);
 		Calendar scheduledTime = Calendar.getInstance();
 		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
-		encounter.setScheduledTime(scheduledTime.getTime());
+		//encounter.setScheduledTime(scheduledTime.getTime());
 		encounterService.saveEncounter(encounter);
 		Integer encounterId = encounter.getEncounterId();
 		String generatedOutput = null;

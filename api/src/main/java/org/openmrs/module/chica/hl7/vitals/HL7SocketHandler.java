@@ -11,9 +11,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptNumeric;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -21,6 +23,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -28,7 +31,6 @@ import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chica.hl7.mrfdump.HL7EncounterHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chica.hl7.mrfdump.HL7PatientHandler23;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -53,7 +55,7 @@ import ca.uhn.hl7v2.model.v23.datatype.CX;
  */
 public class HL7SocketHandler implements Application {
 	
-	protected static final Logger logger = Logger.getLogger("SocketHandlerLogger");
+	private static final Logger log = LoggerFactory.getLogger(Util.class);
 	
 	private Integer port;
 	
@@ -108,12 +110,12 @@ public class HL7SocketHandler implements Application {
 	                    IOUtil.bufferedReadWrite(vitalsDumpInput, vitalsDumpFile, false);   
 			}
 			catch (FileNotFoundException e1) {
-				logger.error("Couldn't find file: " + vitalsDirectory + "/" + filename);
+				log.error("Couldn't find file: " + vitalsDirectory + "/" + filename);
 			}
             catch (IOException e2) {
-                logger.error("There was an error writing the vitals dump file");
-                logger.error(e2.getMessage());
-                logger.error(Util.getStackTrace(e2));
+                log.error("There was an error writing the vitals dump file");
+                log.error(e2.getMessage());
+                log.error(Util.getStackTrace(e2));
             }	
 		}
 	}
@@ -130,7 +132,7 @@ public class HL7SocketHandler implements Application {
 			messageProcessThread.join();
 		}
 		catch (InterruptedException e) {
-			logger.error("Process message thread interrupted.", e);
+			log.error("Process message thread interrupted.", e);
 			Thread.currentThread().interrupt();
 		}
 		
@@ -226,7 +228,7 @@ public class HL7SocketHandler implements Application {
 				patient = patients.get(0);
 			}
 			else{
-				logger.error("Unable to process vitals for patient with MRN: " + mrn);
+				log.error("Unable to process vitals for patient with MRN: " + mrn);
 				error = true;
 			}
 			
@@ -238,7 +240,7 @@ public class HL7SocketHandler implements Application {
 			// and processing the obs
 			if(patient != null){
 				
-				org.openmrs.module.chica.hibernateBeans.Encounter encounter = null;
+				Encounter encounter = null;
 				
 				// Check global property to determine if we should look up the encounter using the visit number
 				AdministrationService adminService = Context.getAdministrationService();
@@ -288,7 +290,7 @@ public class HL7SocketHandler implements Application {
 								String conceptIdString = obs.getConcept().getConceptId().toString();
 								Concept mappedConcept = conceptService.getConceptByMapping(conceptIdString, source);
 								if (mappedConcept == null) {
-									logger.error("Could not map vitals concept: " + conceptIdString
+									log.error("Could not map vitals concept: " + conceptIdString
 											+ ". Could not store vitals observation. Source : " + source);
 								} else {
 									if (obs.getValueCoded()!=null&&obs.getValueCoded().getConceptId() == 1) {
@@ -296,7 +298,7 @@ public class HL7SocketHandler implements Application {
 										if (answerConcept != null) {
 											String answerConceptName = answerConcept.getName().getName();
 											obs.setValueText(answerConceptName);
-											logger.error("Could not map vitals concept: " + answerConceptName
+											log.error("Could not map vitals concept: " + answerConceptName
 													+ ". Could not store vitals observation. Source : " + source);
 										}
 									}
@@ -312,7 +314,7 @@ public class HL7SocketHandler implements Application {
 										obsService.saveObs(obs, null);
 									}catch(APIException apie){
 										// CHICA-1017 Catch the exception and log it so that we can continue processing the message
-										logger.error("APIException while saving obs.", apie);
+										log.error("APIException while saving obs.", apie);
 									}
 									
 								}
@@ -321,30 +323,30 @@ public class HL7SocketHandler implements Application {
 							org.openmrs.module.chica.util.Util.calculatePercentiles(encounter.getEncounterId(), patient, locationTagId);
 
 							double duration = (new Date().getTime() - starttime.getTime()) / 1000.0;
-							logger.info("MESSAGE PROCESS TIME: " + duration + " sec");
+							log.info("MESSAGE PROCESS TIME: " + duration + " sec");
 						}
 						else
 						{
-							logger.error("Unable get session for encounter: " + encounterId);
+							log.error("Unable get session for encounter: " + encounterId);
 							error = true;
 						}
 					}
 					else
 					{
-						logger.error("Unable get location from encounter: " + encounterId);
+						log.error("Unable get location from encounter: " + encounterId);
 						error = true;
 					}
 				}
 				else
 				{
-					logger.error("Unable to locate recent encounter for patient with MRN: " + mrn);
+					log.error("Unable to locate recent encounter for patient with MRN: " + mrn);
 					error = true;
 				}
 			}
 		}
 		catch (RuntimeException e) {
 			//Do not stop application. Start processing next hl7 message.
-			logger.error("RuntimeException processing ORU_RO1", e);
+			log.error("RuntimeException processing ORU_RO1", e);
 			error = true;
 		}
 		finally{
@@ -363,7 +365,7 @@ public class HL7SocketHandler implements Application {
 				
 				BaseStateActionHandler.changeState(patient, sessionId, state, stateAction, parameters, locationTagId, locationId);
 			} else {
-				logger.error("Patient State is null for patient: " + patient);
+				log.error("Patient State is null for patient: " + patient);
 			}
 		}
 		
@@ -375,7 +377,7 @@ public class HL7SocketHandler implements Application {
 	 * @param patient
 	 * @return
 	 */
-	private org.openmrs.module.chica.hibernateBeans.Encounter getRecentEncounter(Patient patient){
+	private Encounter getRecentEncounter(Patient patient){
 		EncounterService encounterService = Context.getService(EncounterService.class);
     	// Get latest encounter today
 		Calendar startCal = Calendar.getInstance();
@@ -389,7 +391,7 @@ public class HL7SocketHandler implements Application {
 		if (encounters == null || encounters.size() == 0) {
 			return null;
 		} else {
-			return (org.openmrs.module.chica.hibernateBeans.Encounter) encounters.get(encounters.size()-1);
+			return encounters.get(encounters.size()-1);
 		}
 	}
 	
@@ -406,7 +408,7 @@ public class HL7SocketHandler implements Application {
 			allObs = obsHandler.getObs(message, patient);
 		}
 		catch (Exception e) {
-			logger.error(e);
+			log.error("Exception parsing HL7 to get obs",e);
 		}
 		return allObs;
 	}
@@ -443,7 +445,7 @@ public class HL7SocketHandler implements Application {
 				{ 
 					// Need to fix the concept configuration if we received units in the HL7, 
 					// but the mapped concept does not have units defined
-					logger.error("Units were received in HL7 message for concept ID: " 
+					log.error("Units were received in HL7 message for concept ID: " 
 							+ obsConcept.getConceptId() + " units received: " + obsConceptUnits 
 							+ " Need to define units for concept ID: " + mappedConcept.getConceptId());
 					return;
@@ -490,7 +492,7 @@ public class HL7SocketHandler implements Application {
 					}
 					catch(NumberFormatException nfe)
 					{
-						logger.error("Vitals Conversion Error: Could not convert vitals measurement for " + mappedConcept.getName());
+						log.error("Vitals Conversion Error: Could not convert vitals measurement for " + mappedConcept.getName());
 					}
 				}
 			}
@@ -512,7 +514,7 @@ public class HL7SocketHandler implements Application {
 			ConceptNumeric numericConcept = cs.getConceptNumeric(concept.getConceptId());
 			// If the concept is null, log the error because the datatype is set to numeric.
 			if (numericConcept == null) {
-				logger.error("Concept defined as numeric, but was not found. Concept ID: " + concept.getConceptId());
+				log.error("Concept defined as numeric, but was not found. Concept ID: " + concept.getConceptId());
 				return units;
 			}
 			
@@ -541,9 +543,9 @@ public class HL7SocketHandler implements Application {
 	 * @param message
 	 * @return
 	 */
-	private org.openmrs.module.chica.hibernateBeans.Encounter getEncounterByVisitNumber(Patient patient, Message message)
+	private Encounter getEncounterByVisitNumber(Patient patient, Message message)
 	{
-		org.openmrs.module.chica.hibernateBeans.Encounter encounter = null;
+		Encounter encounter = null;
 		HL7EncounterHandler23 hl7EncounterHandler23 = new HL7EncounterHandler23();
 		String visitNumber = hl7EncounterHandler23.getVisitNumber(message);
 		
@@ -558,28 +560,28 @@ public class HL7SocketHandler implements Application {
 				if(encounterAttributeValue != null)
 				{
 					EncounterService encounterService = Context.getService(EncounterService.class);
-					encounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterAttributeValue.getEncounterId());
+					encounter = encounterService.getEncounter(encounterAttributeValue.getEncounterId());
 					
 					// Make sure the patientId for the encounter record matches the patient from the HL7 message
 					if(patient.getPatientId().intValue() != encounter.getPatient().getPatientId().intValue()) // CHICA-1151 replace encounter.getPatientId() with encounter.getPatient().getPatientId()
 					{
-						logger.error("Unable to match encounter to patientId: " + patient.getPatientId());
+						log.error("Unable to match encounter to patientId: " + patient.getPatientId());
 						encounter = null;
 					}
 				}
 				else
 				{
-					logger.error("Unable to locate encounter for visit number: " + visitNumber);					
+					log.error("Unable to locate encounter for visit number: " + visitNumber);					
 				}
 			}
 			catch(Exception e)
 			{
-				logger.error("Error occurred while locating encounter for visit number: " + visitNumber, e);				
+				log.error("Error occurred while locating encounter for visit number: " + visitNumber, e);				
 			}
 		}
 		else
 		{
-			logger.error("Unable to locate visit number in HL7 message for patientId: " + patient.getPatientId());
+			log.error("Unable to locate visit number in HL7 message for patientId: " + patient.getPatientId());
 		}
 		
 		return encounter;

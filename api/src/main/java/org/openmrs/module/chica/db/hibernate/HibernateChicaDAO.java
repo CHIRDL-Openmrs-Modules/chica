@@ -17,6 +17,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
@@ -34,7 +35,6 @@ import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
 import org.openmrs.module.chica.hibernateBeans.DDST_Milestone;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
@@ -46,6 +46,7 @@ import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.hibernateBeans.Wtageinf;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.openmrs.module.chirdlutilbackports.util.ChirdlUtilBackportsConstants;
 
 /**
  * Hibernate implementation of chica database methods.
@@ -63,8 +64,8 @@ public class HibernateChicaDAO implements ChicaDAO
 	 */
 	private SessionFactory sessionFactory;
 	
-	private static final String PATIENT_STATE_ENTITY_NAME = "chirdlutilbackportsPatientState";	
-	private static final String ENCOUNTER_ENTITY_NAME = "chicaEncounter";	
+	
+	private static final String ENCOUNTER_ENTITY_NAME = "Encounter";	
 	private static final String LOCATION_TAG_ID = "locationTagId";
 	private static final String LOCATION_ID = "locationId";
 	private static final String FORM_NAME = "formName";
@@ -774,7 +775,7 @@ public class HibernateChicaDAO implements ChicaDAO
 				qry.setDate(OPTIONAL_START_TIME_RESTRICTION, optionalDateRestriction);
 			}
 			
-			qry.addEntity(PATIENT_STATE_ENTITY_NAME);
+			qry.addEntity(ChirdlUtilBackportsConstants.PATIENT_STATE_ENTITY);
 			return qry.list();
 		} catch (Exception e)
 		{
@@ -1173,7 +1174,7 @@ public class HibernateChicaDAO implements ChicaDAO
     	
     	qry.setParameterList(LOCATION_TAG_ID_LIST, locationTagIds);
 
-    	qry.addEntity(PATIENT_STATE_ENTITY_NAME);
+    	qry.addEntity(ChirdlUtilBackportsConstants.PATIENT_STATE_ENTITY);
     	return qry.list();
     }
     

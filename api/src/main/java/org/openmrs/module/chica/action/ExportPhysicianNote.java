@@ -23,17 +23,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
@@ -136,13 +136,13 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	private String createOutgoingHL7(Integer encounterId, String note, String hl7Abbreviation, String conceptName,
 	                                 String resultStatusValue) {
 		
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		
 		try {
 			
 			Integer numberOfOBXSegments = 0;
-			
-			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+			Encounter openmrsEncounter = encounterService.getEncounter(encounterId);
 			
 			MDM_T02 mdm = new MDM_T02();
 			

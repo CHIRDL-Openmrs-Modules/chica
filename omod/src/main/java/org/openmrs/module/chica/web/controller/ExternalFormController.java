@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chica.util.ChicaConstants;
@@ -162,12 +163,12 @@ public class ExternalFormController {
 
 		ChirdlUtilBackportsService backportsService = Context.getService(ChirdlUtilBackportsService.class);
 		List<Encounter> encounterList = Util.getEncounterList(patient); 
-		org.openmrs.module.chica.hibernateBeans.Encounter encounter = null ;
+		Encounter encounter = null ;
 		if (encounterList!=null && encounterList.size() == 1) { 
 			// Look up the encounter through the CHICA encounter service to prevent class cast exceptions.
-			org.openmrs.module.chica.service.EncounterService encounterService = Context.getService(org.openmrs.module.chica.service.EncounterService.class);
+			EncounterService encounterService = Context.getEncounterService();
 			Integer encounterId = encounterList.get(0).getEncounterId();
-			encounter = (org.openmrs.module.chica.hibernateBeans.Encounter)encounterService.getEncounter(encounterId);
+			encounter = encounterService.getEncounter(encounterId);
 			ControllerUtil.setPhysicianFormURLAttributes(encounter, map);
 		} else if (encounterList!=null && encounterList.size() > 1) {
 			encounter = ControllerUtil.getPhysicianEncounterWithoutScannedTimeStamp(encounterList, backportsService, map);

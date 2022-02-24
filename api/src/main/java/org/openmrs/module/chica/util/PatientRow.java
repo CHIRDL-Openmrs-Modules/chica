@@ -9,8 +9,9 @@ import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.openmrs.Encounter;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
+
 
 /**
  * @author tmdugan

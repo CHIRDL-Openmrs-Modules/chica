@@ -21,8 +21,6 @@ import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 
 /**
  * Calculates a person's age in years based from their date of birth to the index date
@@ -77,7 +75,7 @@ public class immunizationQuery implements Rule {
 				EncounterService encounterService = Context.getService(EncounterService.class);
 				Integer encounterId = (Integer) parameters.get("encounterId");
 				
-				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+				Encounter encounter =  encounterService.getEncounter(encounterId);
 				
 				Location location = encounter.getLocation();
 				

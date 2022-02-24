@@ -13,6 +13,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.LocationTag;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -25,8 +26,8 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
@@ -75,7 +76,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		
 		if (SUICIDE_NOTIFICATION_TEXT == null || ABUSE_NOTIFICATION_TEXT == null || FROM_EMAIL == null
 		        || DV_NOTIFICATION_TEXT == null || SUBJECT == null || NUM_DAYS == null) {
-			log.error("One or more required properties for AlertPhysicianHighRiskCondition are not set");
+			log.error("One or more required properties for AlertPhysicianHighRiskCondition are not set.");
 			return;
 		}
 		
@@ -142,11 +143,12 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	                                        String notificationText, String fromEmail, String subject,String riskConceptName,
 	                                        Date dateThreshold) {
 		LocationService locationService = Context.getLocationService();
-		org.openmrs.module.chica.service.EncounterService chicaEncounterService = Context
-		        .getService(org.openmrs.module.chica.service.EncounterService.class);
+		EncounterService encounterService = Context.getService(EncounterService.class);
 		DssService dssService = Context.getService(DssService.class);
 		ObsService obsService = Context.getObsService();
-		HashSet<org.openmrs.Encounter> notificationSet = new HashSet<org.openmrs.Encounter>();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context
+				.getService(ChirdlUtilBackportsService.class);
+		HashSet<Encounter> notificationSet = new HashSet<>();
 		
 		for (String ruleName : ruleNames) {
 			Rule rule = dssService.getRule(ruleName);
@@ -154,11 +156,19 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 		}
 		
 		//send notification emails
-		for (org.openmrs.Encounter encounter : notificationSet) {
-			Encounter chicaEncounter = (Encounter) chicaEncounterService.getEncounter(encounter.getEncounterId());
-			Date riskDate = null;
+		for (Encounter encounter : notificationSet) {
+			Encounter chicaEncounter = encounterService.getEncounter(encounter.getEncounterId());
+			
+			EncounterAttributeValue attributeValue = chirdlutilbackportsService
+					.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
 			Integer locationId = chicaEncounter.getLocation().getLocationId();
-			String printerLocation = chicaEncounter.getPrinterLocation();
+			Date riskDate = null;
+			String printerLocation =  null;	
+			
+			if (attributeValue != null) {
+				printerLocation =  attributeValue.getValueText();	
+			}
+			
 			if (printerLocation != null) {
 				LocationTag locTag = locationService.getLocationTagByName(printerLocation.trim());
 				if (locTag != null) {
@@ -233,8 +243,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 								// Get the email addresses
 								String emailAddys = personAttribute.getValue();
 								if (emailAddys == null || emailAddys.trim().length() == 0) {
-									log.error("No valid " + ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL
-									        + " found for personId " + personId + ".  No one will be emailed.");
+									log.error("No valid {} found for personId {}.  No one will be emailed.", ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL, personId);
 									return;
 								}
 								try {

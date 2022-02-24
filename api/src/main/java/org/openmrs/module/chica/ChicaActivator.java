@@ -32,7 +32,7 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 	 */
 	@Override
 	public void started() {
-		this.log.info("Starting Chica Module");
+		log.info("Starting Chica Module");
 		
 		//check that all the required global properties are set
 		checkGlobalProperties();
@@ -62,16 +62,16 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 					currValue = currProperty.getPropertyValue();
 					if (currValue == null || currValue.length() == 0)
 					{
-						this.log.error("You must set a value for global property: "
+						log.error("You must set a value for global property: "
 								+ currName);
 					}
 				}
 			}
 		} catch (Exception e)
 		{
-			this.log.error("Error checking global properties for chica module");
-			this.log.error(e.getMessage());
-			this.log.error(Util.getStackTrace(e));
+			log.error("Error checking global properties for chica module");
+			log.error(e.getMessage());
+			log.error(Util.getStackTrace(e));
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 	 */
 	@Override
 	public void stopped() {
-		this.log.info("Shutting down Chica Module");
+		log.info("Shutting down Chica Module");
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 	}
 	
 
-	private void setEncounterTypeValue(String name) {
+	private static void setEncounterTypeValue(String name) {
 		EncounterType encounterType = Context.getEncounterService().getEncounterType(name);
 		if (encounterType != null) {
 			encounterTypeValue = encounterType.getEncounterTypeId().toString();

@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -43,18 +44,19 @@ import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ToObs;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.threadmgmt.RunnableResult;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
@@ -516,8 +518,7 @@ public class HL7SocketHandler extends
 	public org.openmrs.Encounter processEncounter(String incomingMessageString,
 			Patient p, Date encDate, org.openmrs.Encounter newEncounter,
 			Provider provider, HashMap<String, Object> parameters) {
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context
-				.getService(ChirdlUtilBackportsService.class);
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		AdministrationService adminService = Context.getAdministrationService();
 		org.openmrs.Encounter encounter = super.processEncounter(
 				incomingMessageString, p, encDate, newEncounter, provider,
@@ -653,28 +654,59 @@ public class HL7SocketHandler extends
 			}
 
 		
-
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
-		encounter = encounterService.getEncounter(encounterId);
-		Encounter chicaEncounter = (org.openmrs.module.chica.hibernateBeans.Encounter) encounter;
-
-		chicaEncounter.setInsurancePlanCode(planCode);
-		chicaEncounter.setInsuranceCarrierCode(carrierCode);
-		chicaEncounter.setScheduledTime(appointmentTime);
+		EncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
+	
+		if (encounterAttribute == null) {
+			EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttribute, encounterId, planCode);
+			EncounterAttributeValue savedEncounterAttributeValue = chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+		}else {
+			log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
+		}
 		
+		EncounterAttribute encounterAttributeCarrierCode = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE);
+		 
+		if (encounterAttributeCarrierCode == null) {
+				EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeCarrierCode, encounterId, planCode);
+				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+		}else {
+			log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE);
+		}
+		
+		
+		EncounterAttribute encounterAttributeAppointmentTime = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		 
+		if (encounterAttributeAppointmentTime == null) {
+				EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeAppointmentTime, encounterId, planCode);
+				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+		}else {
+			log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		}
+		
+
 		// Set the printer location only if this is a new encounter, we don't want to potentially change the printer location
 		// after registration is already complete and the tablet has already been handed out
 		if(newEncounterCreated) 
 		{
-			chicaEncounter.setPrinterLocation(printerLocation);
+			
+			EncounterAttribute encounterAttributePrinterLocation = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			 
+			if (encounterAttributeCarrierCode == null) {
+					EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributePrinterLocation, encounterId, planCode);
+					chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+			}else {
+				log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			}
+			
 		}
 		else
 		{
 			// Use the existing printer location
 			// Note: This really shouldn't be needed at this point, but setting it just
 			// in case similar A10 and A04 functionality is implemented at IUH
-			printerLocation = chicaEncounter.getPrinterLocation();
+			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+			if (encounterAttributeValue != null) {
+				printerLocation = encounterAttributeValue.getValueText();
+			}
 		}
 
 		Location location = null;
@@ -693,8 +725,17 @@ public class HL7SocketHandler extends
 			}
 		}
 
-		chicaEncounter.setLocation(location);
-		chicaEncounter.setInsuranceSmsCode(null);
+		encounter.setLocation(location);
+		
+		EncounterAttribute encounterAttributeInsuranceSMSCode = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_SMS_CODE);
+		 
+		if (encounterAttributeInsuranceSMSCode != null) {
+				EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeInsuranceSMSCode, encounterId, planCode);
+				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+		}else {
+			log.error("Unable to save encounter attribute value. Encounter id: {} Encounter Attribute: {}: ",
+					encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_SMS_CODE);
+		}
 		
 		//DWE CLINREQ-130 Removed encounter parameter
 		// CAUTION: If an encounter object is needed in this thread in the future, 
@@ -710,18 +751,18 @@ public class HL7SocketHandler extends
 				.getStateByName(STATE_CLINIC_REGISTRATION);
 		PatientState patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
-						getLocationId(chicaEncounter), null);
-		patientState.setStartTime(chicaEncounter.getEncounterDatetime());
-		patientState.setEndTime(chicaEncounter.getEncounterDatetime());
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(encounter),
+						getLocationId(encounter), null);
+		patientState.setStartTime(encounter.getEncounterDatetime());
+		patientState.setEndTime(encounter.getEncounterDatetime());
 		chirdlutilbackportsService.updatePatientState(patientState);
 
 		state = chirdlutilbackportsService
 				.getStateByName(STATE_HL7_CHECKIN);
 		patientState = chirdlutilbackportsService
 				.addPatientState(p, state, getSession(parameters)
-						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(chicaEncounter),
-						getLocationId(chicaEncounter), null);
+						.getSessionId(), org.openmrs.module.chica.util.Util.getLocationTagId(encounter),
+						getLocationId(encounter), null);
 		Date processCheckinHL7Start = (Date) parameters
 				.get(PROCESS_HL7_CHECKIN_START);
 		Date processCheckinHL7End = (Date) parameters
@@ -729,8 +770,8 @@ public class HL7SocketHandler extends
 		patientState.setStartTime(processCheckinHL7Start);
 		patientState.setEndTime(processCheckinHL7End);
 		chirdlutilbackportsService.updatePatientState(patientState);
-		
-		encounterService.saveEncounter(chicaEncounter);
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		encounterService.saveEncounter(encounter);
 		
 		if(messageContainsInsurance) { // CHICA-1157
 			ConceptService conceptService = Context.getConceptService();

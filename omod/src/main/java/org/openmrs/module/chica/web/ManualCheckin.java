@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -36,21 +37,23 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientIdentifierException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25;
 import org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25;
 import org.openmrs.module.chica.hl7.mckesson.HL7SocketHandler;
 import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.validator.PatientIdentifierValidator;
@@ -334,7 +337,8 @@ public class ManualCheckin
 
 		PersonService personService = Context.getPersonService();
 		PatientService patientService = Context.getPatientService();
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
 		Patient checkinPatient = new Patient();
 		PersonName name = new PersonName();
@@ -488,10 +492,9 @@ public class ManualCheckin
 				null);
 		
 		//create encounter
-		org.openmrs.module.chica.hibernateBeans.Encounter newEncounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
+		Encounter newEncounter = new Encounter();
 		newEncounter.setLocation(encounterLocation);
 		newEncounter.setEncounterDatetime(encounterDate);
-		newEncounter.setPrinterLocation(request.getParameter("manualCheckinStation"));
 		newEncounter.setEncounterDatetime(encounterDate);
 		EncounterType encType = encounterService.getEncounterType("ManualCheckin");
 		if (encType == null){
@@ -510,10 +513,18 @@ public class ManualCheckin
 		boolean checkinSuccess = false;
 		HashMap<String,Object> parameters = new HashMap<String,Object>();
 		if (validIdentifier){
-			Encounter enc = (Encounter) socketHandler.checkin(provider, checkinPatient, encounterDate,
+			Encounter enc = socketHandler.checkin(provider, checkinPatient, encounterDate,
 					 null, null, newEncounter,parameters);
 			if (enc != null){
 				checkinSuccess = true;
+				
+				//Set the printer location encounter attribute
+				EncounterAttribute encounterAttribute = chirdlutilbackportsService
+						.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+				EncounterAttributeValue encounterAttributeValue = 
+						new EncounterAttributeValue(encounterAttribute, enc.getEncounterId(), request.getParameter("manualCheckinStation"));
+				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+				
 				// Set the insurance category
 				String insuranceCategory = request.getParameter("manualCheckinInsuranceCategory");
 				if (insuranceCategory != null && insuranceCategory.trim().length() > 0) {
@@ -646,9 +657,27 @@ public class ManualCheckin
 			{
 				ServletUtil.writeTag("doctor", provider.getId(), pw);
 			}
-
-			ServletUtil.writeTag("station", ServletUtil.escapeXML(encounter.getPrinterLocation()), pw);
-			ServletUtil.writeTag("insuranceCode", ServletUtil.escapeXML(encounter.getInsuranceSmsCode()), pw);
+			
+			//Get encounter attribute value for printer location
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			String printerLocation = null;	
+			EncounterAttributeValue printerLocationAttributeValue = chirdlutilbackportsService.
+					getEncounterAttributeValueByName(encounter.getEncounterId(), 
+							ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			if (printerLocationAttributeValue != null) {
+				 printerLocation = printerLocationAttributeValue.getValueText();
+			}
+			
+			String insuranceSMSCode = null;
+			EncounterAttributeValue insuranceSMSCodeAttributeValue = chirdlutilbackportsService
+					.getEncounterAttributeValueByName(encounter.getEncounterId(), 
+							ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_SMS_CODE);
+			if (insuranceSMSCodeAttributeValue != null) {
+				insuranceSMSCode = insuranceSMSCodeAttributeValue.getValueText();
+			}
+			
+			ServletUtil.writeTag("station", ServletUtil.escapeXML(printerLocation), pw);
+			ServletUtil.writeTag("insuranceCode", ServletUtil.escapeXML(insuranceSMSCode), pw);
 		}
 		
 		pw.write("</patient>");

@@ -23,6 +23,7 @@ import ca.uhn.hl7v2.model.Message;
  *
  */
 public class AgeCheckRunnable implements RunnableResult<Boolean> {
+	
 	private static final Logger log = LoggerFactory.getLogger(AgeCheckRunnable.class);
 	private Boolean ageOk = Boolean.TRUE;
 	private Message message;

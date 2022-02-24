@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<!-- DWE CHICA-633 Created new chirdlutilbackports_encounter_attribute_value table -->
+<hibernate-mapping package="org.openmrs.module.chirdlutilbackports">
+
+	<class name="org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue" table="chirdlutilbackports_encounter_attribute_value">
+
+		<id name="encounterAttributeValueId" type="java.lang.Integer"
+			column="encounter_attribute_value_id" unsaved-value="0">
+			<generator class="native" />
+		</id>
+		
+		<discriminator column="encounter_attribute_value_id" insert="false" />
+		
+		<property name="encounterId" type="java.lang.Integer" column="encounter_id" />
+		<property name="valueText" type="java.lang.String" column="value_text" />
+		<property name="uuid" type="java.lang.String" column="uuid" length="38" unique="true" />
+		<property name="dateCreated" type="java.util.Date" column="date_created" not-null="true" />
+		<property name="dateChanged" type="java.util.Date" column="date_changed"  />
+		<property name="dateVoided" type="java.util.Date" column="date_voided" />
+		<property name="voided" type="boolean" not-null="true" />
+		<property name="voidReason" type="java.lang.String" column="void_reason" length="255" />
+		
+		<many-to-one name="encounterAttribute" class="org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute" not-null="false">
+			<column name="encounter_attribute_id" />
+		</many-to-one>
+				
+		<many-to-one name="creator" class="org.openmrs.User" column="creator" not-null="true" />
+		<many-to-one name="changedBy" class="org.openmrs.User" column="changed_by" />
+		<many-to-one name="voidedBy" class="org.openmrs.User" column="voided_by" />
+		
+	</class>
+</hibernate-mapping>

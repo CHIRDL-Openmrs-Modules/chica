@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.jfree.util.Log;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -33,18 +35,18 @@ import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chica.util.PatientRowComparator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
@@ -171,10 +173,16 @@ public class GreaseBoardBuilder {
 				
 				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
-				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
 				
-				Date appointmentDate = encounter.getScheduledTime();
-				String appointment = DateUtil.formatDate(appointmentDate, ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
+				Encounter encounter = encounterService.getEncounter(encounterId);
+				
+				EncounterAttributeValue  encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName(encounterId,  ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);		
+				if  (encounterAttributeValue == null) {
+					Log.error("Encounter attribute value does not exist for " +  ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+				}
+			
+				String appointment = encounterAttributeValue.getValueText();
+
 				PatientRow row = new PatientRow();
 				Date encounterDate = null;
 				
@@ -263,8 +271,14 @@ public class GreaseBoardBuilder {
 						waitingForMD++;
 					}	
 				}
-
-				String printerLocation = encounter.getPrinterLocation();
+				
+				String printerLocation = null;
+				EncounterAttributeValue printerLocationAttributeValue = chirdlutilbackportsService
+						.getEncounterAttributeValueByName(encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+				if (printerLocationAttributeValue != null) {
+					 printerLocation = printerLocationAttributeValue.getValueText();
+				}
+				
 				Integer formId = currState.getFormId();
 				Integer locationTagId = currState.getLocationTagId();
 				
@@ -355,10 +369,19 @@ public class GreaseBoardBuilder {
 			}
 		}
 		
-		HashMapAttributesKey startStateKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE);
-		HashMapAttributesKey reprintStateKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE);
-		HashMapAttributesKey isPrimaryPatientFormKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM);
-		HashMapAttributesKey isPrimaryPhysicianFormKey = new HashMapAttributesKey(encounter.getLocation(), encounter.getPrinterLocation(), formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM);
+		String printerLocation = null;
+		
+		EncounterAttributeValue printerLocationAttributeValue = chirdlutilbackportsService.
+				getEncounterAttributeValueByName(encounter.getEncounterId(), 
+						ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+		if (printerLocationAttributeValue != null) {
+			 printerLocation = printerLocationAttributeValue.getValueText();
+		}
+		
+		HashMapAttributesKey startStateKey = new HashMapAttributesKey(encounter.getLocation(), printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE);
+		HashMapAttributesKey reprintStateKey = new HashMapAttributesKey(encounter.getLocation(), printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_REPRINT_STATE);
+		HashMapAttributesKey isPrimaryPatientFormKey = new HashMapAttributesKey(encounter.getLocation(), printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PATIENT_FORM);
+		HashMapAttributesKey isPrimaryPhysicianFormKey = new HashMapAttributesKey(encounter.getLocation(), printerLocation, formId, ChirdlUtilConstants.FORM_ATTRIBUTE_IS_PRIMARY_PHYSICIAN_FORM);
 
 		String startStateValue = hMap.get(startStateKey);
 		String reprintStateValue = hMap.get(reprintStateKey);
