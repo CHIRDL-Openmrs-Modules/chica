@@ -188,7 +188,7 @@ public class Util {
 			if (baseUrl == null || baseUrl.length() == 0 || pagerNumber == null || pagerNumber.length() == 0
 			        || message == null || message.length() == 0 || idParam == null || idParam.length() == 0
 			        || textParam == null || textParam.length() == 0) {
-				log.error("Page was not sent due to null url string or null parameters. " + urlStr);
+				log.error("Page was not sent due to null url string or null parameters. URL string: {}", urlStr);
 				return "";
 			}
 			
@@ -700,7 +700,7 @@ public class Util {
 			Integer formId = patientState.getFormId();
 			List<PatientState> foundStates = formIdToPatientStateMap.get(formId);
 			if (foundStates == null) {
-				foundStates = new ArrayList<PatientState>();
+				foundStates = new ArrayList<>();
 			}
 			
 			foundStates.add(patientState);
@@ -711,7 +711,6 @@ public class Util {
 	public static void calculatePercentiles(Integer encounterId, Patient patient, Integer locationTagId) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		Encounter encounter = encounterService.getEncounter(encounterId);
-		ObsService obsService = Context.getObsService();
 		ATDService atdService = Context.getService(ATDService.class);
 		List<Encounter> encounters = new ArrayList<>();
 		encounters.add(encounter);
@@ -1636,7 +1635,7 @@ public class Util {
 		while (iter.hasNext()) {
 			String ruleId = iter.next();
 			List<Obs> obsList = obsMap.get(ruleId);
-			if (obsList != null && obsList.size() > 0) {
+			if (obsList != null && !obsList.isEmpty()) {
 				Set<String> noteSet = new HashSet<>();
 				for (Obs ob : obsList) {
 					String value = ob.getValueText();

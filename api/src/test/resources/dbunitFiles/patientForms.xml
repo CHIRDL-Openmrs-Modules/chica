@@ -15,7 +15,7 @@
     <location_tag location_tag_id="2987" name="tag2987" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="2987398273792872983789273"/>
     <location_tag_map location_id="8992" location_tag_id="2987"/>
     <encounter_type encounter_type_id="1" name="HL7Message" creator="1" date_created="2007-08-15 15:46:47.0" retired="false" uuid="kla9009812as9s8df908asdf"/>
-     <encounter_type encounter_type_id="5" name="CHICA" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="false" uuid="cce28722-1896-11e7-93ae-911361f002672"/>
+    <encounter_type encounter_type_id="5" name="CHICA" description="Outpatient Pediatric Return Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="false" uuid="cce28722-1896-11e7-93ae-911361f002672"/>
     <encounter encounter_id="23189" encounter_type="5" patient_id="2298" location_id="8992" encounter_datetime="2017-08-15 15:46:47.0" creator="1" date_created="2017-08-15 15:46:47.0" voided="false" uuid="asdf98asd08asd908sadf98" />
     <chirdlutilbackports_session session_id="23189" encounter_id="23189"/>
     <chirdlutilbackports_state state_id="98791" name="JIT_mobile_create" />

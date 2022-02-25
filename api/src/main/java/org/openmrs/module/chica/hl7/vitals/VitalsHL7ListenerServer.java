@@ -26,7 +26,9 @@
 
 package org.openmrs.module.chica.hl7.vitals;
 
-import org.apache.log4j.Logger;
+import org.openmrs.module.chica.ChicaActivator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
@@ -55,7 +57,7 @@ import ca.uhn.hl7v2.parser.Parser;
  */
 public class VitalsHL7ListenerServer extends ca.uhn.hl7v2.app.SimpleServer {
 	
-	private static final Logger log = Logger.getLogger("VitalsHL7ListenerServer");
+	private static final Logger log = LoggerFactory.getLogger(VitalsHL7ListenerServer.class);
 	private HL7SocketHandler hl7SocketHandler = null;
 	private static final String ORU = "ORU";
 	private static final String R01 = "R01";

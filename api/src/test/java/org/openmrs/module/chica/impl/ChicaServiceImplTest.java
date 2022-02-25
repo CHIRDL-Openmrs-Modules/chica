@@ -282,9 +282,6 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName(savedEncounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 		Assertions.assertNotNull(encounterAttributeValue);	
 
-		System.out.println(encounterAttributeValue.getValueText());
-		
-		
 		Integer encounterId = encounter.getEncounterId();
 		String generatedOutput = null;
 		String booleanString = adminService
