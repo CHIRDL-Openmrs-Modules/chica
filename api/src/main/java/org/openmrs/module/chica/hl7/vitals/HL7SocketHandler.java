@@ -109,13 +109,11 @@ public class HL7SocketHandler implements Application {
 			        ByteArrayInputStream vitalsDumpInput = new ByteArrayInputStream(incomingMessage.getBytes())){		  	                
 	                    IOUtil.bufferedReadWrite(vitalsDumpInput, vitalsDumpFile, false);   
 			}
-			catch (FileNotFoundException e1) {
-				log.error("Couldn't find file: " + vitalsDirectory + "/" + filename);
+			catch (FileNotFoundException e) {
+				log.error("Couldn't find vitals file: {} in directory: {}", filename , vitalsDirectory, e);
 			}
-            catch (IOException e2) {
-                log.error("There was an error writing the vitals dump file");
-                log.error(e2.getMessage());
-                log.error(Util.getStackTrace(e2));
+            catch (IOException ioe) {
+                log.error("IOException writing incoming HL7 message to file: {} in directory: {}.", filename , vitalsDirectory, ioe);
             }	
 		}
 	}

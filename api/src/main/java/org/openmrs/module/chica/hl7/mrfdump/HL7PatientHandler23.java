@@ -441,8 +441,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 		} catch (RuntimeException e)
 		{
-			log.warn("Unable to parse patient name. Message: "
-					+ e.getMessage());
+			log.warn("Unable to parse patient name.", e);
 		}
 
 		return name;
@@ -457,8 +456,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			ceRace = pid.getRace();
 		} catch (RuntimeException e)
 		{
-			log.warn("Unable to parse race from PID. Message: "
-					+ e.getMessage());
+			log.warn("Unable to parse race from PID.", e);
 		}
 
 		if (ceRace != null)
@@ -466,9 +464,9 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			try
 			{
 				return ceRace.getValue();
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				log.debug("Warning: Race information not available in PID segment.");
+				log.debug("Warning: Race information not available in PID segment.", e);
 			}
 		}
 		return null;

@@ -37,7 +37,7 @@ public class VitalsProcessor extends AbstractTask {
 				port = Integer.parseInt(portString);
 			}
 			catch (NumberFormatException e) {
-				log.error("Could not start VitalsHL7ListenerServer. Port " + portString + " could not be parsed");
+				log.error("Could not start VitalsHL7ListenerServer. Port: {} could not be parsed.", portString, e);
 				return;
 			}
 			
@@ -56,9 +56,7 @@ public class VitalsProcessor extends AbstractTask {
 			log.info("Starting VitalsHL7ListenerServer...");
 		}
 		catch (Exception e) {
-			log.error("Error starting VitalsHL7ListenerServer...");
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error starting VitalsHL7ListenerServer...", e);
 		}
 		log.info("Finished initializing VitalsHL7ListenerServer processor.");
 	}
@@ -70,8 +68,7 @@ public class VitalsProcessor extends AbstractTask {
 			this.server.start();
 		}
 		catch (Exception e) {
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error starting VitalsProcessor task.", e);
 		}
 		finally {
 			Context.closeSession();
@@ -97,8 +94,7 @@ public class VitalsProcessor extends AbstractTask {
 			}
 		}
 		catch (Exception e) {
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error shutting down VitalsProcessor task.", e);
 		}
 	}
 }

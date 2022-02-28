@@ -72,7 +72,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				} 
 			} catch (Exception e)
 			{
-				log.error("Exception after processing teleform fil.e",e);
+				log.error("Exception after processing teleform file.",e);
 			}
 		}
 		else if(method.getName().equals("cleanCache")) 

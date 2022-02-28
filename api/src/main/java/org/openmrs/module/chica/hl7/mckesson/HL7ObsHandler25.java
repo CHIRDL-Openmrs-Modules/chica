@@ -81,8 +81,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			obx = adt.getOBX(obRep);
 		} catch (Exception e)
 		{
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error getting OBX segment for obRep: {}.", obRep, e);
 		}
 
 		return obx;

@@ -89,7 +89,7 @@ public class CheckinProcessor extends AbstractTask
 			this.server.start();
 		} catch (Exception e)
 		{
-			log.error("Exception running Checkin Processor task.");
+			log.error("Exception running Checkin Processor task.", e);
 		} finally
 		{
 			Context.closeSession();
@@ -118,7 +118,7 @@ public class CheckinProcessor extends AbstractTask
 			}
 		} catch (Exception e)
 		{
-			log.error("Exception shutting down Checkin Processor task.");
+			log.error("Exception shutting down Checkin Processor task.",e);
 		}	
 	}
 }

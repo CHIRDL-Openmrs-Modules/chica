@@ -139,17 +139,12 @@ public class ChicaServiceImpl implements ChicaService
 							formInstance,locationTagId);
 					fieldMap = formDatasource.getFormFields(formInstance);
 
-				} catch (Exception e1)
-				{
-					org.openmrs.module.chirdlutilbackports.hibernateBeans.Error Error = new org.openmrs.module.chirdlutilbackports.hibernateBeans.Error("Error","XML Parsing", 
-							" Error parsing XML file to be consumed. Form Instance Id = " + formInstanceId
-							, Util.getStackTrace(e1), new Date(),sessionId);
-					chirdlutilbackportsService.saveError(Error);
+				} catch (Exception e){	
+					log.error("Error parsing XML file to be consumed. Encounte;r id: {} Form Instance Id:{} Location tag id: {}"
+							, encounterId, formInstance, locationTagId, e);
 					return;
 				}
 			}
-
-			startTime = System.currentTimeMillis();
 
 			Integer formId = formInstance.getFormId();
 			
@@ -220,10 +215,8 @@ public class ChicaServiceImpl implements ChicaService
 					 fieldsToConsume,locationTagId,sessionId);
 			System.out.println("chicaService.consume: Time of atdService.consume: "+
 				(System.currentTimeMillis()-startTime));
-		} catch (Exception e)
-		{
-			log.error(e.getMessage());
-			log.error(Util.getStackTrace(e));
+		} catch (Exception e){
+			log.error("Exception consuming formInstance: {} encounter id: {} location tag id: {}", formInstance, encounterId, locationTagId, e);
 		}
 	}
 

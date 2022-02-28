@@ -83,7 +83,7 @@ public class ProcessFile implements ChirdlRunnable
 		} 
 		finally
 		{
-			log.info("Finished execution of {} ({}, {})",  getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()) );;
+			log.info("Finished execution of {} ({}, {})",  getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()) );
 		}
 	}
 

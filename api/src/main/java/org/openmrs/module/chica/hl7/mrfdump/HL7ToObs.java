@@ -241,8 +241,7 @@ public class HL7ToObs {
 				newMessage.append(line);
 			}
 		} catch (IOException e) {
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception replacing HL7 version with {}.", HL7_VERSION_2_3, e);
 		}
 
 		return newMessage.toString();

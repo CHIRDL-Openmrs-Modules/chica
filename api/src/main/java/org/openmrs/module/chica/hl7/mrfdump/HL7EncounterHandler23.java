@@ -48,8 +48,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 			doctor = pv1.getAttendingDoctor(0);
 		} catch (Exception e)
 		{
-			log.warn("Unable to parse doctor name from PV1. Message: "
-					+ e.getMessage());
+			log.warn("Unable to parse doctor name from PV1.", e);
 		}
 		if (doctor != null)
 		{

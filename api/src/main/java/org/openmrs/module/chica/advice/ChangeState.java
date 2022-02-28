@@ -53,7 +53,7 @@ public class ChangeState implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		log.info("Started execution of {} ({}), {}", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		try
 		{
 			BaseStateActionHandler.getInstance().changeState(this.patientState,
@@ -65,7 +65,7 @@ public class ChangeState implements ChirdlRunnable
 		} 
 		finally
 		{
-			log.info("Finished execution of {} ({}), {}", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
+			log.info("Finished execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		}
 	}
 

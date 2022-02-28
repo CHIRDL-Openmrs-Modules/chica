@@ -450,7 +450,7 @@ public class HL7SocketHandler extends
 	                            incomingMessageString.getBytes())){
 	                            IOUtil.bufferedReadWrite(input, outputFile, false);
 	                        }catch(Exception e1){
-	                            log.error("Exception writing the dump file: {}", filename );
+	                            log.error("Exception writing the dump file: {}", filename, e);
 	                        }
 					    }    
 					}catch(IOException e2){
@@ -777,7 +777,7 @@ public class HL7SocketHandler extends
 						encounter.getEncounterDatetime());
 			}else{
 				log.error("Unable to map insurance code for plan code: {} insurance Name: {} sending application: {} sending facility: {}"
-						, sendingFacility, planCode, insuranceName, sendingApplication,sendingFacility);
+						, planCode, insuranceName, sendingApplication, sendingFacility);
 			}
 		}
 		

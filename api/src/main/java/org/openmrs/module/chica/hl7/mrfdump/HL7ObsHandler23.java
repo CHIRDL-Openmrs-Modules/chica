@@ -81,8 +81,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 					.getOBSERVATION(obRep).getOBX();
 		} catch (Exception e)
 		{
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error getting OBX segment from HL7 for orderRep: {}  obRep: {}.", orderRep, obRep, e);
 		}
 
 		return obx;
@@ -97,8 +96,7 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 			obr = oru.getRESPONSE().getORDER_OBSERVATION(orderRep).getOBR();
 		} catch (Exception e)
 		{
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error getting OBX segment from HL7 for orderRep: {}.", orderRep, e);
 		}
 
 		return obr;
@@ -424,12 +422,8 @@ public class HL7ObsHandler23 implements HL7ObsHandler
 				return answer;
 			} catch (RuntimeException e)
 			{
-				log.error("createObs() failed. MRN: " + pIdentifierString
-						+ ";Invalid OBX value: " + stConceptId
-						+ ";concept question id: " + conceptQuestionId
-						+ "; concept name: " + conceptName);
-				log.error(e.getMessage());
-				log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				log.error("Processing coded observation type failed. MRN: {}; Invalid OBX value: {}; concept question id: {}; concept name: {}." 
+						,pIdentifierString, stConceptId, conceptQuestionId, conceptName,e);
 			}
 
 		}
