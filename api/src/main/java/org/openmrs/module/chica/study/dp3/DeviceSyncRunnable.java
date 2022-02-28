@@ -122,37 +122,37 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 							}
 							else
 							{
-								this.log.error("Device sync error. Unable to determine patient location from encounter: " + chicaEncounter.getEncounterId());
+								log.error("Device sync error. Unable to determine patient location from encounter: " + chicaEncounter.getEncounterId());
 							}
 						}
 						else
 						{
-							this.log.error("Device sync error. Unable to get session for encounter: " + + chicaEncounter.getEncounterId());
+							log.error("Device sync error. Unable to get session for encounter: " + + chicaEncounter.getEncounterId());
 						}
 					}
 					else
 					{
-						this.log.error("Device sync was received, but unable to locate recent encounter for patient with GlookoCode: " + this.glookoCode);
+						log.error("Device sync was received, but unable to locate recent encounter for patient with GlookoCode: " + this.glookoCode);
 					}
 				}
 				else
 				{
-					this.log.error("Device sync was received, but unable to locate patient with person attribute for GlookoCode: " + this.glookoCode);
+					log.error("Device sync was received, but unable to locate patient with person attribute for GlookoCode: " + this.glookoCode);
 				}
 			}
 			else
 			{
-				this.log.error("Device sync was received, but unable to locate person attribute for GlookoCode: " + this.glookoCode);
+				log.error("Device sync was received, but unable to locate person attribute for GlookoCode: " + this.glookoCode);
 			}
 			
 		}
 		catch(ContextAuthenticationException e)
 		{
-			this.log.error("Error authenticating context in " + this.getClass().getName() + ".", e);
+			log.error("Error authenticating context in " + this.getClass().getName() + ".", e);
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error in " + this.getClass().getName() + ".", e);
+			log.error("Error in " + this.getClass().getName() + ".", e);
 		}
 	}
 	

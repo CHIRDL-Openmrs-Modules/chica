@@ -80,7 +80,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 		if(form != null)
 		{
 			if (encounterId == null) {
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate encounterId.");
+				log.error("Error while creating " + PWS_PDF + ". Unable to locate encounterId.");
 				return Result.emptyResult();
 			}
 
@@ -89,13 +89,13 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			State state = chirdlutilbackportsService.getStateByName(Util.getStartStateName(encounterId, form.getFormId()));
 			if(state == null){
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate " + ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE + ".");
+				log.error("Error while creating " + PWS_PDF + ". Unable to locate " + ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE + ".");
 				return Result.emptyResult();
 			}
 			
 			List<PatientState> states = Context.getService(ChirdlUtilBackportsService.class).getPatientStateByEncounterState(encounterId, state.getStateId());
 			if (states == null || states.size() == 0) {
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate patient state for encounterId: " + encounterId + ".");
+				log.error("Error while creating " + PWS_PDF + ". Unable to locate patient state for encounterId: " + encounterId + ".");
 				return Result.emptyResult();
 			}
 
@@ -165,8 +165,8 @@ public class GetPWSFieldValuesFromXML implements Rule{
 					}
 					catch(IOException ioe){
 						log.error("Unable to read " + physicianForm + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
-						this.log.error(ioe.getMessage());
-						this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(ioe));
+						log.error(ioe.getMessage());
+						log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(ioe));
 					}
 				}			
 
@@ -174,14 +174,14 @@ public class GetPWSFieldValuesFromXML implements Rule{
 				{
 					Record record = records.getRecord();
 					if (record == null) {
-						this.log.error("Error while creating " + PWS_PDF + ". Unable to locate record in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						log.error("Error while creating " + PWS_PDF + ". Unable to locate record in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
 						return Result.emptyResult();
 					}
 
 					// Get the <field> elements found within the file
 					List<Field> currentFieldsInFile = record.getFields();
 					if (currentFieldsInFile == null) {
-						this.log.error("Error while creating " + PWS_PDF + ". Unable to locate fields in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						log.error("Error while creating " + PWS_PDF + ". Unable to locate fields in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
 						return Result.emptyResult();
 					}
 
@@ -191,12 +191,12 @@ public class GetPWSFieldValuesFromXML implements Rule{
 				}	
 			}
 			else{
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to get form instance id from PatientState: " + patientState.getPatientStateId());
+				log.error("Error while creating " + PWS_PDF + ". Unable to get form instance id from PatientState: " + patientState.getPatientStateId());
 				return Result.emptyResult();
 			}
 		}
 
-		this.log.error("Error while creating " + PWS_PDF + ".");
+		log.error("Error while creating " + PWS_PDF + ".");
 		return Result.emptyResult();	
 	}
 

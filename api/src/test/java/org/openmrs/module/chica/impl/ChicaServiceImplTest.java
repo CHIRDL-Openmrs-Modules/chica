@@ -269,26 +269,12 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 
 		encounter.setLocation(locationService.getLocation("Unknown Location"));
 		encounter.setPatient(patient);
-		Encounter savedEncounter = encounterService.saveEncounter(encounter);
-		Assertions.assertNotNull(savedEncounter);	
-		
-		Calendar scheduledTime = Calendar.getInstance();
-		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
-		
-		EncounterAttribute encounterAttributeScheduledTime = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
-		Assertions.assertNotNull(encounterAttributeScheduledTime);	
-		EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeScheduledTime, savedEncounter.getEncounterId(), scheduledTime.getTime().toString());
-		chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
-		encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName(savedEncounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
-		Assertions.assertNotNull(encounterAttributeValue);	
-
+		encounterService.saveEncounter(encounter);
 		Integer encounterId = encounter.getEncounterId();
 		String generatedOutput = null;
 		String booleanString = adminService
 				.getGlobalProperty("atd.mergeTestCaseXML");
 		boolean merge = Boolean.parseBoolean(booleanString);
-	
-
 		String PSFMergeDirectory = null;
 		FormService formService = Context.getFormService();
 
@@ -437,12 +423,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		encounter.setEncounterType(new EncounterType(3));
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
-
 		encounter.setLocation(locationService.getLocation("Unknown Location"));
 		encounter.setPatient(patient);
-		Calendar scheduledTime = Calendar.getInstance();
-		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
-		//encounter.setScheduledTime(scheduledTime.getTime());
 		encounterService.saveEncounter(encounter);
 		Integer encounterId = encounter.getEncounterId();
 		String generatedOutput = null;
@@ -626,6 +608,6 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		chicaService.saveStudyAttributeValue(studyAttVal);
 		
 		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1"), "TEST NAME");
-		assertEquals("Match","DobGtSentinelDateK22Randomizer", studyAttr.getValue());
+		assertEquals("DobGtSentinelDateK22Randomizer",studyAttr.getValue());
 	}
 }

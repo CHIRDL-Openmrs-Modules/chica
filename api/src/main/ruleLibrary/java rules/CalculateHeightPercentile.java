@@ -50,14 +50,14 @@ public class CalculateHeightPercentile implements Rule {
 		// Ensure the patient exists
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			this.log.error("Cannot find patient with ID " + patientId);
+			log.error("Cannot find patient with ID " + patientId);
 			return Result.emptyResult();
 		}
 		
 		// Ensure the patient has a birthdate
 		Date birthDate = patient.getBirthdate();
 		if (birthDate == null) {
-			this.log.error("Patient " + patientId + " does not have a birthdate specified.");
+			log.error("Patient " + patientId + " does not have a birthdate specified.");
 			return Result.emptyResult();
 		}
 		
@@ -81,7 +81,7 @@ public class CalculateHeightPercentile implements Rule {
 				heightObs.getObsDatetime());
 			return new Result(heightPercentile);
 		} catch (Exception e) {
-			this.log.error("Error calculating height percentile for patient " + patientId, e);
+			log.error("Error calculating height percentile for patient " + patientId, e);
 			return Result.emptyResult();
 		}
 	}

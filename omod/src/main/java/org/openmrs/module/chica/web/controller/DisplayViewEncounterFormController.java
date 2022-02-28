@@ -256,7 +256,7 @@ public class DisplayViewEncounterFormController {
 			// login page
 		}catch (Exception e){
 
-			this.log.error(Util.getStackTrace(e));
+			log.error(Util.getStackTrace(e));
 		}
 
 		return FORM_VIEW;

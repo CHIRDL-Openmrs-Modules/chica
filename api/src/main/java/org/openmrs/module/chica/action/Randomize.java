@@ -76,10 +76,7 @@ public class Randomize implements ProcessStateAction
 					randomizer = (Randomizer) theClass.newInstance();
 				} catch (Exception e)
 				{
-					log.error("Error creating custom randomizer: "
-							+ randomizerClassName);
-					log.error(e.getMessage());
-					log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+					log.error("Error creating custom randomizer: {}", randomizerClassName, e);
 				}
 			} else
 			{

@@ -86,8 +86,8 @@ public class ChicaNoteTesterController {
 				
 			}
 			catch (Exception e) {
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				log.error(e.getMessage());
+				log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 			}
 		}
 		

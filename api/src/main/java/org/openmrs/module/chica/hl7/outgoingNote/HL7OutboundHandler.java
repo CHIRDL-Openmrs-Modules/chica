@@ -68,15 +68,15 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(ContextAuthenticationException e)
 		{
-			this.log.error("Error authenticating context.", e);
+			log.error("Error authenticating context.", e);
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error in " + this.getClass().getName() + ".", e);
+			log.error("Error in " + this.getClass().getName() + ".", e);
 		}
 		finally
 		{
-			this.log.error("Shutting down " + this.getClass().getName() + ".");
+			log.error("Shutting down " + this.getClass().getName() + ".");
 		}	
 	}
 	
@@ -93,7 +93,7 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error getting pending HL7Outbound records.", e);
+			log.error("Error getting pending HL7Outbound records.", e);
 		}
 		
 		return null;
@@ -121,7 +121,7 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error sending HL7Outbound message HL7OutQueueId: " + hl7Outbound.getHL7OutQueueId(), e);
+			log.error("Error sending HL7Outbound message HL7OutQueueId: " + hl7Outbound.getHL7OutQueueId(), e);
 			return;
 		}
 
@@ -167,7 +167,7 @@ public class HL7OutboundHandler implements Runnable
 		} 
 		catch (Exception e) 
 		{
-			this.log.error("Open socket failed: " + e.getMessage());
+			log.error("Open socket failed: ", e);
 		}
 	} 
 	
@@ -190,7 +190,7 @@ public class HL7OutboundHandler implements Runnable
 		 }
 		 catch (Exception e) 
 		 {
-			 this.log.error("Error closing socket: " + e.getMessage());
+			 log.error("Error closing socket: ", e);
 		 }
 	 }
 	 
@@ -218,7 +218,7 @@ public class HL7OutboundHandler implements Runnable
 		 } 
 		 catch (Exception e) 
 		 {
-			 this.log.error("Error during readAck", e);
+			 log.error("Error during readAck", e);
 		 }
 		 
 		 return null;

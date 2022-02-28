@@ -111,21 +111,21 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 				}
 				else
 				{
-					this.log.error("New Glooko user notification was received. Unable to locate patient match for: " + this.lastName + ", " + this.firstName);
+					log.error("New Glooko user notification was received. Unable to locate patient match for: " + this.lastName + ", " + this.firstName);
 				}
 			}
 			else
 			{
-				this.log.error("New Glooko user notification was received. Unable to locate possible patient matches for: " + this.lastName + ", " + this.firstName);
+				log.error("New Glooko user notification was received. Unable to locate possible patient matches for: " + this.lastName + ", " + this.firstName);
 			}	
 		}
 		catch(ContextAuthenticationException e)
 		{
-			this.log.error("Error authenticating context.", e);
+			log.error("Error authenticating context.", e);
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error in " + this.getClass().getName() + ".", e);
+			log.error("Error in " + this.getClass().getName() + ".", e);
 		}		
 	}
 	
@@ -141,7 +141,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 
 			if (attributeType == null)
 			{
-				this.log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId() + " Person attribute type does not exist.");
+				log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId() + " Person attribute type does not exist.");
 				return;
 			}
 			
@@ -154,7 +154,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 		}
 		catch(APIException e)
 		{
-			this.log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId(), e);
+			log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId(), e);
 		}	
 	}
 

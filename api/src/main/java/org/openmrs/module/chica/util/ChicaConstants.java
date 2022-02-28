@@ -46,4 +46,13 @@ public class ChicaConstants {
     /** Form concepts */
     public static final String PROVIDER_VIEW = "_provider_view";
     public static final String PROVIDER_SUBMIT = "_provider_submit";
+    
+    /** Rule names **/
+    public static final String RULE_NAME_DEPRESSION_SUICIDE_PWS = "Depression_SuicidePWS";
+    public static final String RULE_NAME_BF_SUICIDE_PWS = "bf_suicide_PWS";
+    public static final String RULE_NAME_ABUSE_CONCERN_PWS = "Abuse_Concern_PWS";
+    public static final String RULE_NAME_DOM_VIOL_PWS = "Dom_Viol_PWS";
+
+    /**Concepts**/;
+    public static final String CONCEPT_SUICIDE_CONCERNS =  "suicide_concerns";
 }

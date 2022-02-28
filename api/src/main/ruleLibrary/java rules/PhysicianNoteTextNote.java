@@ -84,7 +84,7 @@ public class PhysicianNoteTextNote implements Rule
 		long startTime = System.currentTimeMillis();
 		Integer encounterId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		if (encounterId == null) {
-			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			log.error("Cannot determine encounter ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		

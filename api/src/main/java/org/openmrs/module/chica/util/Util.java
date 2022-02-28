@@ -819,15 +819,17 @@ public class Util {
 	public static Integer getLocationTagId(Encounter encounter) {
 		if (encounter != null) {
 			// lookup location tag id that matches printer location
-			ChirdlUtilBackportsService chirdlutilbackportsService = Context
-					.getService(ChirdlUtilBackportsService.class);
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			
 			EncounterAttributeValue printerEncounterAttributeValue  = chirdlutilbackportsService.
 					getEncounterAttributeValueByName( encounter.getEncounterId(), ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			
 			if (printerEncounterAttributeValue != null) {
 				String printerLocation = printerEncounterAttributeValue.getValueText();
-				if (printerLocation!= null ) {
+				if (printerLocation != null ) {
 					Location location = encounter.getLocation();
 					Set<LocationTag> tags = location.getTags();
+					
 					if (tags != null) {
 						for (LocationTag tag : tags) {
 							if (tag.getName().equalsIgnoreCase(printerLocation)) {
@@ -836,6 +838,9 @@ public class Util {
 						}
 					}
 				}
+			}else{
+				log.error("Encounter attribute {} does not exist for {} encounter id: "
+						, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, encounter.getEncounterId());
 			}
 		}
 		return null;
@@ -853,7 +858,7 @@ public class Util {
 		Date endDate = Calendar.getInstance().getTime();
 		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
 				null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-		if (encounters == null || encounters.size() == 0) {
+		if (encounters == null || encounters.isEmpty()) {
 			return null;
 		} else if (encounters.size() == 1) {
 			return encounters.get(0);
@@ -896,7 +901,7 @@ public class Util {
     		return false;
     	}
     	
-    	if (latestResult.getResultObject() == null || !(latestResult.getResultObject() instanceof Obs)) {
+    	if (!(latestResult.getResultObject() instanceof Obs)) {
     		return false;
     	}
     	
@@ -942,11 +947,13 @@ public class Util {
 				// see if the encounter has a printer location
 				// this will give us the location tag id
 				EncounterAttributeValue encounterAttributeValue =  chirdlutilbackportsService
-						.getEncounterAttributeValueByName( encounter.getEncounterId(), 
-								ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+						.getEncounterAttributeValueByName( encounter.getEncounterId(), ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
 				
 				if (encounterAttributeValue != null) {
 					printerLocation = encounterAttributeValue.getValueText();
+				} else{
+					log.error("Encounter attribute {} does not exist for {} encounter id: "
+							, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, encounter.getEncounterId());
 				}
 
 				// if the printer location is null, pick
@@ -958,7 +965,7 @@ public class Util {
 					{
 						Set<LocationTag> tags = location.getTags();
 
-						if (tags != null && tags.size() > 0)
+						if (tags != null && !tags.isEmpty())
 						{
 							printerLocation = ((LocationTag) tags.toArray()[0])
 									.getName(); // CHICA-1151 replace getTag() with getName()
@@ -1006,7 +1013,7 @@ public class Util {
 			try{
 				stylesheetFile = new File(formAttributeValue.getValue());
 			}catch (Exception e){
-				log.error("The file path in the form attribute is not defined correctly. "+ e);
+				log.error("The file path in the form attribute is not defined correctly. ", e);
 			}				
 		} else {
 			stylesheetFile = XMLUtil.findStylesheet(strStylesheet);

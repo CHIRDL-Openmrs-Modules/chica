@@ -21,6 +21,7 @@ import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -85,7 +86,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 		String exportFilename = null;
 		
 		if (parameters != null) {
-			exportFilename = (String) parameters.get("filename");
+			exportFilename = (String) parameters.get(ChirdlUtilConstants.PARAMETER_FILE_NAME);
 		}
 		try {
 			InputStream input = new FileInputStream(exportFilename);
@@ -93,9 +94,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 			input.close();
 		}
 		catch (Exception e) {
-			log.error("Error consuming chica file: " + exportFilename);
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error consuming chica file: {} ", exportFilename, e);
 		}
 		
 		// remove the parsed xml from the xml datasource
@@ -113,8 +112,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 			}
 		}
 		catch (Exception e) {
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception removing parsed xml from datasource.", e);
 		}
 	}
 }

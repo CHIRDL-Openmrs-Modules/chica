@@ -62,8 +62,7 @@ public class ProcessFile implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		this.log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		try
 		{
 			HashMap<String, Object> stateParameters = this.patientState
@@ -80,12 +79,11 @@ public class ProcessFile implements ChirdlRunnable
 		} 
 		catch (Exception e)
 		{
-			this.log.error("Error processing file", e);
+			log.error("Error processing file", e);
 		} 
 		finally
 		{
-			this.log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}, {})",  getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()) );;
 		}
 	}
 

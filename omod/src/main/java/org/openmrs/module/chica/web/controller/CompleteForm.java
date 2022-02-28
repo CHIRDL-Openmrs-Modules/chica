@@ -68,15 +68,15 @@ public class CompleteForm implements Runnable {
                 }
             }
         } catch (Exception e) {
-            this.log.error(e.getMessage());
-            this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+            log.error(e.getMessage());
+            log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
         } 
     
         try {
             changeState(this.formInstance, this.parameters);
         } catch (Exception e) {
-            this.log.error(e.getMessage());
-            this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+            log.error(e.getMessage());
+            log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
         }
     }
     
@@ -101,8 +101,8 @@ public class CompleteForm implements Runnable {
                     BaseStateActionHandler.getInstance().changeState(formInstState, (HashMap)stateChangeParameters);
                 }
                 catch (Exception e) {
-                    this.log.error(e.getMessage());
-                    this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+                    log.error(e.getMessage());
+                    log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
                 }
             }
         }

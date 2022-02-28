@@ -55,7 +55,7 @@ public class physicianNotePhysicalExam implements Rule {
 		Integer encounterId = org.openmrs.module.chica.util.Util.getIntegerFromMap(
 			parameters, ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		if (encounterId == null) {
-			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			log.error("Cannot determine encounter ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		

@@ -16,6 +16,8 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -140,7 +142,6 @@ public class HL7SocketHandler extends
 					.getPatientIdentifier();
 			
 			if (patientIdentifier != null) {
-				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
 				Patient matchedPatient = findPatient(hl7Patient);
 				
@@ -157,7 +158,7 @@ public class HL7SocketHandler extends
 			}
 
 		} catch (RuntimeException e) {
-			log.error("Exception during patient lookup. ", e);
+			log.error("Exception matching, creating, or updating patient from HL7. ", e);
 		}
 		return resultPatient;
 
@@ -189,12 +190,12 @@ public class HL7SocketHandler extends
 		List<Patient> lookupPatients = patientService.getPatientsByIdentifier(null, mrn,
 				null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		
-		if (lookupPatients == null || lookupPatients.size() == 0){
+		if (lookupPatients == null || lookupPatients.isEmpty()){
 			lookupPatients = patientService.getPatientsByIdentifier(null, LEADING_ZERO + mrn,
 					null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 		}
 
-		if (lookupPatients != null && lookupPatients.size() > 0) {
+		if (lookupPatients != null && !lookupPatients.isEmpty()) {
 			return lookupPatients.iterator().next();
 		}
 
@@ -203,7 +204,7 @@ public class HL7SocketHandler extends
 		if (ssnIdent != null) {
 			String ssn = ssnIdent.getIdentifier();
 			lookupPatients = patientService.getPatientsByIdentifier(null, ssn, null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
-			if (lookupPatients != null && lookupPatients.size() > 0) {
+			if (lookupPatients != null && !lookupPatients.isEmpty()) {
 				Iterator<Patient> i = lookupPatients.iterator();
 				while (i.hasNext()) {
 					Patient patient = i.next();
@@ -434,15 +435,8 @@ public class HL7SocketHandler extends
 				message = this.parser.parse(incomingMessageString);
 			
 			} catch (Exception e) {
-				Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_FATAL, ChirdlUtilConstants.ERROR_HL7_PARSING,
-						"Error parsing the McKesson checkin hl7 "
-								+ e.getMessage(),
-						org.openmrs.module.chirdlutil.util.Util
-								.getStackTrace(e), new Date(), null);
-				ChirdlUtilBackportsService chirdlutilbackportsService = Context
-						.getService(ChirdlUtilBackportsService.class);
+				log.error("Error parsing McKesson checkin HL7 for ADT message.", e );
 
-				chirdlutilbackportsService.saveError(error);
 				String mckessonParseErrorDirectory = IOUtil
 						.formatDirectoryName(adminService
 								.getGlobalProperty(GLOBAL_PROPERTY_PARSE_ERROR_DIRECTORY));
@@ -456,14 +450,11 @@ public class HL7SocketHandler extends
 	                            incomingMessageString.getBytes())){
 	                            IOUtil.bufferedReadWrite(input, outputFile, false);
 	                        }catch(Exception e1){
-	                            log.error("There was an error writing the dump file");
-	                            log.error(e1.getMessage());
-	                            log.error(Util.getStackTrace(e1));
+	                            log.error("Exception writing the dump file: {}", filename );
 	                        }
 					    }    
-					}catch(IOException ioe){
-					    log.error("IOException in HL7SocketHandler.processMessage() (mckessonParseErrorDirectory: " + 
-					            mckessonParseErrorDirectory + " filename: " + filename + ")", ioe);
+					}catch(IOException e2){
+					    log.error("Exception processing message in mckessonParseErrorDirectory: {} filename: {}", mckessonParseErrorDirectory , filename, e2);
 					}
 					
 				}
@@ -473,7 +464,7 @@ public class HL7SocketHandler extends
 					inboundHeader = (Segment) originalMessage.get(originalMessage.getNames()[0]);
 					ackMessage = org.openmrs.module.sockethl7listener.util.Util.makeACK(inboundHeader, processMessageError, null, null);
 				} catch (Exception e2) {
-					log.error("Error sending an ack response after a parsing exception. " , e2);
+					log.error("Error sending ACK response after a parsing exception. " , e2);
 					ackMessage = originalMessage;
 				}
 				return ackMessage;
@@ -533,7 +524,7 @@ public class HL7SocketHandler extends
 		// CHICA-1190
 		boolean newEncounterCreated = true;
 		Object newEncounterCreatedObject = parameters.get(ChirdlUtilConstants.PARAMETER_NEW_ENCOUNTER_CREATED);
-		if(newEncounterCreatedObject != null && newEncounterCreatedObject instanceof Boolean)
+		if(newEncounterCreatedObject instanceof Boolean)
 		{
 			newEncounterCreated = (boolean)newEncounterCreatedObject;
 		}
@@ -654,32 +645,33 @@ public class HL7SocketHandler extends
 			}
 
 		
-		EncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
+		EncounterAttribute encounterAttributePlanCode = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
 	
-		if (encounterAttribute == null) {
-			EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttribute, encounterId, planCode);
-			EncounterAttributeValue savedEncounterAttributeValue = chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+		if (encounterAttributePlanCode != null) {
+			chirdlutilbackportsService.saveEncounterAttributeValue( new EncounterAttributeValue(encounterAttributePlanCode, encounterId, planCode));
 		}else {
-			log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
+			log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
 		}
 		
 		EncounterAttribute encounterAttributeCarrierCode = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE);
 		 
-		if (encounterAttributeCarrierCode == null) {
-				EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeCarrierCode, encounterId, planCode);
-				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+		if (encounterAttributeCarrierCode != null) {
+			chirdlutilbackportsService.saveEncounterAttributeValue(new EncounterAttributeValue(encounterAttributeCarrierCode, encounterId, carrierCode));
 		}else {
-			log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE);
+			log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE);
 		}
 		
 		
-		EncounterAttribute encounterAttributeAppointmentTime = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
-		 
-		if (encounterAttributeAppointmentTime == null) {
-				EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeAppointmentTime, encounterId, planCode);
-				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
-		}else {
-			log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		if (appointmentTime != null){
+			
+			EncounterAttribute encounterAttributeAppointmentTime = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+			String dateString = new SimpleDateFormat(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME).format(appointmentTime);
+			
+			if (encounterAttributeAppointmentTime != null ) {
+				chirdlutilbackportsService.saveEncounterAttributeValue(new EncounterAttributeValue(encounterAttributeAppointmentTime, encounterId, dateString));
+			}else {
+				log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+			}
 		}
 		
 
@@ -690,11 +682,10 @@ public class HL7SocketHandler extends
 			
 			EncounterAttribute encounterAttributePrinterLocation = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
 			 
-			if (encounterAttributeCarrierCode == null) {
-					EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributePrinterLocation, encounterId, planCode);
-					chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+			if (encounterAttributePrinterLocation != null) {
+					chirdlutilbackportsService.saveEncounterAttributeValue(new EncounterAttributeValue(encounterAttributePrinterLocation, encounterId, printerLocation));
 			}else {
-				log.error("Unable to save encounter attribute value. Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+				log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
 			}
 			
 		}
@@ -718,24 +709,11 @@ public class HL7SocketHandler extends
 				location = new Location();
 				location.setName(locationString);
 				locationService.saveLocation(location);
-				log.warn("Location '" + locationString
-						+ "' does not exist in the Location table. "
-						+ "A new location was created for '" + locationString
-						+ "'");
+				log.warn("Created a new location for location: {}.", locationString);
 			}
 		}
 
 		encounter.setLocation(location);
-		
-		EncounterAttribute encounterAttributeInsuranceSMSCode = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_SMS_CODE);
-		 
-		if (encounterAttributeInsuranceSMSCode != null) {
-				EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttributeInsuranceSMSCode, encounterId, planCode);
-				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
-		}else {
-			log.error("Unable to save encounter attribute value. Encounter id: {} Encounter Attribute: {}: ",
-					encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_SMS_CODE);
-		}
 		
 		//DWE CLINREQ-130 Removed encounter parameter
 		// CAUTION: If an encounter object is needed in this thread in the future, 
@@ -779,7 +757,7 @@ public class HL7SocketHandler extends
 			if (insuranceName != null){
 				org.openmrs.module.chirdlutil.util.Util.saveObs(p, concept, encounterId, insuranceName,encDate);
 			}else {
-				log.error("Insurance Name is null for patient: " + p.getPatientId());
+				log.error("Insurance Name is null for patient id: {} ",p.getPatientId());
 			}
 
 			// CHICA-1157 Move category lookup to here from CheckinPatient thread
@@ -798,8 +776,8 @@ public class HL7SocketHandler extends
 				org.openmrs.module.chirdlutil.util.Util.saveObs(p, concept, encounterId, category, 
 						encounter.getEncounterDatetime());
 			}else{
-				log.error("Could not map code: plan code: "+planCode+" insurance Name: "+ insuranceName+
-						" sending application: "+sendingApplication+" sending facility: "+sendingFacility);
+				log.error("Unable to map insurance code for plan code: {} insurance Name: {} sending application: {} sending facility: {}"
+						, sendingFacility, planCode, insuranceName, sendingApplication,sendingFacility);
 			}
 		}
 		

@@ -166,7 +166,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			}
 			catch (Exception e) {
 				
-				log.error("Error occurred while creating outgoing note (encounterId: " + encounterId + ")", e);
+				log.error("Error occurred while creating outgoing note (encounterId: {})", encounterId, e);
 			}
 			finally {
 				if (reader != null) {
@@ -185,7 +185,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		}
 		catch (Exception e) {
 			
-			log.error("Error sending powerNote:", e);
+			log.error("Error sending powerNote for encouter id {}.", encounterId, e);
 		}
 		return null;
 	}
@@ -214,7 +214,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			
 		}
 		catch (Exception e) {
-			log.error("Exception constructing export message MSH segment. EncounterId: " + enc.getEncounterId(), e);
+			log.error("Exception constructing export message MSH segment. EncounterId: {}", enc.getEncounterId(), e);
 		}
 		
 		return msh;
@@ -258,7 +258,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			
 		}
 		catch (Exception e) {
-			log.error("Exception adding PID segment to hl7.  PatientId: " + pat.getPatientId(), e);
+			log.error("Exception adding PID segment to hl7.  PatientId: {}", pat.getPatientId(), e);
 			return null;
 		}
 	}
@@ -292,7 +292,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			
 		}
 		catch (Exception e) {
-			log.error("Exception constructing OBX segment for concept ." + name, e);
+			log.error("Exception constructing OBX segment for concept {}", name, e);
 		}
 		return obx;
 		
@@ -377,7 +377,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 				}
 				catch(Exception e)
 				{
-					log.error("Error occurred while adding provider id to TXA segment for encounter: " + encounter.getEncounterId() + ".", e);
+					log.error("Error occurred while adding provider id to TXA segment for encounter: {}.", encounter.getEncounterId(), e);
 				}
 			}
 			
@@ -416,7 +416,8 @@ public class ExportPhysicianNote implements ProcessStateAction {
 
 				if(encounterAttributeValue == null)
 				{
-					log.error("Error creating PV1 segment for outgoing note. Unable to locate " + ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER + " attribute for encounterId: " + encounter.getId());		
+					log.error("Error creating PV1 segment for outgoing note. Unable to locate {} attribute for encounterId: {}."
+							, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER, encounter.getId());		
 					return null;
 				}
 
@@ -456,26 +457,26 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		// If host and port are not set, allow the record to be created with localhost and port 0
 		if (host == null || host.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
+			log.error("Error creating HL7Outbound record in {}. Host has been set to {}.", this.getClass().getName(),  ChirdlUtilConstants.DEFAULT_HOST);
 			host = ChirdlUtilConstants.DEFAULT_HOST;
 		}
 		
 		if(portString == null || portString.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+			log.error("Error creating HL7Outbound record in {}. Port has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_PORT);
 			port = ChirdlUtilConstants.DEFAULT_PORT;
+		} else {
+			try
+			{
+				port = Integer.parseInt(portString);
+			}
+			catch(NumberFormatException e)
+			{
+				log.error("Error creating HL7Outbound record in {}. Port is not in a valid numeric format (portString: {}).", this.getClass().getName(), portString, e);
+				port = ChirdlUtilConstants.DEFAULT_PORT;
+			}
 		}
-		
-		try
-		{
-			port = Integer.parseInt(portString);
-		}
-		catch(NumberFormatException e)
-		{
-			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + ").");
-			port = ChirdlUtilConstants.DEFAULT_PORT;
-		}
-		
+	
 		try
 		{
 			// CHICA-1070 Replaced with new util method

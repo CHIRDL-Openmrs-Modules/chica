@@ -24,7 +24,7 @@ public class VitalsProcessor extends AbstractTask {
 	
 	@Override
 	public void initialize(TaskDefinition config) {
-		this.log.info("Initializing VitalsHL7ListenerServer processor...");
+		log.info("Initializing VitalsHL7ListenerServer processor...");
 		super.initialize(config);
 		
 		String portString = this.taskDefinition.getProperty("port");
@@ -37,13 +37,13 @@ public class VitalsProcessor extends AbstractTask {
 				port = Integer.parseInt(portString);
 			}
 			catch (NumberFormatException e) {
-				this.log.error("Could not start VitalsHL7ListenerServer. Port " + portString + " could not be parsed");
+				log.error("Could not start VitalsHL7ListenerServer. Port " + portString + " could not be parsed");
 				return;
 			}
 			
 			if(source == null || source.isEmpty())
 			{
-				this.log.error("Could not start VitalsHL7ListenerServer. Source must be set.");
+				log.error("Could not start VitalsHL7ListenerServer. Source must be set.");
 				return;
 			}
 			
@@ -57,10 +57,10 @@ public class VitalsProcessor extends AbstractTask {
 		}
 		catch (Exception e) {
 			log.error("Error starting VitalsHL7ListenerServer...");
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error(e.getMessage());
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
-		this.log.info("Finished initializing VitalsHL7ListenerServer processor.");
+		log.info("Finished initializing VitalsHL7ListenerServer processor.");
 	}
 	
 	@Override
@@ -70,8 +70,8 @@ public class VitalsProcessor extends AbstractTask {
 			this.server.start();
 		}
 		catch (Exception e) {
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error(e.getMessage());
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 		finally {
 			Context.closeSession();
@@ -97,8 +97,8 @@ public class VitalsProcessor extends AbstractTask {
 			}
 		}
 		catch (Exception e) {
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error(e.getMessage());
+			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
 		}
 	}
 }

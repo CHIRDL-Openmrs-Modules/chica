@@ -105,9 +105,7 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 			currState = chirdlutilbackportsService.getStateByName("ErrorState");
 			chirdlutilbackportsService.addPatientState(patient,
 					currState, sessionId,locationTagId,locationId, null);
-			log.error(formName+
-					" locationTagAttribute does not exist for locationTagId: "+
-					locationTagId+" locationId: "+locationId);
+			log.error("{} locationTagAttribute does not exist for locationTagId: {} locationId: {}", formName, locationTagId, locationId);
 			return;
 		}
 	}

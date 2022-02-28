@@ -133,13 +133,13 @@ public class HL7PatientHandler25 extends
 					}
 				} catch (RuntimeException e1)
 				{
-					log.debug("Warning: maiden information not available in PID segment.");
+					log.debug("Warning: mother's maiden name not available in PID segment.");
 				}
 
 			}
 		} catch (Exception e)
 		{
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception parsing mother's maiden name from PID segment");
 		}
 		return maiden;
 	}
@@ -199,7 +199,7 @@ public class HL7PatientHandler25 extends
 	@Override
 	public List<PersonAddress> getAddresses(Message message)
 	{
-		List<PersonAddress> addresses = new ArrayList<PersonAddress>();
+		List<PersonAddress> addresses = new ArrayList<>();
 		XAD[] xadAddresses = null;
 		
 		try
@@ -222,7 +222,7 @@ public class HL7PatientHandler25 extends
 
 		} catch (Exception e)
 		{
-			log.warn("Unable to collect address from PID or NK1 for", e);
+			log.warn("Exception parsing address from PID or NK1.", e);
 		}
 		return addresses;
 	}
@@ -237,7 +237,7 @@ public class HL7PatientHandler25 extends
 			Terser terser = new Terser(newMessage);
 			pid = terser.get("/.PID-3-1");
 		} catch (Exception e) {
-			log.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
+			log.error("MRF dump encoding error getting identifier from PID-3-1 field." , e);
 		} 
 		return pid;
 	}

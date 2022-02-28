@@ -43,13 +43,13 @@ public class ExportObs implements ProcessStateAction
 			// If host and port are not set, allow the record to be created with localhost and port 0
 			if(StringUtils.isBlank(host))
 			{
-				this.log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
+				log.error("Error creating HL7Outbound record in {}. Host has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_HOST);
 				host = ChirdlUtilConstants.DEFAULT_HOST;
 			}
 			
 			if(StringUtils.isBlank(portString))
 			{
-				this.log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+				log.error("Error creating HL7Outbound record in {}. Port has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_PORT);
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
@@ -59,7 +59,8 @@ public class ExportObs implements ProcessStateAction
 			}
 			catch(NumberFormatException e)
 			{
-				this.log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + "). Port will be set to default value " + ChirdlUtilConstants.DEFAULT_PORT + ".", e);
+				log.error("Error creating HL7Outbound record in {}. Port is not in a valid numeric format (portString:{}). Port will be set to default value {}."
+						, this.getClass().getName(), portString, ChirdlUtilConstants.DEFAULT_PORT, e);
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
@@ -68,7 +69,7 @@ public class ExportObs implements ProcessStateAction
 		}
 		catch(Exception e)
 		{
-			this.log.error("Exception exporting obs for encounterId: " + encounterId, e);
+			log.error("Exception exporting obs for encounterId: {}", encounterId, e);
 		}
 		finally
 		{

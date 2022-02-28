@@ -229,7 +229,7 @@ public class consumeWeight implements Rule
 		String value = String.valueOf(pounds);
 		if ((ounces / 16.0) > 1)
 		{
-			this.log.warn("More than 16 ounces entered for weight");
+			log.warn("More than 16 ounces entered for weight.");
 		}
 		
 		return value;

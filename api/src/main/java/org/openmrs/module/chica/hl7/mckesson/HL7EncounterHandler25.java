@@ -176,7 +176,7 @@ public class HL7EncounterHandler25 extends
 			}
 		} catch (Exception e)
 		{
-			log.error(Util.getStackTrace(e));
+			log.error("Error parsing insurance name from IN1 segment.", e);
 		}
 		return null;
 	}
@@ -191,7 +191,7 @@ public class HL7EncounterHandler25 extends
 			}
 		} catch (Exception e)
 		{
-			log.error(Util.getStackTrace(e));
+			log.error("Error parsing insurance carrier from IN1 segment", e);
 		}
 		return null;
 	}
@@ -229,13 +229,13 @@ public class HL7EncounterHandler25 extends
 			if (timeStamp != null && timeStamp.getTime()!= null) { 
 				datetime = TranslateDate(timeStamp);
 			}else {
-				log.error("A valid encounter date time stamp could not be " +
+				log.error("A valid encounter date timestamp could not be " +
 						"determined from MSH segment (for ADT messages)" +
 						" or OBR segment (for ORU messages)");
 			}
 			
 		} catch (Exception e) {
-			log.error("Exception occurred parsing encounter date time from Hl7",e);
+			log.error("Exception occurred parsing encounter date time from Hl7.",e);
 		}
 
 		return datetime;

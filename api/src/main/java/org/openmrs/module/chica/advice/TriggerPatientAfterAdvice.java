@@ -42,9 +42,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				}
 			} catch (Exception e)
 			{
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util
-						.getStackTrace(e));
+				log.error("Exception during patient checkin after hl7 message processing.", e);
 			}
 		}
 		else if (method.getName().equals("fileProcessed"))
@@ -64,7 +62,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					Iterator<TeleformFileState> iter = tfStates.iterator();
 					if(tfStates.size() > 0)
 					{
-						this.log.info("!!!! FOUND TF STATES to PROCESS!!!");
+						log.info("!!!! FOUND TF STATES to PROCESS!!!");
 						while(iter.hasNext())
 						{
 							tfState = iter.next();
@@ -74,14 +72,12 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				} 
 			} catch (Exception e)
 			{
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util
-						.getStackTrace(e));
+				log.error("Exception after processing teleform fil.e",e);
 			}
 		}
 		else if(method.getName().equals("cleanCache")) 
 		{
-            this.log.info("clear regenObs and medicationList");
+            log.info("Clear regenObs and medicationList.");
             ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY)).clearObs();
 
         }

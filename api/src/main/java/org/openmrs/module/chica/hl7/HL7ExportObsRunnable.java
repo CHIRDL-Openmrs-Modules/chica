@@ -70,7 +70,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		}
 		catch(Exception e)
 		{
-			this.log.error("Exception exporting obs for encounterId: " + this.encounterId, e);
+			log.error("Exception exporting obs for encounterId: {}", this.encounterId, e);
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		
 		if(hl7ORU.getORU().getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATIONReps() == 0)
 		{
-			this.log.info("Error creating ORU message. No OBX segments were created for encounterId: " + this.encounterId + " conceptSource: " + this.conceptSourceString);
+			log.info("Error creating ORU message. No OBX segments created for encounterId: {} conceptSource: {}",  this.encounterId,  this.conceptSourceString);
 			return null; // We don't want to send a message that doesn't have at least 1 OBX
 		}
 
@@ -135,7 +135,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 		}
 		catch(HL7Exception e)
 		{
-			this.log.error("Exception parsing HL7 message for encounter: " + this.encounterId + ".", e);
+			log.error("Exception parsing HL7 message for encounter: {}", this.encounterId, e);
 		}
 		
 		return message;

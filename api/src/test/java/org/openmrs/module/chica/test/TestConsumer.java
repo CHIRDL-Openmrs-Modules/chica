@@ -74,33 +74,12 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 		Encounter encounter = new Encounter();
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
-
 		encounter.setLocation(locationService.getLocation(ChirdlUtilConstants.LOCATION_UNKNOWN));
 		encounter.setPatient(patient);
-		Calendar scheduledTime = Calendar.getInstance();
-		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
 		encounter.setDateCreated(new Date());
 		encounterService.saveEncounter(encounter);
-
-		encounter = encounterService.getEncounter(encounter.getEncounterId());
-        Assertions.assertNotNull(encounter, "Encounter not found for encounter id." );	
 		
-        Integer encounterId = encounter.getEncounterId();
-		EncounterAttribute encounterAttribute = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.LOCATION_UNKNOWN);
-		Assertions.assertNotNull(encounterAttribute, "EncounterAttribute not found for attribute value = " + ChirdlUtilConstants.LOCATION_UNKNOWN);
-		
-		EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttribute, encounterId, scheduledTime.toString());
-		EncounterAttributeValue savedEncounterAttributeValue = chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
-		
-		//Check getting attribute value as date
-		Assertions.assertNotNull(savedEncounterAttributeValue);	
-		
-		encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByAttribute(encounterId, encounterAttribute, false);
-		Assertions.assertNotNull(encounterAttributeValue);	
-		String attributeValueText = encounterAttributeValue.getValueText();
-		Assertions.assertNotNull(attributeValueText);	
-		
-		
+		Integer encounterId = encounter.getEncounterId();
 		ATDService atdService = Context.getService(ATDService.class);
 		ChicaService chicaService = Context.getService(ChicaService.class);
 		String filename = "test/testFiles/export_PSF.xml";

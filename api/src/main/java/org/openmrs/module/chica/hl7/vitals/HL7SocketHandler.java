@@ -228,7 +228,7 @@ public class HL7SocketHandler implements Application {
 				patient = patients.get(0);
 			}
 			else{
-				log.error("Unable to process vitals for patient with MRN: " + mrn);
+				log.error("Unable to process vitals for patient with MRN: {}",  mrn);
 				error = true;
 			}
 			
@@ -492,7 +492,7 @@ public class HL7SocketHandler implements Application {
 					}
 					catch(NumberFormatException nfe)
 					{
-						log.error("Vitals Conversion Error: Could not convert vitals measurement for " + mappedConcept.getName());
+						log.error("Vitals Conversion Error: Could not convert vitals measurement for {}", mappedConcept.getName());
 					}
 				}
 			}
@@ -514,7 +514,7 @@ public class HL7SocketHandler implements Application {
 			ConceptNumeric numericConcept = cs.getConceptNumeric(concept.getConceptId());
 			// If the concept is null, log the error because the datatype is set to numeric.
 			if (numericConcept == null) {
-				log.error("Concept defined as numeric, but was not found. Concept ID: " + concept.getConceptId());
+				log.error("Concept defined as numeric, but was not found. Concept ID: {}", concept.getConceptId());
 				return units;
 			}
 			
@@ -565,23 +565,23 @@ public class HL7SocketHandler implements Application {
 					// Make sure the patientId for the encounter record matches the patient from the HL7 message
 					if(patient.getPatientId().intValue() != encounter.getPatient().getPatientId().intValue()) // CHICA-1151 replace encounter.getPatientId() with encounter.getPatient().getPatientId()
 					{
-						log.error("Unable to match encounter to patientId: " + patient.getPatientId());
+						log.error("Unable to match encounter to patientId: {}", patient.getPatientId());
 						encounter = null;
 					}
 				}
 				else
 				{
-					log.error("Unable to locate encounter for visit number: " + visitNumber);					
+					log.error("Unable to locate encounter for visit number: {}", visitNumber);					
 				}
 			}
 			catch(Exception e)
 			{
-				log.error("Error occurred while locating encounter for visit number: " + visitNumber, e);				
+				log.error("Error occurred while locating encounter for visit number: {}", visitNumber, e);				
 			}
 		}
 		else
 		{
-			log.error("Unable to locate visit number in HL7 message for patientId: " + patient.getPatientId());
+			log.error("Unable to locate visit number in HL7 message for patientId: {}", patient.getPatientId());
 		}
 		
 		return encounter;

@@ -66,14 +66,14 @@ public class CalculateMidazolamDosage implements Rule {
 		// Ensure the patient exists
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			this.log.error("Cannot find patient with ID " + patientId);
+			log.error("Cannot find patient with ID " + patientId);
 			return Result.emptyResult();
 		}
 		
 		// Ensure the patient has a birthdate
 		Date birthDate = patient.getBirthdate();
 		if (birthDate == null) {
-			this.log.error("Patient " + patientId + " does not have a birthdate specified.");
+			log.error("Patient " + patientId + " does not have a birthdate specified.");
 			return Result.emptyResult();
 		}
 		

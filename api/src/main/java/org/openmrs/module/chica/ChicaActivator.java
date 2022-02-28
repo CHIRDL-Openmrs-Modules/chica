@@ -11,7 +11,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.DaemonToken;
 import org.openmrs.module.DaemonTokenAware;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 
 /**
@@ -23,9 +22,7 @@ import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAware {
 
 	private static final Logger log = LoggerFactory.getLogger(ChicaActivator.class);
-	private static final String CHICA = "chica";
-	private static String encounterTypeValue = "";
-	
+	private static final String CHICA = "chica";	
 
 	/**
 	 * @see org.openmrs.module.BaseModuleActivator#started()
@@ -36,7 +33,6 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 		
 		//check that all the required global properties are set
 		checkGlobalProperties();
-		setEncounterTypeValue(CHICA);
 		
 		ApplicationCacheManager.getInstance(); // CHICA-963 Prevent errors on shutdown by initializing on startup. This has to be in the ChicaActivator since the cache depends on classes found in the chica module
 	}
@@ -62,16 +58,13 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 					currValue = currProperty.getPropertyValue();
 					if (currValue == null || currValue.length() == 0)
 					{
-						log.error("You must set a value for global property: "
-								+ currName);
+						log.error("You must set a value for global property: {} ", currName);
 					}
 				}
 			}
 		} catch (Exception e)
 		{
-			log.error("Error checking global properties for chica module");
-			log.error(e.getMessage());
-			log.error(Util.getStackTrace(e));
+			log.error("Error checking global properties for chica module.", e);
 		}
 	}
 	
@@ -89,19 +82,6 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 	@Override
 	public void setDaemonToken(DaemonToken token) {
 		org.openmrs.module.chica.util.Util.setDaemonToken(token);
-	}
-	
-
-	private static void setEncounterTypeValue(String name) {
-		EncounterType encounterType = Context.getEncounterService().getEncounterType(name);
-		if (encounterType != null) {
-			encounterTypeValue = encounterType.getEncounterTypeId().toString();
-		} 
-	//	org.openmrs.module.chica.util.Util.setEncounterTypeValue(encounterTypeValue);
-	}
-	
-	public static String getEncounterTypeValue() {
-		return encounterTypeValue;
 	}
 
 }

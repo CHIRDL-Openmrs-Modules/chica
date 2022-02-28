@@ -383,9 +383,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 				return answer;
 			} catch (RuntimeException e)
 			{
-				log.error("createObs() failed. MRN: {}; Invalid OBX value: {}; concept question id: {}; concept name: {}", pIdentifierString, stConceptId, conceptQuestionId, conceptName);
-				log.error(e.getMessage());
-				log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				log.error(" Exception creating answer concept OBX segment for patient identifier: {} OBX coded value: {}; concept question id: {} concept name: {}", pIdentifierString, stConceptId, conceptQuestionId, conceptName, e);
 			}
 
 		}

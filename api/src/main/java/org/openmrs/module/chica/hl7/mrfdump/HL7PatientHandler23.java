@@ -66,8 +66,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				}
 			} catch (RuntimeException e1)
 			{
-				log
-						.debug("Warning: SSN information not available in PID segment.");
+				log.debug("Warning: SSN information not available in PID segment.");
 			}
 		}
 		return ssn;
@@ -85,8 +84,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				religion = religionCE.getValue();
 			} catch (RuntimeException e1)
 			{
-				log
-						.debug("Warning: religion information not available in PID segment.");
+				log.debug("Warning: religion information not available in PID segment.");
 			}
 		}
 		return religion;
@@ -106,8 +104,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 			} catch (RuntimeException e1)
 			{
-				log
-						.debug("Warning: marital information not available in PID segment.");
+				log.debug("Warning: marital information not available in PID segment.");
 			}
 
 		}
@@ -132,8 +129,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				}
 			} catch (RuntimeException e1)
 			{
-				log
-						.debug("Warning: maiden information not available in PID segment.");
+				log.debug("Warning: maiden information not available in PID segment.");
 			}
 
 		}
@@ -197,7 +193,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 		} catch (RuntimeException e)
 		{
-			log.warn("Unable to collect  address from PID);", e);
+			log.warn("Unable to collect address from PID);", e);
 		}
 		return addresses;
 	}
@@ -331,8 +327,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		} catch (RuntimeException e2)
 		{
 			// Unable to extract identifier from PID segment
-			log
-					.error("Error extracting identifier from PID segment (MRN). ");
+			log.error("Error extracting identifier from PID segment (MRN). ");
 			// Still need to continue. Execute find match without the identifer
 		}
 		if (identList == null)
@@ -366,14 +361,6 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 					{
 						pit = patientService
 								.getPatientIdentifierTypeByName("MRN_OTHER");
-						// this is temporary for gathering data
-						log
-								.error("insert into patient_identifier_type"
-										+ "(name, description, format, check_digit, "
-										+ "creator, date_created, required, format_description) "
-										+ "values('MRN_" + assignAuth + "', '"
-										+ assignAuth
-										+ "',null,0,1,'2008-07-03',0,null);");
 					}
 					pi.setIdentifierType(pit);
 					pi.setIdentifier(stIdent);
@@ -383,7 +370,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 				} else
 				{
-					log.error("No MRN in PID segement. ");
+					log.error("No MRN in PID segement.");
 				}
 
 			}
@@ -481,8 +468,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				return ceRace.getValue();
 			} catch (RuntimeException e1)
 			{
-				log
-						.debug("Warning: Race information not available in PID segment.");
+				log.debug("Warning: Race information not available in PID segment.");
 			}
 		}
 		return null;

@@ -117,7 +117,7 @@ public class FaxStatus {
 		        }
 		        
 		    } catch (Exception e) {
-		        log.error("Error setting fax patient information from form instance " + formInstance.toString() + ".", e);
+		        log.error("Error setting fax patient information from form instance {}.", formInstance.toString(), e);
 		    }
 		}
 	}
@@ -440,7 +440,7 @@ public class FaxStatus {
 			//Do not print to log.
 			this.idTag = ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		} catch (Exception e2){
-		    log.error("Unable to determine fax status form instance from idTag " + idTag, e2);
+		    log.error("Unable to determine fax status form instance from idTag {}.", idTag, e2);
 		}
 
 		return formInstance;
@@ -510,7 +510,7 @@ public class FaxStatus {
 			}
 
 		} catch (Exception e) {
-		    log.error("Unable to extract fax location (clinic) from form instance  " + formInstance.toString() + ".", e);
+		    log.error("Unable to extract fax location (clinic) from form instance {}. ", formInstance.toString(), e);
 		}
 
 
@@ -571,7 +571,7 @@ public class FaxStatus {
 			}
 
 		} catch (Exception e) {
-		    log.error("Error setting fax patient information from form instance " + formInstance.toString() + "." , e);
+		    log.error("Error setting fax patient information from form instance {}.",formInstance.toString(), e);
 		}
 
 	}

@@ -53,14 +53,14 @@ public class physicianNoteObs implements Rule {
 		long startTime = System.currentTimeMillis();
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			this.log.error("Patient cannot be found with ID: " + patientId);
+			log.error("Patient cannot be found with ID: " + patientId);
 			System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
 			return Result.emptyResult();
 		}
 		
 		Integer encounterId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		if (encounterId == null) {
-			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			log.error("Cannot determine encounter ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		
@@ -118,7 +118,7 @@ public class physicianNoteObs implements Rule {
     	StringBuilder noteBuffer = new StringBuilder();  
     	Concept noteConcept = Context.getConceptService().getConceptByName("CHICA_Note");
 		if (noteConcept == null) {
-			this.log.error(
+			log.error(
 				"Physician note observations cannot be constructed because concept \"CHICA_Note\" does not exist.");
 			return noteBuffer.toString();
 		}

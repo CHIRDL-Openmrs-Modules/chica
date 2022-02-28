@@ -242,9 +242,7 @@ public class HL7EncounterHandler23 implements HL7EncounterHandler{
 
 		} catch (Exception e2)
 		{
-			log.error("Unable to collect provider id from PV1 segment");
-			log.error(e2.getMessage());
-			log.error(Util.getStackTrace(e2));
+			log.error("Unable to collect provider id from PV1 segment.", e2);
 		}
 		return null;
 	}

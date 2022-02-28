@@ -57,26 +57,26 @@ public class physicianNotePSFResults implements Rule {
 		long startTime = System.currentTimeMillis();
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			this.log.error("Patient cannot be found with ID: " + patientId);
+			log.error("Patient cannot be found with ID: " + patientId);
 			System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
 			return Result.emptyResult();
 		}
 		
 		Integer encounterId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		if (encounterId == null) {
-			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			log.error("Cannot determine encounter ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		
 		Integer locationTagId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID);
 		if (locationTagId == null) {
-			this.log.error("Cannot determine location tag ID.  No note will be created.");
+			log.error("Cannot determine location tag ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		
 		Integer locationId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_LOCATION_ID);
 		if (locationId == null) {
-			this.log.error("Cannot determine location ID.  No note will be created.");
+			log.error("Cannot determine location ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		
@@ -135,7 +135,7 @@ public class physicianNotePSFResults implements Rule {
     private String buildObsNote(Patient patient, Integer encounterId, Integer locationId, Integer locationTagId) {
     	Concept noteConcept = Context.getConceptService().getConceptByName("CHICA_Note");
 		if (noteConcept == null) {
-			this.log.error(
+			log.error(
 				"Physician note observations cannot be constructed because concept \"CHICA_Note\" does not exist.");
 			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}

@@ -51,7 +51,7 @@ public class SubtractValues implements Rule {
 		try {
 			firstValue = Double.valueOf(firstResultStr);
 		} catch (NumberFormatException e) {
-			this.log.error("Error parsing the following value into a Double: " + firstResultStr + " for patient " 
+			log.error("Error parsing the following value into a Double: " + firstResultStr + " for patient " 
 					+ patientId , e);
 			return Result.emptyResult();
 		}
@@ -59,7 +59,7 @@ public class SubtractValues implements Rule {
 		try {
 			secondValue = Double.valueOf(secondResultStr);
 		} catch (NumberFormatException e) {
-			this.log.error("Error parsing the following value into a Double: " + secondResultStr + " for patient " 
+			log.error("Error parsing the following value into a Double: " + secondResultStr + " for patient " 
 					+ patientId , e);
 			return Result.emptyResult();
 		}

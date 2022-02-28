@@ -53,8 +53,7 @@ public class ChangeState implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		this.log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
+		log.info("Started execution of {} ({}), {}", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		try
 		{
 			BaseStateActionHandler.getInstance().changeState(this.patientState,
@@ -62,12 +61,11 @@ public class ChangeState implements ChirdlRunnable
 		} 
 		catch (Exception e)
 		{
-			this.log.error("Error processing file", e);
+			log.error("Exception processing changeState", e);
 		} 
 		finally
 		{
-			this.log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}), {}", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		}
 	}
 

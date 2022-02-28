@@ -20,7 +20,6 @@ import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
@@ -32,7 +31,6 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class CheckinPatient implements ChirdlRunnable
 {
-
 	private static final Logger log = LoggerFactory.getLogger(CheckinPatient.class);
 	private Integer encounterId = null; // Use encounterId instead of an encounter object to prevent lazy initialization errors
 
@@ -49,20 +47,19 @@ public class CheckinPatient implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		
 		try
 		{
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			
 			EncounterService encounterService = Context.getEncounterService();
-			Encounter encounter = encounterService.getEncounter(encounterId);
+			Encounter encounter = encounterService.getEncounter(this.encounterId);
 					
 			if(encounter == null){
 				return;
 			}
-			
+
 			Patient patient = encounter.getPatient();
 
 			//The session is unique because only 1 session exists at checkin
@@ -75,12 +72,15 @@ public class CheckinPatient implements ChirdlRunnable
 			Integer locationId = null;
 			String printerLocation =  null;	
 			
-			// lookup location tag id by printer location					
+			// lookup location tag id by printer location
 			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService
 					.getEncounterAttributeValueByName(encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
 			
 			if (encounterAttributeValue != null) {
 				printerLocation =  encounterAttributeValue.getValueText();	
+				
+			} else {
+				log.error("Encounter attribute value not found. EncounterAttribute: {} Encounter id: {}.", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, this.encounterId );
 			}
 						
 			if (printerLocation != null){
@@ -101,11 +101,9 @@ public class CheckinPatient implements ChirdlRunnable
 					locationTagId,locationId,BaseStateActionHandler.getInstance());
 		} catch (Exception e)
 		{
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception checking in patient. Encounter id: {}", this.encounterId, e);
 		}finally{
-			log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}, {})",  getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()) );
 		}
 	}
 	

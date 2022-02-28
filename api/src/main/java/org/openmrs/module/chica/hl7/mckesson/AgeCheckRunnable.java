@@ -80,10 +80,10 @@ public class AgeCheckRunnable implements RunnableResult<Boolean> {
 		} catch (NumberFormatException e) {
 			//String was either null, empty, or not a digit
 			//No age limit value could be retrieved from attributes, so do not filter
-			this.log.error("Error occurred parsing age limit string.", e);
+			log.error("Error occurred parsing age limit string.", e);
 			this.exception = e;
 		} catch (Exception e){
-			this.log.error("Exception while verifying patient age. ", e);
+			log.error("Exception while verifying patient age. ", e);
 			this.exception = e;
 		}
 	}
