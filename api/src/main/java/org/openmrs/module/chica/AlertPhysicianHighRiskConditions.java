@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.LocationTag;
@@ -34,6 +32,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Tammy Dugan
@@ -141,7 +141,7 @@ public class AlertPhysicianHighRiskConditions extends AbstractTask {
 	                                        String notificationText, String fromEmail, String subject,String riskConceptName,
 	                                        Date dateThreshold) {
 		LocationService locationService = Context.getLocationService();
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		DssService dssService = Context.getService(DssService.class);
 		ObsService obsService = Context.getObsService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context

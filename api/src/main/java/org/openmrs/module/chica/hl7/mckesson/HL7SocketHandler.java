@@ -16,7 +16,6 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +29,6 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
@@ -70,7 +67,8 @@ import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
-import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
@@ -242,9 +240,8 @@ public class HL7SocketHandler extends
 		String familyName1 = patient1.getFamilyName();
 		String familyName2 = patient2.getFamilyName();
 		if ((familyName1 != null && familyName2 == null)
-				|| (familyName1 == null && familyName2 != null)) {
+				|| (familyName1 == null && familyName2 != null))
 			return false;
-		}
 
 		if (familyName1 != null) {
 			if (!familyName1.equals(familyName2))
@@ -270,7 +267,7 @@ public class HL7SocketHandler extends
 			return false;
 		}
 
-		if ((birthDate1 == null && birthDate2 == null)) {
+		if ((birthDate1 == null)) {
 			return true;
 		}
 
@@ -315,7 +312,7 @@ public class HL7SocketHandler extends
 		addSSN(currentPatient, hl7Patient, encounterDate);
 		addReligion(currentPatient, hl7Patient, encounterDate);
 		addMaritalStatus(currentPatient, hl7Patient, encounterDate);
-		addMaidenName(currentPatient, hl7Patient, encounterDate);
+		addMaidenName(currentPatient, hl7Patient);
 		
 		// CHICA-1185 Don't do anything with next of kin if this is an A10
 		if(!ChirdlUtilConstants.HL7_EVENT_CODE_A10.equalsIgnoreCase(eventTypeCode))
@@ -748,7 +745,7 @@ public class HL7SocketHandler extends
 		patientState.setStartTime(processCheckinHL7Start);
 		patientState.setEndTime(processCheckinHL7End);
 		chirdlutilbackportsService.updatePatientState(patientState);
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		encounterService.saveEncounter(encounter);
 		
 		if(messageContainsInsurance) { // CHICA-1157
@@ -856,7 +853,7 @@ public class HL7SocketHandler extends
 			}
 
 			// Sort the list of names based on date
-			List<PersonName> nameList = new ArrayList<PersonName>(names);
+			List<PersonName> nameList = new ArrayList<>(names);
 
 			Collections.sort(nameList, new Comparator<PersonName>() {
 				public int compare(PersonName n1, PersonName n2) {
@@ -870,7 +867,7 @@ public class HL7SocketHandler extends
 			if (nameList.size() > 0 && nameList.get(0) != null) {
 				// set latest to preferred
 				nameList.get(0).setPreferred(true);
-				Set<PersonName> nameSet = new TreeSet<PersonName>(nameList);
+				Set<PersonName> nameSet = new TreeSet<>(nameList);
 				if (nameSet.size() > 0) {
 					currentPatient.getNames().clear();
 					currentPatient.getNames().addAll(nameSet);
@@ -937,7 +934,7 @@ public class HL7SocketHandler extends
 			}
 
 			// Sort the list of names based on date
-			List<PersonAddress> addressList = new ArrayList<PersonAddress>(
+			List<PersonAddress> addressList = new ArrayList<>(
 					addresses);
 
 			Collections.sort(addressList, new Comparator<PersonAddress>() {
@@ -951,7 +948,7 @@ public class HL7SocketHandler extends
 			if (addressList.size() > 0 && addressList.get(0) != null) {
 				// set latest to preferred
 				addressList.get(0).setPreferred(true);
-				Set<PersonAddress> addressSet = new TreeSet<PersonAddress>(addressList);
+				Set<PersonAddress> addressSet = new TreeSet<>(addressList);
 				if (addressSet.size() > 0) {
 					currentPatient.getAddresses().clear();
 					currentPatient.getAddresses().addAll(addressSet);
@@ -1095,8 +1092,7 @@ public class HL7SocketHandler extends
 	 * @param hl7Patient
 	 * @param encounterDate
 	 */
-	private void addMaidenName(Patient currentPatient, Patient hl7Patient,
-			Date encounterDate) {
+	private void addMaidenName(Patient currentPatient, Patient hl7Patient) {
 		PersonAttribute newMaidenNameAttr = hl7Patient
 				.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_MAIDEN_NAME);
 		PersonAttribute currentMaidenNameAttr = currentPatient
@@ -1303,34 +1299,11 @@ public class HL7SocketHandler extends
 
 			//If new MRN does not exist or matches the existing MRN, no need to update.
 			//If the only difference is a leading 0, do not return. MRN must be updated.
-			if (newPatientIdentifier == null
-					|| (newMRN = newPatientIdentifier.getIdentifier()) == null
-					|| existingMRN.trim().equals(newMRN.trim()) ){
+			if ((newMRN = newPatientIdentifier.getIdentifier()) == null || existingMRN.trim().equals(newMRN.trim()) ){
 				return;
 			}
-
-			//New MRNs will not have a leading zero. 
-			try {
-				if (Util.removeLeadingZeros(existingMRN.trim()).equals(Util.removeLeadingZeros(newMRN.trim()))){
-					existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_LEADING_ZERO_CORRECTION);
-					Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_WARNING, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
-							"Leading Zero Correction." 
-									+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
-									"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
-					chirdlutilbackportsService.saveError(error);
-				} else {
-					existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_CORRECTION);
-					Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
-							"MRN correction required! Contact downstream data warehouse about possible corrupted data." 
-									+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
-									"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
-					chirdlutilbackportsService.saveError(error);
-				}
-			} catch (Exception e) {
-
-				log.error("Insert to error table failed. Error category = " + ChirdlUtilConstants.ERROR_MRN_VALIDITY 
-						+  "Existing MRN: " + existingMRN + "; New MRN: " + newMRN, e);
-			}
+			removeMRNLeadingZeros(chirdlutilbackportsService, newMRN, existingMRN, existingPatientIdentifier);
+			
 			//void the existing identifier
 
 			existingPatientIdentifier.setPreferred(false);
@@ -1379,6 +1352,32 @@ public class HL7SocketHandler extends
 		}
 
 	}
+
+	private void removeMRNLeadingZeros(ChirdlUtilBackportsService chirdlutilbackportsService, String newMRN,
+	        String existingMRN, PatientIdentifier existingPatientIdentifier) {
+		//New MRNs will not have a leading zero. 
+		try {
+			if (Util.removeLeadingZeros(existingMRN.trim()).equals(Util.removeLeadingZeros(newMRN.trim()))){
+				existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_LEADING_ZERO_CORRECTION);
+				Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_WARNING, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+						"Leading Zero Correction." 
+								+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
+								"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
+				chirdlutilbackportsService.saveError(error);
+			} else {
+				existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_CORRECTION);
+				Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
+						"MRN correction required! Contact downstream data warehouse about possible corrupted data." 
+								+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
+								"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
+				chirdlutilbackportsService.saveError(error);
+			}
+		} catch (Exception e) {
+
+			log.error("Insert to error table failed. Error category = " + ChirdlUtilConstants.ERROR_MRN_VALIDITY 
+					+  "Existing MRN: " + existingMRN + "; New MRN: " + newMRN, e);
+		}
+	}
 	
 	/**
 	 * If there is no location tag attribute value or it is not numeric, check-in the patient.
@@ -1409,31 +1408,7 @@ public class HL7SocketHandler extends
 
 		return validAgeRunnable.getResult().booleanValue();
 	}
-	
 
-	/**
-	 * Saves the hl7 registration message to the sockethl7listener_patient_message table.
-	 * If patient is new to the system, no patient id will be saved.
-	 * @param message
-	 * @param patient
-	 * @param duplicateString
-	 * @param duplcateEncounter
-	 */
-	private void saveMessage(Message message, Patient patient, boolean duplicateString, boolean duplcateEncounter){
-		
-
-		SocketHL7ListenerService sockethl7listenerService = Context.getService(SocketHL7ListenerService.class);
-		Integer patientId = null;
-		if (patient != null) {
-			patientId = patient.getPatientId();
-			try {
-				sockethl7listenerService.setHl7Message(patientId, null, this.parser.encode(message),
-						duplicateString, duplcateEncounter, super.getPort());
-			} catch (HL7Exception e) {
-				log.error("Error saving HL7 registration message.", e);
-			}
-		}
-	}
 	
 	/**
 	 * Pulls patient identifier from the hl7 message, looks up identifier in CHICA,

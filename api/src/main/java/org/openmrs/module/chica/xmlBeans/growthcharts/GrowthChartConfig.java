@@ -14,7 +14,7 @@ public class GrowthChartConfig {
      * @return the growthCharts
      */
     public GrowthCharts getGrowthCharts() {
-    	return growthCharts;
+    	return this.growthCharts;
     }
 
     /**

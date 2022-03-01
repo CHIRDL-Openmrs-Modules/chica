@@ -6,8 +6,6 @@ package org.openmrs.module.chica.action;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
@@ -24,6 +22,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -85,7 +85,7 @@ public class Randomize implements ProcessStateAction
 
 			if (randomizer != null)
 			{
-				EncounterService encounterService = Context.getService(EncounterService.class);
+				EncounterService encounterService = Context.getEncounterService();
 				randomizer.randomize(currActiveStudy, patient, encounterService.getEncounter(encounterId));
 			}
 		}

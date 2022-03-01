@@ -30,6 +30,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.hl7.immunization.ImmunizationQueryConstructor;
 import org.openmrs.module.chirdlutil.util.HttpUtil;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 public class sendCHIRPUpdate implements Rule
 {
@@ -88,7 +89,7 @@ public class sendCHIRPUpdate implements Rule
 			Integer timeout = Integer.parseInt(adminService.getGlobalProperty("chica.immunizationListTimeout"));
 			boolean sendVXU = false;
 			if (activateVXU != null && 
-				(activateVXU.equalsIgnoreCase("true") || activateVXU.equalsIgnoreCase("yes") 
+				(activateVXU.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_TRUE) || activateVXU.equalsIgnoreCase(ChirdlUtilConstants.GENERAL_INFO_YES)
 						|| activateVXU.equalsIgnoreCase("T"))){
 				sendVXU = true;
 			
@@ -98,7 +99,7 @@ public class sendCHIRPUpdate implements Rule
 			String vxu = (String) parameters.get("param1");
 			if (vxu == null || vxu.trim().equals("")){
 				log.error("Immunization: VXU is an empty string or is null. " +
-						"Do not send to CHIRP. Patient id = " + patientId);
+						"Do not send to CHIRP. Patient id = {}",patientId);
 				return Result.emptyResult();
 			}
 			
@@ -107,9 +108,9 @@ public class sendCHIRPUpdate implements Rule
 			Integer encounterId = (Integer) parameters.get("encounterId");
 			Encounter encounter = encounterService.getEncounter(encounterId);
 			ImmunizationQueryConstructor.saveFile(dir, vxu, "vxu", encounter );
-			log.info("Immunization: vxu = " + vxu);
-			log.info("Immunization: VXU activated = " + sendVXU);
-			log.info("Immunization: URL = " + url);
+			log.info("Immunization: vxu = {}",vxu);
+			log.info("Immunization: VXU activated = {}",sendVXU);
+			log.info("Immunization: URL = {}",url);
 			
 			//Use chirdlutil module post method to post to CHIRP.
 			
@@ -117,16 +118,16 @@ public class sendCHIRPUpdate implements Rule
 			String queryResponse = "";
 			try {
 				if (sendVXU){
-					log.info("Immunizaton: Sending VXU with timout =  " + timeout * 1000);
+					log.info("Immunizaton: Sending VXU with timout = {}", timeout * 1000);
 					if (vxu != null && !vxu.trim().equals("")){
 						 queryResponse = HttpUtil.post(url, postData,timeout * 1000 , timeout * 1000);
 					}
-					log.info("Immunization: VXU response =  " + queryResponse);
+					log.info("Immunization: VXU response = {} for patientId: {}",queryResponse,patientId);
 				}else {
-					log.info("Immunization: VXU not sent.");
+					log.info("Immunization: VXU not sent for patientId: {}",patientId);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("Exception posting VXU response for patientId: {}",patientId);
 			}
 			
 		
@@ -165,7 +166,7 @@ public class sendCHIRPUpdate implements Rule
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	System.out.println("url string: " + data);
+	log.info("url string: {}", data);
 	
 	return data;
 	

@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 import org.openmrs.module.chica.test.TestUtil;
-//import org.openmrs.web.test.jupiter.BaseModuleWebContextSensitiveTest;
 import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 public class BloodPressureTest extends BaseModuleContextSensitiveTest  {

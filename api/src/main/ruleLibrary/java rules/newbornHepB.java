@@ -68,7 +68,7 @@ public class newbornHepB implements Rule {
 						
 			if (obsString != null && obsString.length() > 0) {
 				
-				EncounterService encounterService = Context.getService(EncounterService.class);
+				EncounterService encounterService = Context.getEncounterService();
 				Integer encounterId = (Integer) parameters.get("encounterId");
 				
 				Encounter encounter = encounterService.getEncounter(encounterId);

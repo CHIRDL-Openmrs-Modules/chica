@@ -3,8 +3,6 @@ package org.openmrs.module.chica.action;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
@@ -17,6 +15,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CHICA-1070 Used to create HL7 ORU message and store in the sockethl7listener_hl7_out_queue table to be picked up by the HL7OutboundHandler task

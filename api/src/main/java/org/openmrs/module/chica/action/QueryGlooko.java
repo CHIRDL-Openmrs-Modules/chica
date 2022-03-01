@@ -3,6 +3,7 @@ package org.openmrs.module.chica.action;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -12,8 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.glassfish.jersey.SslConfigurator;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -31,6 +30,8 @@ import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 /**

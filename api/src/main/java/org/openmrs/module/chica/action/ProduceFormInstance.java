@@ -4,25 +4,18 @@
 package org.openmrs.module.chica.action;
 
 import java.util.HashMap;
-import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.openmrs.Encounter;
-import org.openmrs.Form;
 import org.openmrs.Patient;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan

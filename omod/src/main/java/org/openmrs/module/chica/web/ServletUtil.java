@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Field;
@@ -74,6 +72,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -264,8 +264,8 @@ public class ServletUtil {
 			return str;
 		}
 		
-		return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;")
-		        .replaceAll("'", "&apos;");
+		return str.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
+		        .replace("'", "&apos;");
 	}
 	
 	public static void writeTag(String tagName, Object value, PrintWriter pw) {
@@ -294,8 +294,8 @@ public class ServletUtil {
 			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 		
-		StringBuffer htmlMessageBuffer = new StringBuffer("<b>");
-		StringBuffer messageBuffer = new StringBuffer();
+		StringBuilder htmlMessageBuffer = new StringBuilder("<b>");
+		StringBuilder messageBuffer = new StringBuilder();
 		for (String errorMessagePart : errorMessageParts) {
 			htmlMessageBuffer.append("<p>");
 			htmlMessageBuffer.append(errorMessagePart);
@@ -439,8 +439,8 @@ public class ServletUtil {
 			fav = backportsService.getFormAttributeValue(formId, ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, 
 				locationTagId, locationId);
 			if (fav == null || fav.getValue() == null || fav.getValue().trim().length() == 0) {
-			    LOG.error(ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY + " global property not defined for "
-						+ "formId: " + formId + " locationId: " + locationId + " locationTagId: " + locationTagId);
+			    LOG.error("{} global property not defined for formId: {} locationId: {} locationTagId: {}",
+			    		ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY,formId,locationId,locationTagId);
 				continue;
 			}
 			
@@ -454,8 +454,8 @@ public class ServletUtil {
 					ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + formId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + 
 					formInstanceId + ChirdlUtilConstants.GENERAL_INFO_UNDERSCORE + ChirdlUtilConstants.FILE_EXTENSION_PDF);
 				if (!secondMergeFile.exists()) {
-				    LOG.error("Cannot locate PDF merge file for formId: " + formId + " locationId: " + locationId +
-						" locationTagId: " + locationTagId + " " + mergeFile.getAbsolutePath());
+				    LOG.error("Cannot locate PDF merge file for formId: {} locationId: {} locationTagId: {} merge file: {}",
+				    		formId,locationId,locationTagId,mergeFile.getAbsolutePath());
 					continue;
 				}
 			}
@@ -978,7 +978,7 @@ public class ServletUtil {
 		}
 		catch (Exception e) {
 			String message = "Invalid sessionId parameter provided: " + sessionIdString;
-			LOG.error(message, e);
+			LOG.error("Invalid sessionId parameter provided: {}", sessionIdString, e);
 			throw new IllegalArgumentException(message);
 		}
 		
@@ -1314,7 +1314,7 @@ public class ServletUtil {
 		Integer locationTagId = null;
 		
 		if (formIdsStr == null) {
-			LOG.error("Invalid argument formId: " + formIdsStr);
+			LOG.error("Invalid argument formId: {}",formIdsStr);
 			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_HTML);
 			response.getWriter().write("Invalid argument formId: " + formIdsStr);
 			return;
@@ -1326,7 +1326,7 @@ public class ServletUtil {
 			try {
 				formId = Integer.valueOf(formIdStr);
 			} catch (NumberFormatException e) {
-				LOG.error("Invalid argument formId: " + formIdStr, e);
+				LOG.error("Invalid argument formId: {}", formIdStr, e);
 				errorList.add(formIdStr);
 				continue;
 			}
@@ -1711,7 +1711,7 @@ public class ServletUtil {
 			verb = "have";
 		}
 		
-		StringBuffer message = new StringBuffer("The following ").append(subject).append(" ").append(verb).append(
+		StringBuilder message = new StringBuilder("The following ").append(subject).append(" ").append(verb).append(
 			" been successfully sent to the printer: ");
 		for (int i = 0; i < teleformFiles.size(); i++) {
 			FormInstanceTag formInstanceTag = teleformFiles.get(i);

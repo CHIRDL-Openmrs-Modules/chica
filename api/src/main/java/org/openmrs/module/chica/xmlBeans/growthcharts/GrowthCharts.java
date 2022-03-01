@@ -25,6 +25,6 @@ public class GrowthCharts {
 	 * @return ArrayList of GrowthChart objects.
 	 */
 	public ArrayList<GrowthChart> getGrowthCharts() {
-		return growthCharts;
+		return this.growthCharts;
 	}
 }

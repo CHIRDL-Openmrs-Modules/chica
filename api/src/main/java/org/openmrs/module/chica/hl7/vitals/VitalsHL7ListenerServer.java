@@ -26,9 +26,9 @@
 
 package org.openmrs.module.chica.hl7.vitals;
 
-import org.openmrs.module.chica.ChicaActivator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;

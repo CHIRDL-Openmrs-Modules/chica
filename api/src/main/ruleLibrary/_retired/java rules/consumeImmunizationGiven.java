@@ -78,7 +78,7 @@ public class consumeImmunizationGiven implements Rule
 		PatientService patientService = Context.getPatientService();
 		EncounterService encounterService = Context.getEncounterService();
 		Patient patient = patientService.getPatient(patientId);
-		System.out.println("Running consumeImmunizationGiven");
+		log.info("Running consumeImmunizationGiven");
 		FormInstance formInstance = null;
 		String fieldName = null;
 		String conceptName  = null;

@@ -19,8 +19,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
@@ -57,6 +55,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.validator.PatientIdentifierValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
@@ -64,6 +64,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class ManualCheckin
 {
 
+	private static final String NEXT_OF_KIN = "Next of Kin";
 	/** Logger for this class and subclasses */
 	private static final Logger log = LoggerFactory.getLogger(ManualCheckin.class);
 	private static final String PARAM_MRN = "mrn";
@@ -108,6 +109,7 @@ public class ManualCheckin
 				PatientIdentifierValidator.validateIdentifier(mrn, identifierType);
 				valid = true;
 			}  catch(PatientIdentifierException e) {
+				log.error("Exception validating identifier for {}", mrn,e);
 			}
 		}
 		
@@ -121,7 +123,7 @@ public class ManualCheckin
 		// see if there is a patient that already has the mrn
 		if (mrn != null)
 		{
-			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+			List<PatientIdentifierType> identifierTypes = new ArrayList<>();
 			identifierTypes.add(identifierType);
 			List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
 					identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
@@ -141,7 +143,7 @@ public class ManualCheckin
 			}
 		}
 		
-		TreeMap<String,String> raceCodes = new TreeMap<String,String>();
+		TreeMap<String,String> raceCodes = new TreeMap<>();
 		ConceptService conceptService = Context.getConceptService();
 		ConceptSource conceptSource = conceptService.getConceptSourceByName("Wishard Race Codes");
 		List<ConceptMap> conceptMaps = conceptService.getConceptMappingsToSource(conceptSource); // CHICA-1151 replace getConceptsByConceptSource() with getConceptMappingsToSource()
@@ -173,10 +175,11 @@ public class ManualCheckin
 		ProviderService providerService = Context.getProviderService();
 		List<org.openmrs.Provider> doctors = providerService.getAllProviders();
 		
-		List<org.openmrs.Provider> doctorList = new ArrayList<org.openmrs.Provider>();
+		List<org.openmrs.Provider> doctorList = new ArrayList<>();
 		
 		Comparator<org.openmrs.Provider> comparator = new Comparator<org.openmrs.Provider>(){		 
-            public int compare(org.openmrs.Provider p1, org.openmrs.Provider p2) 
+            @Override
+			public int compare(org.openmrs.Provider p1, org.openmrs.Provider p2) 
             {
                Person person1 = p1.getPerson();
                Person person2 = p2.getPerson();
@@ -380,12 +383,12 @@ public class ManualCheckin
 		{
 			PersonAttribute attribute = new PersonAttribute();
 			PersonAttributeType attributeType = personService
-					.getPersonAttributeTypeByName("Next of Kin");
+					.getPersonAttributeTypeByName(NEXT_OF_KIN);
 			if (attributeType == null) {
 				attributeType = new PersonAttributeType();
 				attributeType.setDateCreated(new Date());
-				attributeType.setName("Next of Kin");
-				attributeType.setDescription("Next of Kin");
+				attributeType.setName(NEXT_OF_KIN);
+				attributeType.setDescription(NEXT_OF_KIN);
 				attributeType.setUuid(UUID.randomUUID().toString());
 				attributeType = personService.savePersonAttributeType(attributeType);
 			}
@@ -425,7 +428,7 @@ public class ManualCheckin
 
 		if (ssn1 != null && ssn2 != null && ssn3 != null&&ssn1.length()>0&&ssn2.length()>0&&ssn3.length()>0)
 		{
-			//removed "-" between segments for consistancy with hl7 SSM MSheley 2/29/2009
+			//removed "-" between segments for consistency with hl7 SSM MSheley 2/29/2009
 			String ssn = ssn1 + ssn2 + ssn3;
 			PatientIdentifierType identifierType = patientService
 					.getPatientIdentifierTypeByName("SSN");
@@ -465,7 +468,7 @@ public class ManualCheckin
 				checkinPatient.setBirthdate(birthdate);
 			} catch (Exception e)
 			{
-				log.error("Error parsing date: "+dob);
+				log.error("Error parsing date: {}.",dob,e);
 			}
 		}
 		Provider provider = new Provider();
@@ -478,9 +481,7 @@ public class ManualCheckin
 			provider.setProvider(openmrsProvider);
 		} catch (Exception e)
 		{
-			log.error("Could not assign provider: "+providerId);
-			log.error(e.getMessage());
-			log.error(Util.getStackTrace(e));
+			log.error("Could not assign provider:{} ", providerId,e);
 		}
 		
 		PipeParser parser = new PipeParser();
@@ -618,7 +619,7 @@ public class ManualCheckin
 			}
 		}
 
-		attribute = patient.getAttribute("Next of Kin");
+		attribute = patient.getAttribute(NEXT_OF_KIN);
 		if (attribute != null)
 		{
 			String value = attribute.getValue();
@@ -641,14 +642,13 @@ public class ManualCheckin
 			ServletUtil.writeTag("mrn", ServletUtil.escapeXML(mrn), pw);
 		}
 
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		List<org.openmrs.Encounter> encounters = encounterService
 				.getEncounters(patient, null, null, null, null, null, null,null,null,false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 
 		if (encounters != null && encounters.size() > 0)
 		{
-			Encounter encounter = (Encounter) encounters.get(0);
+			Encounter encounter = encounters.get(0);
 			
 			// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
 			org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);

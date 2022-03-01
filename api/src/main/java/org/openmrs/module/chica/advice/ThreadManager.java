@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.openmrs.module.chirdlutil.ReadWriteManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openmrs.module.chirdlutil.ReadWriteManager;
 
 /**
  * @author tmdugan

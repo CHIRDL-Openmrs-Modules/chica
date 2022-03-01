@@ -23,18 +23,19 @@ public class Language extends org.openmrs.module.atd.xmlBeans.Language
 	 */
 	public Language()
 	{
-		
+		// This constructor is intentionally left empty.
 	}
 	
 	/**
 	 * Adds a field to the list of fields
 	 * @param field Field to add to field list
 	 */
-	public void addField(Field field)
+	@Override
+	public void addField(Field field) 
 	{
 		if(this.fields == null)
 		{
-			this.fields = new ArrayList<Field>();
+			this.fields = new ArrayList<>();
 		}
 		this.fields.add(field);
 	}
@@ -42,6 +43,7 @@ public class Language extends org.openmrs.module.atd.xmlBeans.Language
 	/**
 	 * @return the fields
 	 */
+	@Override
 	public ArrayList<Field> getFields()
 	{
 		return this.fields;
@@ -50,6 +52,7 @@ public class Language extends org.openmrs.module.atd.xmlBeans.Language
 	/**
 	 * @return the name
 	 */
+	@Override
 	public String getName()
 	{
 		return this.name;

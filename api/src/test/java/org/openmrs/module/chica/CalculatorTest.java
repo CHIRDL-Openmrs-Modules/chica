@@ -27,7 +27,6 @@ public class CalculatorTest extends BaseModuleContextSensitiveTest
 	@Test
 	public void calculatePercentile_shouldCalculatePercentile()
 			throws Exception {
-		//TODO auto-generated
 		executeDataSet(TestUtil.LENGTH_AGE_FILE);
 		Calculator calculator = new Calculator();
 		Calendar calendar = Calendar.getInstance();
@@ -46,7 +45,8 @@ public class CalculatorTest extends BaseModuleContextSensitiveTest
 	 */
 	@Test
 	public void lookupPercentile_shouldLookupPercentile() throws Exception {
-		//TODO auto-generated
+		//TODO Add test with assertions to look up the percentile for the age in months
+		//NOTE: Method calculator.lookupPercentile is private
 		
 		double ageInMonths = 24;
 		int sex = 1;
@@ -57,9 +57,7 @@ public class CalculatorTest extends BaseModuleContextSensitiveTest
 		
 		Calculator calculator = new Calculator();
 		Calendar calendar = Calendar.getInstance();
-
-		//look up the percentile for the age in months
 		//Percentile percentileTable = calculator.lookupPercentile(type,ageInMonths,sex);
-//		Assertions.fail("Not yet implemented");
+
 	}
 }

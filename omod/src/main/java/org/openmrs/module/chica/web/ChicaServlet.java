@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.module.atd.util.AtdConstants;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.util.PatientRow;
@@ -23,6 +21,8 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet giving access to CHICA information.

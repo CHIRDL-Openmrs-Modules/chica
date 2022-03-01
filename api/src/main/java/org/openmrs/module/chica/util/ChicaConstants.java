@@ -52,7 +52,8 @@ public class ChicaConstants {
     public static final String RULE_NAME_BF_SUICIDE_PWS = "bf_suicide_PWS";
     public static final String RULE_NAME_ABUSE_CONCERN_PWS = "Abuse_Concern_PWS";
     public static final String RULE_NAME_DOM_VIOL_PWS = "Dom_Viol_PWS";
+    public static final String RULE_NAME_CONCEPT = "conceptRule";
 
-    /**Concepts**/;
+    /**Concepts**/
     public static final String CONCEPT_SUICIDE_CONCERNS =  "suicide_concerns";
 }

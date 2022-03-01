@@ -3,8 +3,6 @@ package org.openmrs.module.chica.hl7;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
@@ -18,6 +16,8 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.sockethl7listener.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
@@ -80,7 +80,7 @@ public class HL7ExportObsRunnable implements ChirdlRunnable
 	 */
 	private String createHL7ORU()
 	{
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		Encounter encounter = encounterService.getEncounter(this.encounterId);
 		PatientService patientService = Context.getPatientService();
 		Patient patient = patientService.getPatient(this.patientId);

@@ -18,7 +18,7 @@ public class GrowthChart {
      * @return the fileLocation
      */
     public String getFileLocation() {
-    	return fileLocation;
+    	return this.fileLocation;
     }
 	
     /**
@@ -32,7 +32,7 @@ public class GrowthChart {
      * @return the chartType
      */
     public String getChartType() {
-    	return chartType;
+    	return this.chartType;
     }
 	
     /**
@@ -46,7 +46,7 @@ public class GrowthChart {
      * @return the ageInMonthsMin
      */
     public int getAgeInMonthsMin() {
-    	return ageInMonthsMin;
+    	return this.ageInMonthsMin;
     }
 	
     /**
@@ -60,7 +60,7 @@ public class GrowthChart {
      * @return the ageInMonthsMax
      */
     public int getAgeInMonthsMax() {
-    	return ageInMonthsMax;
+    	return this.ageInMonthsMax;
     }
 	
     /**
@@ -74,7 +74,7 @@ public class GrowthChart {
      * @return the gender
      */
     public String getGender() {
-    	return gender;
+    	return this.gender;
     }
 	
     /**
@@ -88,7 +88,7 @@ public class GrowthChart {
      * @return the chartConcepts
      */
     public ChartConcepts getChartConcepts() {
-    	return chartConcepts;
+    	return this.chartConcepts;
     }
 	
     /**

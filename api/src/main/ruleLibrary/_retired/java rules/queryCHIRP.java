@@ -91,7 +91,7 @@ public class queryCHIRP implements Rule
 	{
 		try{ 
 			PatientService patientService = Context.getPatientService();
-			EncounterService encounterService = Context.getService(EncounterService.class);
+			EncounterService encounterService = Context.getEncounterService();
 			Integer encounterId = null;
 			Integer locationId = null;
 			Integer formId = null;

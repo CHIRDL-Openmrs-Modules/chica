@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
@@ -16,6 +14,8 @@ import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan

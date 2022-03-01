@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.jfree.util.Log;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -53,6 +52,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.UnexpectedRollbackException;
 
 /**
@@ -71,6 +72,8 @@ public class GreaseBoardBuilder {
 	private static final String PSF_REPRINT_COLOR = "purple_highlight";
 	
 	private static final String PWS_REPRINT_COLOR = "blue_highlight";
+	
+	private static final Logger log = LoggerFactory.getLogger(GreaseBoardBuilder.class);
 	
 	/**
 	 * Creates the patient information needed for display on the Grease Board. All necessary
@@ -129,8 +132,8 @@ public class GreaseBoardBuilder {
 				}
 			}
 			
-			List<PatientState> unfinishedStates = new ArrayList<PatientState>();
-			Map<HashMapAttributesKey, String> hMap = new HashMap<HashMapAttributesKey, String>();
+			List<PatientState> unfinishedStates = new ArrayList<>();
+			Map<HashMapAttributesKey, String> hMap = new HashMap<>();
 			
 			for (Integer locationTagId : locationTagIds) {
 				Program program = chirdlutilbackportsService.getProgram(locationTagId, locationId);
@@ -142,21 +145,21 @@ public class GreaseBoardBuilder {
 				}
 			}
 			
-			List<PatientRow> rows = new ArrayList<PatientRow>();
-			List<String> stateNames = new ArrayList<String>();
+			List<PatientRow> rows = new ArrayList<>();
+			List<String> stateNames = new ArrayList<>();
 			stateNames.add(ChirdlUtilConstants.STATE_PSF_WAIT_FOR_ELECTRONIC_SUBMISSION);
 			stateNames.add(ChirdlUtilConstants.STATE_PROCESS_VITALS);
 			
 			String checkoutStateString = adminService.getGlobalProperty("chica.greaseboardCheckoutState");
 			State checkoutState = chirdlutilbackportsService.getStateByName(checkoutStateString);
 			State jitIncompleteState = chirdlutilbackportsService.getStateByName("JIT_incomplete");
-			EncounterService encounterService = Context.getService(EncounterService.class);
+			EncounterService encounterService = Context.getEncounterService();
 			FormService formService = Context.getFormService();
 			for (PatientState currState : unfinishedStates) {
 				Integer sessionId = currState.getSessionId();
 				List<PatientState> checkoutPatientStates = chirdlutilbackportsService.getPatientStateBySessionState(
 				    sessionId, checkoutState.getStateId());
-				if (checkoutPatientStates != null && checkoutPatientStates.size() > 0) {
+				if (checkoutPatientStates != null && !checkoutPatientStates.isEmpty()) {
 					continue;
 				}
 				
@@ -178,7 +181,7 @@ public class GreaseBoardBuilder {
 				
 				EncounterAttributeValue  encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName(encounterId,  ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);		
 				if  (encounterAttributeValue == null) {
-					Log.error("Encounter attribute value does not exist for " +  ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+					log.error("Encounter attribute value does not exist for {}", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
 				}
 			
 				String appointment = encounterAttributeValue.getValueText();
@@ -245,7 +248,7 @@ public class GreaseBoardBuilder {
 				List<PatientState> reprintRescanStates = chicaService.getReprintRescanStatesBySessionId(sessionId, null, locationTagIds, locationId);
 				
 				boolean reprint = false;
-				if (reprintRescanStates.size() > 0) {
+				if (!reprintRescanStates.isEmpty()) {
 					reprint = true;
 				}
 				row.setReprintStatus(reprint);
@@ -350,7 +353,6 @@ public class GreaseBoardBuilder {
 		
 		if (formInstance != null) {
 			formId = formInstance.getFormId();
-			formName = formService.getForm(formId).getName();
 		}
 		
 		List<PatientState> patientStates = chirdlutilbackportsService.getPatientStateBySessionState(sessionId,

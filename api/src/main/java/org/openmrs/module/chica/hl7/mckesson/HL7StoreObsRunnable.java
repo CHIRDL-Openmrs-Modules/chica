@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
@@ -39,6 +37,8 @@ import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -174,13 +174,13 @@ public class HL7StoreObsRunnable implements Runnable {
 			
 				// check to see if we've already looked up a mapping for this concept
 				Concept mappedConcept = mrfConceptMapping.get(conceptId);
-				if (mappedConcept == null) {
+				if (mappedConcept == null && !mrfConceptSet.contains(conceptId)) {
 					// check to see if we've already searched this one before
-					if (!mrfConceptSet.contains(conceptId)) {
-						mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), medicalRecordSource);
-						mrfConceptSet.add(conceptId);
-						mrfConceptMapping.put(conceptId, mappedConcept);
-					}
+				
+					mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), medicalRecordSource);
+					mrfConceptSet.add(conceptId);
+					mrfConceptMapping.put(conceptId, mappedConcept);
+					
 				}
 				
 				if (mappedConcept != null) {

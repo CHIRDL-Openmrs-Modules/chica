@@ -9,29 +9,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
 import ca.uhn.hl7v2.model.v23.datatype.IS;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
-import ca.uhn.hl7v2.model.v23.datatype.XPN;
-import ca.uhn.hl7v2.model.v23.segment.PID;
-import ca.uhn.hl7v2.model.v25.datatype.CE;
-import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.datatype.TS;
 import ca.uhn.hl7v2.model.v23.datatype.XAD;
-import ca.uhn.hl7v2.model.v23.segment.NK1;
+import ca.uhn.hl7v2.model.v23.datatype.XPN;
 import ca.uhn.hl7v2.model.v23.datatype.XTN;
+import ca.uhn.hl7v2.model.v23.message.ORU_R01;
+import ca.uhn.hl7v2.model.v23.segment.NK1;
+import ca.uhn.hl7v2.model.v23.segment.PID;
 
 /**
  * @author tmdugan
@@ -432,9 +430,9 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 					mn = mnvalue;
 			}
 
-			name.setFamilyName(ln.replaceAll("\"", ""));
-			name.setGivenName(fn.replaceAll("\"", ""));
-			name.setMiddleName(mn.replaceAll("\"", ""));
+			name.setFamilyName(ln.replace("\"", ""));
+			name.setGivenName(fn.replace("\"", ""));
+			name.setMiddleName(mn.replace("\"", ""));
 			// set preferred to true because this method
 			// deliberately just processes the first person name
 			name.setPreferred(true);

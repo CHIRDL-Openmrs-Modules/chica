@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chica.hl7.mrfdump.HL7ObsHandler23;
 import org.openmrs.module.chirdlutil.threadmgmt.RunnableResult;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.ApplicationException;
@@ -73,7 +73,7 @@ public class ProcessMessageRunnable implements RunnableResult<Message> {
 				
 			}
 			catch (IOException e) {
-				log.error("Error creating ACK message." + e.getMessage());
+				log.error("Error creating ACK message.", e);
 				this.exception = e;
 			}
 			catch (HL7Exception e) {
@@ -92,7 +92,7 @@ public class ProcessMessageRunnable implements RunnableResult<Message> {
 			this.exception = e;
 		}
 		catch (ClassCastException e) {
-			log.error("Error casting to " + this.message.getClass().getName() + " ", e);
+			log.error("Error casting to {}.", this.message.getClass().getName(), e);
 			this.exception = new ApplicationException("Invalid message type for handler");
 		}
 		catch (HL7Exception e) {

@@ -11,8 +11,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.Encounter;
@@ -42,6 +40,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
@@ -55,7 +55,7 @@ import ca.uhn.hl7v2.model.v23.datatype.CX;
  */
 public class HL7SocketHandler implements Application {
 	
-	private static final Logger log = LoggerFactory.getLogger(Util.class);
+	private static final Logger log = LoggerFactory.getLogger(HL7SocketHandler.class);
 	
 	private Integer port;
 	
@@ -70,14 +70,14 @@ public class HL7SocketHandler implements Application {
 	
 	public HL7SocketHandler() {
 		
-		if (port == null) {
-			port = 0;
+		if (this.port == null) {
+			this.port = 0;
 		}
-		if (host == null) {
-			host = "localhost";
+		if (this.host == null) {
+			this.host = "localhost";
 		}
-		if (source == null) {
-			host = "";
+		if (this.source == null) {
+			this.host = "";
 		}
 		
 	}
@@ -94,7 +94,7 @@ public class HL7SocketHandler implements Application {
 	 */
 	@Override
 	public boolean canProcess(Message message) {
-		return message != null && message instanceof ca.uhn.hl7v2.model.v23.message.ORU_R01;
+		return message instanceof ca.uhn.hl7v2.model.v23.message.ORU_R01;
 	}
 	
 	private void writeMessageToFile(String mrn, String incomingMessage) {
@@ -164,7 +164,7 @@ public class HL7SocketHandler implements Application {
 		//get patient states for the encounter and state
 		List<PatientState> patientStates = chirdlutilbackportsService.getPatientStateByEncounterState(encounterId, state.getStateId());
 		
-		if(patientStates != null&&patientStates.size()>0){
+		if(patientStates != null&&!patientStates.isEmpty()){
 			
 			patientState = patientStates.get(0);
 			
@@ -219,7 +219,7 @@ public class HL7SocketHandler implements Application {
 			
 			 // DWE CHICA-635 Created list of identifier types and replaced call to deprecated method
 			PatientIdentifierType mrnIdentifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
-			List<PatientIdentifierType>  typeList = new ArrayList<PatientIdentifierType>();
+			List<PatientIdentifierType>  typeList = new ArrayList<>();
 			typeList.add(mrnIdentifierType);
 			List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn, typeList, false); // Do not match identifier exactly // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
 			if (patients != null && patients.size() > 0) {
@@ -262,7 +262,7 @@ public class HL7SocketHandler implements Application {
 						locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
 
 						List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(encounter.getEncounterId());
-						if(sessions != null&&sessions.size()>0){
+						if(sessions != null&&!sessions.isEmpty()){
 							Session session = sessions.get(0);
 							sessionId = session.getSessionId();
 
@@ -288,16 +288,14 @@ public class HL7SocketHandler implements Application {
 								String conceptIdString = obs.getConcept().getConceptId().toString();
 								Concept mappedConcept = conceptService.getConceptByMapping(conceptIdString, source);
 								if (mappedConcept == null) {
-									log.error("Could not map vitals concept: " + conceptIdString
-											+ ". Could not store vitals observation. Source : " + source);
+									log.error("Could not map vitals concept: {}. Could not store vitals observation. Source : {}." , conceptIdString,  source);
 								} else {
 									if (obs.getValueCoded()!=null&&obs.getValueCoded().getConceptId() == 1) {
 										obs.setValueCoded(null);
 										if (answerConcept != null) {
 											String answerConceptName = answerConcept.getName().getName();
 											obs.setValueText(answerConceptName);
-											log.error("Could not map vitals concept: " + answerConceptName
-													+ ". Could not store vitals observation. Source : " + source);
+											log.error("Could not map vitals concept: {}. Could not store vitals observation. Source : {}.", answerConceptName, source);
 										}
 									}
 
@@ -308,12 +306,7 @@ public class HL7SocketHandler implements Application {
 									obs.setLocation(location); 
 									obs.setEncounter(encounter);
 									
-									try{
-										obsService.saveObs(obs, null);
-									}catch(APIException apie){
-										// CHICA-1017 Catch the exception and log it so that we can continue processing the message
-										log.error("APIException while saving obs.", apie);
-									}
+									saveObs(obsService, obs);
 									
 								}
 							}
@@ -321,23 +314,23 @@ public class HL7SocketHandler implements Application {
 							org.openmrs.module.chica.util.Util.calculatePercentiles(encounter.getEncounterId(), patient, locationTagId);
 
 							double duration = (new Date().getTime() - starttime.getTime()) / 1000.0;
-							log.info("MESSAGE PROCESS TIME: " + duration + " sec");
+							log.info("MESSAGE PROCESS TIME: {} sec",  duration);
 						}
 						else
 						{
-							log.error("Unable get session for encounter: " + encounterId);
+							log.error("Unable get session for encounter: {}.", encounterId);
 							error = true;
 						}
 					}
 					else
 					{
-						log.error("Unable get location from encounter: " + encounterId);
+						log.error("Unable get location from encounter: {}.", encounterId);
 						error = true;
 					}
 				}
 				else
 				{
-					log.error("Unable to locate recent encounter for patient with MRN: " + mrn);
+					log.error("Unable to locate recent encounter for patient with MRN: {}. ", mrn);
 					error = true;
 				}
 			}
@@ -369,6 +362,15 @@ public class HL7SocketHandler implements Application {
 		
 		return error;
 	}
+
+	private void saveObs(ObsService obsService, Obs obs) {
+		try{
+			obsService.saveObs(obs, null);
+		}catch(APIException apie){
+			// CHICA-1017 Catch the exception and log it so that we can continue processing the message
+			log.error("APIException while saving obs.", apie);
+		}
+	}
 	
 	/**
 	 * Get the most recent encounter for today
@@ -376,7 +378,7 @@ public class HL7SocketHandler implements Application {
 	 * @return
 	 */
 	private Encounter getRecentEncounter(Patient patient){
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
     	// Get latest encounter today
 		Calendar startCal = Calendar.getInstance();
 		startCal.set(GregorianCalendar.HOUR_OF_DAY, 0);
@@ -388,9 +390,10 @@ public class HL7SocketHandler implements Application {
 			null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 		if (encounters == null || encounters.size() == 0) {
 			return null;
-		} else {
-			return encounters.get(encounters.size()-1);
-		}
+		} 
+		
+		return encounters.get(encounters.size()-1);
+		
 	}
 	
 	/**
@@ -488,15 +491,13 @@ public class HL7SocketHandler implements Application {
 					{
 						obs.setValueNumeric(Double.parseDouble(answer.substring(index + 1).trim()));
 					}
-					catch(NumberFormatException nfe)
+					catch(NumberFormatException e)
 					{
-						log.error("Vitals Conversion Error: Could not convert vitals measurement for {}", mappedConcept.getName());
+						log.error("Vitals Conversion Error: Could not convert vitals measurement for {}", mappedConcept.getName(), e);
 					}
 				}
 			}
 		}
-		
-		return;	
 	}
 	
 	/**
@@ -557,7 +558,7 @@ public class HL7SocketHandler implements Application {
 				
 				if(encounterAttributeValue != null)
 				{
-					EncounterService encounterService = Context.getService(EncounterService.class);
+					EncounterService encounterService = Context.getEncounterService();
 					encounter = encounterService.getEncounter(encounterAttributeValue.getEncounterId());
 					
 					// Make sure the patientId for the encounter record matches the patient from the HL7 message

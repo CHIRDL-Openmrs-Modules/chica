@@ -5,8 +5,8 @@ package org.openmrs.module.chica.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.openmrs.Encounter;
@@ -67,7 +67,7 @@ public class PatientRow implements Serializable
 	 * @return the heightPercentile
 	 */
 	public String getHeightPercentile() {
-		return heightPercentile;
+		return this.heightPercentile;
 	}
 	/**
 	 * @param heightPercentile the heightPercentile to set
@@ -79,7 +79,7 @@ public class PatientRow implements Serializable
 	 * @return the weightPercentile
 	 */
 	public String getWeightPercentile() {
-		return weightPercentile;
+		return this.weightPercentile;
 	}
 	/**
 	 * @param weightPercentile the weightPercentile to set
@@ -91,7 +91,7 @@ public class PatientRow implements Serializable
 	 * @return the station
 	 */
 	public String getStation() {
-		return station;
+		return this.station;
 	}
 	/**
 	 * @param station the station to set
@@ -103,7 +103,7 @@ public class PatientRow implements Serializable
 	 * @return the ageAtVisit
 	 */
 	public String getAgeAtVisit() {
-		return ageAtVisit;
+		return this.ageAtVisit;
 	}
 	/**
 	 * @param ageAtVisit the ageAtVisit to set
@@ -116,7 +116,7 @@ public class PatientRow implements Serializable
 	 * @return the reprintStatus
 	 */
 	public boolean isReprintStatus() {
-		return reprintStatus;
+		return this.reprintStatus;
 	}
 	/**
 	 * @param reprintStatus the reprintStatus to set
@@ -252,7 +252,7 @@ public class PatientRow implements Serializable
     //CHICA-815 Ensure correct order of mobile eJITs - MSHELEY
     public void addFormInstance(FormInstance formInstance){
     	if(this.formInstances == null){
-    		this.formInstances = new LinkedHashSet<FormInstance>();
+    		this.formInstances = new LinkedHashSet<>();
     	}
     	this.formInstances.add(formInstance);
     }
@@ -278,7 +278,7 @@ public class PatientRow implements Serializable
      * @return the locationId
      */
     public Integer getLocationId() {
-    	return locationId;
+    	return this.locationId;
     }
 	
     /**
@@ -292,7 +292,7 @@ public class PatientRow implements Serializable
      * @return the locationTagId
      */
     public Integer getLocationTagId() {
-    	return locationTagId;
+    	return this.locationTagId;
     }
 	
     /**
@@ -306,7 +306,7 @@ public class PatientRow implements Serializable
      * @return the isManualCheckin
      */
     public boolean getIsManualCheckin() {
-    	return isManualCheckin;
+    	return this.isManualCheckin;
     }
 	
     /**
@@ -322,7 +322,7 @@ public class PatientRow implements Serializable
      */
     public Integer getAgeInYears()
     {
-    	return ageInYears;
+    	return this.ageInYears;
     }
     
     /**
@@ -340,51 +340,51 @@ public class PatientRow implements Serializable
      * @return String containing the XML representation of this PatientRow object.
      */
     public String toXml() {
-    	StringBuffer xmlWriter = new StringBuffer();
+    	StringBuilder xmlWriter = new StringBuilder();
     	xmlWriter.append("<patientRow>");
-    	xmlWriter.append("<firstName>" + firstName + "</firstName>");
-    	xmlWriter.append("<lastName>" + lastName + "</lastName>");
-    	xmlWriter.append("<mrn>" + mrn + "</mrn>");
-    	xmlWriter.append("<dob>" + dob + "</dob>");
-    	xmlWriter.append("<sex>" + sex + "</sex>");
-    	xmlWriter.append("<mdName>" + mdName + "</mdName>");
-    	xmlWriter.append("<appointment>" + appointment + "</appointment>");
-    	xmlWriter.append("<checkin>" + checkin + "</checkin>");
-    	xmlWriter.append("<status>" + status + "</status>");
-    	xmlWriter.append("<statusColor>" + statusColor + "</statusColor>");
-    	xmlWriter.append("<patientId>" + patientId + "</patientId>");
-    	xmlWriter.append("<sessionId>" + sessionId + "</sessionId>");
-    	xmlWriter.append("<isManualCheckin>" + isManualCheckin + "</isManualCheckin>");
+    	xmlWriter.append("<firstName>" + this.firstName + "</firstName>");
+    	xmlWriter.append("<lastName>" + this.lastName + "</lastName>");
+    	xmlWriter.append("<mrn>" + this.mrn + "</mrn>");
+    	xmlWriter.append("<dob>" + this.dob + "</dob>");
+    	xmlWriter.append("<sex>" + this.sex + "</sex>");
+    	xmlWriter.append("<mdName>" + this.mdName + "</mdName>");
+    	xmlWriter.append("<appointment>" + this.appointment + "</appointment>");
+    	xmlWriter.append("<checkin>" + this.checkin + "</checkin>");
+    	xmlWriter.append("<status>" + this.status + "</status>");
+    	xmlWriter.append("<statusColor>" + this.statusColor + "</statusColor>");
+    	xmlWriter.append("<patientId>" + this.patientId + "</patientId>");
+    	xmlWriter.append("<sessionId>" + this.sessionId + "</sessionId>");
+    	xmlWriter.append("<isManualCheckin>" + this.isManualCheckin + "</isManualCheckin>");
     	xmlWriter.append("<psfId>");
     	if (psfId != null) {
-    		xmlWriter.append("<formId>" + psfId.getFormId() + "</formId>");
-    		xmlWriter.append("<formInstanceId>" + psfId.getFormInstanceId() + "</formInstanceId>");
-    		xmlWriter.append("<locationId>" + psfId.getLocationId() + "</locationId>");
+    		xmlWriter.append("<formId>" + this.psfId.getFormId() + "</formId>");
+    		xmlWriter.append("<formInstanceId>" + this.psfId.getFormInstanceId() + "</formInstanceId>");
+    		xmlWriter.append("<locationId>" + this.psfId.getLocationId() + "</locationId>");
     	}
     	xmlWriter.append("</psfId>");
     	xmlWriter.append("<pwsId>");
     	if (pwsId != null) {
-    		xmlWriter.append("<formId>" + pwsId.getFormId() + "</formId>");
-    		xmlWriter.append("<formInstanceId>" + pwsId.getFormInstanceId() + "</formInstanceId>");
-    		xmlWriter.append("<locationId>" + pwsId.getLocationId() + "</locationId>");
+    		xmlWriter.append("<formId>" + this.pwsId.getFormId() + "</formId>");
+    		xmlWriter.append("<formInstanceId>" + this.pwsId.getFormInstanceId() + "</formInstanceId>");
+    		xmlWriter.append("<locationId>" + this.pwsId.getLocationId() + "</locationId>");
     	}
     	xmlWriter.append("</pwsId>");
-    	xmlWriter.append("<ageAtVisit>" + ageAtVisit + "</ageAtVisit>");
-    	xmlWriter.append("<ageInYears>" + ageInYears + "</ageInYears>");
-    	xmlWriter.append("<station>" + station + "</station>");
-    	xmlWriter.append("<weightPercentile>" + weightPercentile + "</weightPercentile>");
-    	xmlWriter.append("<heightPercentile>" + heightPercentile + "</heightPercentile>");
-    	xmlWriter.append("<reprintStatus>" + reprintStatus + "</reprintStatus>");
+    	xmlWriter.append("<ageAtVisit>" + this.ageAtVisit + "</ageAtVisit>");
+    	xmlWriter.append("<ageInYears>" + this.ageInYears + "</ageInYears>");
+    	xmlWriter.append("<station>" + this.station + "</station>");
+    	xmlWriter.append("<weightPercentile>" + this.weightPercentile + "</weightPercentile>");
+    	xmlWriter.append("<heightPercentile>" + this.heightPercentile + "</heightPercentile>");
+    	xmlWriter.append("<reprintStatus>" + this.reprintStatus + "</reprintStatus>");
     	xmlWriter.append("<printableJits>");
     	if (printableJits != null) {
-    		for (String jit : printableJits) {
+    		for (String jit : this.printableJits) {
     			xmlWriter.append("<printableJit>" + jit + "</printableJit>");
     		}
     	}
     	xmlWriter.append("</printableJits>");
     	xmlWriter.append("<formInstances>");
-    	if (formInstances != null) {
-    		Iterator<FormInstance> iter = formInstances.iterator();
+    	if (this.formInstances != null) {
+    		Iterator<FormInstance> iter = this.formInstances.iterator();
     		while (iter.hasNext()) {
     			FormInstance formInstance = iter.next();
     			xmlWriter.append("<formInstance>");
@@ -395,9 +395,9 @@ public class PatientRow implements Serializable
     		}
     	}
     	xmlWriter.append("</formInstances>");
-    	xmlWriter.append("<pwsScanned>" + pwsScanned + "</pwsScanned>");
-    	xmlWriter.append("<locationId>" + locationId + "</locationId>");
-    	xmlWriter.append("<locationTagId>" + locationTagId + "</locationTagId>");
+    	xmlWriter.append("<pwsScanned>" + this.pwsScanned + "</pwsScanned>");
+    	xmlWriter.append("<locationId>" + this.locationId + "</locationId>");
+    	xmlWriter.append("<locationTagId>" + this.locationTagId + "</locationTagId>");
     	xmlWriter.append("<encounter>");
     	if (encounter != null) {
     		//TODO: fill in encounter information.  This isn't needed for the immediate implementation for the grease board.

@@ -4,8 +4,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -23,6 +21,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.parameter.EncounterSearchCriteria;
 import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CHICA-1063
@@ -76,7 +76,7 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 					todaysDate.set(Calendar.HOUR_OF_DAY, 0);
 					todaysDate.set(Calendar.MINUTE, 0);
 					todaysDate.set(Calendar.SECOND, 0);
-					EncounterService encounterService = Context.getService(EncounterService.class);
+					EncounterService encounterService = Context.getEncounterService();
 		
 					EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder()
 							.setPatient(patient)
@@ -89,7 +89,7 @@ public class DeviceSyncRunnable implements ChirdlRunnable
 					{
 						// Use the most recent encounter since the device sync happened right now, 
 						// we should be working off of the most recent encounter for the day
-						Encounter chicaEncounter = (Encounter)encounters.get(0);
+						Encounter chicaEncounter = encounters.get(0);
 						
 						// Store the data type as an encounter attribute
 						// We could pass this through to the state action,

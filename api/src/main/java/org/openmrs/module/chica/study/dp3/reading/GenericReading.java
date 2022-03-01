@@ -106,84 +106,84 @@ public class GenericReading
 	 * @return the timestamp
 	 */
 	public String getTimestamp() {
-		return timestamp;
+		return this.timestamp;
 	}
 
 	/**
 	 * @return the timeOffset
 	 */
 	public Integer getTimeOffset() {
-		return timeOffset;
+		return this.timeOffset;
 	}
 	
 	/**
 	 * @return utcOffset
 	 */
 	public String getUTCOffset() {
-		return utcOffset;
+		return this.utcOffset;
 	}
 	
 	/**
 	 * @return displayTime
 	 */
 	public String getDisplayTime() {
-		return displayTime;
+		return this.displayTime;
 	}
 
 	/**
 	 * @return the syncTimestamp
 	 */
 	public String getSyncTimestamp() {
-		return syncTimestamp;
+		return this.syncTimestamp;
 	}
 
 	/**
 	 * @return the guid
 	 */
 	public String getGuid() {
-		return guid;
+		return this.guid;
 	}
 
 	/**
 	 * @return the updatedAt
 	 */
 	public String getUpdatedAt() {
-		return updatedAt;
+		return this.updatedAt;
 	}
 
 	/**
 	 * @return the value
 	 */
 	public Integer getValue() {
-		return value;
+		return this.value;
 	}
 
 	/**
 	 * @return the units
 	 */
 	public String getUnits() {
-		return units;
+		return this.units;
 	}
 
 	/**
 	 * @return the mealTagSource
 	 */
 	public String getMealTagSource() {
-		return mealTagSource;
+		return this.mealTagSource;
 	}
 
 	/**
 	 * @return the mealTag
 	 */
 	public String getMealTag() {
-		return mealTag;
+		return this.mealTag;
 	}
 
 	/**
 	 * @return trendArrow
 	 */
 	public String getTrendArrow() {
-		return trendArrow;
+		return this.trendArrow;
 	}
 	
 	/**

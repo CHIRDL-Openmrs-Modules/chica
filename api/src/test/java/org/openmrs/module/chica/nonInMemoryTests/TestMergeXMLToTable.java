@@ -10,11 +10,11 @@ import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.atd.service.ATDService;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.DssManager;
-import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
  * @author Tammy Dugan
@@ -22,7 +22,7 @@ import org.openmrs.test.SkipBaseSetup;
  */
 @SkipBaseSetup
 @Disabled
-public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
+public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest 
 {
 
 	/**
@@ -40,7 +40,6 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
-
 	public void testMergeXMLToTable() throws Exception
 	{
 		AdministrationService adminService = Context.getAdministrationService();

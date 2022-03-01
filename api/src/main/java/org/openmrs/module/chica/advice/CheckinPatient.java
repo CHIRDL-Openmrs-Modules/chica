@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -24,6 +22,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeV
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan

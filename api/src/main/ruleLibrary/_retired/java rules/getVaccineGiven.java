@@ -87,7 +87,7 @@ public class getVaccineGiven implements Rule
 	public Result eval(LogicContext context, Integer patientId,
 	       			Map<String, Object> parameters) throws LogicException
 	{
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
 		LocationService locationService = Context.getLocationService();
 		ConceptService conceptService = Context.getConceptService();

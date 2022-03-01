@@ -3,11 +3,11 @@
  */
 package org.openmrs.module.chica.hl7.vitals;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.PipeParser;

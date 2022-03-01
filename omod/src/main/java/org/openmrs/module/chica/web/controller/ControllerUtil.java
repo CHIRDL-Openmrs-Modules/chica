@@ -1,7 +1,6 @@
 package org.openmrs.module.chica.web.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

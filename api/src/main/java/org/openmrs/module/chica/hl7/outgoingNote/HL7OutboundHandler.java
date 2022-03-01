@@ -6,13 +6,13 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -72,11 +72,11 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(Exception e)
 		{
-			log.error("Error in " + this.getClass().getName() + ".", e);
+			log.error("Error in {}.", this.getClass().getName(), e);
 		}
 		finally
 		{
-			log.error("Shutting down " + this.getClass().getName() + ".");
+			log.error("Shutting down {}.", this.getClass().getName());
 		}	
 	}
 	
@@ -121,7 +121,7 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(Exception e)
 		{
-			log.error("Error sending HL7Outbound message HL7OutQueueId: " + hl7Outbound.getHL7OutQueueId(), e);
+			log.error("Error sending HL7Outbound message HL7OutQueueId: {}", hl7Outbound.getHL7OutQueueId(), e);
 			return;
 		}
 
@@ -202,7 +202,7 @@ public class HL7OutboundHandler implements Runnable
 	 {
 		 try
 		 {
-			 StringBuffer stringbuffer = new StringBuffer();
+			 StringBuilder stringbuffer = new StringBuilder();
 			 int i = 0;
 			 while(i != 28)
 			 {

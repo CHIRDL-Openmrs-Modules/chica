@@ -7,12 +7,12 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.hibernate.Hibernate;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan

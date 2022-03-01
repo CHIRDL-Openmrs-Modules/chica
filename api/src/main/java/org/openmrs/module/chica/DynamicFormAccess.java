@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Encounter;
@@ -66,6 +64,8 @@ import org.openmrs.module.dss.DssManager;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class used to access the specific portions of form on the fly.

@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
@@ -43,6 +41,8 @@ import org.openmrs.notification.MessageException;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Steve McKee
@@ -239,15 +239,15 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	    String timeSpanStr = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN);
         Integer timeSpan = null;
         if (StringUtils.isBlank(timeSpanStr)) {
-            log.error("The task property '" + PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN + "' does not exist.  " +
-                    "The default value of " + DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN + " months will be used.");
+            log.error("The task property {} does not exist. The default value of {} months will be used.",  
+            		PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN,  DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN );
         }
         
         try {
             timeSpan = Integer.valueOf(timeSpanStr);
         } catch (NumberFormatException e) {
-            log.error("The task property '" + PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN + " contains an invalid value.  " +
-                    "The default value of " + DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN + " months will be used.", e);
+    		log.error("The task property {} contains an invalid value. The default value of {} months will be used.", 
+    				PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN, DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN, e);
             timeSpan = DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN;
         }
         
@@ -451,10 +451,9 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		
 		try {
             Context.getMessageService().sendMessage(emails, fromEmailAddress, emailSubject, body.toString());
-    		log.info("Care Transition Follow Up Email sent for provider ID " + providerId + " containing " + 
-    				successfulSaves + " patient(s).");
+    		log.info("Care Transition Follow Up Email sent for provider ID {} containing {} patient(s).", providerId, successfulSaves);
         } catch (MessageException e) {
-        	log.error("An error occurred sending Care Transition followup email for provider ID " + providerId + ".");
+        	log.error("An error occurred sending Care Transition followup email for provider ID {}.", providerId, e);
 			ObsService obsService = Context.getObsService();
 			for (Obs obs : savedObs) {
 				obsService.voidObs(obs, "Care Transition follow up email was unable to be sent.");
@@ -487,14 +486,14 @@ public class CareTransitionFollowUpTask extends AbstractTask {
          * @return the provider
          */
         public Provider getProvider() {
-        	return provider;
+        	return this.provider;
         }
         
         /**
          * @return the encounters
          */
         public List<Encounter> getEncounters() {
-        	return encounters;
+        	return this.encounters;
         }
         
         /**
@@ -505,21 +504,20 @@ public class CareTransitionFollowUpTask extends AbstractTask {
          * @return Array of email addresses
          */
         public String[] getProviderEmails() {
-            Integer providerId = provider.getProviderId();
-            Person person = provider.getPerson();
+            Integer providerId = this.provider.getProviderId();
+            Person person = this.provider.getPerson();
             if (person != null) {
                 PersonAttribute emailAttribute = person.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL);
                 if (emailAttribute != null && StringUtils.isNotBlank(emailAttribute.getValue())) {
                     return emailAttribute.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
                 }
                 
-                log.error("There is no email person attribute specified for provider ID " + providerId + ".  Email " +
-                    " will be sent to the personnel stored in the " + 
-                    GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS + " global property.");
+                log.error("There is no email person attribute specified for provider ID {}. Email will be sent to personnel stored in {} global property.",
+                		providerId, GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS);
                 return getDefaultEmails();
             }
             
-            log.error("No person object found for provider ID " + providerId);
+            log.error("No person object found for provider ID {}.",  providerId);
             return getDefaultEmails();
         }
         
@@ -535,8 +533,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
             if (StringUtils.isNotBlank(defaultEmails)) {
                 emails = defaultEmails.split(ChirdlUtilConstants.GENERAL_INFO_COMMA); 
             } else {
-                log.error("No value specified for global property: " + 
-                    GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS);
+                log.error("No value specified for global property: {} ", GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS);
             }
             
             return emails;

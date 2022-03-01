@@ -66,7 +66,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 		LocationService locationService = Context.getLocationService();
 
 		int patientId = 30520;
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		PatientService patientService = Context.getPatientService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 

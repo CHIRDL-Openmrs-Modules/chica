@@ -23,7 +23,7 @@ public class PumpReadingsImpl implements Readings
 	 */
 	public PumpReadingsImpl()
 	{
-		
+		// This constructor is intentionally left empty.
 	}
 	
 	/**
@@ -32,16 +32,16 @@ public class PumpReadingsImpl implements Readings
 	 */
 	public List<Object> getPumpsReadings()
 	{
-		return pumpsReadings;
+		return this.pumpsReadings;
 	}
 	
 	@Override
 	public List<GenericReading> getGenericReadingList() throws Exception{
-		if(genericReadingsList == null)
+		if(this.genericReadingsList == null)
 		{
-			genericReadingsList = new ArrayList<GenericReading>();
+			this.genericReadingsList = new ArrayList<>();
 			
-			for(Object obj : pumpsReadings)
+			for(Object obj : this.pumpsReadings)
 			{
 
 				@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -59,13 +59,12 @@ public class PumpReadingsImpl implements Readings
 				// It would be nice if all Glooko "readings" objects would return this, but instead
 				// we have an inconsistent interface which creates the need for the different classes
 				// that implement the Readings interface
-				// String type = map.get("type") == null ? null : (String) map.get("type");
 
-				genericReadingsList.add(new GenericReading(timestamp, utcOffset, syncTimestamp, guid, updatedAt, value, units, mealTagSource, mealTag));
+				this.genericReadingsList.add(new GenericReading(timestamp, utcOffset, syncTimestamp, guid, updatedAt, value, units, mealTagSource, mealTag));
 			}
 		}
 		
-		return genericReadingsList;
+		return this.genericReadingsList;
 	}
 
 }

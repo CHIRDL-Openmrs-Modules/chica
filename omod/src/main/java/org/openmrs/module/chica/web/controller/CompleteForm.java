@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -16,6 +14,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runs null priority rules for a patient/form and changes the state.

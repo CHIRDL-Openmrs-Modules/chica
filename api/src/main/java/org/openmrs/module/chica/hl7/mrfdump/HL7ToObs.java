@@ -16,7 +16,6 @@ package org.openmrs.module.chica.hl7.mrfdump;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,8 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.ConceptName;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -43,6 +40,8 @@ import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -195,8 +194,8 @@ public class HL7ToObs {
 
 	//MES CHICA-358 - New MRF format uses escape sequence ampersand. 
 	public static String renameDxAndComplaints(String message) {
-		message = message.replaceAll("DX & COMPLAINTS", "DX and COMPLAINTS");
-		message = message.replaceAll("Dx " + ESCAPE_SEQUENCE_AMPERSAND + " Complaints", "DX and COMPLAINTS");
+		message = message.replace("DX & COMPLAINTS", "DX and COMPLAINTS");
+		message = message.replace("Dx " + ESCAPE_SEQUENCE_AMPERSAND + " Complaints", "DX and COMPLAINTS");
 		return message;
 	}
 
@@ -207,7 +206,7 @@ public class HL7ToObs {
 	 * @return
 	 */
 	public static String replaceVersion(String message) {
-		StringBuffer newMessage = new StringBuffer();
+		StringBuilder newMessage = new StringBuilder();
 		BufferedReader reader = new BufferedReader(new StringReader(message));
 		try {
 			String firstLine = reader.readLine();

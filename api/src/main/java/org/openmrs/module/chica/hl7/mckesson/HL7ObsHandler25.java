@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
@@ -22,12 +20,13 @@ import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -367,25 +366,21 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			conceptName = stConceptId;
 		}
 
-		// Success conversion to int
-		if (intObxValueID != null)
+		try
 		{
-			try
-			{
-				Concept answer = new Concept();
-				answer.setConceptId(intObxValueID);
-				ConceptName name = new ConceptName();
-				name.setName( conceptName);
-				name.setLocale(new Locale("en_US"));
-				answer.addName(name);
+			Concept answer = new Concept();
+			answer.setConceptId(intObxValueID);
+			ConceptName name = new ConceptName();
+			name.setName( conceptName);
+			name.setLocale(new Locale("en_US"));
+			answer.addName(name);
 
-				return answer;
-			} catch (RuntimeException e)
-			{
-				log.error(" Exception creating answer concept OBX segment for patient identifier: {} OBX coded value: {}; concept question id: {} concept name: {}", pIdentifierString, stConceptId, conceptQuestionId, conceptName, e);
-			}
-
+			return answer;
+		} catch (RuntimeException e)
+		{
+			log.error(" Exception creating answer concept OBX segment for patient identifier: {} OBX coded value: {}; concept question id: {} concept name: {}", pIdentifierString, stConceptId, conceptQuestionId, conceptName, e);
 		}
+
 		return null;
 	}
 
@@ -424,7 +419,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 		HL7SocketHandler hl7SocketHandler = new HL7SocketHandler(parser,
 				patientHandler, this, hl7EncounterHandler,
 				hl7PatientHandler,null);
-		ArrayList<Obs> allObs = new ArrayList<Obs>();
+		ArrayList<Obs> allObs = new ArrayList<>();
 		LocationService locationService = Context.getLocationService();
 		String sendingFacility = getSendingFacility(message);
 		Location existingLoc = locationService.getLocation(sendingFacility);

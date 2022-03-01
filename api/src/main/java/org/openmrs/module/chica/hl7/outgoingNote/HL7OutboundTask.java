@@ -1,12 +1,12 @@
 package org.openmrs.module.chica.hl7.outgoingNote;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DWE CHICA-636

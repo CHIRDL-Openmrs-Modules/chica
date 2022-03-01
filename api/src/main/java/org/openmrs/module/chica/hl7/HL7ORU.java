@@ -2,8 +2,6 @@ package org.openmrs.module.chica.hl7;
 
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptNumeric;
@@ -19,6 +17,9 @@ import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.model.v25.datatype.DT;
 import ca.uhn.hl7v2.model.v25.datatype.NM;
 import ca.uhn.hl7v2.model.v25.datatype.ST;

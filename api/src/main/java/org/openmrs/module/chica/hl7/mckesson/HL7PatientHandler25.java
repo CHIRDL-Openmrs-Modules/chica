@@ -51,9 +51,9 @@ public class HL7PatientHandler25 extends
 				{
 					ssn = "";
 				}
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				log.debug("Warning: SSN information not available in PID segment.");
+				log.debug("Warning: SSN information not available in PID segment.",e);
 			}
 		}
 		return ssn;
@@ -75,9 +75,9 @@ public class HL7PatientHandler25 extends
 					religion = religionST.getValue();
 				}
 
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				log.debug("Warning: religion information not available in PID segment.");
+				log.debug("Warning: religion information not available in PID segment.", e);
 			}
 		}
 		return religion;
@@ -100,9 +100,9 @@ public class HL7PatientHandler25 extends
 					marital = maritalST.getValue();
 				}
 
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				log.debug("Warning: marital information not available in PID segment.");
+				log.debug("Warning: marital information not available in PID segment.", e);
 			}
 
 		}
@@ -119,27 +119,32 @@ public class HL7PatientHandler25 extends
 
 			if (maidenXPN != null)
 			{
-				try
-				{
-					FN maidenFN = maidenXPN.getFamilyName();
-
-					if (maidenFN != null)
-					{
-						ST maidenST = maidenFN.getSurname();
-						if (maidenST != null)
-						{
-							maiden = maidenST.getValue();
-						}
-					}
-				} catch (RuntimeException e1)
-				{
-					log.debug("Warning: mother's maiden name not available in PID segment.");
-				}
+				maiden = getMothersMaidenNameFromXPNField(maiden, maidenXPN);
 
 			}
 		} catch (Exception e)
 		{
-			log.error("Exception parsing mother's maiden name from PID segment");
+			log.error("Exception parsing mother's maiden name from PID segment", e);
+		}
+		return maiden;
+	}
+
+	private String getMothersMaidenNameFromXPNField(String maiden, XPN maidenXPN) {
+		try
+		{
+			FN maidenFN = maidenXPN.getFamilyName();
+
+			if (maidenFN != null)
+			{
+				ST maidenST = maidenFN.getSurname();
+				if (maidenST != null)
+				{
+					maiden = maidenST.getValue();
+				}
+			}
+		} catch (RuntimeException e)
+		{
+			log.debug("Warning: mother's maiden name not available in PID segment.", e);
 		}
 		return maiden;
 	}
@@ -166,6 +171,7 @@ public class HL7PatientHandler25 extends
 		return stIdent;
 	}
 	
+	@Override
 	protected PersonAddress getAddress(XAD xad){
 
 		PersonAddress address = new PersonAddress();

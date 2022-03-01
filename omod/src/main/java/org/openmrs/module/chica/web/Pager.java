@@ -14,17 +14,17 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Location;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Pager class sends a page message via an internet paging service. The URL and parameter settings
@@ -137,7 +137,7 @@ public class Pager {
 			if (baseUrl == null || baseUrl.length() == 0 || pagerNumber == null || pagerNumber.length() == 0
 			        || message == null || message.length() == 0 || idParam == null || idParam.length() == 0
 			        || textParam == null || textParam.length() == 0) {
-				log.error("Page was not sent due to null url string or null parameters. " + urlStr);
+				log.error("Page not sent due to null url string or null parameters. URL string: {}",urlStr);
 				
 				return "Invalid parameters provided.  Could not send page.";
 			}
@@ -154,8 +154,7 @@ public class Pager {
 			response = sb.toString();
 		}
 		catch (Exception e) {
-			log.error("Could not send page: " + e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Could not send page.",e);
 			return "Could not send page: " + e.getMessage();
 		}
 		finally {
@@ -169,7 +168,7 @@ public class Pager {
 					thresholdDateByLocation.put(locationId, thresholdDate);
 				}
 				catch (Exception e) { /* pass */
-					log.error("Could not set Threshold Date for Page!" + e.getMessage());
+					log.error("Could not set Threshold Date for Page!",e);
 				}
 		}
 		

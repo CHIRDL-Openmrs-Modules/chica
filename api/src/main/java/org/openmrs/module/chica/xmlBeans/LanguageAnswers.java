@@ -22,18 +22,19 @@ public class LanguageAnswers extends org.openmrs.module.atd.xmlBeans.LanguageAns
 	 */
 	public LanguageAnswers()
 	{
-		
+		// This constructor is intentionally left empty.
 	}
 	
 	/**
 	 * Adds a language to the list of languages
 	 * @param language Language to add to language list
 	 */
-	public void addLanguage(Language language)
+	@Override
+	public void addLanguage(Language language) 
 	{
 		if(this.languages == null)
 		{
-			this.languages = new ArrayList<Language>();
+			this.languages = new ArrayList<>();
 		}
 		this.languages.add(language);
 	}
@@ -41,6 +42,7 @@ public class LanguageAnswers extends org.openmrs.module.atd.xmlBeans.LanguageAns
 	/**
 	 * @return the languages
 	 */
+	@Override
 	public ArrayList<Language> getLanguages()
 	{
 		return this.languages;

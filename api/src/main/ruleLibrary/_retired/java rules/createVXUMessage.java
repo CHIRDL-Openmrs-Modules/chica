@@ -103,8 +103,8 @@ public class createVXUMessage implements Rule
 	{
 		try{ 
 			PatientService patientService = Context.getPatientService();
-			EncounterService encounterService = Context.getService(EncounterService.class);
-			System.out.println("Running createvxumessage");
+			EncounterService encounterService = Context.getEncounterService();
+			log.info("Running createvxumessage");
 			Integer encounterId = (Integer) parameters.get("encounterId");
 			
 			org.openmrs.Encounter encounter =   encounterService.getEncounter(encounterId);
@@ -144,17 +144,12 @@ public class createVXUMessage implements Rule
 			vxuString = addVaccineHistory(vxuString,  "Influenza", context, patientId, encounterId, action);
 			vxuString = addVaccineHistory(vxuString,  "MCV", context, patientId, encounterId, action);
 			
-			
-			
-		
-			System.out.println(new Date() + " " + vxu);
-			
 			if (vxuString != null){
 				return new Result(vxuString);
 			}
 			
 		} catch (Exception e){
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception construcint VXU message for patientId: {}",patientId,e);
 		}
 		return Result.emptyResult();
 	}
@@ -203,15 +198,9 @@ public class createVXUMessage implements Rule
 		
 			Result result = context.read(patientId, this.logicService
 					.getLogicDataSource("CHICA"), fullCriteria.last());
-				
-			
-		//	Result result = context.read(patientId, context.getLogicDataSource("obs"),
-		//			fullCriteria.last());
-		//	Result result = context.read(patientId, obsDataSource, 
-		//			new LogicCriteriaImpl(conceptName).within(Duration.days(-20)).last());
 			
 			if (result == null || result.toObject() == null || !(result.toObject() instanceof Obs) ){
-				log.info("Immunization: There are no observations for vaccine: " + vaccineType);
+				log.info("Immunization: There are no observations for vaccine: {}", vaccineType);
 				return vxu;
 			}
 			
@@ -223,8 +212,7 @@ public class createVXUMessage implements Rule
 				//get the cvx and cpt codes from concept maps
 				answer = vaccineObs.getValueCoded();
 				if (answer == null){
-					log.error("Immunization: An obs exists for concept " + conceptName
-							+ ", but there is no value coded for that obs. PatientId: " + patientId);
+					log.error("Immunization: An obs exists with no value coded for concept {}. PatientId: {}",conceptName,patientId);
 				}
 				cvxCode = getCode(answer, "CVX");
 				
@@ -235,13 +223,13 @@ public class createVXUMessage implements Rule
 				Concept cvxConcept = conceptService.getConceptByMapping(cvxCode, "CVX");
 				
 				if (cvxConcept == null){
-					log.error("Immunization: No concepts found for CVX code: " + cvxCode);
+					log.error("Immunization: No concepts found for CVX code: {}",cvxCode);
 					return vxu;
 				}
 					
 				ConceptName cvxConceptName = cvxConcept.getName();
 				if (cvxConceptName == null){
-					log.error("Immunization: There is not a conceptName for Conceptid = "  + cvxConcept.getConceptId());
+					log.error("Immunization: There is not a conceptName for Conceptid = {}", cvxConcept.getConceptId());
 					return vxu;
 				}
 				
@@ -267,16 +255,6 @@ public class createVXUMessage implements Rule
 				leftRight = result.toString();
 			}
 			
-			/*conceptName = "CHICA " + vaccineType + " Lot Number";
-			result = context.read(patientId, obsDataSource, 
-					new LogicCriteriaImpl(conceptName).within(Duration.days(-2)).last());
-			if (result != null && !result.isEmpty()) {
-				// Since lot number cannot be entered on form, send a bogus number to be
-				//updated later by staff
-				//lotNumber = result.toString();
-				lotNumber = "9999999999";
-			}
-			*/
 			conceptName = "CHICA " + vaccineType + " Route";
 			result = context.read(patientId, obsDataSource, 
 					new LogicCriteriaImpl(conceptName).within(Duration.days(-5)).last());
@@ -347,8 +325,6 @@ public class createVXUMessage implements Rule
 					vxu = ImmunizationQueryConstructor.addVaccineHistory(vxu, vaccineObs,
 		    			name, cvxCode, name, cptCode, action, false, false);
 				}
-		 
-				System.out.println(new Date() + " " + vxu);
 			}
 			
 		} catch (Exception e){

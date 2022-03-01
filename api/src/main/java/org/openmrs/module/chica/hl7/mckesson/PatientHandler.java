@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -19,6 +17,8 @@ import org.openmrs.module.chirdlutil.SSNValidator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.patient.UnallowedIdentifierException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 

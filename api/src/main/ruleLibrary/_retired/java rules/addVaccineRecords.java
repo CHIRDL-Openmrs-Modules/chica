@@ -116,7 +116,7 @@ public class addVaccineRecords implements Rule
 		
 		
 		PatientService patientService = Context.getPatientService();
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		int i = 1;
 		Result vaccines = Result.emptyResult();
 				
@@ -215,12 +215,7 @@ public class addVaccineRecords implements Rule
 			i++;
 		}
 		
-		
-	
-		
-		System.out.println(constructor.getVXUMessageString());
 		String vxu = constructor.getVXUMessageString();
-		System.out.println(vxu);
 		if (vxu != null){
 			return new Result(vxu);
 		}

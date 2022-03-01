@@ -7,15 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.APIException;
@@ -34,8 +33,9 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeV
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.ui.ModelMap;

@@ -12,7 +12,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -31,11 +30,8 @@ import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
@@ -258,7 +254,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		Integer formInstanceId = 1;
 		Integer sessionId = 1;
 
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		PatientService patientService = Context.getPatientService();
 
@@ -282,129 +278,119 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		Integer locationTagId = 1;
 		Integer locationId = 1;
 		
-		try
+
+		FormAttributeValue formAttributeValue = chirdlutilbackportsService
+				.getFormAttributeValue(psfFormId,
+						"defaultMergeDirectory", locationTagId,locationId);
+
+		if (formAttributeValue != null)
 		{
-				FormAttributeValue formAttributeValue = chirdlutilbackportsService
-						.getFormAttributeValue(psfFormId,
-								"defaultMergeDirectory", locationTagId,locationId);
-
-				if (formAttributeValue != null)
-				{
-					PSFMergeDirectory = formAttributeValue.getValue();
-				}
-
-				String PSFFilename = "test/testFiles/PSF.xml";
-				String removeCurrentTimeXSLT = "test/testFiles/removeCurrentTime.xslt";
-
-				ATDService atdService = Context.getService(ATDService.class);
-				PatientState patientState = new PatientState();
-				patientState.setPatient(patient);
-
-				// test create PSF merge file
-				String state = "PSF_create";
-				LocationTagAttributeValue locTagAttrValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
-				
-				Integer formId = null;
-				
-				if(locTagAttrValue != null){
-					String value = locTagAttrValue.getValue();
-					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
-					}
-				}
-				FormInstance formInstance = new FormInstance();
-				formInstance.setFormInstanceId(formInstanceId);
-
-				formInstance.setFormId(formId);
-				formInstance.setLocationId(locationId);
-				patientState.setSessionId(sessionId);
-				OutputStream generatedXML = new ByteArrayOutputStream();
-				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
-						psfFormId, "numPrompts", locationTagId,locationId);
-				int maxDssElements = 0;
-
-				if (formAttributeValue != null)
-				{
-					maxDssElements = Integer.parseInt(formAttributeValue.getValue());
-				}
-
-				atdService.produce(generatedXML, patientState, patient,
-						encounterId, "PSF", maxDssElements,sessionId);
-				OutputStream targetXML = new ByteArrayOutputStream();
-				IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
-						targetXML);
-				generatedOutput = generatedXML.toString();
-				if (merge && PSFMergeDirectory != null)
-				{
-					FileWriter writer = new FileWriter(PSFMergeDirectory
-							+ "file1.xml");
-					writer.write(generatedOutput);
-					writer.close();
-				}
-				generatedXML = new ByteArrayOutputStream();
-				XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
-						.getBytes()), generatedXML, new FileInputStream(
-						removeCurrentTimeXSLT), null);
-				assertEquals(targetXML.toString(), generatedXML.toString());
-
-				// test forms with younger child
-				Calendar calendar = Calendar.getInstance();
-				calendar.set(2007, Calendar.JANUARY, 1);
-				patient.setBirthdate(calendar.getTime());
-				PSFFilename = "test/testFiles/PSF_younger.xml";
-
-				// test create PSF merge file
-				state = "PSF_create";
-				locTagAttrValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
-				
-				if(locTagAttrValue != null){
-					String value = locTagAttrValue.getValue();
-					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
-					}
-				}
-				formInstance = new FormInstance();
-				formInstance.setFormInstanceId(formInstanceId);
-
-				formInstance.setFormId(formId);
-				formInstance.setLocationId(locationId);
-				generatedXML = new ByteArrayOutputStream();
-				atdService.produce(generatedXML, patientState, patient,
-						encounterId, "PSF", maxDssElements,sessionId);
-				targetXML = new ByteArrayOutputStream();
-				IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
-						targetXML);
-				generatedOutput = generatedXML.toString();
-				if (merge && PSFMergeDirectory != null)
-				{
-					FileWriter writer = new FileWriter(PSFMergeDirectory
-							+ "file2.xml");
-					writer.write(generatedOutput);
-			writer.flush();
-					writer.close();
-				}
-				generatedXML = new ByteArrayOutputStream();
-				XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
-						.getBytes()), generatedXML, new FileInputStream(
-						removeCurrentTimeXSLT), null);
-				assertEquals(targetXML.toString(), generatedXML.toString());
-			
-		} catch (Exception e)
-		{
-
+			PSFMergeDirectory = formAttributeValue.getValue();
 		}
+
+		String PSFFilename = "test/testFiles/PSF.xml";
+		String removeCurrentTimeXSLT = "test/testFiles/removeCurrentTime.xslt";
+
+		ATDService atdService = Context.getService(ATDService.class);
+		PatientState patientState = new PatientState();
+		patientState.setPatient(patient);
+
+		// test create PSF merge file
+		String state = "PSF_create";
+		LocationTagAttributeValue locTagAttrValue = 
+			chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
+		
+		Integer formId = null;
+		
+		if(locTagAttrValue != null){
+			String value = locTagAttrValue.getValue();
+			if(value != null){
+				try
+				{
+					formId = Integer.parseInt(value);
+				} catch (Exception e)
+				{
+				}
+			}
+		}
+		FormInstance formInstance = new FormInstance();
+		formInstance.setFormInstanceId(formInstanceId);
+
+		formInstance.setFormId(formId);
+		formInstance.setLocationId(locationId);
+		patientState.setSessionId(sessionId);
+		OutputStream generatedXML = new ByteArrayOutputStream();
+		formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
+				psfFormId, "numPrompts", locationTagId,locationId);
+		int maxDssElements = 0;
+
+		if (formAttributeValue != null)
+		{
+			maxDssElements = Integer.parseInt(formAttributeValue.getValue());
+		}
+
+		atdService.produce(generatedXML, patientState, patient,
+				encounterId, "PSF", maxDssElements,sessionId);
+		OutputStream targetXML = new ByteArrayOutputStream();
+		IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
+				targetXML);
+		generatedOutput = generatedXML.toString();
+		if (merge && PSFMergeDirectory != null)
+		{
+			FileWriter writer = new FileWriter(PSFMergeDirectory
+					+ "file1.xml");
+			writer.write(generatedOutput);
+			writer.close();
+		}
+		generatedXML = new ByteArrayOutputStream();
+		XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
+				.getBytes()), generatedXML, new FileInputStream(
+				removeCurrentTimeXSLT), null);
+		assertEquals(targetXML.toString(), generatedXML.toString());
+
+		// test forms with younger child
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2007, Calendar.JANUARY, 1);
+		patient.setBirthdate(calendar.getTime());
+		PSFFilename = "test/testFiles/PSF_younger.xml";
+
+		// test create PSF merge file
+		state = "PSF_create";
+		locTagAttrValue = 
+			chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
+		
+		if(locTagAttrValue != null){
+			String value = locTagAttrValue.getValue();
+			if(value != null){
+				formId = Integer.parseInt(value);
+			}
+		}
+		formInstance = new FormInstance();
+		formInstance.setFormInstanceId(formInstanceId);
+
+		formInstance.setFormId(formId);
+		formInstance.setLocationId(locationId);
+		generatedXML = new ByteArrayOutputStream();
+		atdService.produce(generatedXML, patientState, patient,
+				encounterId, "PSF", maxDssElements,sessionId);
+		targetXML = new ByteArrayOutputStream();
+		IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
+				targetXML);
+		generatedOutput = generatedXML.toString();
+		if (merge && PSFMergeDirectory != null)
+		{
+			FileWriter writer = new FileWriter(PSFMergeDirectory
+					+ "file2.xml");
+			writer.write(generatedOutput);
+			writer.flush();
+			writer.close();
+		}
+		generatedXML = new ByteArrayOutputStream();
+		XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
+				.getBytes()), generatedXML, new FileInputStream(
+				removeCurrentTimeXSLT), null);
+		assertEquals(targetXML.toString(), generatedXML.toString());
+		
 	}
 
 	@Test
@@ -465,13 +451,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				Integer formId = null;
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
-					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+					if(value != null){				
+						formId = Integer.parseInt(value);				
 					}
 				}
 				FormInstance formInstance = new FormInstance();
@@ -503,7 +484,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 					FileWriter writer = new FileWriter(PWSMergeDirectory
 							+ "file1.xml");
 					writer.write(generatedOutput);
-			writer.flush();
+					writer.flush();
 					writer.close();
 				}
 				generatedXML = new ByteArrayOutputStream();

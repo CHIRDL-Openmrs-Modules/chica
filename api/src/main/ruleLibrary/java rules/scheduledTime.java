@@ -47,7 +47,7 @@ public class scheduledTime implements Rule
 			return Result.emptyResult();
 		}
 		
-		EncounterService encounterService = (EncounterService) Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
 		encounter =  encounterService.getEncounter(encounterIdParam);

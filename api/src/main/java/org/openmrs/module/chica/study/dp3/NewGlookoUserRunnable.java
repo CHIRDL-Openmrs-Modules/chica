@@ -5,8 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
@@ -18,6 +16,8 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CHICA-1063
@@ -111,12 +111,12 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 				}
 				else
 				{
-					log.error("New Glooko user notification was received. Unable to locate patient match for: " + this.lastName + ", " + this.firstName);
+					log.error("New Glooko user notification was received. Unable to locate patient match for: {}, {}.",  this.lastName, this.firstName);
 				}
 			}
 			else
 			{
-				log.error("New Glooko user notification was received. Unable to locate possible patient matches for: " + this.lastName + ", " + this.firstName);
+				log.error("New Glooko user notification was received. Unable to locate possible patient matches for: {}, {}.", this.lastName,  this.firstName);
 			}	
 		}
 		catch(ContextAuthenticationException e)

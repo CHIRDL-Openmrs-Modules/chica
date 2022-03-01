@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openmrs.module.chica.web.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openmrs.module.chica.web.ServletUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
