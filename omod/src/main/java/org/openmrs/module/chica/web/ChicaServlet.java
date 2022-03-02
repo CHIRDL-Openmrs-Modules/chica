@@ -33,6 +33,7 @@ public class ChicaServlet extends HttpServlet {
 	
 	public static final String CHICA_SERVLET_URL = "/moduleServlet/chica/chica";
 	public static final String CHICA_SERVLET_PDF_PARAMS = "#view=fit&navpanes=0";
+	public static final String CONTENT_DISPOSITION_PDF = "inline;filename=patientJITS.pdf";
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -57,7 +58,7 @@ public class ChicaServlet extends HttpServlet {
     		if (ServletUtil.GET_PATIENT_JITS.equals(action) || ServletUtil.DISPLAY_FORCE_PRINT_FORMS.equals(action)) {
     			response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
     			response.addHeader(
-    				ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, ServletUtil.CONTENT_DISPOSITION_PDF);
+    				ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
     		} else if (ServletUtil.FORCE_PRINT_FORMS.equals(action)) {
     			ServletUtil.getForcePrintFormHeader(request, response);
     		}
@@ -322,7 +323,7 @@ public class ChicaServlet extends HttpServlet {
 	 */
 	private void convertTiffToPDF(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
-		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, ServletUtil.CONTENT_DISPOSITION_PDF);
+		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, CONTENT_DISPOSITION_PDF);
 		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_CACHE_CONTROL_PUBLIC + ", " + 
 				ChirdlUtilConstants.HTTP_CACHE_CONTROL_MAX_AGE + "=" + ServletUtil.MAX_CACHE_AGE);
 		

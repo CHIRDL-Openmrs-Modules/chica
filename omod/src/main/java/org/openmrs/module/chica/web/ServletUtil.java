@@ -192,7 +192,6 @@ public class ServletUtil {
 	
 	public static final String STYLESHEET = "stylesheet";
 	public static final String FORM_DIRECTORY = "formDirectory";
-	public static final String CONTENT_DISPOSITION_PDF = "inline;filename=patientJITS.pdf";
 	public static final String MAX_CACHE_AGE = "600";
 	public static final String RESULT_SUCCESS = "success";
 	
@@ -1153,14 +1152,11 @@ public class ServletUtil {
 			for (String outputType : outputTypes) {
 				outputType = outputType.trim();
 				if (ChirdlUtilConstants.FORM_ATTR_VAL_PDF.equalsIgnoreCase(outputType) || 
-						ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_PDF.equalsIgnoreCase(outputType)) {
+						ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_PDF.equalsIgnoreCase(outputType) ||
+						    ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_XML.equalsIgnoreCase(outputType)) {
 					pw.write(XML_FORCE_PRINT_JIT_START);
 					writeTag(XML_FORM_INSTANCE_TAG, formInstanceTag, pw);
-					writeTag(XML_OUTPUT_TYPE, outputType, pw);
-					pw.write(XML_FORCE_PRINT_JIT_END);
-				} else if (ChirdlUtilConstants.FORM_ATTR_VAL_TELEFORM_XML.equalsIgnoreCase(outputType)) {
-					pw.write(XML_FORCE_PRINT_JIT_START);
-					writeTag(XML_FORM_INSTANCE_TAG, formInstanceTag, pw);
+					writeTag(XML_FORM_NAME, escapeXML(formName), pw);
 					writeTag(XML_OUTPUT_TYPE, outputType, pw);
 					pw.write(XML_FORCE_PRINT_JIT_END);
 				} else {
@@ -1171,7 +1167,7 @@ public class ServletUtil {
 				}
 			}
 			
-			if (errorList.size() > 0) {
+			if (errorList.isEmpty()) {
 				pw.write(XML_ERROR_MESSAGES_START);
 				for (String error : errorList) {
 					writeTag(XML_ERROR_MESSAGE, error, pw);
@@ -1554,7 +1550,8 @@ public class ServletUtil {
 	 */
 	public static void getPatientJITs(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String formInstances = request.getParameter(ServletUtil.PARAM_FORM_INSTANCES);
-		locatePatientJITs(response, formInstances);
+		String formName = request.getParameter(ChirdlUtilConstants.PARAMETER_FORM_NAME);
+		locatePatientJITs(response, formInstances, formName);
 	}
 	
 	/**
@@ -1564,10 +1561,11 @@ public class ServletUtil {
 	 * @param formInstances The form instances to load.  This should be a comma delimited list.
 	 * @throws IOException
 	 */
-	public static void locatePatientJITs(HttpServletResponse response, String formInstances) 
+	public static void locatePatientJITs(HttpServletResponse response, String formInstances, String formName) 
 			throws IOException {	
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_APPLICATION_PDF);
-		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, ServletUtil.CONTENT_DISPOSITION_PDF);
+		String contentDispositionPdf = "inline;filename=" + formName.replaceAll("\\s+", "") + ChirdlUtilConstants.FILE_EXTENSION_PDF;
+		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CONTENT_DISPOSITION, contentDispositionPdf);
 		response.addHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_CACHE_CONTROL_PUBLIC + ", " + 
 				ChirdlUtilConstants.HTTP_CACHE_CONTROL_MAX_AGE + "=" + ServletUtil.MAX_CACHE_AGE);
 		
