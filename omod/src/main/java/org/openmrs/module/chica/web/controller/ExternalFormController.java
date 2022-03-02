@@ -237,7 +237,7 @@ public class ExternalFormController {
 		}
 		
 		List<Session> sessions = backportsService.getSessionsByEncounter(encounter.getEncounterId());
-		if (sessions != null && sessions.size() > 0) {
+		if (sessions != null && !sessions.isEmpty()) {
 			map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessions.get(0).getSessionId());
 		}
 		

@@ -150,7 +150,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			try {
 				sessionId = Integer.valueOf(sessionIdStr);
 			} catch(NumberFormatException e) {
-			    log.error("Error parsing sessionId: " + sessionIdStr, e);
+			    log.error("Error parsing sessionId: {} ", sessionIdStr, e);
 			}
 		}
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -196,11 +196,8 @@ public class ChicaMobileServlet extends HttpServlet {
 						{
 							if(formInstance.getFormId() == null || formInstance.getFormInstanceId() == null || formInstance.getLocationId() == null)
 							{
-							    log.error("Error getting forms for patientId: " + row.getPatientId() + " formId: " 
-										+ formInstance.getFormId() 
-										+ " formInstanceId: " + formInstance.getFormInstanceId() 
-										+ " locationId: " + formInstance.getLocationId() 
-										+ ". The patient will not be added to the mobile greaseBoard.");
+							    log.error("Error getting forms for patientId: {} formId:{} formInstanceId: {} locationId: {}. The patient will not be added to the mobile greaseBoard.",  
+										row.getPatientId(),formInstance.getFormId(),formInstance.getFormInstanceId(),formInstance.getLocationId() );
 								continue PatientRowLoop;
 							}
 						}

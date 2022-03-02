@@ -68,7 +68,7 @@ public class GreaseBoardController {
 			}
 		} catch (NumberFormatException e) 
 		{
-			log.error("Error parsing patientId: " + patientIdString, e);
+			log.error("Error parsing patientId: {}",patientIdString, e);
 		}
 		String sessionIdString = request.getParameter("greaseBoardSessionId");
 		Integer sessionId = null;
@@ -79,7 +79,7 @@ public class GreaseBoardController {
 			}
 		} catch (NumberFormatException e) 
 		{
-			log.error("Error parsing sessionId: " + sessionIdString, e);
+			log.error("Error parsing sessionId: {}",sessionIdString, e);
 		}
 		
 		//Initiate an ADHD WU for the patient
@@ -165,7 +165,7 @@ public class GreaseBoardController {
 				FormService formService = Context.getFormService();
 				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
-				EncounterService encounterService = Context.getService(EncounterService.class);
+				EncounterService encounterService = Context.getEncounterService();
 				Encounter encounter =  encounterService.getEncounter(encounterId);
 				String formName = Util.getFormNameByPrintOptionString(encounter, optionsString); 
 
@@ -175,7 +175,7 @@ public class GreaseBoardController {
 					if (form != null) {
 						formId = form.getFormId();
 					} else {
-						log.error("The locationTagAttributeValue "+formName+" is invalid");
+						log.error("The locationTagAttributeValue {} is invalid",formName);
 						return new ModelAndView(new RedirectView(FORM));
 					}
 					
@@ -193,7 +193,7 @@ public class GreaseBoardController {
 						currState = chirdlutilbackportsService
 								.getStateByName(stateName);
 						if (currState == null) {
-							log.error("A start state with name "+stateName+" cannot be found in the CHICA system.");
+							log.error("A start state with name {} cannot be found in the CHICA system.",stateName);
 							return new ModelAndView(new RedirectView(FORM));
 						}
 						

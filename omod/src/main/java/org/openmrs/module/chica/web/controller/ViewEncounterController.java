@@ -70,7 +70,7 @@ public class ViewEncounterController {
 	@RequestMapping(method = RequestMethod.POST)
 	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object command) throws Exception {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		String optionsString = request.getParameter(PARAMATER_OPTIONS);
 		String patientIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
 		Integer patientId = null;
@@ -82,7 +82,7 @@ public class ViewEncounterController {
 		} 
 		catch (Exception e) 
 		{
-			log.error("Error displaying form in View Encounters. Unable to parse patientId (patientIdString: " + patientIdString + ").", e);
+			log.error("Error displaying form in View Encounters. Unable to parse patientId (patientIdString: {}", patientIdString, e);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
@@ -95,14 +95,14 @@ public class ViewEncounterController {
 		} 
 		catch (Exception e) 
 		{
-			log.error("Error displaying form in View Encounters. Unable to parse encounterId (encounterIdString: " + encounterIdString + ").", e);
+			log.error("Error displaying form in View Encounters. Unable to parse encounterId (encounterIdString: {}).",encounterIdString, e);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
 		
 		if(optionsString == null)
 		{
-			log.error("Error displaying form in View Encounters for encounterId: " + encounterId + "(optionsString: " + optionsString + ")");
+			log.error("Error displaying form in View Encounters for encounterId: {} (optionsString: {})",encounterId,optionsString);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
@@ -122,7 +122,7 @@ public class ViewEncounterController {
 		}
 		catch(Exception e)
 		{
-			log.error("Error displaying form in View Encounters for encounterId: " + encounterId + "(optionsString: " + optionsString + ")", e);
+			log.error("Error displaying form in View Encounters for encounterId: {} (optionsString: {})",encounterId,optionsString,e);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
@@ -223,7 +223,7 @@ public class ViewEncounterController {
 							}
 							catch(APIException e)
 							{
-								log.error(this.getClass().getName() + ": Error finding form information for the form to be displayed on the right side.", e);
+								log.error("{}: Error finding form information for the form to be displayed on the right side.",this.getClass().getName(), e);
 							}	
 						}	
 					}
@@ -297,7 +297,7 @@ public class ViewEncounterController {
 							}
 							catch(APIException e)
 							{
-								log.error(this.getClass().getName() + ": Error finding form information for the form to be displayed on the left side.", e);
+								log.error("{}: Error finding form information for the form to be displayed on the left side.",this.getClass().getName(), e);
 							}		
 						}		
 					}
@@ -352,7 +352,7 @@ public class ViewEncounterController {
 				}
 				catch(NumberFormatException nfe)
 				{
-					log.error(this.getClass().getName() + ": unable to parse parameter for patientId: " + patientIdParam);
+					log.error("{}: unable to parse parameter for patientId: {}",this.getClass().getName(), patientIdParam,nfe);
 				}
 			}
 			else
@@ -375,7 +375,7 @@ public class ViewEncounterController {
 			map.put(PARAMATER_TITLE_DOB, dobString);
 
 			// encounter rows
-			EncounterService encounterService = Context.getService(EncounterService.class);
+			EncounterService encounterService = Context.getEncounterService();
 			List<org.openmrs.Encounter> list = encounterService.getEncountersByPatientId(patient.getPatientId());
 			List<PatientRow> rows = new ArrayList<PatientRow>();
 			

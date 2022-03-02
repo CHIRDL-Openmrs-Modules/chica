@@ -401,8 +401,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		int patientId = 30520;
 		Integer formInstanceId = 1;
 
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		PatientService patientService = Context.getPatientService();
 		ATDService atdService = Context.getService(ATDService.class);
 		Encounter encounter = new Encounter();

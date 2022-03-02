@@ -1,7 +1,5 @@
 package org.openmrs.module.chica.test.service;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openmrs.Encounter;
-import org.openmrs.annotation.Authorized;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.test.TestUtil;
@@ -20,11 +17,10 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.test.SkipBaseSetup;
 import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
- * @author Tammy Dugan
+ * @author Meena Sheley
  * 
  */
 public class TestEncounterAttributes extends BaseModuleContextSensitiveTest
@@ -41,8 +37,6 @@ public class TestEncounterAttributes extends BaseModuleContextSensitiveTest
 	{
 		// create the basic user and give it full rights
 		initializeInMemoryDatabase();
-//		executeDataSet(TestUtil.DBUNIT_SETUP_FILE);
-		// authenticate to the temp database
 		authenticate();
 	}
 

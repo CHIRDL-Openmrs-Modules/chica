@@ -1167,7 +1167,7 @@ public class ServletUtil {
 				}
 			}
 			
-			if (errorList.isEmpty()) {
+			if (!errorList.isEmpty()) {
 				pw.write(XML_ERROR_MESSAGES_START);
 				for (String error : errorList) {
 					writeTag(XML_ERROR_MESSAGE, error, pw);
@@ -1753,7 +1753,7 @@ public class ServletUtil {
 			subject = "forms";
 		}
 		
-		StringBuffer message = new StringBuffer("An error occurred creating the following ").append(subject).append(": ");
+		StringBuilder message = new StringBuilder("An error occurred creating the following ").append(subject).append(": ");
 		for (int i = 0; i < errorFiles.size(); i++) {
 			FormInstanceTag formInstanceTag = errorFiles.get(i);
 			if (i != 0) {
@@ -1811,10 +1811,10 @@ public class ServletUtil {
 		        response.setContentLength(output.size());
 		        response.getOutputStream().write(output.toByteArray());
 			} catch (BadPdfFormatException e) {
-				LOG.error("Bad PDF found: " + filePath, e);
+				LOG.error("Bad PDF found: {} ", filePath, e);
 				throw new IOException(e);
 			} catch (DocumentException e) {
-				LOG.error("Error handling PDF document: " + filePath, e);
+				LOG.error("Error handling PDF document: {} ",filePath, e);
 				throw new IOException(e);
 			} finally {
 				output.flush();
@@ -1873,7 +1873,7 @@ public class ServletUtil {
 		        response.setContentLength(baos.size());
 		        response.getOutputStream().write(baos.toByteArray());
 			} catch (BadPdfFormatException e) {
-				LOG.error("Bad PDF found: " + filePath, e);
+				LOG.error("Bad PDF found: {}", filePath, e);
 				throw new IOException(e);
 			} catch (DocumentException e) {
 				LOG.error("Error handling PDF document", e);

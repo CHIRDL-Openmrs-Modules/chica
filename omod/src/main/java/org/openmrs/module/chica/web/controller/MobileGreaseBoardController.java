@@ -39,7 +39,6 @@ public class MobileGreaseBoardController {
     private static final String SUCCESS_VIEW = "greaseBoardMobile.form";
     
     /** Parameters */
-    private static final String PARAMETER_PATIENT_ROWS = "patientRows";
     private static final String PARAMETER_REFRESH_PERIOD = "refreshPeriod";
     private static final String PARAMETER_CURRENT_USER = "currentUser";
     private static final String PARAMETER_DISPLAY_CONFIDENTIALITY_NOTICE = "displayConfidentialityNoticeMobileGreaseBoard";
@@ -69,8 +68,7 @@ public class MobileGreaseBoardController {
 		if(patientId == null || patientId.isEmpty() 
 				|| encounterId == null || encounterId.isEmpty() 
 				|| sessionId == null || sessionId.isEmpty()) {
-			log.error("Error processing form submission (patientId: " + patientId + " encounterId: " + encounterId + 
-			    " sessionId: " + sessionId + ").");
+			log.error("Error processing form submission (patientId: {} encounterId: {} sessionId: {}).",patientId,encounterId,sessionId);
 			map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE, ERROR_SELECTION);
 			return new ModelAndView(new RedirectView(SUCCESS_VIEW), map);
 		}
@@ -117,14 +115,14 @@ public class MobileGreaseBoardController {
 	            return new ModelAndView(new RedirectView(nextPage), map);
 			}
 			
-		    log.error("Error processing form submission, locationTagId is null (patientId: " + patientId + " formIdStr: " + 
-		    formIdStr + " formInstanceIdStr: " + formInstanceIdStr + " locationIdStr: " + locationIdStr + ").");
+		    log.error("Error processing form submission, locationTagId is null (patientId: {} formIdStr: {} formInstanceIdStr: {} locationIdStr: {}).",
+		    		patientId,formIdStr,formInstanceIdStr,locationIdStr);
 		    map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE, ERROR_SELECTION);
             return new ModelAndView(new RedirectView(SUCCESS_VIEW), map);			     
 			
 		} catch(NumberFormatException nfe) {
-			log.error("Error processing form submission (patientId: " + patientId + " formIdStr: " + formIdStr + 
-			    " formInstanceIdStr: " + formInstanceIdStr + " locationIdStr: " + locationIdStr + ").", nfe);
+		    log.error("Error processing form submission  (patientId: {} formIdStr: {} formInstanceIdStr: {} locationIdStr: {}).",
+		    		patientId,formIdStr,formInstanceIdStr,locationIdStr,nfe);
 			map.put(ChirdlUtilConstants.PARAMETER_ERROR_MESSAGE, ERROR_SELECTION);
 			return new ModelAndView(new RedirectView(SUCCESS_VIEW), map);
 		}
@@ -179,9 +177,8 @@ public class MobileGreaseBoardController {
 					}
 				}
 			} catch(Exception e) {
-				log.error("Error retrieving location attribute " + 
-				        ChirdlUtilConstants.LOCATION_ATTR_DISPLAY_CONFIDENTIALITY_NOTICE + 
-				        ". The confidentiality notice will not be displayed on the mobile greaseboard.", e);
+				log.error("Error retrieving location attribute {}. The confidentiality notice will not be displayed on the mobile greaseboard.",
+						ChirdlUtilConstants.LOCATION_ATTR_DISPLAY_CONFIDENTIALITY_NOTICE,e);
 			}	
 		}
 		

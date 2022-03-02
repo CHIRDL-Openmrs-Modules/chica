@@ -20,6 +20,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import java.text.ParseException;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 
@@ -58,7 +59,7 @@ public class scheduledTime implements Rule
 		EncounterAttributeValue encounterAttributeValue = chirdlUtilBackportsService
 				.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 		
-		if (encounterAttributeValue == null) {
+		if (encounterAttributeValue == null || StringUtils.isBlank(encounterAttributeValue.getValueText())) {
 			return Result.emptyResult(); 
 		}
 		

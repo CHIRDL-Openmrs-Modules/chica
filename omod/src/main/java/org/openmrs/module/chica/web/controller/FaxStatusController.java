@@ -57,7 +57,7 @@ public class FaxStatusController {
 
 	@ModelAttribute("faxStatusRows")
 	public List<FaxStatus> getFaxStatuses(){
-		return new ArrayList<FaxStatus>();
+		return new ArrayList<>();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)

@@ -553,8 +553,7 @@ public class HL7SocketHandler extends
 				
 				messageContainsInsurance = messageContainsInsuranceInfo(message); // CHICA-1157 Only attempt to parse insurance info if the message contains a valid IN1 segment (A10 messages will not)
 					
-				EncounterService encounterService = Context
-						.getService(EncounterService.class);
+				EncounterService encounterService = Context.getEncounterService();
 				encounter = encounterService.getEncounter(encounter
 						.getEncounterId());
 				if (this.hl7EncounterHandler instanceof org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) {
