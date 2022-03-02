@@ -767,17 +767,17 @@ public class ChicaServiceImpl implements ChicaService
 	
 	@Override
 	public Double getHighBP(Patient patient, Integer bpPercentile,
-			String bpType, org.openmrs.Encounter encounter)
+			String bpType, Encounter encounter)
 	{
-		List<Person> persons = new ArrayList<Person>();
+		List<Person> persons = new ArrayList<>();
 		persons.add(patient);
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConceptByName("HtCentile");
-		List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+		List<Encounter> encounters = new ArrayList<>();
 		encounters.add(encounter);
 		Double heightPercentile = null;
 		ObsService obsService = Context.getObsService();
-		List<Concept> concepts = new ArrayList<Concept>();
+		List<Concept> concepts = new ArrayList<>();
 
 		concepts.add(concept);
 
@@ -1114,7 +1114,7 @@ public class ChicaServiceImpl implements ChicaService
 		}
             
 		@Override
-		public List<org.openmrs.Encounter> getEncountersForEnrolledPatients(Concept concept,
+		public List<Encounter> getEncountersForEnrolledPatients(Concept concept,
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
     	}

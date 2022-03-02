@@ -855,6 +855,7 @@ public class HL7SocketHandler extends
 			List<PersonName> nameList = new ArrayList<>(names);
 
 			Collections.sort(nameList, new Comparator<PersonName>() {
+				@Override
 				public int compare(PersonName n1, PersonName n2) {
 					Date date1 = n1.getDateCreated();
 					Date date2 = n2.getDateCreated();
@@ -937,6 +938,7 @@ public class HL7SocketHandler extends
 					addresses);
 
 			Collections.sort(addressList, new Comparator<PersonAddress>() {
+				@Override
 				public int compare(PersonAddress a1, PersonAddress a2) {
 					Date date1 = a1.getDateCreated();
 					Date date2 = a2.getDateCreated();

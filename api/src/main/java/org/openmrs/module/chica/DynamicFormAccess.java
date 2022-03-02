@@ -124,7 +124,7 @@ public class DynamicFormAccess {
 		DssManager dssManager = new DssManager(patient);
 		
 		FieldType mergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_MERGE_FIELD);
-		FieldType priorMergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_PRIORITIZED_FIELD);
+		FieldType priorMergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_PRIORITIZED_MERGE_FIELD);
 		LinkedHashMap<FormField, Object> fieldToResult = new LinkedHashMap<>();
 		Map<String, Integer> dssMergeCounters = new HashMap<>();
 		List<FieldType> fieldTypes = new ArrayList<>();
@@ -520,7 +520,7 @@ public class DynamicFormAccess {
 		ATDService atdService = Context.getService(ATDService.class);
 		PatientState patientState = org.openmrs.module.atd.util.Util
 		        .getProducePatientStateByFormInstanceAction(formInstance);
-		FieldType prioritizedMergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_PRIORITIZED_FIELD);
+		FieldType prioritizedMergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_PRIORITIZED_MERGE_FIELD);
 		
 		String mode = ChirdlUtilConstants.PARAMETER_VALUE_CONSUME;
 		LinkedHashMap<String, LinkedHashMap<String, Rule>> rulesToRunByField = new LinkedHashMap<>();

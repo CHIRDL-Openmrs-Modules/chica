@@ -36,6 +36,7 @@ public class Randomize implements ProcessStateAction
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)
 	 */
+	@Override
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
 	{
@@ -95,6 +96,7 @@ public class Randomize implements ProcessStateAction
 
 	}
 
+	@Override
 	public void changeState(PatientState patientState,
 			HashMap<String, Object> parameters) {
 		//deliberately empty because processAction changes the state

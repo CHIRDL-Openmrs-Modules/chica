@@ -149,7 +149,7 @@ public class createVXUMessage implements Rule
 			}
 			
 		} catch (Exception e){
-			log.error("Exception construcint VXU message for patientId: {}",patientId,e);
+			log.error("Exception construcing VXU message for patientId: {}",patientId,e);
 		}
 		return Result.emptyResult();
 	}

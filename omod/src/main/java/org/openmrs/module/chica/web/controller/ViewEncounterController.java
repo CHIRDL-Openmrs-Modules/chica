@@ -82,7 +82,7 @@ public class ViewEncounterController {
 		} 
 		catch (Exception e) 
 		{
-			log.error("Error displaying form in View Encounters. Unable to parse patientId (patientIdString: {}", patientIdString, e);
+			log.error("Error displaying form in View Encounters. Unable to parse patientId (patientIdString: {})", patientIdString, e);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}

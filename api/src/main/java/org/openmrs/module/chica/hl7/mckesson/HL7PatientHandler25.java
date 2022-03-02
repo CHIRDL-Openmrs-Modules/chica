@@ -243,7 +243,7 @@ public class HL7PatientHandler25 extends
 			Terser terser = new Terser(newMessage);
 			pid = terser.get("/.PID-3-1");
 		} catch (Exception e) {
-			log.error("MRF dump encoding error getting identifier from PID-3-1 field." , e);
+			log.error("MRF dump encoding error getting identifier from PID-3-1 field.", e);
 		} 
 		return pid;
 	}

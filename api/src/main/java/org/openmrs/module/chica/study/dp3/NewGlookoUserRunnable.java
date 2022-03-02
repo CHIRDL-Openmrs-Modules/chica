@@ -125,7 +125,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 		}
 		catch(Exception e)
 		{
-			log.error("Error in " + this.getClass().getName() + ".", e);
+			log.error("Error in {}", this.getClass().getName(), e);
 		}		
 	}
 	
@@ -141,7 +141,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 
 			if (attributeType == null)
 			{
-				log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId() + " Person attribute type does not exist.");
+				log.error("Unable to create GlookoCode person attribute for patient: {}.  Person attribute type does not exist.",patient.getPatientId());
 				return;
 			}
 			

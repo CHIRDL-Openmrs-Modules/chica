@@ -40,6 +40,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 	private static final Logger log = LoggerFactory.getLogger(HL7PatientHandler23.class);
 	
+	@Override
 	public String getMothersName(Message message)
 	{
 		return null;
@@ -163,13 +164,14 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return null;
 	}
 
+	@Override
 	public List<PersonAddress> getAddresses(Message message)
 	{
 		// ***For Newborn screening we are using the next-of-kin address
 		// and not the patient address from PID
 		PID pid = getPID(message);
 		NK1 nk1 = getNK1(message);
-		List<PersonAddress> addresses = new ArrayList<PersonAddress>();
+		List<PersonAddress> addresses = new ArrayList<>();
 		try
 		{
 			XAD[] xadAddresses = pid.getPatientAddress(); // PID address
@@ -191,7 +193,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 		} catch (RuntimeException e)
 		{
-			log.warn("Unable to collect address from PID);", e);
+			log.warn("Unable to collect address from PID.", e);
 		}
 		return addresses;
 	}
@@ -231,6 +233,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return address;
 	}
 
+	@Override
 	public Date getBirthdate(Message message)
 	{
 		PID pid = getPID(message);
@@ -242,6 +245,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return HL7ObsHandler23.TranslateDate(date);
 	}
 
+	@Override
 	public String getBirthplace(Message message)
 	{
 		PID pid = getPID(message);
@@ -255,26 +259,27 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			}
 		} catch (RuntimeException e)
 		{
-			log.warn("Unable to parse birthplace from PID. Message: ", e);
+			log.warn("Unable to parse birthplace from PID.", e);
 		}
 		return birthPlace;
 	}
 
+	@Override
 	public String getCitizenship(Message message)
 	{
 		PID pid = getPID(message);
 		IS ceCitizen = null;
 		ceCitizen = pid.getCitizenship();
-		String citizenString = ceCitizen.getValue();
-
-		return citizenString;
+		return ceCitizen.getValue();
 	}
 
+	@Override
 	public Date getDateChanged(Message message)
 	{
 		return null;
 	}
 
+	@Override
 	public Date getDeathDate(Message message)
 	{
 		PID pid = getPID(message);
@@ -287,6 +292,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return ddt;
 	}
 
+	@Override
 	public String getGender(Message message)
 	{
 		// Gender -- Based on meeting 04/10/2007
@@ -311,12 +317,13 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return null;
 	}
 
+	@Override
 	public Set<PatientIdentifier> getIdentifiers(Message message)
 	{
 		PID pid = getPID(message);
 		CX[] identList = null;
 		PatientService patientService = Context.getPatientService();
-		Set<PatientIdentifier> identifiers = new TreeSet<org.openmrs.PatientIdentifier>();
+		Set<PatientIdentifier> identifiers = new TreeSet<>();
 
 		try
 		{
@@ -376,6 +383,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return identifiers;
 	}
 
+	@Override
 	public String[] getPatientIdentifierList(Message message)
 	{
 		if (!(message instanceof ORU_R01))
@@ -395,6 +403,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return patientIdentsAsString;
 	}
 
+	@Override
 	public PersonName getPatientName(Message message)
 	{
 		PersonName name = new PersonName();
@@ -445,6 +454,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return name;
 	}
 
+	@Override
 	public String getRace(Message message)
 	{
 		IS ceRace = null;
@@ -469,6 +479,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		}
 		return null;
 	}
+	@Override
 	public String getTelephoneNumber(Message message)
 	{
 		PID pid = getPID(message);
@@ -488,6 +499,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return tNumber;
 	}
 
+	@Override
 	public Boolean isDead(Message message)
 	{
 		PID pid = getPID(message);
@@ -518,6 +530,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	 * DWE CHICA-406
 	 * @param message
 	 */
+	@Override
 	public String getAccountNumber(Message message)
 	{
 		return null;
@@ -526,7 +539,8 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	/**
 	 * @see org.openmrs.module.sockethl7listener.HL7PatientHandler#getNextOfKin(ca.uhn.hl7v2.model.Message)
 	 */
-    public String getNextOfKin(Message arg0) {
+    @Override
+	public String getNextOfKin(Message arg0) {
 	    return null;
     }
     
@@ -539,6 +553,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	 * @param message
 	 * @return ethnicity code
 	 */
+	@Override
 	public String getEthnicity(Message message)
 	{
 		// Intentionally left empty

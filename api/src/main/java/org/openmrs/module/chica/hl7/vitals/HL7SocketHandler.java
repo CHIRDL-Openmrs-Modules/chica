@@ -356,7 +356,7 @@ public class HL7SocketHandler implements Application {
 				
 				BaseStateActionHandler.changeState(patient, sessionId, state, stateAction, parameters, locationTagId, locationId);
 			} else {
-				log.error("Patient State is null for patient: " + patient);
+				log.error("Patient State is null for patient: {}",patient);
 			}
 		}
 		
@@ -446,9 +446,8 @@ public class HL7SocketHandler implements Application {
 				{ 
 					// Need to fix the concept configuration if we received units in the HL7, 
 					// but the mapped concept does not have units defined
-					log.error("Units were received in HL7 message for concept ID: " 
-							+ obsConcept.getConceptId() + " units received: " + obsConceptUnits 
-							+ " Need to define units for concept ID: " + mappedConcept.getConceptId());
+					log.error("Units were received in HL7 message for concept ID: {} units received: {}. Need to define units for concept ID: {}",
+							obsConcept.getConceptId(),obsConceptUnits,mappedConcept.getConceptId());
 					return;
 				}
 				

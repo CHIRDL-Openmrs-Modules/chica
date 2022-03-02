@@ -26,6 +26,7 @@ public class PrinterLocationHL7Filter implements HL7Filter
 {
 	private static final Logger log = LoggerFactory.getLogger(PrinterLocationHL7Filter.class);
 	
+	@Override
 	public boolean ignoreMessage(HL7EncounterHandler hl7EncounterHandler,
 			Message message,String incomingMessageString)
 	{

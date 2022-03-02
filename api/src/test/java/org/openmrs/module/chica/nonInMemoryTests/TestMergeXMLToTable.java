@@ -21,8 +21,7 @@ import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
  * 
  */
 @SkipBaseSetup
-@Disabled
-public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest 
+public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 {
 
 	/**
@@ -40,6 +39,7 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
+	@Disabled
 	public void testMergeXMLToTable() throws Exception
 	{
 		AdministrationService adminService = Context.getAdministrationService();
@@ -60,32 +60,16 @@ public class TestMergeXMLToTable extends BaseModuleContextSensitiveTest
 		adminService.saveGlobalProperty(property);
 		Integer locationTagId = 1;
 		Integer sessionId = null;
-		
-		try
-		{				
-				FormInstance formInstance = new FormInstance();
-				formInstance.setFormId(formId);
-				formInstance.setFormInstanceId(formInstanceId);
-				formInstance.setLocationId(locationId);
-				atdService.produce(patient, formInstance, output,
-						dssManager, encounterId, null,
-						locationTagId, sessionId);
-			
-		} catch (Exception e)
-		{
-			System.out.println(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
-		}
+						
+		FormInstance formInstance = new FormInstance();
+		formInstance.setFormId(formId);
+		formInstance.setFormInstanceId(formInstanceId);
+		formInstance.setLocationId(locationId);
+		atdService.produce(patient, formInstance, output,
+				dssManager, encounterId, null,
+				locationTagId, sessionId);	
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openmrs.test.BaseContextSensitiveTest#useInMemoryDatabase()
-	 */
-	@Override
-	public Boolean useInMemoryDatabase()
-	{
-		return false;
-	}
+
 
 }
