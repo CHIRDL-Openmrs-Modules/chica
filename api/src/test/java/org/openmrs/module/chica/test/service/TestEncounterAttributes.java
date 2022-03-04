@@ -1,9 +1,6 @@
 package org.openmrs.module.chica.test.service;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.jupiter.api.Assertions;
@@ -53,13 +50,13 @@ public class TestEncounterAttributes extends BaseModuleContextSensitiveTest
 		EncounterService encounterService = Context.getEncounterService();
 
 		int encounterId = 1;
-		
-		LocalDateTime scheduledDate = LocalDateTime.of(2022, Month.JANUARY, 1,9,15);
-		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(ChirdlUtilConstants.DATE_FORMAT_HYPHEN_yyyy_MM_dd_hh_mm_ss); 
-		String formattedScheduledDateText = scheduledDate.format(dateFormatter);
-		System.out.println("Scheduled appointment time : " + formattedScheduledDateText);
-		
 		Encounter encounter = encounterService.getEncounter(encounterId);
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2022, Calendar.FEBRUARY, 11,1,20,30);
+		calendar.clear(Calendar.MILLISECOND);
+		Date appointmentDate = calendar.getTime();
+	
 		//Verify id
 		encounterId = encounter.getEncounterId();
 		Assertions.assertNotNull(encounter, "Encounter not found for encounter id: " + encounterId );	
@@ -67,24 +64,21 @@ public class TestEncounterAttributes extends BaseModuleContextSensitiveTest
 		//Get the attribute by name
 		EncounterAttribute encounterAttribute = chirdlutilbackporsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 		Assertions.assertNotNull(encounterAttribute, "EncounterAttribute not found for attribute value = " + ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+				
+		//Create attribute value for Date 
+		EncounterAttributeValue scheduledDateTimeAttributeValue = new EncounterAttributeValue(encounterAttribute,encounterId,appointmentDate);
 		
-		//Save attribute with date as string value
-		EncounterAttributeValue encounterAttributeValue = new EncounterAttributeValue(encounterAttribute, encounterId, formattedScheduledDateText);
-		EncounterAttributeValue savedEncounterAttributeValue = chirdlutilbackporsService.saveEncounterAttributeValue(encounterAttributeValue);
-		Assertions.assertNotNull(savedEncounterAttributeValue);	
+		//Save encounter attribute value
+		chirdlutilbackporsService.saveEncounterAttributeValue(scheduledDateTimeAttributeValue);
 		
-		//Get the attribute value for date
-		encounterAttributeValue = chirdlutilbackporsService.getEncounterAttributeValueByAttribute(encounterId, encounterAttribute, false);
-		Assertions.assertNotNull(encounterAttributeValue);	
+		//Get saved encounter attribute value
+		EncounterAttributeValue fetchedAttributeValue = chirdlutilbackporsService.getEncounterAttributeValueByName(
+				encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		Assertions.assertNotNull(fetchedAttributeValue, "Encounter attribute value not found for " + ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);	
 		
-		//Verify before and after match
-		String fetchedAttributeValueText = encounterAttributeValue.getValueText();
-		Assertions.assertEquals(formattedScheduledDateText,fetchedAttributeValueText);	
-		System.out.println("Scheduled appointment time from attribute: " + fetchedAttributeValueText);
-		
-		//Convert to date
-	    Date date =new SimpleDateFormat(ChirdlUtilConstants.DATE_FORMAT_HYPHEN_yyyy_MM_dd_hh_mm_ss).parse(fetchedAttributeValueText);  
-
+		Date fetchedAppointmentDate = fetchedAttributeValue.getValueDateTime();
+		Assertions.assertEquals(0, appointmentDate.compareTo(fetchedAppointmentDate));	
+	
 	}
 	
 }

@@ -1,11 +1,10 @@
 package org.openmrs.module.chica.rule;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.openmrs.Patient;
+import org.openmrs.Encounter;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicException;
@@ -17,10 +16,6 @@ import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.Encounter;
-import org.openmrs.api.EncounterService;
-import java.text.ParseException;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 
@@ -35,8 +30,9 @@ public class scheduledTime implements Rule
 
 	/**
 	 * @see org.openmrs.logic.rule.Rule#eval(org.openmrs.Patient,
-	 *      org.openmrs.logic.LogicCriteria)
+	 *      org.openmrs.logic.LogicCriteria) 
 	 */
+	@Override
 	public Result eval(LogicContext context, Integer patientId,
 			Map<String, Object> parameters) throws LogicException
 	{
@@ -59,25 +55,17 @@ public class scheduledTime implements Rule
 		EncounterAttributeValue encounterAttributeValue = chirdlUtilBackportsService
 				.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 		
-		if (encounterAttributeValue == null || StringUtils.isBlank(encounterAttributeValue.getValueText())) {
+		if (encounterAttributeValue == null || encounterAttributeValue.getValueDateTime() == null) {
 			return Result.emptyResult(); 
 		}
-		
-		String scheduledTimeString  = encounterAttributeValue.getValueText();
-	
-		try {
-			Date scheduledDate =new SimpleDateFormat(ChirdlUtilConstants.DATE_FORMAT_HYPHEN_yyyy_MM_dd_hh_mm_ss).parse(scheduledTimeString); 
-			return new Result(scheduledDate);
-		} catch (ParseException e) {
-			//ignore
-		}		
+		return new Result(encounterAttributeValue.getValueDateTime());
 
-		return Result.emptyResult();
 	}
 
 	/**
 	 * @see org.openmrs.logic.rule.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList()
 	{
 		return null;
@@ -86,6 +74,7 @@ public class scheduledTime implements Rule
 	/**
 	 * @see org.openmrs.logic.rule.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies()
 	{
 		return new String[]
@@ -95,6 +84,7 @@ public class scheduledTime implements Rule
 	/**
 	 * @see org.openmrs.logic.rule.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL()
 	{
 		return 0; 
@@ -103,6 +93,7 @@ public class scheduledTime implements Rule
 	/**
 	 * @see org.openmrs.logic.rule.Rule#getDatatype(String)
 	 */
+	@Override
 	public Datatype getDefaultDatatype()
 	{
 		return Datatype.NUMERIC;

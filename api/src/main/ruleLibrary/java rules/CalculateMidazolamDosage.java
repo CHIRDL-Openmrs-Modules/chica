@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -18,6 +16,8 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Calculates Midazolam dosage based upon patients's age and weight.
@@ -66,14 +66,14 @@ public class CalculateMidazolamDosage implements Rule {
 		// Ensure the patient exists
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			log.error("Cannot find patient with ID " + patientId);
+			log.error("Cannot find patient with ID {}", patientId);
 			return Result.emptyResult();
 		}
 		
 		// Ensure the patient has a birthdate
 		Date birthDate = patient.getBirthdate();
 		if (birthDate == null) {
-			log.error("Patient " + patientId + " does not have a birthdate specified.");
+			log.error("Patient {} does not have a birthdate specified.", patientId);
 			return Result.emptyResult();
 		}
 		

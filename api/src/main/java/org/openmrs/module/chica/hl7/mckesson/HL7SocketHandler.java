@@ -16,7 +16,6 @@ package org.openmrs.module.chica.hl7.mckesson;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -660,11 +659,12 @@ public class HL7SocketHandler extends
 		
 		if (appointmentTime != null){
 			
-			EncounterAttribute encounterAttributeAppointmentTime = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
-			String dateString = new SimpleDateFormat(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME).format(appointmentTime);
+			EncounterAttribute encounterAttributeAppointmentTime = chirdlutilbackportsService.getEncounterAttributeByName(
+					ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 			
 			if (encounterAttributeAppointmentTime != null ) {
-				chirdlutilbackportsService.saveEncounterAttributeValue(new EncounterAttributeValue(encounterAttributeAppointmentTime, encounterId, dateString));
+				chirdlutilbackportsService.saveEncounterAttributeValue(
+						new EncounterAttributeValue(encounterAttributeAppointmentTime, encounterId, appointmentTime));
 			}else {
 				log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 			}

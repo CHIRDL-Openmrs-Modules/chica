@@ -3,8 +3,6 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Patient;
@@ -17,6 +15,8 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class getRace implements Rule {
 	
@@ -29,6 +29,7 @@ public class getRace implements Rule {
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
 		return null;
 	}
@@ -38,6 +39,7 @@ public class getRace implements Rule {
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[] {};
 	}
@@ -47,6 +49,7 @@ public class getRace implements Rule {
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
 	}
@@ -56,6 +59,7 @@ public class getRace implements Rule {
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getDatatype(String)
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.CODED;
 	}
@@ -63,6 +67,7 @@ public class getRace implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		PersonAttributeType attributeType = Context.getPersonService().getPersonAttributeTypeByName(RACE);

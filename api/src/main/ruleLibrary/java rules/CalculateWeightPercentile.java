@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -18,6 +16,8 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Calculates weight percentile based upon a provided weight, the patient's age, and gender.
@@ -50,14 +50,14 @@ public class CalculateWeightPercentile implements Rule {
 		// Ensure the patient exists
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			log.error("Cannot find patient with ID " + patientId);
+			log.error("Cannot find patient with ID {}", patientId);
 			return Result.emptyResult();
 		}
 		
 		// Ensure the patient has a birthdate
 		Date birthDate = patient.getBirthdate();
 		if (birthDate == null) {
-			log.error("Patient " + patientId + " does not have a birthdate specified.");
+			log.error("Patient {} does not have a birthdate specified.", patientId);
 			return Result.emptyResult();
 		}
 		

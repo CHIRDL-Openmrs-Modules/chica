@@ -246,6 +246,7 @@
     encounter_attribute_id CDATA #REQUIRED
     encounter_id CDATA #REQUIRED
     value_text CDATA #IMPLIED
+    value_datetime CDATA #IMPLIED
     creator CDATA #REQUIRED
     date_created CDATA #REQUIRED
     changed_by CDATA #IMPLIED

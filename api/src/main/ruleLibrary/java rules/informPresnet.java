@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Encounter;
@@ -45,6 +43,8 @@ import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.HttpUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class informPresnet implements Rule {
 	
@@ -55,6 +55,7 @@ public class informPresnet implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
 		return null;
 	}
@@ -64,6 +65,7 @@ public class informPresnet implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[] {};
 	}
@@ -73,6 +75,7 @@ public class informPresnet implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
 	}
@@ -82,6 +85,7 @@ public class informPresnet implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.CODED;
 	}
@@ -92,6 +96,7 @@ public class informPresnet implements Rule {
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer,
 	 *      java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		Integer locationId = (Integer) parameters.get("locationId");
@@ -357,7 +362,7 @@ public class informPresnet implements Rule {
 				dateList.add(element.getResultDate());
 			}
 		}
-		if (dateList.size() == 0) {
+		if (dateList.isEmpty()) {
 			return null;
 		}
 		Collections.sort(dateList);
@@ -371,7 +376,7 @@ public class informPresnet implements Rule {
 				dateList.add(date);
 			}
 		}
-		if (dateList.size() > 0) {
+		if (!dateList.isEmpty()) {
 			Collections.sort(dateList);
 			Date date = dateList.get(0);
 			return getFormattedResultDate(date);

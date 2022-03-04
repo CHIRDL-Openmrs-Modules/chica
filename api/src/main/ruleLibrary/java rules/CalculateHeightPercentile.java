@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -18,6 +16,8 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Calculates height percentile based upon a provided height, the patient's age, and gender.
@@ -42,7 +42,7 @@ public class CalculateHeightPercentile implements Rule {
 		// Ensure the parameter is a Result
 		Object heightResultsObject = parameters.get(ChirdlUtilConstants.PARAMETER_1);
 		if (!(heightResultsObject instanceof Result)) {
-			return Result.emptyResult();
+			return Result.emptyResult(); 
 		}
 		
 		Result heightResults = (Result)heightResultsObject;

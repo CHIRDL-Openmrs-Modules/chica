@@ -17,6 +17,7 @@
 		
 		<property name="encounterId" type="java.lang.Integer" column="encounter_id" />
 		<property name="valueText" type="java.lang.String" column="value_text" />
+        <property name="valueDateTime" type="java.util.Date" column="value_datetime" />
 		<property name="uuid" type="java.lang.String" column="uuid" length="38" unique="true" />
 		<property name="dateCreated" type="java.util.Date" column="date_created" not-null="true" />
 		<property name="dateChanged" type="java.util.Date" column="date_changed"  />

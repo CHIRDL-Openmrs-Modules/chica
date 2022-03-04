@@ -17,8 +17,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
@@ -31,10 +29,12 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.ZipUtil;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class createAndEmailJitByClinic implements Rule {
 	
@@ -45,6 +45,7 @@ public class createAndEmailJitByClinic implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
 		return null;
 	}
@@ -54,6 +55,7 @@ public class createAndEmailJitByClinic implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[] {};
 	}
@@ -63,6 +65,7 @@ public class createAndEmailJitByClinic implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0; // 60 * 30; // 30 minutes
 	}
@@ -72,6 +75,7 @@ public class createAndEmailJitByClinic implements Rule {
 	 * 
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.CODED;
 	}
@@ -82,6 +86,7 @@ public class createAndEmailJitByClinic implements Rule {
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer,
 	 *      java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		Integer locationId = (Integer) parameters.get("locationId");
 		Integer locationTagId = (Integer) parameters.get("locationTagId");
@@ -92,35 +97,34 @@ public class createAndEmailJitByClinic implements Rule {
 		String body = (String) parameters.get("param4");
 		
 		if (locationId == null) {
-			log.error("Location ID parameter not found.  No one will be emailed for " + locationAttr + ".");
+			log.error("Location ID parameter not found.  No one will be emailed for {} ",locationAttr);
 			return Result.emptyResult();
 		} else if (encounterId == null) {
-			log.error("Encounter ID parameter not found.  No one will be emailed for " + locationAttr + ".");
+			log.error("Encounter ID parameter not found.  No one will be emailed for {}", locationAttr);
 			return Result.emptyResult();
 		} else if (locationAttr == null) {
-			log.error("Location Attribute Value parameter not found.  No one will be emailed for " + locationAttr + ".");
+			log.error("Location Attribute Value parameter not found.  No one will be emailed for {}", locationAttr);
 			return Result.emptyResult();
 		} else if (formName == null) {
-			log.error("Form name parameter not found.  No one will be emailed for " + locationAttr + ".");
+			log.error("Form name parameter not found.  No one will be emailed for {}", locationAttr);
 			return Result.emptyResult();
 		} else if (subject == null) {
-			log.error("Subject parameter not found.  No one will be emailed for " + locationAttr + ".");
+			log.error("Subject parameter not found.  No one will be emailed for {}", locationAttr);
 			return Result.emptyResult();
 		} else if (body == null) {
-			log.error("Body parameter not found.  No one will be emailed for " + locationAttr + ".");
+			log.error("Body parameter not found.  No one will be emailed for ", locationAttr);
 			return Result.emptyResult();
 		}
 		
 		Location location = Context.getLocationService().getLocation(locationId);
 		if (location == null) {
-			log.error("No location found for location ID " + locationId + ".  No one will be emailed for " + locationAttr + 
-				".");
+			log.error("No location found for location ID {}.  No one will be emailed for {}.", locationId, locationAttr);
 			return Result.emptyResult();
 		}
 		
 		Form form = Context.getFormService().getForm(formName);
 		if (form == null) {
-			log.error("No form found for form name " + formName + ".  No one will be emailed for " + locationAttr + ".");
+			log.error("No form found for form name {}.  No one will be emailed for {}.", formName, locationAttr);
 			return Result.emptyResult();
 		}
 		
@@ -144,15 +148,14 @@ public class createAndEmailJitByClinic implements Rule {
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
 		ChirdlLocationAttributeValue emailLav = service.getLocationAttributeValue(locationId, "diabetesEndoEmail");
 		if (emailLav == null || emailLav.getValue() == null || emailLav.getValue().trim().length() == 0) {
-			log.error("No location attribute value specified for location: " + locationId + " and attribute name " + 
-				"diabetesEndoEmail.  No form will be emailed.");
+			log.error("No location attribute value specified for location: {} and attribute name diabetesEndoEmail.  No form will be emailed.", locationId);
 			return Result.emptyResult();
 		}
 		
 		// Get the email addresses
 		ChirdlLocationAttributeValue lav = service.getLocationAttributeValue(locationId, locationAttr);
 		if (lav == null || lav.getValue() == null || lav.getValue().trim().length() == 0) {
-			log.error("No valid " + locationAttr + " found for location " + locationId + ".  No one will be emailed.");
+			log.error("No valid {} found for location {}.  No one will be emailed.",locationAttr,locationId);
 			return Result.emptyResult();
 		}
 		
@@ -161,8 +164,8 @@ public class createAndEmailJitByClinic implements Rule {
 		PatientState patientState = org.openmrs.module.atd.util.Util.getProducePatientStateByEncounterFormAction(
 			encounterId, formId);
 		if (patientState == null) {
-			log.error("No valid patient state could be found for patient: " + patientId + ", encounter ID: " + encounterId + 
-				", form ID: " + formId + " location " + locationId + ".  No one will be emailed.");
+			log.error("No valid patient state could be found for patient: {}, encounter ID: {}, form ID: {} location {}.  No one will be emailed.",
+					patientId,encounterId,formId,locationId);
 			return Result.emptyResult();
 		}
 		
@@ -179,11 +182,11 @@ public class createAndEmailJitByClinic implements Rule {
 			if (pdfDir.exists()) {
 				pdfFile = new File(pdfDir, formInstance.toString() + ".pdf");
 				if (!pdfFile.exists()) {
-					log.error("Cannot find PDF file to zip and email.  Directory: " + mergeDirectory + " File: " + formInstance.toString());
+					log.error("Cannot find PDF file to zip and email. Directory: {} File: {}", mergeDirectory,formInstance.toString());
 					return Result.emptyResult();
 				}
 			} else {
-				log.error("Cannot find PDF file to zip and email.  Directory: " + mergeDirectory + " File: " + formInstance.toString());
+				log.error("Cannot find PDF file to zip and email. Directory: {} File: {}",mergeDirectory,formInstance.toString());
 				return Result.emptyResult();
 			}
 		}
