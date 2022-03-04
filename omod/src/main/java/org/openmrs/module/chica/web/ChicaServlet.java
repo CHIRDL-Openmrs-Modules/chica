@@ -376,7 +376,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			formId = Integer.valueOf(formIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_ID + " is invalid: " + formIdStr, e);
+			log.error("Parameter {} is invalid: {}",ChirdlUtilConstants.PARAMETER_FORM_ID,formIdStr,e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -385,7 +385,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			locationTagId = Integer.valueOf(locationTagIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + " is invalid: " + locationTagIdStr, e);
+			log.error("Parameter {} is invalid: {}",ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID,locationTagIdStr,  e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -394,7 +394,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			locationId = Integer.valueOf(locationIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_ID + " is invalid: " + locationIdStr, e);
+			log.error("Parameter {} is invalid: {}",ChirdlUtilConstants.PARAMETER_LOCATION_ID,locationIdStr, e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -403,14 +403,14 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			formInstanceId = Integer.valueOf(formInstanceIdStr);
 		} catch (NumberFormatException e) {
-			log.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID + " is invalid: " + formInstanceIdStr, e);
+			log.error("Parameter{} is invalid: {}", ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID,formInstanceIdStr,e);
 			pw.write(errorHtml);
 			return;
 		}
 		
 		stylesheet = request.getParameter(ServletUtil.STYLESHEET);
 		if (StringUtils.isBlank(stylesheet)) {
-			log.error("Parameter " + ServletUtil.STYLESHEET + " is invalid: " + stylesheet);
+			log.error("Parameter {} is invalid: {}", ServletUtil.STYLESHEET,stylesheet);
 			pw.write(errorHtml);
 			return;
 		}
@@ -418,7 +418,7 @@ public class ChicaServlet extends HttpServlet {
 		String formDirectory = request.getParameter(ServletUtil.FORM_DIRECTORY);
 		if(StringUtils.isBlank(formDirectory))
 		{
-			log.error("Parameter " + ServletUtil.FORM_DIRECTORY + " is invalid: " + ServletUtil.FORM_DIRECTORY);
+			log.error("Parameter {} is invalid: {}",ServletUtil.FORM_DIRECTORY,ServletUtil.FORM_DIRECTORY);
 			pw.write(errorHtml);
 			return;
 		}
@@ -426,8 +426,8 @@ public class ChicaServlet extends HttpServlet {
 		String output = org.openmrs.module.chica.util.Util.displayStylesheet(formId, locationTagId, locationId, formInstanceId, 
 			stylesheet, formDirectory); // CHICA-1125 Changed to use the directory specified in the config file
 		if (StringUtils.isBlank(output)) {
-			log.info("Transformation is empty for form ID: " + formIdStr + " location tag ID: " + locationTagIdStr + 
-				" location ID: " + locationIdStr + " form instance ID: " + formInstanceIdStr + " stylesheet: " + stylesheet);
+			log.info("Transformation is empty for form ID: {} location tag ID: {} location ID: {} form instance ID: {} stylesheet: {}",
+				formIdStr,locationTagIdStr,locationIdStr,formInstanceIdStr,stylesheet);
 			pw.write(errorHtml);
 			return;
 		}

@@ -144,8 +144,7 @@ public class ChicaRuleTesterController
 
         } catch (Exception e)
         {
-            log.error(e.getMessage());
-            log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+            log.error("Exception running rule {}",ruleName,e);
         }
     }
 }

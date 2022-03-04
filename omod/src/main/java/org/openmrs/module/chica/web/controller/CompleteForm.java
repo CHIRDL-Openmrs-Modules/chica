@@ -68,15 +68,13 @@ public class CompleteForm implements Runnable {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
-            log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+            log.error("Exception processing non-prioritized rules.",e);
         } 
     
         try {
             changeState(this.formInstance, this.parameters);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+            log.error("Exception changing state for form instance {}.",formInstance.getFormInstanceId(),e);
         }
     }
     
@@ -101,8 +99,7 @@ public class CompleteForm implements Runnable {
                     BaseStateActionHandler.getInstance().changeState(formInstState, (HashMap)stateChangeParameters);
                 }
                 catch (Exception e) {
-                    log.error(e.getMessage());
-                    log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+                    log.error("Exception changing state for session {} ",formInstState.getSessionId());
                 }
             }
         }

@@ -81,7 +81,7 @@ public class CalculateWeightPercentile implements Rule {
 				weightObs.getObsDatetime());
 			return new Result(weightPercentile);
 		} catch (Exception e) {
-			log.error("Error calculating weight percentile for patient " + patientId, e);
+			log.error("Error calculating weight percentile for patient {}",patientId, e);
 			return Result.emptyResult();
 		}
 	}

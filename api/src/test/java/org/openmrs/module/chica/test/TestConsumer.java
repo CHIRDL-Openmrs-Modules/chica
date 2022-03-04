@@ -7,10 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.OutputStream;
-import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -27,8 +25,6 @@ import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
@@ -119,13 +115,9 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
+					//Remove try/catch for test
 					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+						formId = Integer.parseInt(value);
 					}
 				}
 				FormInstance formInstance = new FormInstance();
@@ -154,12 +146,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
 					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+					formId = Integer.parseInt(value);
 					}
 				}
 				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
@@ -188,12 +175,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
 					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+					formId = Integer.parseInt(value);
 					}
 				}
 				formInstance = new FormInstance();

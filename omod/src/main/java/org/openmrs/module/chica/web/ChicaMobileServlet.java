@@ -204,7 +204,7 @@ public class ChicaMobileServlet extends HttpServlet {
 					}
 					else
 					{
-					    log.error("Error getting forms for patientId: " + row.getPatientId() + ". The patient will not be added to the mobile greaseBoard.");
+					    log.error("Error getting forms for patientId: {}. The patient will not be added to the mobile greaseBoard.", row.getPatientId());
 						continue;
 					}
 					

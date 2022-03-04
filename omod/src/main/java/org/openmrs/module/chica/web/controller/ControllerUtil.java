@@ -147,9 +147,8 @@ public class ControllerUtil {
 		if (providerId != null && providerId.trim().length() > 0) {
 			saveProviderViewer(patient, encounterId, providerId, formInstTag);
 		} else {
-			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientId
-					+ " encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: "
-					+ formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
+			log.error("Error saving viewing provider ID for form ID: {} patient ID: {} encounter ID: {} provider ID: {} form instance ID:{} location ID: {} location tag ID: {}",
+					formId,patientId,encounterId,providerId,formInstanceId,locationId,locationTagId);
 		}
 
 		map.put(ChicaConstants.PARAMETER_SESSION_TIMEOUT_WARNING, getSessionTimeoutWarning());
@@ -170,7 +169,7 @@ public class ControllerUtil {
 		Object submittedFormInstancesObj = session
 				.getAttribute(ChicaConstants.SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
 
-		if (submittedFormInstancesObj != null && submittedFormInstancesObj instanceof List) {
+		if (submittedFormInstancesObj instanceof List) {
 			submittedFormInstances = (List<String>) submittedFormInstancesObj;
 			if (submittedFormInstances.contains(formInstance)) {
 				return true;
@@ -259,7 +258,7 @@ public class ControllerUtil {
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConceptByName(conceptName);
 		if (concept == null) {
-			log.error("Could not log provider info.  Concept " + conceptName + " not found.");
+			log.error("Could not log provider info.  Concept {} not found.",conceptName);
 			return;
 		}
 		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(), formInstTag.getFormId(),
@@ -546,7 +545,7 @@ public class ControllerUtil {
 			}
 
 			Set<LocationTag> tags = location.getTags();
-			if (tags != null && tags.size() > 0) {
+			if (tags != null && !tags.isEmpty()) {
 				LocationTag tag = tags.iterator().next();
 				map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, tag.getLocationTagId());
 			} else {
@@ -554,7 +553,7 @@ public class ControllerUtil {
 			}
 
 			List<Session> sessions = backportsService.getSessionsByEncounter(handoutsEncounter.getEncounterId());
-			if (sessions != null && sessions.size() > 0) {
+			if (sessions != null && !sessions.isEmpty()) {
 				map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessions.get(0).getSessionId());
 			} else {
 				return;
@@ -618,15 +617,12 @@ public class ControllerUtil {
 		String sessionTimeoutWarningStr = Context.getAdministrationService()
 				.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
 		if (sessionTimeoutWarningStr == null || sessionTimeoutWarningStr.trim().length() == 0) {
-			log.warn("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
-					+ " global property does not have a " + "value set.  180 seconds will be used as a default value.");
+			log.warn("The {} global property does not have a value set.  180 seconds will be used as a default value.",ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
 		} else {
 			try {
 				sessionTimeoutWarning = Integer.valueOf(sessionTimeoutWarningStr);
 			} catch (NumberFormatException e) {
-				log.error("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
-						+ " global property is not a " + "valid Integer.  180 seconds will be used as a default value",
-						e);
+				log.error("The {} global property is not a valid Integer.  180 seconds will be used as a default value", ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING,e);
 				sessionTimeoutWarning = new Integer(180);
 			}
 		}
@@ -645,8 +641,7 @@ public class ControllerUtil {
                 Context.getService(ChirdlUtilBackportsService.class).getLocationAttributeValue(
                     locationId, ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
         if (attrVal == null || StringUtils.isBlank(attrVal.getValue())) {
-            log.error("No location attribute value specified for location " + locationId + " and attribute name " 
-                    + ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
+            log.error("No location attribute value specified for location {} and attribute name {}.",locationId,ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
             return null;
         }
         return attrVal.getValue();

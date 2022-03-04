@@ -143,7 +143,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						}
 
 						if(numTries == MAX_TRIES){
-							log.error("Unable to locate {} while creating {} (formInstanceId: {} locationId: {} locationTagId: {}))",
+							log.error("Unable to locate {} while creating {} (formInstanceId: {} locationId: {} locationTagId: {})",
 									physicianForm,PWS_PDF,formInstanceId,locationId,locationTagId);
 							return Result.emptyResult();
 						}
@@ -168,8 +168,6 @@ public class GetPWSFieldValuesFromXML implements Rule{
 					catch(IOException ioe){
 						log.error("Unable to read {} while creating {} (formInstanceId: {} locationId:{} locationTagId: {})",
 								physicianForm,PWS_PDF,formInstanceId,locationId,locationTagId);
-						log.error(ioe.getMessage());
-						log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(ioe));
 					}
 				}			
 
