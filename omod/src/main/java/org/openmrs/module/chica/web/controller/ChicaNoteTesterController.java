@@ -86,8 +86,7 @@ public class ChicaNoteTesterController {
 				
 			}
 			catch (Exception e) {
-				log.error(e.getMessage());
-				log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				log.error("Error intializing form for patient id {}", request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID),e);
 			}
 		}
 		

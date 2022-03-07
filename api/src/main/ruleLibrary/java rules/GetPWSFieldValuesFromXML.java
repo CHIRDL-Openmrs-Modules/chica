@@ -167,7 +167,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 					}
 					catch(IOException ioe){
 						log.error("Unable to read {} while creating {} (formInstanceId: {} locationId:{} locationTagId: {})",
-								physicianForm,PWS_PDF,formInstanceId,locationId,locationTagId);
+								physicianForm,PWS_PDF,formInstanceId,locationId,locationTagId,ioe);
 					}
 				}			
 

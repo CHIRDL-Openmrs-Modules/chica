@@ -40,7 +40,7 @@ public class MobileGreaseBoardController {
     
     /** Parameters */
     private static final String PARAMETER_REFRESH_PERIOD = "refreshPeriod";
-    private static final String PARAMETER_CURRENT_USER = "currentUser";
+    private static final String PARAMETER_CURRENT_USER = "currentUser"; 
     private static final String PARAMETER_DISPLAY_CONFIDENTIALITY_NOTICE = "displayConfidentialityNoticeMobileGreaseBoard";
 	
     /** Error messages */

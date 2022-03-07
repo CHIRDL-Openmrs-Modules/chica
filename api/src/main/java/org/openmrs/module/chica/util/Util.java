@@ -1028,7 +1028,7 @@ public class Util {
 			try {
 				strOutput = XMLUtil.transformFile(XmlFile, stylesheetFile);
 			} catch (Exception e) {
-				log.error("Error transforming xml: {} xslt: {}.", stylesheetFile.getAbsolutePath(), stylesheetFile.getAbsolutePath(),  e);
+				log.error("Error transforming xml: {} xslt: {}.", XmlFile.getAbsolutePath(), stylesheetFile.getAbsolutePath(),  e);
 			}
 		}
 		return strOutput;

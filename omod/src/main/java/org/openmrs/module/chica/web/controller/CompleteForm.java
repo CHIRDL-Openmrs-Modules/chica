@@ -99,7 +99,7 @@ public class CompleteForm implements Runnable {
                     BaseStateActionHandler.getInstance().changeState(formInstState, (HashMap)stateChangeParameters);
                 }
                 catch (Exception e) {
-                    log.error("Exception changing state for session {} ",formInstState.getSessionId());
+                    log.error("Exception changing state for session {} ",formInstState.getSessionId(),e);
                 }
             }
         }

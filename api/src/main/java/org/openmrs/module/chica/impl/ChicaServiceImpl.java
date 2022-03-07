@@ -236,10 +236,9 @@ public class ChicaServiceImpl implements ChicaService
 			InputStream input = new FileInputStream(statsConfigFile);
 			statsConfig = (StatsConfig) XMLUtil.deserializeXML(
 					StatsConfig.class, input);
-		} catch (IOException e1)
+		} catch (IOException e)
 		{
-			log.error(e1.getMessage());
-			log.error(Util.getStackTrace(e1));
+			log.error("Exception populating field names from stats config file {} ",statsConfigFile,e);
 			return;
 		}
 

@@ -78,6 +78,20 @@ public class TestEncounterAttributes extends BaseModuleContextSensitiveTest
 		
 		Date fetchedAppointmentDate = fetchedAttributeValue.getValueDateTime();
 		Assertions.assertEquals(0, appointmentDate.compareTo(fetchedAppointmentDate));	
+		
+		
+		//Test saving text value 
+		String printerLocation = "INTTEST";
+		
+		//Save encounter attribute value
+		EncounterAttribute encounterAttributePrinterLocation = chirdlutilbackporsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+		chirdlutilbackporsService.saveEncounterAttributeValue( new EncounterAttributeValue(encounterAttributePrinterLocation,encounterId,printerLocation));
+		
+		EncounterAttributeValue fetchPrinterLocationAttributeValue = chirdlutilbackporsService.getEncounterAttributeValueByName(
+				encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+		Assertions.assertNotNull(fetchPrinterLocationAttributeValue, "Encounter attribute value not found for " 
+				+ ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+		Assertions.assertEquals(printerLocation, fetchPrinterLocationAttributeValue.getValueText());
 	
 	}
 	

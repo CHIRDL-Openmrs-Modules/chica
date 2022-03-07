@@ -676,10 +676,12 @@ public class HL7SocketHandler extends
 		if(newEncounterCreated) 
 		{
 			
-			EncounterAttribute encounterAttributePrinterLocation = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			EncounterAttribute encounterAttributePrinterLocation = chirdlutilbackportsService.getEncounterAttributeByName(
+					ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
 			 
 			if (encounterAttributePrinterLocation != null) {
-					chirdlutilbackportsService.saveEncounterAttributeValue(new EncounterAttributeValue(encounterAttributePrinterLocation, encounterId, printerLocation));
+					chirdlutilbackportsService.saveEncounterAttributeValue(
+							new EncounterAttributeValue(encounterAttributePrinterLocation, encounterId, printerLocation));
 			}else {
 				log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
 			}

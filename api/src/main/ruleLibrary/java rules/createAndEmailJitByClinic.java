@@ -112,7 +112,7 @@ public class createAndEmailJitByClinic implements Rule {
 			log.error("Subject parameter not found.  No one will be emailed for {}", locationAttr);
 			return Result.emptyResult();
 		} else if (body == null) {
-			log.error("Body parameter not found.  No one will be emailed for ", locationAttr);
+			log.error("Body parameter not found.  No one will be emailed for {}", locationAttr);
 			return Result.emptyResult();
 		}
 		
