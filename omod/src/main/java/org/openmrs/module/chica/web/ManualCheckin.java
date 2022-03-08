@@ -49,7 +49,6 @@ import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
@@ -518,13 +517,7 @@ public class ManualCheckin
 					 null, null, newEncounter,parameters);
 			if (enc != null){
 				checkinSuccess = true;
-				
-				//Set the printer location encounter attribute
-				EncounterAttribute encounterAttribute = chirdlutilbackportsService
-						.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
-				EncounterAttributeValue encounterAttributeValue = 
-						new EncounterAttributeValue(encounterAttribute, enc.getEncounterId(), request.getParameter("manualCheckinStation"));
-				chirdlutilbackportsService.saveEncounterAttributeValue(encounterAttributeValue);
+				Util.storeEncounterAttributeAsValueText(enc, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION,request.getParameter("manualCheckinStation"));
 				
 				// Set the insurance category
 				String insuranceCategory = request.getParameter("manualCheckinInsuranceCategory");

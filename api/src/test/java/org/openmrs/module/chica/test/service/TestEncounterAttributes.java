@@ -11,6 +11,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.test.TestUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -63,14 +64,11 @@ public class TestEncounterAttributes extends BaseModuleContextSensitiveTest
 		
 		//Get the attribute by name
 		EncounterAttribute encounterAttribute = chirdlutilbackporsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
-		Assertions.assertNotNull(encounterAttribute, "EncounterAttribute not found for attribute value = " + ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+		Assertions.assertNotNull(encounterAttribute, "EncounterAttribute not found for attribute  = " + ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 				
 		//Create attribute value for Date 
-		EncounterAttributeValue scheduledDateTimeAttributeValue = new EncounterAttributeValue(encounterAttribute,encounterId,appointmentDate);
-		
-		//Save encounter attribute value
-		chirdlutilbackporsService.saveEncounterAttributeValue(scheduledDateTimeAttributeValue);
-		
+		Util.storeEncounterAttributeAsValueDate(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME, appointmentDate);
+	
 		//Get saved encounter attribute value
 		EncounterAttributeValue fetchedAttributeValue = chirdlutilbackporsService.getEncounterAttributeValueByName(
 				encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
@@ -82,17 +80,28 @@ public class TestEncounterAttributes extends BaseModuleContextSensitiveTest
 		
 		//Test saving text value 
 		String printerLocation = "INTTEST";
-		
-		//Save encounter attribute value
-		EncounterAttribute encounterAttributePrinterLocation = chirdlutilbackporsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
-		chirdlutilbackporsService.saveEncounterAttributeValue( new EncounterAttributeValue(encounterAttributePrinterLocation,encounterId,printerLocation));
+		Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, printerLocation);
 		
 		EncounterAttributeValue fetchPrinterLocationAttributeValue = chirdlutilbackporsService.getEncounterAttributeValueByName(
-				encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+				encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, false);
+		
 		Assertions.assertNotNull(fetchPrinterLocationAttributeValue, "Encounter attribute value not found for " 
-				+ ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+				+ ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+		
 		Assertions.assertEquals(printerLocation, fetchPrinterLocationAttributeValue.getValueText());
-	
+		
+
+		//Save a different encounter attribute value for the same attribute of "Printer Location"
+		printerLocation = "INTTEST2";
+		Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, printerLocation);
+			
+		EncounterAttributeValue fetchPrinterLocationAttributeValue2 = chirdlutilbackporsService.getEncounterAttributeValueByName(
+				encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, false);
+		
+		Assertions.assertNotNull(fetchPrinterLocationAttributeValue2, "Encounter attribute value not found for " 
+				+ ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+		Assertions.assertEquals(printerLocation, fetchPrinterLocationAttributeValue2.getValueText());
+		
 	}
 	
 }

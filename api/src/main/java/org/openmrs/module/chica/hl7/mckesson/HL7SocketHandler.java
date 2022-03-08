@@ -53,9 +53,7 @@ import org.openmrs.module.chirdlutil.threadmgmt.RunnableResult;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttribute;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.Error;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
@@ -66,6 +64,7 @@ import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
+import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,6 +138,7 @@ public class HL7SocketHandler extends
 					.getPatientIdentifier();
 			
 			if (patientIdentifier != null) {
+				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
 				Patient matchedPatient = findPatient(hl7Patient);
 				
@@ -239,8 +239,9 @@ public class HL7SocketHandler extends
 		String familyName1 = patient1.getFamilyName();
 		String familyName2 = patient2.getFamilyName();
 		if ((familyName1 != null && familyName2 == null)
-				|| (familyName1 == null && familyName2 != null))
+				|| (familyName1 == null && familyName2 != null)) {
 			return false;
+		}
 
 		if (familyName1 != null) {
 			if (!familyName1.equals(familyName2))
@@ -611,7 +612,7 @@ public class HL7SocketHandler extends
 						}
 						else
 						{
-							log.error("Unable to parse visit number for encounterId: " + encounter.getEncounterId());
+							log.error("Unable to parse visit number for encounterId: {}", encounter.getEncounterId());
 						}		
 					}
 					
@@ -630,6 +631,7 @@ public class HL7SocketHandler extends
 					{
 						Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_TYPE, visitType);
 					}
+				
 				}
 			} catch (EncodingNotSupportedException e) {
 				log.error("Encoding not supported when parsing incoming message.", e);
@@ -638,66 +640,37 @@ public class HL7SocketHandler extends
 			} catch (Exception e){
 				log.error("Exception getting encounter information from the incoming message", e);
 			}
-
-		
-		EncounterAttribute encounterAttributePlanCode = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
-	
-		if (encounterAttributePlanCode != null) {
-			chirdlutilbackportsService.saveEncounterAttributeValue( new EncounterAttributeValue(encounterAttributePlanCode, encounterId, planCode));
-		}else {
-			log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE);
-		}
-		
-		EncounterAttribute encounterAttributeCarrierCode = chirdlutilbackportsService.getEncounterAttributeByName(ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE);
-		 
-		if (encounterAttributeCarrierCode != null) {
-			chirdlutilbackportsService.saveEncounterAttributeValue(new EncounterAttributeValue(encounterAttributeCarrierCode, encounterId, carrierCode));
-		}else {
-			log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE);
-		}
-		
-		
-		if (appointmentTime != null){
 			
-			EncounterAttribute encounterAttributeAppointmentTime = chirdlutilbackportsService.getEncounterAttributeByName(
-					ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
-			
-			if (encounterAttributeAppointmentTime != null ) {
-				chirdlutilbackportsService.saveEncounterAttributeValue(
-						new EncounterAttributeValue(encounterAttributeAppointmentTime, encounterId, appointmentTime));
-			}else {
-				log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
-			}
+		EncounterService encounterService = Context.getEncounterService();
+		encounter = encounterService.getEncounter(encounterId);
+		
+		if(StringUtils.isNotEmpty(planCode)) {
+			Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE,planCode);
 		}
 		
-
+		if(StringUtils.isNotEmpty(carrierCode)) {
+			Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE,carrierCode);
+		}
+		if(appointmentTime!= null) {
+			Util.storeEncounterAttributeAsValueDate(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME,appointmentTime);
+		}
 		// Set the printer location only if this is a new encounter, we don't want to potentially change the printer location
 		// after registration is already complete and the tablet has already been handed out
 		if(newEncounterCreated) 
 		{
-			
-			EncounterAttribute encounterAttributePrinterLocation = chirdlutilbackportsService.getEncounterAttributeByName(
-					ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
-			 
-			if (encounterAttributePrinterLocation != null) {
-					chirdlutilbackportsService.saveEncounterAttributeValue(
-							new EncounterAttributeValue(encounterAttributePrinterLocation, encounterId, printerLocation));
-			}else {
-				log.error("Unknown encounter attribute {}: ", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
-			}
-			
-		}
-		else
-		{
+			Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION,printerLocation);
+
+		}else{
 			// Use the existing printer location
 			// Note: This really shouldn't be needed at this point, but setting it just
 			// in case similar A10 and A04 functionality is implemented at IUH
-			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
-			if (encounterAttributeValue != null) {
-				printerLocation = encounterAttributeValue.getValueText();
+			EncounterAttributeValue printerLocationAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName(
+					encounterId, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, false);
+			if (printerLocationAttributeValue != null){
+				printerLocation = printerLocationAttributeValue.getValueText();
 			}
 		}
-
+		
 		Location location = null;
 
 		if (locationString != null) {
@@ -746,7 +719,6 @@ public class HL7SocketHandler extends
 		patientState.setStartTime(processCheckinHL7Start);
 		patientState.setEndTime(processCheckinHL7End);
 		chirdlutilbackportsService.updatePatientState(patientState);
-		EncounterService encounterService = Context.getEncounterService();
 		encounterService.saveEncounter(encounter);
 		
 		if(messageContainsInsurance) { // CHICA-1157
@@ -1305,7 +1277,6 @@ public class HL7SocketHandler extends
 			if ((newMRN = newPatientIdentifier.getIdentifier()) == null || existingMRN.trim().equals(newMRN.trim()) ){
 				return;
 			}
-			removeMRNLeadingZeros(chirdlutilbackportsService, newMRN, existingMRN, existingPatientIdentifier);
 			
 			//void the existing identifier
 
@@ -1355,32 +1326,6 @@ public class HL7SocketHandler extends
 		}
 
 	}
-
-	private void removeMRNLeadingZeros(ChirdlUtilBackportsService chirdlutilbackportsService, String newMRN,
-	        String existingMRN, PatientIdentifier existingPatientIdentifier) {
-		//New MRNs will not have a leading zero. 
-		try {
-			if (Util.removeLeadingZeros(existingMRN.trim()).equals(Util.removeLeadingZeros(newMRN.trim()))){
-				existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_LEADING_ZERO_CORRECTION);
-				Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_WARNING, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
-						"Leading Zero Correction." 
-								+ "Previous MRN: " + existingMRN + " New MRN: " + newMRN,
-								"The existing MRN and new MRN differ by only the leading zero. Save the MRN w/o leading zero. ", new Date(), null);
-				chirdlutilbackportsService.saveError(error);
-			} else {
-				existingPatientIdentifier.setVoidReason(VOID_REASON_MRN_CORRECTION);
-				Error error = new Error(ChirdlUtilConstants.ERROR_LEVEL_ERROR, ChirdlUtilConstants.ERROR_MRN_VALIDITY,
-						"MRN correction required! Contact downstream data warehouse about possible corrupted data." 
-								+ "Invalid MRN: " + existingMRN + " New MRN: " + newMRN,
-								"HL7 or manual checkin indicate that an existing patient has an invalid MRN. ", new Date(), null);
-				chirdlutilbackportsService.saveError(error);
-			}
-		} catch (Exception e) {
-
-			log.error("Insert to error table failed. Error category = " + ChirdlUtilConstants.ERROR_MRN_VALIDITY 
-					+  "Existing MRN: " + existingMRN + "; New MRN: " + newMRN, e);
-		}
-	}
 	
 	/**
 	 * If there is no location tag attribute value or it is not numeric, check-in the patient.
@@ -1411,7 +1356,31 @@ public class HL7SocketHandler extends
 
 		return validAgeRunnable.getResult().booleanValue();
 	}
+	
 
+	/**
+	 * Saves the hl7 registration message to the sockethl7listener_patient_message table.
+	 * If patient is new to the system, no patient id will be saved.
+	 * @param message
+	 * @param patient
+	 * @param duplicateString
+	 * @param duplcateEncounter
+	 */
+	private void saveMessage(Message message, Patient patient, boolean duplicateString, boolean duplcateEncounter){
+		
+
+		SocketHL7ListenerService sockethl7listenerService = Context.getService(SocketHL7ListenerService.class);
+		Integer patientId = null;
+		if (patient != null) {
+			patientId = patient.getPatientId();
+			try {
+				sockethl7listenerService.setHl7Message(patientId, null, this.parser.encode(message),
+						duplicateString, duplcateEncounter, super.getPort());
+			} catch (HL7Exception e) {
+				log.error("Error saving HL7 registration message.", e);
+			}
+		}
+	}
 	
 	/**
 	 * Pulls patient identifier from the hl7 message, looks up identifier in CHICA,
